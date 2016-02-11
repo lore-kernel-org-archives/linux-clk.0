@@ -1,97 +1,56 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 02/20] clk: bcm2835: clean up coding style issues
-Date: Sun, 28 Feb 2016 15:36:53 +0000
-Message-Id: <1456673831-2408-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Thu, 11 Feb 2016 09:16:51 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ "Gregory CLEMENT" <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
+Message-ID: <20160211091651.765cd91c@free-electrons.com>
+In-Reply-To: <1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Kevin,
 
-Fix all the checkpatch complaints for clk-bcm2835.c.
-Specifically:
-* indention
-* missing spin lock comments
-* multiple empty lines
+On Wed, 10 Feb 2016 23:40:26 +0000, Kevin Smith wrote:
+> The corediv clock is not required for all builds, only those that
+> enable peripherals that need it.  Move the corediv config option
+> from the clock driver Kconfig to the mvebu Kconfig and make it
+> conditional.
+> 
+> This also enables corediv on Armada 375 and 38X as needed.
+> 
+> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  arch/arm/mach-mvebu/Kconfig | 3 +++
+>  drivers/clk/mvebu/Kconfig   | 1 -
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+> index 64e3d2c..794e7c5 100644
+> --- a/arch/arm/mach-mvebu/Kconfig
+> +++ b/arch/arm/mach-mvebu/Kconfig
+> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
+>  	select CPU_PJ4B
+>  	select MACH_MVEBU_V7
+>  	select PINCTRL_ARMADA_370
+> +	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+Thanks for the new iteration. I know the corediv clock is only used for
+the NAND, but I'm wondering if it's really worth doing this "if
+MTD_NAND_PXA3xx.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index d3009a6..3aa3e7a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -12,9 +12,6 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
-
- /**
-@@ -297,7 +294,7 @@
- struct bcm2835_cprman {
- 	struct device *dev;
- 	void __iomem *regs;
--	spinlock_t regs_lock;
-+	spinlock_t regs_lock; /* spinlock for all clocks */
- 	const char *osc_name;
-
- 	struct clk_onecell_data onecell;
-@@ -325,12 +322,12 @@ void __init bcm2835_init_clocks(void)
- 	int ret;
-
- 	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
--					126000000);
-+				      126000000);
- 	if (IS_ERR(clk))
- 		pr_err("apb_pclk not registered\n");
-
- 	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
--					3000000);
-+				      3000000);
- 	if (IS_ERR(clk))
- 		pr_err("uart0_pclk not registered\n");
- 	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
-@@ -338,7 +335,7 @@ void __init bcm2835_init_clocks(void)
- 		pr_err("uart0_pclk alias not registered\n");
-
- 	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
--					125000000);
-+				      125000000);
- 	if (IS_ERR(clk))
- 		pr_err("uart1_pclk not registered\n");
- 	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
-@@ -1291,7 +1288,7 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- }
-
- static int bcm2835_clock_determine_rate(struct clk_hw *hw,
--		struct clk_rate_request *req)
-+					struct clk_rate_request *req)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct clk_hw *parent, *best_parent = NULL;
-@@ -1349,7 +1346,6 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
- 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
- }
-
--
- static const struct clk_ops bcm2835_clock_clk_ops = {
- 	.is_prepared = bcm2835_clock_is_on,
- 	.prepare = bcm2835_clock_on,
---
-1.7.10.4
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
