@@ -1,146 +1,175 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<jacky.baip@gmail.com>
-Subject: [PATCH V3 3/5] ARM: dts: imx: Add basic dts support for imx6qp-sabreauto
-Date: Tue, 2 Feb 2016 18:01:36 +0800
-Message-ID: <1454407298-15545-3-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
-References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from bes.se.axis.com ([195.60.68.10]:44668 "EHLO bes.se.axis.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751681AbcBKOFH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 11 Feb 2016 09:05:07 -0500
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
+Subject: [PATCH v2 6/8] arm: initial machine port for artpec-6 SoC
+Date: Thu, 11 Feb 2016 15:04:40 +0100
+Message-Id: <326c3d195bd2011e08509fe8bdcc32e48df13b86.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds basic dts file for i.MX6QP-Sbreauto board.
+Basic machine port for the Artpec-6 SoC from Axis
+Communications.
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Lars Persson <larper@axis.com>
 ---
+ arch/arm/Kconfig                     |  2 +
+ arch/arm/Makefile                    |  1 +
+ arch/arm/mach-artpec/Kconfig         | 20 ++++++++++
+ arch/arm/mach-artpec/Makefile        |  1 +
+ arch/arm/mach-artpec/board-artpec6.c | 72 ++++++++++++++++++++++++++++++++++++
+ 5 files changed, 96 insertions(+)
+ create mode 100644 arch/arm/mach-artpec/Kconfig
+ create mode 100644 arch/arm/mach-artpec/Makefile
+ create mode 100644 arch/arm/mach-artpec/board-artpec6.c
 
-change for V3:
--- correct the dts list in alphabet order
--- update the copyright header for double license
-
- arch/arm/boot/dts/Makefile             |  3 +-
- arch/arm/boot/dts/imx6qp-sabreauto.dts | 93 ++++++++++++++++++++++++++++++++++
- 2 files changed, 95 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/imx6qp-sabreauto.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c4f42a78..3801cbd 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -352,7 +352,8 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6q-tx6q-1110.dtb \
- 	imx6q-udoo.dtb \
- 	imx6q-wandboard.dtb \
--	imx6q-wandboard-revb1.dtb
-+	imx6q-wandboard-revb1.dtb \
-+	imx6qp-sabreauto.dtb
- dtb-$(CONFIG_SOC_IMX6SL) += \
- 	imx6sl-evk.dtb \
- 	imx6sl-warp.dtb
-diff --git a/arch/arm/boot/dts/imx6qp-sabreauto.dts b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 4f799e5..e1565dd 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -724,6 +724,8 @@ source "arch/arm/mach-mvebu/Kconfig"
+ 
+ source "arch/arm/mach-alpine/Kconfig"
+ 
++source "arch/arm/mach-artpec/Kconfig"
++
+ source "arch/arm/mach-asm9260/Kconfig"
+ 
+ source "arch/arm/mach-at91/Kconfig"
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index fe25410..4eb24c6 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -154,6 +154,7 @@ textofs-$(CONFIG_ARCH_AXXIA) := 0x00308000
+ # Machine directory name.  This list is sorted alphanumerically
+ # by CONFIG_* macro name.
+ machine-$(CONFIG_ARCH_ALPINE)		+= alpine
++machine-$(CONFIG_ARCH_ARTPEC)		+= artpec
+ machine-$(CONFIG_ARCH_AT91)		+= at91
+ machine-$(CONFIG_ARCH_AXXIA)		+= axxia
+ machine-$(CONFIG_ARCH_BCM)		+= bcm
+diff --git a/arch/arm/mach-artpec/Kconfig b/arch/arm/mach-artpec/Kconfig
 new file mode 100644
-index 0000000..5ce3840
+index 0000000..6cbe5a2
 --- /dev/null
-+++ b/arch/arm/boot/dts/imx6qp-sabreauto.dts
-@@ -0,0 +1,93 @@
++++ b/arch/arm/mach-artpec/Kconfig
+@@ -0,0 +1,20 @@
++menuconfig ARCH_ARTPEC
++	bool "Axis Communications ARM based ARTPEC SoCs"
++	depends on ARCH_MULTI_V7
++
++if ARCH_ARTPEC
++
++config MACH_ARTPEC6
++	bool "Axis ARTPEC-6 ARM Cortex A9 Platform"
++	depends on ARCH_MULTI_V7
++	select ARM_AMBA
++	select ARM_GIC
++	select ARM_GLOBAL_TIMER
++	select ARM_PSCI
++	select HAVE_ARM_ARCH_TIMER
++	select HAVE_ARM_SCU
++	select HAVE_ARM_TWD if SMP
++	help
++	  Support for Axis ARTPEC-6 ARM Cortex A9 Platform
++
++endif
+diff --git a/arch/arm/mach-artpec/Makefile b/arch/arm/mach-artpec/Makefile
+new file mode 100644
+index 0000000..78325f0
+--- /dev/null
++++ b/arch/arm/mach-artpec/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_MACH_ARTPEC6)		:= board-artpec6.o
+diff --git a/arch/arm/mach-artpec/board-artpec6.c b/arch/arm/mach-artpec/board-artpec6.c
+new file mode 100644
+index 0000000..d486217
+--- /dev/null
++++ b/arch/arm/mach-artpec/board-artpec6.c
+@@ -0,0 +1,72 @@
 +/*
-+ * Copyright 2016 Freescale Semiconductor, Inc.
++ * ARTPEC-6 device support.
 + *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + */
 +
-+/dts-v1/;
++#include <linux/amba/bus.h>
++#include <linux/clocksource.h>
++#include <linux/dma-mapping.h>
++#include <linux/io.h>
++#include <linux/irqchip.h>
++#include <linux/irqchip/arm-gic.h>
++#include <linux/of_platform.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/clk-provider.h>
++#include <linux/smp.h>
++#include <asm/smp_scu.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/psci.h>
++#include <linux/arm-smccc.h>
 +
-+#include "imx6qp.dtsi"
-+#include "imx6qdl-sabreauto.dtsi"
++#define ARTPEC6_DMACFG_UARTS_BURST 0xff
 +
-+/ {
-+	model = "Freescale i.MX6 Quad Plus SABRE Automotive Board";
-+	compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
-+};
++#define SECURE_OP_L2C_WRITEREG 0xb4000001
 +
-+&i2c2 {
-+	max7322: gpio@68 {
-+		compatible = "maxim,max7322";
-+		reg = <0x68>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
++static void __init artpec6_init_machine(void)
++{
++	void __iomem *dmacfg;
++	struct device_node *np;
++
++	np = of_find_compatible_node(NULL, NULL, "axis,artpec6-dmacfg");
++	if (np) {
++		/* Use PL011 DMA Burst Request signal instead of DMA
++		 *  Single Request
++		 */
++		dmacfg = of_iomap(np, 0);
++		BUG_ON(!dmacfg);
++
++		writel(ARTPEC6_DMACFG_UARTS_BURST, dmacfg);
++		iounmap(dmacfg);
++		of_node_put(np);
 +	};
++
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
++}
++
++static void artpec6_l2c310_write_sec(unsigned long val, unsigned reg)
++{
++	struct arm_smccc_res res;
++
++	arm_smccc_smc(SECURE_OP_L2C_WRITEREG, reg, val, 0,
++		      0, 0, 0, 0, &res);
++
++	WARN_ON(res.a0);
++}
++
++static const char * const artpec6_dt_match[] = {
++	"axis,artpec6",
++	NULL
 +};
 +
-+&iomuxc {
-+	imx6qdl-sabreauto {
-+		pinctrl_enet: enetgrp {
-+			fsl,pins = <
-+				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
-+				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
-+				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
-+				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
-+				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
-+				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
-+				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
-+				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
-+				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
-+				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
-+				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
-+				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
-+				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
-+				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
-+				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
-+				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
-+			>;
-+		};
-+	};
-+};
-+
-+&pcie {
-+	status = "disabled";
-+};
-+
-+&vgen3_reg {
-+	regulator-always-on;
-+};
++DT_MACHINE_START(ARTPEC6, "Axis ARTPEC-6 Platform")
++	.l2c_aux_val	= 0x0C000000,
++	.l2c_aux_mask	= 0xF3FFFFFF,
++	.l2c_write_sec  = artpec6_l2c310_write_sec,
++	.init_machine	= artpec6_init_machine,
++	.dt_compat	= artpec6_dt_match,
++MACHINE_END
 -- 
-1.9.1
+2.1.4
+
