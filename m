@@ -1,77 +1,67 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 8/8] clk: bcm2835: add the testdebug clock generators
-Date: Mon, 29 Feb 2016 15:44:02 +0000
-Message-Id: <1456760642-2412-9-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <kevin.smith@elecsyscorp.com>
+From: Kevin Smith <kevin.smith@elecsyscorp.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Gregory
+ CLEMENT" <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
+Date: Thu, 11 Feb 2016 16:01:03 +0000
+Message-ID: <56BCB043.5040909@elecsyscorp.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
+ <20160211091651.765cd91c@free-electrons.com>
+In-Reply-To: <20160211091651.765cd91c@free-electrons.com>
+Content-Type: text/plain; charset="Windows-1252"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Hello Thomas,
 
-Add the testdebug0/1 clock generators using the osc parent mux.
+On 02/11/2016 02:16 AM, Thomas Petazzoni wrote:
+> Kevin,
+>
+> On Wed, 10 Feb 2016 23:40:26 +0000, Kevin Smith wrote:
+>> The corediv clock is not required for all builds, only those that
+>> enable peripherals that need it.  Move the corediv config option
+>> from the clock driver Kconfig to the mvebu Kconfig and make it
+>> conditional.
+>>
+>> This also enables corediv on Armada 375 and 38X as needed.
+>>
+>> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>> ---
+>>   arch/arm/mach-mvebu/Kconfig | 3 +++
+>>   drivers/clk/mvebu/Kconfig   | 1 -
+>>   2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+>> index 64e3d2c..794e7c5 100644
+>> --- a/arch/arm/mach-mvebu/Kconfig
+>> +++ b/arch/arm/mach-mvebu/Kconfig
+>> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
+>>   	select CPU_PJ4B
+>>   	select MACH_MVEBU_V7
+>>   	select PINCTRL_ARMADA_370
+>> +	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
+> Thanks for the new iteration. I know the corediv clock is only used for
+> the NAND, but I'm wondering if it's really worth doing this "if
+> MTD_NAND_PXA3xx.
+>
+> Thomas
+Maybe I misunderstood.  In your previous e-mail you said "building=20
+ARMADA_38X_CLK or ARMADA_375_CLK does not require building=20
+clk-corediv.c, it only needs common.c.  So maybe instead we should=20
+change arch/arm/mach-mvebu/Kconfig to have MACH_ARMADA_xxx select=20
+MVEBU_CLK_COREDIV when needed."  I thought you meant only when a=20
+peripheral depended on the coreclk.
 
-These may also require PM_DEBUG to work propperly.
-Also the parents are - for now - unclear, so we assume osc parents.
+Should I remove the conditional and just have MACH_ARMADA_XXX always=20
+enable MVEBU_CLK_COREDIV for platforms that have it?
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   19 +++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |    2 ++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 2ddff8f..926fdf5 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1865,6 +1865,25 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_TECDIV,
- 		.int_bits = 6,
- 		.frac_bits = 0),
-+	/*
-+	 * testdebug clocks
-+	 * these may possibly require PM_DEBUG to be set as well
-+	 * for now we assume these are using the osc parent mux
-+	 * (note that testdebugX is in this mux as well,
-+	 * so it may produce issues)
-+	 */
-+	[BCM2835_CLOCK_TESTDEBUG0] = REGISTER_OSC_CLK(
-+		.name = "testdebug0",
-+		.ctl_reg = CM_TD0CTL,
-+		.div_reg = CM_TD0DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12),
-+	[BCM2835_CLOCK_TESTDEBUG0] = REGISTER_OSC_CLK(
-+		.name = "testdebug1",
-+		.ctl_reg = CM_TD1CTL,
-+		.div_reg = CM_TD1DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12),
-
- 	/* clocks with vpu parent mux */
- 	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 7bc03cd..c752392 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -73,3 +73,5 @@
- #define BCM2835_CLOCK_ARM		55
- #define BCM2835_CLOCK_PERA		56
- #define BCM2835_CLOCK_SYS		57
-+#define BCM2835_CLOCK_TESTDEBUG0	58
-+#define BCM2835_CLOCK_TESTDEBUG1	59
---
-1.7.10.4
+Thank you,
+Kevin=
