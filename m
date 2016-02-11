@@ -1,76 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:60495 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751942AbcB2BPS (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 28 Feb 2016 20:15:18 -0500
-Subject: Re: [PATCH v2] clk: check the actual phase if get_phase is provided
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1455759499-9622-1-git-send-email-shawn.lin@rock-chips.com>
- <20160225231458.GH28849@codeaurora.org> <56CFA8B4.7070600@rock-chips.com>
- <20160227001042.GC28849@codeaurora.org>
-Cc: shawn.lin@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <56D39B8C.9030008@rock-chips.com>
-Date: Mon, 29 Feb 2016 09:14:52 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160227001042.GC28849@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
+Subject: [PATCH v2 2/8] clk: add artpec-6 pll1 clock driver
+Date: Thu, 11 Feb 2016 15:04:36 +0100
+Message-Id: <6d47cfe5ab7596e91a7fcc5647c5907cc12a4d83.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016/2/27 8:10, Stephen Boyd wrote:
-> On 02/26, Shawn Lin wrote:
->> On 2016/2/26 7:14, Stephen Boyd wrote:
->>> On 02/18, Shawn Lin wrote:
->>>> set_phase does sanity checking of degree and ask sub-driver
->>
->> [...]
->>
->>>> already there.
->>>>
->>>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>>>
->>>> ---
->>>
->>> Knee jerk reaction is why does the provider code set a phase that
->>> isn't requested? Do we need some sort of clk_round_phase() API
->>> that parallels clk_round_rate() so that drivers know what phase
->>> they're going to get? Or do drivers not care what phase they get
->>> when they call clk_set_phase()?
->>
->> Hi Stephen,
->>
->> drivers should care what phase they get when calling clk_set_phase(i.e
->> the drivers setting phase to do tuning work should know what the actual
->> degrees is, which is important for them to decide the sample window
->> algorithm).
->>
->> By looking into the two drivers who use set_phase/get_phase pair
->> currently, they actually both don'e care what the actual degrees when
->> they call clk_set_phase. I think that is because the drivers are used
->> for specific platform which support 0~360 implicitly. But the situation
->> is NOT always right for cross-platform drivers. So add some sort of
->> round_phase API is probably sane ?
->>
->
-> Do you have such a platform or driver though? I'd rather not do
-> anything unless we actually need to.
+The PLL1 clock is a fixed-factor clock with factors derived from boot
+mode pins. This driver is a simple wrapper to register the fixed
+factor clock according to the pin settings.
 
-Currently no, but we going to have one soon in this year which supports
-10°, 20°, 30°,... 360°(each 10° a step, totally 36 steps). So I look
-into phase stuff in advance and send a RFC patch to discuss the
-practicability before I actually writing driver code.
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ drivers/clk/Makefile      |  1 +
+ drivers/clk/clk-artpec6.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+ create mode 100644 drivers/clk/clk-artpec6.c
 
-I have no idea whether we need it. Or maybe we can just do some tricks
-inside current ->set_phase/get_phase call back to meet the requirment.
-Otherwise， I'd rather not add New API either.
-
->
-
-
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index b038e36..388f0cf 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -17,6 +17,7 @@ endif
+ 
+ # hardware specific clock types
+ # please keep this section sorted lexicographically by file/directory path name
++obj-$(CONFIG_MACH_ARTPEC6)		+= clk-artpec6.o
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+diff --git a/drivers/clk/clk-artpec6.c b/drivers/clk/clk-artpec6.c
+new file mode 100644
+index 0000000..3664c44
+--- /dev/null
++++ b/drivers/clk/clk-artpec6.c
+@@ -0,0 +1,70 @@
++/*
++ * ARTPEC-6 clock initialization
++ *
++ * Copyright 2015 Axis Comunications AB.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++static void __init of_artpec6_pll1_setup(struct device_node *np)
++{
++	void __iomem *devstat;
++	struct clk *clk;
++	const char *clk_name = np->name;
++	const char *parent_name;
++	u32 pll_mode, pll_m, pll_n;
++
++	parent_name = of_clk_get_parent_name(np, 0);
++
++	devstat = of_iomap(np, 0);
++	if (devstat == NULL) {
++		pr_err("error to ioremap DEVSTAT\n");
++		return;
++	}
++
++	/* DEVSTAT register contains PLL settings */
++	pll_mode = (readl(devstat) >> 6) & 3;
++	iounmap(devstat);
++
++	/*
++	 * pll1 settings are designed for different DDR speeds using a fixed
++	 * 50MHz external clock. However, a different external clock could be
++	 * used on different boards.
++	 * CPU clock is half the DDR clock.
++	 */
++	switch (pll_mode) {
++	case 0: /* DDR3-2133 mode */
++		pll_m = 4;
++		pll_n = 85;
++		break;
++	case 1: /* DDR3-1866 mode */
++		pll_m = 6;
++		pll_n = 112;
++		break;
++	case 2: /* DDR3-1600 mode */
++		pll_m = 4;
++		pll_n = 64;
++		break;
++	case 3: /* DDR3-1333 mode */
++		pll_m = 8;
++		pll_n = 106;
++		break;
++	}
++	/* ext_clk is defined in device tree */
++	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
++			pll_n, pll_m);
++	if (IS_ERR(clk)) {
++		pr_err("%s not registered\n", clk_name);
++		return;
++	}
++	of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(artpec6_pll1, "axis,artpec6-pll1-clock", of_artpec6_pll1_setup);
 -- 
-Best Regards
-Shawn Lin
-
+2.1.4
