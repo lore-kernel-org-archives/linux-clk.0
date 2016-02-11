@@ -1,81 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 8 Feb 2016 11:50:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: Wenyou Yang <wenyou.yang@atmel.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] Documentation: atmel-pmc: add DT bindings for
- fast startup
-Message-ID: <20160208175038.GA10074@rob-hp-laptop>
-References: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
- <1454571471-4434-5-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 11 Feb 2016 09:09:46 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
+Message-ID: <20160211090946.GY3782@x1>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+ <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
+ <20160210162349.GJ3782@x1>
+ <20160210183504.GG30978@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454571471-4434-5-git-send-email-wenyou.yang@atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160210183504.GG30978@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 04, 2016 at 03:37:51PM +0800, Wenyou Yang wrote:
-> Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
-> to trigger a fast restart signal to PMC.
-> 
-> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-> ---
-> 
-> Changes in v2:
->  - change the property name and property description.
-> 
->  .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-> index 795cc78..1b3833b 100644
-> --- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-> @@ -12,3 +12,66 @@ Examples:
->  		compatible = "atmel,at91rm9200-pmc";
->  		reg = <0xfffffc00 0x100>;
->  	};
-> +
-> +PMC Fast Startup Signals
-> +
-> +The PMC Fast Start Signals are used as the wake up source to trigger the PMC
-> +to wake up the system from the ULP1 mode.
-> +
-> +required properties:
-> +- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
-> +
-> +optional properties:
-> +- atmel,wkup-trigger: boolean, WKUP input can trigger a fast restart signal.
-> +- atmel,secumod-trigger: boolean, SECUMOD can trigger a fast restart signal.
-> +- atmel,piobu0-trigger: boolean, PIOBU0 input can trigger a fast restart signal.
-> +- atmel,piobu1-trigger: boolean, PIOBU1 input can trigger a fast restart signal.
-> +- atmel,piobu2-trigger: boolean, PIOBU2 input can trigger a fast restart signal.
-> +- atmel,piobu3-trigger: boolean, PIOBU3 input can trigger a fast restart signal.
-> +- atmel,piobu4-trigger: boolean, PIOBU4 input can trigger a fast restart signal.
-> +- atmel,piobu5-trigger: boolean, PIOBU5 input can trigger a fast restart signal.
-> +- atmel,piobu6-trigger: boolean, PIOBU6 input can trigger a fast restart signal.
-> +- atmel,piobu7-trigger: boolean, PIOBU7 input can trigger a fast restart signal.
-> +- atmel,gmac-wol-trigger: boolean, GMAC_WOL can trigger a fast restart signal.
-> +- atmel,rtc-alarm-trigger: boolean, RTC alarm can trigger a fast restart signal.
-> +- atmel,usb-resume-trigger: boolean, USB resume can trigger a fast restart
-> +  signal.
-> +- atmel,sdmmc-cd-trigger: boolean, SDMMC card detect can trigger a fast
-> +  restart signal.
-> +- atmel,rxlp-match-trigger: boolean, Matching condition on RXLP can trigger
-> +  a fast restart signal.
-> +- atmel,acc-comparison-trigger: boolean, ACC comparison can trigger a fast
-> +  restart signal.
-> +
-> +- atmel,wkup-trigger-level: string, defines the active polarity of the wake-up
-> +  input. Supported values are: "high" or "low".
+On Wed, 10 Feb 2016, Stephen Boyd wrote:
 
-Use 0 and 1, not strings.
+> On 02/10, Lee Jones wrote:
+> > On Mon, 08 Feb 2016, Stephen Boyd wrote:
+> > 
+> > > Convert this driver to use clkdev_create() instead of
+> > > clk_register_clkdevs(). The latter API is only used by this driver,
+> > > although this driver only allocates one clk to add anyway.
+> > > Furthermore, this driver allocates the clk_lookup structure with
+> > > devm, but clkdev_drop() will free that structure when passed,
+> > > leading to a double free when this driver is removed. Clean it
+> > > all up and pave the way for the removal of clk_register_clkdevs().
+> > > 
+> > > Cc: Lee Jones <lee.jones@linaro.org>
+> > > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Cc: Russell King <linux@arm.linux.org.uk>
+> > > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > ---
+> > >  drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
+> > >  1 file changed, 9 insertions(+), 17 deletions(-)
+> > 
+> > I never much liked this code [0]
+> > 
+> > Glad for it to be simplified.
+> > 
+> > Applied, thanks.
+> > 
+> 
+> Can you please ack the patch instead? I'd like to take it through
+> the clk tree so that I can remove clk_register_clkdevs() as well.
+
+I'll make a branch you can pull from.
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
