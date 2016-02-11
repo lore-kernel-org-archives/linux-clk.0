@@ -1,36 +1,37 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] Revert "clk: qcom: Specify LE device endianness"
-References: <1455298060-15199-1-git-send-email-sboyd@codeaurora.org>
-Date: Fri, 12 Feb 2016 14:21:12 -0800
-In-Reply-To: <1455298060-15199-1-git-send-email-sboyd@codeaurora.org> (Stephen
-	Boyd's message of "Fri, 12 Feb 2016 09:27:40 -0800")
-Message-ID: <7hsi0xzi1z.fsf@baylibre.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+Date: Thu, 11 Feb 2016 12:59:47 +0100
+Message-ID: <CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
+	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+On Sun, Jan 31, 2016 at 2:20 AM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
 
-> This reverts commit 329cabcecf94d8d7821e729dda284ba9dec44c87.
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
 >
-> The commit that caused us to specify LE device endianness here,
-> 29bb45f25ff3 (regmap-mmio: Use native endianness for read/write,
-> 2015-10-29), has been reverted in mainline so now when we specify
-> LE it actively breaks big endian kernels because the byte
-> swapping in regmap-mmio is incorrect. Let's revert this change
-> because it will 1) fix the big endian kernels and 2) be redundant
-> to specify LE because that will become the default soon.
->
-> Cc: Kevin Hilman <khilman@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+Maxime, can you look at this patch?
 
-I verified that this gets apq8016-sbc booting again with mainline.
-
-Kevin
+Yours,
+Linus Walleij
