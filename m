@@ -1,72 +1,45 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 0/6] clk: mvebu: initial support for AP806 clocks
-Date: Wed, 24 Feb 2016 16:14:20 +0100
-Message-Id: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
+Subject: [PATCH v2 7/8] arm: multi_v7_defconfig: add MACH_ARTPEC6
+Date: Thu, 11 Feb 2016 15:04:41 +0100
+Message-Id: <59ff2b8e89d207ffb14e5c77803280c5586a893f.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The following set of patches add initial support for the main clocks
-found in the AP806 hardware block, which is the central block used in
-the newest Marvell 7K and 8K 64-bits processors.
-
-Two new drivers are added, one for the so-called "core" clocks and one
-for the "ring" clocks. The latter are child clocks from one of the
-core clocks. The "core" clocks are fixed rate clocks, but their rate
-is calculated from values in the Sample At Reset register.
-
-Changes since v1:
- - Introduce a minimal DT binding for the AP806 DFX Server register
-   area, and make the clock DT nodes child nodes of the DFX server
-   node. Implementation-wise, we use the simple-mfd/syscon mechanism.
- - Separate the DT binding documentation into its own patches.
-
-Thanks!
-
-Thomas
-
-Thomas Petazzoni (6):
-  dt-bindings: arm/marvell: add DT bindings for AP806 DFX Server
-  dt-bindings: clock: add DT bindings for AP806 core clocks
-  dt-bindings: clock: add DT bindings for AP806 ring clocks
-  clk: unconditionally recurse into clk/mvebu/
-  clk: mvebu: add AP806 core clock driver
-  clk: mvebu: add AP806 ring clock driver
-
- .../arm/marvell/marvell,ap806-dfx-server.txt       |  19 ++++
- .../clock/mvebu-armada-ap806-core-clock.txt        |  35 ++++++
- .../clock/mvebu-armada-ap806-ring-clock.txt        |  36 ++++++
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/mvebu/Kconfig                          |   6 +
- drivers/clk/mvebu/Makefile                         |   3 +-
- drivers/clk/mvebu/ap806-core.c                     | 121 +++++++++++++++++++++
- drivers/clk/mvebu/ap806-ring.c                     |  74 +++++++++++++
- 8 files changed, 294 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt
- create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
- create mode 100644 drivers/clk/mvebu/ap806-core.c
- create mode 100644 drivers/clk/mvebu/ap806-ring.c
-
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 8e8b2ac..1149642 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -16,6 +16,8 @@ CONFIG_ARCH_MULTI_V7=y
+ # CONFIG_ARCH_MULTI_V4 is not set
+ CONFIG_ARCH_VIRT=y
+ CONFIG_ARCH_ALPINE=y
++CONFIG_ARCH_ARTPEC=y
++CONFIG_MACH_ARTPEC6=y
+ CONFIG_ARCH_MVEBU=y
+ CONFIG_MACH_ARMADA_370=y
+ CONFIG_MACH_ARMADA_375=y
+@@ -227,6 +229,7 @@ CONFIG_R8169=y
+ CONFIG_SH_ETH=y
+ CONFIG_SMSC911X=y
+ CONFIG_STMMAC_ETH=y
++CONFIG_SYNOPSYS_DWC_ETH_QOS=y
+ CONFIG_TI_CPSW=y
+ CONFIG_XILINX_EMACLITE=y
+ CONFIG_AT803X_PHY=y
 -- 
-2.6.4
+2.1.4
