@@ -1,41 +1,49 @@
-Return-Path: <kevin.smith@elecsyscorp.com>
-From: Kevin Smith <kevin.smith@elecsyscorp.com>
-To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: Kevin Smith <kevin.smith@elecsyscorp.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Gregory
- CLEMENT" <gregory.clement@free-electrons.com>, Thomas Petazzoni
-	<thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
-Date: Thu, 11 Feb 2016 16:53:52 +0000
-Message-ID: <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-In-Reply-To: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 11 Feb 2016 11:08:38 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
+Message-ID: <20160211110838.GI3782@x1>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+ <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-There is no corediv clock on Armada XP, so this is unnecessary.
+Stephen,
 
-Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/mvebu/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+The upstream patch.  Enjoy!
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index 2769625..e1bc567 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -29,7 +29,6 @@ config ARMADA_XP_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
- 	select MVEBU_CLK_CPU
--	select MVEBU_CLK_COREDIV
-=20
- config DOVE_CLK
- 	bool
---=20
-2.4.6
+The following changes since commit 36f90b0a2ddd60823fe193a85e60ff1906c2a9b3:
+
+  Linux 4.5-rc2 (2016-01-31 18:12:16 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-clk-v4.6
+
+for you to fetch changes up to c4726abce63bf9b1887ce68fdf012a823bd94ec3:
+
+  mfd: intel_quark_i2c_gpio: Use clkdev_create() (2016-02-11 11:03:07 +0000)
+
+----------------------------------------------------------------
+Immutable branch between MFD and Clk due for v4.6
+
+----------------------------------------------------------------
+Stephen Boyd (1):
+      mfd: intel_quark_i2c_gpio: Use clkdev_create()
+
+ drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
