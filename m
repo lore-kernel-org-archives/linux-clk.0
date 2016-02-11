@@ -1,88 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:33942 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752191AbcBCTzU (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2016 14:55:20 -0500
-Received: by mail-lb0-f176.google.com with SMTP id cw1so18642990lbb.1
-        for <linux-clk@vger.kernel.org>; Wed, 03 Feb 2016 11:55:19 -0800 (PST)
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	stable@vger.kernel.org, linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>
-Subject: [PATCH] ARM: ICST: avoid arithmetic overflow in icst_hz()
-Date: Wed,  3 Feb 2016 20:55:08 +0100
-Message-Id: <1454529308-31887-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Thu, 11 Feb 2016 17:04:48 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ "Gregory CLEMENT" <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
+Message-ID: <20160211170448.7dbc872a@free-electrons.com>
+In-Reply-To: <56BCB043.5040909@elecsyscorp.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
+	<20160211091651.765cd91c@free-electrons.com>
+	<56BCB043.5040909@elecsyscorp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
+Kevin,
 
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
+On Thu, 11 Feb 2016 16:01:03 +0000, Kevin Smith wrote:
 
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
+> >> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+> >> index 64e3d2c..794e7c5 100644
+> >> --- a/arch/arm/mach-mvebu/Kconfig
+> >> +++ b/arch/arm/mach-mvebu/Kconfig
+> >> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
+> >>   	select CPU_PJ4B
+> >>   	select MACH_MVEBU_V7
+> >>   	select PINCTRL_ARMADA_370
+> >> +	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
+> > Thanks for the new iteration. I know the corediv clock is only used for
+> > the NAND, but I'm wondering if it's really worth doing this "if
+> > MTD_NAND_PXA3xx.
+> >
+> > Thomas
+> Maybe I misunderstood.  In your previous e-mail you said "building 
+> ARMADA_38X_CLK or ARMADA_375_CLK does not require building 
+> clk-corediv.c, it only needs common.c.  So maybe instead we should 
+> change arch/arm/mach-mvebu/Kconfig to have MACH_ARMADA_xxx select 
+> MVEBU_CLK_COREDIV when needed."  I thought you meant only when a 
+> peripheral depended on the coreclk.
+> 
+> Should I remove the conditional and just have MACH_ARMADA_XXX always 
+> enable MVEBU_CLK_COREDIV for platforms that have it?
 
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
+Yes, at least, this is what my comment was suggesting to do. Sorry if
+it was unclear, but my point is that the clock is there regardless of
+whether the NAND driver is available/used.
 
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
+Anyway, it's not a big deal because the defconfig has the pxa3xx_nand
+driver enabled, so most people are very likely going to have this
+driver enabled on Marvell platforms.
 
-Tested on the ARM Versatile.
+Best regards,
 
-Cc: stable@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/common/icst.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
-index 2dc6da70ae59..d3c0e69df259 100644
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
- 
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
- 
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
- 
- EXPORT_SYMBOL(icst_hz);
+Thomas
 -- 
-2.4.3
-
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
