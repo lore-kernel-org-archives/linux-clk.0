@@ -1,47 +1,62 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        <lidongpo@hisilicon.com>, Jiancheng Xue
-	<xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v8 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-Date: Fri, 5 Feb 2016 10:31:09 +0800
-Message-ID: <1454639472-17373-4-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: [PATCH v2 8/8] arm: mach-artpec: add entry to MAINTAINERS
+Date: Thu, 11 Feb 2016 15:04:42 +0100
+Message-Id: <b5adeda17294fceb282d14446ab684316fc3028b.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+ Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
+ Jesper Nilsson <jespern@axis.com>, robh+dt@kernel.org, galak@codeaurora.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-enable CONFIG_RESET_CONTROLLER in hisi_defconfig
-
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Signed-off-by: Lars Persson <larper@axis.com>
+Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
 ---
- arch/arm/configs/hisi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
-index b2e340b..ba62c07 100644
---- a/arch/arm/configs/hisi_defconfig
-+++ b/arch/arm/configs/hisi_defconfig
-@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_PL330_DMA=y
- CONFIG_PWM=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_PHY_HIX5HD2_SATA=y
- CONFIG_EXT4_FS=y
- CONFIG_TMPFS=y
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7f1fa4f..d32c1aa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -932,6 +932,16 @@ M:	Tsahee Zidenberg <tsahee@annapurnalabs.com>
+ S:	Maintained
+ F:	arch/arm/mach-alpine/
+ 
++ARM/ARTPEC MACHINE SUPPORT
++M:	Jesper Nilsson <jesper.nilsson@axis.com>
++M:	Lars Persson <lars.persson@axis.com>
++M:	Niklas Cassel <niklas.cassel@axis.com>
++S:	Maintained
++L:	linux-arm-kernel@axis.com
++F:	arch/arm/mach-artpec
++F:	arch/arm/boot/dts/artpec6*
++F:	drivers/clk/clk-artpec6.c
++
+ ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
+ M:	Nicolas Ferre <nicolas.ferre@atmel.com>
+ M:	Alexandre Belloni <alexandre.belloni@free-electrons.com>
 -- 
-1.9.1
+2.1.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
