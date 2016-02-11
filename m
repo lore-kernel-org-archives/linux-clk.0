@@ -1,100 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:58707 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753298AbcBOOgF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2016 09:36:05 -0500
-Subject: Re: [linux-sunxi] Allwinner A64 MMC support
-To: Chen-Yu Tsai <wens@csie.org>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
- <56BE29A1.3060107@redhat.com> <56C1A590.6030500@arm.com>
- <56C1C7BB.1040602@redhat.com> <56C1D9C0.6020601@arm.com>
- <CAGb2v65E54mnLEcPzLyycEBSHbvn6tp9JpS+S8gdbDg_e7qFyQ@mail.gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	Grant Likely <grant.likely@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56C1E250.9070301@arm.com>
-Date: Mon, 15 Feb 2016 14:36:00 +0000
+Return-Path: <kevin.smith@elecsyscorp.com>
+From: Kevin Smith <kevin.smith@elecsyscorp.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: Kevin Smith <kevin.smith@elecsyscorp.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Gregory
+ CLEMENT" <gregory.clement@free-electrons.com>, Thomas Petazzoni
+	<thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
+Date: Thu, 11 Feb 2016 16:53:52 +0000
+Message-ID: <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+In-Reply-To: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v65E54mnLEcPzLyycEBSHbvn6tp9JpS+S8gdbDg_e7qFyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+There is no corediv clock on Armada XP, so this is unnecessary.
 
-On 15/02/16 14:23, Chen-Yu Tsai wrote:
-> On Mon, Feb 15, 2016 at 9:59 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->> Hi Hans,
->>
->> ....
->>
->>>
->>> p.s.
->>>
->>> I love the work you've been doing on the A64, I've not had a chance
->>> to try it out yet though. Have you made any progress with getting
->>> the mmc slot to work ?  If not maybe I can make some time I've
->>> prior experience in bringing up the mmc slot on other Allwinner SoCs
->>
->> Thanks for that!
->>
->> So we made some progress on the weekend (with the help of #linux-sunxi):
->> 1) The regulator node was stupidly put by me into a separate child node
->> without putting address and size cells into. So I just moved it into
->> /soc directly now and that seems to fixed the missing regulator.
->> 2) The reset node is a allwinner,sun6i-a31-ahb1-reset, which does not
->> get registered automatically, but by an explicit call from mach-sunxi/.
->> I wonder why we do this (yes, I saw that comment, but still...) and if
->> it would work with a normal MODULE_DEVICE_TABLE() declaration.
->> There is and will be no equivalent to the mach- directory on arm64.
-> 
-> On sun6i, we supported the high resolution timer, which had a reset control.
-> Timers (or clocksources) are registered before device model kicks in, so the
-> reset had to be explicitly registered before the timer, or the system would
-> hang. I think we phased that out though. Maxime should know.
+Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/mvebu/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Ah, thanks for that insight!
-So that sounds like we would get away with a normal registration for the
-A64 - and actually many other SoCs as well?
-Shall we guard the explicit sun6i_reset_init with MACH_SUN6I or
-something and do the normal registration otherwise?
-Or do I miss something here?
-
-Cheers,
-Andre
-
->> 3) As Jens pointed out, the MMC IP block isn't really compatible.
->> Changing the clocks is easy (done already), but we need to come up with
->> code to cover the new phase setting registers in the A64 MMC register block.
->>
->> Interestingly somehow hacking this (pretending it is compatible) seems
->> to work, though I got reports from people about mysterious kernel
->> crashes, so I'm inclined to leave MMC out of the first patch series.
->>
->> So if you could take a look at the new registers (starting at offset
->> 0x140) and work out what we actually need to do here, that would be
->> great. I have no real clue about what they actually do and how they
->> relate to the current output and sample clock phase.
->> To me it looks like we might get away with just triggering the automatic
->> calibration and the hardware does the rest for us - keep your fingers
->> crossed ;-)
->>
->> Cheers,
->> Andre.
->>
->> --
->> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
-> 
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index 2769625..e1bc567 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -29,7 +29,6 @@ config ARMADA_XP_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
+ 	select MVEBU_CLK_CPU
+-	select MVEBU_CLK_COREDIV
+=20
+ config DOVE_CLK
+ 	bool
+--=20
+2.4.6
