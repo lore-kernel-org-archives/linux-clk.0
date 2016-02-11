@@ -1,84 +1,87 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>
-CC: <dinh.linux@gmail.com>, <mturquette@baylibre.com>,
-	<mgerlach@opensource.altera.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [PATCHv2] clk: socfpga: allow for multiple parents on Arria10 periph clocks
-Date: Mon, 22 Feb 2016 15:52:46 -0600
-Message-ID: <1456177966-5839-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 11 Feb 2016 13:36:48 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
+	=?utf-8?B?UGF3ZcWC?= Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
+Message-ID: <20160211123648.GN31506@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+ <CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zp3AMgPTa9Mf+MXm"
+In-Reply-To: <CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-There are some Arria10 clocks of type "altr,socfpga-a10-perip-clk" that can
-have multiple parents. Fix up the __socfpga_periph_init() to call
-of_clk_parent_fill() that will return the appropriate number of parents.
+--zp3AMgPTa9Mf+MXm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also, update __socfpga_gate_init() to call of_clk_parent_fill() helper
-function.
+Hi Linus,
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
----
-v2: fix compile warnings
----
- drivers/clk/socfpga/clk-gate-a10.c   | 6 +-----
- drivers/clk/socfpga/clk-periph-a10.c | 7 +++----
- 2 files changed, 4 insertions(+), 9 deletions(-)
+On Thu, Feb 11, 2016 at 12:59:47PM +0100, Linus Walleij wrote:
+> On Sun, Jan 31, 2016 at 2:20 AM, Vishnu Patekar
+> <vishnupatekar0510@gmail.com> wrote:
+>=20
+> > The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> > interrupt bit is 6th and A83T has one extra pin PL12.
+> >
+> > Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>=20
+> Maxime, can you look at this patch?
 
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index 1cebf25..c2d5727 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -115,7 +115,6 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	int rc;
--	int i = 0;
- 
- 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
- 	if (WARN_ON(!socfpga_clk))
-@@ -167,12 +166,9 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	init.name = clk_name;
- 	init.ops = ops;
- 	init.flags = 0;
--	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
--			of_clk_get_parent_name(node, i)) != NULL)
--		i++;
- 
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
--	init.num_parents = i;
- 	socfpga_clk->hw.hw.init = &init;
- 
- 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
-diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
-index 1f397cb..70993f1 100644
---- a/drivers/clk/socfpga/clk-periph-a10.c
-+++ b/drivers/clk/socfpga/clk-periph-a10.c
-@@ -74,7 +74,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	struct clk *clk;
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
--	const char *parent_name;
-+	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	int rc;
- 	u32 fixed_div;
-@@ -109,9 +109,8 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	init.ops = ops;
- 	init.flags = 0;
- 
--	parent_name = of_clk_get_parent_name(node, 0);
--	init.num_parents = 1;
--	init.parent_names = &parent_name;
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
-+	init.parent_names = parent_name;
- 
- 	periph_clk->hw.hw.init = &init;
- 
--- 
-2.6.2
+Chen-Yu had one minor comment on it, and he's also the Allwinner
+maintainer now, so you can trust his Acked-by just like you would
+trust mine ;)
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--zp3AMgPTa9Mf+MXm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWvIBgAAoJEBx+YmzsjxAgvDoP/2cRJSsB3vNt1L4a7unZ3Q4r
+PKIQqTYjq5jMVhMciqaUX/7KWEye8oXLyEYPmKZlmN3O6he4Irfl2DtLNVOeQ3Cz
+o3dvnhyhnSEfyZtVAvlDD70F4Yj9bXESirAnekQza/e1tookMHj9t8tH+xZ3R704
+DfBNwl9EVbi1HvaqyhVUuTpEU1tu80zZogvSvIDXCTDubGXdAJ02jLjM70lY3xHE
+iLtLgoH8R1yEopaV6LPN7EqLDBjsdF6EEaThegRvEzslGPxgyKfuJGTJfhIQMoa2
+JuFDR36zPlUXzx6Oinp7VcgT1Wh1n2QApwCfPm9WsTjku8mskXpMOMPRslZRPc2T
+3RG9CDHXe6cKHQh2vNuQQSUuhZRPN+bdDlcsC5520B49fFRABSbGnfKhhnOj6ueI
+9vq2SYTOQX2ov+UNRZ46CODonbj1dtuF2bA21mhcMchhm5kmIKVMGtA2/qIsLYAx
+Eaoe/1mE6HyfDiqFlgkAHIBP+cCLR4UwS+9p/wRiSUOcBdtslOJv18Ofu2mr0Nau
+Uf73vHuWlaUfM1ft5mwzQGmcGeIBSmdgtaFG8PzL6b4dMhlhpGB+uohAYI3Weurr
+GNtbFS1tdKtEct4LB6hnxrop2sbwr42ydXNeVtUIFvc+JeLudEKT8ywdxo7iBOMJ
+ysg3zMqldUpPCoP+iY7n
+=/Hfg
+-----END PGP SIGNATURE-----
+
+--zp3AMgPTa9Mf+MXm--
