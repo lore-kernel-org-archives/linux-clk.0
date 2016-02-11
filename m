@@ -1,71 +1,48 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Tue, 23 Feb 2016 10:25:50 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Andrew Lunn
- <andrew@lunn.ch>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
- <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Sebastian
- Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
- Lior Amsalem <alior@marvell.com>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
-Message-ID: <20160223102550.2e0cba04@free-electrons.com>
-In-Reply-To: <CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160222025357.GE15973@rob-hp-laptop>
-	<20160222091423.4756a579@free-electrons.com>
-	<20160222141617.GA14970@lunn.ch>
-	<20160222183203.2278.60153@quark.deferred.io>
-	<CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Lars Persson <lars.persson@axis.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, mark.rutland@arm.com,
+	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+	Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, galak@codeaurora.org
+Subject: Re: [PATCH v2 0/8] arm: Add Artpec-6 SoC
+Date: Thu, 11 Feb 2016 15:17:30 +0100
+Message-ID: <13460858.PmVpFaRWcp@wuerfel>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-
-On Mon, 22 Feb 2016 13:42:49 -0600, Rob Herring wrote:
-
-> >> Maybe add a big fat warning that the bindings are unstable, and the DT
-> >> blob must be kept in sync with the kernel?
-> >
-> > +1 and feel free to blame the lack of documentation.  No one can expect
-> > bindings to be finalized when the chip topology is not fully understood.
+On Thursday 11 February 2016 15:04:34 Lars Persson wrote:
+> Basic support for the Axis Artpec-6 ARM SoC. Timers, interrupts, UARTs and
+> ethernet are wired up.
 > 
-> I can understand not understanding the full clock tree. I have "full"
-> documentation of a Marvell chip and don't understand the clock tree
-> fully. But I can't believe you don't have some sense of how many
-> clocks you have to deal with. 10? 100? 1000? What I see is 2 nodes of
-> a single register each for clocks at roughly the same address. That
-> tells me your binding is too fine grained. If you really don't know
-> what is right, then err on the side of a single clock provider node
-> and don't put the clock details in DT.
+> Changes since v1:
+> - Corrected bindings for axis,artpec6-pll1-clock.
+> - Moved the uart aliases to the board dts.
+> - Kconfig cleanup.
+> - Added a device tree binding for the dma configuration.
+> - Added CONFIG_SYNOPSYS_DWC_ETH_QOS to multi_v7_defconfig.
+> - Added binding documentation for axis,artpec6-dev-board.
+> 
+> Lars Persson (8):
+>   clk: add device tree binding for artpec-6 pll1 clock
+>   clk: add artpec-6 pll1 clock driver
+>   arm: add device-tree SoC bindings for Axis Artpec-6
+>   arm: dts: add Artpec-6 SoC dtsi file
+>   arm: dts: add Artpec-6 development board dts
+>   arm: initial machine port for artpec-6 SoC
+>   arm: multi_v7_defconfig: add MACH_ARTPEC6
+>   arm: mach-artpec: add entry to MAINTAINERS
 
-I don't quite understand the reasoning behind this conclusion. We know
-for sure that those two registers control only those core and ring
-clocks. Maybe there are other registers controlling other clocks,  that
-we don't know. But for sure, those two registers only give details
-about those core and ring clocks, so I don't see what would be the
-usefulness of merging that into a single DT node.
+Looks good except for the one issue I pointed out in patch 3 (and also 6).
+Once that is resolved, please submit the new platform for inclusion by sending
+it to arm@kernel.org.
 
-We would lose the fact that the relationship between the ring clocks
-and one of the core clock is represented in the DT. Instead of having a
-clear <&coreclk X> or <&ringclk Y> reference, we would have a
-mysterious <&allclk XYZ> reference, which doesn't tell immediately
-whether it's a core clock or ring clock.
+The first two patches should get merged through the drivers/clk maintainer tree,
+please submit them separately there.
 
-So, while I definitely agree that a syscon is probably in order to
-cover all the system registers, I don't see the point of having a
-single node to cover all the clocks.
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+	Arnd
