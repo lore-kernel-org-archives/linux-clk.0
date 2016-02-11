@@ -1,83 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:35501 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752206AbcB2WbZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 29 Feb 2016 17:31:25 -0500
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-To: Tony Lindgren <tony@atomide.com>
-CC: <paul@pwsan.com>, <t-kristo@ti.com>, <vigneshr@ti.com>,
-	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
- gating
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-2-git-send-email-fcooper@ti.com>
- <20160229220444.GQ13417@atomide.com>
-Message-ID: <56D4C69D.1090100@ti.com>
-Date: Mon, 29 Feb 2016 16:30:53 -0600
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH] clk: clk_register: Correctly initialize enable_count
+To: Michael Turquette <mturquette@baylibre.com>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
+	<emilio@elopez.com.ar>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1455058120-7398-1-git-send-email-rklein@nvidia.com>
+ <56BAA6D9.9090009@elopez.com.ar> <56BB82A8.8010701@nvidia.com>
+ <20160211213247.26445.28956@quark.deferred.io>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <56BD03F6.1050907@nvidia.com>
+Date: Thu, 11 Feb 2016 16:58:14 -0500
 MIME-Version: 1.0
-In-Reply-To: <20160229220444.GQ13417@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160211213247.26445.28956@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tony,
+On 2/11/2016 4:32 PM, Michael Turquette wrote:
+> Quoting Rhyland Klein (2016-02-10 10:34:16)
+>> On 2/9/2016 9:56 PM, Emilio L=C3=B3pez wrote:
+>>> Hi,
+>>>
+>>> El 09/02/16 a las 19:48, Rhyland Klein escribi=C3=B3:
+>>>> When clocks are registered, they could be enabled already in
+>>>> hardware. As of now, the enable count will start at 0. When this
+>>>> happens, it means a clock is enabled and the framework doesn't know
+>>>> that, so it will always report it as disabled.
+...
+>=20
+> clk_disable_unused() handles the case where spurious clocks were left
+> enabled by the bootloader and need to be gated. This sounds like the
+> only thing you were after.
+>=20
+> We also have a case where clocks are gated by clk_disable_unused()
+> because no driver has claimed them yet, but we really want those clocks
+> to be left enabled. For example, clocks supplying DDR & CPU shouldn't be
+> cut, ever. Alternatively, your bootloader put something on the display
+> but your display controller module hasn't loaded yet. Cutting the clock
+> isn't fatal but causes unnecessary screen flicker because the module has
+> not loaded up.
+>=20
+> To solve those sets of problems there is the critical clocks and handoff
+> clocks thread[0].
+>=20
+> [0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquett=
+e@baylibre.com>
+>=20
+> Best regards,
+> Mike
+>=20
 
-On 02/29/2016 04:04 PM, Tony Lindgren wrote:
-> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
->> The PWMSS local clock gating registers have no real purpose on OMAP ARM
->> devices. These registers were left over registers from DSP IP where the
->> PRCM doesn't exist. There is a silicon bug where gating and ungating clocks
->> don't function properly. TRMs will be update to indicate that these
->> registers shouldn't be touched.
->>
->> Therefore, all code that accesses the PWMSS_CLKCONFIG or PWMSS_CLKSTATUS
->> will be removed by this patch with zero loss of functionality by the ECAP
->> and EPWM drivers.
->> @@ -243,40 +240,15 @@ static int ecap_pwm_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	pm_runtime_enable(&pdev->dev);
->> -	pm_runtime_get_sync(&pdev->dev);
->> -
->> -	status = pwmss_submodule_state_change(pdev->dev.parent,
->> -			PWMSS_ECAPCLK_EN);
->> -	if (!(status & PWMSS_ECAPCLK_EN_ACK)) {
->> -		dev_err(&pdev->dev, "PWMSS config space clock enable failed\n");
->> -		ret = -EINVAL;
->> -		goto pwmss_clk_failure;
->> -	}
->> -
->> -	pm_runtime_put_sync(&pdev->dev);
->>  
->>  	platform_set_drvdata(pdev, pc);
->>  	return 0;
->> -
->> -pwmss_clk_failure:
->> -	pm_runtime_put_sync(&pdev->dev);
->> -	pm_runtime_disable(&pdev->dev);
->> -	pwmchip_remove(&pc->chip);
->> -	return ret;
->>  }
-> Hmm but why are you also removing the pm_runtime calls? Those
-> actually do take care of gating the clocks via the interconnect
-> level code that is hwmod in this case.
-I removed all PM runtime calls that revolved around
-pwmss_submodule_state_change. Originally the driver would do
-a pm_runtime_get_sync then call pwmss_submodule_state_change
-and then immediately call pm_runtime_put_sync. Without
-pwmss_submodule_state_change those calls would be
-meaningless.  I also removed pm_runtime calls in error paths
-that no longer existed.
+Thanks. I agree the clk_disable_unused should clear up the situation I
+was in. And the critical clocks and handoff logic should be useful. I am
+sure we can make use of it once its in for Tegra support.
 
-Within ecap and epwm driver pm_runtime_get is done when
-pwm_enable is called  and pm_runtime_sync calls are done
-when pwm_disable is called. Similar pm_runtime_get and
-pm_runtime_sync calls are done in functions that ended up
-touching register's within the IP.
->
-> Regards,
->
-> Tony
+-rhyland
 
+--=20
+nvpublic
