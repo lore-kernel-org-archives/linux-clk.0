@@ -1,87 +1,43 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <richardcochran@gmail.com>
+Return-Path: <richardcochran@gmail.com>
+Date: Thu, 11 Feb 2016 15:51:58 +0100
+From: Richard Cochran <richardcochran@gmail.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Rob Herring <rob.herring@linaro.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jens Kuske <jenskuske@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Frank Rowand <frowand.list@gmail.com>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi:
+ Refactor A31 PLL6 so that it can be reused)
+Message-ID: <20160211145158.GA8824@localhost.localdomain>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56B4E2FB.3050703@arm.com>
+ <56BB2D79.6090402@arm.com>
+ <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
+ <20160210143755.GE31506@lukather>
+ <20160210163001.GG2632@leverpostej>
+ <20160211100048.GK31506@lukather>
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160217212045.GE21202@atomide.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Tero Kristo" <t-kristo@ti.com>,
- linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "Brian Hutchinson" <b.hutchman@gmail.com>,
- "Delio Brignoli" <dbrignoli@audioscience.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>,
- "Matthijs van Duin" <matthijsvanduin@gmail.com>,
- "Philipp Rosenberger" <ilu@linutronix.de>,
- "Russell King - ARM Linux" <linux@arm.linux.org.uk>
-References: <1455312009-808-1-git-send-email-tony@atomide.com>
- <1455312009-808-3-git-send-email-tony@atomide.com>
- <20160217011930.2278.38316@quark.deferred.io>
- <20160217173949.GB21202@atomide.com>
- <20160217205257.2278.11639@quark.deferred.io>
- <20160217212045.GE21202@atomide.com>
-Message-ID: <20160217230253.2278.80903@quark.deferred.io>
-Subject: Re: [PATCH 2/2] clk: ti: Add support for dm814x ADPLL
-Date: Wed, 17 Feb 2016 15:02:53 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160211100048.GK31506@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2016-02-17 13:20:46)
-> * Michael Turquette <mturquette@baylibre.com> [160217 12:53]:
-> > Quoting Tony Lindgren (2016-02-17 09:39:49)
-> > > * Michael Turquette <mturquette@baylibre.com> [160216 17:32]:
-> > > > =
+On Thu, Feb 11, 2016 at 11:00:48AM +0100, Maxime Ripard wrote:
+> None of our existing users ever complained.
 
-> > > > We have a shiny new series that provides a standard way to do this:
-> > > > =
+Note to self:
 
-> > > > http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturque=
-tte@baylibre.com>
-> > > =
+   Avoid choosing this SoC for new projects.  The maintainers do not
+   care about the end users.
 
-> > > OK nice, so tagging the MPU and DDR clocks with CLK_IS_CRITICAL or
-> > > "clock-critical" should allow removing this code. I think in this
-> > > case I still need to set CLK_IS_CRITICAL as the clock is output 1
-> > > of the dts defined clock and does not have a separate dts node.
-> > =
-
-> > In fact I hate clock-critical as a DT property and it's only there to
-> > support legacy DT bindings that store all clk data in DT and have zero
-> > clk data in C. So please use the CLK_IS_CRITICAL or CLK_ENABLE_HAND_OFF
-> > flags in C.
-> > =
-
-> > Do you think you will ever have a driver that wants to gate these
-> > clocks? Probably not for MPU/DDR, but the HAND_OFF flag is a better fit
-> > if you do. It's the same as CRITICAL but transfers the prepare/enable
-> > reference counting to the consumer driver after that driver calls
-> > clk_get() and clk_prepare_enable() on the HAND_OFF clk.
-> =
-
-> OK I'll use CLK_ENABLE_HAND_OFF then. Who knows maybe somebody
-> somewhere has code running on one of the coprocessors in SRAM that
-> actually allows gating these :)
-
-Low power mp3 decoder executing out of ARM icache with DDR clock cut ;-)
-
-Regards,
-Mike
-
-> =
-
-> > > I can update when those patches hit Linux next, or I can do a
-> > > follow-up patch later on if we want to avoid the dependency
-> > > here. Which do you prefer?
-> > =
-
-> > Well, testing is always welcome :-)
-> >
-> > If you rebase onto those patches then I'll add your patches to that
-> > series for testing and merge it that way.
-> =
-
-> OK will do and repost after some testing.
-> =
-
-> Regards,
-> =
-
-> Tony
+Thanks,
+Richard
