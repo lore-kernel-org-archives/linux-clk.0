@@ -1,32 +1,285 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 1 Feb 2016 08:57:49 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: sunxi: Add support for A80 APBS clock
-Message-ID: <20160201145749.GA31544@rob-hp-laptop>
-References: <1454337769-4130-1-git-send-email-wens@csie.org>
- <1454337769-4130-2-git-send-email-wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: [PATCH v2 4/8] arm: dts: add Artpec-6 SoC dtsi file
+Date: Thu, 11 Feb 2016 15:04:38 +0100
+Message-Id: <e95951f1aef4e6526a231c9011009005aadc46ba.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+In-Reply-To: <cover.1455198819.git.larper@axis.com>
+References: <cover.1455198819.git.larper@axis.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+ Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org, galak@codeaurora.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454337769-4130-2-git-send-email-wens@csie.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 01, 2016 at 10:42:48PM +0800, Chen-Yu Tsai wrote:
-> A80's APBS clock is not the same as the APB0 clock on A23. The A80's
-> is a zero-based divider, while the A23's is a power-of-two divider.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+Initial device tree for the Artpec-6 SoC.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ arch/arm/boot/dts/artpec6.dtsi | 236 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 236 insertions(+)
+ create mode 100644 arch/arm/boot/dts/artpec6.dtsi
 
->  drivers/clk/sunxi/Makefile                        |  2 +-
->  drivers/clk/sunxi/clk-sun9i-apbs.c                | 64 +++++++++++++++++++++++
->  3 files changed, 66 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/sunxi/clk-sun9i-apbs.c
+diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
+new file mode 100644
+index 0000000..8b28f72
+--- /dev/null
++++ b/arch/arm/boot/dts/artpec6.dtsi
+@@ -0,0 +1,236 @@
++/*
++ * Device Tree Source for the Axis ARTPEC-6 SoC
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include "skeleton.dtsi"
++
++/ {
++	compatible = "axis,artpec6";
++	interrupt-parent = <&intc>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <0>;
++			next-level-cache = <&pl310>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <1>;
++			next-level-cache = <&pl310>;
++		};
++	};
++
++	dmacfg {
++		compatible = "axis,artpec6-dmacfg";
++		reg = <0xf8000010 4>;
++	};
++
++	psci {
++		compatible = "arm,psci-0.2", "arm,psci";
++		method = "smc";
++		psci_version = <0x84000000>;
++		cpu_on = <0x84000003>;
++		system_reset = <0x84000009>;
++	};
++
++	scu@faf00000 {
++		compatible = "arm,cortex-a9-scu";
++		reg = <0xfaf00000 0x58>;
++	};
++
++	/* Main external clock driving CPU and peripherals */
++	ext_clk: ext_clk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <50000000>;
++	};
++
++	/* PLL1 is used by CPU and some peripherals */
++	pll1_clk: pll1_clk@f8000000 {
++		#clock-cells = <0>;
++		compatible = "axis,artpec6-pll1-clock";
++		reg = <0xf8000000 4>;
++		clocks = <&ext_clk>;
++	};
++
++	cpu_clk: cpu_clk {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <1>;
++		clock-mult = <1>;
++		clocks = <&pll1_clk>;
++		clock-output-names = "cpu_clk";
++	};
++
++	cpu_clkdiv2: cpu_clkdiv2 {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <2>;
++		clock-mult = <1>;
++		clocks = <&cpu_clk>;
++	};
++
++	cpu_clkdiv4: cpu_clkdiv4 {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <4>;
++		clock-mult = <1>;
++		clocks = <&cpu_clk>;
++	};
++
++	apb_pclk: apb_pclk {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <8>;
++		clock-mult = <1>;
++		clocks = <&cpu_clk>;
++		clock-output-names = "apb_pclk";
++	};
++
++	/* PLL2 is used by a number of peripherals, including UDL */
++	pll2: pll2 {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <1>;
++		clock-mult = <24>;
++		clocks = <&ext_clk>;
++	};
++
++	/* PLL2DIV2 is used by the Fractional Clock Divider, for i2s */
++	pll2div2: pll2div2 {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <2>;
++		clock-mult = <1>;
++		clocks = <&pll2>;
++	};
++
++	pll2div12: pll2div12 {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <12>;
++		clock-mult = <1>;
++		clocks = <&pll2>;
++	};
++
++	pll2div24: pll2div24 {
++		#clock-cells = <0>;
++		compatible = "fixed-factor-clock";
++		clock-div = <24>;
++		clock-mult = <1>;
++		clocks = <&pll2>;
++		clock-output-names = "uart_clk";
++	};
++
++
++	gtimer@faf00200 {
++		compatible = "arm,cortex-a9-global-timer";
++		reg = <0xfaf00200 0x20>;
++		interrupts = <GIC_PPI 11 0xf01>;
++		clocks = <&cpu_clkdiv2>;
++	};
++
++	timer@faf00600 {
++		compatible = "arm,cortex-a9-twd-timer";
++		reg = <0xfaf00600 0x20>;
++		interrupts = <GIC_PPI 13 0xf04>;
++		clocks = <&cpu_clkdiv2>;
++		status = "disabled";
++	};
++
++	intc: interrupt-controller@faf01000 {
++		interrupt-controller;
++		compatible = "arm,cortex-a9-gic";
++		#interrupt-cells = <3>;
++		reg = < 0xfaf01000 0x1000 >, < 0xfaf00100 0x0100 >;
++	};
++
++	pl310: cache-controller@faf10000 {
++		compatible = "arm,pl310-cache";
++		cache-unified;
++		cache-level = <2>;
++		reg = <0xfaf10000 0x1000>;
++		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++		arm,data-latency = <1 1 1>;
++		arm,tag-latency = <1 1 1>;
++		arm,filter-ranges = <0x0 0x80000000>;
++	};
++
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&intc>;
++	};
++
++	amba@0 {
++		compatible = "simple-bus";
++		#address-cells = <0x1>;
++		#size-cells = <0x1>;
++		interrupt-parent = <&intc>;
++		ranges;
++		dma-ranges = <0x80000000 0x00000000 0x40000000>;
++		dma-coherent;
++
++		ethernet: ethernet@f8010000 {
++			clock-names = "phy_ref_clk", "apb_pclk";
++			clocks = <&ext_clk>, <&apb_pclk>;
++			compatible = "snps,dwc-qos-ethernet-4.10";
++			interrupt-parent = <&intc>;
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0xf8010000 0x4000>;
++
++			snps,write-requests = <2>;
++			snps,read-requests = <16>;
++			snps,txpbl = <8>;
++			snps,rxpbl = <2>;
++
++			status = "disabled";
++		};
++
++		uart0: serial@f8036000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0xf8036000 0x1000>;
++			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&pll2div24>, <&apb_pclk>;
++			clock-names = "uart_clk", "apb_pclk";
++			status = "disabled";
++		};
++		uart1: serial@f8037000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0xf8037000 0x1000>;
++			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&pll2div24>, <&apb_pclk>;
++			clock-names = "uart_clk", "apb_pclk";
++			status = "disabled";
++		};
++		uart2: serial@f8038000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0xf8038000 0x1000>;
++			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&pll2div24>, <&apb_pclk>;
++			clock-names = "uart_clk", "apb_pclk";
++			status = "disabled";
++		};
++		uart3: serial@f8039000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0xf8039000 0x1000>;
++			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&pll2div24>, <&apb_pclk>;
++			clock-names = "uart_clk", "apb_pclk";
++			status = "disabled";
++		};
++	};
++};
+-- 
+2.1.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
