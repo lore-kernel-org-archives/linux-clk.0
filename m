@@ -1,39 +1,64 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 9 Feb 2016 10:29:40 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] devm: add helper devm_add_action_or_reset()
-Message-ID: <20160209182940.GB31947@codeaurora.org>
-References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
- <20160209010708.GI10791@codeaurora.org>
- <20160209072242.GA10602@sudip-pc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160209072242.GA10602@sudip-pc>
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <rob.herring@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org
+Subject: [RFC PATCH 0/4] clk: sunxi: fix DT compatibility issues
+Date: Fri, 12 Feb 2016 17:59:56 +0000
+Message-Id: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/09, Sudip Mukherjee wrote:
-> On Mon, Feb 08, 2016 at 05:07:08PM -0800, Stephen Boyd wrote:
-> > On 12/23, Sudip Mukherjee wrote:
-> > > Add a helper function devm_add_action_or_reset() which will internally
-> > > call devm_add_action(). But if devm_add_action() fails then it will
-> > > execute the action mentioned and return the error code.
-> > > 
-> > > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
-> > > ---
-> > 
-> > Applied to clk-next
-> 
-> Thanks. Since it went through clk-tree so I guess I can use this helper
-> for other drivers only after 4.6 merge window closes.
-> 
+Commit f7d372ba54ea ("clk: sunxi: Refactor A31 PLL6 so that it can be
+reused") (in -next) made the A31 PLL6 clock driver more generic, so
+that it can drive the PLL8 clock in newer SoCs too.
+However the patch broke compatibility with older DTs, which this
+series tries to fix.
+The approach chosen here is to bring back the old driver under its
+old name, while letting the new driver using a different name to be
+able to tell them apart.
+The old driver should be somewhat deprecated and not used in new DTs
+anymore.
+The slight disadvantage is that there are now two drivers and two
+compatible names for the same hardware (the PLL6 clock), I am not
+sure if this is frowned upon or can be tolerated since the new driver
+is more generic (drives PLL8 as well) and makes the old one obsolete.
+We just need to keep it for compatibility.
 
-Yep.
+The naming for both the functions and compatible names is probably
+wrong, I am relying on more sunxi - experienced people here to
+suggest better identifiers.
+
+This is only one possible approach to fix this issues, so I am open
+to any kind of discussion.
+
+The series is made on top of Maxime's sunxi/for-next branch, so it
+somehow reverts the change in question. I am happy to rebase it on
+any branch people tell me.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+
+Andre Przywara (4):
+  clk: sunxi: rename new sun6i_a31_pll6 clock to sun6i_a31_pll clock
+  clk: sunxi: re-add old sun6i_a31_pll6 clock
+  clk: sunxi: revert .dtsi changes for DTs with a sun6i_a31_pll6 clock
+  DT: Allwinner H3: fix PLL8 clock
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |  2 +-
+ arch/arm/boot/dts/sun6i-a31.dtsi                  | 36 ++++++++---------
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi              | 25 ++++--------
+ arch/arm/boot/dts/sun8i-a23.dtsi                  |  2 +-
+ arch/arm/boot/dts/sun8i-a33.dtsi                  |  4 +-
+ arch/arm/boot/dts/sun8i-h3.dtsi                   | 31 +++++---------
+ drivers/clk/sunxi/clk-sunxi.c                     | 49 ++++++++++++++++++++---
+ 7 files changed, 84 insertions(+), 65 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.4
