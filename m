@@ -1,97 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:53760 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752304AbcBVBkn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Sun, 21 Feb 2016 20:40:43 -0500
+Return-Path: <andre.przywara@arm.com>
 From: Andre Przywara <andre.przywara@arm.com>
-To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com
-Subject: [PATCH] clk: sunxi: allow PLL6 clock to be reused
-Date: Mon, 22 Feb 2016 01:39:58 +0000
-Message-Id: <1456105198-25295-1-git-send-email-andre.przywara@arm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/3] clk: sunxi: Improve divs_clk error handling and reporting
+Date: Fri, 12 Feb 2016 15:11:53 +0000
+Message-Id: <1455289913-29514-4-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
+References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently we hard-code the base name for the PLL6 clock for both the
-sun4i and sun6i variants in the driver (pll6 and pll6x2, respectively).
-This unfortunately denies reusing this clock for the H3 and A64 PLL8
-clock, which is the same otherwise.
-Remove the hard-coded name in the source code and replace it with an
-appropriate index into the clock-output-names array in the DT.
-This is compatible with all current device trees, since they all carry
-the hard-coded base name in there.
+We catch errors in the base clock registration, failure to ioremap
+and failures in the final of_clk_add_provider() call.
+Also we unmap the registers when we need to rollback.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
-Salut Maxime,
+ drivers/clk/sunxi/clk-sunxi.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-does that patch make sense?
-It fixes the re-usability problem while still keeping compatibility
-with existing DTs and also is pretty small.
-If you agree with this, I'll send out a v3 of the A64 series including
-this patch and the H3 PLL8 enablement later.
-I tested this on my BananaPi, the clk_summary output was identical
-with and without this patch.
-
-Cheers,
-Andre.
-
- drivers/clk/sunxi/clk-factors.c | 3 ++-
- drivers/clk/sunxi/clk-factors.h | 1 +
- drivers/clk/sunxi/clk-sunxi.c   | 4 ++--
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index ddefe96..7daf01d 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -202,7 +202,8 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 	if (data->name)
- 		clk_name = data->name;
- 	else
--		of_property_read_string(node, "clock-output-names", &clk_name);
-+		of_property_read_string_index(node, "clock-output-names",
-+					      data->name_idx, &clk_name);
- 
- 	factors = kzalloc(sizeof(struct clk_factors), GFP_KERNEL);
- 	if (!factors)
-diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
-index 1e63c5b..3a7da86 100644
---- a/drivers/clk/sunxi/clk-factors.h
-+++ b/drivers/clk/sunxi/clk-factors.h
-@@ -36,6 +36,7 @@ struct factors_data {
- 	void (*getter)(struct factors_request *req);
- 	void (*recalc)(struct factors_request *req);
- 	const char *name;
-+	int name_idx;
- };
- 
- struct clk_factors {
 diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 99f60ef..53f5927 100644
+index 1ac6c9e0..48ed81d 100644
 --- a/drivers/clk/sunxi/clk-sunxi.c
 +++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -530,14 +530,14 @@ static const struct factors_data sun4i_pll6_data __initconst = {
- 	.enable = 31,
- 	.table = &sun4i_pll5_config,
- 	.getter = sun4i_get_pll5_factors,
--	.name = "pll6",
-+	.name_idx = 2,
- };
+@@ -987,13 +987,20 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
  
- static const struct factors_data sun6i_a31_pll6_data __initconst = {
- 	.enable = 31,
- 	.table = &sun6i_a31_pll6_config,
- 	.getter = sun6i_a31_get_pll6_factors,
--	.name = "pll6x2",
-+	.name_idx = 1,
- };
+ 	/* Set up factor clock that we will be dividing */
+ 	pclk = sunxi_factors_clk_setup(node, data->factors);
++	if (!pclk)
++		return NULL;
+ 	parent = __clk_get_name(pclk);
  
- static const struct factors_data sun5i_a13_ahb_data __initconst = {
+ 	reg = of_iomap(node, 0);
++	if (!reg) {
++		pr_err("Could not map registers for divs-clk: %s\n",
++		       node->name);
++		return NULL;
++	}
+ 
+ 	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
+ 	if (!clk_data)
+-		return NULL;
++		goto out_unmap;
+ 
+ 	clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
+ 	if (!clks)
+@@ -1076,9 +1083,10 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
+ 	/* Adjust to the real max */
+ 	clk_data->clk_num = i;
+ 
+-	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	if (!of_clk_add_provider(node, of_clk_src_onecell_get, clk_data))
++		return clks;
+ 
+-	return clks;
++	pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
+ 
+ free_gate:
+ 	kfree(gate);
+@@ -1086,6 +1094,8 @@ free_clks:
+ 	kfree(clks);
+ free_clkdata:
+ 	kfree(clk_data);
++out_unmap:
++	iounmap(reg);
+ 	return NULL;
+ }
+ 
 -- 
-1.8.4
-
+2.6.4
