@@ -1,109 +1,73 @@
-Return-Path: <wens@csie.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Fri, 12 Feb 2016 08:03:25 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+	rklein@nvidia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
+Message-ID: <20160212080325.GL20693@x1>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+ <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <56C1E250.9070301@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
- <56BE29A1.3060107@redhat.com> <56C1A590.6030500@arm.com> <56C1C7BB.1040602@redhat.com>
- <56C1D9C0.6020601@arm.com> <CAGb2v65E54mnLEcPzLyycEBSHbvn6tp9JpS+S8gdbDg_e7qFyQ@mail.gmail.com>
- <56C1E250.9070301@arm.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 15 Feb 2016 22:58:08 +0800
-Message-ID: <CAGb2v67apAN0H_Nz2kQ4oYjtRwRfaM0L3KTv6uXLfp7m7DpnbA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Allwinner A64 MMC support
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
-	Grant Likely <grant.likely@linaro.org>, Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 10:36 PM, Andre Przywara <andre.przywara@arm.com> wrote:
-> Hi Chen-Yu,
->
-> On 15/02/16 14:23, Chen-Yu Tsai wrote:
->> On Mon, Feb 15, 2016 at 9:59 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->>> Hi Hans,
->>>
->>> ....
->>>
->>>>
->>>> p.s.
->>>>
->>>> I love the work you've been doing on the A64, I've not had a chance
->>>> to try it out yet though. Have you made any progress with getting
->>>> the mmc slot to work ?  If not maybe I can make some time I've
->>>> prior experience in bringing up the mmc slot on other Allwinner SoCs
->>>
->>> Thanks for that!
->>>
->>> So we made some progress on the weekend (with the help of #linux-sunxi):
->>> 1) The regulator node was stupidly put by me into a separate child node
->>> without putting address and size cells into. So I just moved it into
->>> /soc directly now and that seems to fixed the missing regulator.
->>> 2) The reset node is a allwinner,sun6i-a31-ahb1-reset, which does not
->>> get registered automatically, but by an explicit call from mach-sunxi/.
->>> I wonder why we do this (yes, I saw that comment, but still...) and if
->>> it would work with a normal MODULE_DEVICE_TABLE() declaration.
->>> There is and will be no equivalent to the mach- directory on arm64.
->>
->> On sun6i, we supported the high resolution timer, which had a reset control.
->> Timers (or clocksources) are registered before device model kicks in, so the
->> reset had to be explicitly registered before the timer, or the system would
->> hang. I think we phased that out though. Maxime should know.
->
-> Ah, thanks for that insight!
-> So that sounds like we would get away with a normal registration for the
-> A64 - and actually many other SoCs as well?
-> Shall we guard the explicit sun6i_reset_init with MACH_SUN6I or
-> something and do the normal registration otherwise?
-> Or do I miss something here?
+On Thu, 11 Feb 2016, Michael Turquette wrote:
 
-You'll notice 2 reset control compatibles, one is
-"allwinner,sun6i-a31-ahb1-reset",
-while the other is "allwinner,sun6i-a31-clock-reset". The latter is a
-proper device
-model driver. We also don't have the hstimer device node for later
-SoCs. For A23, it
-was because the hardware had only 1 timer, while the driver needed 2,
-and I didn't
-want to deal with it at the time.
+> From: Lee Jones <lee.jones@linaro.org>
+> 
+> Critical clocks are those which must not be gated, else undefined
+> or catastrophic failure would occur.  Here we have chosen to
+> ensure the prepare/enable counts are correctly incremented, so as
+> not to confuse users with enabled clocks with no visible users.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+> ---
+> Changes in v42:
+>   * Moved code from clk_register into __clk_init
 
-As long as you use "allwinner,sun6i-a31-clock-reset", no special code is needed.
+I'm happy with this change.  Thanks Mike!
 
-ChenYu
+>  drivers/clk/clk.c            | 5 +++++
+>  include/linux/clk-provider.h | 1 +
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b4db67a..993f775 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+>  	if (core->ops->init)
+>  		core->ops->init(core->hw);
+>  
+> +	if (core->flags & CLK_IS_CRITICAL) {
+> +		clk_core_prepare(core);
+> +		clk_core_enable(core);
+> +	}
+> +
+>  	kref_init(&core->ref);
+>  out:
+>  	clk_prepare_unlock();
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 1143e38..1d986ea 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -32,6 +32,7 @@
+>  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+>  #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
+>  #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
+> +#define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
+>  
+>  struct clk;
+>  struct clk_hw;
 
-> Cheers,
-> Andre
->
->>> 3) As Jens pointed out, the MMC IP block isn't really compatible.
->>> Changing the clocks is easy (done already), but we need to come up with
->>> code to cover the new phase setting registers in the A64 MMC register block.
->>>
->>> Interestingly somehow hacking this (pretending it is compatible) seems
->>> to work, though I got reports from people about mysterious kernel
->>> crashes, so I'm inclined to leave MMC out of the first patch series.
->>>
->>> So if you could take a look at the new registers (starting at offset
->>> 0x140) and work out what we actually need to do here, that would be
->>> great. I have no real clue about what they actually do and how they
->>> relate to the current output and sample clock phase.
->>> To me it looks like we might get away with just triggering the automatic
->>> calibration and the hardware does the rest for us - keep your fingers
->>> crossed ;-)
->>>
->>> Cheers,
->>> Andre.
->>>
->>> --
->>> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
->>> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
->>> For more options, visit https://groups.google.com/d/optout.
->>
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
