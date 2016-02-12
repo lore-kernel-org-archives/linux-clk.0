@@ -1,121 +1,42 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH] clk: sunxi: allow PLL6 clock to be reused
-To: Chen-Yu Tsai <wens@csie.org>
-References: <1456105198-25295-1-git-send-email-andre.przywara@arm.com>
- <CAGb2v66Fkvpqay+pNYjN1KP_KSUmv-du+PVSsyeuK+Y7bzEt+g@mail.gmail.com>
-Cc: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-   Maxime Ripard <maxime.ripard@free-electrons.com>,
-   Michael Turquette <mturquette@baylibre.com>,
-   Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-   linux-sunxi <linux-sunxi@googlegroups.com>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56CAD72D.7050102@arm.com>
-Date: Mon, 22 Feb 2016 09:38:53 +0000
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] first bunch of rockchip clock changes for 4.6
+Date: Fri, 12 Feb 2016 12:39:43 +0100
+Message-ID: <1494732.M6VqoIU5NQ@phil>
+In-Reply-To: <20160212021936.3210.79199@quark.deferred.io>
+References: <3862076.Cf1OAGsbuq@phil> <20160212021936.3210.79199@quark.deferred.io>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v66Fkvpqay+pNYjN1KP_KSUmv-du+PVSsyeuK+Y7bzEt+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+Hi Mike,
 
-On 22/02/16 08:08, Chen-Yu Tsai wrote:
-> On Sun, Feb 21, 2016 at 5:39 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->> Currently we hard-code the base name for the PLL6 clock for both the
->> sun4i and sun6i variants in the driver (pll6 and pll6x2, respectively).
->> This unfortunately denies reusing this clock for the H3 and A64 PLL8
->> clock, which is the same otherwise.
->> Remove the hard-coded name in the source code and replace it with an
->> appropriate index into the clock-output-names array in the DT.
->> This is compatible with all current device trees, since they all carry
->> the hard-coded base name in there.
->>
->> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->> ---
->> Salut Maxime,
->>
->> does that patch make sense?
->> It fixes the re-usability problem while still keeping compatibility
->> with existing DTs and also is pretty small.
->> If you agree with this, I'll send out a v3 of the A64 series including
->> this patch and the H3 PLL8 enablement later.
->> I tested this on my BananaPi, the clk_summary output was identical
->> with and without this patch.
+Am Donnerstag, 11. Februar 2016, 18:19:36 schrieb Michael Turquette:
+> Quoting Heiko Stuebner (2016-02-11 05:00:02)
 > 
-> This look OK to me, except one minor detail below.
+> > Yakir Yang (1):
+> >       clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
+> >       hclk_vio_bus
 > 
->> Cheers,
->> Andre.
->>
->>  drivers/clk/sunxi/clk-factors.c | 3 ++-
->>  drivers/clk/sunxi/clk-factors.h | 1 +
->>  drivers/clk/sunxi/clk-sunxi.c   | 4 ++--
->>  3 files changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
->> index ddefe96..7daf01d 100644
->> --- a/drivers/clk/sunxi/clk-factors.c
->> +++ b/drivers/clk/sunxi/clk-factors.c
->> @@ -202,7 +202,8 @@ struct clk *sunxi_factors_register(struct device_node *node,
->>         if (data->name)
->>                 clk_name = data->name;
->>         else
->> -               of_property_read_string(node, "clock-output-names", &clk_name);
->> +               of_property_read_string_index(node, "clock-output-names",
->> +                                             data->name_idx, &clk_name);
->>
->>         factors = kzalloc(sizeof(struct clk_factors), GFP_KERNEL);
->>         if (!factors)
->> diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
->> index 1e63c5b..3a7da86 100644
->> --- a/drivers/clk/sunxi/clk-factors.h
->> +++ b/drivers/clk/sunxi/clk-factors.h
->> @@ -36,6 +36,7 @@ struct factors_data {
->>         void (*getter)(struct factors_request *req);
->>         void (*recalc)(struct factors_request *req);
->>         const char *name;
->> +       int name_idx;
+> Thanks for sending the very readable PR. One question below,
 > 
-> I would drop the .name field. It was a bad workaround
-> due to limitations of the factors clk code at the time
-> by me. We really shouldn't hard-code the name if we want
-> to reuse the driver.
+> We'll likely have critical clock and handoff clock support merged in the
+> next few days. I'm starting to audit any new CLK_IGNORE_UNUSED flag
+> usage to see if it should use either of those two flags. Is the above
+> patch a candidate?
 
-I know what you mean (my first thought, too) and I totally agree, but we
-need it still for PLL5, which does not carry the original name in the DT
-output names.
-So at least this workaround here does not work, I guess we have to come
-up with something different - which would be a different patch.
-I can take a look into this later.
+the above clock is part of the interconnect. We don't model that yet, but I 
+guess that would make it more a candidate for the handoff-type instead.
 
-Thanks,
-Andre.
+I'd guess for the Rockchip side, everything that is CLK_IGNORE_UNUSED should 
+be the handoff type (leaf-clocks used by some component we don't control 
+yet). 
 
->>  };
->>
->>  struct clk_factors {
->> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->> index 99f60ef..53f5927 100644
->> --- a/drivers/clk/sunxi/clk-sunxi.c
->> +++ b/drivers/clk/sunxi/clk-sunxi.c
->> @@ -530,14 +530,14 @@ static const struct factors_data sun4i_pll6_data __initconst = {
->>         .enable = 31,
->>         .table = &sun4i_pll5_config,
->>         .getter = sun4i_get_pll5_factors,
->> -       .name = "pll6",
->> +       .name_idx = 2,
->>  };
->>
->>  static const struct factors_data sun6i_a31_pll6_data __initconst = {
->>         .enable = 31,
->>         .table = &sun6i_a31_pll6_config,
->>         .getter = sun6i_a31_get_pll6_factors,
->> -       .name = "pll6x2",
->> +       .name_idx = 1,
->>  };
->>
->>  static const struct factors_data sun5i_a13_ahb_data __initconst = {
->> --
->> 1.8.4
->>
-> 
+The clocks we already register as critical most likely are the ones that 
+should be critical, as they are central clocks where it causes havok when 
+they get disabled :-) .
+
+
+Heiko
