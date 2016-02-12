@@ -1,71 +1,72 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU frequency
- control
-To: Daniel Kurtz <djkurtz@chromium.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
- <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
- <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
- <20151217090628.GA317@quark.deferred.io>
- <CAGS+omBWEVac_in-ZDurf4R5tje3hzJPyr5nsP2Z_v7F8sSCUg@mail.gmail.com>
-Cc: Pi-Cheng Chen <pi-cheng.chen@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, James Liao <jamesjj.liao@mediatek.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, linux-clk@vger.kernel.org,
- "moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <56AF459F.2050808@gmail.com>
-Date: Mon, 1 Feb 2016 12:46:39 +0100
-MIME-Version: 1.0
-In-Reply-To: <CAGS+omBWEVac_in-ZDurf4R5tje3hzJPyr5nsP2Z_v7F8sSCUg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/3] clk: sunxi: improve mux_clk error handling and reporting
+Date: Fri, 12 Feb 2016 15:11:51 +0000
+Message-Id: <1455289913-29514-2-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
+References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+We now catch and report a failing ioremap, also a failure in the final
+step of the clock registration is now handled and reported.
+Also warnings are turned into errors.
 
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-On 26/01/16 11:23, Daniel Kurtz wrote:
-> Hi Michael, Pi-Cheng,
->
-> On Thu, Dec 17, 2015 at 1:06 AM, Michael Turquette
-> <mturquette@baylibre.com> wrote:
->>
->> On 12/01, Pi-Cheng Chen wrote:
->>> On Mon, Nov 30, 2015 at 11:48 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
->>>> Hi Pi-Cheng and Michael,
->>>>
->>>> On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
->>>>> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
->>>>>
->>>>> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
->>>>> for intermediate clock source switching.
->>>>
->>>> It looks like this patch was never picked up.
->>>> It is required for MT8173 cpufreq.
->>>>
->>>> What is the plan to get this one merged?
->>>
->>> Hi Dan,
->>> Mike is working on a new CCF feature called "coordinated clock rate changes"
->>> which would help to migrate mt8173-cpufreq driver to generic cpufreq-dt
->>> driver, and I am working with him to port MT8173 clock driver on the new
->>> feature. So I think that's why this patch was not picked since it will
->>> be migrated to new implementation once the new feature's ready.
->>>
->>> @Mike:
->>> Are you plannig to post those patches on the mailing list ?
->>> Or is it fine for you to take this first and then I will refine it for
->>> the new feature later?
->>
->> I plan to post those patches next week.
->
-> Were these patches ever posted?
-> Or should we consider going ahead and trying to merge this 4-month old
-> MTK CPU mux clock patch into v4.5 before it is too late?
->
-
-It's already too late for v4.5. The -rc are mostly bug fixes and new 
-features get merged after the official v4.5 release. They will show up 
-in v4.6-rc1
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 49ce283..361f396 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -690,11 +690,15 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+ 	int i;
+ 
+ 	reg = of_iomap(node, 0);
++	if (!reg) {
++		pr_err("Could not map registers for mux-clk: %s\n", node->name);
++		return NULL;
++	}
+ 
+ 	i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
+ 	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
+-		pr_warn("%s: could not read clock-output-names for \"%s\"\n",
+-			__func__, clk_name);
++		pr_err("%s: could not read clock-output-names for \"%s\"\n",
++		       __func__, clk_name);
+ 		goto out_unmap;
+ 	}
+ 
+@@ -704,14 +708,17 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+ 			       0, &clk_lock);
+ 
+ 	if (IS_ERR(clk)) {
+-		pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
+-			clk_name, PTR_ERR(clk));
++		pr_err("%s: failed to register mux clock %s: %ld\n", __func__,
++		       clk_name, PTR_ERR(clk));
+ 		goto out_unmap;
+ 	}
+ 
+-	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (!of_clk_add_provider(node, of_clk_src_simple_get, clk))
++		return clk;
++
++	pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
+ 
+-	return clk;
++	clk_unregister_divider(clk);
+ 
+ out_unmap:
+ 	iounmap(reg);
+-- 
+2.6.4
