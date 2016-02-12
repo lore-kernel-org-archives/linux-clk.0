@@ -1,54 +1,88 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 9 Feb 2016 16:19:31 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>, mturquette@baylibre.com,
-	stigge@antcom.de, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: lpc32xx: do not prepare clock "0"
-Message-ID: <20160210001931.GE30978@codeaurora.org>
-References: <1455042550-18766-1-git-send-email-slemieux.tyco@gmail.com>
- <20160209190309.GD31947@codeaurora.org>
- <1455048667.19294.5.camel@localhost>
- <56BA7A06.4020807@mleia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56BA7A06.4020807@mleia.com>
+Return-Path: <tony@atomide.com>
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH 1/2] dt-bindings: clock: adpll: Add binding documentation for TI adpll
+Date: Fri, 12 Feb 2016 13:20:08 -0800
+Message-Id: <1455312009-808-2-git-send-email-tony@atomide.com>
+In-Reply-To: <1455312009-808-1-git-send-email-tony@atomide.com>
+References: <1455312009-808-1-git-send-email-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/10, Vladimir Zapolskiy wrote:
-> Hi Sylvain,
-> 
-> On 09.02.2016 22:11, Sylvain Lemieux wrote:
-> > On Tue, 2016-02-09 at 11:03 -0800, Stephen Boyd wrote:
-> >> On 02/09, slemieux.tyco@gmail.com wrote:
-> >>> From: Sylvain Lemieux <slemieux@tycoint.com>
-> >>>
-> >>> The following errors are display in the console during the power-on:
-> >>> [    0.000000] lpc32xx_usb_clk_init: failed to register (null) clock: -12
-> >>> [    0.000000] lpc32xx_clk_init: failed to register (null) clock: -12
-> >>>
-> >>> There is no need to prepare clock "0"; the first clock used is 1;
-> >>>
-> >>> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> >>> ---
-> >>
-> >> Do you mean register instead of prepare? Change looks ok
-> >> otherwise.
-> >>
-> > Should read register in the description;
-> > I will submit a new version of the patch tomorrow.
-> > 
-> 
-> thanks for catching this leftover after renumbering clocks starting from 1.
-> 
-> Feel free to add to v2
-> 
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-> 
+Let's add binding documentation for the ADPLL found on dm814x
+and dra62x. The binding uses the standard clock binding.
 
-I subbed register for prepare and added this ack and pushed to
-clk-next.
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tero Kristo <t-kristo@ti.com>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ .../devicetree/bindings/clock/ti/adpll.txt         | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/adpll.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/ti/adpll.txt b/Documentation/devicetree/bindings/clock/ti/adpll.txt
+new file mode 100644
+index 0000000..8516bf0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/adpll.txt
+@@ -0,0 +1,43 @@
++Binding for Texas Instruments ADPLL clock.
++
++Binding status: Unstable - ABI compatibility may be broken in the future
++
++This binding uses the common clock binding[1]. It assumes a
++register-mapped ADPLL with two to three selectable input clocks
++and three to four children.
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be one of "ti,dm814-adpll-s-clock" or
++  "ti,dm814-adpll-lj-clock" depending on the type of the ADPLL
++- #clock-cells : from common clock binding; shall be set to 0.
++- clocks : link phandles of parent clocks clkinp and clkinpulow, note
++  that the adpll-s-clock also has an optional clkinphif
++- reg : address and length of the register set for controlling the ADPLL.
++
++Examples:
++	adpll_mpu_ck: adpll@40 {
++		#clock-cells = <1>;
++		compatible = "ti,dm814-adpll-s-clock";
++		reg = <0x40 0x40>;
++		clocks = <&devosc_ck &devosc_ck &devosc_ck>;
++		clock-names = "clkinp", "clkinpulow", "clkinphif";
++		clock-indices = <0>, <1>, <2>, <3>;
++		clock-output-names = "481c5040.adpll.dcoclkldo",
++				     "481c5040.adpll.clkout",
++				     "481c5040.adpll.clkoutx2",
++				     "481c5040.adpll.clkouthif";
++	};
++
++	adpll_dsp_ck: adpll@80 {
++		#clock-cells = <1>;
++		compatible = "ti,dm814-adpll-lj-clock";
++		reg = <0x80 0x30>;
++		clocks = <&devosc_ck &devosc_ck>;
++		clock-names = "clkinp", "clkinpulow";
++		clock-indices = <0>, <1>, <2>;
++		clock-output-names = "481c5080.adpll.dcoclkldo",
++				     "481c5080.adpll.clkout",
++				     "481c5080.adpll.clkoutldo";
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
