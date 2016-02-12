@@ -1,75 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 15:37:10 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: arm/marvell: add DT bindings for
- AP806 DFX Server
-Message-ID: <20160225233710.GJ28849@codeaurora.org>
-References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+Date: Fri, 12 Feb 2016 17:28:22 +0100
+In-Reply-To: <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+	(Kevin Smith's message of "Thu, 11 Feb 2016 16:53:52 +0000")
+Message-ID: <87vb5tx595.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/24, Thomas Petazzoni wrote:
-> +Marvell AP806 DFX Server
-> +------------------------
-> +
-> +The Marvell AP806 HW block (which is a core component of the Marvell
-> +Armada 7K and 8K SOCs) has a set of registers called "DFX
-> +Server". This set of registers contains miscellaneous registers, most
-> +of them being used for silicon fine-tuning and manufacturing testing,
-> +and as such are not publicly documented. However, this DFX server
-> +register range also contains a few documented and useful registers,
-> +for example for clock control.
-> +
-> +This Device Tree binding allows to represent the entire DFX server
-> +register space as one single DT node.
-> +
-> +Required properties:
-> +- compatible: the first and second values must be:
-> +	"simple-mfd", "syscon"
-> +- reg: address and length of following register sets for the DFX
-> +  server
+Hi Kevin,
+=20
+ On jeu., f=C3=A9vr. 11 2016, Kevin Smith <kevin.smith@elecsyscorp.com> wro=
+te:
 
-Example?
+> There is no corediv clock on Armada XP, so this is unnecessary.
+>
+> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-I would think the binding would be done in a way that we don't
-have to describe every little register in this misc register
-block. Instead, dfx server has a compatible:
+Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
- node@f00 {
- 	reg = <0xf00 0x100>;
-	compatible = "marvell,dfx-ap806";
-	#clock-cells = <1>;
- };
+Thanks,
 
-And then a driver that probes this compatible string and
-registers a handful of clks. If we ever get into a situation
-where we want to expose non-clk functionality from this device
-node, we would make some sort of mfd driver that probes based on
-the same compatible string and creates platform devices in
-software to register the clk device component and whatever other
-device type is used. In that situation, we could assign a regmap
-to the mfd device and the clk device would be a child of the mfd
-and get a regmap through the dev->parent pointer.
+Gregory
+> ---
+>  drivers/clk/mvebu/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+> index 2769625..e1bc567 100644
+> --- a/drivers/clk/mvebu/Kconfig
+> +++ b/drivers/clk/mvebu/Kconfig
+> @@ -29,7 +29,6 @@ config ARMADA_XP_CLK
+>  	bool
+>  	select MVEBU_CLK_COMMON
+>  	select MVEBU_CLK_CPU
+> -	select MVEBU_CLK_COREDIV
+>=20=20
+>  config DOVE_CLK
+>  	bool
+> --=20
+> 2.4.6
 
-TL;DR I'm still lost why we have to describe each clk in DT.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
