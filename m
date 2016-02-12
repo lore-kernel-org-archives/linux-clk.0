@@ -1,71 +1,49 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160203195919.GB3327@lukather>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
- <20160115031515.GA19797@rob-hp-laptop> <20160203195919.GB3327@lukather>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 3 Feb 2016 14:19:31 -0600
-Message-ID: <CAL_JsqLLvK0L+PaOxesgr9u_3hb6EWbb9w2-yw80D8sUqiohTA@mail.gmail.com>
-Subject: Re: [PATCH v2 17/26] drm: sun4i: Add DT bindings documentation
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] clk: sunxi: error checking on clock setup
+Date: Fri, 12 Feb 2016 15:11:50 +0000
+Message-Id: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 3, 2016 at 1:59 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Rob,
->
-> On Thu, Jan 14, 2016 at 09:15:15PM -0600, Rob Herring wrote:
->> On Thu, Jan 14, 2016 at 04:25:00PM +0100, Maxime Ripard wrote:
->> > The display pipeline of the Allwinner A10 is involving several loosely
->> > coupled components.
->> >
->> > Add a documentation for the bindings.
->> >
->> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> > ---
->> >  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++++++++++++++++
+Since I promised to do this some days ago:
 
-[...]
+Setting up the clocks properly is quite critical to the system's
+operation, but currently our error handling is not very verbose.
+This series adds error handling and reporting to the sunxi clocks,
+so that any errors are correctly detected and reported. Also previous
+actions are rolled back in case something went wrong.
+This proves to be helpful in debugging clock tree issues,
+especially when adding support for new SoCs.
+I tested this on a BananaPi by deliberately misspelling
+"clock-output-names". The resulting kernel crash in
+sun4i_timer_interrupt is totally misleading, but now there is a line
+in the dmesg before saying:
+=======
+sunxi_divider_clk_setup: could not read clock-output-names for "apb0"
+=======
 
->> > +Required properties:
->> > +  - compatible: value must be one of:
->> > +    * allwinner,sun5i-a13-display-engine
->> > +  - allwinner,pipelines: list of phandle to the entry points of the
->> > +    pipelines (either to the frontend or backend)
->> > +
->> > +Example:
->> > +
->> > +panel: panel {
->> > +   compatible = "olimex,lcd-olinuxino-43-ts";
->>
->> This should either be a child of what it is attached to or use of-graph.
->
-> You had a similar discussion with Thierry last time I sent it, and it
-> seemed to settle on keeping that property:
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/382115.html
->
-> Has that changed?
+This applies on top of Maxime's sunxi/for-next branch.
 
-No, I still disagree. We already have 2 ways to describe panels: as a
-child node of its controller or with of-graph. We don't need a 3rd way
-even if it is simple. The problem with of-graph today is too much of
-the parsing is left to the individual drivers. We need to fix that and
-make it be handled by common code.
+Please have a look (and apply, if you like it).
 
-Rob
+Cheers,
+Andre.
+
+Andre Przywara (3):
+  clk: sunxi: improve mux_clk error handling and reporting
+  clk: sunxi: improve divider_clk error handling and reporting
+  clk: sunxi: Improve divs_clk error handling and reporting
+
+ drivers/clk/sunxi/clk-sunxi.c | 68 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 56 insertions(+), 12 deletions(-)
+
+-- 
+2.6.4
