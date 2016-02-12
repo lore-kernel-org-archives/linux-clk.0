@@ -1,43 +1,45 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 1 Feb 2016 09:03:44 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
-	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
-	wens@csie.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 03/14] clk: sunxi: add bus gates for A83T
-Message-ID: <20160201150344.GA4947@rob-hp-laptop>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 11 Feb 2016 16:33:13 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] clk: qcom: mmcc8974: Use gdscs .parent and remove
+ genpd calls
+Message-ID: <20160212003313.GB4847@codeaurora.org>
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+ <1448986336-16846-7-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1448986336-16846-7-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jan 31, 2016 at 09:20:55AM +0800, Vishnu Patekar wrote:
-> A83T has similar bus gates that of H3, including single gating register has
-> different clock parent.
+On 12/01, Rajendra Nayak wrote:
+> With gdsc driver capable of handling hierarchical power domains,
+> specify oxili_gdsc as parent of oxilicx_gdsc.
 > 
-> As per H3 and A83T datasheet, usbhost is under AHB2.
+> Remove all direct calls to genpd from the mmcc clock driver. The
+> adding and removing of subdomains is now handled from within
+> the gdsc driver.
 > 
-> However,below shows allwinner source code assignment:
-> bits: 26 (ehci0), 27 (ehci1), 29 (ohci0) => AHB1 for A83T.
-> bits: 26 (ehci0), 27 (ehci1) => AHB1 for H3
-> bits  29, 30, 31(ohci0,1,2) => AHB2 for H3.
-> 
-> until, this confusion is cleared keep it H3 way.
-> 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
->  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 2 ++
->  2 files changed, 3 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to clk-next + this squashed in
+
+---8<----
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index 6b2e4e808125..bcda56e81503 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2617,7 +2617,6 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8974_match_table);
+ static int mmcc_msm8974_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
+-	int ret;
+ 
+ 	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
+ 	if (IS_ERR(regmap))
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
