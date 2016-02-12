@@ -1,35 +1,33 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 14 Feb 2016 11:21:03 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: kernel@pengutronix.de, pawel.moll@arm.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, jacky.baip@gmail.com
-Subject: Re: [PATCH V3 1/5] clk: imx: Add clock support for imx6qp
-Message-ID: <20160214032103.GD6756@tiger>
-References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <robh@kernel.org>
+Date: Fri, 12 Feb 2016 10:52:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: sunxi: Add support for A80 APBS clock
+Message-ID: <20160212165221.GA14697@rob-hp-laptop>
+References: <1455269475-8180-1-git-send-email-wens@csie.org>
+ <1455269475-8180-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1455269475-8180-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 02, 2016 at 06:01:34PM +0800, Bai Ping wrote:
-> most of the clock tree structures on i.MX6 Quad Plus are
-> same as on i.MX6Q. there still some differences between
-> these two SOCs. compared to the i.XM6Q, the differents of
-> clocks on i.MX6QP is mainly on:
+On Fri, Feb 12, 2016 at 05:31:14PM +0800, Chen-Yu Tsai wrote:
+> A80's APBS clock is not the same as the APB0 clock on A23. The A80's
+> is a zero-based divider, while the A23's is a power-of-two divider.
 > 
-> 1. New clock gate added to support the PRE and PRG modules
-> 2. 24MHz OSC clock option added to the UART, IPG, ECSPI, and
->    CAN clock roots.
-> 3. MMDC channel 1 clock gate is now controllable.
-> 4. clock gating added to the LDB_DIx_IPU clocks on i.MX6QP
-> 5. EMI clock root divider fix
-> 6. other updates fo CSCMRx, CSCDRx and CS2CDR registers.
+> Replace the CLK_OF_DECLARE version of sun8i-a23-apb0. This also extends
+> the common setup function to take div clk flags.
 > 
-> detailed infomation, please refer to the i.MX6QP RM.
-> 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
-Applied all, thanks.
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/clk/sunxi/clk-sun8i-apb0.c                | 23 ++++++++---------------
+>  2 files changed, 9 insertions(+), 15 deletions(-)
