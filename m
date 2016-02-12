@@ -1,105 +1,88 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1453353537.5384.33.camel@mtksdaap41>
-References: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
- <1453271747-57397-3-git-send-email-jamesjj.liao@mediatek.com>
- <20160120163236.GA21035@rob-hp-laptop> <1453353537.5384.33.camel@mtksdaap41>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 1 Feb 2016 09:55:53 -0600
-Message-ID: <CAL_JsqLJVLDbPqynmD9-Yc=JVGH4iLPfb2keA5G7c2fjitAsSQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] dt-bindings: ARM: Mediatek: Document bindings for MT2701
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, John Crispin <blogic@openwrt.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mediatek@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <rob.herring@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org
+Subject: [RFC PATCH 2/4] clk: sunxi: re-add old sun6i_a31_pll6 clock
+Date: Fri, 12 Feb 2016 17:59:58 +0000
+Message-Id: <1455300000-18723-3-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
+References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 20, 2016 at 11:18 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
-> Hi Rob,
->
-> On Wed, 2016-01-20 at 10:32 -0600, Rob Herring wrote:
->> On Wed, Jan 20, 2016 at 02:35:43PM +0800, James Liao wrote:
->> > This patch adds the binding documentation for apmixedsys, bdpsys,
->> > ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
->> > vdecsys for Mediatek MT2701.
->> >
->> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
->> > Tested-by: John Crispin <blogic@openwrt.org>
->> > ---
->> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
->> >  .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
->> >  .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
->> >  .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
->> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
->> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
->> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
->> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
->> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
->> >  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
->> >  10 files changed, 73 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
->> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
->> > index 936166f..a701e19 100644
->> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
->> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
->> > @@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
->> >  Required Properties:
->> >
->> >  - compatible: Should be:
->> > +   - "mediatek,mt2701-apmixedsys"
->> >     - "mediatek,mt8135-apmixedsys"
->> >     - "mediatek,mt8173-apmixedsys"
->> >  - #clock-cells: Must be 1
->> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->> > new file mode 100644
->> > index 0000000..4137196
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->> > @@ -0,0 +1,22 @@
->> > +Mediatek bdpsys controller
->> > +============================
->> > +
->> > +The Mediatek bdpsys controller provides various clocks to the system.
->>
->> As you clarified these blocks provide more that just clocks. Please list
->> all the functions here and on the others.
->
-> Some blocks may provide clock and reset controller at the same time. But
+The older version of the A31 PLL6 clock driver was used by many DTs
+which we want to stay compatible with.
+As an intermediate step bring back the code for the old driver, but
+don't instantiate it yet.
 
-Then say the block provides clocks and resets is all I'm asking for.
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-> most of them will not provide functions directly. Instead, some DT
-> blocks which provide specific functions may refer to these controller
-> nodes due to it need to access the same register space.
->
-> For example, scpsys (the power domain provider) refers to infracfg
-> because it need to control infracfg registers when power on/off domains:
->
->         scpsys: scpsys@10006000 {
->                 compatible = "mediatek,mt2701-scpsys";
->                 #power-domain-cells = <1>;
->                 reg = <0 0x10006000 0 0x1000>;
->                 infracfg = <&infracfg>;
->         };
->
-> So I think it should not need to list all functions for each blocks
-> here.
-
-Sorry, but you do need to describe what functions the blocks provide.
-
-Also, if you are accessing the infracfg regs directly to modify clock
-registers outside of the clock driver, that is very bad design. The
-clock driver could assume that register values are not changing behind
-its back and it bypasses any locks around register accesses. I can see
-why it is needed though, but we really need a proper interface.
-
-Rob
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index b4ab84b..12131ba 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -248,6 +248,21 @@ static void sun6i_a31_get_pll_factors(struct factors_request *req)
+ 	req->n = DIV_ROUND_UP(div, (req->k + 1)) - 1;
+ }
+ 
++static void sun6i_a31_get_pll6_factors(struct factors_request *req)
++{
++	u8 div;
++
++	/* Normalize value to a parent_rate multiple (24M) */
++	div = req->rate / req->parent_rate;
++	req->rate = req->parent_rate * div;
++
++	req->k = div / 32;
++	if (req->k > 3)
++		req->k = 3;
++
++	req->n = DIV_ROUND_UP(div, (req->k + 1)) - 1;
++}
++
+ static void sun6i_a31_pll6_recalc(struct factors_request *req)
+ {
+ 	req->rate = req->parent_rate;
+@@ -549,6 +564,13 @@ static const struct factors_data sun6i_a31_pll_data __initconst = {
+ 	.recalc = sun6i_a31_pll6_recalc,
+ };
+ 
++static const struct factors_data sun6i_a31_pll6_data __initconst = {
++	.enable = 31,
++	.table = &sun6i_a31_pll6_config,
++	.getter = sun6i_a31_get_pll6_factors,
++	.name	= "pll6x2",
++};
++
+ static const struct factors_data sun5i_a13_ahb_data __initconst = {
+ 	.mux = 6,
+ 	.muxmask = BIT(1) | BIT(0),
+@@ -954,6 +976,15 @@ static const struct divs_data pll6_divs_data __initconst = {
+ 	}
+ };
+ 
++static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
++	.factors = &sun6i_a31_pll6_data,
++	.ndivs = 2,
++	.div = {
++		{ .fixed = 2 }, /* normal output */
++		{ .self = 1 }, /* base factor clock, 2x */
++	}
++};
++
+ /**
+  * sunxi_divs_clk_setup() - Setup function for leaf divisors on clocks
+  *
+-- 
+2.6.4
