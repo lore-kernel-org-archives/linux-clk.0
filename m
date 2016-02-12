@@ -1,63 +1,56 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: breaking DT compatibility
-To: Richard Cochran <richardcochran@gmail.com>,
-   Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com> <56BB2D79.6090402@arm.com>
- <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
- <20160210143755.GE31506@lukather> <20160210163001.GG2632@leverpostej>
- <20160211100048.GK31506@lukather>
- <20160211145158.GA8824@localhost.localdomain>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-   Rob Herring <rob.herring@linaro.org>,
-   Vishnu Patekar <vishnupatekar0510@gmail.com>,
-   Jean-Francois Moine <moinejf@free.fr>,
-   Mike Turquette <mturquette@baylibre.com>,
-   Stephen Boyd
- <sboyd@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>,
-   Chen-Yu Tsai <wens@csie.org>, Jens Kuske <jenskuske@gmail.com>,
-   Grant Likely <grant.likely@linaro.org>,
-   Frank Rowand
- <frowand.list@gmail.com>, linux-clk@vger.kernel.org,
-   "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56BCA5CD.3080008@arm.com>
-Date: Thu, 11 Feb 2016 15:16:29 +0000
-MIME-Version: 1.0
-In-Reply-To: <20160211145158.GA8824@localhost.localdomain>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: sunxi: Fix APBS clock for Allwinner A80
+Date: Fri, 12 Feb 2016 17:31:13 +0800
+Message-Id: <1455269475-8180-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi everyone,
 
-On 11/02/16 14:51, Richard Cochran wrote:
-> On Thu, Feb 11, 2016 at 11:00:48AM +0100, Maxime Ripard wrote:
->> None of our existing users ever complained.
-> 
-> Note to self:
-> 
->    Avoid choosing this SoC for new projects.  The maintainers do not
->    care about the end users.
+This is v2 of the A80 APBS clock fixes series.
 
-Now that's a bit harsh, I think.
-Maxime is doing a great job for maintaining this admittedly not very
-well architected and documented SoC "family" - in his spare time.
+When I did the A80 PRCM support, I failed to notice the A80's APBS clock
+was not the same as the A23's APB0 clock. The former is a zero-based
+divider, while the latter is a power-of-two divider. But the lowest 2
+dividers are the same.
 
-Also the actual end user experience is probably just fine (despite
-broken DT compatibility), since on these storage-less boards the
-distributions usually ship DT, firmware (U-Boot) and kernel bundled
-together.
-This does not qualify for breaking the DT deliberately, but we are about
-to fix this as we speak.
+The hardware defaults to the lowest setting, or a /1 divider. Since the
+child gates do not propagate clk_set_rate up, and no consumers here do
+clk_set_rate, this actually works.
 
-Also my concern was just that I wanted to move away from this being the
-only way of running Linux on those boards.
+I realized my mistake while reviewing the A83T's PRCM patches. The A83T
+shares the same PRCM clocks as the A80.
 
-We may think about collecting DTBs and firmware for those boards in a
-central place without direct connection to a certain Linux version or
-distribution. This would make the whole idea more visible and would make
-compatibility breaks more evident.
+Maxime, since this was introduced in 4.5-rc1, please apply this series
+for 4.5 so we fix it before the release.
 
-Cheers,
-Andre.
+
+Changes since v1:
+
+  - Replace the CLK_OF_DECLARE version of sun8i-a23-apb0-clk with the
+    A80 APBS version, instead of writing a new driver.
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (2):
+  clk: sunxi: Add support for A80 APBS clock
+  ARM: dts: sun9i: Fix apbs clock compatible
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ arch/arm/boot/dts/sun9i-a80.dtsi                  |  2 +-
+ drivers/clk/sunxi/clk-sun8i-apb0.c                | 23 ++++++++---------------
+ 3 files changed, 10 insertions(+), 16 deletions(-)
+
+-- 
+2.7.0
