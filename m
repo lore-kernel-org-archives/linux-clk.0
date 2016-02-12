@@ -1,70 +1,97 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH 2/5] clk: sunxi: Make clocks setup functions take const
- pointer
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-   Mike Turquette <mturquette@baylibre.com>,
-   Stephen Boyd
- <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
-   heiko@sntech.de, Chen-Yu Tsai <wens@csie.org>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454402834-6385-3-git-send-email-maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56B09CF8.2020801@arm.com>
-Date: Tue, 2 Feb 2016 12:11:36 +0000
-MIME-Version: 1.0
-In-Reply-To: <1454402834-6385-3-git-send-email-maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:43623 "EHLO
+	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbcBLToU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2016 14:44:20 -0500
+Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in console
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Content-Type: text/plain; charset=utf-8
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <F7A2533A-D64C-4187-ABD4-416C446D1637@martin.sperl.org>
+Date: Fri, 12 Feb 2016 20:44:25 +0100
+Cc: Eric Anholt <eric@anholt.net>,
+	linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
+Message-Id: <6CD3FC59-BA17-43D9-897C-A2D122D26EF8@martin.sperl.org>
+References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org> <56BC895E.2010108@sperl.org> <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de> <662D2FB2-B088-4CFC-8416-A4F35BBAD7DD@sperl.org> <F7A2533A-D64C-4187-ABD4-416C446D1637@martin.sperl.org>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/02/16 08:47, Maxime Ripard wrote:
-> All the data structure that we pass to the clocks setup functions are
-> declared const, while our setup functions expects a regular pointer. This
-> was hidden by the fact that we cast a void * pointer back to these
-> structures, which made it go unnoticed.
-> 
-> Fix the functions prototype.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre.
-
-> ---
->  drivers/clk/sunxi/clk-sunxi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> On 12.02.2016, at 18:34, Martin Sperl <kernel@martin.sperl.org> wrote:
 > 
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 67ef94948544..a3d706f5b21c 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -616,7 +616,7 @@ static const struct mux_data sun8i_h3_ahb2_mux_data __initconst = {
->  };
->  
->  static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
-> -					       struct mux_data *data)
-> +					       const struct mux_data *data)
->  {
->  	struct clk *clk;
->  	const char *clk_name = node->name;
-> @@ -700,7 +700,7 @@ static const struct div_data sun4i_apb0_data __initconst = {
->  };
->  
->  static void __init sunxi_divider_clk_setup(struct device_node *node,
-> -					   struct div_data *data)
-> +					   const struct div_data *data)
->  {
->  	struct clk *clk;
->  	const char *clk_name = node->name;
-> @@ -810,7 +810,7 @@ static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
->   */
->  
->  static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
-> -						 struct divs_data *data)
-> +						 const struct divs_data *data)
->  {
->  	struct clk_onecell_data *clk_data;
->  	const char *parent;
+> The screen is still blinking and UART does not work.
+> Maybe the driver is not able to handle the “remapping”
+> of registers to a different range and is touching ram
+> used by the FW?
 > 
+> The only solution that I found is using fixed clocks
+> in the device-tree (which is not what we intended:
+> / {
+>                clk_uart0: clock@3 {
+>                        compatible = "fixed-clock";
+>                        reg = <3>;
+>                        #clock-cells = <0>;
+>                        clock-output-names = "uart0_pclk";
+>                        clock-frequency = <3000000>;
+>                };
+> 
+>                clk_apb_p: clock@4 {
+>                        compatible = "fixed-clock";
+>                        reg = <4>;
+>                        #clock-cells = <0>;
+>                        clock-output-names = "apb_pclk";
+>                        clock-frequency = <126000000>;
+>                };
+> };
+> &uart0 {
+>        clocks = <&clk_uart0 &clk_apb_p>;
+> };
+> 
+> (so I have ruled out that the amba-pl011 writes to
+> the wrong addresses).
+> 
+> So as far as I can tell it is only clock related
+> and when the new clock-framework is used it fails...
+
+So the issue is triggered as soon as the plld_per
+pll divider gets disabled/reenabled.
+
+This happens because the clk_hw.core.prepare_count
+drops down to 0 and then unprepare is called.
+
+So we need to increase the ref-count for the pll
+and pll_dividers to at least 1 so that these never
+get disabled - at least for now until we can come
+up with a better contract with the firmware.
+
+Obviously this may impact other drivers as well
+where a pll is used for the first time - if nothing
+else uses it and the clock gets released, then
+the clock would trigger a unprepare of the whole
+branch of the clock tree.
+
+The question is: how can we solve it in an acceptable
+manner?
+
+Do we need a driver that just holds a reference to
+those clocks? Or should we just prepare the clock
+after registering it in clk-bcm2835.c?
+
+As for why does this not show up when compiled in?
+It seems that in that case the amba_pl011 driver
+never gets removed and then probed again.
+
+This is possibly related to the optional use of DMA,
+with the amba-pl011 driver that retries the install,
+which is not supported on the bcm2835 - at least that
+is what the datasheet says. And DMA is (probably) not
+enabled during the early boot stages, so it does not
+fail once when it tries to register DMA.
+
+Thanks,
+	Martin
+
+
