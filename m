@@ -1,95 +1,39 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 11 Feb 2016 16:31:11 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] clk: qcom: gdsc: Add support for gdscs with gds
+ hw controller
+Message-ID: <20160212003111.GN30978@codeaurora.org>
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+ <1448986336-16846-3-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Russell King" <linux@arm.linux.org.uk>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
- <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
-Message-ID: <20160215221250.2278.79010@quark.deferred.io>
-Subject: Re: [PATCH 02/14] clkdev: Remove clk_register_clkdevs()
-Date: Mon, 15 Feb 2016 14:12:50 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448986336-16846-3-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stephen Boyd (2016-02-08 17:45:29)
-> Now that we've converted the only caller over to another clkdev
-> API, remove this one.
-> =
-
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Looks good to me.
-
-Regards,
-Mike
-
+On 12/01, Rajendra Nayak wrote:
+> Some gdsc power domains can have a gds_hw_controller block inside
+> to help ensure all slave devices within the power domain are idle
+> before the gdsc is actually switched off.
+> This is mainly useful in power domains which host a MMU, in which
+> case its necessary to make sure there are no outstanding MMU operations
+> or pending bus transactions before the power domain is turned off.
+> 
+> In gdscs with gds_hw_controller block, its necessary to check the
+> gds_hw_ctrl status bits instead of the ones in gdscr, to determine
+> the state of the powerdomain.
+> 
+> While at it, also move away from using jiffies and use ktime APIs
+> instead for busy looping on status bits.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
->  drivers/clk/clkdev.c   | 27 ---------------------------
->  include/linux/clkdev.h |  1 -
->  2 files changed, 28 deletions(-)
-> =
 
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index 779b6ff0c7ad..ae61f2e57048 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -383,30 +383,3 @@ int clk_register_clkdev(struct clk *clk, const char =
-*con_id,
->         return cl ? 0 : -ENOMEM;
->  }
->  EXPORT_SYMBOL(clk_register_clkdev);
-> -
-> -/**
-> - * clk_register_clkdevs - register a set of clk_lookup for a struct clk
-> - * @clk: struct clk to associate with all clk_lookups
-> - * @cl: array of clk_lookup structures with con_id and dev_id pre-initia=
-lized
-> - * @num: number of clk_lookup structures to register
-> - *
-> - * To make things easier for mass registration, we detect error clks
-> - * from a previous clk_register() call, and return the error code for
-> - * those.  This is to permit this function to be called immediately
-> - * after clk_register().
-> - */
-> -int clk_register_clkdevs(struct clk *clk, struct clk_lookup *cl, size_t =
-num)
-> -{
-> -       unsigned i;
-> -
-> -       if (IS_ERR(clk))
-> -               return PTR_ERR(clk);
-> -
-> -       for (i =3D 0; i < num; i++, cl++) {
-> -               cl->clk_hw =3D __clk_get_hw(clk);
-> -               __clkdev_add(cl);
-> -       }
-> -
-> -       return 0;
-> -}
-> -EXPORT_SYMBOL(clk_register_clkdevs);
-> diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-> index 08bffcc466de..43a8c2e8ac29 100644
-> --- a/include/linux/clkdev.h
-> +++ b/include/linux/clkdev.h
-> @@ -46,7 +46,6 @@ int clk_add_alias(const char *, const char *, const cha=
-r *, struct device *);
->  =
+Applied to clk-next
 
->  int clk_register_clkdev(struct clk *, const char *, const char *, ...)
->         __printf(3, 4);
-> -int clk_register_clkdevs(struct clk *, struct clk_lookup *, size_t);
->  =
-
->  #ifdef CONFIG_COMMON_CLK
->  int __clk_get(struct clk *clk);
-> -- =
-
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->=20
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
