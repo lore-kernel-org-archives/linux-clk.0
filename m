@@ -1,50 +1,52 @@
-Return-Path: <Joshua.Henderson@microchip.com>
-From: Joshua Henderson <joshua.henderson@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-mips@linux-mips.org>, <ralf@linux-mips.org>, Joshua Henderson
-	<joshua.henderson@microchip.com>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Purna Chandra Mandal <purna.mandal@microchip.com>, Rob Herring
-	<robh@kernel.org>, Sandeep Sheriker
-	<sandeepsheriker.mallikarjun@microchip.com>
-Subject: [PATCH v9 0/3] PIC32MZDA Clock Driver
-Date: Thu, 25 Feb 2016 11:07:50 -0700
-Message-ID: <1456423709-24145-1-git-send-email-joshua.henderson@microchip.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] first bunch of rockchip clock changes for 4.6
+Date: Fri, 12 Feb 2016 17:26:47 +0100
+Message-ID: <2084107.OlAREkXC0f@phil>
+In-Reply-To: <20160212151329.1685.89663@quark.deferred.io>
+References: <3862076.Cf1OAGsbuq@phil> <1494732.M6VqoIU5NQ@phil> <20160212151329.1685.89663@quark.deferred.io>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: joshua.henderson@microchip.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock bindings got acked and then essentially unacked, while the clock
-driver never made it upstream. In the meantime, the initial DTS file
-made it upstream. This latest patch series includes a patch to go back
-and correct the DTS files to reflect the new clock bindings in this
-patch series.
+Am Freitag, 12. Februar 2016, 07:13:29 schrieb Michael Turquette:
+> Quoting Heiko Stuebner (2016-02-12 03:39:43)
+> > Am Donnerstag, 11. Februar 2016, 18:19:36 schrieb Michael Turquette:
+> > > Quoting Heiko Stuebner (2016-02-11 05:00:02)
+> > > 
+> > > > Yakir Yang (1):
+> > > >       clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
+> > > >       hclk_vio_bus
+> > > 
+> > > Thanks for sending the very readable PR. One question below,
+> > > 
+> > > We'll likely have critical clock and handoff clock support merged in
+> > > the
+> > > next few days. I'm starting to audit any new CLK_IGNORE_UNUSED flag
+> > > usage to see if it should use either of those two flags. Is the above
+> > > patch a candidate?
+> > 
+> > the above clock is part of the interconnect. We don't model that yet,
+> > but I guess that would make it more a candidate for the handoff-type
+> > instead.
+> > 
+> > I'd guess for the Rockchip side, everything that is CLK_IGNORE_UNUSED
+> > should be the handoff type (leaf-clocks used by some component we don't
+> > control yet).
+> > 
+> > The clocks we already register as critical most likely are the ones that
+> > should be critical, as they are central clocks where it causes havok
+> > when
+> > they get disabled :-) .
+> 
+> OK. It sounds like you might go back and clean up these clocks to use
+> the new infrastructure once it gets merged,
 
-Purna Chandra Mandal (3):
-  dt/bindings: Add PIC32 clock binding documentation
-  clk: clk-pic32: Add PIC32 clock driver
-  MIPS: dts: pic32: Update dts to reflect new PIC32MZDA clk binding
+that has always be the plan ;-) .
 
- .../devicetree/bindings/clock/microchip,pic32.txt  |   39 +
- arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi        |  236 -----
- arch/mips/boot/dts/pic32/pic32mzda.dtsi            |   63 +-
- arch/mips/boot/dts/pic32/pic32mzda_sk.dts          |    5 +-
- drivers/clk/Kconfig                                |    3 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/microchip/Makefile                     |    2 +
- drivers/clk/microchip/clk-core.c                   |  954 ++++++++++++++++++++
- drivers/clk/microchip/clk-core.h                   |   78 ++
- drivers/clk/microchip/clk-pic32mzda.c              |  269 ++++++
- include/dt-bindings/clock/microchip,pic32-clock.h  |   42 +
- 11 files changed, 1433 insertions(+), 259 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
- delete mode 100644 arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi
- create mode 100644 drivers/clk/microchip/Makefile
- create mode 100644 drivers/clk/microchip/clk-core.c
- create mode 100644 drivers/clk/microchip/clk-core.h
- create mode 100644 drivers/clk/microchip/clk-pic32mzda.c
- create mode 100644 include/dt-bindings/clock/microchip,pic32-clock.h
+> so I'll go ahead and pull this tag now.
 
---
-1.7.9.5
+thanks, that will make life a bit easier when I don't have to rip the branch 
+apart again, but can do the conversion on top.
