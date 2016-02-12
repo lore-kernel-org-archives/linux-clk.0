@@ -1,103 +1,94 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 10 Feb 2016 16:23:49 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
-Message-ID: <20160210162349.GJ3782@x1>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
- <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3 2/2] clk: mvebu: Move corediv config to mvebu config
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
+Date: Fri, 12 Feb 2016 17:28:37 +0100
+In-Reply-To: <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
+	(Kevin Smith's message of "Thu, 11 Feb 2016 16:54:00 +0000")
+Message-ID: <87r3ghx58q.fsf@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 08 Feb 2016, Stephen Boyd wrote:
+Hi Kevin,
+=20
+ On jeu., f=C3=A9vr. 11 2016, Kevin Smith <kevin.smith@elecsyscorp.com> wro=
+te:
 
-> Convert this driver to use clkdev_create() instead of
-> clk_register_clkdevs(). The latter API is only used by this driver,
-> although this driver only allocates one clk to add anyway.
-> Furthermore, this driver allocates the clk_lookup structure with
-> devm, but clkdev_drop() will free that structure when passed,
-> leading to a double free when this driver is removed. Clean it
-> all up and pave the way for the removal of clk_register_clkdevs().
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> The core clock does not depend on corediv, so enabling corediv
+> based on the clock is not really correct.  Move the corediv
+> config option from the clock driver Kconfig to the mvebu Kconfig
+> so that it can be enabled by the MACH option instead.
+>
+> This also enables corediv on Armada 375 and 38X, which was
+> previously missing.
+>
+> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+
+Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+
+Thanks,
+
+Gregory
+
 > ---
->  drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
->  1 file changed, 9 insertions(+), 17 deletions(-)
+>  arch/arm/mach-mvebu/Kconfig | 3 +++
+>  drivers/clk/mvebu/Kconfig   | 1 -
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+> index 64e3d2c..71e97da 100644
+> --- a/arch/arm/mach-mvebu/Kconfig
+> +++ b/arch/arm/mach-mvebu/Kconfig
+> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
+>  	select CPU_PJ4B
+>  	select MACH_MVEBU_V7
+>  	select PINCTRL_ARMADA_370
+> +	select MVEBU_CLK_COREDIV
+>  	help
+>  	  Say 'Y' here if you want your kernel to support boards based
+>  	  on the Marvell Armada 370 SoC with device tree.
+> @@ -48,6 +49,7 @@ config MACH_ARMADA_375
+>  	select HAVE_SMP
+>  	select MACH_MVEBU_V7
+>  	select PINCTRL_ARMADA_375
+> +	select MVEBU_CLK_COREDIV
+>  	help
+>  	  Say 'Y' here if you want your kernel to support boards based
+>  	  on the Marvell Armada 375 SoC with device tree.
+> @@ -64,6 +66,7 @@ config MACH_ARMADA_38X
+>  	select HAVE_SMP
+>  	select MACH_MVEBU_V7
+>  	select PINCTRL_ARMADA_38X
+> +	select MVEBU_CLK_COREDIV
+>  	help
+>  	  Say 'Y' here if you want your kernel to support boards based
+>  	  on the Marvell Armada 380/385 SoC with device tree.
+> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+> index e1bc567..eaee8f0 100644
+> --- a/drivers/clk/mvebu/Kconfig
+> +++ b/drivers/clk/mvebu/Kconfig
+> @@ -11,7 +11,6 @@ config ARMADA_370_CLK
+>  	bool
+>  	select MVEBU_CLK_COMMON
+>  	select MVEBU_CLK_CPU
+> -	select MVEBU_CLK_COREDIV
+>=20=20
+>  config ARMADA_375_CLK
+>  	bool
+> --=20
+> 2.4.6
 
-I never much liked this code [0]
-
-Glad for it to be simplified.
-
-Applied, thanks.
-
-[0] https://lkml.org/lkml/2014/11/25/845
-
-> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-> index 042137465300..bdc5e27222c0 100644
-> --- a/drivers/mfd/intel_quark_i2c_gpio.c
-> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
-> @@ -52,8 +52,6 @@
->  /* The Quark I2C controller source clock */
->  #define INTEL_QUARK_I2C_CLK_HZ	33000000
->  
-> -#define INTEL_QUARK_I2C_NCLK	1
-> -
->  struct intel_quark_mfd {
->  	struct pci_dev		*pdev;
->  	struct clk		*i2c_clk;
-> @@ -128,30 +126,24 @@ MODULE_DEVICE_TABLE(pci, intel_quark_mfd_ids);
->  static int intel_quark_register_i2c_clk(struct intel_quark_mfd *quark_mfd)
->  {
->  	struct pci_dev *pdev = quark_mfd->pdev;
-> -	struct clk_lookup *i2c_clk_lookup;
->  	struct clk *i2c_clk;
-> -	int ret;
-> -
-> -	i2c_clk_lookup = devm_kcalloc(&pdev->dev, INTEL_QUARK_I2C_NCLK,
-> -				      sizeof(*i2c_clk_lookup), GFP_KERNEL);
-> -	if (!i2c_clk_lookup)
-> -		return -ENOMEM;
-> -
-> -	i2c_clk_lookup[0].dev_id = INTEL_QUARK_I2C_CONTROLLER_CLK;
->  
->  	i2c_clk = clk_register_fixed_rate(&pdev->dev,
->  					  INTEL_QUARK_I2C_CONTROLLER_CLK, NULL,
->  					  CLK_IS_ROOT, INTEL_QUARK_I2C_CLK_HZ);
-> +	if (IS_ERR(i2c_clk))
-> +		return PTR_ERR(i2c_clk);
->  
-> -	quark_mfd->i2c_clk_lookup = i2c_clk_lookup;
->  	quark_mfd->i2c_clk = i2c_clk;
-> +	quark_mfd->i2c_clk_lookup = clkdev_create(i2c_clk, NULL,
-> +						INTEL_QUARK_I2C_CONTROLLER_CLK);
->  
-> -	ret = clk_register_clkdevs(i2c_clk, i2c_clk_lookup,
-> -				   INTEL_QUARK_I2C_NCLK);
-> -	if (ret)
-> -		dev_err(&pdev->dev, "Fixed clk register failed: %d\n", ret);
-> +	if (!quark_mfd->i2c_clk_lookup) {
-> +		dev_err(&pdev->dev, "Fixed clk register failed\n");
-> +		return -ENOMEM;
-> +	}
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static void intel_quark_unregister_i2c_clk(struct pci_dev *pdev)
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
