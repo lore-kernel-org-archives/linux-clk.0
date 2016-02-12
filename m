@@ -1,76 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:49673 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753594AbcBXKSg (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 24 Feb 2016 05:18:36 -0500
-From: Yakir Yang <ykk@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 4/4] clk: rockchip: set the clock ids for RK3228 HDMI
-Date: Wed, 24 Feb 2016 18:16:28 +0800
-Message-Id: <1456308988-30974-1-git-send-email-ykk@rock-chips.com>
-In-Reply-To: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
-References: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Antony Pavlov <antonynpavlov@gmail.com>,  linux-mips@linux-mips.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455005641-7079-2-git-send-email-antonynpavlov@gmail.com>
+Cc: "Marek Vasut" <marex@denx.de>, "Wills Wang" <wills.wang@live.com>,
+ "Daniel Schwierzeck" <daniel.schwierzeck@gmail.com>,
+ "Alban Bedel" <albeu@free.fr>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Rob Herring" <robh+dt@kernel.org>, "Paul Burton" <paul.burton@imgtec.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <1455005641-7079-1-git-send-email-antonynpavlov@gmail.com>
+ <1455005641-7079-2-git-send-email-antonynpavlov@gmail.com>
+Message-ID: <20160212022124.3210.30707@quark.deferred.io>
+Subject: Re: [RFC v5 01/15] WIP: clk: add Atheros AR933X SoCs clock driver
+Date: Thu, 11 Feb 2016 18:21:24 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3228.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Quoting Antony Pavlov (2016-02-09 00:13:47)
+> +static void __init ar9130_init(struct device_node *np)
+> +{
+> +       int retval;
+> +       struct ath79_cblk *cblk;
+> +
+> +       cblk =3D ath79_cblk_new(ar9331_clocks, ARRAY_SIZE(ar9331_clocks),=
+ np);
+> +       if (!cblk) {
+> +               pr_err("%s: failed to initialise clk block\n", __func__);
+> +               return;
+> +       }
+> +
+> +       retval =3D ath79_cblk_register_clocks(cblk);
+> +       if (retval)
+> +               pr_err("%s: failed to register clocks\n", __func__);
+> +}
+> +CLK_OF_DECLARE(ar933x_clk, "qca,ar9330-pll", ar9130_init);
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 8747b25..a8a6be2 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -285,7 +285,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(23), 14, 2, MFLAGS, 8, 6, DFLAGS,
- 			RK2928_CLKGATE_CON(3), 5, GFLAGS),
- 
--	GATE(0, "sclk_hdmi_hdcp", "xin24m", 0,
-+	GATE(SCLK_HDMI_HDCP, "sclk_hdmi_hdcp", "xin24m", 0,
- 			RK2928_CLKGATE_CON(3), 7, GFLAGS),
- 
- 	COMPOSITE(0, "sclk_hdmi_cec", mux_sclk_hdmi_cec_p, 0,
-@@ -364,7 +364,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKGATE_CON(3), 1, GFLAGS),
- 	MUX(0, "sclk_vop_src", mux_sclk_vop_src_p, 0,
- 			RK2928_CLKSEL_CON(27), 0, 1, MFLAGS),
--	DIV(0, "dclk_hdmiphy", "sclk_vop_src", 0,
-+	DIV(DCLK_HDMI_PHY, "dclk_hdmiphy", "sclk_vop_src", 0,
- 			RK2928_CLKSEL_CON(29), 0, 3, DFLAGS),
- 	DIV(0, "sclk_vop_pre", "sclk_vop_src", 0,
- 			RK2928_CLKSEL_CON(27), 8, 8, DFLAGS),
-@@ -517,7 +517,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(0, "hclk_vop_noc", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 13, GFLAGS),
- 	GATE(0, "hclk_vio_h2p", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 7, GFLAGS),
- 	GATE(0, "hclk_hdcp_mmu", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 12, GFLAGS),
--	GATE(0, "pclk_hdmi_ctrl", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 6, GFLAGS),
-+	GATE(PCLK_HDMI_CTRL, "pclk_hdmi_ctrl", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 6, GFLAGS),
- 	GATE(0, "pclk_vio_h2p", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 8, GFLAGS),
- 	GATE(0, "pclk_hdcp", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 11, GFLAGS),
- 
-@@ -590,7 +590,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 
- 	GATE(0, "pclk_ddrphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 3, GFLAGS),
- 	GATE(0, "pclk_acodecphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 5, GFLAGS),
--	GATE(0, "pclk_hdmiphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 7, GFLAGS),
-+	GATE(PCLK_HDMI_PHY, "pclk_hdmiphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 7, GFLAGS),
- 	GATE(0, "pclk_vdacphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 8, GFLAGS),
- 	GATE(0, "pclk_phy_noc", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 9, GFLAGS),
- 
--- 
-1.9.1
+Is there any reason this isn't a platform_driver?
 
-
+Thanks,
+Mike
