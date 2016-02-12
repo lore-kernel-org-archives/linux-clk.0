@@ -1,71 +1,62 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: stigge@antcom.de,
-	vz@mleia.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2] clk: lpc32xx: fix compilation warning
-Date: Tue, 23 Feb 2016 14:56:09 -0500
-Message-Id: <1456257369-22342-1-git-send-email-slemieux.tyco@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160204080109.GA4270@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
+ <20160202131725.GQ4652@lukather> <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
+ <20160204080109.GA4270@lukather>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Date: Fri, 12 Feb 2016 13:24:39 +0800
+Message-ID: <CAEzqOZsCkGDxma77H0Te+9PLau6Ybu19cdG_yNTiEhEbwQQrhw@mail.gmail.com>
+Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sylvain Lemieux <slemieux@tycoint.com>
+Hello Maxime,
 
-Remove the following false positives compilation warning:
-- drivers/clk/nxp/clk-lpc32xx.c: In function 'lpc32xx_clk_register':
-  warning: 'hw' may be used uninitialized in this function [-Wmaybe-uninitialized]
-- drivers/clk/nxp/clk-lpc32xx.c: In function 'clk_hclk_pll_round_rate':
-  warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  warning: 'n' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-Tested using gcc version 4.7.3.
-
-Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
----
-Changes from v1 to v2:
-* Update the patch as per the feedback received from:
-  - Vladimir: http://permalink.gmane.org/gmane.linux.kernel.clk/4315
-    initialize to 0 or NULL instead of using "uninitialized_var".
-  - Stephen: http://permalink.gmane.org/gmane.linux.kernel.clk/4331
-    return an error pointer if type does not match in the if/else.
-
- drivers/clk/nxp/clk-lpc32xx.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 48b3a11..7f1712a 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -588,7 +588,8 @@ static long clk_hclk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long *parent_rate)
- {
- 	struct lpc32xx_pll_clk *clk = to_lpc32xx_pll_clk(hw);
--	u64 m_i, m, n, p, o = rate, i = *parent_rate, d = (u64)rate << 6;
-+	u64 m_i, o = rate, i = *parent_rate, d = (u64)rate << 6;
-+	u64 m = 0, n = 0, p = 0;
- 	int p_i, n_i;
- 
- 	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
-@@ -1414,7 +1415,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
- 			.flags = lpc32xx_clk->flags,
- 			.ops = clk_hw->hw0.ops,
- 		};
--		struct clk_hw *hw;
-+		struct clk_hw *hw = NULL;
- 
- 		if (clk_hw->type == CLK_LPC32XX)
- 			hw = &clk_hw->hw0.clk.hw;
-@@ -1428,6 +1429,8 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
- 			hw = &clk_hw->hw0.div.hw;
- 		else if (clk_hw->type == CLK_GATE)
- 			hw = &clk_hw->hw0.gate.hw;
-+		else
-+			return ERR_PTR(-EINVAL);
- 
- 		hw->init = &clk_init;
- 		clk = clk_register(NULL, hw);
--- 
-1.8.3.1
+On Thu, Feb 4, 2016 at 4:01 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Thu, Feb 04, 2016 at 02:06:45PM +0800, Vishnu Patekar wrote:
+>> Hello Maxime,
+>>
+>>
+>> On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > Hi,
+>> >
+>> > On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
+>> >> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+>> >> clock index 0b1x is PLL6.
+>> >>
+>> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> >
+>> > If the clock is the same but the parents are different, then we don't
+>> > need to duplicate all the logic. Simply add the number of parents to
+>> > mux_data, and you're all set.
+>>
+>> Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
+>> 0b10 and 0b11 is pll6/pre_div.
+>> So, just adding number of parents to mux_data will not solve problem.
+>
+> Is anyone using 0b11 ? Can't we just ignore it?
+Yes, it's used, 0b11 is pll6 parent in case of A31.
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
