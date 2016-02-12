@@ -1,95 +1,74 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	heiko@sntech.de,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	keescook@google.com,
-	linux-kernel@vger.kernel.org,
-	jeffy.chen@rock-chips.com,
-	leozwang@google.com,
-	zhengxing <zhengxing@rock-chips.com>,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH v5 2/8] clk: rockchip: rk3036: fix and add node id for emac clock
-Date: Tue,  2 Feb 2016 11:48:19 +0800
-Message-Id: <1454384899-7270-1-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1454384032-6794-1-git-send-email-wxt@rock-chips.com>
-References: <1454384032-6794-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Fri, 12 Feb 2016 08:06:20 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+	rklein@nvidia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v42 0/6] critical clocks and handoff clocks
+Message-ID: <20160212080620.GM20693@x1>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: zhengxing <zhengxing@rock-chips.com>
+On Thu, 11 Feb 2016, Michael Turquette wrote:
 
-In the emac driver, we need to refer HCLK_MAC since there are
-only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under the
-GPLL, and it is unable to provide the accurate rate for mac_ref which
-need to 50MHz probability, we should let it under the DPLL and are
-able to set the freq which integer multiples of 50MHz, so we add these
-emac node for reference.
+> This series combines Lee's critical clock patches[0] plus some small
+> fixes and changes with a repost of my handoff clock patches[1]. Both
+> features are enabled by setting new flags on static clock data within
+> clock provider drivers.
+> 
+> In addition, there is a new function for setting the CLK_IS_CRITICAL
+> flag based on the presence of the clock-critical Device Tree property.
+> This DT property is not a part of the common-clock binding and must be
+> enabled on a per-binding basis (including adding that property to the
+> machine-specific binding description). Likewise the new function,
+> of_clk_detect_critical() must be called by either the clock provider
+> driver's probe or OF_CLK_DECLARE setup function.
+> 
+> [0] https://lkml.org/lkml/2016/1/18/272
+> [1] http://www.gossamer-threads.com/lists/linux/kernel/2234337
+> 
+> Lee Jones (3):
+>   clk: Allow clocks to be marked as CRITICAL
+>   clk: WARN_ON about to disable a critical clock
+>   clk: Provide OF helper to mark clocks as CRITICAL
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+One small issue which I've commented on already, but appart from that:
 
----
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Changes in v5: None
-Changes in v4:
-- fix the commit, pick up from the
-  https://patchwork.kernel.org/patch/7976631/.
-- The emac parent shouldn't depend on the APLL. instead of DPLL.
+W00t, finally!  I'm so happy I could kiss you (but I can't due to that
+legal injunction you have out on me that says I can't come within 100m
+of you). ;)
 
- drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
- include/dt-bindings/clock/rk3036-cru.h | 2 ++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+Let's get this sucker in. :)
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index be71a41..701f702 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -343,8 +343,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
- 
--	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
--			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-+	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
-+			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
-+	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
-+			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
-+
- 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
- 
-@@ -404,7 +407,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
- 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
- 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
--	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
-+	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
- 
- 	/* pclk_peri gates */
- 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
-diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
-index ebc7a7b..de44109 100644
---- a/include/dt-bindings/clock/rk3036-cru.h
-+++ b/include/dt-bindings/clock/rk3036-cru.h
-@@ -54,6 +54,7 @@
- #define SCLK_PVTM_VIDEO		125
- #define SCLK_MAC		151
- #define SCLK_MACREF		152
-+#define SCLK_MACPLL		153
- #define SCLK_SFC		160
- 
- /* aclk gates */
-@@ -92,6 +93,7 @@
- #define HCLK_SDMMC		456
- #define HCLK_SDIO		457
- #define HCLK_EMMC		459
-+#define HCLK_MAC		460
- #define HCLK_I2S		462
- #define HCLK_LCDC		465
- #define HCLK_ROM		467
+> Michael Turquette (3):
+>   clk: per-user clk prepare & enable ref counts
+>   clk: clk_put WARNs if user has not disabled clk
+>   clk: introduce CLK_ENABLE_HAND_OFF flag
+> 
+>  drivers/clk/clk.c            | 127 +++++++++++++++++++++++++++++++++++++++++--
+>  include/linux/clk-provider.h |  12 +++-
+>  2 files changed, 134 insertions(+), 5 deletions(-)
+
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
