@@ -1,85 +1,101 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	uclinux-h8-devel@lists.sourceforge.jp,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Tero Kristo <t-kristo@ti.com>,
-	Felipe Balbi <balbi@ti.com>,
-	linux-usb@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-fbdev@vger.kernel.org
-Subject: [PATCH 0/9] Change return type of of_clk_get_parent_count() to unsigned
-Date: Mon, 22 Feb 2016 12:54:38 -0800
-Message-Id: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [linux-sunxi] [RFC PATCH 0/4] clk: sunxi: fix DT compatibility
+ issues
+To: andre.przywara@arm.com, Maxime Ripard <maxime.ripard@free-electrons.com>,
+        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>
+References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <rob.herring@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <56BE29A1.3060107@redhat.com>
+Date: Fri, 12 Feb 2016 19:51:13 +0100
+MIME-Version: 1.0
+In-Reply-To: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Russell King recently pointed out that of_clk_get_parent_count() can
-return a negative number if the "clocks" property isn't present in a
-node. Upon investigating all the callers of this API, none of the them
-seem to care about that case, and furthermore some callers are assigning
-the return value to an unsigned int which could cause very large numbers
-of parents to be used.
+Hi,
 
-This series changes the API to return an unsigned int from 0 (no parents)
-to N, thereby avoiding any problems with negative return values.
+So far I've stayed out of this discussion, but now I feel I have to
+weigh in:
 
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: <uclinux-h8-devel@lists.sourceforge.jp>
-Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org> 
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Felipe Balbi <balbi@ti.com>
-Cc: <linux-usb@vger.kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: <linux-fbdev@vger.kernel.org>
+There is no need for this series, device-tree compatibility for
+sunxi devices is a non issue. No devices ship with dtb files as
+part of the bootloader / firmware (the vendor kernels do not
+use dtb at all).
 
-Stephen Boyd (9):
-  clk: Make of_clk_get_parent_count() return unsigned ints
-  clk: at91: Remove impossible checks for of_clk_get_parent_count()
-  clk: gpio: Remove impossible check for of_clk_get_parent_count() < 0
-  clk: h8300: Remove impossible check for of_clk_get_parent_count()
-  clk: st: Remove impossible check for of_clk_get_parent_count() < 0
-  clk: sunxi: Use proper type for of_clk_get_parent_count() return value
-  clk: ti: Update for of_clk_get_parent_count() returning unsigned int
-  usb: dwc3: Remove impossible check for of_clk_get_parent_count() < 0
-  simplefb: Remove impossible check for of_clk_get_parent_count() < 0
+So we always are using a dtb from the kernel tree, and both Fedora
+and Debian (AFAIK), the 2 distros which ship with more or less official
+sunxi support package things so that each kernel version uses the dtb
+files compiled from the dts shipped with that exact kernel version,
+(through the ftddir directive in extlinux.conf, which is per menu
+entry / kernel version) even if multiple kernel versions are installed.
 
- drivers/clk/at91/clk-generated.c    |  4 ++--
- drivers/clk/at91/clk-main.c         |  4 ++--
- drivers/clk/at91/clk-master.c       |  4 ++--
- drivers/clk/at91/clk-programmable.c |  4 ++--
- drivers/clk/at91/clk-slow.c         |  6 +++---
- drivers/clk/at91/clk-smd.c          |  4 ++--
- drivers/clk/at91/clk-usb.c          |  4 ++--
- drivers/clk/clk-gpio.c              |  6 ++----
- drivers/clk/clk.c                   | 16 ++++++++++++++--
- drivers/clk/h8300/clk-div.c         |  4 ++--
- drivers/clk/h8300/clk-h8s2678.c     |  4 ++--
- drivers/clk/st/clk-flexgen.c        |  4 ++--
- drivers/clk/st/clkgen-mux.c         |  4 ++--
- drivers/clk/sunxi/clk-sun6i-ar100.c |  2 +-
- drivers/clk/ti/clockdomain.c        |  2 +-
- drivers/clk/ti/composite.c          |  8 ++++----
- drivers/clk/ti/dpll.c               |  2 +-
- drivers/clk/ti/mux.c                |  4 ++--
- drivers/usb/dwc3/dwc3-of-simple.c   |  9 +++++----
- drivers/video/fbdev/simplefb.c      |  4 ++--
- include/linux/clk-provider.h        |  2 +-
- 21 files changed, 56 insertions(+), 45 deletions(-)
+So there is no reason, no reason at all to worry too much about dtb
+compatibility for sunxi devices.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+As for compatibility with u-boot, u-boot ships with its own embedded
+dtb copy, which is based on dts files from the kernel (the u-boot copies
+get synced regularly), and even if this dtb were to somehow be replaced
+by a new "incompatible" dtb from a newer kernel there would still not
+be a problem as u-boot does not (currently) use the clk definitions
+from the dtb. Note I'm the u-boot sunxi custodian and I'm fine with
+the proposed changes.
+
+TL;DR: NACK for this series.
+
+Regards,
+
+Hans
+
+
+
+On 12-02-16 18:59, Andre Przywara wrote:
+> Commit f7d372ba54ea ("clk: sunxi: Refactor A31 PLL6 so that it can be
+> reused") (in -next) made the A31 PLL6 clock driver more generic, so
+> that it can drive the PLL8 clock in newer SoCs too.
+> However the patch broke compatibility with older DTs, which this
+> series tries to fix.
+> The approach chosen here is to bring back the old driver under its
+> old name, while letting the new driver using a different name to be
+> able to tell them apart.
+> The old driver should be somewhat deprecated and not used in new DTs
+> anymore.
+> The slight disadvantage is that there are now two drivers and two
+> compatible names for the same hardware (the PLL6 clock), I am not
+> sure if this is frowned upon or can be tolerated since the new driver
+> is more generic (drives PLL8 as well) and makes the old one obsolete.
+> We just need to keep it for compatibility.
+>
+> The naming for both the functions and compatible names is probably
+> wrong, I am relying on more sunxi - experienced people here to
+> suggest better identifiers.
+>
+> This is only one possible approach to fix this issues, so I am open
+> to any kind of discussion.
+>
+> The series is made on top of Maxime's sunxi/for-next branch, so it
+> somehow reverts the change in question. I am happy to rebase it on
+> any branch people tell me.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>
+> Andre Przywara (4):
+>    clk: sunxi: rename new sun6i_a31_pll6 clock to sun6i_a31_pll clock
+>    clk: sunxi: re-add old sun6i_a31_pll6 clock
+>    clk: sunxi: revert .dtsi changes for DTs with a sun6i_a31_pll6 clock
+>    DT: Allwinner H3: fix PLL8 clock
+>
+>   Documentation/devicetree/bindings/clock/sunxi.txt |  2 +-
+>   arch/arm/boot/dts/sun6i-a31.dtsi                  | 36 ++++++++---------
+>   arch/arm/boot/dts/sun8i-a23-a33.dtsi              | 25 ++++--------
+>   arch/arm/boot/dts/sun8i-a23.dtsi                  |  2 +-
+>   arch/arm/boot/dts/sun8i-a33.dtsi                  |  4 +-
+>   arch/arm/boot/dts/sun8i-h3.dtsi                   | 31 +++++---------
+>   drivers/clk/sunxi/clk-sunxi.c                     | 49 ++++++++++++++++++++---
+>   7 files changed, 84 insertions(+), 65 deletions(-)
+>
