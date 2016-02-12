@@ -1,41 +1,70 @@
-Return-Path: <moinejf@free.fr>
-Date: Sat, 6 Feb 2016 10:37:51 +0100
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
- Lopez <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] clk: sunxi: Add sun6i/8i video support
-Message-Id: <20160206103751.eb21edf56ddc6ef7c27907f0@free.fr>
-In-Reply-To: <20160205093915.GF1139@lukather>
-References: <cover.1454435944.git.moinejf@free.fr>
-	<3c0e2cdea659e9e682f80ecf42b252c740095f15.1454435944.git.moinejf@free.fr>
-	<20160205093915.GF1139@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1494732.M6VqoIU5NQ@phil>
+Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <3862076.Cf1OAGsbuq@phil> <20160212021936.3210.79199@quark.deferred.io>
+ <1494732.M6VqoIU5NQ@phil>
+Message-ID: <20160212151329.1685.89663@quark.deferred.io>
+Subject: Re: [GIT PULL] first bunch of rockchip clock changes for 4.6
+Date: Fri, 12 Feb 2016 07:13:29 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 5 Feb 2016 10:39:15 +0100
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Quoting Heiko Stuebner (2016-02-12 03:39:43)
+> Hi Mike,
+> =
 
-> > +CLK_OF_DECLARE(sun6i_display, "allwinner,sun6i-display-clk", sun6i_dis=
-play_setup);
->=20
-> Please use the display driver from my DRM serie, it covers everything
-> you need here.
+> Am Donnerstag, 11. Februar 2016, 18:19:36 schrieb Michael Turquette:
+> > Quoting Heiko Stuebner (2016-02-11 05:00:02)
+> > =
 
-If you give me a pointer, I will have a look.
+> > > Yakir Yang (1):
+> > >       clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
+> > >       hclk_vio_bus
+> > =
 
-> > +CLK_OF_DECLARE(sun6i_pll3, "allwinner,sun6i-pll3-clk", sun6i_pll3_setu=
-p);
->=20
-> And please use the clk-factors code here.
+> > Thanks for sending the very readable PR. One question below,
+> > =
 
-I don't see how I can get direct 297MHz and 270MHz in fractional mode
-with that code.
+> > We'll likely have critical clock and handoff clock support merged in the
+> > next few days. I'm starting to audit any new CLK_IGNORE_UNUSED flag
+> > usage to see if it should use either of those two flags. Is the above
+> > patch a candidate?
+> =
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+> the above clock is part of the interconnect. We don't model that yet, but=
+ I =
+
+> guess that would make it more a candidate for the handoff-type instead.
+> =
+
+> I'd guess for the Rockchip side, everything that is CLK_IGNORE_UNUSED sho=
+uld =
+
+> be the handoff type (leaf-clocks used by some component we don't control =
+
+> yet). =
+
+> =
+
+> The clocks we already register as critical most likely are the ones that =
+
+> should be critical, as they are central clocks where it causes havok when =
+
+> they get disabled :-) .
+
+OK. It sounds like you might go back and clean up these clocks to use
+the new infrastructure once it gets merged, so I'll go ahead and pull
+this tag now.
+
+Thanks,
+Mike
+
+> =
+
+> =
+
+> Heiko
