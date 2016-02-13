@@ -1,81 +1,47 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 0/8] clk: bcm2835: add most missing clocks of bcm2835
-Date: Mon, 29 Feb 2016 15:43:54 +0000
-Message-Id: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Feb 2016 17:18:55 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
+	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+	rklein@nvidia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v42 5/6] clk: clk_put WARNs if user has not disabled clk
+Message-ID: <20160213011855.GL4847@codeaurora.org>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+ <1455225554-13267-6-git-send-email-mturquette@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455225554-13267-6-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On 02/11, Michael Turquette wrote:
+> >From the clk_put kerneldoc in include/linux/clk.h:
+> 
+> """
+> Note: drivers must ensure that all clk_enable calls made on this clock
+> source are balanced by clk_disable calls prior to calling this function.
+> """
+> 
+> The common clock framework implementation of the clk.h api has per-user
+> reference counts for calls to clk_prepare and clk_disable. As such it
+> can enforce the requirement to properly call clk_disable and
+> clk_unprepare before calling clk_put.
+> 
+> Because this requirement is probably violated in many places, this patch
+> starts with a simple warning. Once offending code has been fixed this
+> check could additionally release the reference counts automatically.
 
-Add a graphviz dot file containing the (currently) best known
-representation of the bcm2835 clock tree.
-This information has mostly been gleaned/guessed from the headerfiles
-that broadcom shared for VideoCore4 at:
-http://www.broadcom.com/docs/support/videocore/Brcm_Android_ICS_Graphics_Stack.tar.gz
+Do we have any fixes for pm code in the works? I'm worried we're
+going to be giving a warning and nobody will fix them or has a
+plan to fix them.
 
-These headers have been transformed and the extracted information
-is more easily consumable at:
-*  https://github.com/msperl/rpi-registers/blob/master/md/Region_A2W.md
-*  https://github.com/msperl/rpi-registers/blob/master/md/Region_CM.md
+> 
+> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+> ---
 
-Based on this information most of the missing clocks
-are added in separate patches with logical grouping:
-* pll-divider
-* oscillator and peripherial clocks
-* camera
-* dsi/display
-* arm
-* gate clocks
-* testdebug clock generator clocks
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Note that the biggest possible problem can be identification of
-the correct parent clocks for the relevant muxes.
-
-The patches try to be conservative using only the "standard" pattern
-(=osc clocks) where it seems a new mux is used for a specific clock(group).
-It would be helpfull if someone with access to the HW documentation
-can report the actual parents that are used so that the parents can get
-corrected.
-
-Having all those clocks in place should reduce the risk
-that we disable another pll used by the firmware,
-which can bring down the system
-See: "clk: bcm2835: enable clocks that have been enabled by firmware"
-
-Note that this patchset (except for the graphviz file)
-requires at least the following patches from the new clock
-initialization patch-set to be applied:
-  clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
-  clk: bcm2835: reorganize bcm2835_clock_array assignment
-
-Martin Sperl (8):
-  clk: bcm2835: documenentation: add graphiz bcm2835 clock tree
-  clk: bcm2835: add missing PLL clock divider
-  clk: bcm2835: add missing osc and per clocks
-  clk: bcm2835: add the camera related clocks cam0, cam1 and ccp2
-  clk: bcm2835: add the dsi clocks
-  clk: bcm2835: add arm clock
-  clk: bcm2835: add gates that require PM_DEBUG to be set
-  clk: bcm2835: add the testdebug clock generators
-
- Documentation/clk/bcrm,bcm2835-clock-tree.dot |  350 +++++++++++++++++++++++++
- drivers/clk/bcm/clk-bcm2835.c                 |  329 ++++++++++++++++++++++-
- include/dt-bindings/clock/bcm2835.h           |   30 +++
- 3 files changed, 708 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/clk/bcrm,bcm2835-clock-tree.dot
-
---
-1.7.10.4
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
