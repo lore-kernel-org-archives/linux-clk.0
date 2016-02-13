@@ -1,43 +1,41 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 6/6] soc: rockchip: power-domain: check the existing of regmap
-Date: Mon, 15 Feb 2016 11:33:57 +0800
-Message-Id: <1455507237-13161-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Feb 2016 17:09:41 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
+	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+	rklein@nvidia.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v42 3/6] clk: Provide OF helper to mark clocks as CRITICAL
+Message-ID: <20160213010941.GH4847@codeaurora.org>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+ <1455225554-13267-4-git-send-email-mturquette@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455225554-13267-4-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Check return value of syscon_node_to_regmap for
-rockchip_pm_domain_probe. If err value is returned, probe
-procedure should abort.
+On 02/11, Michael Turquette wrote:
+> +int of_clk_mark_if_critical(struct device_node *np,
+> +					  int index, unsigned long *flags)
+> +{
+> +	struct property *prop;
+> +	const __be32 *cur;
+> +	uint32_t idx;
+> +
+> +	if (!np || !flags)
+> +		return -EINVAL;
+> +
+> +	of_property_for_each_u32(np, "clock-critical", prop, cur, idx)
+> +		if (index == idx)
+> +			*flags |= CLK_IS_CRITICAL;
+> +
+> +	return 0;
+> +}
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+I hope we don't have to export this to modules...
 
- drivers/soc/rockchip/pm_domains.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 534c589..3c4a44d 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -402,6 +402,10 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
- 	}
- 
- 	pmu->regmap = syscon_node_to_regmap(parent->of_node);
-+	if (IS_ERR(pmu->regmap)) {
-+		dev_err(dev, "no regmap available\n");
-+		return -ENODEV;
-+	}
- 
- 	/*
- 	 * Configure power up and down transition delays for CORE
 -- 
-2.3.7
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
