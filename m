@@ -1,49 +1,43 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: rockchip: check grf when waiting pll lock
-Date: Mon, 15 Feb 2016 22:40:18 +0100
-Message-ID: <1835816.QSOU3ZhEch@phil>
-In-Reply-To: <1455507205-12996-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com> <1455507205-12996-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Feb 2016 17:14:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
+	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+	rklein@nvidia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
+Message-ID: <20160213011403.GI4847@codeaurora.org>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+ <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 15. Februar 2016, 11:33:25 schrieb Shawn Lin:
-> rockchip_clk_get_grf pass on return value from
-> syscon_regmap_lookup_by_phandle, so we check grf to
-> make sure whether to do the following things or not.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+On 02/11, Michael Turquette wrote:
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b4db67a..993f775 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+>  	if (core->ops->init)
+>  		core->ops->init(core->hw);
+>  
+> +	if (core->flags & CLK_IS_CRITICAL) {
+> +		clk_core_prepare(core);
+> +		clk_core_enable(core);
+> +	}
 
-applied to my clk-branch for 4.6 with one change below
+What do we do if this is an orphan clk? From what I can tell
+we're not going to increment the ref count on the parents that
+may or may not appear at some later time when this flag is set.
+Furthermore, do we want to propagate the CLK_IS_CRITICAL flag up
+to all the parent clocks so that the warning mechanism spits out
+errors for parent clocks? I suppose that may not be very useful
+assuming refcounts are correct, but it may be useful to know
+which clocks are critical and which ones aren't during debug.
 
-> ---
-> 
->  drivers/clk/rockchip/clk-pll.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-pll.c
-> b/drivers/clk/rockchip/clk-pll.c index b7e66c9..dddbc29 100644
-> --- a/drivers/clk/rockchip/clk-pll.c
-> +++ b/drivers/clk/rockchip/clk-pll.c
-> @@ -90,10 +90,16 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
-> */
->  static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
->  {
-> -	struct regmap *grf = rockchip_clk_get_grf();
-> +	struct regmap *grf;
->  	unsigned int val;
->  	int delay = 24000000, ret;
-> 
-> +	grf = rockchip_clk_get_grf();
-> +	if (IS_ERR(grf)) {
-> +		pr_err("%s: grf regmap not available\n", __func__);
-> +		return -ENODEV;
-
-I've changed that to PTR_ERR(grf), similar to the preexisting checks
-
-
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
