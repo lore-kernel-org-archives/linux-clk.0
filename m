@@ -1,189 +1,71 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	heiko@sntech.de,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 5/5] clk: sunxi: Remove clk_register_clkdev calls
-Date: Tue,  2 Feb 2016 09:47:14 +0100
-Message-Id: <1454402834-6385-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160213011855.GL4847@codeaurora.org>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+	<1455225554-13267-6-git-send-email-mturquette@baylibre.com>
+	<20160213011855.GL4847@codeaurora.org>
+Date: Sun, 14 Feb 2016 15:51:56 +0100
+Message-ID: <CAMuHMdX55j+-5SzMdsew_iBfxpnAWNoBQfr-tGMW_Xduf-x=WA@mail.gmail.com>
+Subject: Re: [PATCH v42 5/6] clk: clk_put WARNs if user has not disabled clk
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Maxime Coquelin <maxime.coquelin@st.com>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Andre Przywara <andre.przywara@arm.com>, rklein@nvidia.com,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that our protection code doesn't use the global name lookup anymore, we
-can remove the clkdev registrations.
+Hi Stephen, Mike,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/clk-a10-hosc.c         | 3 +--
- drivers/clk/sunxi/clk-a20-gmac.c         | 2 --
- drivers/clk/sunxi/clk-factors.c          | 7 -------
- drivers/clk/sunxi/clk-factors.h          | 1 -
- drivers/clk/sunxi/clk-mod0.c             | 1 +
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c | 2 --
- drivers/clk/sunxi/clk-sun9i-core.c       | 1 +
- drivers/clk/sunxi/clk-sunxi.c            | 3 ---
- 8 files changed, 3 insertions(+), 17 deletions(-)
+On Sat, Feb 13, 2016 at 2:18 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 02/11, Michael Turquette wrote:
+>> >From the clk_put kerneldoc in include/linux/clk.h:
+>>
+>> """
+>> Note: drivers must ensure that all clk_enable calls made on this clock
+>> source are balanced by clk_disable calls prior to calling this function.
+>> """
+>>
+>> The common clock framework implementation of the clk.h api has per-user
+>> reference counts for calls to clk_prepare and clk_disable. As such it
+>> can enforce the requirement to properly call clk_disable and
+>> clk_unprepare before calling clk_put.
+>>
+>> Because this requirement is probably violated in many places, this patch
+>> starts with a simple warning. Once offending code has been fixed this
+>> check could additionally release the reference counts automatically.
+>
+> Do we have any fixes for pm code in the works? I'm worried we're
+> going to be giving a warning and nobody will fix them or has a
+> plan to fix them.
+drivers/base/power/clock_ops.c
+AFAIK not.
 
-diff --git a/drivers/clk/sunxi/clk-a10-hosc.c b/drivers/clk/sunxi/clk-a10-hosc.c
-index 0481d5d673d6..6b598c6a0213 100644
---- a/drivers/clk/sunxi/clk-a10-hosc.c
-+++ b/drivers/clk/sunxi/clk-a10-hosc.c
-@@ -15,9 +15,9 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/slab.h>
- 
- #define SUNXI_OSC24M_GATE	0
- 
-@@ -61,7 +61,6 @@ static void __init sun4i_osc_clk_setup(struct device_node *node)
- 		goto err_free_gate;
- 
- 	of_clk_add_provider(node, of_clk_src_simple_get, clk);
--	clk_register_clkdev(clk, clk_name, NULL);
- 
- 	return;
- 
-diff --git a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
-index 1611b036421c..3437f734c9bf 100644
---- a/drivers/clk/sunxi/clk-a20-gmac.c
-+++ b/drivers/clk/sunxi/clk-a20-gmac.c
-@@ -17,7 +17,6 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-@@ -107,7 +106,6 @@ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
- 		goto iounmap_reg;
- 
- 	of_clk_add_provider(node, of_clk_src_simple_get, clk);
--	clk_register_clkdev(clk, clk_name, NULL);
- 
- 	return;
- 
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index 6e97f46c0c37..ddefe9668863 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -258,14 +258,8 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 	if (ret)
- 		goto err_provider;
- 
--	ret = clk_register_clkdev(clk, clk_name, NULL);
--	if (ret)
--		goto err_clkdev;
--
- 	return clk;
- 
--err_clkdev:
--	of_clk_del_provider(node);
- err_provider:
- 	/* TODO: The composite clock stuff will leak a bit here. */
- 	clk_unregister(clk);
-@@ -291,7 +285,6 @@ void sunxi_factors_unregister(struct device_node *node, struct clk *clk)
- 	factors = to_clk_factors(hw);
- 	name = clk_hw_get_name(hw);
- 
--	/* No unregister call for clkdev_* */
- 	of_clk_del_provider(node);
- 	/* TODO: The composite clock stuff will leak a bit here. */
- 	clk_unregister(clk);
-diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
-index a44a865a6b9e..1e63c5b2d5f4 100644
---- a/drivers/clk/sunxi/clk-factors.h
-+++ b/drivers/clk/sunxi/clk-factors.h
-@@ -2,7 +2,6 @@
- #define __MACH_SUNXI_CLK_FACTORS_H
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/spinlock.h>
- 
- #define SUNXI_FACTORS_NOT_APPLICABLE	(0)
-diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-index 578bff0dd251..b38d71cec74c 100644
---- a/drivers/clk/sunxi/clk-mod0.c
-+++ b/drivers/clk/sunxi/clk-mod0.c
-@@ -15,6 +15,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-index 23d042aabb4f..68021fa5ecd9 100644
---- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-+++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-@@ -9,7 +9,6 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -87,7 +86,6 @@ static int sun6i_a31_apb0_gates_clk_probe(struct platform_device *pdev)
- 						      clk_parent, 0, reg, i,
- 						      0, NULL);
- 		WARN_ON(IS_ERR(clk_data->clks[i]));
--		clk_register_clkdev(clk_data->clks[i], clk_name, NULL);
- 
- 		j++;
- 	}
-diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
-index a81211062ecb..43f014f85803 100644
---- a/drivers/clk/sunxi/clk-sun9i-core.c
-+++ b/drivers/clk/sunxi/clk-sun9i-core.c
-@@ -15,6 +15,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 5f2f3e0408bd..91f6d8ef81df 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -685,7 +685,6 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
- 
- 	if (clk) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		clk_register_clkdev(clk, clk_name, NULL);
- 	}
- 
- 	return clk;
-@@ -796,7 +795,6 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
- 					 data->table, &clk_lock);
- 	if (clk) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		clk_register_clkdev(clk, clk_name, NULL);
- 	}
- }
- 
-@@ -1020,7 +1018,6 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 						 clkflags);
- 
- 		WARN_ON(IS_ERR(clk_data->clks[i]));
--		clk_register_clkdev(clks[i], clk_name, NULL);
- 	}
- 
- 	/* Adjust to the real max */
--- 
-2.6.4
+I've been running with the above patch for several months, and I had
+to remove the two clk_put() calls in {en,dis}able_clock() in
+drivers/base/power/clock_ops.c to get rid of the warnings when using the
+legacy clock domain.
+
+Fixing drivers/base/power/clock_ops.c is non-trivial though, as you need a
+place to store the clk's reference obtained in enable_clock(), for later use in
+disable_clock().
+
+However, the plan is to make CONFIG_PM=y mandatory for Renesas ARM
+SoCs with clock domains, which makes us no longer users of the legacy clock
+domain.
+
+Legacy SH and Davinci/Keystone/OMAP1 users may care, though...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
