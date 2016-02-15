@@ -1,77 +1,229 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 09/13] ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
-Date: Sun, 28 Feb 2016 23:18:54 +0800
-Message-Id: <1456672738-4993-10-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+Date: Mon, 15 Feb 2016 08:34:57 +0100
+Message-Id: <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a device node for the Reduced Serial Bus (RSB)
-controller and the defacto pinmux setting to the A83T dtsi.
+This commit adds a new driver to handle the core clocks found in the
+AP806 HW block, which is the core block of all Armada 7K and 8K
+Marvell 64-bits processors. This core clock driver reads the
+Sample-At-Reset register to determine the frequencies of several core
+clocks: DDR, Ring and CPU clocks.
 
-Since there is only one possible pinmux setting for RSB, just
-set it in the dtsi.
-
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ .../clock/mvebu-armada-ap806-core-clock.txt        |  33 ++++++
+ drivers/clk/mvebu/Kconfig                          |   3 +
+ drivers/clk/mvebu/Makefile                         |   2 +-
+ drivers/clk/mvebu/ap806-core.c                     | 112 +++++++++++++++++++++
+ 4 files changed, 149 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+ create mode 100644 drivers/clk/mvebu/ap806-core.c
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index af961a8..675fc01 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -476,6 +476,27 @@
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+new file mode 100644
+index 0000000..b2131bb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+@@ -0,0 +1,33 @@
++* Clock bindings for Marvell MVEBU AP806 Core clocks
 +
-+			r_rsb_pins: r_rsb {
-+				allwinner,pins = "PL0", "PL1";
-+				allwinner,function = "s_rsb";
-+				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+			};
-+		};
++The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
++hosting the CPU and other core components of the CPU. This Device Tree
++binding allows to describe the core clocks of the AP806, whose
++frequencies are determined by reading the Sample-At-Reset (SAR)
++register.
 +
-+		r_rsb: i2c@01f03400 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x01f03400 0x400>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 3>;
-+			clock-frequency = <3000000>;
-+			resets = <&apb0_reset 3>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- };
++Clock consumers must specify the desired clock by having the clock ID
++in its "clocks" phandle cell.
++
++The following is a list of provided IDs and clock names for the core
++Armada AP806 clocks:
++
++ 0 = DDR
++ 1 = Ring
++ 2 = CPU
++
++Required properties:
++- compatible: must be be one of the following:
++	"marvell,armada-ap806-core-clock"
++- reg: must be the register address of the Sample-At-Reset (SAR) register
++- #clock-cells: from common clock binding; shall be set to 1
++- clock-output-names: name of the output clocks
++
++Example:
++
++	coreclk: clk@0x6F8204 {
++		compatible = "marvell,armada-ap806-core-clock";
++		reg = <0x6F8204 0x04>;
++		#clock-cells = <1>;
++		clock-output-names = "ddr", "ring", "cpu";
++	};
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index 2769625..fd84172 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -42,3 +42,6 @@ config KIRKWOOD_CLK
+ config ORION_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
++
++config ARMADA_AP806_CORE_CLK
++	bool
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 8866115..db5c28c 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -1,11 +1,11 @@
+ obj-$(CONFIG_MVEBU_CLK_COMMON)	+= common.o
+ obj-$(CONFIG_MVEBU_CLK_CPU) 	+= clk-cpu.o
+ obj-$(CONFIG_MVEBU_CLK_COREDIV)	+= clk-corediv.o
+-
+ obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
+ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
++obj-$(CONFIG_ARMADA_AP806_CORE_CLK) += ap806-core.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
+ obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
+diff --git a/drivers/clk/mvebu/ap806-core.c b/drivers/clk/mvebu/ap806-core.c
+new file mode 100644
+index 0000000..56c81cd
+--- /dev/null
++++ b/drivers/clk/mvebu/ap806-core.c
+@@ -0,0 +1,112 @@
++/*
++ * Marvell Armada AP806 core clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++/*
++ * AP806 PLLs:
++ *   0 - DDR
++ *   1 - Ring
++ *   2 - CPU
++ */
++
++#define AP806_PLL_NUM	3
++#define AP806_PLL_FREQ  7
++
++/* SAR parameters to get the PLL data */
++struct apclk_sar {
++	int mask;
++	int offset;
++	const char *name;
++};
++
++static const struct apclk_sar
++ap806_core_clk_sar[AP806_PLL_NUM]  __initconst = {
++	{ .mask = 0x7,	.offset = 21 },
++	{ .mask = 0x7,	.offset = 18 },
++	{ .mask = 0x7,	.offset = 15 },
++};
++
++static struct clk *ap806_core_clks[AP806_PLL_NUM];
++
++static struct clk_onecell_data ap806_core_clk_data = {
++	.clks = ap806_core_clks,
++	.clk_num = AP806_PLL_NUM,
++};
++
++/* mapping between SAR value to frequency */
++static const u32
++ap806_core_clk_freq[AP806_PLL_NUM][AP806_PLL_FREQ] __initconst = {
++	{ 2400000000, 2100000000, 1800000000,
++	  1600000000, 1300000000, 1300000000,
++	  1300000000 },
++	{ 2000000000, 1800000000, 1600000000,
++	  1400000000, 1200000000, 1200000000,
++	  1200000000 },
++	{ 2500000000, 2200000000, 2000000000,
++	  1700000000, 1600000000, 1200000000,
++	  1200000000 },
++};
++
++static unsigned long __init ap806_core_clk_get_freq(u32 reg, int clk_idx)
++{
++	int freq_idx;
++	const struct apclk_sar *clk_info;
++
++	clk_info = &ap806_core_clk_sar[clk_idx];
++
++	freq_idx = (reg >> clk_info->offset) & clk_info->mask;
++	if (WARN_ON(freq_idx > AP806_PLL_FREQ))
++		return 0;
++	else
++		return ap806_core_clk_freq[clk_idx][freq_idx];
++}
++
++static void __init ap806_core_clk_init(struct device_node *np)
++{
++	void __iomem *base;
++	u32 reg;
++	int i;
++
++	base = of_iomap(np, 0);
++	if (WARN_ON(!base))
++		return;
++
++	reg = readl(base);
++
++	iounmap(base);
++
++	for (i = 0; i < AP806_PLL_NUM; i++) {
++		unsigned long freq;
++		const char *name;
++
++		freq = ap806_core_clk_get_freq(reg, i);
++
++		of_property_read_string_index(np, "clock-output-names",
++					      i, &name);
++
++		ap806_core_clks[i] =
++			clk_register_fixed_rate(NULL, name, NULL,
++						CLK_IS_ROOT, freq);
++	}
++
++	of_clk_add_provider(np, of_clk_src_onecell_get,
++			    &ap806_core_clk_data);
++}
++
++CLK_OF_DECLARE(ap806_core_clk, "marvell,armada-ap806-core-clock",
++	       ap806_core_clk_init);
 -- 
-1.9.1
+2.6.4
