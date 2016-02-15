@@ -1,128 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:45127 "EHLO
-	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758505AbcB1Php (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 28 Feb 2016 10:37:45 -0500
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 16/20] clk: bcm2835: add the camera related clocks cam0, cam1 and ccp2
-Date: Sun, 28 Feb 2016 15:37:07 +0000
-Message-Id: <1456673831-2408-17-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Russell King" <linux@arm.linux.org.uk>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+ <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
+Message-ID: <20160215221250.2278.79010@quark.deferred.io>
+Subject: Re: [PATCH 02/14] clkdev: Remove clk_register_clkdevs()
+Date: Mon, 15 Feb 2016 14:12:50 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Quoting Stephen Boyd (2016-02-08 17:45:29)
+> Now that we've converted the only caller over to another clkdev
+> API, remove this one.
+> =
 
-Add the camera related clocks: cam0, cam1 and ccp2
-and the corresponding ccp2 clock mux definition.
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Note that the mux definition is incomplete and essentially
-is identical to the osc mux right now. But it should contain
-at least plla_ccp2 in one location.
+Looks good to me.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   53 +++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |    3 ++
- 2 files changed, 56 insertions(+)
+Regards,
+Mike
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 5c62672..5364f10 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1428,6 +1428,34 @@ static const char *const bcm2835_clock_vpu_parents[] = {
- 	.parents = bcm2835_clock_vpu_parents,				\
- 	__VA_ARGS__)
- 
-+/* ccp2 (camera) parent mux */
-+static const char * const bcm2835_clock_ccp2_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	/*
-+	 * more parent clocks, but unknown at this time
-+	 * the current definition follows the "common" pattern
-+	 * that already applies to all the other parent mux
-+	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
-+	 * as the first 3 entries.
-+	 * The mux should contain "plla_ccp2" at one position.
-+	 * here some possible candidates for the next parents in the list.
-+	 *   plla_ccp2 or ppla_core/per
-+	 *   pllb_core/per
-+	 *   pllc_core/per
-+	 *   plld_core/per
-+	 *   pllh_aux/pix
-+	 * up to 16 different parents
-+	 */
-+};
-+
-+#define REGISTER_CCP2_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_ccp2_parents),	\
-+	.parents = bcm2835_clock_ccp2_parents,				\
-+	__VA_ARGS__)
-+
- /*
-  * the real definition of all the pll, pll_dividers and clocks
-  * these make use of the above REGISTER_* macros
-@@ -1777,6 +1805,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_AVEODIV,
- 		.int_bits = 4,
- 		.frac_bits = 0),
-+	[BCM2835_CLOCK_CAM0]	= REGISTER_PER_CLK(
-+		.name = "cam0",
-+		.ctl_reg = CM_CAM0CTL,
-+		.div_reg = CM_CAM0DIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
-+	[BCM2835_CLOCK_CAM1]	= REGISTER_PER_CLK(
-+		.name = "cam1",
-+		.ctl_reg = CM_CAM1CTL,
-+		.div_reg = CM_CAM1DIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
- 	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
- 		.name = "dft",
- 		.ctl_reg = CM_DFTCTL,
-@@ -1870,6 +1910,19 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.int_bits = 4,
- 		.frac_bits = 0),
- 
-+	/* clocks with ccp2 parent mux */
-+	[BCM2835_CLOCK_CCP2]	= REGISTER_CCP2_CLK(
-+		/*
-+		 * this is possibly a gate of the plla_ccp2 divider
-+		 * but as CTL contains 4 bits for mux selection
-+		 * it must be a mux
-+		 */
-+		.name = "ccp2",
-+		.ctl_reg = CM_CCP2CTL,
-+		.div_reg = CM_CCP2DIV,
-+		.int_bits = 1,
-+		.frac_bits = 0),
-+
- 	/* the gates */
- 
- 	/*
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index f2e72e7..1d70088 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -63,3 +63,6 @@
- #define BCM2835_CLOCK_SLIM		45
- #define BCM2835_CLOCK_SMI		46
- #define BCM2835_CLOCK_TEC		47
-+#define BCM2835_CLOCK_CAM0		48
-+#define BCM2835_CLOCK_CAM1		49
-+#define BCM2835_CLOCK_CCP2		50
--- 
-1.7.10.4
+> ---
+>  drivers/clk/clkdev.c   | 27 ---------------------------
+>  include/linux/clkdev.h |  1 -
+>  2 files changed, 28 deletions(-)
+> =
 
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 779b6ff0c7ad..ae61f2e57048 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -383,30 +383,3 @@ int clk_register_clkdev(struct clk *clk, const char =
+*con_id,
+>         return cl ? 0 : -ENOMEM;
+>  }
+>  EXPORT_SYMBOL(clk_register_clkdev);
+> -
+> -/**
+> - * clk_register_clkdevs - register a set of clk_lookup for a struct clk
+> - * @clk: struct clk to associate with all clk_lookups
+> - * @cl: array of clk_lookup structures with con_id and dev_id pre-initia=
+lized
+> - * @num: number of clk_lookup structures to register
+> - *
+> - * To make things easier for mass registration, we detect error clks
+> - * from a previous clk_register() call, and return the error code for
+> - * those.  This is to permit this function to be called immediately
+> - * after clk_register().
+> - */
+> -int clk_register_clkdevs(struct clk *clk, struct clk_lookup *cl, size_t =
+num)
+> -{
+> -       unsigned i;
+> -
+> -       if (IS_ERR(clk))
+> -               return PTR_ERR(clk);
+> -
+> -       for (i =3D 0; i < num; i++, cl++) {
+> -               cl->clk_hw =3D __clk_get_hw(clk);
+> -               __clkdev_add(cl);
+> -       }
+> -
+> -       return 0;
+> -}
+> -EXPORT_SYMBOL(clk_register_clkdevs);
+> diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+> index 08bffcc466de..43a8c2e8ac29 100644
+> --- a/include/linux/clkdev.h
+> +++ b/include/linux/clkdev.h
+> @@ -46,7 +46,6 @@ int clk_add_alias(const char *, const char *, const cha=
+r *, struct device *);
+>  =
+
+>  int clk_register_clkdev(struct clk *, const char *, const char *, ...)
+>         __printf(3, 4);
+> -int clk_register_clkdevs(struct clk *, struct clk_lookup *, size_t);
+>  =
+
+>  #ifdef CONFIG_COMMON_CLK
+>  int __clk_get(struct clk *clk);
+> -- =
+
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>=20
