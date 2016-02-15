@@ -1,35 +1,58 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Date: Fri, 26 Feb 2016 09:26:19 +0100
-Message-ID: <CAMuHMdXWEo=mXO4p8EX4fCz+v0r-SV+31R7SHjFRjDDUXA1+xw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: shmobile: r8a7795: Add CAN FD peripheral clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Paterson <chris.paterson2@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 1/6] clk: rockchip: handle alt_parent in err cases when registering cpuclk
+Date: Mon, 15 Feb 2016 11:33:15 +0800
+Message-Id: <1455507195-12955-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Add clk_disable_unprepare to handle cpuclk->alt_parent if
+rockchip_clk_register_cpuclk fails.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Gr{oetje,eeting}s,
+---
 
-                        Geert
+ drivers/clk/rockchip/clk-cpu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index d07374f..68a2a87 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -290,14 +290,14 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 		pr_err("%s: could not lookup parent clock %s\n",
+ 		       __func__, parent_names[0]);
+ 		ret = -EINVAL;
+-		goto free_cpuclk;
++		goto free_alt_parent;
+ 	}
+ 
+ 	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for %s\n",
+ 				__func__, name);
+-		goto free_cpuclk;
++		goto free_alt_parent;
+ 	}
+ 
+ 	if (nrates > 0) {
+@@ -326,6 +326,8 @@ free_rate_table:
+ 	kfree(cpuclk->rate_table);
+ unregister_notifier:
+ 	clk_notifier_unregister(clk, &cpuclk->clk_nb);
++free_alt_parent:
++	clk_disable_unprepare(cpuclk->alt_parent);
+ free_cpuclk:
+ 	kfree(cpuclk);
+ 	return ERR_PTR(ret);
+-- 
+2.3.7
