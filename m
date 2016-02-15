@@ -1,60 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Felipe Balbi <balbi@ti.com>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH 8/9] usb: dwc3: Remove impossible check for of_clk_get_parent_count() < 0
-Date: Mon, 22 Feb 2016 12:54:46 -0800
-Message-Id: <1456174487-28397-9-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1455527982.29688.8.camel@mtksdaap41>
+Subject: Re: [PATCH v6 4/7] clk: mediatek: Add MT2701 clock support
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>
+Date: Mon, 15 Feb 2016 17:19:42 +0800
+In-Reply-To: <20160210200853.26445.15165@quark.deferred.io>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1454665050-37776-5-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160210200853.26445.15165@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The check for < 0 is impossible now that
-of_clk_get_parent_count() returns an unsigned int. Simplify the
-code and update the types.
+Hi Mike,
 
-Cc: Felipe Balbi <balbi@ti.com>
-Cc: <linux-usb@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+On Wed, 2016-02-10 at 12:08 -0800, Michael Turquette wrote:
+> Quoting James Liao (2016-02-05 01:37:27)
+> > +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
+> > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+> > +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+> > +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
+> > +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
+> > +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
+> > +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
+> > +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
+> > +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
+> > +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+> 
+> :-/
+> 
+> This is way too much CLK_OF_DECLARE and not enough Linux Driver Model.
+> 
+> I understand that some platforms really must initialize some clocks very
+> early, but can we please separate those into one table and call
+> CLK_OF_DECLARE on only that set, and then register the rest through a
+> platform_driver later on?
 
-Please ack so this can go through clk tree along with patch 1.
+I know CLK_OF_DECLARE is much earlier than platform_driver, so it can
+ensure all drivers lookup their clocks successfully during
+platform_driver probe. Is there anything different to init these clock
+providers in CLK_OF_DECLARE and platform_driver?
 
- drivers/usb/dwc3/dwc3-of-simple.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index 9c9f74155066..974335377d9f 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -42,6 +42,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	struct device		*dev = &pdev->dev;
- 	struct device_node	*np = dev->of_node;
- 
-+	unsigned int		count;
- 	int			ret;
- 	int			i;
- 
-@@ -49,11 +50,11 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	if (!simple)
- 		return -ENOMEM;
- 
--	ret = of_clk_get_parent_count(np);
--	if (ret < 0)
--		return ret;
-+	count = of_clk_get_parent_count(np);
-+	if (!count)
-+		return -ENOENT;
- 
--	simple->num_clocks = ret;
-+	simple->num_clocks = count;
- 
- 	simple->clks = devm_kcalloc(dev, simple->num_clocks,
- 			sizeof(struct clk *), GFP_KERNEL);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+
+James
