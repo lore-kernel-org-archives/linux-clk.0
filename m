@@ -1,34 +1,50 @@
-Return-Path: <lars.persson@axis.com>
-From: Lars Persson <lars.persson@axis.com>
-To: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: [PATCH 0/2] clk: Add Artpec-6 SoC support
-Date: Thu, 11 Feb 2016 17:01:02 +0100
-Message-Id: <cover.1455206007.git.larper@axis.com>
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 2/6] clk: rockchip: check grf when waiting pll lock
+Date: Mon, 15 Feb 2016 11:33:25 +0800
+Message-Id: <1455507205-12996-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock support for the Artpec-6 SoC port. The ARM parts are in the series
-"arm: Add Artpec-6 SoC" and it goes through the arm-soc tree.
+rockchip_clk_get_grf pass on return value from
+syscon_regmap_lookup_by_phandle, so we check grf to
+make sure whether to do the following things or not.
 
-Lars Persson (2):
-  clk: add device tree binding for artpec-6 pll1 clock
-  clk: add artpec-6 pll1 clock driver
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
- .../devicetree/bindings/clock/artpec6.txt          | 16 +++++
- drivers/clk/Makefile                               |  1 +
- drivers/clk/clk-artpec6.c                          | 70 ++++++++++++++++++++++
- 3 files changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
- create mode 100644 drivers/clk/clk-artpec6.c
+ drivers/clk/rockchip/clk-pll.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index b7e66c9..dddbc29 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -90,10 +90,16 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
+  */
+ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+ {
+-	struct regmap *grf = rockchip_clk_get_grf();
++	struct regmap *grf;
+ 	unsigned int val;
+ 	int delay = 24000000, ret;
+ 
++	grf = rockchip_clk_get_grf();
++	if (IS_ERR(grf)) {
++		pr_err("%s: grf regmap not available\n", __func__);
++		return -ENODEV;
++	}
++
+ 	while (delay > 0) {
+ 		ret = regmap_read(grf, pll->lock_offset, &val);
+ 		if (ret) {
 -- 
-2.1.4
+2.3.7
