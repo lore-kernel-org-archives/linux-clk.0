@@ -1,38 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 15:19:06 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [GIT PULL] clk/samsung updates
-Message-ID: <20160225231906.GI28849@codeaurora.org>
-References: <56CF1B60.5090300@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56CF1B60.5090300@samsung.com>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	zhangqing@rock-chips.com,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Caesar Wang <wxt@rock-chips.com>
+Subject: [RESEND PATCH 2/8] clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+Date: Mon, 15 Feb 2016 15:33:27 +0800
+Message-Id: <1455521613-27340-3-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/25, Sylwester Nawrocki wrote:
-> 
-> Hello Stephen, Mike,
-> 
-> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
-> 
->   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.6
-> 
-> for you to fetch changes up to a6cb74cbc927af04af827ef590082f9717ffad51:
-> 
->   clk: samsung: exynos5433: Fix wrong registers of PCLK_GSCL_SMMU clocks
-> (2016-02-25 12:10:00 +0100)
+This patch adds the needed clocks for rk3228 tsadc.
 
-Thanks. Pulled.
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+---
 
+ drivers/clk/rockchip/clk-rk3228.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index c515915..ac014b9 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -424,7 +424,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	GATE(0, "sclk_otgphy1", "xin24m", 0,
+ 			RK2928_CLKGATE_CON(1), 6, GFLAGS),
+ 
+-	COMPOSITE_NOMUX(0, "sclk_tsadc", "xin24m", 0,
++	COMPOSITE_NOMUX(SCLK_TSADC, "sclk_tsadc", "xin24m", 0,
+ 			RK2928_CLKSEL_CON(24), 6, 10, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 8, GFLAGS),
+ 
+@@ -584,7 +584,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	GATE(PCLK_UART0, "pclk_uart0", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 12, GFLAGS),
+ 	GATE(PCLK_UART1, "pclk_uart1", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 13, GFLAGS),
+ 	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 14, GFLAGS),
+-	GATE(0, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, GFLAGS),
+ 	GATE(PCLK_GRF, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 0, GFLAGS),
+ 	GATE(0, "pclk_cru", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 1, GFLAGS),
+ 	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 2, GFLAGS),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
