@@ -1,88 +1,117 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:55607 "EHLO bear.ext.ti.com"
+Received: from mga11.intel.com ([192.55.52.93]:20927 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750780AbcB2XMR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 29 Feb 2016 18:12:17 -0500
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-To: Tony Lindgren <tony@atomide.com>
-CC: <paul@pwsan.com>, <t-kristo@ti.com>, <vigneshr@ti.com>,
-	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
- gating
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-2-git-send-email-fcooper@ti.com>
- <20160229220444.GQ13417@atomide.com> <56D4C69D.1090100@ti.com>
- <20160229225536.GR13417@atomide.com>
-Message-ID: <56D4D032.7040801@ti.com>
-Date: Mon, 29 Feb 2016 17:11:46 -0600
-MIME-Version: 1.0
-In-Reply-To: <20160229225536.GR13417@atomide.com>
+	id S1751105AbcBOPN1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 15 Feb 2016 10:13:27 -0500
+Message-ID: <1455549246.31169.125.camel@linux.intel.com>
+Subject: Re: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Lee Jones <lee.jones@linaro.org>,
+	Russell King <linux@arm.linux.org.uk>
+Date: Mon, 15 Feb 2016 17:14:06 +0200
+In-Reply-To: <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+	 <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, 2016-02-08 at 17:45 -0800, Stephen Boyd wrote:
+> Convert this driver to use clkdev_create() instead of
+> clk_register_clkdevs(). The latter API is only used by this driver,
+> although this driver only allocates one clk to add anyway.
+> Furthermore, this driver allocates the clk_lookup structure with
+> devm, but clkdev_drop() will free that structure when passed,
+> leading to a double free when this driver is removed. Clean it
+> all up and pave the way for the removal of clk_register_clkdevs().
 
+Good one.
 
-On 02/29/2016 04:55 PM, Tony Lindgren wrote:
-> * Franklin S Cooper Jr. <fcooper@ti.com> [160229 14:31]:
->> On 02/29/2016 04:04 PM, Tony Lindgren wrote:
->>> Hmm but why are you also removing the pm_runtime calls? Those
->>> actually do take care of gating the clocks via the interconnect
->>> level code that is hwmod in this case.
->> I removed all PM runtime calls that revolved around
->> pwmss_submodule_state_change. Originally the driver would do
->> a pm_runtime_get_sync then call pwmss_submodule_state_change
->> and then immediately call pm_runtime_put_sync. Without
->> pwmss_submodule_state_change those calls would be
->> meaningless.  I also removed pm_runtime calls in error paths
->> that no longer existed.
-> Typically the interconnect level code can gate the clkctrl bit
-> for the module with PM runtime even with no other driver specific
-> registers. If you remove the pm_runtime calls, that does not
-> happen.
+I have still in my local tree the fix regarding to this code since I
+found an error in the error path (we don't free clk resources). So, I
+will re-base it, although it will require to go with two patches
+instead of one if we go to stable.
 
-So the clocks should be unlocked when ever the IP registers are
-being read/written or if the peripheral is being used for
-example
-the pwm signal is being generated. All these cases are already
-being handled.
+For this one:
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Using ecap driver as an example.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
+>  1 file changed, 9 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c
+> b/drivers/mfd/intel_quark_i2c_gpio.c
+> index 042137465300..bdc5e27222c0 100644
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -52,8 +52,6 @@
+>  /* The Quark I2C controller source clock */
+>  #define INTEL_QUARK_I2C_CLK_HZ	33000000
+>  
+> -#define INTEL_QUARK_I2C_NCLK	1
+> -
+>  struct intel_quark_mfd {
+>  	struct pci_dev		*pdev;
+>  	struct clk		*i2c_clk;
+> @@ -128,30 +126,24 @@ MODULE_DEVICE_TABLE(pci, intel_quark_mfd_ids);
+>  static int intel_quark_register_i2c_clk(struct intel_quark_mfd
+> *quark_mfd)
+>  {
+>  	struct pci_dev *pdev = quark_mfd->pdev;
+> -	struct clk_lookup *i2c_clk_lookup;
+>  	struct clk *i2c_clk;
+> -	int ret;
+> -
+> -	i2c_clk_lookup = devm_kcalloc(&pdev->dev,
+> INTEL_QUARK_I2C_NCLK,
+> -				      sizeof(*i2c_clk_lookup),
+> GFP_KERNEL);
+> -	if (!i2c_clk_lookup)
+> -		return -ENOMEM;
+> -
+> -	i2c_clk_lookup[0].dev_id = INTEL_QUARK_I2C_CONTROLLER_CLK;
+>  
+>  	i2c_clk = clk_register_fixed_rate(&pdev->dev,
+>  					  INTEL_QUARK_I2C_CONTROLLER
+> _CLK, NULL,
+>  					  CLK_IS_ROOT,
+> INTEL_QUARK_I2C_CLK_HZ);
+> +	if (IS_ERR(i2c_clk))
+> +		return PTR_ERR(i2c_clk);
+>  
+> -	quark_mfd->i2c_clk_lookup = i2c_clk_lookup;
+>  	quark_mfd->i2c_clk = i2c_clk;
+> +	quark_mfd->i2c_clk_lookup = clkdev_create(i2c_clk, NULL,
+> +						INTEL_QUARK_I2C_CONT
+> ROLLER_CLK);
+>  
+> -	ret = clk_register_clkdevs(i2c_clk, i2c_clk_lookup,
+> -				   INTEL_QUARK_I2C_NCLK);
+> -	if (ret)
+> -		dev_err(&pdev->dev, "Fixed clk register failed:
+> %d\n", ret);
+> +	if (!quark_mfd->i2c_clk_lookup) {
+> +		dev_err(&pdev->dev, "Fixed clk register failed\n");
+> +		return -ENOMEM;
+> +	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static void intel_quark_unregister_i2c_clk(struct pci_dev *pdev)
 
-Pm_runtime_get_sync is called within ecap_pwm_enable when
-the pwm signal is to be generated. Pm_runtime_put_sync is called
-when the pwm signal is to be stopped.
-
-When either the pwm signal polarity is set or pwm
-configuration is made
-then a pm_runtime_get_sync and pm_runtime_put_sync are
-called within
-the same function surrounding calls to the IP's registers.
-
-Probe is calling pm_runtime_enable while remove is calling
-pm_runtime_disable.
-
-So the correct pm_runtime calls are being made from what I
-can see.
-I'm not sure I understand the concern since removing those
-calls aren't
-creating any kind of imbalance.
-
-If I'm not addressing your concern please give me an example
-of where
-you see a possible issue.
-
-> Also, how do you know this change does not affect the other
-> SoC variants using the same driver?
-
-I've tested these changes on AM335x GP and AM437x GP evms.
-AM335x
-and AM437x were the only other users of this driver. Sorry 
-I should of
-documented this in my cover-letter.
-> Regards,
->
-> Tony
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
 
