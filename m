@@ -1,115 +1,53 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 00/13]  Add A83T clk, r_pio, mmc rsb support
-Date: Sun, 28 Feb 2016 23:18:45 +0800
-Message-Id: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <56C13B40.7070207@codeaurora.org>
+Date: Mon, 15 Feb 2016 08:13:12 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] clk: qcom: mmcc8974: Use gdscs .parent and remove
+ genpd calls
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org> <1448986336-16846-7-git-send-email-rnayak@codeaurora.org> <20160212003313.GB4847@codeaurora.org>
+In-Reply-To: <20160212003313.GB4847@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-This is v2 of series which adds further support for A83T, mainly adds clock support.
-Also adds R_PIO, PRCM related clocks, mmc, rsb support.
 
-A83T difference in short:
-R_PIO is slightly different from A23 r_pio. AHB1 has different parents as
-compared to a31-ahb1, APB1 has different dividers.Bus gates are similar to H3,
-apb0 gates are different.mmc and rsb are compatible with earlier sunxi socs.
 
-These patches are based on Maxime's sunxi/for-next branch.
-https://git.kernel.org/cgit/linux/kernel/git/mripard/linux.git/
+On 02/12/2016 06:03 AM, Stephen Boyd wrote:
+> On 12/01, Rajendra Nayak wrote:
+>> With gdsc driver capable of handling hierarchical power domains,
+>> specify oxili_gdsc as parent of oxilicx_gdsc.
+>>
+>> Remove all direct calls to genpd from the mmcc clock driver. The
+>> adding and removing of subdomains is now handled from within
+>> the gdsc driver.
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+> 
+> Applied to clk-next + this squashed in
 
-v1->v2 Changes:
-1. Patches for apb0 gates clock, bus gates, low speed oscillators are already
-   merged, so, not included again in this series.
-1. sorted the R_PIO Kconfig options.
-2. removed un-necessary a83t apb1 div table.
-3. combined the three ahb reset registers into one reset node.
-4. Changed the bus gates names to bus_spidf and bus_usb_otg.
-5. removed un-necessary #address-cells and #size-cells from R_PIO node.
-6. splited rsb pins and rsb controller nodes in different patches.
-7. used PF6 as mmc0 CD reference design pin.
-8. corrected the style related errors.
+Thanks Stephen, for fixing these up before pulling in.
+I will resubmit the dtsi parts as a separate patch.
 
-Patch 1: adds support for r_pio pin controller.
-
-patch 2: adds ahb1 clock support, 0b1x is pll6 parent otherwise it's same as a31
-ahb1.
-
-patch 3: adds apb1 clock support, apb1 has different dividers compared to a10 
-apb0 clock.
-
-patch 4: adds basics clocks nodes to dtsi, pll6, ahb1, ahb2, apb1, apb2,
-bus gates, and resets.
-
-patch 5-6: adds mmc and it's clock nodes.
-
-patch 7: adds A83T PRCM related clocks, clock resets.
-
-patch 8: adds r_pio pin controller nodes to dtsi
-
-patch 9: adds RSB controller nodes to dtsi
-
-patch 10: adds common MMC CD detect pin as reference design pin 
-
-patch 11: enables mmc0 support for h8homlet board, tested by LABBE Corentin.
-
-patch 12: This patch adds support for Sinovoip BPI-M3 A83T based board, it has 
-2GB LPDDR3, u-boot support is added recently for this board.
-
-patch 13: Introduce MACH_SUN8I_A83T config option.
-
-Vishnu Patekar (13):
-  pinctrl: sunxi: Add A83T R_PIO controller support
-  clk: sunxi: add ahb1 clock for A83T
-  clk: sunxi: Add APB1 clock for A83T
-  ARM: dts: sun8i-a83t: Add basic clocks and resets
-  ARM: dts: sun8i-a83t: add mmc clock nodes
-  ARM: dts: sun8i-a83t: Add mmc controller nodes
-  ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-  ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
-  ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
-  ARM: dts: sun8i-a83t: add mmc0 CD pin
-  ARM: dts: sun8i: enable mmc for H8Homlet Board.
-  ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-  ARM: sunxi: Introduce MACH_SUN8I_A83T option
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  11 +
- ...omlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} |  21 +-
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 285 ++++++++++++++++++++-
- arch/arm/mach-sunxi/Kconfig                        |   5 +
- drivers/clk/sunxi/Makefile                         |   3 +
- drivers/clk/sunxi/clk-sunxi.c                      |  89 +++++++
- drivers/pinctrl/sunxi/Kconfig                      |   5 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++
- 12 files changed, 538 insertions(+), 5 deletions(-)
- copy arch/arm/boot/dts/{sun8i-a83t-allwinner-h8homlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} (83%)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+> 
+> ---8<----
+> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+> index 6b2e4e808125..bcda56e81503 100644
+> --- a/drivers/clk/qcom/mmcc-msm8974.c
+> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> @@ -2617,7 +2617,6 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8974_match_table);
+>  static int mmcc_msm8974_probe(struct platform_device *pdev)
+>  {
+>  	struct regmap *regmap;
+> -	int ret;
+>  
+>  	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
+>  	if (IS_ERR(regmap))
+> 
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
