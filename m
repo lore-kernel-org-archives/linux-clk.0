@@ -1,269 +1,91 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
-Subject: [PATCH 4/8] arm: dts: add Artpec-6 soc dtsi file
-Date: Wed, 10 Feb 2016 13:41:53 +0100
-Message-Id: <733065957e9ec67d698870cf832b4641d0da30cb.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, "Rob Herring" <robh+dt@kernel.org>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Pawel Moll" <pawel.moll@arm.com>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Kumar Gala" <galak@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Cc: "Jason Cooper" <jason@lakedaemon.net>, "Andrew Lunn" <andrew@lunn.ch>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@free-electrons.com>,
+ "Nadav Haklai" <nadavh@marvell.com>, "Lior Amsalem" <alior@marvell.com>,
+ linux-arm-kernel@lists.infradead.org,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Message-ID: <20160215233102.2278.88855@quark.deferred.io>
+Subject: Re: [PATCH 0/3] clk: mvebu: initial support for AP806 clocks
+Date: Mon, 15 Feb 2016 15:31:02 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- arch/arm/boot/dts/artpec6.dtsi | 238 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 238 insertions(+)
- create mode 100644 arch/arm/boot/dts/artpec6.dtsi
+Hi Thomas,
 
-diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
-new file mode 100644
-index 0000000..c1790d8
---- /dev/null
-+++ b/arch/arm/boot/dts/artpec6.dtsi
-@@ -0,0 +1,238 @@
-+/*
-+ * Device Tree Source for the Axis ARTPEC-6 SoC
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include "skeleton.dtsi"
-+
-+/ {
-+	compatible = "axis,artpec6";
-+	interrupt-parent = <&intc>;
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+			next-level-cache = <&pl310>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <1>;
-+			next-level-cache = <&pl310>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2", "arm,psci";
-+		method = "smc";
-+		psci_version = <0x84000000>;
-+		cpu_on = <0x84000003>;
-+		system_reset = <0x84000009>;
-+	};
-+
-+	scu@faf00000 {
-+		compatible = "arm,cortex-a9-scu";
-+		reg = <0xfaf00000 0x58>;
-+	};
-+
-+	/* Main external clock driving CPU and peripherals */
-+	ext_clk: ext_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <50000000>;
-+	};
-+
-+	/* PLL1 is used by CPU and some peripherals */
-+	pll1_clk: pll1_clk@f8000000 {
-+		#clock-cells = <0>;
-+		compatible = "axis,artpec6-pll1-clock";
-+		reg = <0xf8000000 4>;
-+		clocks = <&ext_clk>;
-+	};
-+
-+	cpu_clk: cpu_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <1>;
-+		clock-mult = <1>;
-+		clocks = <&pll1_clk>;
-+		clock-output-names = "cpu_clk";
-+	};
-+
-+	cpu_clkdiv2: cpu_clkdiv2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <2>;
-+		clock-mult = <1>;
-+		clocks = <&cpu_clk>;
-+	};
-+
-+	cpu_clkdiv4: cpu_clkdiv4 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <4>;
-+		clock-mult = <1>;
-+		clocks = <&cpu_clk>;
-+	};
-+
-+	apb_pclk: apb_pclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <8>;
-+		clock-mult = <1>;
-+		clocks = <&cpu_clk>;
-+		clock-output-names = "apb_pclk";
-+	};
-+
-+	/* PLL2 is used by a number of peripherals, including UDL */
-+	pll2: pll2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <1>;
-+		clock-mult = <24>;
-+		clocks = <&ext_clk>;
-+	};
-+
-+	/* PLL2DIV2 is used by the Fractional Clock Divider, for i2s */
-+	pll2div2: pll2div2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <2>;
-+		clock-mult = <1>;
-+		clocks = <&pll2>;
-+	};
-+
-+	pll2div12: pll2div12 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <12>;
-+		clock-mult = <1>;
-+		clocks = <&pll2>;
-+	};
-+
-+	pll2div24: pll2div24 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <24>;
-+		clock-mult = <1>;
-+		clocks = <&pll2>;
-+		clock-output-names = "uart_clk";
-+	};
-+
-+
-+	gtimer@faf00200 {
-+		compatible = "arm,cortex-a9-global-timer";
-+		reg = <0xfaf00200 0x20>;
-+		interrupts = <GIC_PPI 11 0xf01>;
-+		clocks = <&cpu_clkdiv2>;
-+	};
-+
-+	timer@faf00600 {
-+		compatible = "arm,cortex-a9-twd-timer";
-+		reg = <0xfaf00600 0x20>;
-+		interrupts = <GIC_PPI 13 0xf04>;
-+		clocks = <&cpu_clkdiv2>;
-+		status = "disabled";
-+	};
-+
-+	intc: interrupt-controller@faf01000 {
-+		interrupt-controller;
-+		compatible = "arm,cortex-a9-gic";
-+		#interrupt-cells = <3>;
-+		reg = < 0xfaf01000 0x1000 >, < 0xfaf00100 0x0100 >;
-+	};
-+
-+	pl310: cache-controller@faf10000 {
-+		compatible = "arm,pl310-cache";
-+		cache-unified;
-+		cache-level = <2>;
-+		reg = <0xfaf10000 0x1000>;
-+		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+		arm,data-latency = <1 1 1>;
-+		arm,tag-latency = <1 1 1>;
-+		arm,filter-ranges = <0x0 0x80000000>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-parent = <&intc>;
-+	};
-+
-+	amba@0 {
-+		compatible = "simple-bus";
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+		interrupt-parent = <&intc>;
-+		ranges;
-+		dma-ranges = <0x80000000 0x00000000 0x40000000>;
-+		dma-coherent;
-+
-+		ethernet: ethernet@f8010000 {
-+			clock-names = "phy_ref_clk", "apb_pclk";
-+			clocks = <&ext_clk>, <&apb_pclk>;
-+			compatible = "snps,dwc-qos-ethernet-4.10";
-+			interrupt-parent = <&intc>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0xf8010000 0x4000>;
-+
-+			snps,write-requests = <2>;
-+			snps,read-requests = <16>;
-+			snps,txpbl = <8>;
-+			snps,rxpbl = <2>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart0: uart@f8036000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8036000 0x1000>;
-+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+		uart1: uart@f8037000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8037000 0x1000>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+		uart2: uart@f8038000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8038000 0x1000>;
-+			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+		uart3: uart@f8039000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8039000 0x1000>;
-+			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+	};
-+};
--- 
-2.1.4
+Quoting Thomas Petazzoni (2016-02-14 23:34:55)
+> Hello,
+> =
+
+> The following set of patches add initial support for the main clocks
+> found in the AP806 hardware block, which is the central block used in
+> the newest Marvell 7K and 8K 64-bits processors.
+> =
+
+> Two new drivers are added, one for the so-called "core" clocks and one
+> for the "ring" clocks. The latter are child clocks from one of the
+> core clocks. The "core" clocks are fixed rate clocks, but their rate
+> is calculated from values in the Sample At Reset register.
+> =
+
+> The support for the Marvell 7K/8K platform (Device Tree, etc.) will be
+> submitted as a separate patch series.
+
+Yay, new SoC! Just FYI, we worked out an agreement in December[0] that
+the clk git tree can take DT bindings and headers, and we'll always host
+them in an immutable branch by default in case arm-soc (or anyone else)
+needs them. Stephen and I are doing this now.
+
+It's nice for us to review those bindings at the same time that we
+review the driver.
+
+[0] http://lkml.kernel.org/r/<20151231001859.19557.99512@quark.deferred.io>
+
+Best regards,
+Mike
+
+> =
+
+> Thanks!
+> =
+
+> Thomas
+> =
+
+> Thomas Petazzoni (3):
+>   clk: unconditionally recurse into clk/mvebu/
+>   clk: mvebu: add AP806 core clock driver
+>   clk: mvebu: add AP806 ring clock driver
+> =
+
+>  .../clock/mvebu-armada-ap806-core-clock.txt        |  33 ++++++
+>  .../clock/mvebu-armada-ap806-ring-clock.txt        |  32 ++++++
+>  drivers/clk/Makefile                               |   2 +-
+>  drivers/clk/mvebu/Kconfig                          |   6 ++
+>  drivers/clk/mvebu/Makefile                         |   3 +-
+>  drivers/clk/mvebu/ap806-core.c                     | 112 +++++++++++++++=
+++++++
+>  drivers/clk/mvebu/ap806-ring.c                     |  65 ++++++++++++
+>  7 files changed, 251 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-=
+ap806-core-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-=
+ap806-ring-clock.txt
+>  create mode 100644 drivers/clk/mvebu/ap806-core.c
+>  create mode 100644 drivers/clk/mvebu/ap806-ring.c
+> =
+
+> -- =
+
+> 2.6.4
+>=20
