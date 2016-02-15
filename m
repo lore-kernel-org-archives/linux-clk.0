@@ -1,96 +1,171 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 4 Feb 2016 09:01:09 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
-	linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-Message-ID: <20160204080109.GA4270@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
- <20160202131725.GQ4652@lukather>
- <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1455529857.29688.36.camel@mtksdaap41>
+Subject: Re: [PATCH v6 7/7] clk: mediatek: Enable critical clocks for MT2701
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+Date: Mon, 15 Feb 2016 17:50:57 +0800
+In-Reply-To: <20160211213542.26445.82983@quark.deferred.io>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1454665050-37776-8-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160211213542.26445.82983@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-In-Reply-To: <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike,
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2016-02-11 at 13:35 -0800, Michael Turquette wrote:
+> Hi James,
+> 
+> Quoting James Liao (2016-02-05 01:37:30)
+> > Some system clocks should be turned on by default on MT2701.
+> > This patch enable these clocks when related clocks have
+> > been registered.
+> > 
+> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/clk-mt2701.c | 23 +++++++++++++++++++++--
+> >  1 file changed, 21 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+> > index 01722e0..f7b4d52 100644
+> > --- a/drivers/clk/mediatek/clk-mt2701.c
+> > +++ b/drivers/clk/mediatek/clk-mt2701.c
+> > @@ -573,6 +573,21 @@ static const struct mtk_gate top_clks[] __initconst = {
+> >         GATE_TOP_AUD(CLK_TOP_AUD_I2S6_MCLK, "aud_i2s6_mclk", "aud_k6_src_div", 28),
+> >  };
+> >  
+> > +static struct clk_onecell_data *top_clk_data __initdata;
+> > +static struct clk_onecell_data *pll_clk_data __initdata;
+> > +
+> > +static void __init mtk_clk_enable_critical(void)
+> > +{
+> > +       if (!top_clk_data || !pll_clk_data)
+> > +               return;
+> > +
+> > +       clk_prepare_enable(pll_clk_data->clks[CLK_APMIXED_ARMPLL]);
+> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_AXI_SEL]);
+> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_MEM_SEL]);
+> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_DDRPHYCFG_SEL]);
+> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_RTC_SEL]);
+> > +}
+> 
+> I think we're close to having a better solution. Please see this patch
+> series[0] and let me know if it provides a better way for you to enable
+> these critical clocks instead of the open-coded solution.
+> 
+> [0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+> 
 
-On Thu, Feb 04, 2016 at 02:06:45PM +0800, Vishnu Patekar wrote:
-> Hello Maxime,
->=20
->=20
-> On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Hi,
-> >
-> > On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
-> >> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-> >> clock index 0b1x is PLL6.
-> >>
-> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> >
-> > If the clock is the same but the parents are different, then we don't
-> > need to duplicate all the logic. Simply add the number of parents to
-> > mux_data, and you're all set.
->=20
-> Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
-> 0b10 and 0b11 is pll6/pre_div.
-> So, just adding number of parents to mux_data will not solve problem.
+I took a quick view of this patchset, CLK_ENABLE_HAND_OFF is not
+suitable for these critical clocks. I'm not sure CLK_IS_CRITICAL
+suitable or not. A clock with CLK_IS_CRITICAL will be prepare_enable
+when it is registered. But if its parent is not registered into CCF, it
+will not be enabled even the parent clock register into CCF later.
 
-Is anyone using 0b11 ? Can't we just ignore it?
+> > +
+> >  static void __init mtk_topckgen_init(struct device_node *node)
+> >  {
+> >         struct clk_onecell_data *clk_data;
+> > @@ -585,7 +600,7 @@ static void __init mtk_topckgen_init(struct device_node *node)
+> >                 return;
+> >         }
+> >  
+> > -       clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
+> > +       top_clk_data = clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
+> >  
+> >         mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+> >                                                                 clk_data);
+> > @@ -606,6 +621,8 @@ static void __init mtk_topckgen_init(struct device_node *node)
+> >         if (r)
+> >                 pr_err("%s(): could not register clock provider: %d\n",
+> >                         __func__, r);
+> > +
+> > +       mtk_clk_enable_critical();
+> 
+> So you call the function here, and ...
+> >  }
+> >  CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
+> >  
+> > @@ -1201,7 +1218,7 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
+> >         struct clk_onecell_data *clk_data;
+> >         int r;
+> >  
+> > -       clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
+> > +       pll_clk_data = clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
+> >         if (!clk_data)
+> >                 return;
+> >  
+> > @@ -1212,6 +1229,8 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
+> >         if (r)
+> >                 pr_err("%s(): could not register clock provider: %d\n",
+> >                         __func__, r);
+> > +
+> > +       mtk_clk_enable_critical();
+> 
+> ... here as well. So the prepare_count and enable_count will be 2? I'm
+> not sure that this makes sense. If you have different clocks that need
+> to be enabled at different times (due to the split registration scheme
+> that you employ in this driver) then why not pass an array of those
+> clocks into mtk_clk_enable_critical?
 
-Maxime
+No. After topckgen and apmixedsys initialized, critical clocks'
+reference count will be 1.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+There is a guard at the beginning of mtk_clk_enable_critical():
 
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+	if (!top_clk_data || !pll_clk_data)
+		return;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+So this function will be only executed when topckgen and apmixedsys init
+done.
 
-iQIcBAEBAgAGBQJWswVFAAoJEBx+YmzsjxAgzyQQAKF0SzkwT8zLiJK4ZzCThSFj
-8JdhhulHi4AhSSmPfZCaW8RWnJl10GA6s+ZY1zNH8Hg83UD9CQuTEbeF14UGm1vK
-5exWnk22uRozmuT9xfjiAlSl3NqsB6x65XjRlp8XmIQobnO4hyAYNg2MzTiykK2l
-CJqYnzCsuwIHfcq+gUSLQSaSFspC3r130FWnQwjVlAWB29t8UHUKnU4MKBytgV15
-kfwI3dhUkv84NOJ+mXxTL7zJzppuYtAmWHOGzKjS7VN+p8Yq3Eu7KJIg+zXQd8rQ
-sK1zbf8KwF/T5VM+08BeQZanwfkGijC19tK7ymPVPmKXvDwYy3cPOeuaZ5dVkyxv
-2itgmXJ18Kg9rEJI4OtUlhGR/XIV4yyp7kdn/OpyDy798FDfLSQ1GsWmChcVnCeM
-wBXdnLcysl9ISU52ZXzdrYKgQU0WFfz6jeNaiMUHxvs5Unwa/uCBbV3gULWAoTx3
-xyGPJTUMWW9drTJqwdZmAN+s4eVCE+vQNNEzRiNiCdOeZkET2GpQRcm+sLp6Y0tF
-TGIsnuMzeAQ6vW7Sn/Bs6WsU9a32UUFMgdri+pHbB/8veT6nGknTIrRwlB+OK2VS
-YWKLRaPXuvUuVIqS/KWEIKATYven5supg70uu8cPR+FpH7xNUiep7FxPdc7uN4+l
-bvYDfpIX3Y6/LPS+26pt
-=r74m
------END PGP SIGNATURE-----
+We need to enable critical clocks:
 
---ikeVEW9yuYc//A+q--
+1. As early as possible.
+2. After critical clocks and their parents are registered into CCF.
+
+We need to wait all necessary clock providers because parents of
+critical clocks must be enabled at the same time. For example,
+CLK_TOP_AXI_SEL may have different parent on different platforms. We
+also need to keep new parent clock on if CLK_TOP_AXI_SEL change its
+parent dynamically.
+
+Because we can't ensure the init ordering of clock providers, we can
+only check all necessary providers are registered or not in each init
+function.
+
+> Anyways, like I mentioned above I think we're close to a solution to
+> handle this in the framework.
+> 
+> One question: do you ever want these critical clocks to be gated by a
+> driver, or do you want them always on, forever?
+
+In this patch, these clocks should be always on (in SW view) even if
+there are other drivers controlling them.
+
+If these is a common way to keep critical clocks and their parents on, I
+would like to use the common way. But the solution in your patch series
+[0] looks not handle parent clocks well. What's your suggestion to
+implement critical clocks base on [0]?
+
+
+Best regards,
+
+James
+
+> >  }
+> >  CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+> >                                                         mtk_apmixedsys_init);
+> > -- 
+> > 1.9.1
+> > 
