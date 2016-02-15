@@ -1,46 +1,55 @@
-Return-Path: <ricard.wanderlof@axis.com>
-Date: Wed, 17 Feb 2016 15:18:57 +0100
-From: Ricard Wanderlof <ricard.wanderlof@axis.com>
-To: Mark Brown <broonie@kernel.org>
-CC: Peter Ujfalusi <peter.ujfalusi@ti.com>, alsa-devel
-	<alsa-devel@alsa-project.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jyri Sarha
-	<jsarha@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, "Kristo,  Tero"
-	<t-kristo@ti.com>, <linux-clk@vger.kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>
-Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for	selecting
- system clocks by ID
-In-Reply-To: <20160216191346.2278.725@quark.deferred.io>
-Message-ID: <alpine.DEB.2.02.1602171516260.10339@lnxricardw1.se.axis.com>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com> <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com> <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com> <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 3/6] clk: rockchip: don't return NULL when registering inverter fails
+Date: Mon, 15 Feb 2016 11:33:33 +0800
+Message-Id: <1455507213-13037-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Avoid return NULL if rockchip_clk_register_inverter fails, otherwise
+rockchip_clk_register_branches print "unknown clock type". The acutal
+case is that it's a known clock type but we fail to regiser it, which
+may makes user confuse the reason of failure.
 
-Quoting Mark Brown (2016-02-16 05:42:33)
-> On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
-> 
-> > As for codecs, tlv320aic3106 is also pretty simple device from the outside, it
-> > can receive it's reference clock via:
-> > MCLK pin, GPIO2 pin or it can use the BCLK from the bus. Based on the incoming
-> > frequency it can use it directly or it needs to use the internal PLL to
-> > generate the cocks.
-> > It can output generated clock via GPIO1
-> 
-> That already sounds like there is room for configuration and hooking
-> into a wider clock tree - we've got three different source options and
-> an output plus a PLL that can presumably take in non-audio rates.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-It makes sense to use an already existing clock framework, but I'm 
-wondering, how do we model the clock select function? Using a clock mux? 
-Somewhere, somehow, something needs to look at the setup and decide which 
-pin on the codec should be the clock source (e.g. MCLK, GPIO2, or BCLK in 
-the case of the tlv320aic3106).
+ drivers/clk/rockchip/clk-inverter.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-/Ricard
+diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
+index 7cbf43b..dcb6e37 100644
+--- a/drivers/clk/rockchip/clk-inverter.c
++++ b/drivers/clk/rockchip/clk-inverter.c
+@@ -90,7 +90,7 @@ struct clk *rockchip_clk_register_inverter(const char *name,
+ 
+ 	inv_clock = kmalloc(sizeof(*inv_clock), GFP_KERNEL);
+ 	if (!inv_clock)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	init.name = name;
+ 	init.num_parents = num_parents;
+@@ -106,11 +106,7 @@ struct clk *rockchip_clk_register_inverter(const char *name,
+ 
+ 	clk = clk_register(NULL, &inv_clock->hw);
+ 	if (IS_ERR(clk))
+-		goto err_free;
++		kfree(inv_clock);
+ 
+ 	return clk;
+-
+-err_free:
+-	kfree(inv_clock);
+-	return NULL;
+ }
 -- 
-Ricard Wolf Wanderlöf                           ricardw(at)axis.com
-Axis Communications AB, Lund, Sweden            www.axis.com
-Phone +46 46 272 2016                           Fax +46 46 13 61 30
+2.3.7
