@@ -1,50 +1,49 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Mon, 22 Feb 2016 09:15:23 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew
- Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
- Lior Amsalem <alior@marvell.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] clk: mvebu: add AP806 ring clock driver
-Message-ID: <20160222091523.59570303@free-electrons.com>
-In-Reply-To: <20160222025401.GF15973@rob-hp-laptop>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1455521698-7905-4-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160222025401.GF15973@rob-hp-laptop>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: rockchip: check grf when waiting pll lock
+Date: Mon, 15 Feb 2016 22:40:18 +0100
+Message-ID: <1835816.QSOU3ZhEch@phil>
+In-Reply-To: <1455507205-12996-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com> <1455507205-12996-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear Rob Herring,
-
-On Sun, 21 Feb 2016 20:54:01 -0600, Rob Herring wrote:
-> On Mon, Feb 15, 2016 at 08:34:58AM +0100, Thomas Petazzoni wrote:
-> > This commit adds a new driver to handle the ring clocks found in the
-> > AP806 HW block, which is the core block of all Armada 7K and 8K
-> > Marvell 64-bits processors. Those ring clocks are derived from the
-> > core ring clock handled by the AP806 core clock driver. The ring
-> > clocks are used by various peripherals inside the AP806.
-> > 
-> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> > ---
-> >  .../clock/mvebu-armada-ap806-ring-clock.txt        | 32 +++++++++++
+Am Montag, 15. Februar 2016, 11:33:25 schrieb Shawn Lin:
+> rockchip_clk_get_grf pass on return value from
+> syscon_regmap_lookup_by_phandle, so we check grf to
+> make sure whether to do the following things or not.
 > 
-> Combine this with the other patch. Similar comments as the other one.
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-What do you mean by "combine"? It certainly doesn't make sense to merge
-the two patches: there is one patch per driver, so the DT binding
-documentation comes together with the driver it corresponds to.
+applied to my clk-branch for 4.6 with one change below
 
-Best regards,
+> ---
+> 
+>  drivers/clk/rockchip/clk-pll.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-pll.c
+> b/drivers/clk/rockchip/clk-pll.c index b7e66c9..dddbc29 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -90,10 +90,16 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
+> */
+>  static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+>  {
+> -	struct regmap *grf = rockchip_clk_get_grf();
+> +	struct regmap *grf;
+>  	unsigned int val;
+>  	int delay = 24000000, ret;
+> 
+> +	grf = rockchip_clk_get_grf();
+> +	if (IS_ERR(grf)) {
+> +		pr_err("%s: grf regmap not available\n", __func__);
+> +		return -ENODEV;
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+I've changed that to PTR_ERR(grf), similar to the preexisting checks
+
+
+Heiko
