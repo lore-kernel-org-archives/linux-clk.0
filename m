@@ -1,143 +1,44 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 10 Feb 2016 13:59:36 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jean-Francois Moine <moinejf@free.fr>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <rob.herring@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4] clk: sunxi: Refactor A31 PLL6 so that it can be reused
-Message-ID: <20160210125936.GD31506@lukather>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Rln2GmQ7CFmDhc9B"
-In-Reply-To: <56B4E2FB.3050703@arm.com>
+In-Reply-To: <20160211151246.GO31506@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+	<CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+	<20160211123648.GN31506@lukather>
+	<CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
+	<20160211151246.GO31506@lukather>
+Date: Tue, 16 Feb 2016 00:23:37 +0100
+Message-ID: <CACRpkdb7=x2bJP1nXpF2bP3U0t+NUHiuw_aeTAhbR8OXOrHn6A@mail.gmail.com>
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Feb 11, 2016 at 4:12 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Thu, Feb 11, 2016 at 02:47:57PM +0100, Linus Walleij wrote:
 
---Rln2GmQ7CFmDhc9B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> Can you guys supply a MAINTAINERS entry for the sunxi
+>> stuff?
+>
+> We have one, and Chen-Yu is listed as co-maintainer:
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n911
 
-Hi,
+Modified request:
+can you put in F: wildcards there to match the files pertaining to
+the sunxi platform, so that scripts/find-maintainer.pl finds them.
 
-On Fri, Feb 05, 2016 at 05:59:23PM +0000, Andre Przywara wrote:
-> Hi Maxime,
->=20
-> just found this while looking at your current git branch, so sorry for
-> the late reply.
->=20
-> CC:ing DT people, since you touch both existing DTs(!) and the binding do=
-c.
->=20
-> On 01/02/16 20:20, Maxime Ripard wrote:
-> > Remove the fixed dividers from the PLL6 driver to be able to have a
-> > reusable driver that can be used across several SoCs that share the same
-> > controller, but don't have the same set of dividers for this clock, and=
- to
-> > also be reused multiple times in the same SoC, since we're droping the
-> > clock name.
-> >=20
-> > Acked-by: Chen-Yu Tsai <wens@csie.org>
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >=20
-> > Changes from v3:
-> >   - Fixed the documentation
-> >   - Added pll6d2 back
-> >=20
-> > Changes from v2:
-> >   - Rebased and converted over to the new factors refactoring. Fixed the
-> >     retrieved rate
-> >=20
-> >  Documentation/devicetree/bindings/clock/sunxi.txt |  2 +-
-> >  arch/arm/boot/dts/sun6i-a31.dtsi                  | 36 +++++++++++----=
--------
-> >  arch/arm/boot/dts/sun8i-a23-a33.dtsi              | 25 ++++++++++-----
-> >  arch/arm/boot/dts/sun8i-a23.dtsi                  |  2 +-
-> >  arch/arm/boot/dts/sun8i-a33.dtsi                  |  4 +--
-> >  arch/arm/boot/dts/sun8i-h3.dtsi                   | 37 ++++++++++++++-=
---------
->=20
-> So are you really breaking all those systems by changing the DT and the
-> driver in an incompatible way?
-
-Yes.
-
-> Please correct me if this assessment is wrong, but to me it looks like
-> any user out there is either stuck with 4.5 at best _or_ will only be
-> able to run 4.6 and later (depending on which version of the DT she is
-> using)? And no, switching DTs along with the kernel is _not_ an option.
-
-It is. And it is one that every other ARM platform chose. And so did
-every distribution.
-
-> That is not how I understand DT.
-
-I'm sorry for that. This has never been something we said was
-happening.
-
-> Also this totally ignores any other DT user (U-Boot, FreeBSD, you
-> name it).
-
-Which all have their own DT copies, with their own bindings, that we
-(ie Linux) never agreed on.
-
-By further extending that argument, you're currently looking at the DT
-=66rom Allwinner, do you want to support theirs as well?
-
-> I actually appreciate this rework, it's more flexible now and looks
-> better, but you really can't do this in a way to breaks compatibility
-> with existing DTs.
->=20
-> Jean-Francois came up with another solution for the pll8 clock [1], so
-> could this be considered at least?
-> I think changing the H3 PLL8 clock from dummy to something real is a
-> different story in terms of compatibility (since it never really worked
-> before and this wouldn't change for any old-DT user).
-
-So, one would have to update the DT anyway to benefit from these
-changes? What's the point of maintaining DT stability if you add every
-new release new stuff to the DT that users are going to want? Beside
-adding untested, unmaintained, dead, and possibly broken code, that is.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---Rln2GmQ7CFmDhc9B
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWuzQ4AAoJEBx+YmzsjxAgA/wP/3p54jR5zJcXXIjc2IsAuTBe
-Y9eGrrWTsO0lhRSql1rUni0fVcA9A4rM003Z576mvDbD+Np5SYlNLEzAVL8IW+9K
-TefehsFQ97E68CUQAYKDvIJ24vtxYsR2LpTcvEpkacdCXBbUK5+NJg+9BElcVrAx
-mz9NzjrGpX3j+4H/B5yvv7E8geRMdJXxicPQO6qJp27L1cA5KY4YCgEoOL7dCXx3
-zYfUy8AXZFWjtfMPdVmsAT0cmUnikxO+0teAIMINUNnrtTMjVWfYRO3VUv7UtUV3
-c3CXawqd4FEortgTnVwDOfYCPZy3Ps7HZztd0ZUftvPLC70+o7c2Hzi4AsNoixll
-6ibI32vWW/HaY0TcaEKM4ZF2mW1LHx/bJt0StVKKKZAxZ9QQ7TS2QQsHWKwvybYq
-olIGAGDRDGkk5uL3T0KMjUjSeMkLB+0gkYIivFGgpS1v7KJelZkr83Grd1VwX6xa
-OkaFHRc6b6GFmwY01hP3ozc47m8c8WpqNS18viQLy4LlOnSU31Pg/9AxCw8PpJah
-UWJgFn5WCBN/cLm+bBP9eBbwqkzex4NxMeHx8oUNBG2FlFC3+q/eEVuWAJlkLUaD
-voycn9drHyzjYJaOFbmLb2E+k8Z+t46vjMsYYplNIYwEi8M8RdWKvYXVOZnDsrCo
-PieFjnuG8BJhr4cU5e15
-=N1Zy
------END PGP SIGNATURE-----
-
---Rln2GmQ7CFmDhc9B--
+Yours,
+Linus Walleij
