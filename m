@@ -1,62 +1,62 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160204080109.GA4270@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
- <20160202131725.GQ4652@lukather> <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
- <20160204080109.GA4270@lukather>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Fri, 12 Feb 2016 13:24:39 +0800
-Message-ID: <CAEzqOZsCkGDxma77H0Te+9PLau6Ybu19cdG_yNTiEhEbwQQrhw@mail.gmail.com>
-Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 0/3] clk: mvebu: initial support for AP806 clocks
+Date: Mon, 15 Feb 2016 08:34:55 +0100
+Message-Id: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Maxime,
+Hello,
 
-On Thu, Feb 4, 2016 at 4:01 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Thu, Feb 04, 2016 at 02:06:45PM +0800, Vishnu Patekar wrote:
->> Hello Maxime,
->>
->>
->> On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > Hi,
->> >
->> > On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
->> >> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
->> >> clock index 0b1x is PLL6.
->> >>
->> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> >
->> > If the clock is the same but the parents are different, then we don't
->> > need to duplicate all the logic. Simply add the number of parents to
->> > mux_data, and you're all set.
->>
->> Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
->> 0b10 and 0b11 is pll6/pre_div.
->> So, just adding number of parents to mux_data will not solve problem.
->
-> Is anyone using 0b11 ? Can't we just ignore it?
-Yes, it's used, 0b11 is pll6 parent in case of A31.
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+The following set of patches add initial support for the main clocks
+found in the AP806 hardware block, which is the central block used in
+the newest Marvell 7K and 8K 64-bits processors.
+
+Two new drivers are added, one for the so-called "core" clocks and one
+for the "ring" clocks. The latter are child clocks from one of the
+core clocks. The "core" clocks are fixed rate clocks, but their rate
+is calculated from values in the Sample At Reset register.
+
+The support for the Marvell 7K/8K platform (Device Tree, etc.) will be
+submitted as a separate patch series.
+
+Thanks!
+
+Thomas
+
+Thomas Petazzoni (3):
+  clk: unconditionally recurse into clk/mvebu/
+  clk: mvebu: add AP806 core clock driver
+  clk: mvebu: add AP806 ring clock driver
+
+ .../clock/mvebu-armada-ap806-core-clock.txt        |  33 ++++++
+ .../clock/mvebu-armada-ap806-ring-clock.txt        |  32 ++++++
+ drivers/clk/Makefile                               |   2 +-
+ drivers/clk/mvebu/Kconfig                          |   6 ++
+ drivers/clk/mvebu/Makefile                         |   3 +-
+ drivers/clk/mvebu/ap806-core.c                     | 112 +++++++++++++++++++++
+ drivers/clk/mvebu/ap806-ring.c                     |  65 ++++++++++++
+ 7 files changed, 251 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+ create mode 100644 drivers/clk/mvebu/ap806-core.c
+ create mode 100644 drivers/clk/mvebu/ap806-ring.c
+
+-- 
+2.6.4
