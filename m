@@ -1,252 +1,70 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: add lpc18xx creg clk driver
-Date: Sat, 20 Feb 2016 19:53:36 +0100
-Message-Id: <1455994417-4471-2-git-send-email-manabian@gmail.com>
-In-Reply-To: <1455994417-4471-1-git-send-email-manabian@gmail.com>
-References: <1455994417-4471-1-git-send-email-manabian@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160213011403.GI4847@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
+ maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+ geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+ rklein@nvidia.com, linux-kernel@vger.kernel.org
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+ <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
+ <20160213011403.GI4847@codeaurora.org>
+Message-ID: <20160215202734.2278.91610@quark.deferred.io>
+Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
+Date: Mon, 15 Feb 2016 12:27:34 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-The CREG block on lpc18xx contains configuration register
-for two low power clocks. Support enabling of these two
-clocks with a clk driver that access CREG trough the
-syscon regmap interface.
+Quoting Stephen Boyd (2016-02-12 17:14:03)
+> On 02/11, Michael Turquette wrote:
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index b4db67a..993f775 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct=
+ clk *clk_user)
+> >       if (core->ops->init)
+> >               core->ops->init(core->hw);
+> >  =
 
-These clocks are needed to support peripherals like the
-internal RTC on lpc18xx.
+> > +     if (core->flags & CLK_IS_CRITICAL) {
+> > +             clk_core_prepare(core);
+> > +             clk_core_enable(core);
+> > +     }
+> =
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- drivers/clk/nxp/Makefile           |   1 +
- drivers/clk/nxp/clk-lpc18xx-creg.c | 205 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 206 insertions(+)
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
+> What do we do if this is an orphan clk? From what I can tell
+> we're not going to increment the ref count on the parents that
+> may or may not appear at some later time when this flag is set.
 
-diff --git a/drivers/clk/nxp/Makefile b/drivers/clk/nxp/Makefile
-index 607bd48c6563..d456ee6cc3d3 100644
---- a/drivers/clk/nxp/Makefile
-+++ b/drivers/clk/nxp/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-cgu.o
- obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-ccu.o
-+obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-creg.o
- obj-$(CONFIG_ARCH_LPC32XX)	+= clk-lpc32xx.o
-diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
-new file mode 100644
-index 000000000000..af2b2ae3aea7
---- /dev/null
-+++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
-@@ -0,0 +1,205 @@
-+/*
-+ * Clk driver for NXP LPC18xx/43xx Configuration Registers (CREG)
-+ *
-+ * Copyright (C) 2015 Joachim Eastwood <manabian@gmail.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define LPC18XX_CREG_CREG0			0x004
-+#define  LPC18XX_CREG_CREG0_EN1KHZ		BIT(0)
-+#define  LPC18XX_CREG_CREG0_EN32KHZ		BIT(1)
-+#define  LPC18XX_CREG_CREG0_RESET32KHZ		BIT(2)
-+#define  LPC18XX_CREG_CREG0_PD32KHZ		BIT(3)
-+
-+#define to_clk_creg(_hw) container_of(_hw, struct clk_creg_data, hw)
-+
-+enum {
-+	CREG_CLK_1KHZ,
-+	CREG_CLK_32KHZ,
-+	CREG_CLK_MAX,
-+};
-+
-+struct clk_creg_data {
-+	struct clk_hw hw;
-+	const char *name;
-+	struct regmap *reg;
-+	unsigned int en_mask;
-+	const struct clk_ops *ops;
-+};
-+
-+#define CREG_CLK(_name, _emask, _ops)		\
-+{						\
-+	.name = _name,				\
-+	.en_mask = LPC18XX_CREG_CREG0_##_emask,	\
-+	.ops = &_ops,				\
-+}
-+
-+static int clk_creg_32k_prepare(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+	int ret;
-+
-+	ret = regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+				 LPC18XX_CREG_CREG0_PD32KHZ |
-+				 LPC18XX_CREG_CREG0_RESET32KHZ, 0);
-+
-+	/*
-+	 * Powering up the 32k oscillator takes a long while
-+	 * and sadly there aren't any status bit to poll.
-+	 */
-+	msleep(2500);
-+
-+	return ret;
-+}
-+
-+static void clk_creg_32k_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+
-+	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+			   LPC18XX_CREG_CREG0_PD32KHZ,
-+			   LPC18XX_CREG_CREG0_PD32KHZ);
-+}
-+
-+static int clk_creg_32k_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+	u32 reg;
-+
-+	regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
-+
-+	return !(reg & LPC18XX_CREG_CREG0_PD32KHZ) &&
-+	       !(reg & LPC18XX_CREG_CREG0_RESET32KHZ);
-+}
-+
-+static unsigned long clk_creg_1k_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	return parent_rate / 32;
-+}
-+
-+static int clk_creg_enable(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+
-+	return regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+				  creg->en_mask, creg->en_mask);
-+}
-+
-+static void clk_creg_disable(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+
-+	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+			   creg->en_mask, 0);
-+}
-+
-+static const struct clk_ops clk_creg_32k = {
-+	.enable		= clk_creg_enable,
-+	.disable	= clk_creg_disable,
-+	.prepare	= clk_creg_32k_prepare,
-+	.unprepare	= clk_creg_32k_unprepare,
-+	.is_prepared	= clk_creg_32k_is_prepared,
-+};
-+
-+static const struct clk_ops clk_creg_1k = {
-+	.enable		= clk_creg_enable,
-+	.disable	= clk_creg_disable,
-+	.recalc_rate	= clk_creg_1k_recalc_rate,
-+};
-+
-+static struct clk_creg_data clk_creg_clocks[] = {
-+	[CREG_CLK_1KHZ]  = CREG_CLK("1khz_clk",  EN1KHZ,  clk_creg_1k),
-+	[CREG_CLK_32KHZ] = CREG_CLK("32khz_clk", EN32KHZ, clk_creg_32k),
-+};
-+
-+static struct clk *clk_register_creg_clk(struct clk_creg_data *creg_clk,
-+					 const char **parent_name,
-+					 struct regmap *syscon)
-+{
-+	struct clk_init_data init;
-+
-+	init.ops = creg_clk->ops;
-+	init.name = creg_clk->name;
-+	init.parent_names = parent_name;
-+	init.num_parents = 1;
-+
-+	creg_clk->reg = syscon;
-+	creg_clk->hw.init = &init;
-+
-+	return clk_register(NULL, &creg_clk->hw);
-+}
-+
-+static struct clk *clk_creg[CREG_CLK_MAX];
-+static struct clk_onecell_data clk_base_data = {
-+	.clks = clk_creg,
-+	.clk_num = CREG_CLK_MAX,
-+};
-+
-+static void __init lpc18xx_creg_clk_init(struct device_node *np)
-+{
-+	const char *clk_32khz_parent;
-+	struct regmap *syscon;
-+
-+	syscon = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(syscon)) {
-+		pr_err("%s: syscon lookup failed\n", __func__);
-+		return;
-+	}
-+
-+	clk_32khz_parent = of_clk_get_parent_name(np, 0);
-+
-+	clk_creg[CREG_CLK_32KHZ] =
-+		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
-+				      &clk_32khz_parent, syscon);
-+	clk_creg[CREG_CLK_1KHZ] = ERR_PTR(-EPROBE_DEFER);
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
-+}
-+CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
-+
-+static int lpc18xx_creg_clk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *syscon;
-+
-+	syscon = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(syscon)) {
-+		dev_err(&pdev->dev, "syscon lookup failed\n");
-+		return PTR_ERR(syscon);
-+	}
-+
-+	clk_creg[CREG_CLK_1KHZ] =
-+		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
-+				      &clk_creg_clocks[CREG_CLK_32KHZ].name,
-+				      syscon);
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id lpc18xx_creg_clk_of_match[] = {
-+	{ .compatible = "nxp,lpc1850-creg-clk", },
-+	{},
-+};
-+
-+static struct platform_driver lpc18xx_creg_clk_driver = {
-+	.probe = lpc18xx_creg_clk_probe,
-+	.driver = {
-+		.name = "lpc18xx-creg-clk",
-+		.of_match_table = lpc18xx_creg_clk_of_match,
-+	},
-+};
-+builtin_platform_driver(lpc18xx_creg_clk_driver);
--- 
-1.8.0
+I don't see how this is any different than any other orphan clock.
+__clk_set_parent_before and __clk_set_parent_after should still handle
+migration and propagation of the {prepare,enable}_count when it is
+finally re-parented.
+
+(as an aside, that code conditionally calls clk_prepare AND clk_enable
+based solely on the prepare refcount, which seems weird to me...)
+
+> Furthermore, do we want to propagate the CLK_IS_CRITICAL flag up
+> to all the parent clocks so that the warning mechanism spits out
+> errors for parent clocks? I suppose that may not be very useful
+> assuming refcounts are correct, but it may be useful to know
+> which clocks are critical and which ones aren't during debug.
+
+No, propagating flags is a bad idea. Existing prepare/enable ref counts
+should do the job for us.
+
+Regarding debug, propagating the flag will hurt debug-ability. We
+already expose the clk_core->flags in sysfs, and debuggers can grep for
+the CRITICAL flag there to find any spuriously enabled clocks.
+
+Regards,
+Mike
+
+> =
+
+> -- =
+
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
