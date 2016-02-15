@@ -1,107 +1,119 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 26 Feb 2016 15:55:49 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:10352 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751593AbcBODq6 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 14 Feb 2016 22:46:58 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: arm/marvell: add DT bindings for
- AP806 DFX Server
-Message-ID: <20160226235549.GB28849@codeaurora.org>
-References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
- <20160225233710.GJ28849@codeaurora.org>
- <20160226093227.5d4dc1a7@free-electrons.com>
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v3 4/4] Documentation: atmel-pmc: add DT bindings for fast startup
+Date: Mon, 15 Feb 2016 11:40:30 +0800
+Message-ID: <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
+References: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160226093227.5d4dc1a7@free-electrons.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/26, Thomas Petazzoni wrote:
-> I would entirely agree with you if this DFX Server was some sort of
-> "system control" IP block that provided clocks, resets, and all sort of
-> other features.
-> 
-> But this DFX server thing is just a bunch of registers with absolutely
-> no relation to clocks. Due to this, it would be completely awkward to
-> have clock references like:
-> 
-> 	serial {
-> 		clocks = <&dfxserver 42>;
-> 	};
-> 
-> One will wonder "why the heck this UART controller is using a clock
-> from this really odd dfxserver thing" ? Currently we have:
-> 
-> 	serial {
-> 		clocks = <&coreclk 4>;
-> 	};
-> 
-> which makes a *lot* more sense.
+Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
+to trigger a fast restart signal to PMC.
 
-Sorry I don't see the difference and I don't agree with this
-argument. dfxserver is just a phandle and possibly a poorly named
-one at that. So is coreclk. The second example doesn't make a
-*lot* more sense or really any more sense than the first example.
-Maybe some #define should be used to make things readable:
-&dfxserver CORE_CLK_X or something. Why someone would care what
-the name of the phandle is for where the clk is coming from makes
-no sense to me.
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Document: binding
 
-The miscellaneous register dumping ground, i.e. dfxserver, is a
-total mess in hardware, agreed, but it doesn't mean we need to
-pick it apart and describe the bits and pieces of it so that our
-DT can be read as &coreclk 4 instead of &dfxserver 42.
+---
 
-Somebody delivered this dfxserver hardware block into the SoC.
-They decided to put random clk control in there. In terms of
-hardware blocks, I would guess that dfxserver has a couple clk
-wires coming out and some SoC integration engineer had to wire
-those up to the places like the uart that actually use them.
-Embrace these hardware design decisions. Represent the hardware
-in DT as it is represented in hardware by making one node for the
-dfxserver because dfxserver is a hardware block.
+Changes in v3:
+ - update the property description.
 
-> 
-> Also, your idea of just hiding everything behind a MFD bothers me quite
-> a bit. If I push this idea further, then why shouldn't I replace my
-> entire DT with a single node, that covers the entire register space of
-> my SoC, and then handle *everything* as a huge MFD. In a way, it would
-> be quite useful for me, as it would resolve the on-going dispute over
-> DT binding stability with Rob and Mark.
+Changes in v2:
+ - change the property name and property description.
 
-That's a straw man fallacy. Nobody is asking for this. DT is
-about describing relations between hardware blocks and the
-resources they use. It is *not* about describing register level
-details of hardware blocks and providing some data heavy format
-so that drivers are nothing besides DT data driven husks of code.
-Nor is it about grouping clk subtypes into different DT subnodes
-to make writing drivers easier. That's what gets us into the mess
-of DT backward compatibility when the data that should have been
-in the driver has been put into DT.
+ .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-> 
-> For sure, I wouldn't have any DT backward compatibility issue, because
-> everything is hidden in my big MFD. But in terms of the DT as a
-> representation of the different HW blocks and the relations between
-> then, such a choice would be quite a failure.
-> 
-
-I don't see any failure. The dfxserver is a hardware block and
-that happens to be a clk provider, plain and simple. Consumers of
-those clks are related to the dfxserver and we've properly
-expressed the relations between them.
-
+diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+index 795cc78..0d2481c 100644
+--- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+@@ -12,3 +12,66 @@ Examples:
+ 		compatible = "atmel,at91rm9200-pmc";
+ 		reg = <0xfffffc00 0x100>;
+ 	};
++
++PMC Fast Startup Signals
++
++The PMC Fast Start Signals are used as the wake up source to trigger the PMC
++to wake up the system from the ULP1 mode.
++
++required properties:
++- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
++
++optional properties:
++- atmel,wkup-trigger: boolean, WKUP input can trigger a fast restart signal.
++- atmel,secumod-trigger: boolean, SECUMOD can trigger a fast restart signal.
++- atmel,piobu0-trigger: boolean, PIOBU0 input can trigger a fast restart signal.
++- atmel,piobu1-trigger: boolean, PIOBU1 input can trigger a fast restart signal.
++- atmel,piobu2-trigger: boolean, PIOBU2 input can trigger a fast restart signal.
++- atmel,piobu3-trigger: boolean, PIOBU3 input can trigger a fast restart signal.
++- atmel,piobu4-trigger: boolean, PIOBU4 input can trigger a fast restart signal.
++- atmel,piobu5-trigger: boolean, PIOBU5 input can trigger a fast restart signal.
++- atmel,piobu6-trigger: boolean, PIOBU6 input can trigger a fast restart signal.
++- atmel,piobu7-trigger: boolean, PIOBU7 input can trigger a fast restart signal.
++- atmel,gmac-wol-trigger: boolean, GMAC_WOL can trigger a fast restart signal.
++- atmel,rtc-alarm-trigger: boolean, RTC alarm can trigger a fast restart signal.
++- atmel,usb-resume-trigger: boolean, USB resume can trigger a fast restart
++  signal.
++- atmel,sdmmc-cd-trigger: boolean, SDMMC card detect can trigger a fast
++  restart signal.
++- atmel,rxlp-match-trigger: boolean, Matching condition on RXLP can trigger
++  a fast restart signal.
++- atmel,acc-comparison-trigger: boolean, ACC comparison can trigger a fast
++  restart signal.
++
++- atmel,wkup-trigger-level: int, defines the active polarity of the wake-up
++  input. Supported values are: 1 or 0.
++- atmel,piobu0-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU0 input. Supported values are: 1 or 0.
++- atmel,piobu1-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU1 input. Supported values are: 1 or 0.
++- atmel,piobu2-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU2 input. Supported values are: 1 or 0".
++- atmel,piobu3-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU3 input. Supported values are: 1 or 0.
++- atmel,piobu4-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU4 input. Supported values are: 1 or 0.
++- atmel,piobu5-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU5 input. Supported values are: 1 or 0.
++- atmel,piobu6-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU6 input. Supported values are: 1 or 0.
++- atmel,piobu7-trigger-level: int, defines the active polarity of
++  the corresponding PIOBU7 input. Supported values are: 1 or 0.
++
++Example:
++
++	pmc: pmc@f0014000 {
++		compatible = "atmel,sama5d2-pmc";
++		reg = <0xf0014000 0x160>;
++
++		pmc_fast_restart {
++			compatible = "atmel,sama5d2-pmc-fast-startup";
++			atmel,wkup-trigger;
++			atmel,rtc-alarm-trigger;
++			atmel,wkup-trigger-level = <0>;
++		};
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
+
