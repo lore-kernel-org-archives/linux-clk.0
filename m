@@ -1,80 +1,176 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 2 Feb 2016 14:27:18 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 1/5] clk: sunxi: Make clocks setup functions return their
- clock
-Message-ID: <20160202132718.GU4652@lukather>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v66CyhkM0vabbede43eAaf7WVg0Lm8w_OUKwqHnFO182uw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ImSVV91IQg5ga+3z"
-In-Reply-To: <CAGb2v66CyhkM0vabbede43eAaf7WVg0Lm8w_OUKwqHnFO182uw@mail.gmail.com>
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 3/3] clk: mvebu: add AP806 ring clock driver
+Date: Mon, 15 Feb 2016 08:34:58 +0100
+Message-Id: <1455521698-7905-4-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This commit adds a new driver to handle the ring clocks found in the
+AP806 HW block, which is the core block of all Armada 7K and 8K
+Marvell 64-bits processors. Those ring clocks are derived from the
+core ring clock handled by the AP806 core clock driver. The ring
+clocks are used by various peripherals inside the AP806.
 
---ImSVV91IQg5ga+3z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ .../clock/mvebu-armada-ap806-ring-clock.txt        | 32 +++++++++++
+ drivers/clk/mvebu/Kconfig                          |  3 +
+ drivers/clk/mvebu/Makefile                         |  1 +
+ drivers/clk/mvebu/ap806-ring.c                     | 65 ++++++++++++++++++++++
+ 4 files changed, 101 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+ create mode 100644 drivers/clk/mvebu/ap806-ring.c
 
-Hi,
-
-On Tue, Feb 02, 2016 at 06:35:29PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Feb 2, 2016 at 4:47 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The clocks registration code in clk-sunxi was most of the time not
-> > returning the struct clk (or struct clk array) that was registered,
-> > preventing the users of such functions to manipulate it, for example to
-> > protect it.
-> >
-> > Make them return it so that we can start using it.
->=20
-> Should they return error codes as well? So the CLK_OF_DECLARE setup funct=
-ions
-> can report errors. Or make these helper functions report errors directly?
-
-CLK_OF_DECLARE doesn't handle any kind of error, as the setup function
-must return void, and the error printing should rather be in the
-common functions in order to avoid duplicating it everywhere, so I'm
-not sure. Or did you had something else in mind?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---ImSVV91IQg5ga+3z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWsK62AAoJEBx+YmzsjxAgzK8P/1e9U9N8FVQRWBwkQDvUN7Rw
-tdReFfpZUateZREysT7nlGz9QVOi5DY2dLFoesJvlozJPqPbHyvoqjDwMEqi7mhu
-mLH8NwM/ALvYTZW3vrgloSwOKBIrz8Rn4CMPYFv3EvwLA9f/1G/MWkCu4iGIl1F+
-dr5v2tDB/tUX0aQGEkoE9UcYbqeJmhMU8yNVBO4ypmBcjmbyp5oIvOpQKzOkNBG5
-4NPPqKwHOdBh7dNfcHvljst6DUBMJdS2Y7RBtDg1l0PZ7hpedEMfbS5IuveSfIIQ
-lUBfShSYmpv0yphOLj9tNw5sScLY2S+pVbSg9pmFrv6C+d/RUANx7YAKObvbjvgG
-EYIlV26TyJqxz24O3D9vO7eEC5uhuNurYipMNxyxw4r4ncxOicn6W51P8xeBtl0+
-0JKu5RNDWOsw+IXalo3+3cSt2GVnf0U+g8dta4O0I6TqFDGfqumz9d/4UaAilp/3
-7wDefVRhCi6nTuJJGhSBO9ruxcVHb1P/6xYFJpOgsWPgNCRDZZH+4q43WtkRo4dc
-pxEFzZBNwwpdV5C4Hag80mFVKpQQ2nDNeqtUW4h6p8jIKlre2OdnNnRO3mMouibp
-K3G2n/0eBf2jDBUeLcCb9qHUxJw3jXql8b4OOzw1maS+FMuw3iJx5pfvD3uJoLTr
-hZzp6sgZ5QrdMyH//2FQ
-=EVOp
------END PGP SIGNATURE-----
-
---ImSVV91IQg5ga+3z--
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+new file mode 100644
+index 0000000..5602bdc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+@@ -0,0 +1,32 @@
++* Clock bindings for Marvell MVEBU AP806 Ring clocks
++
++The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
++hosting the CPU and other core components of the CPU. This Device Tree
++binding allows to describe the ring clocks of the AP806, which are
++derived from the Ring Core clock, after a dividing factor.
++
++The following is a list of provided IDs and clock names on Armada
++AP806 RING dividers:
++
++ 0 = Ring 0
++ 1 = Ring 2
++ 2 = Ring 3
++ 3 = Ring 4
++ 4 = Ring 5
++
++Required properties:
++- compatible: must be one of the following:
++	"marvell,armada-ap806-ring-clock"
++- reg: must be the register holding the divider values for ring clocks
++- #clock-cells : from common clock binding; shall be set to 1
++- clock-output-names: name of the output clocks
++
++Example:
++
++	ringclk: clk@0x6F8250 {
++		compatible = "marvell,armada-ap806-ring-clock";
++		reg = <0x6F8250 0x04>;
++		#clock-cells = <1>;
++		clock-output-names = "ring-0", "ring-2", "ring-3", "ring-4", "ring-5";
++		clocks = <&coreclk 1>;
++	};
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index fd84172..5d30aac 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -45,3 +45,6 @@ config ORION_CLK
+ 
+ config ARMADA_AP806_CORE_CLK
+ 	bool
++
++config ARMADA_AP806_RING_CLK
++	bool
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index db5c28c..48ca2d3 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
+ obj-$(CONFIG_ARMADA_AP806_CORE_CLK) += ap806-core.o
++obj-$(CONFIG_ARMADA_AP806_RING_CLK) += ap806-ring.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
+ obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
+diff --git a/drivers/clk/mvebu/ap806-ring.c b/drivers/clk/mvebu/ap806-ring.c
+new file mode 100644
+index 0000000..154ee55
+--- /dev/null
++++ b/drivers/clk/mvebu/ap806-ring.c
+@@ -0,0 +1,65 @@
++/*
++ * Marvell Armada AP806 ring clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#define AP806_RING_DIV_NUM	5
++
++static struct clk *ap806_ring_clks[AP806_RING_DIV_NUM];
++
++static struct clk_onecell_data ap806_ring_clk_data = {
++	.clks = ap806_ring_clks,
++	.clk_num = AP806_RING_DIV_NUM,
++};
++
++static void __init ap806_ring_clk_init(struct device_node *np)
++{
++	void __iomem *base;
++	const char *parent;
++	u32 reg;
++	int i;
++
++	base = of_iomap(np, 0);
++	if (WARN_ON(!base))
++		return;
++
++	reg = readl(base);
++
++	iounmap(base);
++
++	parent = of_clk_get_parent_name(np, 0);
++
++	for (i = 0; i < AP806_RING_DIV_NUM; i++) {
++		unsigned long divider;
++		const char *name;
++
++		/* Each clock is represented by 6 bits */
++		divider = (reg >> (6 * i)) & 0x3f;
++
++		of_property_read_string_index(np, "clock-output-names",
++					      i, &name);
++
++		ap806_ring_clks[i] =
++			clk_register_fixed_factor(NULL, name, parent,
++						  0, 1, divider);
++	}
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_ring_clk_data);
++}
++
++CLK_OF_DECLARE(ap806_ring_clk, "marvell,armada-ap806-ring-clock",
++	       ap806_ring_clk_init);
+-- 
+2.6.4
