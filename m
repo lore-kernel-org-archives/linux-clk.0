@@ -1,76 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 2 Feb 2016 18:33:40 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: don't mark sun6i_ar100_data __initconst
-Message-ID: <20160202173340.GA4652@lukather>
-References: <1453727747-23307-11-git-send-email-wens@csie.org>
- <1454428571-4040607-1-git-send-email-arnd@arndb.de>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ON0CT8LY+wgE1XqS"
-In-Reply-To: <1454428571-4040607-1-git-send-email-arnd@arndb.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455539977-23308-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1455539977-23308-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <20160215231651.2278.72320@quark.deferred.io>
+Subject: Re: [PATCH] clk: shmobile: cpg-mssr: Update serial port clock in example
+Date: Mon, 15 Feb 2016 15:16:51 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Geert Uytterhoeven (2016-02-15 04:39:37)
+> Cfr. commit a9ec81f4ed5c05db ("serial: sh-sci: Drop the interface
+> clock").
+> =
 
---ON0CT8LY+wgE1XqS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> I plan to queue this up with the other clk-shmobile patches in
+> clk-shmobile-for-v4.6 and send a pull request later.
 
-On Tue, Feb 02, 2016 at 04:55:30PM +0100, Arnd Bergmann wrote:
-> The clk-sun6i-ar100 clk driver is a platform driver that may use
-> deferred probing, so its probe function must not access
-> __init symbols. Kbuild warns about this:
+Ack.
+
+Regards,
+Mike
+
+> =
+
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
+
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt=
+ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> index 59297d34b2084429..fefb8023020f1a54 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> @@ -61,7 +61,7 @@ Examples
+>                 reg =3D <0 0xe6e88000 0 64>;
+>                 interrupts =3D <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+>                 clocks =3D <&cpg CPG_MOD 310>;
+> -               clock-names =3D "sci_ick";
+> +               clock-names =3D "fck";
+>                 dmas =3D <&dmac1 0x13>, <&dmac1 0x12>;
+>                 dma-names =3D "tx", "rx";
+>                 power-domains =3D <&cpg>;
+> -- =
+
+> 1.9.1
 >=20
-> WARNING: drivers/clk/sunxi/built-in.o(.text+0x15f0): Section mismatch in =
-reference from the function sun6i_a31_ar100_clk_probe() to the (unknown ref=
-erence) .init.rodata:(unknown)
-> The function sun6i_a31_ar100_clk_probe() references
-> the (unknown reference) __initconst (unknown).
-> This is often because sun6i_a31_ar100_clk_probe lacks a __initconst
-> annotation or the annotation of (unknown) is wrong.
->=20
-> Removing the __initconst annotation avoids the warning and makes
-> deferred probing work.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 3ca2377b6fed ("clk: sunxi: rewrite sun6i-ar100 using factors clk")
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---ON0CT8LY+wgE1XqS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWsOh0AAoJEBx+YmzsjxAgNZUQAIPH+/ZLru4oqDSpb2GdVCVv
-GDb87NYMLlhOrk2Xhl4YrJjC7drtBZosWEzgQzUkKc3o2+LS7O5UBYxX8hI76vrB
-iaPNE8oC0iHglfLPJ5m+x7HIAMHkMvI6KZLC8L15O0Bhq2Y/WAyg66y3D5Iht3/y
-ED+rHxJMGj6Mwec48koIGQtNDwxY7JFaflBqnmJFOWHCv7bdbm+vYqubJAfa3fEO
-cSv9lavTG/u5wmlqmR3C2AdJgEfEwaiYAZsf2GXfyIqaki96pRMpvyuAOjSW12jr
-Em8C5l+SiaihzoHyZw5mEXeEtQhXYyWPeAFY9XzfgsH2lRtzRs8FyaIkAGTFPPHo
-eF83UjGNAqpAHZMptCTrSU+Mo0WrEsmU06kPa7bjSpE57h8DaiqMeeQC0vjvQmat
-ScC8K4P1WwSP+UbAr2GCg+PrkHlCzQswH8FvC9f7OR2LifzeGZfS2RwoCNFjjDdD
-cbRVtNnQsR4JUFk4ZCifY3GSHBUX5QXgm3mBeXCdn1sUBdboW1tMZD2HoSY1HTAU
-l9SgjfAzLuotu7kmiwfHvH265IdHT2OInMskUc3/qruhHSAYa46e/phyFoLxw4nb
-qvi+qAvpiwpL6+tf0O2ASVOaXtEPI/w6T1VRh7doOIGh1+AfVzmkL76AKAxNzEgb
-JSbAbfc+lzbaVXMyrtXG
-=Voyh
------END PGP SIGNATURE-----
-
---ON0CT8LY+wgE1XqS--
