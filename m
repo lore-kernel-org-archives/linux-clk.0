@@ -1,39 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 15:06:54 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
 	Michael Turquette <mturquette@baylibre.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 2/2] clk: mvebu: Move corediv config to mvebu config
-Message-ID: <20160225230654.GD28849@codeaurora.org>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
- <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
- <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	zhangqing@rock-chips.com,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Caesar Wang <wxt@rock-chips.com>
+Subject: [RESEND PATCH 3/8] thermal: rockchip: fix a impossible condition caused by the warning
+Date: Mon, 15 Feb 2016 15:33:28 +0800
+Message-Id: <1455521613-27340-4-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/11, Kevin Smith wrote:
-> The core clock does not depend on corediv, so enabling corediv
-> based on the clock is not really correct.  Move the corediv
-> config option from the clock driver Kconfig to the mvebu Kconfig
-> so that it can be enabled by the MACH option instead.
-> 
-> This also enables corediv on Armada 375 and 38X, which was
-> previously missing.
-> 
-> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
+As the Dan report the smatch check the thermal driver warning:
+drivers/thermal/rockchip_thermal.c:551 rockchip_configure_from_dt()
+warn: impossible condition '(thermal->tshut_temp > ((~0 >> 1))) =>
+(s32min-s32max > s32max)'
 
-Applied to clk-next
+Although The shut_temp read from DT is u32,the temperature is currently
+represented as int not long in the thermal driver.
+Let's change to make shut_temp instead of the thermal->tshut_temp for
+the condition.
 
+Fixes: commit 437df2172e8d
+("thermal: rockchip: consistently use int for temperatures")
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+---
+
+ drivers/thermal/rockchip_thermal.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+index b58e3fb..433085a 100644
+--- a/drivers/thermal/rockchip_thermal.c
++++ b/drivers/thermal/rockchip_thermal.c
+@@ -693,15 +693,14 @@ static int rockchip_configure_from_dt(struct device *dev,
+ 			 thermal->chip->tshut_temp);
+ 		thermal->tshut_temp = thermal->chip->tshut_temp;
+ 	} else {
++		if (shut_temp > INT_MAX) {
++			dev_err(dev, "Invalid tshut temperature specified: %d\n",
++				shut_temp);
++			return -ERANGE;
++		}
+ 		thermal->tshut_temp = shut_temp;
+ 	}
+ 
+-	if (thermal->tshut_temp > INT_MAX) {
+-		dev_err(dev, "Invalid tshut temperature specified: %d\n",
+-			thermal->tshut_temp);
+-		return -ERANGE;
+-	}
+-
+ 	if (of_property_read_u32(np, "rockchip,hw-tshut-mode", &tshut_mode)) {
+ 		dev_warn(dev,
+ 			 "Missing tshut mode property, using default (%s)\n",
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
