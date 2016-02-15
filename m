@@ -1,62 +1,22 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH 8/8] arm: mach-artpec: add entry to MAINTAINERS
-Date: Wed, 10 Feb 2016 13:41:57 +0100
-Message-Id: <0b705a87e60c75c71721f3cf013b544eea746a95.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
- Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
- Jesper Nilsson <jespern@axis.com>, robh+dt@kernel.org, galak@codeaurora.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] clk: rockchip: don't return NULL when registering mmc branch fails
+Date: Mon, 15 Feb 2016 23:42:07 +0100
+Message-ID: <2062369.hCVujqfC1c@phil>
+In-Reply-To: <1455507221-13078-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com> <1455507221-13078-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
-Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Am Montag, 15. Februar 2016, 11:33:41 schrieb Shawn Lin:
+> Avoid return NULL if rockchip_clk_register_mmc fails, otherwise
+> rockchip_clk_register_branches print "unknown clock type". The acutal
+> case is that it's a known clock type but we fail to regiser it, which
+> may makes user confuse the reason of failure.
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7f1fa4f..d32c1aa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -932,6 +932,16 @@ M:	Tsahee Zidenberg <tsahee@annapurnalabs.com>
- S:	Maintained
- F:	arch/arm/mach-alpine/
- 
-+ARM/ARTPEC MACHINE SUPPORT
-+M:	Jesper Nilsson <jesper.nilsson@axis.com>
-+M:	Lars Persson <lars.persson@axis.com>
-+M:	Niklas Cassel <niklas.cassel@axis.com>
-+S:	Maintained
-+L:	linux-arm-kernel@axis.com
-+F:	arch/arm/mach-artpec
-+F:	arch/arm/boot/dts/artpec6*
-+F:	drivers/clk/clk-artpec6.c
-+
- ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
- M:	Nicolas Ferre <nicolas.ferre@atmel.com>
- M:	Alexandre Belloni <alexandre.belloni@free-electrons.com>
--- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+applied to my clk-branch for 4.6
