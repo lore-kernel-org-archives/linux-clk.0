@@ -1,79 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Feb 2016 18:03:33 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
-	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
-	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
-	rklein@nvidia.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
-Message-ID: <20160219020333.GO4847@codeaurora.org>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
- <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
- <20160213011403.GI4847@codeaurora.org>
- <20160215202734.2278.91610@quark.deferred.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160215202734.2278.91610@quark.deferred.io>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 1/3] clk: unconditionally recurse into clk/mvebu/
+Date: Mon, 15 Feb 2016 08:34:56 +0100
+Message-Id: <1455521698-7905-2-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/15, Michael Turquette wrote:
-> Quoting Stephen Boyd (2016-02-12 17:14:03)
-> > On 02/11, Michael Turquette wrote:
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index b4db67a..993f775 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
-> > >       if (core->ops->init)
-> > >               core->ops->init(core->hw);
-> > >  
-> > > +     if (core->flags & CLK_IS_CRITICAL) {
-> > > +             clk_core_prepare(core);
-> > > +             clk_core_enable(core);
-> > > +     }
-> > 
-> > What do we do if this is an orphan clk? From what I can tell
-> > we're not going to increment the ref count on the parents that
-> > may or may not appear at some later time when this flag is set.
-> 
-> I don't see how this is any different than any other orphan clock.
-> __clk_set_parent_before and __clk_set_parent_after should still handle
-> migration and propagation of the {prepare,enable}_count when it is
-> finally re-parented.
+The drivers/clk/mvebu directory is only being built when
+CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
+platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
+we need to recurse into this directory regardless of the value of
+CONFIG_PLAT_ORION.
 
->From what I can see we don't call __clk_set_parent_before() or
-__clk_set_parent_after() when we're reparenting orphans to
-registered clks. We just call clk_core_reparent() that does
-mostly a list manipulation and recalc down the tree (BTW we
-probably shouldn't recalc at all if a clk is still orphaned
-because the rate is totally bogus).
+Since all files in drivers/clk/mvebu/ are already conditionally
+compiled depending on various Kconfig options, we can recurse
+unconditionally into drivers/clk/mvebu without any other change.
 
-> 
-> (as an aside, that code conditionally calls clk_prepare AND clk_enable
-> based solely on the prepare refcount, which seems weird to me...)
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yeah I think I was questioning why we need to call clk_enable()
-there too so we should probably revisit this topic in another
-thread.
-
-> 
-> > Furthermore, do we want to propagate the CLK_IS_CRITICAL flag up
-> > to all the parent clocks so that the warning mechanism spits out
-> > errors for parent clocks? I suppose that may not be very useful
-> > assuming refcounts are correct, but it may be useful to know
-> > which clocks are critical and which ones aren't during debug.
-> 
-> No, propagating flags is a bad idea. Existing prepare/enable ref counts
-> should do the job for us.
-> 
-> Regarding debug, propagating the flag will hurt debug-ability. We
-> already expose the clk_core->flags in sysfs, and debuggers can grep for
-> the CRITICAL flag there to find any spuriously enabled clocks.
-> 
-
-Awesome.
-
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index b038e36..e08bb0e 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -61,7 +61,7 @@ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+= mmp/
+ endif
+-obj-$(CONFIG_PLAT_ORION)		+= mvebu/
++obj-y					+= mvebu/
+ obj-$(CONFIG_ARCH_MESON)		+= meson/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.4
