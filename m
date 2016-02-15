@@ -1,43 +1,235 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 17:07:38 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 06/16] clk: move core->parents allocation to
- clk_register()
-Message-ID: <20160202010738.GU4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-7-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451298191-30815-7-git-send-email-yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1454982341-22715-4-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+ <1454982341-22715-4-git-send-email-sboyd@codeaurora.org>
+Message-ID: <20160215221332.2278.64497@quark.deferred.io>
+Subject: Re: [PATCH 03/14] clk: Add {devm_}clk_hw_{register,unregister}() APIs
+Date: Mon, 15 Feb 2016 14:13:32 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Masahiro Yamada wrote:
-> Currently, __clk_core_init() allows failure of the kcalloc() for the
-> core->parents.  So, clk_fetch_parent_index() and __clk_init_parent()
-> also try to allocate core->parents in case it has not been allocated
-> yet.  Scattering memory allocation here and there makes things
-> complicated.
-> 
-> Like other clk_core members, allocate core->parents in clk_register()
-> and let it fail in case of memory shortage.  If we cannot allocate
-> such a small piece of memory, the system is already insane.  There is
-> no point to postpone the memory allocation.
-> 
-> Also, allocate core->parents regardless of core->num_parents.  We want
-> it even if core->num_parents == 1 because clk_fetch_parent_index()
-> might be called against the clk_core with a single parent.
-> 
-> If core->num_parents == 0, core->parents is set to ZERO_SIZE_PTR. It
-> is harmless because no access happens to core->parents in such a case.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Quoting Stephen Boyd (2016-02-08 17:45:30)
+> We've largely split the clk consumer and provider APIs along
+> struct clk and struct clk_hw, but clk_register() still returns a
+> struct clk pointer for each struct clk_hw that's registered.
+> Eventually we'd like to only allocate struct clks when there's a
+> user, because struct clk is per-user now, so clk_register() needs
+> to change.
+> =
+
+> Let's add new APIs to register struct clk_hws, but this time
+> we'll hide the struct clk from the caller by returning an int
+> error code. Also add an unregistration API that takes the clk_hw
+> structure that was passed to the registration API. This way
+> provider drivers never have to deal with a struct clk pointer
+> unless they're using the clk consumer APIs.
+> =
+
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Looks good to me.
+
+Regards,
+Mike
+
 > ---
+>  Documentation/driver-model/devres.txt |  1 +
+>  drivers/clk/clk.c                     | 86 +++++++++++++++++++++++++++++=
+++++++
+>  include/linux/clk-provider.h          |  6 +++
+>  3 files changed, 93 insertions(+)
+> =
 
-Applied to clk-next
+> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver=
+-model/devres.txt
+> index 831a5363f6be..600e30bf52c5 100644
+> --- a/Documentation/driver-model/devres.txt
+> +++ b/Documentation/driver-model/devres.txt
+> @@ -236,6 +236,7 @@ certainly invest a bit more effort into libata core l=
+ayer).
+>  CLOCK
+>    devm_clk_get()
+>    devm_clk_put()
+> +  devm_clk_hw_register()
+>  =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  DMA
+>    dmam_alloc_coherent()
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b4db67a446c8..adaaead3639f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2613,6 +2613,22 @@ fail_out:
+>  }
+>  EXPORT_SYMBOL_GPL(clk_register);
+>  =
+
+> +/**
+> + * clk_hw_register - register a clk_hw and return an error code
+> + * @dev: device that is registering this clock
+> + * @hw: link to hardware-specific clock data
+> + *
+> + * clk_hw_register is the primary interface for populating the clock tre=
+e with
+> + * new clock nodes. It returns an integer equal to zero indicating succe=
+ss or
+> + * less than zero indicating failure. Drivers must test for an error cod=
+e after
+> + * calling clk_hw_register().
+> + */
+> +int clk_hw_register(struct device *dev, struct clk_hw *hw)
+> +{
+> +       return PTR_ERR_OR_ZERO(clk_register(dev, hw));
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_register);
+> +
+>  /* Free memory allocated for a clock. */
+>  static void __clk_release(struct kref *ref)
+>  {
+> @@ -2714,11 +2730,26 @@ void clk_unregister(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_unregister);
+>  =
+
+> +/**
+> + * clk_hw_unregister - unregister a currently registered clk_hw
+> + * @hw: hardware-specific clock data to unregister
+> + */
+> +void clk_hw_unregister(struct clk_hw *hw)
+> +{
+> +       clk_unregister(hw->clk);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_unregister);
+> +
+>  static void devm_clk_release(struct device *dev, void *res)
+>  {
+>         clk_unregister(*(struct clk **)res);
+>  }
+>  =
+
+> +static void devm_clk_hw_release(struct device *dev, void *res)
+> +{
+> +       clk_hw_unregister(*(struct clk_hw **)res);
+> +}
+> +
+>  /**
+>   * devm_clk_register - resource managed clk_register()
+>   * @dev: device that is registering this clock
+> @@ -2749,6 +2780,36 @@ struct clk *devm_clk_register(struct device *dev, =
+struct clk_hw *hw)
+>  }
+>  EXPORT_SYMBOL_GPL(devm_clk_register);
+>  =
+
+> +/**
+> + * devm_clk_hw_register - resource managed clk_hw_register()
+> + * @dev: device that is registering this clock
+> + * @hw: link to hardware-specific clock data
+> + *
+> + * Managed clk_hw_register(). Clocks returned from this function are
+> + * automatically clk_hw_unregister()ed on driver detach. See clk_hw_regi=
+ster()
+> + * for more information.
+> + */
+> +int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
+> +{
+> +       struct clk_hw **hwp;
+> +       int ret;
+> +
+> +       hwp =3D devres_alloc(devm_clk_hw_release, sizeof(*hwp), GFP_KERNE=
+L);
+> +       if (!hwp)
+> +               return -ENOMEM;
+> +
+> +       ret =3D clk_hw_register(dev, hw);
+> +       if (!ret) {
+> +               *hwp =3D hw;
+> +               devres_add(dev, hwp);
+> +       } else {
+> +               devres_free(hwp);
+> +       }
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_hw_register);
+> +
+>  static int devm_clk_match(struct device *dev, void *res, void *data)
+>  {
+>         struct clk *c =3D res;
+> @@ -2757,6 +2818,15 @@ static int devm_clk_match(struct device *dev, void=
+ *res, void *data)
+>         return c =3D=3D data;
+>  }
+>  =
+
+> +static int devm_clk_hw_match(struct device *dev, void *res, void *data)
+> +{
+> +       struct clk_hw *hw =3D res;
+> +
+> +       if (WARN_ON(!hw))
+> +               return 0;
+> +       return hw =3D=3D data;
+> +}
+> +
+>  /**
+>   * devm_clk_unregister - resource managed clk_unregister()
+>   * @clk: clock to unregister
+> @@ -2771,6 +2841,22 @@ void devm_clk_unregister(struct device *dev, struc=
+t clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(devm_clk_unregister);
+>  =
+
+> +/**
+> + * devm_clk_hw_unregister - resource managed clk_hw_unregister()
+> + * @dev: device that is unregistering the hardware-specific clock data
+> + * @hw: link to hardware-specific clock data
+> + *
+> + * Unregister a clk_hw registered with devm_clk_hw_register(). Normally
+> + * this function will not need to be called and the resource management
+> + * code will ensure that the resource is freed.
+> + */
+> +void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
+> +{
+> +       WARN_ON(devres_release(dev, devm_clk_hw_release, devm_clk_hw_matc=
+h,
+> +                               hw));
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
+> +
+>  /*
+>   * clkdev helpers
+>   */
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 1143e38555a4..abc16d77fb62 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -639,9 +639,15 @@ void of_gpio_mux_clk_setup(struct device_node *node);
+>  struct clk *clk_register(struct device *dev, struct clk_hw *hw);
+>  struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
+>  =
+
+> +int __must_check clk_hw_register(struct device *dev, struct clk_hw *hw);
+> +int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw =
+*hw);
+> +
+>  void clk_unregister(struct clk *clk);
+>  void devm_clk_unregister(struct device *dev, struct clk *clk);
+>  =
+
+> +void clk_hw_unregister(struct clk_hw *hw);
+> +void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+> +
+>  /* helper functions */
+>  const char *__clk_get_name(const struct clk *clk);
+>  const char *clk_hw_get_name(const struct clk_hw *hw);
+> -- =
+
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>=20
