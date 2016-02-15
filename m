@@ -1,26 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 11 Feb 2016 16:33:42 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] clk: qcom: gdsc: Add GDSCs in msm8996 GCC
-Message-ID: <20160212003342.GC4847@codeaurora.org>
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
- <1448986336-16846-5-git-send-email-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448986336-16846-5-git-send-email-rnayak@codeaurora.org>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	zhangqing@rock-chips.com,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Caesar Wang <wxt@rock-chips.com>
+Subject: [RESEND PATCH 8/8] ARM: dts: rockchip: enable the tsadc for rk3228 evb
+Date: Mon, 15 Feb 2016 15:33:33 +0800
+Message-Id: <1455521613-27340-9-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/01, Rajendra Nayak wrote:
-> Add all data for the GDSCs which are part of msm8996 GCC block
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+This patch enables the tsadc for rk3228 evb board.
 
-Forgot to mention that I left out the dtsi change here too.
+The rk3228 evb board uses the CRU to reset the chip since it hasn't the
+PMIC to connect it, and TSHUT is low active on evb board.
 
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+
+---
+
+ arch/arm/boot/dts/rk3228-evb.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3228-evb.dts b/arch/arm/boot/dts/rk3228-evb.dts
+index e3898b8..c75cc41 100644
+--- a/arch/arm/boot/dts/rk3228-evb.dts
++++ b/arch/arm/boot/dts/rk3228-evb.dts
+@@ -61,6 +61,13 @@
+ 	status = "okay";
+ };
+ 
++&tsadc {
++	status = "okay";
++
++	rockchip,hw-tshut-mode = <0>; /* tshut mode 0:CRU 1:GPIO */
++	rockchip,hw-tshut-polarity = <1>; /* tshut polarity 0:LOW 1:HIGH */
++};
++
+ &uart2 {
+ 	status = "okay";
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
