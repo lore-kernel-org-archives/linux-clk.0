@@ -1,35 +1,56 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 1 Feb 2016 08:49:23 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
-	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
-	wens@csie.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-Message-ID: <20160201144923.GA29286@rob-hp-laptop>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	zhangqing@rock-chips.com,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Caesar Wang <wxt@rock-chips.com>
+Subject: [RESEND PATCH 1/8] clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+Date: Mon, 15 Feb 2016 15:33:26 +0800
+Message-Id: <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
-> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-> clock index 0b1x is PLL6.
-> 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+This patch adds 'SCLK_TSADC' and 'PCLK_TSADC' id found on rk3228 SoCs.
+That will be needed by TSADC controller.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+---
 
->  drivers/clk/sunxi/clk-sunxi.c                     | 75 +++++++++++++++++++++++
->  2 files changed, 76 insertions(+)
+ include/dt-bindings/clock/rk3228-cru.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
+index a78dd89..cd2e06b 100644
+--- a/include/dt-bindings/clock/rk3228-cru.h
++++ b/include/dt-bindings/clock/rk3228-cru.h
+@@ -29,6 +29,7 @@
+ #define SCLK_SDMMC		68
+ #define SCLK_SDIO		69
+ #define SCLK_EMMC		71
++#define SCLK_TSADC		72
+ #define SCLK_UART0		77
+ #define SCLK_UART1		78
+ #define SCLK_UART2		79
+@@ -68,6 +69,7 @@
+ #define PCLK_UART0		341
+ #define PCLK_UART1		342
+ #define PCLK_UART2		343
++#define PCLK_TSADC		344
+ #define PCLK_PWM		350
+ #define PCLK_TIMER		353
+ #define PCLK_PERI		363
+-- 
+1.9.1
