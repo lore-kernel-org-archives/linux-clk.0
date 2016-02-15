@@ -1,104 +1,55 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1454463733-25281-1-git-send-email-sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <1454463733-25281-1-git-send-email-sboyd@codeaurora.org>
-Message-ID: <20160204054803.32018.95106@quark.deferred.io>
-Subject: Re: [PATCH] clk: Deprecate CLK_IS_ROOT
-Date: Wed, 03 Feb 2016 21:48:03 -0800
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 4/6] clk: rockchip: don't return NULL when registering mmc branch fails
+Date: Mon, 15 Feb 2016 11:33:41 +0800
+Message-Id: <1455507221-13078-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stephen Boyd (2016-02-02 17:42:13)
-> We don't use CLK_IS_ROOT but in a few places in the common clk
-> framework core. Let's replace those checks with a check for the
-> number of parents a clk has instead of the flag, freeing up one
-> flag for something else. We don't remove the flag yet so that
-> things keep building, but we'll remove it once all drivers have
-> removed their flag usage.
-> =
+Avoid return NULL if rockchip_clk_register_mmc fails, otherwise
+rockchip_clk_register_branches print "unknown clock type". The acutal
+case is that it's a known clock type but we fail to regiser it, which
+may makes user confuse the reason of failure.
 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-Looks good to me.
+ drivers/clk/rockchip/clk-mmc-phase.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Regards,
-Mike
-
-> ---
-> =
-
-> A bunch of patches to remove CLK_IS_ROOT are coming...
-> =
-
->  drivers/clk/clk.c            | 6 +++---
->  include/linux/clk-provider.h | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> =
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index bb01ed6cc63e..cd8382c83f48 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -385,7 +385,7 @@ static unsigned long clk_core_get_rate_nolock(struct =
-clk_core *core)
->  =
-
->         ret =3D core->rate;
->  =
-
-> -       if (core->flags & CLK_IS_ROOT)
-> +       if (!core->num_parents)
->                 goto out;
->  =
-
->         if (!core->parent)
-> @@ -2351,7 +2351,7 @@ static int __clk_core_init(struct clk_core *core)
->         /*
->          * Populate core->parent if parent has already been __clk_init'd.=
-  If
->          * parent has not yet been __clk_init'd then place clk in the orp=
-han
-> -        * list.  If clk has set the CLK_IS_ROOT flag then place it in th=
-e root
-> +        * list.  If clk doesn't have any parents then place it in the ro=
-ot
->          * clk list.
->          *
->          * Every time a new clk is clk_init'd then we walk the list of or=
-phan
-> @@ -2362,7 +2362,7 @@ static int __clk_core_init(struct clk_core *core)
->                 hlist_add_head(&core->child_node,
->                                 &core->parent->children);
->                 core->orphan =3D core->parent->orphan;
-> -       } else if (core->flags & CLK_IS_ROOT) {
-> +       } else if (!core->num_parents) {
->                 hlist_add_head(&core->child_node, &clk_root_list);
->                 core->orphan =3D false;
->         } else {
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index fabe5bedbba6..9c3a18c1a984 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -25,7 +25,7 @@
->  #define CLK_SET_PARENT_GATE    BIT(1) /* must be gated across re-parent =
-*/
->  #define CLK_SET_RATE_PARENT    BIT(2) /* propagate rate change up one le=
-vel */
->  #define CLK_IGNORE_UNUSED      BIT(3) /* do not gate even if unused */
-> -#define CLK_IS_ROOT            BIT(4) /* root clk, has no parent */
-> +#define CLK_IS_ROOT            BIT(4) /* Deprecated: Don't use */
->  #define CLK_IS_BASIC           BIT(5) /* Basic clk, can't do a to_clk_fo=
-o() */
->  #define CLK_GET_RATE_NOCACHE   BIT(6) /* do not use the cached clk rate =
-*/
->  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate chang=
-e */
-> -- =
-
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->=20
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 2685644..e0dc7e8 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -150,7 +150,7 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 
+ 	mmc_clock = kmalloc(sizeof(*mmc_clock), GFP_KERNEL);
+ 	if (!mmc_clock)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	init.name = name;
+ 	init.num_parents = num_parents;
+@@ -172,11 +172,7 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 
+ 	clk = clk_register(NULL, &mmc_clock->hw);
+ 	if (IS_ERR(clk))
+-		goto err_free;
++		kfree(mmc_clock);
+ 
+ 	return clk;
+-
+-err_free:
+-	kfree(mmc_clock);
+-	return NULL;
+ }
+-- 
+2.3.7
