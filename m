@@ -1,63 +1,91 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V4 2/7] clk: bcm2835: clamp clock divider to highest integer only
-In-Reply-To: <1452867667-2447-3-git-send-email-kernel@martin.sperl.org>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org> <1452867667-2447-3-git-send-email-kernel@martin.sperl.org>
-Date: Mon, 01 Feb 2016 15:19:57 -0800
-Message-ID: <87k2mo3tnm.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1455549376.31169.127.camel@linux.intel.com>
+Subject: Re: [PATCH 02/14] clkdev: Remove clk_register_clkdevs()
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
+	 <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+Date: Mon, 15 Feb 2016 17:16:16 +0200
+In-Reply-To: <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+	 <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+On Mon, 2016-02-08 at 17:45 -0800, Stephen Boyd wrote:
+> Now that we've converted the only caller over to another clkdev
+> API, remove this one.
+> 
 
-kernel@martin.sperl.org writes:
+This API didn't feel suitable, good we get rid of it eventually.
 
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> The clock divider calculation right now clamps the
-> divider to the highest possible fractional divider.
-> So typically (BIT(div_int_bits) - 1) + 4095 / 4096.
->
-> As the fractional clock divider is alterating between
-> (Fosc / div_int) and (Fosc / (div_int + 1))
-> the divider will overflow for the (div_int + 1) case.
-> As with the "underflow" case we have seen for (div < 2),
-> we can assume that the same applies on the upper limit
-> as well.
->
-> So this patch will instead clamp to the divider to the
-> max of (BIT(div_int_bits) - 1)
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>> 
 
-Looks like this restriction might be necessary, though it's not quite
-spelled out in the docs.
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clkdev.c   | 27 ---------------------------
+>  include/linux/clkdev.h |  1 -
+>  2 files changed, 28 deletions(-)
+> 
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 779b6ff0c7ad..ae61f2e57048 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -383,30 +383,3 @@ int clk_register_clkdev(struct clk *clk, const
+> char *con_id,
+>  	return cl ? 0 : -ENOMEM;
+>  }
+>  EXPORT_SYMBOL(clk_register_clkdev);
+> -
+> -/**
+> - * clk_register_clkdevs - register a set of clk_lookup for a struct
+> clk
+> - * @clk: struct clk to associate with all clk_lookups
+> - * @cl: array of clk_lookup structures with con_id and dev_id pre-
+> initialized
+> - * @num: number of clk_lookup structures to register
+> - *
+> - * To make things easier for mass registration, we detect error clks
+> - * from a previous clk_register() call, and return the error code
+> for
+> - * those.  This is to permit this function to be called immediately
+> - * after clk_register().
+> - */
+> -int clk_register_clkdevs(struct clk *clk, struct clk_lookup *cl,
+> size_t num)
+> -{
+> -	unsigned i;
+> -
+> -	if (IS_ERR(clk))
+> -		return PTR_ERR(clk);
+> -
+> -	for (i = 0; i < num; i++, cl++) {
+> -		cl->clk_hw = __clk_get_hw(clk);
+> -		__clkdev_add(cl);
+> -	}
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL(clk_register_clkdevs);
+> diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+> index 08bffcc466de..43a8c2e8ac29 100644
+> --- a/include/linux/clkdev.h
+> +++ b/include/linux/clkdev.h
+> @@ -46,7 +46,6 @@ int clk_add_alias(const char *, const char *, const
+> char *, struct device *);
+>  
+>  int clk_register_clkdev(struct clk *, const char *, const char *,
+> ...)
+>  	__printf(3, 4);
+> -int clk_register_clkdevs(struct clk *, struct clk_lookup *, size_t);
+>  
+>  #ifdef CONFIG_COMMON_CLK
+>  int __clk_get(struct clk *clk);
 
-This also needs to be conditional on it being a MASH clock, and the
-limit on the divider changes in the same way based on the mash number as
-for the minimum.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJWr+gdAAoJELXWKTbR/J7okrEP/27LzAcVY/7Z8mLTgHV1EUWo
-hFJJuh5S/5+cr0hfqEJzG6zmaSBDUqz9I+pkObuKWyQwmpJkMzOZpEeCzi2sXNE9
-9rUbhcXhwJ/VFk3uWdxvUKKL1FYv0IynSPk91Ueo7sh+AXSj1qnVpHFprC6lKJtD
-Rl/3qYk+L+cHxt0Ap37ZUwlG+v+5BE+abJ3NR3UWYtmJb3XMTZRhvfyR5Et0iX6J
-IMAmIxWMptxGVE0VfQqtQXNDH8OysbO9G5HX09WYyC/jT5PI3tR+RkKxKlGIhATA
-Pm7RyZpqSbEOzUWqLWxAUtVMwW6t61Bbx+eHdPcf6DiwmB0Iaa/hjVQvpYcjaqxx
-ZqKk2jp6bbp7NN83/aJh5RIuJbwvIz4jbQlaZGKjzXGXxf7L6oTUcGnHZ9GUH308
-xn65k1lvFZ8NeGQKWaMvqK9T02A1xduvSPcNHhaQxqp2ruajVBc+kEtIieXBmPyc
-8+oQz15XbLotWHbT46+z9gmvuXoxHrPT4/Y1pvSkIciaDMhu0m870Cueussh/FVJ
-KGLz4McO/vaqV+D1cZXO/Oe5ce94c6EBrcWmdVOAVQHhvSokqaMkX7/A/It713NZ
-BNCnGsYxEgphc35+w8DzhChFvv7+RXTGflAKhjapvBT8uyxkQ3M+0U6NVQV3Ndql
-UO2DQtsu1nZM7JZGoDnV
-=NqSn
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
