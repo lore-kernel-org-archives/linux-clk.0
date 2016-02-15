@@ -1,200 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <tony@atomide.com>
+Date: Mon, 15 Feb 2016 13:31:54 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 03/14] clk: Add {devm_}clk_hw_{register,unregister}() APIs
-Date: Mon,  8 Feb 2016 17:45:30 -0800
-Message-Id: <1454982341-22715-4-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
+ clk_get_rate
+Message-ID: <20160215213153.GC19432@atomide.com>
+References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
+ <56A9FED1.3090903@ti.com>
+ <20160128172215.GD19432@atomide.com>
+ <56AA6261.7030503@ti.com>
+ <20160128190026.GI19432@atomide.com>
+ <56AA6775.5090302@ti.com>
+ <20160128191949.GK19432@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160128191949.GK19432@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We've largely split the clk consumer and provider APIs along
-struct clk and struct clk_hw, but clk_register() still returns a
-struct clk pointer for each struct clk_hw that's registered.
-Eventually we'd like to only allocate struct clks when there's a
-user, because struct clk is per-user now, so clk_register() needs
-to change.
+* Tony Lindgren <tony@atomide.com> [160128 11:20]:
+> * Tero Kristo <t-kristo@ti.com> [160128 11:10]:
+> > On 01/28/2016 09:00 PM, Tony Lindgren wrote:
+> > >* Tero Kristo <t-kristo@ti.com> [160128 10:48]:
+> > >>On 01/28/2016 07:22 PM, Tony Lindgren wrote:
+> > >>>* Tero Kristo <t-kristo@ti.com> [160128 03:44]:
+> > >>>>On 01/28/2016 01:37 PM, Tero Kristo wrote:
+> > >>>>>As the code in this file is being executed within irq context in some
+> > >>>>>cases, we must avoid the clk_get_rate which uses mutex internally.
+> > >>>>>Switch the code to use clk_hw_get_rate instead which is non-locking.
+> > >>>>>
+> > >>>>>Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> > >>>>
+> > >>>>Ooops, sorry. Sent wrong version (read: old) of this patch, please ignore
+> > >>>>this one. Will re-send the correct version in a bit.
+> > >>>
+> > >>>I think this is still needed as a fix for -rc cycle with cc: stable
+> > >>>as otherwise we have omap4 and 5 hang if PM runtime is enabled before
+> > >>>a suspend/resume cycle?
+> > >>
+> > >>Look at the other patch I sent, it should accomplish the same thing, and
+> > >>more.
+> > >>
+> > >>https://www.spinics.net/lists/linux-clk/msg06094.html
+> > >
+> > >Right.. But is that suitable for the -rc cycle with cc stable?
+> > 
+> > Hmm yea, thats a good question, we may need to resurrect this patch after
+> > all.
+> 
+> Yes a minimal fix first with cc stable, then the rest of the changes
+> can be done for v4.6?
+> 
+> > >You should also describe the bug it causes in the change log.
+> > >Something like:
+> > >
+> > >This fixes an issue where PM runtime will hang the system if
+> > >enabled with a serial console before a suspend-resume cycle.
+> > 
+> > Yea I can add this to the desc if we want to keep this version of the patch.
+> 
+> Yes please. It seems the fix should be cc stable for several merge
+> windows.
 
-Let's add new APIs to register struct clk_hws, but this time
-we'll hide the struct clk from the caller by returning an int
-error code. Also add an unregistration API that takes the clk_hw
-structure that was passed to the registration API. This way
-provider drivers never have to deal with a struct clk pointer
-unless they're using the clk consumer APIs.
+Tero, what's the status on this one? We have systems hang shortly
+after entering init if PM is enabled without this one.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- Documentation/driver-model/devres.txt |  1 +
- drivers/clk/clk.c                     | 86 +++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h          |  6 +++
- 3 files changed, 93 insertions(+)
+Regards,
 
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 831a5363f6be..600e30bf52c5 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -236,6 +236,7 @@ certainly invest a bit more effort into libata core layer).
- CLOCK
-   devm_clk_get()
-   devm_clk_put()
-+  devm_clk_hw_register()
- 
- DMA
-   dmam_alloc_coherent()
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b4db67a446c8..adaaead3639f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2613,6 +2613,22 @@ fail_out:
- }
- EXPORT_SYMBOL_GPL(clk_register);
- 
-+/**
-+ * clk_hw_register - register a clk_hw and return an error code
-+ * @dev: device that is registering this clock
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * clk_hw_register is the primary interface for populating the clock tree with
-+ * new clock nodes. It returns an integer equal to zero indicating success or
-+ * less than zero indicating failure. Drivers must test for an error code after
-+ * calling clk_hw_register().
-+ */
-+int clk_hw_register(struct device *dev, struct clk_hw *hw)
-+{
-+	return PTR_ERR_OR_ZERO(clk_register(dev, hw));
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register);
-+
- /* Free memory allocated for a clock. */
- static void __clk_release(struct kref *ref)
- {
-@@ -2714,11 +2730,26 @@ void clk_unregister(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_unregister);
- 
-+/**
-+ * clk_hw_unregister - unregister a currently registered clk_hw
-+ * @hw: hardware-specific clock data to unregister
-+ */
-+void clk_hw_unregister(struct clk_hw *hw)
-+{
-+	clk_unregister(hw->clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_unregister);
-+
- static void devm_clk_release(struct device *dev, void *res)
- {
- 	clk_unregister(*(struct clk **)res);
- }
- 
-+static void devm_clk_hw_release(struct device *dev, void *res)
-+{
-+	clk_hw_unregister(*(struct clk_hw **)res);
-+}
-+
- /**
-  * devm_clk_register - resource managed clk_register()
-  * @dev: device that is registering this clock
-@@ -2749,6 +2780,36 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(devm_clk_register);
- 
-+/**
-+ * devm_clk_hw_register - resource managed clk_hw_register()
-+ * @dev: device that is registering this clock
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * Managed clk_hw_register(). Clocks returned from this function are
-+ * automatically clk_hw_unregister()ed on driver detach. See clk_hw_register()
-+ * for more information.
-+ */
-+int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
-+{
-+	struct clk_hw **hwp;
-+	int ret;
-+
-+	hwp = devres_alloc(devm_clk_hw_release, sizeof(*hwp), GFP_KERNEL);
-+	if (!hwp)
-+		return -ENOMEM;
-+
-+	ret = clk_hw_register(dev, hw);
-+	if (!ret) {
-+		*hwp = hw;
-+		devres_add(dev, hwp);
-+	} else {
-+		devres_free(hwp);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_hw_register);
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk *c = res;
-@@ -2757,6 +2818,15 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
- 	return c == data;
- }
- 
-+static int devm_clk_hw_match(struct device *dev, void *res, void *data)
-+{
-+	struct clk_hw *hw = res;
-+
-+	if (WARN_ON(!hw))
-+		return 0;
-+	return hw == data;
-+}
-+
- /**
-  * devm_clk_unregister - resource managed clk_unregister()
-  * @clk: clock to unregister
-@@ -2771,6 +2841,22 @@ void devm_clk_unregister(struct device *dev, struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(devm_clk_unregister);
- 
-+/**
-+ * devm_clk_hw_unregister - resource managed clk_hw_unregister()
-+ * @dev: device that is unregistering the hardware-specific clock data
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * Unregister a clk_hw registered with devm_clk_hw_register(). Normally
-+ * this function will not need to be called and the resource management
-+ * code will ensure that the resource is freed.
-+ */
-+void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
-+{
-+	WARN_ON(devres_release(dev, devm_clk_hw_release, devm_clk_hw_match,
-+				hw));
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
-+
- /*
-  * clkdev helpers
-  */
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 1143e38555a4..abc16d77fb62 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -639,9 +639,15 @@ void of_gpio_mux_clk_setup(struct device_node *node);
- struct clk *clk_register(struct device *dev, struct clk_hw *hw);
- struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
- 
-+int __must_check clk_hw_register(struct device *dev, struct clk_hw *hw);
-+int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw *hw);
-+
- void clk_unregister(struct clk *clk);
- void devm_clk_unregister(struct device *dev, struct clk *clk);
- 
-+void clk_hw_unregister(struct clk_hw *hw);
-+void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
-+
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tony
