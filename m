@@ -1,56 +1,117 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Thu, 11 Feb 2016 09:16:51 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- "Gregory CLEMENT" <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
-Message-ID: <20160211091651.765cd91c@free-electrons.com>
-In-Reply-To: <1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	zhangqing@rock-chips.com,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Caesar Wang <wxt@rock-chips.com>
+Subject: [RESEND PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
+Date: Mon, 15 Feb 2016 15:33:25 +0800
+Message-Id: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Kevin,
+Hello Eduardo, Heiko, Michael & Stephen:
 
-On Wed, 10 Feb 2016 23:40:26 +0000, Kevin Smith wrote:
-> The corediv clock is not required for all builds, only those that
-> enable peripherals that need it.  Move the corediv config option
-> from the clock driver Kconfig to the mvebu Kconfig and make it
-> conditional.
-> 
-> This also enables corediv on Armada 375 and 38X as needed.
-> 
-> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  arch/arm/mach-mvebu/Kconfig | 3 +++
->  drivers/clk/mvebu/Kconfig   | 1 -
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-> index 64e3d2c..794e7c5 100644
-> --- a/arch/arm/mach-mvebu/Kconfig
-> +++ b/arch/arm/mach-mvebu/Kconfig
-> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
->  	select CPU_PJ4B
->  	select MACH_MVEBU_V7
->  	select PINCTRL_ARMADA_370
-> +	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
+This series pacthes to support the rk3228 SoCs thermal.
 
-Thanks for the new iteration. I know the corediv clock is only used for
-the NAND, but I'm wondering if it's really worth doing this "if
-MTD_NAND_PXA3xx.
+They have the following patches to work on rk3228 SoCs.
 
-Thomas
+1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+bd2720c thermal: rockchip: fix a impossible condition caused by the warning
+df9c1bd thermal: rockchip: fix calculation error for code_to_temp
+fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
+b907b75 thermal: rockchip: fix the tsadc sequence output on rk3228/rk3399
+bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
+22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
+
+Verified on https://github.com/Caesar-github/rockchip/tree/rk3228-thermal-tests.
+This series patches are based on
+Linux version 4.5.0-rc4+ (wxt@ubuntu) (...) (GCC) ) #204 SMP Mon Feb 15 14:12:16 CST 6
+
+Tests:
+
+1) Get the temperature in every 500ms.
+
+while true;do ls >/dev/null; done&
+while true; do grep "" /sys/class/thermal/thermal_zone0/temp; sleep
+.5; done &
+
+2) critical tests
+**
+/sys/devices/virtual/thermal/thermal_zone0 # cat temp
+33000
+/sys/devices/virtual/thermal/thermal_zone0 # echo 30000 > trip_point_2_temp
+[  988.114192] thermal thermal_zone0: critical temperature reached(33 C),shutting down
+...
+shutdown
+-
+**via modify the dts over-temperature protectiong value to trigger otp pin.
+
+Verified on rk3228/rk3288/rk3368 SoCs.
+---
+
+Hi Michael,Stephen
+PATCH[1/8-2/8]:
+Add the tsadc needed clocks for rk3228 SoCs
+
+Hi Eduardo,
+PATCH[3/8]:
+To fix a build warning came from Dan Carpenter report smatch check,
+Thanks.
+As the patch exists in https://patchwork.kernel.org/patch/7757311/
+
+PATCH[4/8]:
+fix calculation error for code_to_temp
+That's a error since the copy causes.
+
+PATCH[5/8]:
+the rename compatibles for rockchip SoCs
+As the more and more rockchip SOCs are supported in thermal driver. this pacth
+supposed to be compatible for better.
+
+PATCH[6/8]:
+fix the tsadc sequence output on rk3228/rk3399
+Fixes the tsadc sequence output since the rk3228/rk3399 SoCs design.
+
+Hi Heiko,
+PATCH[7/8-8/8]: thermal DTS
+1) add the thermal main info found on rk3228
+2) enable the tsadc for rk3228 evb
+
+I'd appreciate if someone have free time to review that. :)
+
+
+
+Caesar Wang (7):
+  clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+  clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+  thermal: rockchip: fix a impossible condition caused by the warning
+  thermal: rockchip: the rename compatibles for rockchip SoCs
+  thermal: rockchip: fix the tsadc sequence output on rk3228/rk3399
+  ARM: dts: rockchip: add the thermal main info found on rk3228
+  ARM: dts: rockchip: enable the tsadc for rk3228 evb
+
+Elaine Zhang (1):
+  thermal: rockchip: fix calculation error for code_to_temp
+
+ arch/arm/boot/dts/rk3228-evb.dts       |   7 +
+ arch/arm/boot/dts/rk3228.dtsi          |  69 ++++++++++
+ drivers/clk/rockchip/clk-rk3228.c      |   4 +-
+ drivers/thermal/rockchip_thermal.c     | 239 +++++++++++++++++++--------------
+ include/dt-bindings/clock/rk3228-cru.h |   2 +
+ 5 files changed, 216 insertions(+), 105 deletions(-)
+
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
