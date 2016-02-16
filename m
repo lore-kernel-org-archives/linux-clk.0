@@ -1,63 +1,108 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Caesar Wang <wxt@rock-chips.com>, "Heiko Stuebner" <heiko@sntech.de>,
- edubezval@gmail.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
-Cc: huangtao@rock-chips.com, linux-pm@vger.kernel.org,
- "Stephen Boyd" <sboyd@codeaurora.org>, zhangqing@rock-chips.com,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Jeffy Chen" <jeffy.chen@rock-chips.com>, "Zhang Rui" <rui.zhang@intel.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Caesar Wang" <wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
- <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
-Message-ID: <20160216224301.2278.88600@quark.deferred.io>
-Subject: Re: [RESEND PATCH 1/8] clk: rockchip: add id of the tsadc clock found on
- rk3228 SoCs
-Date: Tue, 16 Feb 2016 14:43:01 -0800
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v5 2/3] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Tue, 16 Feb 2016 15:20:31 +0900
+Message-id: <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Caesar Wang (2016-02-14 23:33:26)
-> This patch adds 'SCLK_TSADC' and 'PCLK_TSADC' id found on rk3228 SoCs.
-> That will be needed by TSADC controller.
-> =
+Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+so it is built also on ARMv7. This does not bring any kind of benefit.
+There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+multi_v7 for ARMv7).
 
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Instead build clock drivers only for respective SoC's architecture.
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> ---
-> =
+---
 
->  include/dt-bindings/clock/rk3228-cru.h | 2 ++
->  1 file changed, 2 insertions(+)
-> =
+Changes since v4:
+1. Move ARM64 clock entry just before COMMON_CLK_SAMSUNG to make it more
+   consistent with selecting behavior. Newer platforms just select
+   COMMON_CLK_SAMSUNG. Only S3C24XX select specific clock symbols.
+2. Re-work behaviour on COMPILE_TEST=y to fix ignored compilation
+   when COMPILE_TEST=y but COMMON_CLK_SAMSUNG=n.
+   The COMMON_CLK_SAMSUNG=y is necessary always to compile ARM64 clocks.
+3. I received reviews and tests (Chanwoo, Javier, Andi, Stephen - thank
+   you guys!)... but the patch is now different so I decided to drop
+   them. I am kindly asking for review/testing (again...).
 
-> diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings=
-/clock/rk3228-cru.h
-> index a78dd89..cd2e06b 100644
-> --- a/include/dt-bindings/clock/rk3228-cru.h
-> +++ b/include/dt-bindings/clock/rk3228-cru.h
-> @@ -29,6 +29,7 @@
->  #define SCLK_SDMMC             68
->  #define SCLK_SDIO              69
->  #define SCLK_EMMC              71
-> +#define SCLK_TSADC             72
->  #define SCLK_UART0             77
->  #define SCLK_UART1             78
->  #define SCLK_UART2             79
-> @@ -68,6 +69,7 @@
->  #define PCLK_UART0             341
->  #define PCLK_UART1             342
->  #define PCLK_UART2             343
-> +#define PCLK_TSADC             344
->  #define PCLK_PWM               350
->  #define PCLK_TIMER             353
->  #define PCLK_PERI              363
-> -- =
+Changes since v3:
+1. Rebase on next-20160127.
 
-> 1.9.1
->=20
+Changes since v2:
+1. Follow Arnd's advice making EXYNOS_ARM64_COMMON_CLK user-visible when
+   COMPILE_TEST is enabled.
+2. Dropped accumulated tags because the logic is now different.
+
+Changes since v1:
+1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
+   discussion): EXYNOS_ARM64_COMMON_CLK.
+2. Minor cleanups after Tomasz's comments.
+3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
+   were given for v1 but assuming that change from 1. is not major
+   enough to require re-tagging).
+---
+ drivers/clk/samsung/Kconfig  | 10 +++++++++-
+ drivers/clk/samsung/Makefile |  4 ++--
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index dd6093a33f84..20c5fe92ab4a 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -1,6 +1,15 @@
++# Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
+ config COMMON_CLK_SAMSUNG
+ 	bool "Samsung Exynos clock controller support" if COMPILE_TEST
++	# Clocks on ARM64 SoCs (e.g. Exynos5433, Exynos7) are chosen by
++	# EXYNOS_ARM64_COMMON_CLK to avoid building them on ARMv7:
++	select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
+ 
++config EXYNOS_ARM64_COMMON_CLK
++	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
++	depends on COMMON_CLK_SAMSUNG
++
++# For S3C24XX platforms, select following symbols:
+ config S3C2410_COMMON_CLK
+ 	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
+ 	select COMMON_CLK_SAMSUNG
+@@ -22,4 +31,3 @@ config S3C2412_COMMON_CLK
+ config S3C2443_COMMON_CLK
+ 	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
+ 	select COMMON_CLK_SAMSUNG
+-
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index 5f6833ea355d..fc367d4b2902 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+-obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
++obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+ obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
+-obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
++obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+ obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+ obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+ obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+-- 
+2.5.0
