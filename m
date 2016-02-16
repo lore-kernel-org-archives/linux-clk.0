@@ -1,153 +1,73 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1456218878.3387.9.camel@pengutronix.de>
-Subject: Re: [PATCH v9 2/6] clk: hisilicon: add CRG driver for hi3519 soc
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
- galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
- arnd@arndb.de,  olof@lixom.net, xuwei5@hisilicon.com,
- haojian.zhuang@linaro.org,  zhangfei.gao@linaro.org,
- bintian.wang@huawei.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
- yanghongwei@hisilicon.com, suwenping@hisilicon.com, raojun@hisilicon.com,
- ml.yang@hisilicon.com, gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
- xuejiancheng@hisilicon.com, lidongpo@hisilicon.com
-Date: Tue, 23 Feb 2016 10:14:38 +0100
-In-Reply-To: <1456127280-23275-3-git-send-email-xuejiancheng@huawei.com>
-References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
-	 <1456127280-23275-3-git-send-email-xuejiancheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Eric Anholt <eric@anholt.net>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455591838-22725-1-git-send-email-eric@anholt.net>
+Cc: linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, "Stephen Warren" <swarren@wwwdotorg.org>,
+ "Lee Jones" <lee@kernel.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Eric Anholt" <eric@anholt.net>, stable@vger.kernel.org
+References: <1455591838-22725-1-git-send-email-eric@anholt.net>
+Message-ID: <20160216214457.2278.13701@quark.deferred.io>
+Subject: Re: [PATCH 1/2] clk: bcm2835: Fix setting of PLL divider clock rates
+Date: Tue, 16 Feb 2016 13:44:57 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Quoting Eric Anholt (2016-02-15 19:03:57)
+> Our dividers weren't being set successfully because CM_PASSWORD wasn't
+> included in the register write.  It looks easier to just compute the
+> divider to write ourselves than to update clk-divider for the ability
+> to OR in some arbitrary bits on write.
+> =
 
-Am Montag, den 22.02.2016, 15:47 +0800 schrieb Jiancheng Xue:
-> The CRG(Clock and Reset Generator) block provides clock
-> and reset signals for other modules in hi3519 soc.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-[...]
-> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-> new file mode 100644
-> index 0000000..50e00e7
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/reset.c
-> @@ -0,0 +1,124 @@
-> +/*
-> + * Hisilicon Reset Controller Driver
-> + *
-> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define	HISI_RESET_BIT_MASK	0x1f
-> +#define	HISI_RESET_OFFSET_SHIFT	8
-> +#define	HISI_RESET_OFFSET_MASK	0xffff00
-> +
-> +struct hisi_reset_controller {
-> +	spinlock_t	lock;
-> +	void __iomem	*membase;
-> +	struct reset_controller_dev	rcdev;
-> +};
-> +
-> +
-> +#define to_hisi_reset_controller(rcdev)  \
-> +	container_of(rcdev, struct hisi_reset_controller, rcdev)
-> +
-> +static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
-> +			const struct of_phandle_args *reset_spec)
-> +{
-> +	u32 offset;
-> +	u8 bit;
-> +
-> +	if (WARN_ON(reset_spec->args_count != rcdev->of_reset_n_cells))
-> +		return -EINVAL;
+> Fixes about half of the video modes on my HDMI monitor (everything
+> except 720x400).
+> =
 
-This check now has been moved to the core in e677774f5026 ("reset: Move
-DT cell size check to the core"). It is not necessary anymore to check
-this in the .of_xlate callback.
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-> +	offset = (reset_spec->args[0] << HISI_RESET_OFFSET_SHIFT)
-> +		& HISI_RESET_OFFSET_MASK;
-> +	bit = reset_spec->args[1] & HISI_RESET_BIT_MASK;
-> +	return (offset | bit);
-> +}
-> +
-> +static int hisi_reset_assert(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
-> +	unsigned long flags;
-> +	u32 offset, reg;
-> +	u8 bit;
-> +
-> +	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
-> +	bit = id & HISI_RESET_BIT_MASK;
-> +
-> +	spin_lock_irqsave(&rstc->lock, flags);
-> +
-> +	reg = readl(rstc->membase + offset);
-> +	writel(reg | BIT(bit), rstc->membase + offset);
-> +
-> +	spin_unlock_irqrestore(&rstc->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
-> +	unsigned long flags;
-> +	u32 offset, reg;
-> +	u8 bit;
-> +
-> +	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
-> +	bit = id & HISI_RESET_BIT_MASK;
-> +
-> +	spin_lock_irqsave(&rstc->lock, flags);
-> +
-> +	reg = readl(rstc->membase + offset);
-> +	writel(reg & ~BIT(bit), rstc->membase + offset);
-> +
-> +	spin_unlock_irqrestore(&rstc->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct reset_control_ops hisi_reset_ops = {
-> +	.assert		= hisi_reset_assert,
-> +	.deassert	= hisi_reset_deassert,
-> +};
+Applied to clk-next.
 
-These can be made const after commit 203d4f347d86 ("reset: Make
-reset_control_ops const") is merged. Since this is to be merged through
-the clock tree, both change could be made later.
+Regards,
+Mike
 
-For the reset driver part,
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> =
 
-regards
-Philipp
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 015e687..9f4df8f 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct cl=
+k_hw *hw,
+>         struct bcm2835_pll_divider *divider =3D bcm2835_pll_divider_from_=
+hw(hw);
+>         struct bcm2835_cprman *cprman =3D divider->cprman;
+>         const struct bcm2835_pll_divider_data *data =3D divider->data;
+> -       u32 cm;
+> -       int ret;
+> +       u32 cm, div, max_div =3D 1 << A2W_PLL_DIV_BITS;
+>  =
+
+> -       ret =3D clk_divider_ops.set_rate(hw, rate, parent_rate);
+> -       if (ret)
+> -               return ret;
+> +       div =3D DIV_ROUND_UP_ULL(parent_rate, rate);
+> +
+> +       div =3D min(div, max_div);
+> +       if (div =3D=3D max_div)
+> +               div =3D 0;
+>  =
+
+> +       cprman_write(cprman, data->a2w_reg, div);
+>         cm =3D cprman_read(cprman, data->cm_reg);
+>         cprman_write(cprman, data->cm_reg, cm | data->load_mask);
+>         cprman_write(cprman, data->cm_reg, cm & ~data->load_mask);
+> -- =
+
+> 2.7.0
+>=20
