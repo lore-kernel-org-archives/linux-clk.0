@@ -1,59 +1,113 @@
-Return-Path: <Purna.Mandal@microchip.com>
-Subject: Re: [PATCH v7 2/3] clk: clk-pic32: Add PIC32 clock driver
-To: Michael Turquette <mturquette@baylibre.com>, Joshua Henderson
-	<joshua.henderson@microchip.com>, <linux-kernel@vger.kernel.org>
-References: <1455899179-14097-1-git-send-email-joshua.henderson@microchip.com>
- <1455899179-14097-3-git-send-email-joshua.henderson@microchip.com>
- <20160219201615.2278.2909@quark.deferred.io>
-CC: <linux-mips@linux-mips.org>, <ralf@linux-mips.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>
-From: Purna Chandra Mandal <purna.mandal@microchip.com>
-Message-ID: <56C80FC3.8050205@microchip.com>
-Date: Sat, 20 Feb 2016 12:33:31 +0530
-MIME-Version: 1.0
-In-Reply-To: <20160219201615.2278.2909@quark.deferred.io>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: purna.mandal@microchip.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v5 3/3] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+Date: Tue, 16 Feb 2016 15:20:32 +0900
+Message-id: <1455603632-11158-4-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20/2016 01:46 AM, Michael Turquette wrote:
+The ARMv8 Exynos family SoCs in Linux kernel are currently:
+ - Exynos5433 (controlled by ARCH_EXYNOS),
+ - Exynos7 (controlled by ARCH_EXYNOS7).
 
-> Quoting Joshua Henderson (2016-02-19 08:25:35)
->> +const struct clk_ops pic32_roclk_ops = {
->> +       .enable                 = roclk_enable,
->> +       .disable                = roclk_disable,
->> +       .is_enabled             = roclk_is_enabled,
->> +       .get_parent             = roclk_get_parent,
->> +       .set_parent             = roclk_set_parent,
->> +       .determine_rate         = roclk_determine_rate,
->> +       .recalc_rate            = roclk_recalc_rate,
->> +       .round_rate             = roclk_round_rate,
->> +       .set_rate_and_parent    = roclk_set_rate_and_parent,
->> +       .set_rate               = roclk_set_rate,
->> +       .init                   = roclk_init,
->> +};
-> You can remove .round_rate and only use .determine_rate.
+It duplicates Kconfig symbols unnecessarily, so consolidate them into
+one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+symbol.
 
-Ack. Will remove .round_rate.
+The commit should not bring any visible functional change.
 
-> ...
->> +CLK_OF_DECLARE(pic32mzda_clk, "microchip,pic32mzda-clk", pic32mzda_clock_init);
-> Can you make this a platform_driver instead of using CLK_OF_DECLARE? I
-> asked this in v6 but there was no response.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
-Mike,
-I tried to use platform_driver approach, but didn't work for me.
-On MIPS/PIC32 first call of clk_get() happens from "start_kernel -> time_init()->
-plat_time_init()" which is very early in boot sequence even before execution of
-early_initcall(). In short, by platform_driver way I'was not able to register clock(s)
-before the first clock user becomes ready. Whereas with CLK_OF_DECLARE() I can
-explicitly call of_clk_init() in plat_time_init() just before calling clk_get().
+---
 
-Please suggest me if you have any reference to avoid my case.
+Changes since v4:
+1. Added tags from: Javier, Andi.
 
-> Regards,
-> Mike
->
->> -- 
->> 1.7.9.5
->>
+Changes since v3:
+1. Rebase on next-20160127.
+
+Changes since v2:
+1. None
+
+Changes since v1:
+1. Minor cleanups after Tomasz's comments.
+2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
+---
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 21074f674bde..653662bbafeb 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -14,21 +14,14 @@ config ARCH_BERLIN
+ 	  This enables support for Marvell Berlin SoC Family
+ 
+ config ARCH_EXYNOS
+-	bool
+-	help
+-	  This enables support for Samsung Exynos SoC family
+-
+-config ARCH_EXYNOS7
+-	bool "ARMv8 based Samsung Exynos7"
+-	select ARCH_EXYNOS
++	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+-
+ 	help
+-	  This enables support for Samsung Exynos7 SoC family
++	  This enables support for ARMv8 based Samsung Exynos SoC family.
+ 
+ config ARCH_LAYERSCAPE
+ 	bool "ARMv8 based Freescale Layerscape SoC family"
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 20310e5b6d6f..50c9b9383cfa 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 18ca9fb9e65f..331a843cf122 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ CONFIG_ARCH_BCM_IPROC=y
+ CONFIG_ARCH_BERLIN=y
+-CONFIG_ARCH_EXYNOS7=y
++CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
+-- 
+2.5.0
