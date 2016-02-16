@@ -1,92 +1,74 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH v6 0/7] Add clock support for Mediatek MT2701
-Date: Fri, 5 Feb 2016 17:37:23 +0800
-Message-ID: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v5 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Tue, 16 Feb 2016 15:20:29 +0900
+Message-id: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is based on 4.5-rc1 and [1], add clock and reset controller
-support for Mediatek MT2701.
+Hi,
 
-This series also refined makefile and Kconfig to support configurable
-multiple SoC clock support.
+Patchset attempts to remove the ARCH_EXYNOS7 symbol.
 
-changes since v5:
-- Rebase to v4.5-rc1 and [1].
-- Enable critical clocks for MT2701
-- Refine dt-binding documents, add reset controller support for hifsys.
+I rebased this on top of James':
+ - clk: Move vendor's Kconfig into CCF menu section
+   http://www.spinics.net/lists/devicetree/msg111953.html
 
-changes since v4:
-- Rebase to v4.5-rc1.
-- Remove CLK_SET_RATE_PARENT from divider flags.
-- Add img_jpgdec_smi clock.
-- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
+The third patch depends on previous ones so one way of merging this
+would be to prepare a tag from clk tree with first two patches
+and the dependency. The last third patch would go through arm-soc.
 
-changes since v3:
-- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
+Changes since v4:
+=================
+1. Rebased on "clk: Move vendor's Kconfig into CCF menu section"
+   existing in clock tree.
+2. Re-work patch 2/3 (see specific changelog).
 
-changes since v2:
-- Fix ethsys definition.
-- Replace read-modify-write with regmap_update_bits() in clock operations.
-- Move mt2701-resets.h to include/dt-bindings/reset/.
-- Add hifsys reset patch from John Crispin.
+Changes since v3:
+=================
+1. Rebase on next-20160127 (s3c64xx became multiplatform).
 
-changes since v1:
-- Document MT2701 compatible strings.
+Changes since v2:
+=================
+1. Follow Arnd's advice about not enabling silently the newly added
+   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+   also a trigger for some changes in placement of Samsung clocks
+   Kconfig entries...
+2. ... which lead to introducing patch 1.
 
-[1] https://patchwork.kernel.org/patch/8147901/
 
-James Liao (3):
-  clk: mediatek: Refine the makefile to support multiple clock drivers
-  dt-bindings: ARM: Mediatek: Document bindings for MT2701
-  clk: mediatek: Enable critical clocks for MT2701
+Rationale:
+==========
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds.
 
-Shunli Wang (4):
-  clk: mediatek: Add dt-bindings for MT2701 clocks
-  clk: mediatek: Add MT2701 clock support
-  reset: mediatek: Add MT2701 reset controller dt-binding file
-  reset: mediatek: Add MT2701 reset driver
 
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    3 +-
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,hifsys.txt      |   24 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    3 +-
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    3 +-
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    3 +-
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |    3 +-
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    3 +-
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    3 +-
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/mediatek/Kconfig                       |   31 +
- drivers/clk/mediatek/Makefile                      |    7 +-
- drivers/clk/mediatek/clk-gate.c                    |   52 +
- drivers/clk/mediatek/clk-gate.h                    |    2 +
- drivers/clk/mediatek/clk-mt2701.c                  | 1236 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c                     |   25 +
- drivers/clk/mediatek/clk-mtk.h                     |   34 +-
- include/dt-bindings/clock/mt2701-clk.h             |  482 ++++++++
- include/dt-bindings/reset/mt2701-resets.h          |   83 ++
- 20 files changed, 2029 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
- create mode 100644 drivers/clk/mediatek/Kconfig
- create mode 100644 drivers/clk/mediatek/clk-mt2701.c
- create mode 100644 include/dt-bindings/clock/mt2701-clk.h
- create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+Best regards,
+Krzysztof
 
---
-1.9.1
+Krzysztof Kozlowski (3):
+  clk: samsung: Enable COMPILE_TEST for Samsung clocks
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/samsung/Kconfig         | 18 +++++++++++++-----
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 5 files changed, 19 insertions(+), 18 deletions(-)
+
+-- 
+2.5.0
