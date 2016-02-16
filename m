@@ -1,60 +1,52 @@
-Return-Path: <kernel@martin.sperl.org>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: [PATCH 2/2] clk: bcm2835: expose current divider, parent and mash via debugfs
-From: Martin Sperl <kernel@martin.sperl.org>
-In-Reply-To: <87h9gr5jt3.fsf@eliezer.anholt.net>
-Date: Mon, 29 Feb 2016 22:11:19 +0100
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <058897BC-1090-4171-B239-D2A289F1D626@martin.sperl.org>
-References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org> <1456755616-2472-3-git-send-email-kernel@martin.sperl.org> <87h9gr5jt3.fsf@eliezer.anholt.net>
-To: Eric Anholt <eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:51900 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750927AbcBPKqQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 16 Feb 2016 05:46:16 -0500
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] clk: sunxi: error checking on clock setup
+Date: Tue, 16 Feb 2016 10:46:05 +0000
+Message-Id: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Setting up the clocks properly is quite critical to the system's
+operation, but currently our error handling is not very verbose.
+This series adds error handling and reporting to the sunxi clocks,
+so that any errors are correctly detected and reported. Also previous
+actions are rolled back in case something went wrong.
+This proves to be helpful in debugging clock tree issues,
+especially when adding support for new SoCs.
+I tested this on a BananaPi by deliberately misspelling
+"clock-output-names". The resulting kernel crash in
+sun4i_timer_interrupt is totally misleading, but now there is a line
+in the dmesg before saying:
+=======
+sunxi_divider_clk_setup: could not read clock-output-names for "apb0"
+=======
 
-> On 29.02.2016, at 21:43, Eric Anholt <eric@anholt.net> wrote:
->=20
-> kernel@martin.sperl.org writes:
->=20
->> From: Martin Sperl <kernel@martin.sperl.org>
->>=20
->> For each clock expose the following values via debugfs:
->> * current_parent - the currently selected parent
->> * current_divi - the integer portion of the currently set divider
->> * current_divf - the fractional portion of the currently set divider
->> * current_frac - the current frac/mash settings for the divider
->=20
-> current_parent can already be found through /debug/clk/clk_summary =
-quite
-> nicely I think.  If we wanted a per-clock parent file, that seems like
-> something the core ought to be doing.
->=20
-> current_frac is looking at a bit that doesn't exist for non-MASH =
-clocks.
->=20
-> divi/divf are OK, I guess, but don't seem particularly useful given =
-the
-> raw register output already.  A cooked floating point point divider
-> debugfs entry would be nice, but I don't know if we can do that.
+This applies on top of Maxime's sunxi/for-next branch.
 
-The reason I had those is because I wanted to allow people to
-see quickly what is the parent clock and what is the used=20
-parent and divider=E2=80=A6
+Changes v1 .. v2:
+- in all three patches:
+  - use of_clock_full_name() instead of node->name
+  - don't report the uninitialized clk_name
+  - handle error in final check in if-clause
 
-While discussing with the PCM/I2s people they were always concerned
-about those details - so I needed to provide them with a way to access
-those things easily. And explaining to them the register format was -
-for me - out of the question.
+Andre Przywara (3):
+  clk: sunxi: improve mux_clk error handling and reporting
+  clk: sunxi: improve divider_clk error handling and reporting
+  clk: sunxi: Improve divs_clk error handling and reporting
 
-Especially the mapping of =E2=80=9Cid=E2=80=9D to real parent was a bit =
-of a pain.
+ drivers/clk/sunxi/clk-sunxi.c | 75 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 63 insertions(+), 12 deletions(-)
 
-What do you mean by cooked? Something like: "33+27/4096=E2=80=9D?
+-- 
+2.6.4
 
-Martin=
