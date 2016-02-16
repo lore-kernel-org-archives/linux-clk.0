@@ -1,83 +1,106 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
-Date: Mon, 22 Feb 2016 23:53:15 +0100
-Message-Id: <1456181595-10392-3-git-send-email-manabian@gmail.com>
-In-Reply-To: <1456181595-10392-1-git-send-email-manabian@gmail.com>
-References: <1456181595-10392-1-git-send-email-manabian@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ "Kukjin Kim" <kgene@kernel.org>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will.deacon@arm.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+Cc: "Arnd Bergmann" <arnd@arndb.de>, "Olof Johansson" <olof@lixom.net>,
+ "Kevin Hilman" <khilman@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>,
+ "Pankaj Dubey" <pankaj.dubey@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+Message-ID: <20160216223158.2278.48998@quark.deferred.io>
+Subject: Re: [PATCH v5 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Tue, 16 Feb 2016 14:31:58 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT binding documentation for lpc1850-creg-clk driver.
+Quoting Krzysztof Kozlowski (2016-02-15 22:20:29)
+> Hi,
+> =
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+> Patchset attempts to remove the ARCH_EXYNOS7 symbol.
+> =
 
-diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-new file mode 100644
-index 000000000000..0c83d373b766
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-@@ -0,0 +1,52 @@
-+* NXP LPC1850 CREG clocks
-+
-+The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
-+control registers for two low speed clocks. One of the clocks is a
-+32 kHz oscillator driver with power up/down and clock gating. Next
-+is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
-+
-+These clocks are used by the RTC and the Event Router peripherials.
-+The 32 kHz can also be routed to other peripherials to enable low
-+power modes.
-+
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible:
-+	Should be "nxp,lpc1850-creg-clk"
-+- #clock-cells:
-+	Shall have value <1>.
-+- clocks:
-+	Shall contain a phandle to the fix 32 kHz crystall.
-+
-+The creg-clk node must be a child of the creg syscon node.
-+
-+The following clocks are available from the clock node.
-+
-+Clock ID	Name
-+   0		 1 kHz clock
-+   1		32 kHz Oscillator
-+
-+Example:
-+soc {
-+	creg: syscon@40043000 {
-+		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
-+		reg = <0x40043000 0x1000>;
-+
-+		creg_clk: clock-controller@004 {
-+			compatible = "nxp,lpc1850-creg-clk";
-+			clocks = <&xtal32>;
-+			#clock-cells = <1>;
-+		};
-+
-+		...
-+	};
-+
-+	rtc: rtc@40046000 {
-+		...
-+		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
-+		clock-names = "rtc", "reg";
-+		...
-+	};
-+};
--- 
-1.8.0
+> I rebased this on top of James':
+>  - clk: Move vendor's Kconfig into CCF menu section
+>    http://www.spinics.net/lists/devicetree/msg111953.html
+> =
+
+> The third patch depends on previous ones so one way of merging this
+> would be to prepare a tag from clk tree with first two patches
+> and the dependency. The last third patch would go through arm-soc.
+
+I've done this locally and things look good. I'm just waiting for Acks
+to patch #2 and I'll merge patches #1 and #2 and provide a stable tag
+named clk-samsung-kconfig, based on v4.5-rc1.
+
+These patches were not based on -rc1, but the fixups were trivial so I'm
+fine with them.
+
+Regards,
+Mike
+
+> =
+
+> Changes since v4:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. Rebased on "clk: Move vendor's Kconfig into CCF menu section"
+>    existing in clock tree.
+> 2. Re-work patch 2/3 (see specific changelog).
+> =
+
+> Changes since v3:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. Rebase on next-20160127 (s3c64xx became multiplatform).
+> =
+
+> Changes since v2:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. Follow Arnd's advice about not enabling silently the newly added
+>    EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+>    also a trigger for some changes in placement of Samsung clocks
+>    Kconfig entries...
+> 2. ... which lead to introducing patch 1.
+> =
+
+> =
+
+> Rationale:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+> fall under generic ARCH_EXYNOS. In the same time there is no sense
+> in building clocks for these ARMv8 SoCs on ARMv7 builds.
+> =
+
+> =
+
+> Best regards,
+> Krzysztof
+> =
+
+> Krzysztof Kozlowski (3):
+>   clk: samsung: Enable COMPILE_TEST for Samsung clocks
+>   clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+>   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+> =
+
+>  arch/arm64/Kconfig.platforms        | 11 ++---------
+>  arch/arm64/boot/dts/exynos/Makefile |  2 +-
+>  arch/arm64/configs/defconfig        |  2 +-
+>  drivers/clk/samsung/Kconfig         | 18 +++++++++++++-----
+>  drivers/clk/samsung/Makefile        |  4 ++--
+>  5 files changed, 19 insertions(+), 18 deletions(-)
+> =
+
+> -- =
+
+> 2.5.0
+>=20
