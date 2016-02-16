@@ -1,66 +1,116 @@
-Return-Path: <stefan.wahren@i2se.com>
-Date: Sun, 28 Feb 2016 18:58:15 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
-	kernel@martin.sperl.org, Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Message-ID: <440771566.330986.eb44c2f6-8870-42b4-ada5-1ccea76f532b.open-xchange@email.1und1.de>
-In-Reply-To: <1456673831-2408-2-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
- <1456673831-2408-2-git-send-email-kernel@martin.sperl.org>
-Subject: Re: [PATCH v5 01/20] clk: bcm2835: pll_off should only set
- CM_PLL_ANARST
+Return-Path: <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
+ clocks by ID
+To: Mark Brown <broonie@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
+ <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
+ <20160215152635.GN18988@sirena.org.uk>
+CC: Liam Girdwood <lgirdwood@gmail.com>, <alsa-devel@alsa-project.org>,
+        Jyri
+ Sarha <jsarha@ti.com>, <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Kristo, Tero"
+	<t-kristo@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <56C2F00C.8080809@ti.com>
+Date: Tue, 16 Feb 2016 11:46:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160215152635.GN18988@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+On 02/15/2016 05:26 PM, Mark Brown wrote:
+> On Mon, Feb 15, 2016 at 04:11:35PM +0200, Peter Ujfalusi wrote:
+> 
+>> Most CPU and codec drivers can select their system clock from different
+>> sources. They rely on snd_soc_dai_set_sysclk(x, sysclk_id, x, x) to do so.
+>> Add support for selecting which clock need to be selected along with the
+>> rate.
+> 
+> Rather than adding new bindings for the ASoC specific clocking APIs it
+> seems better to use the standard clock API bindings and transition
+> drivers to use that.  In the past the clock API didn't have DT bindings
+> so wehad to do our own thing but I think now that's no longer the case?
 
-> kernel@martin.sperl.org hat am 28. Februar 2016 um 16:36 geschrieben:
->
->
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> bcm2835_pll_off is currently assigning CM_PLL_ANARST
-> to the control register.
->
-> This patch only sets the CM_PLL_ANARST bit
-> not resetting any of the other bits, which allows
-> restoring the register to its original value
-> via bcm2834_pll_on.
->
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+McASP is relatively simple regarding to clocking and it is only problematic in
+case when it is master. When it is slave it is going to use the BCLK and FS
+coming from outside for clocking the data.
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain
-clocks")
+The driver currently only supports symmetric clocking, meaning we only use the
+TX clock path (RX is using the TX clocks).
+To generate the bit clock we have something like this:
 
-> ---
-> drivers/clk/bcm/clk-bcm2835.c | 8 ++++++--
-> 1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 5747a9d..d3009a6 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -913,8 +913,12 @@ static void bcm2835_pll_off(struct clk_hw *hw)
-> struct bcm2835_cprman *cprman = pll->cprman;
-> const struct bcm2835_pll_data *data = pll->data;
->
-> - cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
-> - cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-> + cprman_write(cprman, data->cm_ctrl_reg,
-> + cprman_read(cprman, data->cm_ctrl_reg) |
-> + CM_PLL_ANARST);
-> + cprman_write(cprman, data->a2w_ctrl_reg,
-> + cprman_read(cprman, data->a2w_ctrl_reg) |
-> + A2W_PLL_CTRL_PWRDN);
+[mcaspA_auxclkx_div]->
+		    [mcaspA_hclkx_mux] -> [mcaspA_hclkx_div] -> [mcaspA_bclkx]
+[mcaspA_ahclkx_in]  ->
 
-Since this change adds a RMW cycle we should add the spinlocks for
-bcm2835_pll_off here and not in 03/20.
+If [mcaspA_auxclkx_div] is selected in [mcaspA_hclkx_mux], then:
+[mcaspA_hclkx_mux] -> [mcaspA_ahclkx_out]
+the HCLKX clock can be sent to mcaspA_ahclkx_out, as output from the SoC.
 
-Regards
-Stefan
+mcaspA is mcasp0...number of MCASP in the SoC.
+
+We would need three (or two if we decide to not represent the mcaspA_bclkx)
+simple clock node, two dividers and one mux.
+
+We could have binding for this regarding to clocks:
+
+/* McASP clk IDs */
+#define MCASP_AUXCLKX_DIV	0
+#define MCASP_AHCLKX_IN		1
+#define MCASP_HCLKX_MUX		2
+#define MCASP_HCLKX_DIV		3
+#define MCASP_AHCLKX_OUT	4
+#define MCASP_BCLK		5
+
+/* dtsi file */
+mcasp3: mcasp@48468000 {
+	compatible = "ti,dra7-mcasp-audio";
+	#clock-cells = <1>;
+	clocks = <&mcasp3_aux_gfclk_mux>, <&mcasp3_ahclkx_mux>;
+	clock-names = "fck", "ahclkx";
+	assigned-clocks = <&mcasp3 MCASP_AHCLKX_IN>,
+			  <&mcasp3 MCASP_AUXCLKX_DIV>;
+	assigned-clock-parents = <&mcasp3_ahclkx_mux>,
+				 <&mcasp3_aux_gfclk_mux>;
+};
+
+/* board dts */
+&mcasp3 {
+	assigned-clocks = <&mcasp3 MCASP_AHCLKX_IN>,
+			  <&mcasp3 MCASP_AUXCLKX_DIV>,
+			  <&mcasp3_ahclkx_mux>,
+			  <&mcasp3 MCASP_HCLKX_MUX>;
+	assigned-clock-parents = <&mcasp3_ahclkx_mux>,
+				 <&mcasp3_aux_gfclk_mux>,
+				 <&atl_clkin2_ck>,
+				 <&mcasp3 MCASP_AHCLKX_IN>;
+};
+
+With this one we can set up the clock tree via clk bindings. Not sure how this
+will work if audio including McASP is built as module?
+
+There are couple of important questions regarding to this: if the
+MCASP_HCLKX_DIV is not explicitly set the McASP driver will configure it based
+on the need for the starting stream (rate, bits, etc), but in some case we
+need to have different calculation since we want to have more bclk then it is
+needed for the audio data (bclk-fck ratio).
+
+The clock tree within the McASP need to be built up inside of the code, can
+not be done via DT.
+
+As for codecs, tlv320aic3106 is also pretty simple device from the outside, it
+can receive it's reference clock via:
+MCLK pin, GPIO2 pin or it can use the BCLK from the bus. Based on the incoming
+frequency it can use it directly or it needs to use the internal PLL to
+generate the cocks.
+It can output generated clock via GPIO1
+
+I don't think it will bring any clarity or features we miss right now if we
+try to move CPU and codec drivers to clk API. IMHO.
+
+-- 
+Péter
