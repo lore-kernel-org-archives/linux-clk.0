@@ -1,52 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Feb 2016 18:36:45 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
-Message-ID: <20160219023645.GP4847@codeaurora.org>
-References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
- <1436651307-24098-2-git-send-email-manabian@gmail.com>
- <20150811204127.31346.16729@quantum>
- <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
- <20150818002604.31346.18322@quantum>
- <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
- <20160217005629.2278.90197@quark.deferred.io>
- <CAGhQ9VzB_WgB8b4_c3Z17W+K2MC7Fq7SD9zEvZUN_UJVGDZ3Wg@mail.gmail.com>
- <20160217202824.2278.25956@quark.deferred.io>
- <CAGhQ9VxPt7FmE4JN_-rBJMNpLpGoKVKocVFPWc3siV29Pk0_mQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGhQ9VxPt7FmE4JN_-rBJMNpLpGoKVKocVFPWc3siV29Pk0_mQ@mail.gmail.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Eric Anholt <eric@anholt.net>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] clk: bcm2835: Fix setting of PLL divider clock rates
+Date: Mon, 15 Feb 2016 19:03:57 -0800
+Message-Id: <1455591838-22725-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/17, Joachim Eastwood wrote:
-> 
-> For creg-clk it would probably work.
-> 
-> cgu would need to register most of clocks early since it needs to
-> support whatever setup the bootloader throws at it. The only clocks
-> that could be taken out is the base clocks (clk_onecell_data
-> clk_base_data) except for one of them. But splitting this table would
-> be a bad idea as hw clk numbers are used as indexes for easy look up.
-> 
-> Come to think of it; isn't splitting the clock table between a early
-> init and platform driver going become a problem?
-> At least the lookup in the driver or framework would become more complex(?)
-> And won't you confuse the lookup?
-> If the early driver register one clock table with
-> of_clk_add_provider() and then sometime later the platform driver
-> register another clock table, both using the same of_node. How is that
-> suppose to work?
+Our dividers weren't being set successfully because CM_PASSWORD wasn't
+included in the register write.  It looks easier to just compute the
+divider to write ourselves than to update clk-divider for the ability
+to OR in some arbitrary bits on write.
 
-I believe that should work, although I haven't tested it. The
-code looks until it finds a provider that matches the device node
-and gives us a valid clk pointer. If we don't get a valid pointer
-we keep looking for another provider until we exhaust all
-providers.
+Fixes about half of the video modes on my HDMI monitor (everything
+except 720x400).
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 015e687..9f4df8f 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct clk_hw *hw,
+ 	struct bcm2835_pll_divider *divider = bcm2835_pll_divider_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = divider->cprman;
+ 	const struct bcm2835_pll_divider_data *data = divider->data;
+-	u32 cm;
+-	int ret;
++	u32 cm, div, max_div = 1 << A2W_PLL_DIV_BITS;
+ 
+-	ret = clk_divider_ops.set_rate(hw, rate, parent_rate);
+-	if (ret)
+-		return ret;
++	div = DIV_ROUND_UP_ULL(parent_rate, rate);
++
++	div = min(div, max_div);
++	if (div == max_div)
++		div = 0;
+ 
++	cprman_write(cprman, data->a2w_reg, div);
+ 	cm = cprman_read(cprman, data->cm_reg);
+ 	cprman_write(cprman, data->cm_reg, cm | data->load_mask);
+ 	cprman_write(cprman, data->cm_reg, cm & ~data->load_mask);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
