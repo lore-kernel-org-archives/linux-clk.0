@@ -1,91 +1,41 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Tue, 23 Feb 2016 16:56:03 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Rob Herring <robh@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, linux-clk <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell
- <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark
- Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Jason
- Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
- Lior Amsalem <alior@marvell.com>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Yehuda Yitschak
- <yehuday@marvell.com>
-Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
-Message-ID: <20160223165603.74576dca@free-electrons.com>
-In-Reply-To: <20160223102550.2e0cba04@free-electrons.com>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160222025357.GE15973@rob-hp-laptop>
-	<20160222091423.4756a579@free-electrons.com>
-	<20160222141617.GA14970@lunn.ch>
-	<20160222183203.2278.60153@quark.deferred.io>
-	<CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
-	<20160223102550.2e0cba04@free-electrons.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Tue, 16 Feb 2016 01:42:21 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: rtc-linux@googlegroups.com, linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] rtc: rtc-ds1307: add clock provider support for DS3231
+Message-ID: <20160216004221.GA3310@piout.net>
+References: <1454249410-21449-1-git-send-email-akinobu.mita@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454249410-21449-1-git-send-email-akinobu.mita@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Rob, Michael, Stephen,
-
-On Tue, 23 Feb 2016 10:25:50 +0100, Thomas Petazzoni wrote:
-
-> > >> Maybe add a big fat warning that the bindings are unstable, and the DT
-> > >> blob must be kept in sync with the kernel?
-> > >
-> > > +1 and feel free to blame the lack of documentation.  No one can expect
-> > > bindings to be finalized when the chip topology is not fully understood.
-> > 
-> > I can understand not understanding the full clock tree. I have "full"
-> > documentation of a Marvell chip and don't understand the clock tree
-> > fully. But I can't believe you don't have some sense of how many
-> > clocks you have to deal with. 10? 100? 1000? What I see is 2 nodes of
-> > a single register each for clocks at roughly the same address. That
-> > tells me your binding is too fine grained. If you really don't know
-> > what is right, then err on the side of a single clock provider node
-> > and don't put the clock details in DT.
+On 31/01/2016 at 23:10:10 +0900, Akinobu Mita wrote :
+> DS3231 has programmable square-wave output signal.
+> This enables to use this feature as a clock provider of
+> common clock framework.
 > 
-> I don't quite understand the reasoning behind this conclusion. We know
-> for sure that those two registers control only those core and ring
-> clocks. Maybe there are other registers controlling other clocks,  that
-> we don't know. But for sure, those two registers only give details
-> about those core and ring clocks, so I don't see what would be the
-> usefulness of merging that into a single DT node.
+> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  .../devicetree/bindings/rtc/maxim,ds3231.txt       |  37 +++
+>  drivers/rtc/rtc-ds1307.c                           | 296 ++++++++++++++++++++-
+>  2 files changed, 332 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/maxim,ds3231.txt
 > 
-> We would lose the fact that the relationship between the ring clocks
-> and one of the core clock is represented in the DT. Instead of having a
-> clear <&coreclk X> or <&ringclk Y> reference, we would have a
-> mysterious <&allclk XYZ> reference, which doesn't tell immediately
-> whether it's a core clock or ring clock.
-> 
-> So, while I definitely agree that a syscon is probably in order to
-> cover all the system registers, I don't see the point of having a
-> single node to cover all the clocks.
 
-So, I had a discussion with Marvell engineers and a closer look at the
-matter. It turns out that those two clock registers are in the middle
-of an area called DFX (Design for Testability), which contain registers
-to fine tune the silicon and detect manufacturing issues. This area of
-registers is most likely never going to be publicly documented, and the
-fact that those two clock-related registers were placed there was more
-an oversight than a real architecture choice.
+Applied, thanks.
 
-For this reason, there is in fact no real benefit in mapping the entire
-area using a syscon, and having the two DT nodes for the core clocks
-and ring clocks, mapping just their own registers is by far the
-simplest solution considering the register layout.
-
-We would prefer to keep things as proposed in terms of DT
-representation, with the understanding that the submission of the Linux
-support for this platform comes very early in the chip development
-cycle, and that as such, the DT bindings should be considered unstable.
-
-Thanks a lot,
-
-Thomas
 -- 
-Thomas Petazzoni, CTO, Free Electrons
+Alexandre Belloni, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
