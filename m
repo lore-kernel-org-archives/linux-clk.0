@@ -1,77 +1,82 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <56C1D9C0.6020601@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
- <56BE29A1.3060107@redhat.com> <56C1A590.6030500@arm.com> <56C1C7BB.1040602@redhat.com>
- <56C1D9C0.6020601@arm.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 15 Feb 2016 22:23:48 +0800
-Message-ID: <CAGb2v65E54mnLEcPzLyycEBSHbvn6tp9JpS+S8gdbDg_e7qFyQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Allwinner A64 MMC support
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
-	Grant Likely <grant.likely@linaro.org>, Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: Mark Brown <broonie@kernel.org>, "Peter Ujfalusi" <peter.ujfalusi@ti.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160216134233.GN18327@sirena.org.uk>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ alsa-devel@alsa-project.org, "Jyri Sarha" <jsarha@ti.com>,
+ linux-clk@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kristo,
+ Tero" <t-kristo@ti.com>
+References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
+ <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
+ <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
+ <20160216134233.GN18327@sirena.org.uk>
+Message-ID: <20160216191346.2278.725@quark.deferred.io>
+Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system clocks by ID
+Date: Tue, 16 Feb 2016 11:13:46 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 9:59 PM, Andre Przywara <andre.przywara@arm.com> wrote:
-> Hi Hans,
->
-> ....
->
->>
->> p.s.
->>
->> I love the work you've been doing on the A64, I've not had a chance
->> to try it out yet though. Have you made any progress with getting
->> the mmc slot to work ?  If not maybe I can make some time I've
->> prior experience in bringing up the mmc slot on other Allwinner SoCs
->
-> Thanks for that!
->
-> So we made some progress on the weekend (with the help of #linux-sunxi):
-> 1) The regulator node was stupidly put by me into a separate child node
-> without putting address and size cells into. So I just moved it into
-> /soc directly now and that seems to fixed the missing regulator.
-> 2) The reset node is a allwinner,sun6i-a31-ahb1-reset, which does not
-> get registered automatically, but by an explicit call from mach-sunxi/.
-> I wonder why we do this (yes, I saw that comment, but still...) and if
-> it would work with a normal MODULE_DEVICE_TABLE() declaration.
-> There is and will be no equivalent to the mach- directory on arm64.
+Quoting Mark Brown (2016-02-16 05:42:33)
+> On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
+> =
 
-On sun6i, we supported the high resolution timer, which had a reset control.
-Timers (or clocksources) are registered before device model kicks in, so the
-reset had to be explicitly registered before the timer, or the system would
-hang. I think we phased that out though. Maxime should know.
+> > As for codecs, tlv320aic3106 is also pretty simple device from the outs=
+ide, it
+> > can receive it's reference clock via:
+> > MCLK pin, GPIO2 pin or it can use the BCLK from the bus. Based on the i=
+ncoming
+> > frequency it can use it directly or it needs to use the internal PLL to
+> > generate the cocks.
+> > It can output generated clock via GPIO1
+> =
 
-ChenYu
+> That already sounds like there is room for configuration and hooking
+> into a wider clock tree - we've got three different source options and
+> an output plus a PLL that can presumably take in non-audio rates.
 
-> 3) As Jens pointed out, the MMC IP block isn't really compatible.
-> Changing the clocks is easy (done already), but we need to come up with
-> code to cover the new phase setting registers in the A64 MMC register block.
->
-> Interestingly somehow hacking this (pretending it is compatible) seems
-> to work, though I got reports from people about mysterious kernel
-> crashes, so I'm inclined to leave MMC out of the first patch series.
->
-> So if you could take a look at the new registers (starting at offset
-> 0x140) and work out what we actually need to do here, that would be
-> great. I have no real clue about what they actually do and how they
-> relate to the current output and sample clock phase.
-> To me it looks like we might get away with just triggering the automatic
-> calibration and the hardware does the rest for us - keep your fingers
-> crossed ;-)
->
-> Cheers,
-> Andre.
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
++1
+
+It is quite easy for existing drivers to become clock providers. Please
+see struct isp_xclk in:
+
+drivers/media/platform/omap3isp/isp.h
+drivers/media/platform/omap3isp/isp.c
+
+CCF is intentionally designed as a library, meaning that you don't need
+to create a new struct device to register clocks. Feel free to BYOD
+(bring your own device).
+
+Then your IP block clocks (McASP in this case) can hook into the
+system-wide clock tree (e.g. where some of the parent clocks come from).
+
+> =
+
+> > I don't think it will bring any clarity or features we miss right now i=
+f we
+> > try to move CPU and codec drivers to clk API. IMHO.
+
+CPU drivers? Peter, you wrote the CCF clock provider driver for DRA7
+ATL, so I'm not sure what you mean here.
+
+> =
+
+> You happen to be looking at a particularly simple system but things do
+> scale up and there's not a clear cutoff point which would allow us to
+> make a clear distinction between things that might get used in a simple
+> system and things that might need something more complex.  This seems
+> particularly important when we're adding things to simple-card, we want
+> it to be usable with as many different devices as possible.
+
+The original patches didn't hit my inbox, only the last two replies. Can
+someone fill me in on the DT side of this discussion? Why are DT
+bindings needed here? Are other devices besides McASP consuming the
+clocks provided by McASP?
+
+DT can also be a good candidate for doing per-board (or per-use case)
+clock configuration via the assigned-clocks, assigned-clock-rates, and
+assigned-clock-parents properties.
+
+Regards,
+Mike
