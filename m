@@ -1,34 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47644 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750775AbcB2XYr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 29 Feb 2016 18:24:47 -0500
-Date: Mon, 29 Feb 2016 15:24:43 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
-Message-ID: <20160229232443.GW13417@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-6-git-send-email-fcooper@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 16 Feb 2016 09:47:52 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH v3] clk: sunxi: Fix sun8i-a23-apb0-clk divider flags
+Message-ID: <20160216084752.GG4344@lukather>
+References: <1455529219-30204-1-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456439796-28546-6-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="z9ECzHErBrwFF8sy"
+In-Reply-To: <1455529219-30204-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
-> From: Vignesh R <vigneshr@ti.com>
-> 
-> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
-> for dt bindings.
 
-Seems to be all standard so applying this one into omap-for-v4.6/dt
-thanks.
+--z9ECzHErBrwFF8sy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
+On Mon, Feb 15, 2016 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
+> The APB0 clock on A23 is a zero-based divider, not a power-of-two based
+> divider.
+>=20
+> Note that this patch does not apply cleanly to kernels before 4.5-rc1,
+> which added CLK_OF_DECLARE support to this driver.
+>=20
+> Fixes: 57a1fbf28424 ("clk: sunxi: Add A23 APB0 divider clock support")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Tony
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--z9ECzHErBrwFF8sy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWwuI4AAoJEBx+YmzsjxAg9tEQAMG41ZS+iYFOBm6uqSI+mdBm
+RZK7PVyH8ptzTEOXAs8fVR6wyjAxvOHA8gBU957Onu1VEf0lUWBXbi/8wjBN9gp+
+Ait0JCZ27naBSQfx9AxQ8yEyPv3PWMkbECRrH5/fIP2UTIpskVA2XzR0LBrwUYAJ
+yCSd7o8wd6t2FbY472WRcKLZ1ummDtpGjTAymIEI0rqAxpFggIlmRaP5ydbQY6Yt
+HaJwcsouoNH5w5ghnDsrrx507oxd7qJwkQ3zHV/+98jGRRGDZoSCfP0u0C6tSQ+Q
+qV4RewM0UOZMzz+irpmOot4ymcskAy/a4g3zqRqdTYzoO6uMp1BEA9fQgygjII7X
+hcBU0nmJy12VDyCqP932XsPP3QGw2uAg4724T6kk3rZcmynkuXx1zogjezoDFIBG
+wMYvtcTcaWXI3l5w+1kz25ooDigo9lq54MQifVlCzhSTTf7WDDs8oI3TTPnzhgvf
+TpqxBVoAnxmBjQ46gUJDo1ymU6jyx0FH7ZomL0JpXzhv+GBtjoWh0OCNZYSS57Bj
+d/uQIfpwxh8AYqDhoT8WTL86atXMlHWoMPGwRvDfNR1xMBQCFOTj1+HMqu7fF3Pv
+xM/tK6wqlT8ThNQDT8MnxQQlWdDSrL0CuzQCuuoqyDVy00qafS90HModonR1WdlO
+gchZWIs2u3mqIMqx18zQ
+=3lFo
+-----END PGP SIGNATURE-----
+
+--z9ECzHErBrwFF8sy--
