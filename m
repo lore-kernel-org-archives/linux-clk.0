@@ -1,35 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 8 Feb 2016 14:16:43 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jyri Sarha <jsarha@ti.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: provider: Remove of_gpio_{gate,mux}_clk_setup()
- prototypes
-Message-ID: <20160208221643.GU4848@codeaurora.org>
-References: <1454830926-10434-1-git-send-email-sboyd@codeaurora.org>
- <56B712E9.3020705@ti.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56B712E9.3020705@ti.com>
+To: Caesar Wang <wxt@rock-chips.com>, "Heiko Stuebner" <heiko@sntech.de>,
+ edubezval@gmail.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455521613-27340-3-git-send-email-wxt@rock-chips.com>
+Cc: huangtao@rock-chips.com, linux-pm@vger.kernel.org,
+ "Stephen Boyd" <sboyd@codeaurora.org>, zhangqing@rock-chips.com,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Jeffy Chen" <jeffy.chen@rock-chips.com>, "Zhang Rui" <rui.zhang@intel.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Caesar Wang" <wxt@rock-chips.com>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+ <1455521613-27340-3-git-send-email-wxt@rock-chips.com>
+Message-ID: <20160216224310.2278.75088@quark.deferred.io>
+Subject: Re: [RESEND PATCH 2/8] clk: rockchip: add the tsadc clocks found on rk3228
+ SoCs
+Date: Tue, 16 Feb 2016 14:43:10 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/07, Jyri Sarha wrote:
-> On 02/07/16 09:42, Stephen Boyd wrote:
-> >These functions either never existed or were only used in
-> >OF_CLK_DECLARE() macros. Remove the dead prototypes.
-> >
-> 
-> Yes, they were used by OF_CLK_DECLARE() macros. I originally made
-> the of_gpio_clk_gate_setup() non static just because the other basic
-> clocks were implemented the same way. Actually I do not follow why
-> the functions needed to be non static in the first place. Surely the
-> declarations can go now after the conversion to a platform driver.
-> 
+Quoting Caesar Wang (2016-02-14 23:33:27)
+> This patch adds the needed clocks for rk3228 tsadc.
+> =
 
-Thanks. There is some exporting of basic type functions for u300.
-I'm not entirely sure why we do it there either though.
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+> ---
+> =
+
+>  drivers/clk/rockchip/clk-rk3228.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk=
+-rk3228.c
+> index c515915..ac014b9 100644
+> --- a/drivers/clk/rockchip/clk-rk3228.c
+> +++ b/drivers/clk/rockchip/clk-rk3228.c
+> @@ -424,7 +424,7 @@ static struct rockchip_clk_branch rk3228_clk_branches=
+[] __initdata =3D {
+>         GATE(0, "sclk_otgphy1", "xin24m", 0,
+>                         RK2928_CLKGATE_CON(1), 6, GFLAGS),
+>  =
+
+> -       COMPOSITE_NOMUX(0, "sclk_tsadc", "xin24m", 0,
+> +       COMPOSITE_NOMUX(SCLK_TSADC, "sclk_tsadc", "xin24m", 0,
+>                         RK2928_CLKSEL_CON(24), 6, 10, DFLAGS,
+>                         RK2928_CLKGATE_CON(2), 8, GFLAGS),
+>  =
+
+> @@ -584,7 +584,7 @@ static struct rockchip_clk_branch rk3228_clk_branches=
+[] __initdata =3D {
+>         GATE(PCLK_UART0, "pclk_uart0", "pclk_cpu", 0, RK2928_CLKGATE_CON(=
+9), 12, GFLAGS),
+>         GATE(PCLK_UART1, "pclk_uart1", "pclk_cpu", 0, RK2928_CLKGATE_CON(=
+9), 13, GFLAGS),
+>         GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK2928_CLKGATE_CON(=
+9), 14, GFLAGS),
+> -       GATE(0, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, G=
+FLAGS),
+> +       GATE(PCLK_TSADC, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(=
+9), 15, GFLAGS),
+>         GATE(PCLK_GRF, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_=
+CLKGATE_CON(10), 0, GFLAGS),
+>         GATE(0, "pclk_cru", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE=
+_CON(10), 1, GFLAGS),
+>         GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGAT=
+E_CON(10), 2, GFLAGS),
+> -- =
+
+> 1.9.1
+>=20
