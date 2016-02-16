@@ -1,54 +1,51 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	zhangqing@rock-chips.com,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/8] clk: rockchip: add the tsadc clocks found on rk3228 SoCs
-Date: Wed,  3 Feb 2016 12:12:41 +0800
-Message-Id: <1454472767-5767-3-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1454472767-5767-1-git-send-email-wxt@rock-chips.com>
-References: <1454472767-5767-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+MIME-Version: 1.0
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
+Date: Tue, 16 Feb 2016 13:59:14 +0900
+Message-ID: <CAJKOXPdA1VeGUmgAtObueXbY5S_X0acrF5m_QnEygzaMOeWPUw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: Move vendor's Kconfig into CCF menu section
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the needed clocks for rk3228 tsadc.
+2016-01-28 17:58 GMT+09:00 James Liao <jamesjj.liao@mediatek.com>:
+> Move all vendor's Kconfig into CCF menu section to prevent
+> new drivers putting their Kconfig files in a wrong place.
+>
+> Some Kconigs need to modify at the same time to avoid build
+> warnings.
+>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> ---
+> This patch is based on v4.5-rc1.
+>
+> changes since v1:
+> - Modify s3c24xx and samsung's Kconfig to avoid build warngings.
+>
+>  arch/arm/mach-s3c24xx/Kconfig | 1 +
+>  drivers/clk/Kconfig           | 8 +++-----
+>  drivers/clk/samsung/Kconfig   | 1 -
+>  3 files changed, 4 insertions(+), 6 deletions(-)
+>
 
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
----
+I wish you had used scripts/get_maintainer.pl to get list of people to CC...
+Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+Krzysztof Kozlowski <k.kozlowski@samsung.com> (maintainer:ARM/SAMSUNG
+EXYNOS ARM ARCHITECTURES)
+linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS
+ARM ARCHITECTURES)
 
- drivers/clk/rockchip/clk-rk3228.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Beside the fact that it is just nice and welcomed... it would help me
+to avoid some of duplicated work...
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 981a502..6374fef 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -422,7 +422,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(0, "sclk_otgphy1", "xin24m", 0,
- 			RK2928_CLKGATE_CON(1), 6, GFLAGS),
- 
--	COMPOSITE_NOMUX(0, "sclk_tsadc", "xin24m", 0,
-+	COMPOSITE_NOMUX(SCLK_TSADC, "sclk_tsadc", "xin24m", 0,
- 			RK2928_CLKSEL_CON(24), 6, 10, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 8, GFLAGS),
- 
-@@ -582,7 +582,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(PCLK_UART0, "pclk_uart0", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 12, GFLAGS),
- 	GATE(PCLK_UART1, "pclk_uart1", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 13, GFLAGS),
- 	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 14, GFLAGS),
--	GATE(0, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, GFLAGS),
-+	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, GFLAGS),
- 	GATE(PCLK_GRF, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 0, GFLAGS),
- 	GATE(0, "pclk_cru", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 1, GFLAGS),
- 	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 2, GFLAGS),
--- 
-1.9.1
+Best regards,
+Krzysztof
