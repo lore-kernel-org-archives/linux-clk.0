@@ -1,63 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54676 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752522AbcBVDVb (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 21 Feb 2016 22:21:31 -0500
-Date: Mon, 22 Feb 2016 12:21:08 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Ricard Wanderlof <ricard.wanderlof@axis.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-	alsa-devel <alsa-devel@alsa-project.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jyri Sarha <jsarha@ti.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	"Kristo, Tero" <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Message-ID: <20160222032108.GU18327@sirena.org.uk>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk>
- <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io>
- <alpine.DEB.2.02.1602171516260.10339@lnxricardw1.se.axis.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0kAGJ5Hb5f/LtdyK"
-In-Reply-To: <alpine.DEB.2.02.1602171516260.10339@lnxricardw1.se.axis.com>
-Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for
- selecting system clocks by ID
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/3] clk: sunxi: improve divider_clk error handling and reporting
+Date: Tue, 16 Feb 2016 10:46:07 +0000
+Message-Id: <1455619568-1906-3-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
+References: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+We now report a failing ioremap, failing output names parsing,
+failures in table registration and in the final step.
+Also there was a bug where clk_register_divider_table() would return
+an ERR_PTR value instead of NULL, which we were checking for.
+We now implement proper rollback in case of an error.
 
---0kAGJ5Hb5f/LtdyK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 36 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
 
-On Wed, Feb 17, 2016 at 03:18:57PM +0100, Ricard Wanderlof wrote:
-
-> It makes sense to use an already existing clock framework, but I'm=20
-> wondering, how do we model the clock select function? Using a clock mux?=
-=20
-
-Yes, that looks like a mux to me.
-
---0kAGJ5Hb5f/LtdyK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWyn6iAAoJECTWi3JdVIfQx7EH/3J5PT27YZ3ntIIDi2PrKBhf
-RKAlzOzL1SU6i6QH4mr2rJ5zcYEDcRYOr6Q1gQi1CKbwKrq41XjP2YwCjvbN9odh
-ZL71+kinLVk96YRQyJDnFePo79Qe/MczX3Tb+CRpm1dUhA8kGNk9inc6Kj8szvKR
-W1eMhlLLP1ipaWlFTGVATqD/bs+1Y1Sn3agdevleKFRek1RwWvNmfyd7xNZx84sC
-QLWP5mOiXFLQkHMyWkKKFpT9LdKB1tjKfitfrbbTTzZmkSWfTvD2bXBJKYYM0kQe
-f3qSIjJmDFAIEm3X5AJYq04kU3kPYnMSUQWCyndS39GpP6JhiJ2TIZeRBnmUYEc=
-=vppu
------END PGP SIGNATURE-----
-
---0kAGJ5Hb5f/LtdyK--
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 775e137..4bd0917 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -805,17 +805,47 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
+ 	void __iomem *reg;
+ 
+ 	reg = of_iomap(node, 0);
++	if (!reg) {
++		pr_err("Could not map registers for mux-clk: %s\n",
++		       of_node_full_name(node));
++		return;
++	}
+ 
+ 	clk_parent = of_clk_get_parent_name(node, 0);
+ 
+-	of_property_read_string(node, "clock-output-names", &clk_name);
++	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
++		pr_err("%s: could not read clock-output-names from \"%s\"\n",
++		       __func__, of_node_full_name(node));
++		goto out_unmap;
++	}
+ 
+ 	clk = clk_register_divider_table(NULL, clk_name, clk_parent, 0,
+ 					 reg, data->shift, data->width,
+ 					 data->pow ? CLK_DIVIDER_POWER_OF_TWO : 0,
+ 					 data->table, &clk_lock);
+-	if (clk)
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register divider clock %s: %ld\n",
++		       __func__, clk_name, PTR_ERR(clk));
++		goto out_unmap;
++	}
++
++	if (of_clk_add_provider(node, of_clk_src_simple_get, clk)) {
++		pr_err("%s: failed to add clock provider for %s\n",
++		       __func__, clk_name);
++		goto out_unregister;
++	}
++
++	if (clk_register_clkdev(clk, clk_name, NULL)) {
++		of_clk_del_provider(node);
++		goto out_unregister;
++	}
++
++	return;
++out_unregister:
++	clk_unregister_divider(clk);
++
++out_unmap:
++	iounmap(reg);
+ }
+ 
+ static void __init sun4i_ahb_clk_setup(struct device_node *node)
+-- 
+2.6.4
