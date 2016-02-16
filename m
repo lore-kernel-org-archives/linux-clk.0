@@ -1,137 +1,127 @@
-Return-Path: <lars.persson@axis.com>
-Message-ID: <56C44BC9.9060802@axis.com>
-Date: Wed, 17 Feb 2016 11:30:33 +0100
-From: Lars Persson <lars.persson@axis.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 16 Feb 2016 09:44:48 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Rob Herring <rob.herring@linaro.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jens Kuske <jenskuske@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Frank Rowand <frowand.list@gmail.com>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi:
+ Refactor A31 PLL6 so that it can be reused)
+Message-ID: <20160216084448.GE4344@lukather>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56B4E2FB.3050703@arm.com>
+ <56BB2D79.6090402@arm.com>
+ <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
+ <20160210143755.GE31506@lukather>
+ <20160210163001.GG2632@leverpostej>
+ <20160211100048.GK31506@lukather>
+ <20160211114410.GA32535@leverpostej>
+ <20160211170820.GP31506@lukather>
+ <1455270030.3201.71.camel@pengutronix.de>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Lars Persson
-	<larper@axis.com>, <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<galak@codeaurora.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] clk: add artpec-6 pll1 clock driver
-References: <cover.1455206007.git.larper@axis.com> <6d47cfe5ab7596e91a7fcc5647c5907cc12a4d83.1455206007.git.larper@axis.com> <20160217000220.2278.30045@quark.deferred.io>
-In-Reply-To: <20160217000220.2278.30045@quark.deferred.io>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wchHw8dVAp53YPj8"
+In-Reply-To: <1455270030.3201.71.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--wchHw8dVAp53YPj8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/17/2016 01:02 AM, Michael Turquette wrote:
-> Hi Lars,
->
-> Quoting Lars Persson (2016-02-11 08:01:04)
->> The PLL1 clock is a fixed-factor clock with factors derived from boot
->> mode pins. This driver is a simple wrapper to register the fixed
->> factor clock according to the pin settings.
->>
->> Signed-off-by: Lars Persson <larper@axis.com>
->> ---
->>   drivers/clk/Makefile      |  1 +
->>   drivers/clk/clk-artpec6.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++
->>   2 files changed, 71 insertions(+)
->>   create mode 100644 drivers/clk/clk-artpec6.c
->>
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index b038e36..388f0cf 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -17,6 +17,7 @@ endif
->>   
->>   # hardware specific clock types
->>   # please keep this section sorted lexicographically by file/directory path name
->> +obj-$(CONFIG_MACH_ARTPEC6)             += clk-artpec6.o
->>   obj-$(CONFIG_MACH_ASM9260)             += clk-asm9260.o
->>   obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)    += clk-axi-clkgen.o
->>   obj-$(CONFIG_ARCH_AXXIA)               += clk-axm5516.o
->> diff --git a/drivers/clk/clk-artpec6.c b/drivers/clk/clk-artpec6.c
->> new file mode 100644
->> index 0000000..3664c44
->> --- /dev/null
->> +++ b/drivers/clk/clk-artpec6.c
-> You mentioned having three drivers. Maybe consider putting this in
-> drivers/clk/axis?
-Will be fixed in v2.
->
-> Continuing my questions from patch #1, should this clock be coupled with
-> other artpec6 clocks sharing the same clock controller?
->
->> @@ -0,0 +1,70 @@
->> +/*
->> + * ARTPEC-6 clock initialization
->> + *
->> + * Copyright 2015 Axis Comunications AB.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +
->> +static void __init of_artpec6_pll1_setup(struct device_node *np)
->> +{
->> +       void __iomem *devstat;
->> +       struct clk *clk;
->> +       const char *clk_name = np->name;
->> +       const char *parent_name;
->> +       u32 pll_mode, pll_m, pll_n;
->> +
->> +       parent_name = of_clk_get_parent_name(np, 0);
->> +
->> +       devstat = of_iomap(np, 0);
->> +       if (devstat == NULL) {
->> +               pr_err("error to ioremap DEVSTAT\n");
->> +               return;
->> +       }
->> +
->> +       /* DEVSTAT register contains PLL settings */
->> +       pll_mode = (readl(devstat) >> 6) & 3;
->> +       iounmap(devstat);
->> +
->> +       /*
->> +        * pll1 settings are designed for different DDR speeds using a fixed
->> +        * 50MHz external clock. However, a different external clock could be
->> +        * used on different boards.
->> +        * CPU clock is half the DDR clock.
->> +        */
->> +       switch (pll_mode) {
->> +       case 0: /* DDR3-2133 mode */
->> +               pll_m = 4;
->> +               pll_n = 85;
->> +               break;
->> +       case 1: /* DDR3-1866 mode */
->> +               pll_m = 6;
->> +               pll_n = 112;
->> +               break;
->> +       case 2: /* DDR3-1600 mode */
->> +               pll_m = 4;
->> +               pll_n = 64;
->> +               break;
->> +       case 3: /* DDR3-1333 mode */
->> +               pll_m = 8;
->> +               pll_n = 106;
->> +               break;
->> +       }
->> +       /* ext_clk is defined in device tree */
->> +       clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
->> +                       pll_n, pll_m);
->> +       if (IS_ERR(clk)) {
->> +               pr_err("%s not registered\n", clk_name);
->> +               return;
->> +       }
->> +       of_clk_add_provider(np, of_clk_src_simple_get, clk);
->> +}
->> +CLK_OF_DECLARE(artpec6_pll1, "axis,artpec6-pll1-clock", of_artpec6_pll1_setup);
-> Instead of using CLK_OF_DECLARE can you make this a platform_driver?
-Will be fixed in v2.
->
-> Best regards,
-> Mike
->
->> -- 
->> 2.1.4
->>
+On Fri, Feb 12, 2016 at 10:40:30AM +0100, Lucas Stach wrote:
+> Am Donnerstag, den 11.02.2016, 18:08 +0100 schrieb Maxime Ripard:
+> [...]
+> > > > > Having code in mainline comes with responsibilities. One of those=
+ is to
+> > > > > keep said code working for existing users. Otherwise, why bother =
+having
+> > > > > it in mainline at all?
+> > > >=20
+> > > > None of our existing users ever complained.
+> > >=20
+> > > I believe that in this case, Andre was complaining about this particu=
+lar
+> > > breakage, unless I have misunderstood.
+> > >=20
+> > > To be clear, I'm arguing for the strategy going forward. If no-one has
+> > > complained about the stuff broken up to this point, let's not waste t=
+ime
+> > > restoring that.
+> > >=20
+> > > Going forward we need to keep old DTBs supported.
+> >=20
+> > I find that stand a bit dishonest.
+> >=20
+> > You, DT maintainers, admit that you're not doing your job properly,
+> > and that burden relies on the platform maintainers? Or should I take
+> > it as you volunteering to maintain that code?
+> >=20
+> > But ok. Let's do that. Make sure that the other platform maintainers
+> > are aware that this is the rule too though. I surely don't want to be
+> > alone in that boat.
+>=20
+> FWIW: I always thought it's the platform maintainers job to enforce a
+> reasonable level of DT stability. I don't see how the DT maintainers
+> could provide the necessary in-depth review with every platform being
+> different in many subtle ways.
+>=20
+> For the i.MX platform we actually enforced a baseline of DT stability by
+> shooting down patches that break DT stability for the sake of adding new
+> features, or when trying to put "fixes" into the DT, that could be
+> solved entirely inside the kernel.
+>=20
+> Yes, mistakes happen and and we can not really prevent all breakage,
+> especially when the bindings were not strictly enough defined and board
+> DT writers may have interpreted them differently, but it is definitely
+> possible to keep DTs reasonably stable if the platform maintainers care
+> about that.
+>=20
+> I strongly disagree with platform maintainers denying that duty, by
+> claiming that DTs won't be completely stable ever, so there is no reason
+> to even care.
+
+A DT is either stable or not. If it is "reasonably" stable, then it's
+not.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--wchHw8dVAp53YPj8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWwuGAAAoJEBx+YmzsjxAgpKQP/RbUORVZICS38GpFghNeFp+l
+o9Vc1yNi0GD1SdoVE2bm+eXDuEZDnqU0dm6HinDzd981/s2AzT86aoYSwRiOJSAM
+0BBosumT52wz7o9TEUq0Gk7keHBAH9UgOB39PELtR8655ay21pVFeHpoGRF7QoyZ
+5cmB6ZD10FLV/bHqsEbdrNfMNYZAG4dXitklZF7UokZAiVIKs+o/nc3/cGI1WuFh
+cvDz58K0BlWJ/fcB7J28T4HmWfj4nrAj2pa8J9PQTs2AUlygA4sNEyZmf7BVEjoF
+4hk6CXloUkVAoMkUGhDyAO9yXp03PJWMKFo5bhtcMrbrG/FpwGDnjJyqGrtKL72H
+pXrPAtmasf7UFBRR/vP7UcRBdfmqnhUazfVZMQ0/4Jqokr1G8JOomjDG4rdJ3kHD
+c0QYzU8FMpEmvX7AlSiJhy1OJhHK2LKmgseNC9ZDZ+Dpg3pGThLyrIT1LiDABM6k
+e9ixSjgQfeNxagCwEPEQfZRALVpsfrZXjhgoa4ViJBC+/uyiM9sBFz/9pqQCY74c
+a1fiDP2X8mJ9GHa8wdA1N026SUDuMOTveF9j4eo+RMkPxozfnNDINSvAVv5WGMsl
+ysKk5sHL3J+5ZhwoAeiwPNIMpe00Y3UOp+2XCzPq5sYYdoKDUvCtcR0xh+JJ6Shs
+Y2bZFeKwtBKJ8BiPcU0W
+=u8sV
+-----END PGP SIGNATURE-----
+
+--wchHw8dVAp53YPj8--
