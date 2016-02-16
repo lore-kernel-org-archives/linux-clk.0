@@ -1,49 +1,117 @@
-Return-Path: <wens@csie.org>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH 1/3] clk: sunxi: improve mux_clk error handling and
+ reporting
+To: Chen-Yu Tsai <wens@csie.org>
+References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
+ <1455289913-29514-2-git-send-email-andre.przywara@arm.com>
+ <CAGb2v65hxNiY8XAL=yBbV4qazscJd+six432CKWAm+GfM6bd2Q@mail.gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+   =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+   Michael Turquette <mturquette@baylibre.com>,
+   Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+   linux-sunxi <linux-sunxi@googlegroups.com>,
+   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56C2EFD5.5080604@arm.com>
+Date: Tue, 16 Feb 2016 09:45:57 +0000
 MIME-Version: 1.0
-In-Reply-To: <20160201150344.GA4947@rob-hp-laptop>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com> <20160201150344.GA4947@rob-hp-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 1 Feb 2016 23:13:10 +0800
-Message-ID: <CAGb2v67BcLx8g+MDZnMyrgDpHWmQ-kcxFVqDNpMWzyJ_QoDrQA@mail.gmail.com>
-Subject: Re: [PATCH 03/14] clk: sunxi: add bus gates for A83T
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAGb2v65hxNiY8XAL=yBbV4qazscJd+six432CKWAm+GfM6bd2Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 1, 2016 at 11:03 PM, Rob Herring <robh@kernel.org> wrote:
-> On Sun, Jan 31, 2016 at 09:20:55AM +0800, Vishnu Patekar wrote:
->> A83T has similar bus gates that of H3, including single gating register has
->> different clock parent.
+Hi Chen-Yu,
+
+On 13/02/16 02:44, Chen-Yu Tsai wrote:
+> Hi,
+> 
+> On Fri, Feb 12, 2016 at 11:11 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+>> We now catch and report a failing ioremap, also a failure in the final
+>> step of the clock registration is now handled and reported.
+>> Also warnings are turned into errors.
 >>
->> As per H3 and A83T datasheet, usbhost is under AHB2.
->>
->> However,below shows allwinner source code assignment:
->> bits: 26 (ehci0), 27 (ehci1), 29 (ohci0) => AHB1 for A83T.
->> bits: 26 (ehci0), 27 (ehci1) => AHB1 for H3
->> bits  29, 30, 31(ohci0,1,2) => AHB2 for H3.
->>
->> until, this confusion is cleared keep it H3 way.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 >> ---
->>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
->>  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 2 ++
->>  2 files changed, 3 insertions(+)
->
-> Acked-by: Rob Herring <robh@kernel.org>
+>>  drivers/clk/sunxi/clk-sunxi.c | 19 +++++++++++++------
+>>  1 file changed, 13 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+>> index 49ce283..361f396 100644
+>> --- a/drivers/clk/sunxi/clk-sunxi.c
+>> +++ b/drivers/clk/sunxi/clk-sunxi.c
+>> @@ -690,11 +690,15 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+>>         int i;
+>>
+>>         reg = of_iomap(node, 0);
+>> +       if (!reg) {
+>> +               pr_err("Could not map registers for mux-clk: %s\n", node->name);
+> 
+> of_node_full_name(node->name) is better. node->name is almost always "clk",
+> which is useless. (Unless someone goes through the dts files to replace all
+> of them.)
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Good point. I both fixed the code here as well as amended the node names
+in the A64 DT.
 
-We should really get the clk parents sorted out though.
+> 
+>> +               return NULL;
+>> +       }
+>>
+>>         i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
+>>         if (of_property_read_string(node, "clock-output-names", &clk_name)) {
+>> -               pr_warn("%s: could not read clock-output-names for \"%s\"\n",
+>> -                       __func__, clk_name);
+>> +               pr_err("%s: could not read clock-output-names for \"%s\"\n",
+>> +                      __func__, clk_name);
+> 
+> Same here. clk_name defaults to node->name. If you could, please replace it.
+
+Really? Isn't clk_name directly from the DT clock-output-names strings here?
+
+>>                 goto out_unmap;
+>>         }
+>>
+>> @@ -704,14 +708,17 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+>>                                0, &clk_lock);
+>>
+>>         if (IS_ERR(clk)) {
+>> -               pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
+>> -                       clk_name, PTR_ERR(clk));
+>> +               pr_err("%s: failed to register mux clock %s: %ld\n", __func__,
+>> +                      clk_name, PTR_ERR(clk));
+>>                 goto out_unmap;
+>>         }
+>>
+>> -       of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>> +       if (!of_clk_add_provider(node, of_clk_src_simple_get, clk))
+>> +               return clk;
+>> +
+>> +       pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
+>>
+>> -       return clk;
+> 
+> I'd have all the error path in ifs, and have the normal return path
+> here for consistency.
+> But I guess this works as well.
+
+Yeah, I wanted to skip that single goto ;-)
+But I changed it now as you said and it indeed looks more reasonable.
+
+I took the freedom of applying the comments to the other patches too.
+
+Will send out a v2 in a minute.
+
+Thanks for looking!
+Andre.
+
+> 
+> Thanks!
+> ChenYu
+> 
+>> +       clk_unregister_divider(clk);
+>>
+>>  out_unmap:
+>>         iounmap(reg);
+>> --
+>> 2.6.4
+>>
+> 
