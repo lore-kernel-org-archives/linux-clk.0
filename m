@@ -1,103 +1,63 @@
-Return-Path: <marex@denx.de>
-From: Marek Vasut <marex@denx.de>
-To: Antony Pavlov <antonynpavlov@gmail.com>
-Subject: Re: [RFC v5 01/15] WIP: clk: add Atheros AR933X SoCs clock driver
-Date: Tue, 9 Feb 2016 12:05:36 +0100
-Cc: linux-mips@linux-mips.org,
- Wills Wang <wills.wang@live.com>,
- Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
- Alban Bedel <albeu@free.fr>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Rob Herring <robh+dt@kernel.org>,
- Paul Burton <paul.burton@imgtec.com>,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1455005641-7079-1-git-send-email-antonynpavlov@gmail.com> <1455005641-7079-2-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1455005641-7079-2-git-send-email-antonynpavlov@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Message-Id: <201602091205.36276.marex@denx.de>
+To: Caesar Wang <wxt@rock-chips.com>, "Heiko Stuebner" <heiko@sntech.de>,
+ edubezval@gmail.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
+Cc: huangtao@rock-chips.com, linux-pm@vger.kernel.org,
+ "Stephen Boyd" <sboyd@codeaurora.org>, zhangqing@rock-chips.com,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Jeffy Chen" <jeffy.chen@rock-chips.com>, "Zhang Rui" <rui.zhang@intel.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Caesar Wang" <wxt@rock-chips.com>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+ <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
+Message-ID: <20160216224301.2278.88600@quark.deferred.io>
+Subject: Re: [RESEND PATCH 1/8] clk: rockchip: add id of the tsadc clock found on
+ rk3228 SoCs
+Date: Tue, 16 Feb 2016 14:43:01 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, February 09, 2016 at 09:13:47 AM, Antony Pavlov wrote:
-> This driver can be easely upgraded for other Atheros
-> SoCs (e.g. AR724X/AR913X) support.
-> 
+Quoting Caesar Wang (2016-02-14 23:33:26)
+> This patch adds 'SCLK_TSADC' and 'PCLK_TSADC' id found on rk3228 SoCs.
+> That will be needed by TSADC controller.
+> =
 
-Hi!
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 
-[...]
+Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-> +static unsigned long
-> +ath79_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	struct ath79_clk *ath79_clk = to_ath79_clk(hw);
-> +	struct ath79_cblk *cblk = ath79_clk->cblk;
-> +	const struct ath79_clk_info *clk_info =
-> &cblk->clock_info[ath79_clk->idx]; +	const struct ath79_pll_info
-> *pll_info;
-> +	unsigned long rate;
-> +	unsigned long freq;
-> +	u32 clock_ctrl;
-> +	u32 cpu_config;
-> +	u32 t;
-> +
-> +	BUG_ON(clk_info->type != ATH79_CLK_PLL);
-> +
-> +	clock_ctrl = __raw_readl(cblk->base + AR933X_PLL_CLOCK_CTRL_REG);
-> +
-> +	if (clock_ctrl & AR933X_PLL_CLOCK_CTRL_BYPASS) {
-> +		return parent_rate;
-> +	}
+> ---
+> =
 
-You can drop the {} here.
+>  include/dt-bindings/clock/rk3228-cru.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> =
 
-> +	cpu_config = __raw_readl(cblk->base + AR933X_PLL_CPU_CONFIG_REG);
-> +
-> +	t = (cpu_config >> AR933X_PLL_CPU_CONFIG_REFDIV_SHIFT) &
-> +	    AR933X_PLL_CPU_CONFIG_REFDIV_MASK;
-> +	freq = parent_rate / t;
-> +
-> +	t = (cpu_config >> AR933X_PLL_CPU_CONFIG_NINT_SHIFT) &
-> +	    AR933X_PLL_CPU_CONFIG_NINT_MASK;
-> +	freq *= t;
-> +
-> +	t = (cpu_config >> AR933X_PLL_CPU_CONFIG_OUTDIV_SHIFT) &
-> +	    AR933X_PLL_CPU_CONFIG_OUTDIV_MASK;
-> +	if (t == 0)
-> +		t = 1;
-> +
-> +	freq >>= t;
-> +
-> +	pll_info = &clk_info->pll;
-> +
-> +	t = ((clock_ctrl >> pll_info->div_shift) & pll_info->div_mask) + 1;
-> +	rate = freq / t;
-> +
-> +	return rate;
-> +}
+> diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings=
+/clock/rk3228-cru.h
+> index a78dd89..cd2e06b 100644
+> --- a/include/dt-bindings/clock/rk3228-cru.h
+> +++ b/include/dt-bindings/clock/rk3228-cru.h
+> @@ -29,6 +29,7 @@
+>  #define SCLK_SDMMC             68
+>  #define SCLK_SDIO              69
+>  #define SCLK_EMMC              71
+> +#define SCLK_TSADC             72
+>  #define SCLK_UART0             77
+>  #define SCLK_UART1             78
+>  #define SCLK_UART2             79
+> @@ -68,6 +69,7 @@
+>  #define PCLK_UART0             341
+>  #define PCLK_UART1             342
+>  #define PCLK_UART2             343
+> +#define PCLK_TSADC             344
+>  #define PCLK_PWM               350
+>  #define PCLK_TIMER             353
+>  #define PCLK_PERI              363
+> -- =
 
-[...]
-
-> +static void __init ar9130_init(struct device_node *np)
-> +{
-> +	int retval;
-> +	struct ath79_cblk *cblk;
-> +
-> +	cblk = ath79_cblk_new(ar9331_clocks, ARRAY_SIZE(ar9331_clocks), np);
-> +	if (!cblk) {
-> +		pr_err("%s: failed to initialise clk block\n", __func__);
-> +		return;
-> +	}
-> +
-> +	retval = ath79_cblk_register_clocks(cblk);
-> +	if (retval)
-> +		pr_err("%s: failed to register clocks\n", __func__);
-> +}
-> +CLK_OF_DECLARE(ar933x_clk, "qca,ar9330-pll", ar9130_init);
-
-Is that ar9130_init name correct? Shouldn't it be ar9330_init ?
-
-Looks good otherwise, thanks!
+> 1.9.1
+>=20
