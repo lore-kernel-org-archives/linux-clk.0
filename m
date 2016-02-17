@@ -1,87 +1,109 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 11 Feb 2016 13:36:48 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?utf-8?B?UGF3ZcWC?= Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
-Message-ID: <20160211123648.GN31506@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
- <CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zp3AMgPTa9Mf+MXm"
-In-Reply-To: <CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+To: Tony Lindgren <tony@atomide.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Tero Kristo" <t-kristo@ti.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455312009-808-2-git-send-email-tony@atomide.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "Brian Hutchinson" <b.hutchman@gmail.com>,
+ "Delio Brignoli" <dbrignoli@audioscience.com>,
+ "Neil Armstrong" <narmstrong@baylibre.com>,
+ "Matthijs van Duin" <matthijsvanduin@gmail.com>,
+ "Philipp Rosenberger" <ilu@linutronix.de>,
+ "Russell King - ARM Linux" <linux@arm.linux.org.uk>,
+ devicetree@vger.kernel.org, "Rob Herring" <robh+dt@kernel.org>
+References: <1455312009-808-1-git-send-email-tony@atomide.com>
+ <1455312009-808-2-git-send-email-tony@atomide.com>
+Message-ID: <20160217010440.2278.62327@quark.deferred.io>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: adpll: Add binding documentation for TI
+ adpll
+Date: Tue, 16 Feb 2016 17:04:40 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Tony,
 
---zp3AMgPTa9Mf+MXm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Tony Lindgren (2016-02-12 13:20:08)
+> Let's add binding documentation for the ADPLL found on dm814x
+> and dra62x. The binding uses the standard clock binding.
+> =
 
-Hi Linus,
+> Cc: devicetree@vger.kernel.org
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  .../devicetree/bindings/clock/ti/adpll.txt         | 43 ++++++++++++++++=
+++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/adpll.txt
+> =
 
-On Thu, Feb 11, 2016 at 12:59:47PM +0100, Linus Walleij wrote:
-> On Sun, Jan 31, 2016 at 2:20 AM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
+> diff --git a/Documentation/devicetree/bindings/clock/ti/adpll.txt b/Docum=
+entation/devicetree/bindings/clock/ti/adpll.txt
+> new file mode 100644
+> index 0000000..8516bf0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/adpll.txt
+> @@ -0,0 +1,43 @@
+> +Binding for Texas Instruments ADPLL clock.
+> +
+> +Binding status: Unstable - ABI compatibility may be broken in the future
+> +
+> +This binding uses the common clock binding[1]. It assumes a
+> +register-mapped ADPLL with two to three selectable input clocks
+> +and three to four children.
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible : shall be one of "ti,dm814-adpll-s-clock" or
+> +  "ti,dm814-adpll-lj-clock" depending on the type of the ADPLL
+> +- #clock-cells : from common clock binding; shall be set to 0.
+
+Thanks for the patch.
+
+clock-cells =3D 1 in both of the examples below (which looks right).
+
+> +- clocks : link phandles of parent clocks clkinp and clkinpulow, note
+> +  that the adpll-s-clock also has an optional clkinphif
+> +- reg : address and length of the register set for controlling the ADPLL.
+> +
+> +Examples:
+> +       adpll_mpu_ck: adpll@40 {
+> +               #clock-cells =3D <1>;
+> +               compatible =3D "ti,dm814-adpll-s-clock";
+> +               reg =3D <0x40 0x40>;
+> +               clocks =3D <&devosc_ck &devosc_ck &devosc_ck>;
+> +               clock-names =3D "clkinp", "clkinpulow", "clkinphif";
+> +               clock-indices =3D <0>, <1>, <2>, <3>;
+
+Why is clock-indices necessary?
+
+Best regards,
+Mike
+
+> +               clock-output-names =3D "481c5040.adpll.dcoclkldo",
+> +                                    "481c5040.adpll.clkout",
+> +                                    "481c5040.adpll.clkoutx2",
+> +                                    "481c5040.adpll.clkouthif";
+> +       };
+> +
+> +       adpll_dsp_ck: adpll@80 {
+> +               #clock-cells =3D <1>;
+> +               compatible =3D "ti,dm814-adpll-lj-clock";
+> +               reg =3D <0x80 0x30>;
+> +               clocks =3D <&devosc_ck &devosc_ck>;
+> +               clock-names =3D "clkinp", "clkinpulow";
+> +               clock-indices =3D <0>, <1>, <2>;
+> +               clock-output-names =3D "481c5080.adpll.dcoclkldo",
+> +                                    "481c5080.adpll.clkout",
+> +                                    "481c5080.adpll.clkoutldo";
+> +       };
+> -- =
+
+> 2.7.0
 >=20
-> > The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> > interrupt bit is 6th and A83T has one extra pin PL12.
-> >
-> > Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->=20
-> Maxime, can you look at this patch?
-
-Chen-Yu had one minor comment on it, and he's also the Allwinner
-maintainer now, so you can trust his Acked-by just like you would
-trust mine ;)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---zp3AMgPTa9Mf+MXm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWvIBgAAoJEBx+YmzsjxAgvDoP/2cRJSsB3vNt1L4a7unZ3Q4r
-PKIQqTYjq5jMVhMciqaUX/7KWEye8oXLyEYPmKZlmN3O6he4Irfl2DtLNVOeQ3Cz
-o3dvnhyhnSEfyZtVAvlDD70F4Yj9bXESirAnekQza/e1tookMHj9t8tH+xZ3R704
-DfBNwl9EVbi1HvaqyhVUuTpEU1tu80zZogvSvIDXCTDubGXdAJ02jLjM70lY3xHE
-iLtLgoH8R1yEopaV6LPN7EqLDBjsdF6EEaThegRvEzslGPxgyKfuJGTJfhIQMoa2
-JuFDR36zPlUXzx6Oinp7VcgT1Wh1n2QApwCfPm9WsTjku8mskXpMOMPRslZRPc2T
-3RG9CDHXe6cKHQh2vNuQQSUuhZRPN+bdDlcsC5520B49fFRABSbGnfKhhnOj6ueI
-9vq2SYTOQX2ov+UNRZ46CODonbj1dtuF2bA21mhcMchhm5kmIKVMGtA2/qIsLYAx
-Eaoe/1mE6HyfDiqFlgkAHIBP+cCLR4UwS+9p/wRiSUOcBdtslOJv18Ofu2mr0Nau
-Uf73vHuWlaUfM1ft5mwzQGmcGeIBSmdgtaFG8PzL6b4dMhlhpGB+uohAYI3Weurr
-GNtbFS1tdKtEct4LB6hnxrop2sbwr42ydXNeVtUIFvc+JeLudEKT8ywdxo7iBOMJ
-ysg3zMqldUpPCoP+iY7n
-=/Hfg
------END PGP SIGNATURE-----
-
---zp3AMgPTa9Mf+MXm--
