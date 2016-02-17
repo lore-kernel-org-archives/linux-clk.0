@@ -1,91 +1,46 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1455549376.31169.127.camel@linux.intel.com>
-Subject: Re: [PATCH 02/14] clkdev: Remove clk_register_clkdevs()
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
-	 <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Date: Mon, 15 Feb 2016 17:16:16 +0200
-In-Reply-To: <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-	 <1454982341-22715-3-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <ricard.wanderlof@axis.com>
+Date: Wed, 17 Feb 2016 15:18:57 +0100
+From: Ricard Wanderlof <ricard.wanderlof@axis.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Peter Ujfalusi <peter.ujfalusi@ti.com>, alsa-devel
+	<alsa-devel@alsa-project.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jyri Sarha
+	<jsarha@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, "Kristo,  Tero"
+	<t-kristo@ti.com>, <linux-clk@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>
+Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for	selecting
+ system clocks by ID
+In-Reply-To: <20160216191346.2278.725@quark.deferred.io>
+Message-ID: <alpine.DEB.2.02.1602171516260.10339@lnxricardw1.se.axis.com>
+References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com> <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com> <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com> <20160216134233.GN18327@sirena.org.uk>
+ <20160216191346.2278.725@quark.deferred.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-15"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2016-02-08 at 17:45 -0800, Stephen Boyd wrote:
-> Now that we've converted the only caller over to another clkdev
-> API, remove this one.
+
+Quoting Mark Brown (2016-02-16 05:42:33)
+> On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
 > 
-
-This API didn't feel suitable, good we get rid of it eventually.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>> 
-
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clkdev.c   | 27 ---------------------------
->  include/linux/clkdev.h |  1 -
->  2 files changed, 28 deletions(-)
+> > As for codecs, tlv320aic3106 is also pretty simple device from the outside, it
+> > can receive it's reference clock via:
+> > MCLK pin, GPIO2 pin or it can use the BCLK from the bus. Based on the incoming
+> > frequency it can use it directly or it needs to use the internal PLL to
+> > generate the cocks.
+> > It can output generated clock via GPIO1
 > 
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index 779b6ff0c7ad..ae61f2e57048 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -383,30 +383,3 @@ int clk_register_clkdev(struct clk *clk, const
-> char *con_id,
->  	return cl ? 0 : -ENOMEM;
->  }
->  EXPORT_SYMBOL(clk_register_clkdev);
-> -
-> -/**
-> - * clk_register_clkdevs - register a set of clk_lookup for a struct
-> clk
-> - * @clk: struct clk to associate with all clk_lookups
-> - * @cl: array of clk_lookup structures with con_id and dev_id pre-
-> initialized
-> - * @num: number of clk_lookup structures to register
-> - *
-> - * To make things easier for mass registration, we detect error clks
-> - * from a previous clk_register() call, and return the error code
-> for
-> - * those.  This is to permit this function to be called immediately
-> - * after clk_register().
-> - */
-> -int clk_register_clkdevs(struct clk *clk, struct clk_lookup *cl,
-> size_t num)
-> -{
-> -	unsigned i;
-> -
-> -	if (IS_ERR(clk))
-> -		return PTR_ERR(clk);
-> -
-> -	for (i = 0; i < num; i++, cl++) {
-> -		cl->clk_hw = __clk_get_hw(clk);
-> -		__clkdev_add(cl);
-> -	}
-> -
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL(clk_register_clkdevs);
-> diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-> index 08bffcc466de..43a8c2e8ac29 100644
-> --- a/include/linux/clkdev.h
-> +++ b/include/linux/clkdev.h
-> @@ -46,7 +46,6 @@ int clk_add_alias(const char *, const char *, const
-> char *, struct device *);
->  
->  int clk_register_clkdev(struct clk *, const char *, const char *,
-> ...)
->  	__printf(3, 4);
-> -int clk_register_clkdevs(struct clk *, struct clk_lookup *, size_t);
->  
->  #ifdef CONFIG_COMMON_CLK
->  int __clk_get(struct clk *clk);
+> That already sounds like there is room for configuration and hooking
+> into a wider clock tree - we've got three different source options and
+> an output plus a PLL that can presumably take in non-audio rates.
 
+It makes sense to use an already existing clock framework, but I'm 
+wondering, how do we model the clock select function? Using a clock mux? 
+Somewhere, somehow, something needs to look at the setup and decide which 
+pin on the codec should be the clock source (e.g. MCLK, GPIO2, or BCLK in 
+the case of the tlv320aic3106).
+
+/Ricard
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Ricard Wolf Wanderl�f                           ricardw(at)axis.com
+Axis Communications AB, Lund, Sweden            www.axis.com
+Phone +46 46 272 2016                           Fax +46 46 13 61 30
