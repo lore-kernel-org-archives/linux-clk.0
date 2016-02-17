@@ -1,115 +1,192 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 19 Feb 2016 15:51:58 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.5-rc4
-Message-ID: <20160219235158.GT4847@codeaurora.org>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160217202824.2278.25956@quark.deferred.io>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+	<1436651307-24098-2-git-send-email-manabian@gmail.com>
+	<20150811204127.31346.16729@quantum>
+	<CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
+	<20150818002604.31346.18322@quantum>
+	<CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
+	<20160217005629.2278.90197@quark.deferred.io>
+	<CAGhQ9VzB_WgB8b4_c3Z17W+K2MC7Fq7SD9zEvZUN_UJVGDZ3Wg@mail.gmail.com>
+	<20160217202824.2278.25956@quark.deferred.io>
+Date: Wed, 17 Feb 2016 22:52:10 +0100
+Message-ID: <CAGhQ9VxPt7FmE4JN_-rBJMNpLpGoKVKocVFPWc3siV29Pk0_mQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+On 17 February 2016 at 21:28, Michael Turquette <mturquette@baylibre.com> wrote:
+> Quoting Joachim Eastwood (2016-02-17 10:24:12)
+>> On 17 February 2016 at 01:56, Michael Turquette <mturquette@baylibre.com> wrote:
+>> > Quoting Joachim Eastwood (2016-02-13 06:38:45)
+>> >> Hi Mike,
+>> >>
+>> >> Seems your reply got lost in my mailbox and I didn't notice it before
+>> >> Stephen replied on the cover letter. Sorry about that.
+>> >>
+>> >> On 18 August 2015 at 02:26, Michael Turquette <mturquette@baylibre.com> wrote:
+>> >> > Quoting Joachim Eastwood (2015-08-13 13:43:11)
+>> >> >> On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.com> wrote:
+>> >> >> > Hi Joachim,
+>> >> >> >
+>> >> >> > Quoting Joachim Eastwood (2015-07-11 14:48:26)
+>> >> >> >> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
+>> >> >> >> +{
+>> >> >> >> +       const char *clk_32khz_parent;
+>> >> >> >> +       struct regmap *syscon;
+>> >> >> >> +
+>> >> >> >> +       syscon = syscon_node_to_regmap(np->parent);
+>> >> >> >> +       if (IS_ERR(syscon)) {
+>> >> >> >> +               pr_err("%s: syscon lookup failed\n", __func__);
+>> >> >> >> +               return;
+>> >> >> >> +       }
+>> >> >> >> +
+>> >> >> >> +       clk_32khz_parent = of_clk_get_parent_name(np, 0);
+>> >> >> >> +
+>> >> >> >> +       clk_creg[CREG_CLK_32KHZ] =
+>> >> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
+>> >> >> >> +                                     &clk_32khz_parent, syscon);
+>> >> >> >> +
+>> >> >> >> +       clk_creg[CREG_CLK_1KHZ] =
+>> >> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
+>> >> >> >> +                                     &clk_creg_clocks[CREG_CLK_32KHZ].name,
+>> >> >> >> +                                     syscon);
+>> >> >> >> +
+>> >> >> >> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
+>> >> >> >> +}
+>> >> >> >> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
+>> >> >> >
+>> >> >> > I'll ask the same question that Stephen asked in your CCU/CGU driver
+>> >> >> > series: is it necessary to use CLK_OF_DECLARE here or can you use the
+>> >> >> > platform device model?
+>> >> >>
+>> >> >> The 32 kHz clock from the CREG block is a clock parent to the CGU
+>> >> >> block so it's possible that it will required early. This is all
+>> >> >> depends on how the boot loader initially configures the CGU.
+>> >> >>
+>> >> >> Currently in the DTS for lpc18xx cgu it has:
+>> >> >> clocks = <&xtal>, <&xtal32>, <...>;
+>> >> >> xtal32 is just a temporary placeholder until the CREG clock is in place.
+>> >> >
+>> >> > Well that seems wrong. Is it just a matter of probe order where you try
+>> >> > to probe the cgu driver before the creg driver?
+>> >>
+>> >> The ideal probe order for the clk drivers on the lpc18xx platform
+>> >> would be; creg-clk, cgu and ccu.
+>> >> If the 32k clk is used by any of timers we need creg-clk to enable the
+>> >> 32k clock and determine the rate.
+>> >>
+>> >> Note that the cgu and ccu driver is using CLK_OF_DECLARE now.
+>> >>
+>> >>
+>> >> I have tired to create an overview of the lpc18xx clock system here:
+>> >> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
+>> >
+>> > That's great, thanks a lot for the link and the nice documentation.
+>> >
+>> > It's been a while since I've looked at this thread. Do any of the
+>> > creg-clk, cgu or ccu clock drivers need to use CLK_OF_DECLARE? If they
+>> > were platform_drivers then you could use -EPROBE_DEFER to solve your
+>> > ordering issue.
+>>
+>> The clock for the clocksource/timer
+>> (drivers/clocksource/time-lpc32xx.c) comes from cgu/ccu and can also
+>> come from creg-clk. So afaik they must use CLK_OF_DECLARE. Or is there
+>> something I am missing?
+>
+> No, you're not missing anything. What I want is for clock provider
+> drivers to actually be real Linux device drivers. Right now the drivers
+> that only call CLK_OF_DECLARE are essentially just initcall hacks, and
+> this causes problems down the road when you decide you want your clk
+> provider driver to have suspend/resume ops, etc. Also I feel that having
+> proper drivers will be important as runtime pm and the generic power
+> domains stuff matures.
+>
+>> Isn't true that most SoC system clock drivers must use CLK_OF_DECLARE
+>> because the system timer require clocks early? I thought this was the
+>> whole point.
+>
+> On ARMv8, mandatory use of architected timers removes the need for the
+> clk framework to be involved with timer init, so it's definitely not
+> true for all platforms.
+>
+> On QCOM's 32-bit platforms they have an always-on clock with a known
+> fixed rate, so they can either put the fixed-rate clock in DT, or even
+> just put the frequency as a property into the timer node with no need to
+> involve the clk framework (which is what they do today). That is also a
+> bit hacky, but it is why you won't find CLK_OF_DECLARE in
+> drivers/clk/qcom and all of their drivers are proper platform_drivers.
+>
+>>
+>> Since it is possible that the 32k clock from creg-clk can be use as a
+>> parent clock for the timer doesn't this mean it also must use
+>> CLK_OF_DECLARE?
+>
+> Right, if your 32k clock is a fixed-clock, and if it is provided on the
+> board (e.g. external extal -> lpc timer) then you could just put the
+> fixed-rate clock into DT (which uses CLK_OF_DECLARE) and reference that
+> from your timer node. The rest of the clocks could be registered later
+> through a platform_driver.
+>
+> Sounds like your timer clocking scheme is more complicated than that
+> however.
+>
+>> If it wasn't possible for creg-clk to be used as a parent clock for
+>> the timer it could have been a platform device.
+>>
+>>
+>> The lpc18xx clock configuration that require creg-clk early would be:
+>> 32k - > PLL0 -> BASE_M3/M4_CLK -> CLK_M3/M4_TIMER0. See second figure
+>> on the webpage. Note that this is probably not a common configuration,
+>> but it is a valid one. (PLL0 accepts input down to 14 kHz)
+>
+> I was just discussing this with Stephen and we're both curious to know
+> if the same "nxp,lpc1850-creg-clk" compatible string can be used with
+> CLK_OF_DECLARE for registering the bare minimum early clks, and also
+> with a platform_driver using a different table of clocks for late
+> registration.
+>
+> The compat string could be the same, and the driver would have different
+> tables/setup functions to keep from re-registering the same clocks
+> twice.
 
-  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+creg-clk is quite simple with only two clocks and only one of them may
+be needed during boot.
 
-are available in the git repository at:
+> I know that nobody likes to be the guinea pig for this type of stuff,
+> but the lack of participation in the Linux driver model for clk drivers
+> needs to curbed. Do you think the above proposed scheme could work for
+> your clock provider drivers?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+For creg-clk it would probably work.
 
-for you to fetch changes up to 4462b4bbfc33a44f19710ead784ff361bda2c3b3:
+cgu would need to register most of clocks early since it needs to
+support whatever setup the bootloader throws at it. The only clocks
+that could be taken out is the base clocks (clk_onecell_data
+clk_base_data) except for one of them. But splitting this table would
+be a bad idea as hw clk numbers are used as indexes for easy look up.
 
-  clk: gpio: Really allow an optional clock= DT property (2016-02-18 19:10:22 -0800)
+Come to think of it; isn't splitting the clock table between a early
+init and platform driver going become a problem?
+At least the lookup in the driver or framework would become more complex(?)
+And won't you confuse the lookup?
+If the early driver register one clock table with
+of_clk_add_provider() and then sometime later the platform driver
+register another clock table, both using the same of_node. How is that
+suppose to work?
 
-----------------------------------------------------------------
-An assortment of vendor specific clk drivers fixes, most notably
-fallout from adding Tegra210 and rockchip rk3036/rk3368 drivers
-this cycle. There's also the random smattering of sparse/checker
-fixes, a build "fix" to get the Tango clk driver to compile
-because the Kconfig symbol was renamed after the fact, and a clk
-gpio fix for a patch mismerge.
+ccu has only 4 clocks needed early; CLK_CPU_TIMERx with x = 0..3.
 
-----------------------------------------------------------------
-Amitoj Kaur Chawla (1):
-      clk: tegra: Add missing of_node_put()
 
-Andrew Bresticker (1):
-      clk: tegra: pll: Fix potential sleeping-while-atomic
+Note that I don't have much time to spare on lpc18xx right now so I
+might be a bit slow if you want me to implement and test stuff.
 
-Axel Lin (1):
-      clk: scpi: Fix checking return value of platform_device_register_simple()
 
-Jianqun xu (1):
-      clk: rockchip: rk3368: fix some clock gates
-
-Jon Hunter (7):
-      clk: tegra: Add the APB2APE audio clock on Tegra210
-      clk: tegra: Fix clock sources for Tegra210 EMC
-      clk: tegra: Fix warning caused by pll_u failing to lock
-      clk: tegra: Use definition for pll_u override bit
-      clk: tegra: Fix sparse warning for pll_m
-      clk: tegra: Fix sparse warnings for functions not declared as static
-      clk: tegra: super: Fix sparse warnings for functions not declared as static
-
-Linus Walleij (1):
-      clk: versatile: mask VCO bits before writing
-
-Marc Gonzalez (1):
-      clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
-
-Mark Kuo (2):
-      clk: tegra: Do not disable PLLE when under hardware control
-      clk: tegra: Fix PLLE SS coefficients
-
-Rhyland Klein (6):
-      clk: tegra: Fix divider on VI_I2C
-      clk: tegra: Remove improper flags for lock_enable
-      clk: tegra: Fix naming of MISC registers
-      clk: tegra: Fix the misnaming of nvenc from msenc
-      clk: tegra: Fix pllx dyn step calculation
-      clk: tegra: Fix typos around clearing PLLE bits during enable
-
-Stephen Boyd (5):
-      clk: mvebu: Mark ioremapped memory as __iomem
-      Merge tag 'v4.5-rockchip-clkfixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
-      Merge tag 'tegra-for-4.5-clk-fixes' of git://git.kernel.org/.../tegra/linux into clk-fixes
-      Revert "clk: qcom: Specify LE device endianness"
-      clk: gpio: Really allow an optional clock= DT property
-
-Xing Zheng (4):
-      clk: rockchip: rk3036: fix the FLAGs for clock mux
-      clk: rockchip: rk3036: fix uarts clock error
-      clk: rockchip: rk3036: fix the div offset for emac clock
-      clk: rockchip: rk3036: rename emac ext source clock
-
- .../bindings/clock/rockchip,rk3036-cru.txt         |   2 +-
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/clk-gpio.c                             |   2 +-
- drivers/clk/clk-scpi.c                             |   2 +-
- drivers/clk/mvebu/dove-divider.c                   |   2 +-
- drivers/clk/qcom/gcc-apq8084.c                     |   1 -
- drivers/clk/qcom/gcc-ipq806x.c                     |   1 -
- drivers/clk/qcom/gcc-msm8660.c                     |   1 -
- drivers/clk/qcom/gcc-msm8916.c                     |   1 -
- drivers/clk/qcom/gcc-msm8960.c                     |   2 -
- drivers/clk/qcom/gcc-msm8974.c                     |   1 -
- drivers/clk/qcom/lcc-ipq806x.c                     |   1 -
- drivers/clk/qcom/lcc-msm8960.c                     |   1 -
- drivers/clk/qcom/mmcc-apq8084.c                    |   1 -
- drivers/clk/qcom/mmcc-msm8960.c                    |   2 -
- drivers/clk/qcom/mmcc-msm8974.c                    |   1 -
- drivers/clk/rockchip/clk-rk3036.c                  |  26 ++--
- drivers/clk/rockchip/clk-rk3368.c                  |  26 ++--
- drivers/clk/tegra/clk-emc.c                        |   6 +-
- drivers/clk/tegra/clk-id.h                         |   1 +
- drivers/clk/tegra/clk-pll.c                        |  50 +++++---
- drivers/clk/tegra/clk-tegra-periph.c               |   5 +-
- drivers/clk/tegra/clk-tegra-super-gen4.c           |   6 +-
- drivers/clk/tegra/clk-tegra210.c                   | 132 ++++++++++-----------
- drivers/clk/versatile/clk-icst.c                   |   3 +
- include/dt-bindings/clock/tegra210-car.h           |   2 +-
- 26 files changed, 138 insertions(+), 142 deletions(-)
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards,
+Joachim Eastwood
