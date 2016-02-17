@@ -1,61 +1,58 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 17 Feb 2016 15:23:33 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Return-Path: <tony@atomide.com>
+Date: Wed, 17 Feb 2016 09:28:36 -0800
+From: Tony Lindgren <tony@atomide.com>
 To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk
- <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org, Rob Herring
- <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel
- Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala
- <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
- <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai
- <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, "Stephen Boyd
- <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede
- <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 0/3] clk: mvebu: initial support for AP806 clocks
-Message-ID: <20160217152333.6718d8fc@free-electrons.com>
-In-Reply-To: <CAEG3pNCRa_CQx70aPHfQpG+7jEZ_=_-FxBWDkXVYbgH=j=1rmA@mail.gmail.com>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160215233102.2278.88855@quark.deferred.io>
-	<CAEG3pNCRa_CQx70aPHfQpG+7jEZ_=_-FxBWDkXVYbgH=j=1rmA@mail.gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: adpll: Add binding documentation
+ for TI adpll
+Message-ID: <20160217172836.GA21202@atomide.com>
+References: <1455312009-808-1-git-send-email-tony@atomide.com>
+ <1455312009-808-2-git-send-email-tony@atomide.com>
+ <20160217010440.2278.62327@quark.deferred.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160217010440.2278.62327@quark.deferred.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Michael,
-
-On Mon, 15 Feb 2016 15:36:49 -0800, Michael Turquette wrote:
-
-> > Yay, new SoC! Just FYI, we worked out an agreement in December[0] that
-> > the clk git tree can take DT bindings and headers, and we'll always host
-> > them in an immutable branch by default in case arm-soc (or anyone else)
-> > needs them. Stephen and I are doing this now.
+* Michael Turquette <mturquette@baylibre.com> [160216 17:17]:
+> Quoting Tony Lindgren (2016-02-12 13:20:08)
+> > +Required properties:
+> > +- compatible : shall be one of "ti,dm814-adpll-s-clock" or
+> > +  "ti,dm814-adpll-lj-clock" depending on the type of the ADPLL
+> > +- #clock-cells : from common clock binding; shall be set to 0.
 > 
-> Oops, I misunderstood your point (and I should have looked at the
-> patches before replying). The patches in this series do indeed have
-> the clk DT binding descriptions.
+> Thanks for the patch.
 > 
-> Pardon the noise, nothing to see here, move along ;-)
+> clock-cells = 1 in both of the examples below (which looks right).
 
-Yes, each driver comes with its DT binding documentation in the same
-patch. Unfortunately, some maintainers prefer to have the DT binding
-documentation as separate patches from the driver itself, while some
-other maintainers prefer to have both in the same patch. And I never
-remember which maintainer has which preference.
+Oops thanks, will update to 1.
 
-So, let me know if you're fine with having both in the same patches. If
-not, I can respin by splitting the DT binding documentation in its own
-patches.
+> > +- clocks : link phandles of parent clocks clkinp and clkinpulow, note
+> > +  that the adpll-s-clock also has an optional clkinphif
+> > +- reg : address and length of the register set for controlling the ADPLL.
+> > +
+> > +Examples:
+> > +       adpll_mpu_ck: adpll@40 {
+> > +               #clock-cells = <1>;
+> > +               compatible = "ti,dm814-adpll-s-clock";
+> > +               reg = <0x40 0x40>;
+> > +               clocks = <&devosc_ck &devosc_ck &devosc_ck>;
+> > +               clock-names = "clkinp", "clkinpulow", "clkinphif";
+> > +               clock-indices = <0>, <1>, <2>, <3>;
+> 
+> Why is clock-indices necessary?
 
-Other than that, any comments on the drivers themselves? Since they are
-quite trivial, I would ideally like to see them in 4.6, if at all
-possible.
+Hmm yeah I don't think it's needed, so will drop.
 
-Thanks a lot!
+Regards,
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Tony
