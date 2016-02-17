@@ -1,36 +1,62 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>, edubezval@gmail.com
-Cc: huangtao@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
-Date: Tue, 16 Feb 2016 00:25:39 +0100
-Message-ID: <3650760.H1YezDtoUE@phil>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 17 Feb 2016 12:07:59 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+	Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Kristo, Tero" <t-kristo@ti.com>
+Message-ID: <20160217120759.GO7544@sirena.org.uk>
+References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
+ <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
+ <20160215152635.GN18988@sirena.org.uk>
+ <56C2F00C.8080809@ti.com>
+ <20160216134233.GN18327@sirena.org.uk>
+ <20160216191346.2278.725@quark.deferred.io>
+ <56C42BAF.3050900@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qi3SIpffvxS/TM8d"
+In-Reply-To: <56C42BAF.3050900@ti.com>
+Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
+ clocks by ID
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 15. Februar 2016, 15:33:25 schrieb Caesar Wang:
-> Hello Eduardo, Heiko, Michael & Stephen:
-> 
-> This series pacthes to support the rk3228 SoCs thermal.
-> 
-> They have the following patches to work on rk3228 SoCs.
-> 
 
-> 1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
-> 8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
-> bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
-> 22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
+--qi3SIpffvxS/TM8d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-clk and devicetree patches look good and I'll pick those up once Eduardo is 
-ok with (and has taken) the thermal-specific changes:
+On Wed, Feb 17, 2016 at 10:13:35AM +0200, Peter Ujfalusi wrote:
 
-> bd2720c thermal: rockchip: fix a impossible condition caused by the
-> warning df9c1bd thermal: rockchip: fix calculation error for code_to_temp
-> fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
-> b907b75 thermal: rockchip: fix the tsadc sequence output on rk3228/rk3399
+> With this change we don't need to write custom machine drivers for setup not
+> using sysclk_id == 0.
+> I do think this is reasonable change by itself.
 
+> However I do think that the current simple-card is flawed regarding to clock
+> selection and the change Jyri and me are proposing is reasonable.
 
-Heiko
+But you define a new ABI to specify it in the process, I'd rather fix
+the flaws by using the common clock ABI than extend any device stuff.
+If it didn't define a new ABI I'd probably not worry about it but one of
+the issues we have with DT is that we do end up making ABIs every time
+we put something in DT.
+
+--qi3SIpffvxS/TM8d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWxGKeAAoJECTWi3JdVIfQWX0H/2DHTWHHEXQujN/q9jvyMVye
+coE0ygd7GYZmtpMwhzH2Sjn2kFnAl9aRpfwckzVm6we9m+GGlv0lPHIga6CyZ86m
+B5UgWhaWQ0IA3V7D50kLRIsvihc5H49Extp2l1TUFNspro7vpbGS5fL0PWhoyD1S
+aOfe9ifEBnIMIzNs9t095LayVS3HNz+4YUw2mVIbFjsOURiskunGwVEwxgoBSAW7
+SnTSaG8DC7/O5RwSJ6wJlp3dWTpKulYSlhl6/F9ZN8aoCzMVV1koIBmR9Jd0FbJG
+TULx2jtVzWsn2KaDIKcVLlkPvcrpNTyurYVYS1jbimZFL8r7VFlVhYCCkRzER7M=
+=dA2F
+-----END PGP SIGNATURE-----
+
+--qi3SIpffvxS/TM8d--
