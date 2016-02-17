@@ -1,229 +1,291 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
-Date: Mon, 15 Feb 2016 08:34:57 +0100
-Message-Id: <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jiancheng Xue <xuejiancheng@huawei.com>, sboyd@codeaurora.org,
+ p.zabel@pengutronix.de, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de, olof@lixom.net,
+ xuwei5@hisilicon.com, haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
+ bintian.wang@huawei.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1454639472-17373-2-git-send-email-xuejiancheng@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com, suwenping@hisilicon.com,
+ raojun@hisilicon.com, ml.yang@hisilicon.com, gaofei@hisilicon.com,
+ zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com,
+ lidongpo@hisilicon.com, "Jiancheng Xue" <xuejiancheng@huawei.com>
+References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+ <1454639472-17373-2-git-send-email-xuejiancheng@huawei.com>
+Message-ID: <20160217004648.2278.64006@quark.deferred.io>
+Subject: Re: [RESEND PATCH v8 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+Date: Tue, 16 Feb 2016 16:46:48 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds a new driver to handle the core clocks found in the
-AP806 HW block, which is the core block of all Armada 7K and 8K
-Marvell 64-bits processors. This core clock driver reads the
-Sample-At-Reset register to determine the frequencies of several core
-clocks: DDR, Ring and CPU clocks.
+Hello Jiancheng Xue,
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- .../clock/mvebu-armada-ap806-core-clock.txt        |  33 ++++++
- drivers/clk/mvebu/Kconfig                          |   3 +
- drivers/clk/mvebu/Makefile                         |   2 +-
- drivers/clk/mvebu/ap806-core.c                     | 112 +++++++++++++++++++++
- 4 files changed, 149 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
- create mode 100644 drivers/clk/mvebu/ap806-core.c
+Quoting Jiancheng Xue (2016-02-04 18:31:07)
+> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makef=
+ile
+> index 74dba31..3f57b09 100644
+> --- a/drivers/clk/hisilicon/Makefile
+> +++ b/drivers/clk/hisilicon/Makefile
+> @@ -4,8 +4,10 @@
+>  =
 
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
-new file mode 100644
-index 0000000..b2131bb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
-@@ -0,0 +1,33 @@
-+* Clock bindings for Marvell MVEBU AP806 Core clocks
-+
-+The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
-+hosting the CPU and other core components of the CPU. This Device Tree
-+binding allows to describe the core clocks of the AP806, whose
-+frequencies are determined by reading the Sample-At-Reset (SAR)
-+register.
-+
-+Clock consumers must specify the desired clock by having the clock ID
-+in its "clocks" phandle cell.
-+
-+The following is a list of provided IDs and clock names for the core
-+Armada AP806 clocks:
-+
-+ 0 = DDR
-+ 1 = Ring
-+ 2 = CPU
-+
-+Required properties:
-+- compatible: must be be one of the following:
-+	"marvell,armada-ap806-core-clock"
-+- reg: must be the register address of the Sample-At-Reset (SAR) register
-+- #clock-cells: from common clock binding; shall be set to 1
-+- clock-output-names: name of the output clocks
-+
-+Example:
-+
-+	coreclk: clk@0x6F8204 {
-+		compatible = "marvell,armada-ap806-core-clock";
-+		reg = <0x6F8204 0x04>;
-+		#clock-cells = <1>;
-+		clock-output-names = "ddr", "ring", "cpu";
-+	};
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index 2769625..fd84172 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -42,3 +42,6 @@ config KIRKWOOD_CLK
- config ORION_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
-+
-+config ARMADA_AP806_CORE_CLK
-+	bool
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 8866115..db5c28c 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -1,11 +1,11 @@
- obj-$(CONFIG_MVEBU_CLK_COMMON)	+= common.o
- obj-$(CONFIG_MVEBU_CLK_CPU) 	+= clk-cpu.o
- obj-$(CONFIG_MVEBU_CLK_COREDIV)	+= clk-corediv.o
--
- obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
- obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
-+obj-$(CONFIG_ARMADA_AP806_CORE_CLK) += ap806-core.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
- obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
-diff --git a/drivers/clk/mvebu/ap806-core.c b/drivers/clk/mvebu/ap806-core.c
-new file mode 100644
-index 0000000..56c81cd
---- /dev/null
-+++ b/drivers/clk/mvebu/ap806-core.c
-@@ -0,0 +1,112 @@
-+/*
-+ * Marvell Armada AP806 core clocks
-+ *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+/*
-+ * AP806 PLLs:
-+ *   0 - DDR
-+ *   1 - Ring
-+ *   2 - CPU
-+ */
-+
-+#define AP806_PLL_NUM	3
-+#define AP806_PLL_FREQ  7
-+
-+/* SAR parameters to get the PLL data */
-+struct apclk_sar {
-+	int mask;
-+	int offset;
-+	const char *name;
-+};
-+
-+static const struct apclk_sar
-+ap806_core_clk_sar[AP806_PLL_NUM]  __initconst = {
-+	{ .mask = 0x7,	.offset = 21 },
-+	{ .mask = 0x7,	.offset = 18 },
-+	{ .mask = 0x7,	.offset = 15 },
-+};
-+
-+static struct clk *ap806_core_clks[AP806_PLL_NUM];
-+
-+static struct clk_onecell_data ap806_core_clk_data = {
-+	.clks = ap806_core_clks,
-+	.clk_num = AP806_PLL_NUM,
-+};
-+
-+/* mapping between SAR value to frequency */
-+static const u32
-+ap806_core_clk_freq[AP806_PLL_NUM][AP806_PLL_FREQ] __initconst = {
-+	{ 2400000000, 2100000000, 1800000000,
-+	  1600000000, 1300000000, 1300000000,
-+	  1300000000 },
-+	{ 2000000000, 1800000000, 1600000000,
-+	  1400000000, 1200000000, 1200000000,
-+	  1200000000 },
-+	{ 2500000000, 2200000000, 2000000000,
-+	  1700000000, 1600000000, 1200000000,
-+	  1200000000 },
-+};
-+
-+static unsigned long __init ap806_core_clk_get_freq(u32 reg, int clk_idx)
-+{
-+	int freq_idx;
-+	const struct apclk_sar *clk_info;
-+
-+	clk_info = &ap806_core_clk_sar[clk_idx];
-+
-+	freq_idx = (reg >> clk_info->offset) & clk_info->mask;
-+	if (WARN_ON(freq_idx > AP806_PLL_FREQ))
-+		return 0;
-+	else
-+		return ap806_core_clk_freq[clk_idx][freq_idx];
-+}
-+
-+static void __init ap806_core_clk_init(struct device_node *np)
-+{
-+	void __iomem *base;
-+	u32 reg;
-+	int i;
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		return;
-+
-+	reg = readl(base);
-+
-+	iounmap(base);
-+
-+	for (i = 0; i < AP806_PLL_NUM; i++) {
-+		unsigned long freq;
-+		const char *name;
-+
-+		freq = ap806_core_clk_get_freq(reg, i);
-+
-+		of_property_read_string_index(np, "clock-output-names",
-+					      i, &name);
-+
-+		ap806_core_clks[i] =
-+			clk_register_fixed_rate(NULL, name, NULL,
-+						CLK_IS_ROOT, freq);
-+	}
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get,
-+			    &ap806_core_clk_data);
-+}
-+
-+CLK_OF_DECLARE(ap806_core_clk, "marvell,armada-ap806-core-clock",
-+	       ap806_core_clk_init);
--- 
-2.6.4
+>  obj-y  +=3D clk.o clkgate-separated.o clkdivider-hi6220.o
+>  =
+
+> +obj-$(CONFIG_RESET_CONTROLLER) +=3D reset.o
+
+Do you really want to build reset.o for all hisi SoCs?
+
+>  obj-$(CONFIG_ARCH_HI3xxx)      +=3D clk-hi3620.o
+>  obj-$(CONFIG_ARCH_HIP04)       +=3D clk-hip04.o
+>  obj-$(CONFIG_ARCH_HIX5HD2)     +=3D clk-hix5hd2.o
+>  obj-$(CONFIG_COMMON_CLK_HI6220)        +=3D clk-hi6220.o
+>  obj-$(CONFIG_STUB_CLK_HI6220)  +=3D clk-hi6220-stub.o
+> +obj-$(CONFIG_COMMON_CLK_HI3519)        +=3D clk-hi3519.o
+> diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/c=
+lk-hi3519.c
+> new file mode 100644
+> index 0000000..ed983af
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/clk-hi3519.c
+> @@ -0,0 +1,133 @@
+> +/*
+> + * Hi3519 Clock Driver
+> + *
+> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <dt-bindings/clock/hi3519-clock.h>
+> +#include <linux/delay.h>
+
+Remove this header.
+
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+
+Remove this header.
+
+> +#include <linux/of_platform.h>
+
+Remove this header.
+
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+
+Remove this header.
+
+> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+> index 9f8e766..06ec3fe 100644
+> --- a/drivers/clk/hisilicon/clk.c
+> +++ b/drivers/clk/hisilicon/clk.c
+> @@ -37,7 +37,7 @@
+>  =
+
+>  static DEFINE_SPINLOCK(hisi_clk_lock);
+>  =
+
+> -struct hisi_clock_data __init *hisi_clk_init(struct device_node *np,
+> +struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+>                                              int nr_clks)
+>  {
+>         struct hisi_clock_data *clk_data;
+> @@ -71,8 +71,9 @@ err_data:
+>  err:
+>         return NULL;
+>  }
+> +EXPORT_SYMBOL(hisi_clk_init);
+>  =
+
+> -void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *c=
+lks,
+> +void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *cl=
+ks,
+>                                          int nums, struct hisi_clock_data=
+ *data)
+>  {
+>         struct clk *clk;
+> @@ -91,8 +92,9 @@ void __init hisi_clk_register_fixed_rate(struct hisi_fi=
+xed_rate_clock *clks,
+>                 data->clk_data.clks[clks[i].id] =3D clk;
+>         }
+>  }
+> +EXPORT_SYMBOL(hisi_clk_register_fixed_rate);
+>  =
+
+> -void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_cloc=
+k *clks,
+> +void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock=
+ *clks,
+>                                            int nums,
+>                                            struct hisi_clock_data *data)
+>  {
+> @@ -112,8 +114,9 @@ void __init hisi_clk_register_fixed_factor(struct his=
+i_fixed_factor_clock *clks,
+>                 data->clk_data.clks[clks[i].id] =3D clk;
+>         }
+>  }
+> +EXPORT_SYMBOL(hisi_clk_register_fixed_factor);
+>  =
+
+> -void __init hisi_clk_register_mux(struct hisi_mux_clock *clks,
+> +void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+>                                   int nums, struct hisi_clock_data *data)
+>  {
+>         struct clk *clk;
+> @@ -141,8 +144,9 @@ void __init hisi_clk_register_mux(struct hisi_mux_clo=
+ck *clks,
+>                 data->clk_data.clks[clks[i].id] =3D clk;
+>         }
+>  }
+> +EXPORT_SYMBOL(hisi_clk_register_mux);
+>  =
+
+> -void __init hisi_clk_register_divider(struct hisi_divider_clock *clks,
+> +void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+>                                       int nums, struct hisi_clock_data *d=
+ata)
+>  {
+>         struct clk *clk;
+> @@ -170,8 +174,9 @@ void __init hisi_clk_register_divider(struct hisi_div=
+ider_clock *clks,
+>                 data->clk_data.clks[clks[i].id] =3D clk;
+>         }
+>  }
+> +EXPORT_SYMBOL(hisi_clk_register_divider);
+>  =
+
+> -void __init hisi_clk_register_gate(struct hisi_gate_clock *clks,
+> +void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
+>                                        int nums, struct hisi_clock_data *=
+data)
+>  {
+>         struct clk *clk;
+> @@ -198,8 +203,9 @@ void __init hisi_clk_register_gate(struct hisi_gate_c=
+lock *clks,
+>                 data->clk_data.clks[clks[i].id] =3D clk;
+>         }
+>  }
+> +EXPORT_SYMBOL(hisi_clk_register_gate);
+>  =
+
+> -void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *clks,
+> +void hisi_clk_register_gate_sep(const struct hisi_gate_clock *clks,
+>                                        int nums, struct hisi_clock_data *=
+data)
+>  {
+>         struct clk *clk;
+> @@ -226,8 +232,9 @@ void __init hisi_clk_register_gate_sep(struct hisi_ga=
+te_clock *clks,
+>                 data->clk_data.clks[clks[i].id] =3D clk;
+>         }
+>  }
+> +EXPORT_SYMBOL(hisi_clk_register_gate_sep);
+>  =
+
+> -void __init hi6220_clk_register_divider(struct hi6220_divider_clock *clk=
+s,
+> +void __init hi6220_clk_register_divider(const struct hi6220_divider_cloc=
+k *clks,
+>                                         int nums, struct hisi_clock_data =
+*data)
+
+It would have been better to break out all of the changes to clk.c into
+a separate patch.
+
+>  {
+>         struct clk *clk;
+> diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+> index b56fbc1..20d64af 100644
+> --- a/drivers/clk/hisilicon/clk.h
+> +++ b/drivers/clk/hisilicon/clk.h
+> @@ -111,18 +111,18 @@ struct clk *hi6220_register_clkdiv(struct device *d=
+ev, const char *name,
+>         u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
+>  =
+
+>  struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+> -void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
+> +void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
+>                                 int, struct hisi_clock_data *);
+> -void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
+> +void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock=
+ *,
+>                                 int, struct hisi_clock_data *);
+> -void hisi_clk_register_mux(struct hisi_mux_clock *, int,
+> +void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
+>                                 struct hisi_clock_data *);
+> -void hisi_clk_register_divider(struct hisi_divider_clock *,
+> +void hisi_clk_register_divider(const struct hisi_divider_clock *,
+>                                 int, struct hisi_clock_data *);
+> -void hisi_clk_register_gate(struct hisi_gate_clock *,
+> +void hisi_clk_register_gate(const struct hisi_gate_clock *,
+>                                 int, struct hisi_clock_data *);
+> -void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
+> +void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+>                                 int, struct hisi_clock_data *);
+> -void hi6220_clk_register_divider(struct hi6220_divider_clock *,
+> +void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
+>                                 int, struct hisi_clock_data *);
+>  #endif /* __HISI_CLK_H */
+
+Ditto.
+
+> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+> new file mode 100644
+> index 0000000..4fc7c8f
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/reset.c
+> @@ -0,0 +1,130 @@
+> +/*
+> + * Hisilicon Reset Controller Driver
+> + *
+> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+
+I didn't look into these headers but I'm guessing they aren't all
+needed?
+
+Best regards,
+Mike
