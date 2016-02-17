@@ -1,58 +1,61 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	huangtao@rock-chips.com,
-	jay.xu@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
-Date: Mon, 29 Feb 2016 19:26:00 +0800
-Message-Id: <1456745161-12954-5-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1456745161-12954-1-git-send-email-zhengxing@rock-chips.com>
-References: <1456745161-12954-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Wed, 17 Feb 2016 15:23:33 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk
+ <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org, Rob Herring
+ <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel
+ Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala
+ <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
+ <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai
+ <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, "Stephen Boyd
+ <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede
+ <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/3] clk: mvebu: initial support for AP806 clocks
+Message-ID: <20160217152333.6718d8fc@free-electrons.com>
+In-Reply-To: <CAEG3pNCRa_CQx70aPHfQpG+7jEZ_=_-FxBWDkXVYbgH=j=1rmA@mail.gmail.com>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160215233102.2278.88855@quark.deferred.io>
+	<CAEG3pNCRa_CQx70aPHfQpG+7jEZ_=_-FxBWDkXVYbgH=j=1rmA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Because there are some frac clock mux nodes don't need gate node on
-the RK3399.
+Hello Michael,
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+On Mon, 15 Feb 2016 15:36:49 -0800, Michael Turquette wrote:
 
- drivers/clk/rockchip/clk.h |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> > Yay, new SoC! Just FYI, we worked out an agreement in December[0] that
+> > the clk git tree can take DT bindings and headers, and we'll always host
+> > them in an immutable branch by default in case arm-soc (or anyone else)
+> > needs them. Stephen and I are doing this now.
+> 
+> Oops, I misunderstood your point (and I should have looked at the
+> patches before replying). The patches in this series do indeed have
+> the clk DT binding descriptions.
+> 
+> Pardon the noise, nothing to see here, move along ;-)
 
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 36b4938..bfafd67 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -463,6 +463,22 @@ struct rockchip_clk_branch {
- 		.child		= ch,				\
- 	}
- 
-+#define COMPOSITE_FRACMUX_NOGATE(_id, cname, pname, f, mo, df, ch) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_fraction_divider,	\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.div_shift	= 16,				\
-+		.div_width	= 16,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= -1,				\
-+		.child		= ch,				\
-+	}
-+
- #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
- 	{							\
- 		.id		= _id,				\
+Yes, each driver comes with its DT binding documentation in the same
+patch. Unfortunately, some maintainers prefer to have the DT binding
+documentation as separate patches from the driver itself, while some
+other maintainers prefer to have both in the same patch. And I never
+remember which maintainer has which preference.
+
+So, let me know if you're fine with having both in the same patches. If
+not, I can respin by splitting the DT binding documentation in its own
+patches.
+
+Other than that, any comments on the drivers themselves? Since they are
+quite trivial, I would ideally like to see them in 4.6, if at all
+possible.
+
+Thanks a lot!
+
+Thomas
 -- 
-1.7.9.5
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
