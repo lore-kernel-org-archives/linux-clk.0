@@ -1,48 +1,114 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55696 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756615AbcBWA5k (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2016 19:57:40 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] clk: shmobile: Remove ARCH_SHMOBILE_MULTI
-Date: Tue, 23 Feb 2016 09:57:31 +0900
-Message-Id: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Joachim  Eastwood <manabian@gmail.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
+Cc: devicetree@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+ <1436651307-24098-2-git-send-email-manabian@gmail.com>
+ <20150811204127.31346.16729@quantum>
+ <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
+ <20150818002604.31346.18322@quantum>
+ <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
+Message-ID: <20160217005629.2278.90197@quark.deferred.io>
+Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
+Date: Tue, 16 Feb 2016 16:56:29 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-As of 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") all platforms
-that use Renesas clock drivers now select ARCH_RENESAS. As it is present in
-drivers/clk/Makefile ARCH_SHMOBILE_MULTI may now be removed.
+Quoting Joachim Eastwood (2016-02-13 06:38:45)
+> Hi Mike,
+> =
 
-This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> Seems your reply got lost in my mailbox and I didn't notice it before
+> Stephen replied on the cover letter. Sorry about that.
+> =
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/clk/Makefile | 1 -
- 1 file changed, 1 deletion(-)
+> On 18 August 2015 at 02:26, Michael Turquette <mturquette@baylibre.com> w=
+rote:
+> > Quoting Joachim Eastwood (2015-08-13 13:43:11)
+> >> On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.com=
+> wrote:
+> >> > Hi Joachim,
+> >> >
+> >> > Quoting Joachim Eastwood (2015-07-11 14:48:26)
+> >> >> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
+> >> >> +{
+> >> >> +       const char *clk_32khz_parent;
+> >> >> +       struct regmap *syscon;
+> >> >> +
+> >> >> +       syscon =3D syscon_node_to_regmap(np->parent);
+> >> >> +       if (IS_ERR(syscon)) {
+> >> >> +               pr_err("%s: syscon lookup failed\n", __func__);
+> >> >> +               return;
+> >> >> +       }
+> >> >> +
+> >> >> +       clk_32khz_parent =3D of_clk_get_parent_name(np, 0);
+> >> >> +
+> >> >> +       clk_creg[CREG_CLK_32KHZ] =3D
+> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32K=
+HZ],
+> >> >> +                                     &clk_32khz_parent, syscon);
+> >> >> +
+> >> >> +       clk_creg[CREG_CLK_1KHZ] =3D
+> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KH=
+Z],
+> >> >> +                                     &clk_creg_clocks[CREG_CLK_32K=
+HZ].name,
+> >> >> +                                     syscon);
+> >> >> +
+> >> >> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_d=
+ata);
+> >> >> +}
+> >> >> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_c=
+reg_clk_init);
+> >> >
+> >> > I'll ask the same question that Stephen asked in your CCU/CGU driver
+> >> > series: is it necessary to use CLK_OF_DECLARE here or can you use the
+> >> > platform device model?
+> >>
+> >> The 32 kHz clock from the CREG block is a clock parent to the CGU
+> >> block so it's possible that it will required early. This is all
+> >> depends on how the boot loader initially configures the CGU.
+> >>
+> >> Currently in the DTS for lpc18xx cgu it has:
+> >> clocks =3D <&xtal>, <&xtal32>, <...>;
+> >> xtal32 is just a temporary placeholder until the CREG clock is in plac=
+e.
+> >
+> > Well that seems wrong. Is it just a matter of probe order where you try
+> > to probe the cgu driver before the creg driver?
+> =
 
- Based on clk-next
+> The ideal probe order for the clk drivers on the lpc18xx platform
+> would be; creg-clk, cgu and ccu.
+> If the 32k clk is used by any of timers we need creg-clk to enable the
+> 32k clock and determine the rate.
+> =
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index bae4be6501df..b19af449d2f3 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -70,7 +70,6 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
- obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
- obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
- obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
- obj-$(CONFIG_ARCH_RENESAS)		+= shmobile/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
--- 
-2.1.4
+> Note that the cgu and ccu driver is using CLK_OF_DECLARE now.
+> =
 
+> =
+
+> I have tired to create an overview of the lpc18xx clock system here:
+> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
+
+That's great, thanks a lot for the link and the nice documentation.
+
+It's been a while since I've looked at this thread. Do any of the
+creg-clk, cgu or ccu clock drivers need to use CLK_OF_DECLARE? If they
+were platform_drivers then you could use -EPROBE_DEFER to solve your
+ordering issue.
+
+Regards,
+Mike
+
+> =
+
+> =
+
+> regards,
+> Joachim Eastwood
