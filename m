@@ -1,59 +1,38 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: ti: Allow COMPILE_TEST to build selected drivers
-Date: Fri, 26 Feb 2016 09:45:03 -0800
-Message-Id: <1456508703-17390-1-git-send-email-tony@atomide.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.9]:47505 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030261AbcBQSro (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Feb 2016 13:47:44 -0500
+From: Anatolij Gustschin <agust@denx.de>
+To: linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: imx: correct pwm7 clock name in driver for i.MX6UL
+Date: Wed, 17 Feb 2016 19:48:19 +0100
+Message-Id: <1455734900-1913-1-git-send-email-agust@denx.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The arch independent drivers can be build testeed with
-COMPILE_TEST. Let's allow that for drivers/clk/ti.
+Don't capitalize p in the pwm7 clock name.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
 ---
- drivers/clk/Makefile    | 2 +-
- drivers/clk/ti/Makefile | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6ul.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-
-This allows the appll driver to be built with COMPILE_TEST,
-and this is not currently needed without the adpll driver.
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b038e36..45939a1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -78,7 +78,7 @@ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
--obj-$(CONFIG_ARCH_OMAP2PLUS)		+= ti/
-+obj-y					+= ti/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
- obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
- obj-$(CONFIG_X86)			+= x86/
-diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
-index dfe91d7..0deac98 100644
---- a/drivers/clk/ti/Makefile
-+++ b/drivers/clk/ti/Makefile
-@@ -1,3 +1,5 @@
-+ifeq ($(CONFIG_ARCH_OMAP2PLUS), y)
-+
- obj-y					+= clk.o autoidle.o clockdomain.o
- clk-common				= dpll.o composite.o divider.o gate.o \
- 					  fixed-factor.o mux.o apll.o \
-@@ -19,4 +21,6 @@ ifdef CONFIG_ATAGS
- obj-$(CONFIG_ARCH_OMAP3)                += clk-3xxx-legacy.o
- endif
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 01718d0..15f2ac8 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -394,7 +394,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_I2C4]		= imx_clk_gate2("i2c4",		"perclk", 	 base + 0x80,	24);
+ 	clks[IMX6UL_CLK_PWM5]		= imx_clk_gate2("pwm5",		"perclk",	 base + 0x80,	26);
+ 	clks[IMX6UL_CLK_PWM6]		= imx_clk_gate2("pwm6",		"perclk",	 base +	0x80,	28);
+-	clks[IMX6UL_CLK_PWM7]		= imx_clk_gate2("Pwm7",		"perclk",	 base + 0x80,	30);
++	clks[IMX6UL_CLK_PWM7]		= imx_clk_gate2("pwm7",		"perclk",	 base + 0x80,	30);
  
-+endif	# CONFIG_ARCH_OMAP2PLUS
-+
- obj-$(CONFIG_COMMON_CLK_TI_ADPLL)	+= adpll.o
+ 	/* mask handshake of mmdc */
+ 	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
 -- 
-2.7.0
+1.7.9.5
+
