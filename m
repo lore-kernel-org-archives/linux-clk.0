@@ -1,52 +1,94 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [RESEND PATCH 4/8] thermal: rockchip: fix calculation error for code_to_temp
-Date: Mon, 15 Feb 2016 15:33:29 +0800
-Message-Id: <1455521613-27340-5-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Wed, 17 Feb 2016 23:05:29 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
+Message-ID: <20160217230529.GM19428@n2100.arm.linux.org.uk>
+References: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+On Sat, Jan 02, 2016 at 10:01:34AM +0000, Russell King wrote:
+> When the clock DT property is not given, of_clk_get_parent_count()
+> returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
+> which of course fails, causing the whole driver to fail to create
+> the clock.
+> 
+> This causes the SolidRun platforms to fail probing the SDHCI1 interface
+> which is connected to the WiFi.
+> 
+> Fix this by detecting errno codes, skipping the allocation, and fixing
+> of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
+> array.
+> 
+> Fixes: 80eeb1f0f757 ("clk: add gpio controlled clock multiplexer")
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+> This goes all the way back to 80eeb1f0f757 ("clk: add gpio controlled
+> clock multiplexer") introduced in June in v4.3-rc2 - which raises the
+> question why _development_ work in clk is being merged outside of the
+> merge window.
+> 
+> A rewrite of this patch will be necessary to apply to v4.3 kernels.
+> 
+> This applies on top of v4.4-rc6.
+> 
+>  drivers/clk/clk-gpio.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 335322dc403f..05cca9298f44 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -264,8 +264,8 @@ static struct clk *of_clk_gpio_gate_delayed_register_get(const char *name,
+>  		const char * const *parent_names, u8 num_parents,
+>  		unsigned gpio, bool active_low)
+>  {
+> -	return clk_register_gpio_gate(NULL, name, parent_names[0],
+> -			gpio, active_low, 0);
+> +	return clk_register_gpio_gate(NULL, name, parent_names ?
+> +			parent_names[0] : NULL, gpio, active_low, 0);
+>  }
+>  
+>  static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
+> @@ -292,13 +292,18 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+>  		return;
+>  
+>  	num_parents = of_clk_get_parent_count(node);
+> -
+> -	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+> -	if (!parent_names)
+> -		return;
+> -
+> -	for (i = 0; i < num_parents; i++)
+> -		parent_names[i] = of_clk_get_parent_name(node, i);
+> +	if (num_parents > 0) {
+> +		parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+> +		if (!parent_names) {
+> +			kfree(data);
+> +			return;
+> +		}
+> +
+> +		for (i = 0; i < num_parents; i++)
+> +			parent_names[i] = of_clk_get_parent_name(node, i);
+> +	} else {
+> +		parent_names = NULL;
+> +	}
+>  
+>  	data->num_parents = num_parents;
+>  	data->parent_names = parent_names;
+> -- 
+> 2.1.0
 
-the calculation use a global table, not their own table.
-so adapt the table to the correct one.
+Yes, indeed, my patch above which fixed clk-gpio.c as can be seen above
+does not have the problem that I'm currently seeing...
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
----
-
- drivers/thermal/rockchip_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index 433085a..5c58d48 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -411,7 +411,7 @@ static int rk_tsadcv2_code_to_temp(struct chip_tsadc_table table, u32 code,
- 	 * temperature between 2 table entries is linear and interpolate
- 	 * to produce less granular result.
- 	 */
--	num = table.id[mid].temp - v2_code_table[mid - 1].temp;
-+	num = table.id[mid].temp - table.id[mid - 1].temp;
- 	num *= abs(table.id[mid - 1].code - code);
- 	denom = abs(table.id[mid - 1].code - table.id[mid].code);
- 	*temp = table.id[mid - 1].temp + (num / denom);
 -- 
-1.9.1
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
