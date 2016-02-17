@@ -1,87 +1,59 @@
-Return-Path: <oss@buserror.net>
-Message-ID: <1456510574.5360.48.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Li Yang <leoli@freescale.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Russell
- King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linuxppc-dev
- <linuxppc-dev@lists.ozlabs.org>,  "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Tang Yuantian
- <Yuantian.Tang@freescale.com>
-Date: Fri, 26 Feb 2016 12:16:14 -0600
-In-Reply-To: <CADRPPNRiU-9b5J_9+0ofk6huLCn4LPm1s_2yd=Py0eBBi9GGXg@mail.gmail.com>
-References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
-	 <3374654.Hks5DeSGVV@vostro.rjw.lan>
-	 <1443215827.32298.130.camel@freescale.com>
-	 <2148611.GEpYdTfpoR@vostro.rjw.lan>
-	 <CADRPPNRiU-9b5J_9+0ofk6huLCn4LPm1s_2yd=Py0eBBi9GGXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH v3 5/5] cpufreq: qoriq: Don't look at clock
- implementation details
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 17 Feb 2016 11:31:36 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+	Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Kristo, Tero" <t-kristo@ti.com>
+Message-ID: <20160217113136.GN7544@sirena.org.uk>
+References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
+ <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
+ <20160215152635.GN18988@sirena.org.uk>
+ <56C2F00C.8080809@ti.com>
+ <20160216134233.GN18327@sirena.org.uk>
+ <20160216191346.2278.725@quark.deferred.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yklP1rR72f9kjNtc"
+In-Reply-To: <20160216191346.2278.725@quark.deferred.io>
+Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
+ clocks by ID
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-02-26 at 12:14 -0600, Li Yang wrote:
-> On Fri, Sep 25, 2015 at 4:50 PM, Rafael J. Wysocki <rjw@rjwysocki.net>
-> wrote:
-> > On Friday, September 25, 2015 04:17:07 PM Scott Wood wrote:
-> > > On Fri, 2015-09-25 at 23:42 +0200, Rafael J. Wysocki wrote:
-> > > > On Tuesday, September 22, 2015 12:46:54 PM Viresh Kumar wrote:
-> > > > > On 19-09-15, 23:29, Scott Wood wrote:
-> > > > > > Get the CPU clock's potential parent clocks from the clock
-> > > > > > interface
-> > > > > > itself, rather than manually parsing the clocks property to find a
-> > > > > > phandle, looking at the clock-names property of that, and assuming
-> > > > > > that
-> > > > > > those are valid parent clocks for the cpu clock.
-> > > > > > 
-> > > > > > This is necessary now that the clocks are generated based on the
-> > > > > > clock
-> > > > > > driver's knowledge of the chip rather than a fragile device-tree
-> > > > > > description of the mux options.
-> > > > > > 
-> > > > > > We can now rely on the clock driver to ensure that the mux only
-> > > > > > exposes
-> > > > > > options that are valid.  The cpufreq driver was currently being
-> > > > > > overly
-> > > > > > conservative in some cases -- for example, the "min_cpufreq =
-> > > > > > get_bus_freq()" restriction only applies to chips with erratum
-> > > > > > A-004510, and whether the freq_mask used on p5020 is needed
-> > > > > > depends on
-> > > > > > the actual frequencies of the PLLs (FWIW, p5040 has a similar
-> > > > > > limitation but its .freq_mask was zero) -- and the frequency mask
-> > > > > > mechanism made assumptions about particular parent clock indices
-> > > > > > that
-> > > > > > are no longer valid.
-> > > > > > 
-> > > > > > Signed-off-by: Scott Wood <scottwood@freescale.com>
-> > > > > > ---
-> > > > > > v3: was patch 1/5 and patch 4/5, plus blacklist e6500 and changes
-> > > > > > to clk api usage
-> > > > > > 
-> > > > > >  drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++---------------
-> > > > > > ------
-> > > > > > -------
-> > > > > >  1 file changed, 40 insertions(+), 97 deletions(-)
-> > > > > 
-> > > > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > 
-> > > > I'm wondering who's supposed to be merging this set?
-> > > 
-> > > As I noted in the cover letter, I'm looking for acks so that I can apply
-> > > these to a topic branch which can be pulled through the PPC and ARM
-> > > trees,
-> > > each of which will have patches that depend on it.
-> > 
-> > OK, so no objections from the cpufreq side and you have the ACK from
-> > Viresh.
-> 
-> Hi Scott,
-> 
-> Did you drop this patch later?  I can not find it in 4.5-rc still.
 
-I was asked to get an ack from Russell King patch 4/5, which this patch
-requires.  Despite repeated pings, I could not get a reply from Russell King.
+--yklP1rR72f9kjNtc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--Scott
+On Tue, Feb 16, 2016 at 11:13:46AM -0800, Michael Turquette wrote:
+> Quoting Mark Brown (2016-02-16 05:42:33)
+> > On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
+
+> > > I don't think it will bring any clarity or features we miss right now if we
+> > > try to move CPU and codec drivers to clk API. IMHO.
+
+> CPU drivers? Peter, you wrote the CCF clock provider driver for DRA7
+> ATL, so I'm not sure what you mean here.
+
+In this case he's referring to the drivers for the audio IP blocks
+inside the SoC.
+
+--yklP1rR72f9kjNtc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWxFoXAAoJECTWi3JdVIfQxqwH/jFoYdJg840EahFqi9mA6pYg
+j2v8N1/s1qQc5nld1dNLTtt9NG2kEB/rNCLO3Id56D0ofZ52rc07lD/Wl9T7E5z9
+ozzwHo+64omR53Z8nNGOFQrsqraeBPPIiwaHM2bZoquL1VZ2l5+6NADPXIQrVjfV
+q3jKyrTjI3vohsdVVVfZndx90T2noiYYZrZJPbq3wQVz80dAzYDUrNa6/48Bbut+
+2KgSxUHyQz/q6YLnatI0e/Zw/XehjOzbvcoCadwV0pNkEJgXRp6/fngpQnnRDqPy
+gIKJB4ev3i8K+1teVXKJ3pYtjashT3yOz3d+jt4DeUDU6dVqx+IX2Uj/Es32gkc=
+=33Yi
+-----END PGP SIGNATURE-----
+
+--yklP1rR72f9kjNtc--
