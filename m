@@ -1,245 +1,72 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	heiko@sntech.de,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 3/5] clk: sunxi: convert current clocks registration to CLK_OF_DECLARE
-Date: Tue,  2 Feb 2016 09:47:12 +0100
-Message-Id: <1454402834-6385-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:39257 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756479AbcBQGZF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Feb 2016 01:25:05 -0500
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	shawn.lin@kernel-upstream.org, Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: check the actual phase if get_phase is provided
+Date: Wed, 17 Feb 2016 14:20:36 +0800
+Message-Id: <1455690036-28394-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The current clock registration and protection code has a few drawbacks, the
-two main ones being that we create a lot of orphans clock in the
-registration phase, which will be troublesome when we will start being less
-relaxed about them.
+set_phase does sanity checking of degree and ask sub-driver
+to set the degree. If set_phase is limited to support the
+degree what the caller need, sub-driver may select a
+approximate value and return success state. In this case, it's
+inappropriate to assign the degree directly to clk->core->phase.
+We should ask sub-driver to decide the strategy. If sub-driver just
+want to support accurate degree, it can fail the set_phase. Otherwise,
+store the actual degree provided by sub-driver into clk->core->phase
+if get_phase is provided.
 
-The protection code also relies on clkdev, which we don't really use but
-for this particular case.
-
-Fix both at the same time by moving everyone to the CLK_OF_DECLARE that
-will probe our clock tree in the right and thus avoid orphans, and by
-protecting directly the clock returned by our registration function.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 150 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 133 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index a3d706f5b21c..da6c1bc763d1 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -585,6 +585,41 @@ static struct clk * __init sunxi_factors_clk_setup(struct device_node *node,
- 	return sunxi_factors_register(node, data, &clk_lock, reg);
- }
- 
-+static void __init sun4i_pll1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun4i_pll1_data);
-+}
-+CLK_OF_DECLARE(sun4i_pll1, "allwinner,sun4i-a10-pll1-clk",
-+	       sun4i_pll1_clk_setup);
-+
-+static void __init sun6i_pll1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun6i_a31_pll1_data);
-+}
-+CLK_OF_DECLARE(sun6i_pll1, "allwinner,sun6i-a31-pll1-clk",
-+	       sun6i_pll1_clk_setup);
-+
-+static void __init sun8i_pll1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun8i_a23_pll1_data);
-+}
-+CLK_OF_DECLARE(sun8i_pll1, "allwinner,sun8i-a23-pll1-clk",
-+	       sun8i_pll1_clk_setup);
-+
-+static void __init sun7i_pll4_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun7i_a20_pll4_data);
-+}
-+CLK_OF_DECLARE(sun7i_pll4, "allwinner,sun7i-a20-pll4-clk",
-+	       sun7i_pll4_clk_setup);
-+
-+static void __init sun5i_ahb_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun5i_a13_ahb_data);
-+}
-+CLK_OF_DECLARE(sun5i_ahb, "allwinner,sun5i-a13-ahb-clk",
-+	       sun5i_ahb_clk_setup);
-+
- static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+ drivers/clk/clk.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b4db67a..352bdd2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1891,6 +1891,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+ int clk_set_phase(struct clk *clk, int degrees)
  {
- 	sunxi_factors_clk_setup(node, &sun6i_ahb1_data);
-@@ -592,6 +627,20 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
- 	       sun6i_ahb1_clk_setup);
+ 	int ret = -EINVAL;
++	int actual_phase;
  
-+static void __init sun4i_apb1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
-+}
-+CLK_OF_DECLARE(sun4i_apb1, "allwinner,sun4i-a10-apb1-clk",
-+	       sun4i_apb1_clk_setup);
-+
-+static void __init sun7i_out_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun7i_a20_out_data);
-+}
-+CLK_OF_DECLARE(sun7i_out, "allwinner,sun7i-a20-out-clk",
-+	       sun7i_out_clk_setup);
-+
+ 	if (!clk)
+ 		return 0;
+@@ -1900,6 +1901,8 @@ int clk_set_phase(struct clk *clk, int degrees)
+ 	if (degrees < 0)
+ 		degrees += 360;
  
- /**
-  * sunxi_mux_clk_setup() - Setup function for muxes
-@@ -642,6 +691,34 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
- 	return clk;
- }
- 
-+static void __init sun4i_cpu_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
++	actual_phase = degrees;
 +
-+	clk = sunxi_mux_clk_setup(node, &sun4i_cpu_mux_data);
-+	if (!clk)
-+		return;
-+
-+	/* Protect CPU clock */
-+	__clk_get(clk);
-+	clk_prepare_enable(clk);
-+}
-+CLK_OF_DECLARE(sun4i_cpu, "allwinner,sun4i-a10-cpu-clk",
-+	       sun4i_cpu_clk_setup);
-+
-+static void __init sun6i_ahb1_mux_clk_setup(struct device_node *node)
-+{
-+	sunxi_mux_clk_setup(node, &sun6i_a31_ahb1_mux_data);
-+}
-+CLK_OF_DECLARE(sun6i_ahb1_mux, "allwinner,sun6i-a31-ahb1-mux-clk",
-+	       sun6i_ahb1_mux_clk_setup);
-+
-+static void __init sun8i_ahb2_clk_setup(struct device_node *node)
-+{
-+	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data);
-+}
-+CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-a31-ahb2-clk",
-+	       sun8i_ahb2_clk_setup);
+ 	clk_prepare_lock();
  
+ 	trace_clk_set_phase(clk->core, degrees);
+@@ -1909,9 +1912,12 @@ int clk_set_phase(struct clk *clk, int degrees)
  
- /**
-@@ -723,6 +800,34 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
- 	}
- }
+ 	trace_clk_set_phase_complete(clk->core, degrees);
  
-+static void __init sun4i_ahb_clk_setup(struct device_node *node)
-+{
-+	sunxi_divider_clk_setup(node, &sun4i_ahb_data);
-+}
-+CLK_OF_DECLARE(sun4i_ahb, "allwinner,sun4i-a10-ahb-clk",
-+	       sun4i_ahb_clk_setup);
-+
-+static void __init sun4i_apb0_clk_setup(struct device_node *node)
-+{
-+	sunxi_divider_clk_setup(node, &sun4i_apb0_data);
-+}
-+CLK_OF_DECLARE(sun4i_apb0, "allwinner,sun4i-a10-apb0-clk",
-+	       sun4i_apb0_clk_setup);
-+
-+static void __init sun4i_axi_clk_setup(struct device_node *node)
-+{
-+	sunxi_divider_clk_setup(node, &sun4i_axi_data);
-+}
-+CLK_OF_DECLARE(sun4i_axi, "allwinner,sun4i-a10-axi-clk",
-+	       sun4i_axi_clk_setup);
-+
-+static void __init sun8i_axi_clk_setup(struct device_node *node)
-+{
-+	sunxi_divider_clk_setup(node, &sun8i_a23_axi_data);
-+}
-+CLK_OF_DECLARE(sun8i_axi, "allwinner,sun8i-a23-axi-clk",
-+	       sun8i_axi_clk_setup);
-+
+-	if (!ret)
+-		clk->core->phase = degrees;
++	if (!ret) {
++		if (clk->core->ops->get_phase)
++			actual_phase = clk->core->ops->get_phase(clk->core->hw);
  
- /**
-  * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
-@@ -934,42 +1039,53 @@ free_clkdata:
- 	return NULL;
- }
++		clk->core->phase = actual_phase;
++	}
+ 	clk_prepare_unlock();
  
-+static void __init sun4i_pll5_clk_setup(struct device_node *node)
-+{
-+	struct clk **clks;
-+
-+	clks = sunxi_divs_clk_setup(node, &pll5_divs_data);
-+	if (!clks)
-+		return;
-+
-+	/* Protect PLL5_DDR */
-+	__clk_get(clks[0]);
-+	clk_prepare_enable(clks[0]);
-+}
-+CLK_OF_DECLARE(sun4i_pll5, "allwinner,sun4i-a10-pll5-clk",
-+	       sun4i_pll5_clk_setup);
-+
-+static void __init sun4i_pll6_clk_setup(struct device_node *node)
-+{
-+	sunxi_divs_clk_setup(node, &pll6_divs_data);
-+}
-+CLK_OF_DECLARE(sun4i_pll6, "allwinner,sun4i-a10-pll6-clk",
-+	       sun4i_pll6_clk_setup);
-+
-+static void __init sun6i_pll6_clk_setup(struct device_node *node)
-+{
-+	sunxi_divs_clk_setup(node, &sun6i_a31_pll6_divs_data);
-+}
-+CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
-+	       sun6i_pll6_clk_setup);
- 
- 
- /* Matches for factors clocks */
- static const struct of_device_id clk_factors_match[] __initconst = {
--	{.compatible = "allwinner,sun4i-a10-pll1-clk", .data = &sun4i_pll1_data,},
--	{.compatible = "allwinner,sun6i-a31-pll1-clk", .data = &sun6i_a31_pll1_data,},
--	{.compatible = "allwinner,sun8i-a23-pll1-clk", .data = &sun8i_a23_pll1_data,},
--	{.compatible = "allwinner,sun7i-a20-pll4-clk", .data = &sun7i_a20_pll4_data,},
--	{.compatible = "allwinner,sun5i-a13-ahb-clk", .data = &sun5i_a13_ahb_data,},
--	{.compatible = "allwinner,sun4i-a10-apb1-clk", .data = &sun4i_apb1_data,},
--	{.compatible = "allwinner,sun7i-a20-out-clk", .data = &sun7i_a20_out_data,},
- 	{}
- };
- 
- /* Matches for divider clocks */
- static const struct of_device_id clk_div_match[] __initconst = {
--	{.compatible = "allwinner,sun4i-a10-axi-clk", .data = &sun4i_axi_data,},
--	{.compatible = "allwinner,sun8i-a23-axi-clk", .data = &sun8i_a23_axi_data,},
--	{.compatible = "allwinner,sun4i-a10-ahb-clk", .data = &sun4i_ahb_data,},
--	{.compatible = "allwinner,sun4i-a10-apb0-clk", .data = &sun4i_apb0_data,},
- 	{}
- };
- 
- /* Matches for divided outputs */
- static const struct of_device_id clk_divs_match[] __initconst = {
--	{.compatible = "allwinner,sun4i-a10-pll5-clk", .data = &pll5_divs_data,},
--	{.compatible = "allwinner,sun4i-a10-pll6-clk", .data = &pll6_divs_data,},
--	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_divs_data,},
- 	{}
- };
- 
- /* Matches for mux clocks */
- static const struct of_device_id clk_mux_match[] __initconst = {
--	{.compatible = "allwinner,sun4i-a10-cpu-clk", .data = &sun4i_cpu_mux_data,},
--	{.compatible = "allwinner,sun6i-a31-ahb1-mux-clk", .data = &sun6i_a31_ahb1_mux_data,},
--	{.compatible = "allwinner,sun8i-h3-ahb2-clk", .data = &sun8i_h3_ahb2_mux_data,},
- 	{}
- };
- 
+ 	return ret;
 -- 
-2.6.4
+2.3.7
+
+
