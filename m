@@ -1,112 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:39619 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933286AbcBYSeb (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2016 13:34:31 -0500
-From: Luis Henriques <luis.henriques@canonical.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Luis Henriques <luis.henriques@canonical.com>,
-	kernel-team@lists.ubuntu.com
-Subject: [3.16.y-ckt stable] Patch "ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()" has been added to the 3.16.y-ckt tree
-Date: Thu, 25 Feb 2016 18:34:26 +0000
-Message-Id: <1456425266-18194-1-git-send-email-luis.henriques@canonical.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <lars.persson@axis.com>
+Message-ID: <56C44B7A.7030600@axis.com>
+Date: Wed, 17 Feb 2016 11:29:14 +0100
+From: Lars Persson <lars.persson@axis.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Lars Persson
+	<larper@axis.com>, Rob Herring <robh@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: add device tree binding for artpec-6 pll1 clock
+References: <cover.1455206007.git.larper@axis.com> <2686b3bbb9ec1c86828b365645bd7f997a9780b4.1455206007.git.larper@axis.com> <20160212163916.GA7677@rob-hp-laptop> <56C034BA.7070806@axis.com> <20160216235927.2278.40353@quark.deferred.io>
+In-Reply-To: <20160216235927.2278.40353@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a note to let you know that I have just added a patch titled
 
-    ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
 
-to the linux-3.16.y-queue branch of the 3.16.y-ckt extended stable tree 
-which can be found at:
+On 02/17/2016 12:59 AM, Michael Turquette wrote:
+> Quoting Lars Persson (2016-02-14 00:03:06)
+>>
+>> On 02/12/2016 05:39 PM, Rob Herring wrote:
+>>> On Thu, Feb 11, 2016 at 05:01:03PM +0100, Lars Persson wrote:
+>>>> Add device tree documentation for the main PLL in the Artpec-6 SoC.
+>>> Roughly how many clocks does this SoC have?
+>> It will have 17 clocks declared in the device tree and three
+>> SoC-specific clock drivers.
+> Are all of those clks going to individual DT nodes with clock-cells = 0?
+>
+> If so, I wonder if you should be targeting a clock-controller style
+> binding description, with a node that represents the clock-controller IP
+> block, with clock-cells >= 1. It really comes down to whether or not
+> these clock controls exist in the same IP block.
 
-    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-3.16.y-queue
+Indeed most clocks come from the same clock controller IP. However there 
+was nothing to control there because this clock tree is completely 
+static. This is why we chose to describe it in the device tree using the 
+standard clock components.
 
-This patch is scheduled to be released in version 3.16.7-ckt25.
+The two audio related clock drivers that we will submit for a later 
+merge window will have control knobs. There will be one mux belonging to 
+the common clock controller and fractional dividers as separate IPs.
 
-If you, or anyone else, feels it should not be added to this tree, please 
-reply to this email.
+I guess we could create a clock controller that outputs the pll1 clock 
+and in the future also the muxed audio clock. Then describe the rest of 
+the clock tree with standard components in the DT.
 
-For more information about the 3.16.y-ckt tree, see
-https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
-
-Thanks.
--Luis
-
----8<------------------------------------------------------------
-
->From 47f15523276f4686f985616bd9a21edcff903ddd Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 8 Feb 2016 09:14:37 +0100
-Subject: ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
-
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
-
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
-
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
-
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
-
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
-
-Tested on the ARM Versatile.
-
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Luis Henriques <luis.henriques@canonical.com>
----
- arch/arm/common/icst.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
-index 2dc6da70ae59..d3c0e69df259 100644
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
-
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
-
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
-
- EXPORT_SYMBOL(icst_hz);
+>
+> You mentioned three distinct clock drivers. So possibly three clock
+> controller nodes in DT then?
+We still prefer to fully describe the static parts of the the clock tree 
+in the DT. Will you accept this ?
+>
+> Is there a reference manual/register map available for this SoC?
+No.
+>>>> Signed-off-by: Lars Persson <larper@axis.com>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/clock/artpec6.txt | 16 ++++++++++++++++
+>>>>    1 file changed, 16 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+>>>> new file mode 100644
+>>>> index 0000000..521fec8
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+>>>> @@ -0,0 +1,16 @@
+>>>> +* Clock bindings for Axis ARTPEC-6 chip
+> Please specify that this is based on the clock provider binding in
+> Documentation/devicetree/bindings/clock/clock-bindings.txt
+Will be fixed in v2.
+>
+> Regards,
+> Mike
+>
+>>>> +
+>>>> +Required properties:
+>>>> +- #clock-cells: Should be <0>
+>>>> +- compatible: Should be "axis,artpec6-pll1-clock"
+>>>> +- reg: Address and length of the DEVSTAT register.
+>>>> +- clocks: The PLL's input clock.
+>>>> +
+>>>> +Examples:
+>>>> +
+>>>> +pll1_clk: pll1_clk {
+>>>> +    #clock-cells = <0>;
+>>>> +    compatible = "axis,artpec6-pll1-clock";
+>>>> +    reg = <0xf8000000 4>;
+>>>> +    clocks = <&ext_clk>;
+>>>> +};
+>>>> -- 
+>>>> 2.1.4
+>>>>
