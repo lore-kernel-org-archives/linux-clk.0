@@ -1,77 +1,150 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 3 Feb 2016 20:29:13 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>, heiko@sntech.de,
-	Chen-Yu Tsai <wens@csie.org>,
-	Andre Przywara <andre.przywara@arm.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/5] clk: sunxi: Remove clk_register_clkdev calls
-Message-ID: <20160203192913.GA3327@lukather>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454402834-6385-6-git-send-email-maxime.ripard@free-electrons.com>
- <20160202112604.447baec98bf89a79542fd240@free.fr>
+Return-Path: <lenyoez1@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-In-Reply-To: <20160202112604.447baec98bf89a79542fd240@free.fr>
+In-Reply-To: <1455591838-22725-1-git-send-email-eric@anholt.net>
+References: <1455591838-22725-1-git-send-email-eric@anholt.net>
+Date: Wed, 17 Feb 2016 09:51:16 -0800
+Message-ID: <CAB=mZpFHz-gvqa0WimT-eCQiHk+ZGbH1t-+HL8oLXtuQcfOBdw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: bcm2835: Fix setting of PLL divider clock rates
+From: Jayson Aguilar <lenyoez1@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: stable@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: multipart/alternative; boundary=089e0115e8e888db43052bfae5b8
 List-ID: <linux-clk.vger.kernel.org>
 
+--089e0115e8e888db43052bfae5b8
+Content-Type: text/plain; charset=UTF-8
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Unsubscribe
+On Feb 16, 2016 12:42 AM, "Eric Anholt" <eric@anholt.net> wrote:
+
+> Our dividers weren't being set successfully because CM_PASSWORD wasn't
+> included in the register write.  It looks easier to just compute the
+> divider to write ourselves than to update clk-divider for the ability
+> to OR in some arbitrary bits on write.
+>
+> Fixes about half of the video modes on my HDMI monitor (everything
+> except 720x400).
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 015e687..9f4df8f 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct
+> clk_hw *hw,
+>         struct bcm2835_pll_divider *divider =
+> bcm2835_pll_divider_from_hw(hw);
+>         struct bcm2835_cprman *cprman = divider->cprman;
+>         const struct bcm2835_pll_divider_data *data = divider->data;
+> -       u32 cm;
+> -       int ret;
+> +       u32 cm, div, max_div = 1 << A2W_PLL_DIV_BITS;
+>
+> -       ret = clk_divider_ops.set_rate(hw, rate, parent_rate);
+> -       if (ret)
+> -               return ret;
+> +       div = DIV_ROUND_UP_ULL(parent_rate, rate);
+> +
+> +       div = min(div, max_div);
+> +       if (div == max_div)
+> +               div = 0;
+>
+> +       cprman_write(cprman, data->a2w_reg, div);
+>         cm = cprman_read(cprman, data->cm_reg);
+>         cprman_write(cprman, data->cm_reg, cm | data->load_mask);
+>         cprman_write(cprman, data->cm_reg, cm & ~data->load_mask);
+> --
+> 2.7.0
+>
+>
+> _______________________________________________
+> linux-rpi-kernel mailing list
+> linux-rpi-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel
+>
+
+--089e0115e8e888db43052bfae5b8
+Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 02, 2016 at 11:26:04AM +0100, Jean-Francois Moine wrote:
-> On Tue,  2 Feb 2016 09:47:14 +0100
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-> > index 578bff0dd251..b38d71cec74c 100644
-> > --- a/drivers/clk/sunxi/clk-mod0.c
-> > +++ b/drivers/clk/sunxi/clk-mod0.c
-> > @@ -15,6 +15,7 @@
-> >   */
-> > =20
-> >  #include <linux/clk.h>
-> > +#include <linux/clkdev.h>
->=20
-> Why?
+<p dir=3D"ltr">Unsubscribe </p>
+<div class=3D"gmail_quote">On Feb 16, 2016 12:42 AM, &quot;Eric Anholt&quot=
+; &lt;<a href=3D"mailto:eric@anholt.net">eric@anholt.net</a>&gt; wrote:<br =
+type=3D"attribution"><blockquote class=3D"gmail_quote" style=3D"margin:0 0 =
+0 .8ex;border-left:1px #ccc solid;padding-left:1ex">Our dividers weren&#39;=
+t being set successfully because CM_PASSWORD wasn&#39;t<br>
+included in the register write.=C2=A0 It looks easier to just compute the<b=
+r>
+divider to write ourselves than to update clk-divider for the ability<br>
+to OR in some arbitrary bits on write.<br>
+<br>
+Fixes about half of the video modes on my HDMI monitor (everything<br>
+except 720x400).<br>
+<br>
+Cc: <a href=3D"mailto:stable@vger.kernel.org">stable@vger.kernel.org</a><br=
+>
+Signed-off-by: Eric Anholt &lt;<a href=3D"mailto:eric@anholt.net">eric@anho=
+lt.net</a>&gt;<br>
+---<br>
+=C2=A0drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----<br>
+=C2=A01 file changed, 7 insertions(+), 5 deletions(-)<br>
+<br>
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c<=
+br>
+index 015e687..9f4df8f 100644<br>
+--- a/drivers/clk/bcm/clk-bcm2835.c<br>
++++ b/drivers/clk/bcm/clk-bcm2835.c<br>
+@@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct clk_=
+hw *hw,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct bcm2835_pll_divider *divider =3D bcm2835=
+_pll_divider_from_hw(hw);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct bcm2835_cprman *cprman =3D divider-&gt;c=
+prman;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 const struct bcm2835_pll_divider_data *data =3D=
+ divider-&gt;data;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0u32 cm;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0u32 cm, div, max_div =3D 1 &lt;&lt; A2W_PLL_DIV=
+_BITS;<br>
+<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D clk_divider_ops.set_rate(hw, rate, pare=
+nt_rate);<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0div =3D DIV_ROUND_UP_ULL(parent_rate, rate);<br=
+>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0div =3D min(div, max_div);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if (div =3D=3D max_div)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0div =3D 0;<br>
+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0cprman_write(cprman, data-&gt;a2w_reg, div);<br=
+>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 cm =3D cprman_read(cprman, data-&gt;cm_reg);<br=
+>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 cprman_write(cprman, data-&gt;cm_reg, cm | data=
+-&gt;load_mask);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 cprman_write(cprman, data-&gt;cm_reg, cm &amp; =
+~data-&gt;load_mask);<br>
+--<br>
+2.7.0<br>
+<br>
+<br>
+_______________________________________________<br>
+linux-rpi-kernel mailing list<br>
+<a href=3D"mailto:linux-rpi-kernel@lists.infradead.org">linux-rpi-kernel@li=
+sts.infradead.org</a><br>
+<a href=3D"http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel" re=
+l=3D"noreferrer" target=3D"_blank">http://lists.infradead.org/mailman/listi=
+nfo/linux-rpi-kernel</a><br>
+</blockquote></div>
 
-Because this driver uses __clk_get, that it was previously included in
-clk-factors.h and is not anymore, and that otherwise it won't compile,
-obviously.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWslUJAAoJEBx+YmzsjxAgsxUP/js9xUXAET+Fjg1q3sjnXY5/
-PZ33rYmcUTUdNEotRTJW6OuLSGeYRstK2+S4YFb6deoVc7uFS7o3gwW+Vmk3hDHR
-Rtjj4yMIlBORQI0sl2LmU6tAELUZkPFCrIIGfjgqRlvgzxNPLQ7EHLj/EC553gTg
-G4l4NNJyMIt94cNo1tgMVVoSaV62cXkcj5dduPgMka6+ItK3A+ooaolrWJetiyt/
-nJdL2X/9EYbhpT9G0M4rOztwqoWq2fd5VxtYbdjGC9wj8dzniMhgId0QYh5++XQe
-GSU90u3seaOS0LED87KOXYzxNS8g1qUttqumdNzgfPOEJaVdeJm9A0V+JNoWpKpA
-lb+CgZVb+MGx8cKyWGGg8LglV6LYftJYlkepwoZaBQ8A4rfvpNZPK2IUPDCao8Vt
-6zFu9Tyz0ZsweWZhggARWC8joU7ZycZgjLDAGK3nGhHMdWchAmIKG/O+lpxa4LlM
-JSKoB23VnUqhqmCFyejw1ANxmzLgPTpz9FMv+RuS0NBxPdWCO7gMsgLS9MugL+Mx
-hwjR5cID5KXQXCVjIC88H5EsH4muWrMNom9eu5CIXX7z4FKJ2YvZEDgWFfgt5vBF
-dmzSK5L5hjR/jRu24mu2OUkpD7inIJvGZeEVQBW6XmEmZe+Ss/bUbF0gWUbn4owj
-tOAJ6Ppk3mMBGJYYgLwy
-=a0x3
------END PGP SIGNATURE-----
-
---C7zPtVaVf+AK4Oqc--
+--089e0115e8e888db43052bfae5b8--
