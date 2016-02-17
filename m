@@ -1,40 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47370 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754096AbcBZTRY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 26 Feb 2016 14:17:24 -0500
-Date: Fri, 26 Feb 2016 11:17:21 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
-Message-ID: <20160226191720.GI13417@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-5-git-send-email-fcooper@ti.com>
- <20160226191559.GH13417@atomide.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160226191559.GH13417@atomide.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Akinobu Mita <akinobu.mita@gmail.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
+Cc: "Akinobu Mita" <akinobu.mita@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
+Message-ID: <20160217211435.2278.78093@quark.deferred.io>
+Subject: Re: [PATCH] clk: add userspace clock consumer
+Date: Wed, 17 Feb 2016 13:14:35 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [160226 11:16]:
-> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
-> > From: Vignesh R <vigneshr@ti.com>
-> > 
-> > tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
-> > the required clock information.
-> > 
-> > Signed-off-by: Vignesh R <vigneshr@ti.com>
-> > Acked-by: Michael Turquette <mturquette@baylibre.com>
-> 
-> This should be sent to Tero.
+Quoting Akinobu Mita (2016-02-15 06:40:51)
+> +static ssize_t clk_show_state(struct device *dev, struct device_attribut=
+e *attr,
+> +                       char *buf)
+> +{
+> +       struct clk_userspace_consumer *consumer =3D dev_get_drvdata(dev);
+> +
+> +       if (consumer->enabled)
+> +               return sprintf(buf, "enabled\n");
+> +
+> +       return sprintf(buf, "disabled\n");
+> +}
+> +
+> +static ssize_t clk_store_state(struct device *dev,
 
-Sorry I mean Tero should queue this one as he is already on Cc.
+s/state/enable/
+
+...
+> +static const struct of_device_id userspace_consumer_id[] =3D {
+> +       { .compatible =3D "linux,clk-userspace-consumer" },
+
+Let's use "clock" instead of "clk" for the compat string, this is how
+the other bindings do it. We tend to use "clk" when talking specifically
+about Linux.
 
 Regards,
-
-Tony
+Mike
