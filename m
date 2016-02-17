@@ -1,204 +1,137 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 1/2] clk: bcm2835: expose raw clock-registers via debugfs
-Date: Mon, 29 Feb 2016 14:20:15 +0000
-Message-Id: <1456755616-2472-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org>
-References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <lars.persson@axis.com>
+Message-ID: <56C44BC9.9060802@axis.com>
+Date: Wed, 17 Feb 2016 11:30:33 +0100
+From: Lars Persson <lars.persson@axis.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Lars Persson
+	<larper@axis.com>, <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<galak@codeaurora.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] clk: add artpec-6 pll1 clock driver
+References: <cover.1455206007.git.larper@axis.com> <6d47cfe5ab7596e91a7fcc5647c5907cc12a4d83.1455206007.git.larper@axis.com> <20160217000220.2278.30045@quark.deferred.io>
+In-Reply-To: <20160217000220.2278.30045@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
 
-For debugging purposes under some circumstance
-it helps to be able to see the actual clock registers.
 
-E.g: when looking at the clock divider it is helpful to
-see what the actual clock divider is.
-
-This patch exposes all the clock registers specific to each
-clock/pll/pll-divider via debugfs.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |  101 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 0b2fd9d..89de3d6 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -38,6 +38,7 @@
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk/bcm2835.h>
-+#include <linux/debugfs.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -314,6 +315,27 @@ static inline u32 cprman_read(struct bcm2835_cprman *cprman, u32 reg)
- 	return readl(cprman->regs + reg);
- }
- 
-+static int bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
-+				  struct debugfs_reg32 *regs, size_t nregs,
-+				  struct dentry *dentry)
-+{
-+	struct dentry *regdump;
-+	struct debugfs_regset32 *regset;
-+
-+	regset = devm_kzalloc(cprman->dev, sizeof(*regset), GFP_KERNEL);
-+	if (!regset)
-+		return -ENOMEM;
-+
-+	regset->regs = regs;
-+	regset->nregs = nregs;
-+	regset->base = cprman->regs + base;
-+
-+	regdump = debugfs_create_regset32("regdump", S_IRUGO, dentry,
-+					  regset);
-+
-+	return regdump ? 0 : -ENOMEM;
-+}
-+
- /*
-  * These are fixed clocks. They're probably not all root clocks and it may
-  * be possible to turn them on and off but until this is mapped out better
-@@ -643,6 +665,36 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	return 0;
- }
- 
-+static int bcm2835_pll_debug_init(struct clk_hw *hw,
-+				  struct dentry *dentry)
-+{
-+	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
-+	struct bcm2835_cprman *cprman = pll->cprman;
-+	const struct bcm2835_pll_data *data = pll->data;
-+	struct debugfs_reg32 *regs;
-+
-+	regs = devm_kzalloc(cprman->dev, 7 * sizeof(*regs), GFP_KERNEL);
-+	if (!regs)
-+		return -ENOMEM;
-+
-+	regs[0].name = "cm_ctrl";
-+	regs[0].offset = data->cm_ctrl_reg;
-+	regs[1].name = "a2w_ctrl";
-+	regs[1].offset = data->a2w_ctrl_reg;
-+	regs[2].name = "frac";
-+	regs[2].offset = data->frac_reg;
-+	regs[3].name = "ana0";
-+	regs[3].offset = data->ana_reg_base + 0 * 4;
-+	regs[4].name = "ana1";
-+	regs[4].offset = data->ana_reg_base + 1 * 4;
-+	regs[5].name = "ana2";
-+	regs[5].offset = data->ana_reg_base + 2 * 4;
-+	regs[6].name = "ana3";
-+	regs[6].offset = data->ana_reg_base + 3 * 4;
-+
-+	return bcm2835_debugfs_regset(cprman, 0, regs, 7, dentry);
-+}
-+
- static const struct clk_ops bcm2835_pll_clk_ops = {
- 	.is_prepared = bcm2835_pll_is_on,
- 	.prepare = bcm2835_pll_on,
-@@ -650,6 +702,7 @@ static const struct clk_ops bcm2835_pll_clk_ops = {
- 	.recalc_rate = bcm2835_pll_get_rate,
- 	.set_rate = bcm2835_pll_set_rate,
- 	.round_rate = bcm2835_pll_round_rate,
-+	.debug_init = bcm2835_pll_debug_init,
- };
- 
- struct bcm2835_pll_divider {
-@@ -741,6 +794,26 @@ static int bcm2835_pll_divider_set_rate(struct clk_hw *hw,
- 	return 0;
- }
- 
-+static int bcm2835_pll_divider_debug_init(struct clk_hw *hw,
-+					  struct dentry *dentry)
-+{
-+	struct bcm2835_pll_divider *divider = bcm2835_pll_divider_from_hw(hw);
-+	struct bcm2835_cprman *cprman = divider->cprman;
-+	const struct bcm2835_pll_divider_data *data = divider->data;
-+	struct debugfs_reg32 *regs;
-+
-+	regs = devm_kzalloc(cprman->dev, 7 * sizeof(*regs), GFP_KERNEL);
-+	if (!regs)
-+		return -ENOMEM;
-+
-+	regs[0].name = "cm";
-+	regs[0].offset = data->cm_reg;
-+	regs[1].name = "a2w";
-+	regs[1].offset = data->a2w_reg;
-+
-+	return bcm2835_debugfs_regset(cprman, 0, regs, 2, dentry);
-+}
-+
- static const struct clk_ops bcm2835_pll_divider_clk_ops = {
- 	.is_prepared = bcm2835_pll_divider_is_on,
- 	.prepare = bcm2835_pll_divider_on,
-@@ -748,6 +821,7 @@ static const struct clk_ops bcm2835_pll_divider_clk_ops = {
- 	.recalc_rate = bcm2835_pll_divider_get_rate,
- 	.set_rate = bcm2835_pll_divider_set_rate,
- 	.round_rate = bcm2835_pll_divider_round_rate,
-+	.debug_init = bcm2835_pll_divider_debug_init,
- };
- 
- /*
-@@ -989,6 +1063,31 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
- 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
- }
- 
-+static struct debugfs_reg32 bcm2835_debugfs_clock_reg32[] = {
-+	{
-+		.name = "ctl",
-+		.offset = 0,
-+	},
-+	{
-+		.name = "div",
-+		.offset = 4,
-+	},
-+};
-+
-+static int bcm2835_clock_debug_init(struct clk_hw *hw,
-+				    struct dentry *dentry)
-+{
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	struct bcm2835_cprman *cprman = clock->cprman;
-+	const struct bcm2835_clock_data *data = clock->data;
-+
-+	return bcm2835_debugfs_regset(
-+		cprman, data->ctl_reg,
-+		bcm2835_debugfs_clock_reg32,
-+		ARRAY_SIZE(bcm2835_debugfs_clock_reg32),
-+		dentry);
-+}
-+
- static const struct clk_ops bcm2835_clock_clk_ops = {
- 	.is_prepared = bcm2835_clock_is_on,
- 	.prepare = bcm2835_clock_on,
-@@ -998,6 +1097,7 @@ static const struct clk_ops bcm2835_clock_clk_ops = {
- 	.determine_rate = bcm2835_clock_determine_rate,
- 	.set_parent = bcm2835_clock_set_parent,
- 	.get_parent = bcm2835_clock_get_parent,
-+	.debug_init = bcm2835_clock_debug_init,
- };
- 
- static int bcm2835_vpu_clock_is_on(struct clk_hw *hw)
-@@ -1016,6 +1116,7 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
- 	.determine_rate = bcm2835_clock_determine_rate,
- 	.set_parent = bcm2835_clock_set_parent,
- 	.get_parent = bcm2835_clock_get_parent,
-+	.debug_init = bcm2835_clock_debug_init,
- };
- 
- static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
--- 
-1.7.10.4
+On 02/17/2016 01:02 AM, Michael Turquette wrote:
+> Hi Lars,
+>
+> Quoting Lars Persson (2016-02-11 08:01:04)
+>> The PLL1 clock is a fixed-factor clock with factors derived from boot
+>> mode pins. This driver is a simple wrapper to register the fixed
+>> factor clock according to the pin settings.
+>>
+>> Signed-off-by: Lars Persson <larper@axis.com>
+>> ---
+>>   drivers/clk/Makefile      |  1 +
+>>   drivers/clk/clk-artpec6.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 71 insertions(+)
+>>   create mode 100644 drivers/clk/clk-artpec6.c
+>>
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index b038e36..388f0cf 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -17,6 +17,7 @@ endif
+>>   
+>>   # hardware specific clock types
+>>   # please keep this section sorted lexicographically by file/directory path name
+>> +obj-$(CONFIG_MACH_ARTPEC6)             += clk-artpec6.o
+>>   obj-$(CONFIG_MACH_ASM9260)             += clk-asm9260.o
+>>   obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)    += clk-axi-clkgen.o
+>>   obj-$(CONFIG_ARCH_AXXIA)               += clk-axm5516.o
+>> diff --git a/drivers/clk/clk-artpec6.c b/drivers/clk/clk-artpec6.c
+>> new file mode 100644
+>> index 0000000..3664c44
+>> --- /dev/null
+>> +++ b/drivers/clk/clk-artpec6.c
+> You mentioned having three drivers. Maybe consider putting this in
+> drivers/clk/axis?
+Will be fixed in v2.
+>
+> Continuing my questions from patch #1, should this clock be coupled with
+> other artpec6 clocks sharing the same clock controller?
+>
+>> @@ -0,0 +1,70 @@
+>> +/*
+>> + * ARTPEC-6 clock initialization
+>> + *
+>> + * Copyright 2015 Axis Comunications AB.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clkdev.h>
+>> +#include <linux/io.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +
+>> +static void __init of_artpec6_pll1_setup(struct device_node *np)
+>> +{
+>> +       void __iomem *devstat;
+>> +       struct clk *clk;
+>> +       const char *clk_name = np->name;
+>> +       const char *parent_name;
+>> +       u32 pll_mode, pll_m, pll_n;
+>> +
+>> +       parent_name = of_clk_get_parent_name(np, 0);
+>> +
+>> +       devstat = of_iomap(np, 0);
+>> +       if (devstat == NULL) {
+>> +               pr_err("error to ioremap DEVSTAT\n");
+>> +               return;
+>> +       }
+>> +
+>> +       /* DEVSTAT register contains PLL settings */
+>> +       pll_mode = (readl(devstat) >> 6) & 3;
+>> +       iounmap(devstat);
+>> +
+>> +       /*
+>> +        * pll1 settings are designed for different DDR speeds using a fixed
+>> +        * 50MHz external clock. However, a different external clock could be
+>> +        * used on different boards.
+>> +        * CPU clock is half the DDR clock.
+>> +        */
+>> +       switch (pll_mode) {
+>> +       case 0: /* DDR3-2133 mode */
+>> +               pll_m = 4;
+>> +               pll_n = 85;
+>> +               break;
+>> +       case 1: /* DDR3-1866 mode */
+>> +               pll_m = 6;
+>> +               pll_n = 112;
+>> +               break;
+>> +       case 2: /* DDR3-1600 mode */
+>> +               pll_m = 4;
+>> +               pll_n = 64;
+>> +               break;
+>> +       case 3: /* DDR3-1333 mode */
+>> +               pll_m = 8;
+>> +               pll_n = 106;
+>> +               break;
+>> +       }
+>> +       /* ext_clk is defined in device tree */
+>> +       clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
+>> +                       pll_n, pll_m);
+>> +       if (IS_ERR(clk)) {
+>> +               pr_err("%s not registered\n", clk_name);
+>> +               return;
+>> +       }
+>> +       of_clk_add_provider(np, of_clk_src_simple_get, clk);
+>> +}
+>> +CLK_OF_DECLARE(artpec6_pll1, "axis,artpec6-pll1-clock", of_artpec6_pll1_setup);
+> Instead of using CLK_OF_DECLARE can you make this a platform_driver?
+Will be fixed in v2.
+>
+> Best regards,
+> Mike
+>
+>> -- 
+>> 2.1.4
+>>
