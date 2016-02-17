@@ -1,94 +1,65 @@
-Return-Path: <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 9/9] simplefb: Remove impossible check for
- of_clk_get_parent_count() < 0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
- <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Hans de Goede
-	<hdegoede@redhat.com>,
-        Jean-Christophe Plagniol-Villard
-	<plagnioj@jcrosoft.com>,
-        <linux-fbdev@vger.kernel.org>
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <56D0387D.9040705@ti.com>
-Date: Fri, 26 Feb 2016 13:35:25 +0200
-MIME-Version: 1.0
-In-Reply-To: <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T"
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Jens Kuske <jenskuske@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 3/8] DT: clk: sunxi: add binding doc for the multi-bus-gates clock
+Date: Wed, 17 Feb 2016 11:43:55 +0000
+Message-Id: <1455709440-8668-4-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1455709440-8668-1-git-send-email-andre.przywara@arm.com>
+References: <1455709440-8668-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T
-Content-Type: multipart/mixed; boundary="cXlsU873t5XgLkNaO1JbvnFTdDfQDiN5h"
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- linux-fbdev@vger.kernel.org
-Message-ID: <56D0387D.9040705@ti.com>
-Subject: Re: [PATCH 9/9] simplefb: Remove impossible check for
- of_clk_get_parent_count() < 0
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
- <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
+Recent Allwinner SoCs introduced a bus gates clock which can have
+different parents for individual gates.
+For the time being we encoded this relation in the driver.
+This commit specifies a new binding which allows to encode this in
+the DT by using a child node for each parent clock used. This allows
+to specify any kind of relation efficiently and also keeps the very
+same kernel driver for all SoCs at the same time.
 
---cXlsU873t5XgLkNaO1JbvnFTdDfQDiN5h
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-
-
-On 22/02/16 22:54, Stephen Boyd wrote:
-> The check for < 0 is impossible now that
-> of_clk_get_parent_count() returns an unsigned int. Simplify the
-> code and update the types.
->=20
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: <linux-fbdev@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->=20
-> Please ack so this can go through clk tree along with patch 1.
->=20
->  drivers/video/fbdev/simplefb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Acked-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-
- Tomi
-
-
---cXlsU873t5XgLkNaO1JbvnFTdDfQDiN5h--
-
---1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJW0Dh9AAoJEPo9qoy8lh71zU4P/Ao6u5eKhSG2gOvnDBa+oCI8
-0dklVqgwbsuV8pdmNuWLOgwtjgGJXonvOJEtPm4lf8Qoe0Bz79a4cx3VzuI4YJX6
-toL+hn3UHUZjCZ33ACYbMlAiGhfg8RrxKBrtjDQi1m5EzQjoxmxVkuwcfEQQ5pcf
-WM/Ym7M2ObjKWwDON2/BHyemY9MynTnk7KFk6pel2PyPGCuH8+2G5U+uHUXArI9q
-fQ1Ttys9cbmKF+bmtvBZ/ZmmpEByUnxygRfKnsnHvAOZmrAa78hJe7qEmE+x2j4R
-QhfvVLcjUSML1tM0N/SOSUB5tYBI/m6Dm2oiMC98qJ5r66+q24W0DgPDIyxF3z5Y
-8dhurit8nPLGIdoqvJIuo71Ro6c82n8uyU38270EstlLamLFdIwQcsoMoenOhZdG
-PnTyKU0mKuDGIUQVQnbSOX53lNSrNBvrsGjk6Kh9Z/VZdqA1fhHfKyBzAsrDD9Yt
-TZxO+q/xwj8Iy9H9dktqt65yXpfiGlbw5k6XlHdPx7tay/gc5plJK8MwH04kRszo
-SGA1/7ijf1vmeo7hmX0x61rX8dR01FjjU0Qt0v6kOg2ctUdwAH7xox9UfwTS96GM
-SUcQEzh1wYB1W2fBG/Q2ycndqceeTHiOFP42MrDNlJOEJPow/oLPZ/nwjjUZn3K9
-QU71qwaz+fgfWPs/ljT2
-=Y6UK
------END PGP SIGNATURE-----
-
---1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T--
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index c09f59b..323af8e 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -79,6 +79,7 @@ Required properties:
+ 	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
+ 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
+ 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
++	"allwinner,sunxi-multi-bus-gates-clk" - for the multi-parent bus gates
+ 
+ Required properties for all clocks:
+ - reg : shall be the control register address for the clock.
+@@ -119,6 +120,11 @@ For "allwinner,sun6i-a31-pll6-clk", there are 2 outputs. The first output
+ is the normal PLL6 output, or "pll6". The second output is rate doubled
+ PLL6, or "pll6x2".
+ 
++The "allwinner,sunxi-multi-bus-gates-clk" holds the actual clocks in
++child nodes, where each one specifies the parent clock that the particular
++gates are depending from. The child nodes each follow the common clock
++binding as described in this document.
++
+ The "allwinner,*-mmc-clk" clocks have three different outputs: the
+ main clock, with the ID 0, and the output and sample clocks, with the
+ IDs 1 and 2, respectively.
+-- 
+2.6.4
