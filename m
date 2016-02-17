@@ -1,51 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.73]:63033 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993AbcBJOho (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 09:37:44 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Lars Persson <lars.persson@axis.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, mark.rutland@arm.com,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, galak@codeaurora.org
-Subject: Re: [PATCH 3/8] arm: add device-tree SoC bindings for Axis Artpec-6
-Date: Wed, 10 Feb 2016 15:37:02 +0100
-Message-ID: <7215228.dtgbJ3Moag@wuerfel>
-In-Reply-To: <06f7e5ffdef7ba79b5702f063512010329c40cba.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com> <06f7e5ffdef7ba79b5702f063512010329c40cba.1455107681.git.larper@axis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <56C3C9FB.8090301@samsung.com>
+References: <201602170850.V9nmoMr3%fengguang.wu@intel.com>
+	<56C3C9FB.8090301@samsung.com>
+Date: Tue, 16 Feb 2016 17:37:22 -0800
+Message-ID: <CAEG3pNAGKRavxOC2aDGuJ4S_RU0DsjmXQiy54MTmkO=qrRE6JQ@mail.gmail.com>
+Subject: Re: [clk:clk-samsung-kconfig 1/2] drivers/clk/samsung/clk.h:29:26:
+ error: field 'clk_data' has incomplete type
+From: Michael Turquette <mturquette@baylibre.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 10 February 2016 13:41:52 Lars Persson wrote:
-> Signed-off-by: Lars Persson <larper@axis.com>
+On Tue, Feb 16, 2016 at 5:16 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+>
+> On 17.02.2016 09:01, kbuild test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-samsung-kconfig
+> > head:   e83cb468452c25597e868d1ed778fa73fdaeca4c
+> > commit: 89e08b1b13374a336dfd1d500ebc70aa545579ab [1/2] clk: samsung: Enable COMPILE_TEST for Samsung clocks
+> > config: ia64-allmodconfig (attached as .config)
+> > reproduce:
+> >         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout 89e08b1b13374a336dfd1d500ebc70aa545579ab
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=ia64
+> >
+>
+> I think the error is a result of missing one patch in the branch - the
+> "clk: Move vendor's Kconfig into CCF menu section":
+> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=b9e65ebc654dffeb77d8ef878bd6b2da30c55a94
 
-Add a changelog
+OK, I have rebased the clk-samsung branch on top of b9e65ebc654d. This
+means the immutable branch will pull in about a dozen unrelated
+patches, but I don't want to rebase the whole clk tree just to pull
+out James' patch.
 
->  Documentation/devicetree/bindings/arm/axis.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/axis.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/axis.txt b/Documentation/devicetree/bindings/arm/axis.txt
-> new file mode 100644
-> index 0000000..4c98701
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/axis.txt
-> @@ -0,0 +1,8 @@
-> +Axis Communications AB
-> +ARTPEC series SoC Device Tree Bindings
-> +
-> +
-> +ARTPEC-6 ARM SoC
-> +
-> +Required root node properties:
-> +    - compatible = "axis,artpec6-dev-board", "axis,artpec6";
-> 
+Regards,
+Mike
 
-Requiring "axis,artpec6-dev-board" to be used for all boards somewhat
-misses the point of board specific compatibility values.
+>
+> With mentioned patch these Samsung clocks depends on COMMON_CLK so they
+> should not be selectable on IA64.
+>
+> However I don't have IA64 cross compiler to verify this.
+>
+> Best regards,
+> Krzysztof
 
-	Arnd
+
+
+
+-- 
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
