@@ -1,59 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:34982 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725AbcBJIPI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 03:15:08 -0500
-Received: by mail-ob0-f180.google.com with SMTP id xk3so17065409obc.2
-        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2016 00:15:08 -0800 (PST)
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <7387260.8XnD1ditcY@wuerfel>
-References: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
-	<6141409.WI4q6BtOxa@wuerfel>
-	<20160128201238.GN12841@codeaurora.org>
-	<7387260.8XnD1ditcY@wuerfel>
-Date: Wed, 10 Feb 2016 09:15:08 +0100
-Message-ID: <CACRpkdZj8JM+qYYfE4+cF1iMevJS5t-c_KpV-2jjjspFywf+XQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: Use generic clkdev.h header
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	Linus Walleij <linus.ml.walleij@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+To: Akinobu Mita <akinobu.mita@gmail.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
+Cc: linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>
+References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
+ <20160215230252.2278.43532@quark.deferred.io>
+ <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
+Message-ID: <20160217212415.2278.61232@quark.deferred.io>
+Subject: Re: [PATCH] clk: add userspace clock consumer
+Date: Wed, 17 Feb 2016 13:24:15 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 28, 2016 at 11:07 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 28 January 2016 12:12:38 Stephen Boyd wrote:
->> From: Stephen Boyd <sboyd@codeaurora.org>
->> Subject: [PATCH] ARM: plat-versatile: Remove unused clock.c file
->>
->> This file isn't compiled anymore because PLAT_VERSATILE_CLOCK is
->> never selected. Remove the file and the config.
->>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->> ---
->>  arch/arm/plat-versatile/Kconfig  |  3 --
->>  arch/arm/plat-versatile/Makefile |  1 -
->>  arch/arm/plat-versatile/clock.c  | 74 ----------------------------------------
->>  3 files changed, 78 deletions(-)
->>  delete mode 100644 arch/arm/plat-versatile/clock.c
->>
->
-> Looks good, I've added it to my todo list for arm-soc in 4.6.
->
-> I think Linus Walleij has some related work pending, so I'll
-> let him Ack this patch or pick it up in his tree if he prefers.
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+Quoting Akinobu Mita (2016-02-17 05:18:41)
+> 2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> > Hello Akinobu Mita,
+> >
+> > Quoting Akinobu Mita (2016-02-15 06:40:51)
+> >> This adds userspace consumer for common clock.
+> >>
+> >> This driver is inspired from Userspace regulator consumer
+> >> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
+> >> some classes of devices that are controlled entirely from user space.
+> >
+> > Thanks for submitting the patch. Your implementation looks OK, but I
+> > generally do not like to expose clock hardware controls to userspace
+> > (and have a NAK'd a lot of patches trying to do this in the past). It
+> > can be quite dangerous for the system to allow userspace to control
+> > clocks.
+> =
 
-OK yeah I have a bunch of Versatile family cleanups pending,
-I will put this in the bottom of the pile before the pull request,
-thanks!
+> I understand your concern.  I'll happily add the features and
+> documentation for this module to avoid misuses and abuses.
+> =
 
-Yours,
-Linus Walleij
+> > Can you explain your use case more? If your main concern is testing,
+> =
+
+> I can use this for my own electrical circuit.  But mainly it's
+> useful for testing.  When I tried to add clock provider for DS3231
+> clkout, I wrote very ad hoc kernel code for testing it.  I think
+> other people also have been trying something similar.
+> =
+
+> > should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_FS?
+> =
+
+> But this driver does not use debugfs.  Instead of that, I have no
+> problem moving this driver to lib/ and add config option to
+> lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
+
+Hiding it behind some sort of debug option sounds good to me. Taking a
+quick look through lib/Kconfig.debug, it seems that there are no other
+examples of debug options from drivers/* in there.
+
+I'm wondering what is the best way to do it? Just create a
+CONFIG_COMMON_CLK_DEBUG symbol and source drivers/clk/Kconfig.debug
+conditionally?
+
+Regards,
+Mike
+
+> =
+
+> > Have you looked at the per-provider DEBUGFS hooks? See commit
+> > fb2b3c9f6857, "clk: define and export clk_debugs_add_file".
+> =
+
+> I think it is useful for providing device specific debug features.
+> But this userspace consumer only provides generic feature for most
+> clock provider and allows controlling the devices specified in
+> the device tree.
