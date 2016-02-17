@@ -1,54 +1,251 @@
-Return-Path: <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
- clocks by ID
-To: Mark Brown <broonie@kernel.org>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io> <56C42BAF.3050900@ti.com>
- <20160217120759.GO7544@sirena.org.uk>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, <alsa-devel@alsa-project.org>,
-        Jyri Sarha <jsarha@ti.com>, <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Kristo, Tero" <t-kristo@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <56C4CF8B.5010005@ti.com>
-Date: Wed, 17 Feb 2016 21:52:43 +0200
+Return-Path: <stefan.wahren@i2se.com>
+Date: Wed, 17 Feb 2016 21:01:52 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
+	Martin Sperl <kernel@martin.sperl.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org
+Message-ID: <704229577.519481.7acc7698-e68b-4f4b-8da5-f03a550266a8.open-xchange@email.1und1.de>
+In-Reply-To: <A977D3F2-1F64-41C8-B8ED-EB9F0B3554B9@martin.sperl.org>
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+ <1452867667-2447-6-git-send-email-kernel@martin.sperl.org>
+ <87h9hr517u.fsf@eliezer.anholt.net> <56B8782C.4060107@martin.sperl.org>
+ <A977D3F2-1F64-41C8-B8ED-EB9F0B3554B9@martin.sperl.org>
+Subject: Re: [PATCH V4 5/7] clk: bcm2835: add missing 22 HW-clocks.
 MIME-Version: 1.0
-In-Reply-To: <20160217120759.GO7544@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/17/2016 02:07 PM, Mark Brown wrote:
-> On Wed, Feb 17, 2016 at 10:13:35AM +0200, Peter Ujfalusi wrote:
-> 
->> With this change we don't need to write custom machine drivers for setup not
->> using sysclk_id == 0.
->> I do think this is reasonable change by itself.
-> 
->> However I do think that the current simple-card is flawed regarding to clock
->> selection and the change Jyri and me are proposing is reasonable.
-> 
-> But you define a new ABI to specify it in the process, I'd rather fix
-> the flaws by using the common clock ABI than extend any device stuff.
-> If it didn't define a new ABI I'd probably not worry about it but one of
-> the issues we have with DT is that we do end up making ABIs every time
-> we put something in DT.
 
-I understand. This should have been supported by simple-card since the
-beginning. When we tried to move all boards to use simple-card, we hit the
-wall by not being able to select and configure other sysclk_id than 0.
-I don't want to create yet another simple card which handles only sysclk_id 1 ;)
-On the other hand this ABI is backwards compatible since if it is missing it
-will default to the configuration we right now have regarding to sysclk_dir
-and sysclk_id.
+> Martin Sperl <kernel@martin.sperl.org> hat am 17. Februar 2016 um 19:25
+> geschrieben:
+>
+> As I am trying to complete the list of clocks here my =E2=80=9Cbest=E2=80=
+=9D summary
+> so far of the clock tree for the bcm2835 taken from various sources:
+> * Datasheet
+> * broadcom provided VC4 headers (via https://github.com/msperl/rpi-regist=
+ers)
+> * mailing list
+>
+> And I have come up with the following description that
+> you can put in graphviz or http://www.webgraphviz.com/
+>
+> --- cut here ---
+> digraph clocks {
+> graph [ordering=3D"out"];
+>
+> subgraph cluster_osc {
+> label =3D "Oscillators";
+>
+> "GND";
+> "OSC";
+> "testdebug0";
+> "testdebug1";
+> }
+>
+> subgraph cluster_pll {
+> label =3D "PLLs";
+>
+> subgraph cluster_plla {
+> label =3D "PLLA";
+>
+> OSC -> PLLA;
+>
+> PLLA -> PLLA_core;
+> PLLA -> PLLA_per;
+> PLLA -> PLLA_dsi0;
+> PLLA -> PLLA_ccp2;
+> }
+>
+> subgraph cluster_pllb {
+> label =3D "PLLB";
+>
+> OSC -> PLLB;
+>
+> PLLB -> PLLB_ARM;
+> PLLB -> PLLB_SP0;
+> PLLB -> PLLB_SP1;
+> PLLB -> PLLB_SP2;
+> }
+>
+> subgraph cluster_pllc {
+> label =3D "PLLC";
+>
+> OSC -> PLLC;
+>
+> PLLC -> PLLC_core0;
+> PLLC -> PLLC_core1;
+> PLLC -> PLLC_core2;
+> PLLC -> PLLC_per;
+> }
+>
+> subgraph cluster_plld {
+> label =3D "PLLD";
+>
+> OSC -> PLLD;
+>
+> PLLD -> PLLD_core;
+> PLLD -> PLLD_per;
+> PLLD -> PLLD_dsi0;
+> PLLD -> PLLD_dsi1;
+> }
+>
+> subgraph cluster_pllh {
+> label =3D "PLLH";
+>
+> OSC -> PLLH;
+>
+> PLLH -> PLLH_aux;
+> PLLH -> PLLH_pix;
+> PLLH -> PLLH_rcal;
+> }
+> }
+>
+> subgraph cluster_mux {
+> label =3D "clocks";
+>
+> subgraph cluster_vpu_clocks {
+> label =3D "VPU-clocks";
+>
+> subgraph cluster_vpu_mux {
+> label =3D "VPU-mux";
+>
+> vGND [label=3D"0: GND"];
+> vOSC [label=3D"1: OSC"];
+> vtestdebug0 [label=3D"2: testdebug0"];
+> vtestdebug1 [label=3D"3: testdebug1"];
+> vPLLA_core [label=3D"4: PLLA_core"];
+> vPLLC_core0 [label=3D"5: PLLC_core0"];
+> vPLLD_core [label=3D"6: PLLD_core"];
+> vPLLH_aux [label=3D"7: PLLH_aux"];
+> vPLLC_core1 [label=3D"8: PLLC_core1"];
+> vPLLC_core2 [label=3D"9: PLLC_core2"];
+>
+> GND -> vGND -> vpu_mux;
+> OSC -> vOSC -> vpu_mux;
+> testdebug0 -> vtestdebug0 -> vpu_mux;
+> testdebug1 -> vtestdebug1 -> vpu_mux;
+> PLLA_core -> vPLLA_core -> vpu_mux;
+> PLLC_core0 -> vPLLC_core1 -> vpu_mux;
+> PLLD_core -> vPLLD_core -> vpu_mux;
+> PLLH_aux -> vPLLH_aux -> vpu_mux;
+> PLLC_core1 -> vPLLC_core1 -> vpu_mux;
+> PLLC_core2 -> vPLLC_core2 -> vpu_mux;
+> }
+>
+> vpu_mux -> vpu;
+> vpu_mux -> v3d;
+> vpu_mux -> isp;
+> vpu_mux -> h264;
+> vpu_mux -> sdram;
+> }
+>
+> subgraph cluster_per_clocks {
+> label =3D "Periperial-clocks";
+>
+> subgraph cluster_per_mux {
+> label =3D "Periperal-mux";
+>
+> pGND [label=3D"0: GND"];
+> pOSC [label=3D"1: OSC"];
+> ptestdebug0 [label=3D"2: testdebug0"];
+> ptestdebug1 [label=3D"3: testdebug1"];
+> pPLLA_per [label=3D"4: PLLA_per"];
+> pPLLC_per [label=3D"5: PLLC_per"];
+> pPLLD_per [label=3D"5: PLLD_per"];
+> pPLLH_aux [label=3D"5: PLLH_aux"];
+>
+> GND -> pGND -> per_mux;
+> OSC -> pOSC -> per_mux;
+> testdebug0 -> ptestdebug0 -> per_mux;
+> testdebug1 -> ptestdebug1 -> per_mux;
+> PLLA_per -> pPLLA_per -> per_mux;
+> PLLC_per -> pPLLC_per -> per_mux;
+> PLLD_per -> pPLLD_per -> per_mux;
+> PLLH_aux -> pPLLH_aux -> per_mux;
+> }
+>
+> per_mux -> vec;
+> per_mux -> uart;
+> per_mux -> hsm;
+> per_mux -> emmc;
+> per_mux -> pwm;
+> per_mux -> pcm;
+> per_mux -> aveo;
+> per_mux -> cam0;
+> per_mux -> cam1;
+> per_mux -> dft;
+> per_mux -> dpi;
+> per_mux -> dsi0e;
+> per_mux -> dsi1e;
+> per_mux -> gp0;
+> per_mux -> gp1;
+> per_mux -> gp2;
+> per_mux -> slim;
+> per_mux -> smi;
+> }
+>
+> subgraph cluster_osc_clocks {
+> label =3D "osc-clocks";
+>
+> subgraph cluster_osc_mux {
+> label =3D "osc-mux";
+>
+> oGND [label=3D"0: GND"];
+> oOSC [label=3D"1: OSC"];
+> otestdebug0 [label=3D"2: testdebug0"];
+> otestdebug1 [label=3D"3: testdebug1"];
+>
+> GND -> oGND -> osc_mux;
+> OSC -> oOSC -> osc_mux;
+> testdebug0 -> otestdebug0 -> osc_mux;
+> testdebug1 -> otestdebug1 -> osc_mux;
+> }
+>
+> osc_mux -> tsens;
+> osc_mux -> tec;
+> osc_mux -> otp;
+> }
+>
+> subgraph cluster_unknown_mux_clocks {
+> label =3D "unknown-parent-mux-clocks";
+>
+> ukn_mux -> ccp2;
+> ukn_mux -> dsi0pix;
+> ukn_mux -> dsi1pix;
+> ukn_mux -> pulse;
+> ukn_mux -> td0;
+> ukn_mux -> td1;
+> }
+>
+> subgraph cluster_debug_clocks {
+> label =3D "debug-clocks";
+>
+> debug_mux -> peria;
+> debug_mux -> sys;
+> }
+> }
+>
+> subgraph cluster_aux {
+> label =3D =E2=80=9Cauxiliar-clocks";
+>
+> vpu -> spi1;
+> vpu -> spi2;
+> vpu -> uart1;
+> }
+> }
+> --- cut here ---
+>
+> I have no idea where we could put this information
+> in the kernel tree - maybe this would help.
+>
 
-I will look at the CCF implementation for McASP first then for aic3x.
-
--- 
-Péter
+Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt should be a=
+ good
+place.
