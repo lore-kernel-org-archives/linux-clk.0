@@ -1,74 +1,53 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v5 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
-Date: Tue, 16 Feb 2016 15:20:29 +0900
-Message-id: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <akinobu.mita@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160215230252.2278.43532@quark.deferred.io>
+References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
+	<20160215230252.2278.43532@quark.deferred.io>
+Date: Wed, 17 Feb 2016 22:18:41 +0900
+Message-ID: <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
+Subject: Re: [PATCH] clk: add userspace clock consumer
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> Hello Akinobu Mita,
+>
+> Quoting Akinobu Mita (2016-02-15 06:40:51)
+>> This adds userspace consumer for common clock.
+>>
+>> This driver is inspired from Userspace regulator consumer
+>> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
+>> some classes of devices that are controlled entirely from user space.
+>
+> Thanks for submitting the patch. Your implementation looks OK, but I
+> generally do not like to expose clock hardware controls to userspace
+> (and have a NAK'd a lot of patches trying to do this in the past). It
+> can be quite dangerous for the system to allow userspace to control
+> clocks.
 
-Patchset attempts to remove the ARCH_EXYNOS7 symbol.
+I understand your concern.  I'll happily add the features and
+documentation for this module to avoid misuses and abuses.
 
-I rebased this on top of James':
- - clk: Move vendor's Kconfig into CCF menu section
-   http://www.spinics.net/lists/devicetree/msg111953.html
+> Can you explain your use case more? If your main concern is testing,
 
-The third patch depends on previous ones so one way of merging this
-would be to prepare a tag from clk tree with first two patches
-and the dependency. The last third patch would go through arm-soc.
+I can use this for my own electrical circuit.  But mainly it's
+useful for testing.  When I tried to add clock provider for DS3231
+clkout, I wrote very ad hoc kernel code for testing it.  I think
+other people also have been trying something similar.
 
-Changes since v4:
-=================
-1. Rebased on "clk: Move vendor's Kconfig into CCF menu section"
-   existing in clock tree.
-2. Re-work patch 2/3 (see specific changelog).
+> should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_FS?
 
-Changes since v3:
-=================
-1. Rebase on next-20160127 (s3c64xx became multiplatform).
+But this driver does not use debugfs.  Instead of that, I have no
+problem moving this driver to lib/ and add config option to
+lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
 
-Changes since v2:
-=================
-1. Follow Arnd's advice about not enabling silently the newly added
-   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
-   also a trigger for some changes in placement of Samsung clocks
-   Kconfig entries...
-2. ... which lead to introducing patch 1.
+> Have you looked at the per-provider DEBUGFS hooks? See commit
+> fb2b3c9f6857, "clk: define and export clk_debugs_add_file".
 
-
-Rationale:
-==========
-We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
-fall under generic ARCH_EXYNOS. In the same time there is no sense
-in building clocks for these ARMv8 SoCs on ARMv7 builds.
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (3):
-  clk: samsung: Enable COMPILE_TEST for Samsung clocks
-  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- drivers/clk/samsung/Kconfig         | 18 +++++++++++++-----
- drivers/clk/samsung/Makefile        |  4 ++--
- 5 files changed, 19 insertions(+), 18 deletions(-)
-
--- 
-2.5.0
+I think it is useful for providing device specific debug features.
+But this userspace consumer only provides generic feature for most
+clock provider and allows controlling the devices specified in
+the device tree.
