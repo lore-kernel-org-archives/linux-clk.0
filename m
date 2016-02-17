@@ -1,67 +1,34 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
- linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 0/5] Add support for PWMSS on DRA7
-Date: Thu, 25 Feb 2016 16:36:31 -0600
-Message-Id: <1456439796-28546-1-git-send-email-fcooper@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v5 2/3] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+ <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <56C44578.5010009@samsung.com>
+Date: Wed, 17 Feb 2016 11:03:36 +0100
+MIME-version: 1.0
+In-reply-to: <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for PWMSS on DRA7. The IP is same as that
-present in AM33XX and AM43XX.
+On 16/02/16 07:20, Krzysztof Kozlowski wrote:
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> so it is built also on ARMv7. This does not bring any kind of benefit.
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
+> 
+> Instead build clock drivers only for respective SoC's architecture.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This is an updated version of the patch series originally sent by Vignesh.
-The biggest difference is the removal of local clock gating support from
-various drivers due to silicon issue.
-
-Links to v2 series:
-https://patchwork.ozlabs.org/patch/479933/ (already in mainline)
-https://patchwork.ozlabs.org/patch/479932/
-https://patchwork.ozlabs.org/patch/479931/
-https://patchwork.ozlabs.org/patch/479930/
-https://patchwork.ozlabs.org/patch/479929/
-
-Franklin S Cooper Jr (1):
-  pwms: pwm-ti*: Remove support for local clock gating
-
-Vignesh R (4):
-  ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-  ARM: dts: DRA7: Add TBCLK for PWMSS
-  clk: ti: DRA7: Add tbclk data for ehrpwm
-  ARM: dts: DRA7: Add dt nodes for PWMSS
-
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |   8 +
- .../devicetree/bindings/pwm/pwm-tipwmss.txt        |  17 +-
- arch/arm/boot/dts/dra7.dtsi                        |  64 ++++++
- arch/arm/boot/dts/dra7xx-clocks.dtsi               |  24 +++
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c          | 239 +++++++++++++++++++++
- drivers/clk/ti/clk-7xx.c                           |   3 +
- drivers/pwm/pwm-tiecap.c                           |  28 ---
- drivers/pwm/pwm-tiehrpwm.c                         |  29 ---
- drivers/pwm/pwm-tipwmss.c                          |  49 -----
- drivers/pwm/pwm-tipwmss.h                          |  39 ----
- 10 files changed, 354 insertions(+), 146 deletions(-)
- delete mode 100644 drivers/pwm/pwm-tipwmss.h
-
--- 
-2.7.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
