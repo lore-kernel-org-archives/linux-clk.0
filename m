@@ -1,71 +1,120 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 15 Feb 2016 13:31:54 -0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46599 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965212AbcBQRjw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 17 Feb 2016 12:39:52 -0500
+Date: Wed, 17 Feb 2016 09:39:49 -0800
 From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
- clk_get_rate
-Message-ID: <20160215213153.GC19432@atomide.com>
-References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
- <56A9FED1.3090903@ti.com>
- <20160128172215.GD19432@atomide.com>
- <56AA6261.7030503@ti.com>
- <20160128190026.GI19432@atomide.com>
- <56AA6775.5090302@ti.com>
- <20160128191949.GK19432@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 2/2] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20160217173949.GB21202@atomide.com>
+References: <1455312009-808-1-git-send-email-tony@atomide.com>
+ <1455312009-808-3-git-send-email-tony@atomide.com>
+ <20160217011930.2278.38316@quark.deferred.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160128191949.GK19432@atomide.com>
+In-Reply-To: <20160217011930.2278.38316@quark.deferred.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [160128 11:20]:
-> * Tero Kristo <t-kristo@ti.com> [160128 11:10]:
-> > On 01/28/2016 09:00 PM, Tony Lindgren wrote:
-> > >* Tero Kristo <t-kristo@ti.com> [160128 10:48]:
-> > >>On 01/28/2016 07:22 PM, Tony Lindgren wrote:
-> > >>>* Tero Kristo <t-kristo@ti.com> [160128 03:44]:
-> > >>>>On 01/28/2016 01:37 PM, Tero Kristo wrote:
-> > >>>>>As the code in this file is being executed within irq context in some
-> > >>>>>cases, we must avoid the clk_get_rate which uses mutex internally.
-> > >>>>>Switch the code to use clk_hw_get_rate instead which is non-locking.
-> > >>>>>
-> > >>>>>Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> > >>>>
-> > >>>>Ooops, sorry. Sent wrong version (read: old) of this patch, please ignore
-> > >>>>this one. Will re-send the correct version in a bit.
-> > >>>
-> > >>>I think this is still needed as a fix for -rc cycle with cc: stable
-> > >>>as otherwise we have omap4 and 5 hang if PM runtime is enabled before
-> > >>>a suspend/resume cycle?
-> > >>
-> > >>Look at the other patch I sent, it should accomplish the same thing, and
-> > >>more.
-> > >>
-> > >>https://www.spinics.net/lists/linux-clk/msg06094.html
-> > >
-> > >Right.. But is that suitable for the -rc cycle with cc stable?
+* Michael Turquette <mturquette@baylibre.com> [160216 17:32]:
+> Quoting Tony Lindgren (2016-02-12 13:20:09)
 > > 
-> > Hmm yea, thats a good question, we may need to resurrect this patch after
-> > all.
+> > - Split the device tree binding into a separate patch as requested
+> >   by Mike for his conditional ack of the binding
 > 
-> Yes a minimal fix first with cc stable, then the rest of the changes
-> can be done for v4.6?
-> 
-> > >You should also describe the bug it causes in the change log.
-> > >Something like:
-> > >
-> > >This fixes an issue where PM runtime will hang the system if
-> > >enabled with a serial console before a suspend-resume cycle.
-> > 
-> > Yea I can add this to the desc if we want to keep this version of the patch.
-> 
-> Yes please. It seems the fix should be cc stable for several merge
-> windows.
+> Just to make life fun for you, the clk tree is once more merging DT
+> bindings descriptions and headers. You don't need to merge the patches,
+> it doesn't matter to me, but just as a heads up for the future.
 
-Tero, what's the status on this one? We have systems hang shortly
-after entering init if PM is enabled without this one.
+OK :)
+
+> > --- /dev/null
+> > +++ b/drivers/clk/ti/Kconfig
+> > @@ -0,0 +1,6 @@
+> > +config COMMON_CLK_TI_ADPLL
+> > +       tristate "Clock driver for dm814x ADPLL"
+> > +       depends on ARCH_OMAP2PLUS
+> > +       default y if SOC_TI81XX
+> 
+> Can we add COMPILE_TEST here?
+
+Good idea, will add.
+
+> > +static int ti_adpll_init_inputs(struct ti_adpll_data *d)
+> > +{
+> > +       const char *error = "need at least %i inputs";
+> > +       struct clk *clock;
+> > +       int nr_inputs;
+> > +
+> > +       nr_inputs = of_clk_get_parent_count(d->np);
+> > +       if (nr_inputs < d->c->nr_max_inputs) {
+> > +               dev_err(d->dev, error, nr_inputs);
+> > +               return -EINVAL;
+> > +       }
+> > +       of_clk_parent_fill(d->np, d->parent_names, nr_inputs);
+> > +
+> > +       clock = devm_clk_get(d->dev, d->parent_names[0]);
+> > +       if (IS_ERR(clock)) {
+> > +               dev_err(d->dev, "could not get clkinp\n");
+> > +               return PTR_ERR(clock);
+> > +       }
+> > +       d->parent_clocks[TI_ADPLL_CLKINP] = clock;
+> > +
+> > +       clock = devm_clk_get(d->dev, d->parent_names[1]);
+> > +       if (IS_ERR(clock)) {
+> > +               dev_err(d->dev, "could not get clkinpulow clock\n");
+> > +               return PTR_ERR(clock);
+> > +       }
+> > +       d->parent_clocks[TI_ADPLL_CLKINPULOW] = clock;
+> 
+> Are the clock parents known at compile-time? Can we just put that data
+> in C instead of whatever is going on here?
+
+No they can be board specific depending how the inputs for
+clkin, clkinpulow and clkinphif are wired.
+
+> ...
+> > +int __init dm814x_adpll_enable_init_clocks(void)
+> > +{
+> > +       int i, err;
+> > +
+> > +       if (!timer_clocks_initialized)
+> > +               return -ENODEV;
+> > +
+> > +       for (i = 0; i < ARRAY_SIZE(init_clocks); i++) {
+> > +               struct clk *clock;
+> > +
+> > +               clock = clk_get(NULL, init_clocks[i]);
+> > +               if (WARN(IS_ERR(clock), "could not find init clock %s\n",
+> > +                        init_clocks[i]))
+> > +                       continue;
+> > +               err = clk_prepare_enable(clock);
+> > +               if (WARN(err, "could not enable init clock %s\n",
+> > +                        init_clocks[i]))
+> > +                       continue;
+> 
+> We have a shiny new series that provides a standard way to do this:
+> 
+> http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+
+OK nice, so tagging the MPU and DDR clocks with CLK_IS_CRITICAL or
+"clock-critical" should allow removing this code. I think in this
+case I still need to set CLK_IS_CRITICAL as the clock is output 1
+of the dts defined clock and does not have a separate dts node.
+
+I can update when those patches hit Linux next, or I can do a
+follow-up patch later on if we want to avoid the dependency
+here. Which do you prefer?
 
 Regards,
 
