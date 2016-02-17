@@ -1,100 +1,56 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1454684758.31169.77.camel@linux.intel.com>
-Subject: Re: Common/typical fractional divider HW API
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mason <slash.tmp@free.fr>, linux-clk <linux-clk@vger.kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Heikki
- Krogerus <heikki.krogerus@linux.intel.com>, Sebastian Frias
- <sf84@laposte.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
-Date: Fri, 05 Feb 2016 17:05:58 +0200
-In-Reply-To: <56B4B67D.2080707@free.fr>
-References: <56B4B67D.2080707@free.fr>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [RESEND PATCH v8 1/6] clk: hisilicon: add CRG driver for hi3519
+ soc
+To: Michael Turquette <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>
+References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+ <1454639472-17373-2-git-send-email-xuejiancheng@huawei.com>
+ <20160217004648.2278.64006@quark.deferred.io>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <lidongpo@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56C3E423.5080801@huawei.com>
+Date: Wed, 17 Feb 2016 11:08:19 +0800
+MIME-Version: 1.0
+In-Reply-To: <20160217004648.2278.64006@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-02-05 at 15:49 +0100, Mason wrote:
-> Hello,
+Hi Mike,
+   Thank you very much for your comments.
+
+On 2016/2/17 8:46, Michael Turquette wrote:
+> Hello Jiancheng Xue,
 > 
-> AFAICT, the clk-fractional-divider driver implements the following
-> hardware API:
+> Quoting Jiancheng Xue (2016-02-04 18:31:07)
+>> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+>> index 74dba31..3f57b09 100644
+>> --- a/drivers/clk/hisilicon/Makefile
+>> +++ b/drivers/clk/hisilicon/Makefile
+>> @@ -4,8 +4,10 @@
+>>  
+>>  obj-y  += clk.o clkgate-separated.o clkdivider-hi6220.o
+>>  
+>> +obj-$(CONFIG_RESET_CONTROLLER) += reset.o
 > 
->   M and N are two fields in the same register.
->   DIV = M / N
-> 
-> Is this HW API common/typical in the embedded world?
-> in the PC world?
+> Do you really want to build reset.o for all hisi SoCs?
 > 
 
-At least all new Intel SoCs have it, besides that there is one more
-user of the struct clk_fractional_divider, but I have no idea if they
-have something similar to this.
+This reset controller driver will be just used in some of hisilicon SOCs.
+I'll add a specific config item for it like CONFIG_RESET_HISI. The config
+item will be selected by default in SOCs needing this driver.
 
-> 
-> My hardware uses a slightly weird (to me) API:
-> 
->   I = 0-255 (8 bits)
->   F = 0-15  (4 bits)
+I'll also fix other issues in next version. Thank you!
 
-This part is okay.
-
-> 
->   I = 0 => DIV = +INF
-
-On Intel we recognize this as an absence of the divider.
-
->   I = 1 => DIV = 1 + F/(32-F)
-
-Weird part, indeed. But seems it doubles a precision in a range
-[1 .. 1 + 1/2]
-
->   I > 1 => DIV = I + F/16
-
-This just normal operation.
-
-> 
-> Is this HW API common/typical in the embedded world?
-> (Perhaps just the linear part for I > 1)
-
-I saw similar approach in few UART drivers, but they do not use CLK
-framework.
-
-So, I could consider this one is more popular / wider, than what we
-have in Intel SoCs.
-
-> 
-> I see two downsides to this API:
-> 
-> 1) I = 1 is a special case
-
-> 2) A lot of the value space is wasted on large values.
-> 
-> For example, when I = 250, we don't really care about 250.0625,
-> 250.125,
-> etc, or even nearby integer values, for that matter.
-> 
-> I think it's better to have a distribution with high density in small
-> values, and low density in high values (sort of like floating point).
-> 
-> For example:
-> 
->   I = 0-15  (4 bits)
->   F = 0-255 (8 bits)
->   DIV = 2^I * (1 + F/256)
-> 
-> (We could probably even shave 2-4 bits on F.)
-> 
-> Are there downsides to this HW API?
-> Is this HW API common/typical in the embedded world?
-
-So, what is your intention? If you would like to use CLK framework you
-might consider existing providers and users and might implement a
-specific one for similar cases.
-
-Also it's possible to convert clock providers for, e.g., UARTs to use
-this kind of divider.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Regards,
+Jiancheng.
