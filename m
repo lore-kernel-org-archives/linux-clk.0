@@ -1,68 +1,51 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 4 Feb 2016 13:08:17 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>, heiko@sntech.de,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 2/5] clk: sunxi: Make clocks setup functions take const
- pointer
-Message-ID: <20160204120817.GE4270@lukather>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454402834-6385-3-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+SfteS7bOf3dGlBC"
-In-Reply-To: <1454402834-6385-3-git-send-email-maxime.ripard@free-electrons.com>
+To: Fabio Estevam <festevam@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAOMZO5AZbe2PKysy353Q-3w_+WY0HQD4EYtq24SzwadoQ4ikeA@mail.gmail.com>
+Cc: linux-clk@vger.kernel.org, peter.chen@nxp.com,
+ "Lee Jones" <lee.jones@linaro.org>
+References: <CAOMZO5AZbe2PKysy353Q-3w_+WY0HQD4EYtq24SzwadoQ4ikeA@mail.gmail.com>
+Message-ID: <20160218013839.2278.23558@quark.deferred.io>
+Subject: Re: Keeping a clock enabled during suspend
+Date: Wed, 17 Feb 2016 17:38:39 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Fabio Estevam (2016-02-03 09:04:07)
+> Hi,
+> =
 
---+SfteS7bOf3dGlBC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I am trying to implement a workaround for a mx25 USB erratum issue
+> (ENGcm08333), where I need to keep the USB clock turned on when the
+> system enters in suspend.
+> =
 
-On Tue, Feb 02, 2016 at 09:47:11AM +0100, Maxime Ripard wrote:
-> All the data structure that we pass to the clocks setup functions are
-> declared const, while our setup functions expects a regular pointer. This
-> was hidden by the fact that we cast a void * pointer back to these
-> structures, which made it go unnoticed.
->=20
-> Fix the functions prototype.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Is it possible to indicate that a clock needs to be kept enabled in
+> suspend with the current clock framework?
+> =
 
-Applied with Andre and Chen-Yu Acked-by's
+> I saw this attempt from Lee Jones:
+> https://lkml.org/lkml/2015/4/8/9
 
-Maxime
+That link didn't resolve for me but I'm guessing those are the CRITICAL
+clk patches.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+That flag is designed to keep a clock on always, so it may do what you
+want, but I'd like to know more first.
 
---+SfteS7bOf3dGlBC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Where does your clock get cut? Is there a clk_disable call in a suspend
+callback that does this to your USB clk?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Regards,
+Mike
 
-iQIcBAEBAgAGBQJWsz8xAAoJEBx+YmzsjxAgB+gP/3lqgdRUDrJtxhxOolF3SBTL
-zMUyToQ3/0rvU1wWQ5zlIdqMdqC9+Pbia52lPCRT1/Sjt04oXvLXVY/EdULbhTx/
-EzzxNCeQODeSPFbCN3Pv7I4ULZrCFfxzai3Yxo+LI3D3cB5Vi6CB4LaTcvLASmKF
-vS18le9Bpw6RDw4D0rOJC6GvRtgHf0TZ5rjEg6XqKTq3bbkw/jDvWyCIycdxXybe
-14hJWoGhCyqMmJbh+0UwlB2V+IhA4C6kndThpK2XNvlLoKNNf68tsdNb6Led6Sg5
-EEW3pGFOs0L7NDrS7qYvkT6YcqQY4CkMOCOAYO7tA6IJA0ng78eFri5Dbs9EOcjv
-ylaROogXzD/1HJJ4uPpxtZPfYfNfKNMcBZS0e75K22MTFK1il2oY7CUpBHlk8ZWg
-RpY/AGrmLX5tGZf5jYIU+qV61A7dfY+Cjf5iHiIdRqtCXOvTirSHx4fLNKklix58
-TgNV2fbMAFJmU3qo/zk00b/HFipmS3rC27Ukf2VsuDo07aoprKL+fVqn+0qGuctP
-u9HyILKTM1f581tzfnTyEZH4NFZIVU4seO4CZnGQXL7EV5WVQQqyuLZOVRT+BM9a
-M6aYDtCo4fNLYmCobZ8idGMiVgs+z5WHsu81kSz6JUN/WF9BMWnyW8MvDBBn0pXA
-gtDgL1OQVIAUGzPU4OSH
-=4zGF
------END PGP SIGNATURE-----
+> =
 
---+SfteS7bOf3dGlBC--
+> Any suggestions?
+> =
+
+> Thanks,
+> =
+
+> Fabio Estevam
