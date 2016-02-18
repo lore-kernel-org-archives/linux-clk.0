@@ -1,257 +1,195 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 1/2] clk: add lpc18xx creg clk driver
-Date: Mon, 22 Feb 2016 23:53:14 +0100
-Message-Id: <1456181595-10392-2-git-send-email-manabian@gmail.com>
-In-Reply-To: <1456181595-10392-1-git-send-email-manabian@gmail.com>
-References: <1456181595-10392-1-git-send-email-manabian@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 18 Feb 2016 06:58:52 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+cc: "R, Vignesh" <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Benoit Cousson <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+In-Reply-To: <56C4DB37.9090802@ti.com>
+Message-ID: <alpine.DEB.2.02.1602180652380.4792@utopia.booyaka.com>
+References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <1433332284-10766-3-git-send-email-vigneshr@ti.com> <alpine.DEB.2.02.1507152029460.32764@utopia.booyaka.com> <55A7CE59.6010600@ti.com> <alpine.DEB.2.02.1508121700500.7154@utopia.booyaka.com>
+ <56C4DB37.9090802@ti.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The CREG block on lpc18xx contains configuration register
-for two low power clocks. Support enabling of these two
-clocks with a clk driver that access CREG trough the
-syscon regmap interface.
+Hi Franklin
 
-These clocks are needed to support peripherals like the
-internal RTC on lpc18xx.
+On Wed, 17 Feb 2016, Franklin S Cooper Jr. wrote:
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- drivers/clk/nxp/Makefile           |   1 +
- drivers/clk/nxp/clk-lpc18xx-creg.c | 210 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 211 insertions(+)
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
+> On 08/31/2015 10:51 AM, Paul Walmsley wrote:
+> > On Thu, 16 Jul 2015, R, Vignesh wrote:
+> >> On 07/16/2015 03:24 AM, Paul Walmsley wrote:
+> >>> On Wed, 3 Jun 2015, Vignesh R wrote:
+> >>>
+> >>>> Add hwmod entries for the PWMSS on DRA7.
+> >>>>
+> >>>> Set l4_root_clk_div as the main_clk of PWMSS. It is fixed-factored clock
+> >>>> equal to L4PER2_L3_GICLK/2(l3_iclk_div/2).
+> >>>> As per AM57x TRM SPRUHZ6[1], October 2014, Section 29.1.3 Table 29-4,
+> >>>> clock source to PWMSS is L4PER2_L3_GICLK. But it is actually
+> >>>> L4PER2_L3_GICLK/2. The TRM does not show the division by 2.
+> >>> Is the divide-by-two coming from PWMSS_EPWM.EPWM_TBCTL[HSPCLKDIV]?  Or is 
+> >>> HSPCLKDIV a separate divider after the divide-by-2 you mention above?
+> >> No, it not related to HSPCLKDIV. The TRM wrongly states L4PER2_L3_GICLK
+> >> as clock input for PWMSS. But actually  L4PER2_L4_GICLK(=L3_GICLK/2) is
+> >> the clock input for PWMSS. This will be updated in TRM soon.
+> > OK
+> >
+> >>>> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> >>>> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> >>>> @@ -362,6 +362,149 @@ static struct omap_hwmod dra7xx_dcan2_hwmod = {
+> >>>>  	},
+> >>>>  };
+> >>>>  
+> >>>> +/* pwmss  */
+> >>>> +static struct omap_hwmod_class_sysconfig dra7xx_epwmss_sysc = {
+> >>>> +	.rev_offs	= 0x0,
+> >>>> +	.sysc_offs	= 0x4,
+> >>>> +	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_RESET_STATUS,
+> >>> This doesn't match SPRUHZ6 Table 29-13 "PWMSS_SYSCONFIG".  There's no 
+> >>> RESETSTATUS bit.  There is a SOFTRESET bit. 
+> >>>
+> >>> Could you please confirm whether this is intentional?
+> >> sorry my bad... I will change this in v3.
+> > OK
+> >
+> >>>> +/* ecap0 */
+> >>>> +struct omap_hwmod dra7xx_ecap0_hwmod = {
+> >>>> +	.name		= "ecap0",
+> >>>> +	.class		= &dra7xx_ecap_hwmod_class,
+> >>>> +	.clkdm_name	= "l4per2_clkdm",
+> >>>> +	.main_clk	= "l4_root_clk_div",
+> >>> Looking at SPRUHZ6 Section 29.1.4.2 "PWMSS Modules Local Clock Gating", 
+> >>> there appears to be a local "mini-PRCM" for the PWMSS which implements 
+> >>> clock gating and reports back on the status of what I'd guess is the local 
+> >>> clock gating FSM.
+> >>>
+> >>> So from that point of view, you should probably create a clock driver that 
+> >>> manages both the clock gate request bit and the FSM status bit.  It should 
+> >>> be something that can be reused for the other PWMSS IP blocks.  Then 
+> >>> you'd create per-IP block clock nodes and set the main_clk to point to 
+> >>> that node.
+> >> Since, this register is within the config space of PWMSS, the individual
+> >> gating and reporting for the modules within PWMSS
+> >> (PWMSS_CLKCONFIG) is currently being taken care by pwm-tipwmss.c(almost
+> >> the sole function this driver is doing). It has been the same since
+> >> am335x. Adding new clock nodes will result in driver changes and also
+> >> changes to am335x, am437x (and other platforms) hwmod files. It also
+> >> involves adding new nodes to clocks.dtsi and it will be difficult to
+> >> maintain backward compatibility for older platforms. Is it not better to
+> >> keep this as is, in order to maintain consistency (with am335x, am437x
+> >> etc) and also that these clock bits are within IP's config space?
+> > It's certainly possible that we as maintainers didn't look closely enough 
+> > at the AM33xx data for the PWMSS when we merged it.  But if that's 
+> > incorrect too, then now is the time to fix this.  Otherwise it will never 
+> > get fixed, since each new group of people patching this code will keep 
+> > punting it off to the indeterminate future.
+> >
+> > In terms of hwmod data: based on the register maps in sections 29.4.3, 
+> > 29.3.3, and 29.2.3 of SPRUHZ6, none of these subdevices are hwmod devices.  
+> > They don't support the Highlander OCP registers, they have no individual 
+> > PRCM registers or register bitfields, and all of the idle and status 
+> > reporting is to the PWMSS top-level IP block itself.  So it looks to me 
+> > like the eCAP, eQEP, and ePWM modules should be registered via DT, rather 
+> > than via hwmod.  It looks like you can get away with using the 
+> > "simple-bus" abstraction, but you might ultimately have to define 
+> > something custom here.  However, the PWMSS top level subsystem, described 
+> > in section 29.1, does have the OCP registers, sideband signals, etc., and 
+> > thus should remain a hwmod-registered device (via DT).
+> >
+> > In terms of the clock data: based on section 29.1.4, section 29.1.5.2, 
+> > figure 29-3, and table 29-4, there are several clock gating control bits.  
+> > These should be modeled as clock nodes in the Linux common clock 
+> > framework.  Furthermore these registers are located inside the PWMSS 
+> > subsystem itself, and are only accessible when the PWMSS IP block is 
+> > functional in a PM runtime point of view: i.e., when the block is mapped 
+> > into memory space, clocked and out of reset, etc.  So the clock types for 
+> > the PWMSS_CFG IP block should most likely be implemented in the PWMSS 
+> > driver.  I think you'll still be able to define the clock node data itself 
+> > in DT, but this will probably need a closer look.  Ideally, since the 
+> > clock node register address data is the same for all three subsystem 
+> > instances, one would be able to simply include a DT include file three 
+> > times; but the DT binding data format may ultimately make this 
+> > impractical.
+> >
+> > In terms of the transition from the old approach to this approach, it ooks 
+> > to me like the first thing to do would be to convert
+> > drivers/pwm/pwm-tipwmss.c to define some clk_ops and register some clock
+> > nodes with the CCF.  You've got the meat of the clock gating control code
+> > there already.  Then the next thing to do would be to to get rid of
+> > pwmss_submodule_state_change() and use
+> > clk_{prepare,enable,disable,unprepare}*() in the drivers/pwm/pwm-ti*.c
+> > subdrivers instead.  All of that looks like it should be possible to  
+> > implement in a backwards-compatible way.  Then you'd convert the eCAP, 
+> > eQEP, and ePWM code to probe as platform_devices, driven from a simple-bus 
+> > or pwmss-bus or whatever in the DT data.  Naturally, the AM33xx/43xx data 
+> > should be fixed also.  
+> 
+> I am working on updating this patchset on behalf of Vignesh
+> based on your suggestion. During the process of converting
+> the pwm-tipwmss.c to be a clock provider I discovered that
+> there is an issue with the PWMSS local clock gates. For
+> example on AM437x if you run the below commands you will get
+> a " Custom Error: MASTER M2 (64-bit) TARGET L4_PER_0 (Read):
+> Data Access in User mode during Functional access" error.
+> 
+> rmmod pwm_tiecap
+> rmmod pwm_bl
+> rmmod pwm_tiecap
+> modprobe pwm_tiecap
+> modprobe pwm_bl
+> 
+> Full Log: http://pastebin.com/sEyy52HV
+> 
+> On device powerup, the various PWMSS local clock gates are
+> "unlocked". The remove call in the ecap driver gates the
+> local PWMSS clock gate for the ecap. The probe of the ecap
+> driver "unlocks" the clock gate for the ecap. However, once
+> you try to access any of the ecap registers which is
+> indirectly accessed by the pwm_bl driver you will get an
+> error. This is because the ecap clock is still being gated.
 
-diff --git a/drivers/clk/nxp/Makefile b/drivers/clk/nxp/Makefile
-index 607bd48c6563..d456ee6cc3d3 100644
---- a/drivers/clk/nxp/Makefile
-+++ b/drivers/clk/nxp/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-cgu.o
- obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-ccu.o
-+obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-creg.o
- obj-$(CONFIG_ARCH_LPC32XX)	+= clk-lpc32xx.o
-diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
-new file mode 100644
-index 000000000000..c7c3af6a04d2
---- /dev/null
-+++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
-@@ -0,0 +1,210 @@
-+/*
-+ * Clk driver for NXP LPC18xx/43xx Configuration Registers (CREG)
-+ *
-+ * Copyright (C) 2015 Joachim Eastwood <manabian@gmail.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define LPC18XX_CREG_CREG0			0x004
-+#define  LPC18XX_CREG_CREG0_EN1KHZ		BIT(0)
-+#define  LPC18XX_CREG_CREG0_EN32KHZ		BIT(1)
-+#define  LPC18XX_CREG_CREG0_RESET32KHZ		BIT(2)
-+#define  LPC18XX_CREG_CREG0_PD32KHZ		BIT(3)
-+
-+#define to_clk_creg(_hw) container_of(_hw, struct clk_creg_data, hw)
-+
-+enum {
-+	CREG_CLK_1KHZ,
-+	CREG_CLK_32KHZ,
-+	CREG_CLK_MAX,
-+};
-+
-+struct clk_creg_data {
-+	struct clk_hw hw;
-+	const char *name;
-+	struct regmap *reg;
-+	unsigned int en_mask;
-+	const struct clk_ops *ops;
-+};
-+
-+#define CREG_CLK(_name, _emask, _ops)		\
-+{						\
-+	.name = _name,				\
-+	.en_mask = LPC18XX_CREG_CREG0_##_emask,	\
-+	.ops = &_ops,				\
-+}
-+
-+static int clk_creg_32k_prepare(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+	int ret;
-+
-+	ret = regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+				 LPC18XX_CREG_CREG0_PD32KHZ |
-+				 LPC18XX_CREG_CREG0_RESET32KHZ, 0);
-+
-+	/*
-+	 * Powering up the 32k oscillator takes a long while
-+	 * and sadly there aren't any status bit to poll.
-+	 */
-+	msleep(2500);
-+
-+	return ret;
-+}
-+
-+static void clk_creg_32k_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+
-+	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+			   LPC18XX_CREG_CREG0_PD32KHZ,
-+			   LPC18XX_CREG_CREG0_PD32KHZ);
-+}
-+
-+static int clk_creg_32k_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+	u32 reg;
-+
-+	regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
-+
-+	return !(reg & LPC18XX_CREG_CREG0_PD32KHZ) &&
-+	       !(reg & LPC18XX_CREG_CREG0_RESET32KHZ);
-+}
-+
-+static unsigned long clk_creg_1k_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	return parent_rate / 32;
-+}
-+
-+static int clk_creg_enable(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+
-+	return regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+				  creg->en_mask, creg->en_mask);
-+}
-+
-+static void clk_creg_disable(struct clk_hw *hw)
-+{
-+	struct clk_creg_data *creg = to_clk_creg(hw);
-+
-+	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
-+			   creg->en_mask, 0);
-+}
-+
-+static const struct clk_ops clk_creg_32k = {
-+	.enable		= clk_creg_enable,
-+	.disable	= clk_creg_disable,
-+	.prepare	= clk_creg_32k_prepare,
-+	.unprepare	= clk_creg_32k_unprepare,
-+	.is_prepared	= clk_creg_32k_is_prepared,
-+};
-+
-+static const struct clk_ops clk_creg_1k = {
-+	.enable		= clk_creg_enable,
-+	.disable	= clk_creg_disable,
-+	.recalc_rate	= clk_creg_1k_recalc_rate,
-+};
-+
-+static struct clk_creg_data clk_creg_clocks[] = {
-+	[CREG_CLK_1KHZ]  = CREG_CLK("1khz_clk",  EN1KHZ,  clk_creg_1k),
-+	[CREG_CLK_32KHZ] = CREG_CLK("32khz_clk", EN32KHZ, clk_creg_32k),
-+};
-+
-+static struct clk *clk_register_creg_clk(struct clk_creg_data *creg_clk,
-+					 const char **parent_name,
-+					 struct regmap *syscon)
-+{
-+	struct clk_init_data init;
-+
-+	init.ops = creg_clk->ops;
-+	init.name = creg_clk->name;
-+	init.parent_names = parent_name;
-+	init.num_parents = 1;
-+
-+	creg_clk->reg = syscon;
-+	creg_clk->hw.init = &init;
-+
-+	return clk_register(NULL, &creg_clk->hw);
-+}
-+
-+static struct clk *clk_creg_early[CREG_CLK_MAX];
-+static struct clk_onecell_data clk_creg_early_data = {
-+	.clks = clk_creg_early,
-+	.clk_num = CREG_CLK_MAX,
-+};
-+
-+static void __init lpc18xx_creg_clk_init(struct device_node *np)
-+{
-+	const char *clk_32khz_parent;
-+	struct regmap *syscon;
-+
-+	syscon = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(syscon)) {
-+		pr_err("%s: syscon lookup failed\n", __func__);
-+		return;
-+	}
-+
-+	clk_32khz_parent = of_clk_get_parent_name(np, 0);
-+
-+	clk_creg_early[CREG_CLK_32KHZ] =
-+		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
-+				      &clk_32khz_parent, syscon);
-+	clk_creg_early[CREG_CLK_1KHZ] = ERR_PTR(-EPROBE_DEFER);
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_creg_early_data);
-+}
-+CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
-+
-+static struct clk *clk_creg[CREG_CLK_MAX];
-+static struct clk_onecell_data clk_creg_data = {
-+	.clks = clk_creg,
-+	.clk_num = CREG_CLK_MAX,
-+};
-+
-+static int lpc18xx_creg_clk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *syscon;
-+
-+	syscon = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(syscon)) {
-+		dev_err(&pdev->dev, "syscon lookup failed\n");
-+		return PTR_ERR(syscon);
-+	}
-+
-+	clk_creg[CREG_CLK_32KHZ] = clk_creg_early[CREG_CLK_32KHZ];
-+	clk_creg[CREG_CLK_1KHZ] =
-+		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
-+				      &clk_creg_clocks[CREG_CLK_32KHZ].name,
-+				      syscon);
-+
-+	return of_clk_add_provider(np, of_clk_src_onecell_get, &clk_creg_data);
-+}
-+
-+static const struct of_device_id lpc18xx_creg_clk_of_match[] = {
-+	{ .compatible = "nxp,lpc1850-creg-clk" },
-+	{},
-+};
-+
-+static struct platform_driver lpc18xx_creg_clk_driver = {
-+	.probe = lpc18xx_creg_clk_probe,
-+	.driver = {
-+		.name = "lpc18xx-creg-clk",
-+		.of_match_table = lpc18xx_creg_clk_of_match,
-+	},
-+};
-+builtin_platform_driver(lpc18xx_creg_clk_driver);
--- 
-1.8.0
+OK I'm not sure I understand what's going on, particularly the part about 
+locking and unlocking.  Are you saying that the pwm_bl driver calls into 
+the pwm_tiecap module to write to the PWMSS_CLKCONFIG registers to ungate 
+the ECAP clock, and then the hardware silently ignores the write?  If 
+that's the case, shouldn't we be seeing some warning messages from a 
+failure to ungate the clock from a subsequent PWMSS_CLKSTATUS poll?  Or am 
+I misunderstanding what's going on here?
+
+> This has been verified by hardware folks on our side. Its
+> been determined these registers are not needed since they
+> were designed for devices that didn't have a PRCM.
+> Therefore, the current plan is to update the trms of
+> AM335x,AM437x,DRA7 and AM57x to make it clear that these
+> registers shouldn't be touched.
+
+OK 
+
+> I plan on sending a patch for the pwm-tipwmss.c driver
+> essentially removing anything that touches the
+> PWMSS_CLKCONFIG and PWMSS_CLKSTATUS registers. I will also
+> be sending a v3 version of this patch since I believe the
+> struct omap_hwmod dra7xx_ecap0_hwmod and similar entries you
+> had comments about before are ok to leave as is based on the
+> above findings.
+
+Including the comments regarding dra7xx_epwmss_sysc ?  
+
+
+- Paul
