@@ -1,110 +1,63 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-CC: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH] clk: clk_register: Correctly initialize enable_count
-Date: Tue, 9 Feb 2016 17:48:40 -0500
-Message-ID: <1455058120-7398-1-git-send-email-rklein@nvidia.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFT] clk: shmobile: div6: Fix .recalc_rate() using a stale divisor
+Date: Thu, 18 Feb 2016 17:03:37 +0200
+Message-ID: <2775267.6TSI7JQVto@avalon>
+In-Reply-To: <1455805812-7147-1-git-send-email-geert+renesas@glider.be>
+References: <1455805812-7147-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-When clocks are registered, they could be enabled already in
-hardware. As of now, the enable count will start at 0. When this
-happens, it means a clock is enabled and the framework doesn't know
-that, so it will always report it as disabled.
+Hi Geert,
 
-After the first call of clk_enable(), the enable_count will be
-correct, as it will simply try to enable an already enabled clock.
+Thank you for the patch.
 
-However, in some instances, some clocks may be left on from the boot
-logic and because of the enable_count is inaccurate, drivers won't be
-able to simply use clk_disable() to turn it off.
+On Thursday 18 February 2016 15:30:12 Geert Uytterhoeven wrote:
+> cpg_div6_clock_set_rate() only programs the new divisor if the clock
+> isn't stopped. If the clock is stopped, it will update the cached
+> divisor value only, which will be programmed into the clock registers
+> when enabling the clock later.
+> 
+> However, cpg_div6_clock_recalc_rate() reads the divisor from the clock
+> registers instead of using the cached value, leading to an incorrect
+> result if the clock is currently stopped.
+> 
+> Make cpg_div6_clock_recalc_rate() use the cached value to fix this.
+> 
+> Reported-by: Ramesh Shanmugasundaram
+> <ramesh.shanmugasundaram@bp.renesas.com>
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch will correctly set the enable_count to 1 if the clk is
-already on when it is registered. This allows clk_disable to work as
-expected.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-To prevent the situation where the enable_count is always 1 greater
-than the number of calls to clk_enable() for that clk, we add a flag
-which will prevent incrementing enable_count the first time someone
-calls clk_enable() for a clk that was on at boot.
+> ---
+> Ramesh: Can you please give this a try? Thanks!
+> ---
+>  drivers/clk/shmobile/clk-div6.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/shmobile/clk-div6.c
+> b/drivers/clk/shmobile/clk-div6.c index 9999947694509d58..0627860233cbf97e
+> 100644
+> --- a/drivers/clk/shmobile/clk-div6.c
+> +++ b/drivers/clk/shmobile/clk-div6.c
+> @@ -82,9 +82,8 @@ static unsigned long cpg_div6_clock_recalc_rate(struct
+> clk_hw *hw, unsigned long parent_rate)
+>  {
+>  	struct div6_clock *clock = to_div6_clock(hw);
+> -	unsigned int div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
+> 
+> -	return parent_rate / div;
+> +	return parent_rate / clock->div;
+>  }
+> 
+>  static unsigned int cpg_div6_clock_calc_div(unsigned long rate,
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-Perhaps this code should be something optional right now? I can't test
-all boards that use this framework, and some boards may be using the
-clocks that are on but thought off without realizing it.
-
- drivers/clk/clk.c            | 18 +++++++++++++++++-
- include/linux/clk-provider.h |  1 +
- 2 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index bb01ed6cc63e..70d5ae7dd7a5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -682,6 +682,8 @@ static void clk_core_disable(struct clk_core *core)
- 	if (--core->enable_count > 0)
- 		return;
- 
-+	core->flags &= ~CLK_BOOT_ON_FIRST_ENABLE;
-+
- 	trace_clk_disable(core);
- 
- 	if (core->ops->disable)
-@@ -729,7 +731,8 @@ static int clk_core_enable(struct clk_core *core)
- 	if (WARN_ON(core->prepare_count == 0))
- 		return -ESHUTDOWN;
- 
--	if (core->enable_count == 0) {
-+	if (core->enable_count == 0 ||
-+	    (core->flags & CLK_BOOT_ON_FIRST_ENABLE)) {
- 		ret = clk_core_enable(core->parent);
- 
- 		if (ret)
-@@ -748,6 +751,10 @@ static int clk_core_enable(struct clk_core *core)
- 		}
- 	}
- 
-+	if (core->flags & CLK_BOOT_ON_FIRST_ENABLE) {
-+		core->flags &= ~CLK_BOOT_ON_FIRST_ENABLE;
-+		return 0;
-+	}
- 	core->enable_count++;
- 	return 0;
- }
-@@ -2513,6 +2520,15 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 	core->max_rate = ULONG_MAX;
- 	hw->core = core;
- 
-+	/* clocks can be enabled before being registered. This makes
-+	 * their enable_count inherently incorrect. During register,
-+	 * check to see if the clk is already enabled.
-+	 */
-+	if (clk_core_is_enabled(core)) {
-+		core->enable_count++;
-+		core->flags |= CLK_BOOT_ON_FIRST_ENABLE;
-+	}
-+
- 	/* allocate local copy in case parent_names is __initdata */
- 	core->parent_names = kcalloc(core->num_parents, sizeof(char *),
- 					GFP_KERNEL);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index fabe5bedbba6..dacc28ebbf96 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -32,6 +32,7 @@
- #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
- #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
- #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
-+#define CLK_BOOT_ON_FIRST_ENABLE BIT(11) /* clk on at boot, skip 1st enable */
- 
- struct clk;
- struct clk_hw;
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
