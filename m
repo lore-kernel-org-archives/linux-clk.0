@@ -1,149 +1,64 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 5/6] clk: bcm2835: correctly enable fractional clock support
-Date: Mon, 29 Feb 2016 11:39:21 +0000
-Message-Id: <1456745963-2403-6-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
-References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Kevin Smith <kevin.smith@elecsyscorp.com>,  "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  "Stephen Boyd" <sboyd@codeaurora.org>
+Subject: Re: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<20160218011630.2278.67415@quark.deferred.io>
+	<20160218091105.4a272bf9@free-electrons.com>
+Date: Thu, 18 Feb 2016 18:54:41 +0100
+In-Reply-To: <20160218091105.4a272bf9@free-electrons.com> (Thomas Petazzoni's
+	message of "Thu, 18 Feb 2016 09:11:05 +0100")
+Message-ID: <87twl5q4ym.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Hi Mike,=20
+=20
+ On jeu., f=C3=A9vr. 18 2016, Thomas Petazzoni <thomas.petazzoni@free-elect=
+rons.com> wrote:
 
-The current driver calculates the clock divider with
-fractional support enabled.
+> Hello,
+>
+> On Wed, 17 Feb 2016 17:16:30 -0800, Michael Turquette wrote:
+>> Quoting Kevin Smith (2016-02-11 08:53:52)
+>> > There is no corediv clock on Armada XP, so this is unnecessary.
+>> >=20
+>> > Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+>> > Cc: Michael Turquette <mturquette@baylibre.com>
+>> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> > Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> > Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>>=20
+>> Acked-by: Michael Turquette <mturquette@baylibre.com>
+>>=20
+>> I'm fine to take both patches through the clk tree, or to have them go
+>> through arm-soc. Let me know if you have a preference.
+>
+> I'll let Gregory Clement answer on this one. Since there is no build
+> dependency with the stuff planned in arm-soc, I believe it's fine if
+> you take them, but I'll let Greg give you the final answer since he is
+> taking care of the mvebu stuff going to arm-soc.
 
-But it does not enable fractional support in the
-control register itself resulting in an integer only divider,
-but in clk_set_rate responds back the fractionally divided
-clock frequency.
+Indeed I prefer that you take them in the clock tree.
 
-This patch enables fractional support in the control register
-whenever there is a fractional bit set in the requested clock divider.
+Thanks,
 
-Mash clock limits are are also handled for the PWM clock
-applying the correct divider limits (2 and max_int) applicable to
-basic fractional divider support (mash order of 1).
+Gregory
 
-It also adds locking to protect the read/modify/write cycle of
-the register modification.
+>
+> Thanks for the review!
+>
+> Thomas
+> --=20
+> Thomas Petazzoni, CTO, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
-audio domain clocks")
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   45 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 39 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index edb1f74..da77069 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -52,6 +52,7 @@
- #define CM_GNRICCTL		0x000
- #define CM_GNRICDIV		0x004
- # define CM_DIV_FRAC_BITS	12
-+# define CM_DIV_FRAC_MASK	GENMASK(CM_DIV_FRAC_BITS - 1, 0)
-
- #define CM_VPUCTL		0x008
- #define CM_VPUDIV		0x00c
-@@ -129,6 +130,7 @@
- # define CM_GATE			BIT(CM_GATE_BIT)
- # define CM_BUSY			BIT(7)
- # define CM_BUSYD			BIT(8)
-+# define CM_FRAC			BIT(9)
- # define CM_SRC_SHIFT			0
- # define CM_SRC_BITS			4
- # define CM_SRC_MASK			0xf
-@@ -648,6 +650,7 @@ struct bcm2835_clock_data {
- 	u32 frac_bits;
-
- 	bool is_vpu_clock;
-+	bool is_mash_clock;
- };
-
- static const char *const bcm2835_clock_per_parents[] = {
-@@ -829,6 +832,7 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
- 	.div_reg = CM_PWMDIV,
- 	.int_bits = 12,
- 	.frac_bits = 12,
-+	.is_mash_clock = true,
- };
-
- struct bcm2835_pll {
-@@ -1184,7 +1188,7 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
- 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
- 	u64 rem;
--	u32 div;
-+	u32 div, mindiv, maxdiv;
-
- 	rem = do_div(temp, rate);
- 	div = temp;
-@@ -1194,11 +1198,23 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 		div += unused_frac_mask + 1;
- 	div &= ~unused_frac_mask;
-
--	/* clamp to min divider of 1 */
--	div = max_t(u32, div, 1 << CM_DIV_FRAC_BITS);
--	/* clamp to the highest possible fractional divider */
--	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
--				      CM_DIV_FRAC_BITS - data->frac_bits));
-+	/* different clamping limits apply for a mash clock */
-+	if (data->is_mash_clock) {
-+		/* clamp to min divider of 2 */
-+		mindiv = 2 << CM_DIV_FRAC_BITS;
-+		/* clamp to the highest possible integer divider */
-+		maxdiv = (BIT(data->int_bits) - 1) << CM_DIV_FRAC_BITS;
-+	} else {
-+		/* clamp to min divider of 1 */
-+		mindiv = 1 << CM_DIV_FRAC_BITS;
-+		/* clamp to the highest possible fractional divider */
-+		maxdiv = GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
-+				 CM_DIV_FRAC_BITS - data->frac_bits);
-+	}
-+
-+	/* apply the clamping  limits */
-+	div = max_t(u32, div, mindiv);
-+	div = min_t(u32, div, maxdiv);
-
- 	return div;
- }
-@@ -1292,9 +1308,26 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
-+	u32 ctl;
-+
-+	spin_lock(&cprman->regs_lock);
-+
-+	/*
-+	 * Setting up frac support
-+	 *
-+	 * In principle it is recommended to stop/start the clock first,
-+	 * but as we set CLK_SET_RATE_GATE during registration of the
-+	 * clock this requirement should be take care of by the
-+	 * clk-framework.
-+	 */
-+	ctl = cprman_read(cprman, data->ctl_reg) & ~CM_FRAC;
-+	ctl |= (div & CM_DIV_FRAC_MASK) ? CM_FRAC : 0;
-+	cprman_write(cprman, data->ctl_reg, ctl);
-
- 	cprman_write(cprman, data->div_reg, div);
-
-+	spin_unlock(&cprman->regs_lock);
-+
- 	return 0;
- }
-
---
-1.7.10.4
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
