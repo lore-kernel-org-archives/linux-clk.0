@@ -1,58 +1,72 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Eric Anholt <eric@anholt.net>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/2] clk: bcm2835: Fix setting of PLL divider clock rates
-Date: Mon, 15 Feb 2016 19:03:57 -0800
-Message-Id: <1455591838-22725-1-git-send-email-eric@anholt.net>
+Return-Path: <akinobu.mita@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160217212415.2278.61232@quark.deferred.io>
+References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
+	<20160215230252.2278.43532@quark.deferred.io>
+	<CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
+	<20160217212415.2278.61232@quark.deferred.io>
+Date: Thu, 18 Feb 2016 23:09:46 +0900
+Message-ID: <CAC5umyiYhE=xGhN9yHEMfgxkdK9rdoMcVcqBwRinuFB+Whg_kQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: add userspace clock consumer
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Our dividers weren't being set successfully because CM_PASSWORD wasn't
-included in the register write.  It looks easier to just compute the
-divider to write ourselves than to update clk-divider for the ability
-to OR in some arbitrary bits on write.
+2016-02-18 6:24 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> Quoting Akinobu Mita (2016-02-17 05:18:41)
+>> 2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+>> > Hello Akinobu Mita,
+>> >
+>> > Quoting Akinobu Mita (2016-02-15 06:40:51)
+>> >> This adds userspace consumer for common clock.
+>> >>
+>> >> This driver is inspired from Userspace regulator consumer
+>> >> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
+>> >> some classes of devices that are controlled entirely from user space.
+>> >
+>> > Thanks for submitting the patch. Your implementation looks OK, but I
+>> > generally do not like to expose clock hardware controls to userspace
+>> > (and have a NAK'd a lot of patches trying to do this in the past). It
+>> > can be quite dangerous for the system to allow userspace to control
+>> > clocks.
+>>
+>> I understand your concern.  I'll happily add the features and
+>> documentation for this module to avoid misuses and abuses.
+>>
+>> > Can you explain your use case more? If your main concern is testing,
+>>
+>> I can use this for my own electrical circuit.  But mainly it's
+>> useful for testing.  When I tried to add clock provider for DS3231
+>> clkout, I wrote very ad hoc kernel code for testing it.  I think
+>> other people also have been trying something similar.
+>>
+>> > should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_FS?
+>>
+>> But this driver does not use debugfs.  Instead of that, I have no
+>> problem moving this driver to lib/ and add config option to
+>> lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
+>
+> Hiding it behind some sort of debug option sounds good to me. Taking a
+> quick look through lib/Kconfig.debug, it seems that there are no other
+> examples of debug options from drivers/* in there.
+>
+> I'm wondering what is the best way to do it? Just create a
+> CONFIG_COMMON_CLK_DEBUG symbol and source drivers/clk/Kconfig.debug
+> conditionally?
 
-Fixes about half of the video modes on my HDMI monitor (everything
-except 720x400).
+How about just add that to drivers/clk/Kconfig like below?
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+config COMMON_CLK_DEBUG
+        bool "Clock driver debugging support"
+        depends on DEBUG_KERNEL
+        ...
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 015e687..9f4df8f 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct clk_hw *hw,
- 	struct bcm2835_pll_divider *divider = bcm2835_pll_divider_from_hw(hw);
- 	struct bcm2835_cprman *cprman = divider->cprman;
- 	const struct bcm2835_pll_divider_data *data = divider->data;
--	u32 cm;
--	int ret;
-+	u32 cm, div, max_div = 1 << A2W_PLL_DIV_BITS;
- 
--	ret = clk_divider_ops.set_rate(hw, rate, parent_rate);
--	if (ret)
--		return ret;
-+	div = DIV_ROUND_UP_ULL(parent_rate, rate);
-+
-+	div = min(div, max_div);
-+	if (div == max_div)
-+		div = 0;
- 
-+	cprman_write(cprman, data->a2w_reg, div);
- 	cm = cprman_read(cprman, data->cm_reg);
- 	cprman_write(cprman, data->cm_reg, cm | data->load_mask);
- 	cprman_write(cprman, data->cm_reg, cm & ~data->load_mask);
--- 
-2.7.0
+config COMMON_CLK_USERSPACE_CONSUMER
+        tristate "Userspace clock consumer support"
+        depends on COMMON_CLK_DEBUG
+        ...
+
+
+We can add COMMON_CLK_DEBUG_FS for /sys/kernel/debug/clk/ if preferred.
