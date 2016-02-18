@@ -1,78 +1,94 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] clk: sunxi: Improve divs_clk error handling and reporting
-Date: Tue, 16 Feb 2016 10:46:08 +0000
-Message-Id: <1455619568-1906-4-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
-References: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Kevin Smith <kevin.smith@elecsyscorp.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
+Cc: "Kevin Smith" <kevin.smith@elecsyscorp.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Gregory CLEMENT" <gregory.clement@free-electrons.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+ <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+ <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
+Message-ID: <20160218011644.2278.40155@quark.deferred.io>
+Subject: Re: [PATCH v3 2/2] clk: mvebu: Move corediv config to mvebu config
+Date: Wed, 17 Feb 2016 17:16:44 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-We catch errors in the base clock registration, failure to ioremap
-and failures in the final of_clk_add_provider() call.
-Also we unmap the registers when we need to rollback.
+Quoting Kevin Smith (2016-02-11 08:54:00)
+> The core clock does not depend on corediv, so enabling corediv
+> based on the clock is not really correct.  Move the corediv
+> config option from the clock driver Kconfig to the mvebu Kconfig
+> so that it can be enabled by the MACH option instead.
+> =
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+> This also enables corediv on Armada 375 and 38X, which was
+> previously missing.
+> =
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 4bd0917..91de0a0 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -985,13 +985,20 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 
- 	/* Set up factor clock that we will be dividing */
- 	pclk = sunxi_factors_clk_setup(node, data->factors);
-+	if (!pclk)
-+		return NULL;
- 	parent = __clk_get_name(pclk);
- 
- 	reg = of_iomap(node, 0);
-+	if (!reg) {
-+		pr_err("Could not map registers for divs-clk: %s\n",
-+		       of_node_full_name(node));
-+		return NULL;
-+	}
- 
- 	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
- 	if (!clk_data)
--		return NULL;
-+		goto out_unmap;
- 
- 	clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
-@@ -1074,16 +1081,21 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 	/* Adjust to the real max */
- 	clk_data->clk_num = i;
- 
--	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (of_clk_add_provider(node, of_clk_src_onecell_get, clk_data)) {
-+		pr_err("%s: failed to add clock provider for %s\n",
-+		       __func__, clk_name);
-+		goto free_gate;
-+	}
- 
- 	return clks;
--
- free_gate:
- 	kfree(gate);
- free_clks:
- 	kfree(clks);
- free_clkdata:
- 	kfree(clk_data);
-+out_unmap:
-+	iounmap(reg);
- 	return NULL;
- }
- 
--- 
-2.6.4
+> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+I'm fine to take both patches through the clk tree, or to have them go
+through arm-soc. Let me know if you have a preference.
+
+Regards,
+Mike
+
+> ---
+>  arch/arm/mach-mvebu/Kconfig | 3 +++
+>  drivers/clk/mvebu/Kconfig   | 1 -
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> =
+
+> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+> index 64e3d2c..71e97da 100644
+> --- a/arch/arm/mach-mvebu/Kconfig
+> +++ b/arch/arm/mach-mvebu/Kconfig
+> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
+>         select CPU_PJ4B
+>         select MACH_MVEBU_V7
+>         select PINCTRL_ARMADA_370
+> +       select MVEBU_CLK_COREDIV
+>         help
+>           Say 'Y' here if you want your kernel to support boards based
+>           on the Marvell Armada 370 SoC with device tree.
+> @@ -48,6 +49,7 @@ config MACH_ARMADA_375
+>         select HAVE_SMP
+>         select MACH_MVEBU_V7
+>         select PINCTRL_ARMADA_375
+> +       select MVEBU_CLK_COREDIV
+>         help
+>           Say 'Y' here if you want your kernel to support boards based
+>           on the Marvell Armada 375 SoC with device tree.
+> @@ -64,6 +66,7 @@ config MACH_ARMADA_38X
+>         select HAVE_SMP
+>         select MACH_MVEBU_V7
+>         select PINCTRL_ARMADA_38X
+> +       select MVEBU_CLK_COREDIV
+>         help
+>           Say 'Y' here if you want your kernel to support boards based
+>           on the Marvell Armada 380/385 SoC with device tree.
+> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+> index e1bc567..eaee8f0 100644
+> --- a/drivers/clk/mvebu/Kconfig
+> +++ b/drivers/clk/mvebu/Kconfig
+> @@ -11,7 +11,6 @@ config ARMADA_370_CLK
+>         bool
+>         select MVEBU_CLK_COMMON
+>         select MVEBU_CLK_CPU
+> -       select MVEBU_CLK_COREDIV
+>  =
+
+>  config ARMADA_375_CLK
+>         bool
+> -- =
+
+> 2.4.6
