@@ -1,35 +1,85 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>, edubezval@gmail.com
-Cc: huangtao@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
-Date: Fri, 26 Feb 2016 02:16:58 +0100
-Message-ID: <3480898.qXLEaXSdDG@phil>
-In-Reply-To: <3650760.H1YezDtoUE@phil>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com> <3650760.H1YezDtoUE@phil>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from utopia.booyaka.com ([74.50.51.50]:47254 "EHLO
+	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947229AbcBRRV3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2016 12:21:29 -0500
+Date: Thu, 18 Feb 2016 17:21:28 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+cc: "R, Vignesh" <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Benoit Cousson <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+In-Reply-To: <56C5E466.2030002@ti.com>
+Message-ID: <alpine.DEB.2.02.1602181718560.4792@utopia.booyaka.com>
+References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <1433332284-10766-3-git-send-email-vigneshr@ti.com> <alpine.DEB.2.02.1507152029460.32764@utopia.booyaka.com> <55A7CE59.6010600@ti.com> <alpine.DEB.2.02.1508121700500.7154@utopia.booyaka.com>
+ <56C4DB37.9090802@ti.com> <alpine.DEB.2.02.1602180652380.4792@utopia.booyaka.com> <56C5E466.2030002@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 16. Februar 2016, 00:25:39 schrieb Heiko Stuebner:
-> Am Montag, 15. Februar 2016, 15:33:25 schrieb Caesar Wang:
-> > 1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
-> > 8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
-> > bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
-> > 22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
+Hi Franklin, 
+
+On Thu, 18 Feb 2016, Franklin S Cooper Jr. wrote:
+
+> On 02/18/2016 12:58 AM, Paul Walmsley wrote:
+>
+> > OK I'm not sure I understand what's going on, particularly the part about 
+> > locking and unlocking.  Are you saying that the pwm_bl driver calls into 
+> > the pwm_tiecap module to write to the PWMSS_CLKCONFIG registers to ungate 
+> > the ECAP clock, and then the hardware silently ignores the write?  If 
+> > that's the case, shouldn't we be seeing some warning messages from a 
+> > failure to ungate the clock from a subsequent PWMSS_CLKSTATUS poll?  Or am 
+> > I misunderstanding what's going on here?
+> Pwm-tipwmss.c exports a function
+> pwmss_submodule_state_change which interacts with
+> PWMSS_CLKCONFIG and PWMSS_CLKSTATUS registers. Both
+> pwm-tiehrpwm.c and pwm-tiecap.c calls this exported function
+> to unlock the gate at probe time and lock the gate when the
+> driver is removed.
 > 
-> clk and devicetree patches look good and I'll pick those up once Eduardo
-> is
-> ok with (and has taken) the thermal-specific changes:
-> > bd2720c thermal: rockchip: fix a impossible condition caused by the
-> > warning df9c1bd thermal: rockchip: fix calculation error for
-> > code_to_temp
-> > fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
-> > b907b75 thermal: rockchip: fix the tsadc sequence output on
-> > rk3228/rk3399
+> So when the gate fails to be unlocked after it previously is
+> locked there isn't a way to know this via the
+> PWMSS_CLKSTATUS registers.
 
-@Eduardo: any opinion on the patches related to the thermal driver itself?
+OK I understand now.  Sounds like the gating -> ungating transition is 
+effectively a one-time operation, and once the ungating -> gating 
+transition is done, there's no way to reverse it.  Please correct me if 
+I've got it wrong.
+
+>  So the driver "believes" that the gate is unlocked and when pwm_bl runs 
+> it calls the set_polarity function. Set_polarity in the case of AM437x 
+> gp evm maps to the ecap's ecap_pwm_set_polarity function call. This call 
+> then attempts to write to the ecap registers which results in the 
+> external abort since the clock to the ecap is still gated.
+>
+> When the ecap and tihrpwm driver request to unlock the clock
+> gate it already checks the XXX_CLK_EN_ACK bitfields within
+> CLKSTATUS and it shows that the clocks "should" be unlocked.
+> So there is an issue with the IP.
+
+OK
+
+> Yes, I plan on addressing the change Vignesh acknowledged
+> regarding changing RESETSTATUS to SOFTRESET. For your other
+> comments I believe he already explained why it has to be set
+> in that particular way. If there is anything that I missed
+> or something that isn't clear please let me know.
+
+Perfect, thanks for the good description and the followup.
 
 
-Thanks
-Heiko
+- Paul
