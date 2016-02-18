@@ -1,94 +1,46 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v6 7/7] clk: mediatek: Enable critical clocks for MT2701
-Date: Fri, 5 Feb 2016 17:37:30 +0800
-Message-ID: <1454665050-37776-8-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Thu, 18 Feb 2016 09:11:05 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Kevin Smith <kevin.smith@elecsyscorp.com>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Gregory CLEMENT" <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
+Message-ID: <20160218091105.4a272bf9@free-electrons.com>
+In-Reply-To: <20160218011630.2278.67415@quark.deferred.io>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+	<20160218011630.2278.67415@quark.deferred.io>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Some system clocks should be turned on by default on MT2701.
-This patch enable these clocks when related clocks have
-been registered.
+Hello,
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/mediatek/clk-mt2701.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+On Wed, 17 Feb 2016 17:16:30 -0800, Michael Turquette wrote:
+> Quoting Kevin Smith (2016-02-11 08:53:52)
+> > There is no corediv clock on Armada XP, so this is unnecessary.
+> > 
+> > Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> > Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> 
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
+> 
+> I'm fine to take both patches through the clk tree, or to have them go
+> through arm-soc. Let me know if you have a preference.
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 01722e0..f7b4d52 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -573,6 +573,21 @@ static const struct mtk_gate top_clks[] __initconst = {
- 	GATE_TOP_AUD(CLK_TOP_AUD_I2S6_MCLK, "aud_i2s6_mclk", "aud_k6_src_div", 28),
- };
- 
-+static struct clk_onecell_data *top_clk_data __initdata;
-+static struct clk_onecell_data *pll_clk_data __initdata;
-+
-+static void __init mtk_clk_enable_critical(void)
-+{
-+	if (!top_clk_data || !pll_clk_data)
-+		return;
-+
-+	clk_prepare_enable(pll_clk_data->clks[CLK_APMIXED_ARMPLL]);
-+	clk_prepare_enable(top_clk_data->clks[CLK_TOP_AXI_SEL]);
-+	clk_prepare_enable(top_clk_data->clks[CLK_TOP_MEM_SEL]);
-+	clk_prepare_enable(top_clk_data->clks[CLK_TOP_DDRPHYCFG_SEL]);
-+	clk_prepare_enable(top_clk_data->clks[CLK_TOP_RTC_SEL]);
-+}
-+
- static void __init mtk_topckgen_init(struct device_node *node)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -585,7 +600,7 @@ static void __init mtk_topckgen_init(struct device_node *node)
- 		return;
- 	}
- 
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-+	top_clk_data = clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
- 
- 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
- 								clk_data);
-@@ -606,6 +621,8 @@ static void __init mtk_topckgen_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_clk_enable_critical();
- }
- CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
- 
-@@ -1201,7 +1218,7 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
- 	struct clk_onecell_data *clk_data;
- 	int r;
- 
--	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-+	pll_clk_data = clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
- 	if (!clk_data)
- 		return;
- 
-@@ -1212,6 +1229,8 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_clk_enable_critical();
- }
- CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
- 							mtk_apmixedsys_init);
+I'll let Gregory Clement answer on this one. Since there is no build
+dependency with the stuff planned in arm-soc, I believe it's fine if
+you take them, but I'll let Greg give you the final answer since he is
+taking care of the mvebu stuff going to arm-soc.
+
+Thanks for the review!
+
+Thomas
 -- 
-1.9.1
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
