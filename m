@@ -1,70 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40282 "EHLO
-	mailgw02.hq.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751304AbcBPFqI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 16 Feb 2016 00:46:08 -0500
-Message-ID: <1455601556.29688.41.camel@mtksdaap41>
-Subject: Re: [PATCH v2] clk: Move vendor's Kconfig into CCF menu section
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Arnd Bergmann" <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	"Daniel Kurtz" <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Date: Tue, 16 Feb 2016 13:45:56 +0800
-In-Reply-To: <CAJKOXPdA1VeGUmgAtObueXbY5S_X0acrF5m_QnEygzaMOeWPUw@mail.gmail.com>
-References: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <CAJKOXPdA1VeGUmgAtObueXbY5S_X0acrF5m_QnEygzaMOeWPUw@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+To: Akinobu Mita <akinobu.mita@gmail.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAC5umyiYhE=xGhN9yHEMfgxkdK9rdoMcVcqBwRinuFB+Whg_kQ@mail.gmail.com>
+Cc: linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>
+References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
+ <20160215230252.2278.43532@quark.deferred.io>
+ <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
+ <20160217212415.2278.61232@quark.deferred.io>
+ <CAC5umyiYhE=xGhN9yHEMfgxkdK9rdoMcVcqBwRinuFB+Whg_kQ@mail.gmail.com>
+Message-ID: <20160218193424.2278.3229@quark.deferred.io>
+Subject: Re: [PATCH] clk: add userspace clock consumer
+Date: Thu, 18 Feb 2016 11:34:24 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
-
-On Tue, 2016-02-16 at 13:59 +0900, Krzysztof Kozlowski wrote:
-> 2016-01-28 17:58 GMT+09:00 James Liao <jamesjj.liao@mediatek.com>:
-> > Move all vendor's Kconfig into CCF menu section to prevent
-> > new drivers putting their Kconfig files in a wrong place.
+Quoting Akinobu Mita (2016-02-18 06:09:46)
+> 2016-02-18 6:24 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> > Quoting Akinobu Mita (2016-02-17 05:18:41)
+> >> 2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> >> > Hello Akinobu Mita,
+> >> >
+> >> > Quoting Akinobu Mita (2016-02-15 06:40:51)
+> >> >> This adds userspace consumer for common clock.
+> >> >>
+> >> >> This driver is inspired from Userspace regulator consumer
+> >> >> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes a=
+nd
+> >> >> some classes of devices that are controlled entirely from user spac=
+e.
+> >> >
+> >> > Thanks for submitting the patch. Your implementation looks OK, but I
+> >> > generally do not like to expose clock hardware controls to userspace
+> >> > (and have a NAK'd a lot of patches trying to do this in the past). It
+> >> > can be quite dangerous for the system to allow userspace to control
+> >> > clocks.
+> >>
+> >> I understand your concern.  I'll happily add the features and
+> >> documentation for this module to avoid misuses and abuses.
+> >>
+> >> > Can you explain your use case more? If your main concern is testing,
+> >>
+> >> I can use this for my own electrical circuit.  But mainly it's
+> >> useful for testing.  When I tried to add clock provider for DS3231
+> >> clkout, I wrote very ad hoc kernel code for testing it.  I think
+> >> other people also have been trying something similar.
+> >>
+> >> > should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_F=
+S?
+> >>
+> >> But this driver does not use debugfs.  Instead of that, I have no
+> >> problem moving this driver to lib/ and add config option to
+> >> lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
 > >
-> > Some Kconigs need to modify at the same time to avoid build
-> > warnings.
+> > Hiding it behind some sort of debug option sounds good to me. Taking a
+> > quick look through lib/Kconfig.debug, it seems that there are no other
+> > examples of debug options from drivers/* in there.
 > >
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> > This patch is based on v4.5-rc1.
-> >
-> > changes since v1:
-> > - Modify s3c24xx and samsung's Kconfig to avoid build warngings.
-> >
-> >  arch/arm/mach-s3c24xx/Kconfig | 1 +
-> >  drivers/clk/Kconfig           | 8 +++-----
-> >  drivers/clk/samsung/Kconfig   | 1 -
-> >  3 files changed, 4 insertions(+), 6 deletions(-)
-> >
-> 
-> I wish you had used scripts/get_maintainer.pl to get list of people to CC...
-> Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
-> Krzysztof Kozlowski <k.kozlowski@samsung.com> (maintainer:ARM/SAMSUNG
-> EXYNOS ARM ARCHITECTURES)
-> linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS
-> ARM ARCHITECTURES)
-> 
-> Beside the fact that it is just nice and welcomed... it would help me
-> to avoid some of duplicated work...
+> > I'm wondering what is the best way to do it? Just create a
+> > CONFIG_COMMON_CLK_DEBUG symbol and source drivers/clk/Kconfig.debug
+> > conditionally?
+> =
 
-I'm sorry about that. I modified mach-s3c24xx/Kconfig and
-samsung/Kconfig in patch v2 but I reused the TO and CC list from patch
-v1, so this patch missed Samsung's maintainers.
+> How about just add that to drivers/clk/Kconfig like below?
+> =
 
+> config COMMON_CLK_DEBUG
+>         bool "Clock driver debugging support"
+>         depends on DEBUG_KERNEL
+>         ...
 
-Best regards,
+Looks good. If this symbol is selected then we will source
+drivers/clk/Kconfig.debug.
 
-James
+> =
 
+> config COMMON_CLK_USERSPACE_CONSUMER
+>         tristate "Userspace clock consumer support"
+>         depends on COMMON_CLK_DEBUG
+>         ...
+
+This should go into drivers/clk/Kconfig.debug. There are some clk tests
+that I've been slowly working on and they will end up in the file as
+well at some point in the future.
+
+Regards,
+Mike
+
+> =
+
+> =
+
+> We can add COMMON_CLK_DEBUG_FS for /sys/kernel/debug/clk/ if preferred.
