@@ -1,63 +1,148 @@
-Return-Path: <balbif@gmail.com>
-Return-Path: <balbif@gmail.com>
-Sender: Felipe Balbi <balbif@gmail.com>
-From: Felipe Balbi <balbi@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 8/9] usb: dwc3: Remove impossible check for of_clk_get_parent_count() < 0
-In-Reply-To: <1456174487-28397-9-git-send-email-sboyd@codeaurora.org>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org> <1456174487-28397-9-git-send-email-sboyd@codeaurora.org>
-Date: Tue, 23 Feb 2016 08:48:55 +0200
-Message-ID: <87d1rnorag.fsf@ti.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
+To: Lars Persson <lars.persson@axis.com>, "Lars Persson" <larper@axis.com>,
+ "Rob Herring" <robh@kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <56C44B7A.7030600@axis.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, linux-kernel@vger.kernel.org
+References: <cover.1455206007.git.larper@axis.com>
+ <2686b3bbb9ec1c86828b365645bd7f997a9780b4.1455206007.git.larper@axis.com>
+ <20160212163916.GA7677@rob-hp-laptop> <56C034BA.7070806@axis.com>
+ <20160216235927.2278.40353@quark.deferred.io> <56C44B7A.7030600@axis.com>
+Message-ID: <20160218003500.2278.81753@quark.deferred.io>
+Subject: Re: [PATCH 1/2] clk: add device tree binding for artpec-6 pll1 clock
+Date: Wed, 17 Feb 2016 16:35:00 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Lars,
 
+Quoting Lars Persson (2016-02-17 02:29:14)
+> =
 
-Hi,
+> =
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
-> The check for < 0 is impossible now that
-> of_clk_get_parent_count() returns an unsigned int. Simplify the
-> code and update the types.
->
-> Cc: Felipe Balbi <balbi@ti.com>
-> Cc: <linux-usb@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->
-> Please ack so this can go through clk tree along with patch 1.
+> On 02/17/2016 12:59 AM, Michael Turquette wrote:
+> > Quoting Lars Persson (2016-02-14 00:03:06)
+> >>
+> >> On 02/12/2016 05:39 PM, Rob Herring wrote:
+> >>> On Thu, Feb 11, 2016 at 05:01:03PM +0100, Lars Persson wrote:
+> >>>> Add device tree documentation for the main PLL in the Artpec-6 SoC.
+> >>> Roughly how many clocks does this SoC have?
+> >> It will have 17 clocks declared in the device tree and three
+> >> SoC-specific clock drivers.
+> > Are all of those clks going to individual DT nodes with clock-cells =3D=
+ 0?
+> >
+> > If so, I wonder if you should be targeting a clock-controller style
+> > binding description, with a node that represents the clock-controller IP
+> > block, with clock-cells >=3D 1. It really comes down to whether or not
+> > these clock controls exist in the same IP block.
+> =
 
-sure, no problem ;-) patch looks okay
+> Indeed most clocks come from the same clock controller IP. However there =
 
-Acked-by: Felipe Balbi <balbi@kernel.org>
+> was nothing to control there because this clock tree is completely =
 
-=2D-=20
-balbi
+> static. This is why we chose to describe it in the device tree using the =
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> standard clock components.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Those components are there for board-level clocks, such as a fixed rate
+crystal feeding into a more complex IC. They are not substitutes for
+writing a proper clock controller driver.
 
-iQIbBAEBAgAGBQJWzADYAAoJEIaOsuA1yqREJR0P90MHVyEHbWfTENPxEGTilNlC
-IeSrQVMDS0mvM4oy0ETPq4NAlJWjqXSP2pMdyH8RpCvNLhcv4ApfNwNctNdLlw4N
-kSkqvuksJPf2lDU9PsxYUtJNChHsWY5oLOIS3ZUAbRi5YbBAsBJEQrSai+7sAq2K
-uxvz5GxTWI2XRLnJ+JJzOrHpRPUgmmeM6eJZfqzxAYS63cVedfwGgEB+j5XBeUZv
-bjx0JZaTrJ9W/9n7LV17kNHFjxpz2XU2oUaJ6AOuOKML+Qmri2zD23CgiGdKn1x7
-me0ssF8TcEww2uGMrxPu16wHFzak7dLsVuxLJEIT8bkpCd/sHlJaSNHmpUxil/Ju
-R2yOP01th5cy6pV6AOtb3iCgPCSCweh6/9I75YGnOB9fspleFWUfLAOzmZbktlUA
-wI8NERzbYMayx8NcMirp+r4tZDn4jioUf7vDvXM+BcRH4hlyLuQHg7H7g/hksDdv
-EO4zrD4WzNrgL+R8nqEwzvk+uYmjbc2R/ICIquwSnYn5CKFhjvAeZNjmxNTAoXPl
-/y2BZVArh2aOKl5ZDpGOk8QC+WBtujwq61XJytEJJNYLSHLUDHNOXgukjXCbch7O
-QzdrWLKvu2NOnZsRfjH39MkVfelnFWIKapNMzPYJBrZgEQWbTpyr8Uj17yGrsavE
-uCM1I2iHJradlyhuZkM=
-=gy2Q
------END PGP SIGNATURE-----
---=-=-=--
+> =
+
+> The two audio related clock drivers that we will submit for a later =
+
+> merge window will have control knobs. There will be one mux belonging to =
+
+> the common clock controller and fractional dividers as separate IPs.
+
+So the mux belongs to the same clock controller IP block as the pll?
+Then the DT binding description should definitely not be a
+one-clock-per-node style.
+
+> =
+
+> I guess we could create a clock controller that outputs the pll1 clock =
+
+> and in the future also the muxed audio clock. Then describe the rest of =
+
+> the clock tree with standard components in the DT.
+> =
+
+> >
+> > You mentioned three distinct clock drivers. So possibly three clock
+> > controller nodes in DT then?
+> We still prefer to fully describe the static parts of the the clock tree =
+
+> in the DT. Will you accept this ?
+
+No, description of the clock tree in DT should not be your goal. I know
+it sounds nice from a data-driven point of view but in practice it is a
+bad idea.
+
+(Note that all of the above references the clock tree internal to an
+SoC, and doesn't cover off-chip clocks, like a fixed-rate xtal that
+varies from board to board.)
+
+What you should do is model each clock generator/controller as a DT
+node; this fits nicely in line with the Linux device model. Any leaf
+clocks that are consumed by other devices are exposed as offsets from
+the phandle. Clocks internal to the clock controller/generator block,
+such as intermediate dividers, should not be exposed in device tree as
+they are not direct inputs to downstream devices.
+
+Regards,
+Mike
+
+> >
+> > Is there a reference manual/register map available for this SoC?
+> No.
+> >>>> Signed-off-by: Lars Persson <larper@axis.com>
+> >>>> ---
+> >>>>    Documentation/devicetree/bindings/clock/artpec6.txt | 16 ++++++++=
+++++++++
+> >>>>    1 file changed, 16 insertions(+)
+> >>>>    create mode 100644 Documentation/devicetree/bindings/clock/artpec=
+6.txt
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/D=
+ocumentation/devicetree/bindings/clock/artpec6.txt
+> >>>> new file mode 100644
+> >>>> index 0000000..521fec8
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+> >>>> @@ -0,0 +1,16 @@
+> >>>> +* Clock bindings for Axis ARTPEC-6 chip
+> > Please specify that this is based on the clock provider binding in
+> > Documentation/devicetree/bindings/clock/clock-bindings.txt
+> Will be fixed in v2.
+> >
+> > Regards,
+> > Mike
+> >
+> >>>> +
+> >>>> +Required properties:
+> >>>> +- #clock-cells: Should be <0>
+> >>>> +- compatible: Should be "axis,artpec6-pll1-clock"
+> >>>> +- reg: Address and length of the DEVSTAT register.
+> >>>> +- clocks: The PLL's input clock.
+> >>>> +
+> >>>> +Examples:
+> >>>> +
+> >>>> +pll1_clk: pll1_clk {
+> >>>> +    #clock-cells =3D <0>;
+> >>>> +    compatible =3D "axis,artpec6-pll1-clock";
+> >>>> +    reg =3D <0xf8000000 4>;
+> >>>> +    clocks =3D <&ext_clk>;
+> >>>> +};
+> >>>> -- =
+
+> >>>> 2.1.4
+> >>>>
+>=20
