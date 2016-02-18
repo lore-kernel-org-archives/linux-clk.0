@@ -1,54 +1,37 @@
-Return-Path: <vz@mleia.com>
-Message-ID: <56BA7EE9.8040703@mleia.com>
-Date: Wed, 10 Feb 2016 02:06:01 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 18 Feb 2016 22:14:26 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Fabio Estevam <festevam@gmail.com>, Anatolij Gustschin <agust@denx.de>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: imx: correct pwm7 clock name in driver for i.MX6UL
+Message-ID: <20160218141426.GZ6756@tiger>
+References: <1455734900-1913-1-git-send-email-agust@denx.de>
+ <CAOMZO5Cwed8uOKz6=Odu=jaaBqoNzUxm2Xv3+6TAxKGsa27Mdw@mail.gmail.com>
+ <20160217195725.2278.96780@quark.deferred.io>
 MIME-Version: 1.0
-To: slemieux.tyco@gmail.com, robh+dt@kernel.org, sboyd@codeaurora.org,
- mturquette@baylibre.com
-CC: stigge@antcom.de, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: clock: add lpc32xx clock frequency output
-References: <1455043670-19025-2-git-send-email-slemieux.tyco@gmail.com>
-In-Reply-To: <1455043670-19025-2-git-send-email-slemieux.tyco@gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160217195725.2278.96780@quark.deferred.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylvain,
-
-On 09.02.2016 20:47, slemieux.tyco@gmail.com wrote:
-> From: Sylvain Lemieux <slemieux@tycoint.com>
+On Wed, Feb 17, 2016 at 11:57:25AM -0800, Michael Turquette wrote:
+> Quoting Fabio Estevam (2016-02-17 10:58:13)
+> > On Wed, Feb 17, 2016 at 4:48 PM, Anatolij Gustschin <agust@denx.de> wrote:
+> > > Don't capitalize p in the pwm7 clock name.
+> > >
+> > > Signed-off-by: Anatolij Gustschin <agust@denx.de>
+> > 
+> > Thanks.
+> > 
+> > Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 > 
-> This patch add an optional parameter to setup the
-> xtal clock frequency output.
-> 
-> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> ---
->  Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> index 20cbca3..ce51759 100644
-> --- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> @@ -10,6 +10,9 @@ Required properties:
->  - clock-names: list of external oscillator clock names, must contain
->    "xtal_32k" and may have optional "xtal"
->  
-> +Optional properties:
-> +- xtal,clock-output-frequency: define the "xtal" clock frequency output in Hz
-> +
+> Should I apply this to clk-next or is someone (Shawn?) gathering patches
+> for a pull request?
 
-this one looks wrong in sense that from patch 1/2 the property configures
-a PLL output clock rate, which is not an oscillator (xtal) clock rate.
+Yes, I'm collecting i.MX clock patches for a pull request that will go
+to you later.
 
-I believe switching to "assigned-clock-rates" should make this change
-obsolete.
+Patch applied, thanks.
 
->  Examples:
->  
->  	/* System Control Block */
-> 
-
---
-With best wishes,
-Vladimir
+Shawn
