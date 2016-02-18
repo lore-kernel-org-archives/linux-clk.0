@@ -1,93 +1,45 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 6/6] clk: bcm2835: clean up coding style issues
-Date: Mon, 29 Feb 2016 11:39:22 +0000
-Message-Id: <1456745963-2403-7-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
-References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160218071403.11935.50948.sendpatchset@little-apple>
+References: <20160218071403.11935.50948.sendpatchset@little-apple>
+Date: Thu, 18 Feb 2016 09:01:00 +0100
+Message-ID: <CAMuHMdUf1JLv-JF3pojhWSyChHAv2sXdxE7Wzf5mvWeNhsou-A@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add INTC-EX clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Hi Magnus,
 
-Fix all the checkpatch complaints for clk-bcm2835.c
+On Thu, Feb 18, 2016 at 8:14 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Add the "intc-ex" clock to the r8a7795 CPG MSSR driver V2.
+>
+> According to information from the hardware team the INTC_EX
+> parent clock is CP. The next data sheet version will include
+> this information.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+That makes sense, as it matches R-Car Gen2.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index da77069..105a42f 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -12,9 +12,6 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
- /**
-@@ -300,7 +297,7 @@
- struct bcm2835_cprman {
- 	struct device *dev;
- 	void __iomem *regs;
--	spinlock_t regs_lock;
-+	spinlock_t regs_lock; /* spinlock for all clocks */
- 	const char *osc_name;
- 
- 	struct clk_onecell_data onecell;
-@@ -328,12 +325,12 @@ void __init bcm2835_init_clocks(void)
- 	int ret;
- 
- 	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
--					126000000);
-+				      126000000);
- 	if (IS_ERR(clk))
- 		pr_err("apb_pclk not registered\n");
- 
- 	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
--					3000000);
-+				      3000000);
- 	if (IS_ERR(clk))
- 		pr_err("uart0_pclk not registered\n");
- 	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
-@@ -341,7 +338,7 @@ void __init bcm2835_init_clocks(void)
- 		pr_err("uart0_pclk alias not registered\n");
- 
- 	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
--					125000000);
-+				      125000000);
- 	if (IS_ERR(clk))
- 		pr_err("uart1_pclk not registered\n");
- 	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
-@@ -1332,7 +1329,7 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- }
- 
- static int bcm2835_clock_determine_rate(struct clk_hw *hw,
--		struct clk_rate_request *req)
-+					struct clk_rate_request *req)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct clk_hw *parent, *best_parent = NULL;
-@@ -1390,7 +1387,6 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
- 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
- }
- 
--
- static const struct clk_ops bcm2835_clock_clk_ops = {
- 	.is_prepared = bcm2835_clock_is_on,
- 	.prepare = bcm2835_clock_on,
--- 
-1.7.10.4
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Will queue in clk-shmobile-for-v4.6.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
