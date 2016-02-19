@@ -1,65 +1,49 @@
 Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Joshua Henderson <joshua.henderson@microchip.com>,
+ linux-kernel@vger.kernel.org
 From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: lee.jones@linaro.org,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	maxime.coquelin@st.com,
-	geert@linux-m68k.org,
-	heiko@sntech.de,
-	andre.przywara@arm.com,
-	rklein@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH v42 5/6] clk: clk_put WARNs if user has not disabled clk
-Date: Thu, 11 Feb 2016 13:19:13 -0800
-Message-Id: <1455225554-13267-6-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1455899179-14097-3-git-send-email-joshua.henderson@microchip.com>
+Cc: linux-mips@linux-mips.org, ralf@linux-mips.org,
+ "Purna Chandra Mandal" <purna.mandal@microchip.com>,
+ "Joshua Henderson" <joshua.henderson@microchip.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+References: <1455899179-14097-1-git-send-email-joshua.henderson@microchip.com>
+ <1455899179-14097-3-git-send-email-joshua.henderson@microchip.com>
+Message-ID: <20160219201615.2278.2909@quark.deferred.io>
+Subject: Re: [PATCH v7 2/3] clk: clk-pic32: Add PIC32 clock driver
+Date: Fri, 19 Feb 2016 12:16:15 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
->From the clk_put kerneldoc in include/linux/clk.h:
+Quoting Joshua Henderson (2016-02-19 08:25:35)
+> +const struct clk_ops pic32_roclk_ops =3D {
+> +       .enable                 =3D roclk_enable,
+> +       .disable                =3D roclk_disable,
+> +       .is_enabled             =3D roclk_is_enabled,
+> +       .get_parent             =3D roclk_get_parent,
+> +       .set_parent             =3D roclk_set_parent,
+> +       .determine_rate         =3D roclk_determine_rate,
+> +       .recalc_rate            =3D roclk_recalc_rate,
+> +       .round_rate             =3D roclk_round_rate,
+> +       .set_rate_and_parent    =3D roclk_set_rate_and_parent,
+> +       .set_rate               =3D roclk_set_rate,
+> +       .init                   =3D roclk_init,
+> +};
 
-"""
-Note: drivers must ensure that all clk_enable calls made on this clock
-source are balanced by clk_disable calls prior to calling this function.
-"""
+You can remove .round_rate and only use .determine_rate.
 
-The common clock framework implementation of the clk.h api has per-user
-reference counts for calls to clk_prepare and clk_disable. As such it
-can enforce the requirement to properly call clk_disable and
-clk_unprepare before calling clk_put.
+...
+> +CLK_OF_DECLARE(pic32mzda_clk, "microchip,pic32mzda-clk", pic32mzda_clock=
+_init);
 
-Because this requirement is probably violated in many places, this patch
-starts with a simple warning. Once offending code has been fixed this
-check could additionally release the reference counts automatically.
+Can you make this a platform_driver instead of using CLK_OF_DECLARE? I
+asked this in v6 but there was no response.
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
----
-Changed in v2ish:
-  * s/WARN_ON/WARN_ON_ONCE/ to reduce noise for pm-clocks
+Regards,
+Mike
 
- drivers/clk/clk.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> -- =
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 01183e3..d81f970 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2824,6 +2824,14 @@ void __clk_put(struct clk *clk)
- 	    clk->max_rate < clk->core->req_rate)
- 		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
- 
-+	/*
-+	 * before calling clk_put, all calls to clk_prepare and clk_enable from
-+	 * a given user must be balanced with calls to clk_disable and
-+	 * clk_unprepare by that same user
-+	 */
-+	WARN_ON_ONCE(clk->prepare_count);
-+	WARN_ON_ONCE(clk->enable_count);
-+
- 	owner = clk->core->owner;
- 	kref_put(&clk->core->ref, __clk_release);
- 
--- 
-2.1.4
+> 1.7.9.5
+>=20
