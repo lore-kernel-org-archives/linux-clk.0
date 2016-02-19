@@ -1,49 +1,33 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	huangtao@rock-chips.com,
-	jay.xu@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/5] Add more clock compatible features and support the RK3399 clock
-Date: Mon, 29 Feb 2016 19:25:56 +0800
-Message-Id: <1456745161-12954-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Fri, 19 Feb 2016 16:48:44 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
+Message-ID: <20160219164844.GA19428@n2100.arm.linux.org.uk>
+References: <20160219030731.GS4847@codeaurora.org>
+ <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Feb 18, 2016 at 07:12:05PM -0800, Stephen Boyd wrote:
+> We mis-merged the original patch from Russell here and so the
+> patch went almost all the way, except that we still failed to
+> probe when there wasn't a clocks property in the DT node. Allow
+> that case by making a negative value from
+> of_clk_get_parent_count() into "no parents", like the original
+> patch did.
 
-Hi,
-  The patch series add support more mux parameters and multiple
-clock providers for the rockchip features of the clock framework,
-and support the clock controller for the RK3399.
-
-
-
-Xing Zheng (5):
-  clk: rockchip: add more mux parameters for new pll sources
-  clk: rockchip: Add support for multiple clock providers
-  clk: rockchip: add new pll-type for rk3399 and similar socs
-  clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
-  clk: rockchip: add clock controller for the RK3399
-
- drivers/clk/rockchip/Makefile     |    1 +
- drivers/clk/rockchip/clk-cpu.c    |   14 +-
- drivers/clk/rockchip/clk-pll.c    |  309 +++++++-
- drivers/clk/rockchip/clk-rk3036.c |   20 +-
- drivers/clk/rockchip/clk-rk3188.c |   54 +-
- drivers/clk/rockchip/clk-rk3228.c |   20 +-
- drivers/clk/rockchip/clk-rk3288.c |   22 +-
- drivers/clk/rockchip/clk-rk3368.c |   27 +-
- drivers/clk/rockchip/clk-rk3399.c | 1547 +++++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c        |  148 ++--
- drivers/clk/rockchip/clk.h        |   98 ++-
- 11 files changed, 2136 insertions(+), 124 deletions(-)
- create mode 100644 drivers/clk/rockchip/clk-rk3399.c
+NAK.  I'm not testing this patch, when I've already spent more than
+enough time (a) developing the original patch and testing that, and
+(b) re-diagnosing what's going wrong, and re-fixing the fuck up,
+and testing that fix.
 
 -- 
-1.7.9.5
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
