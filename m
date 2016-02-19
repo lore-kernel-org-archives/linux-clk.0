@@ -1,57 +1,52 @@
-Return-Path: <kernel@martin.sperl.org>
-Subject: Re: [PATCH V4 2/7] clk: bcm2835: clamp clock divider to highest
- integer only
-To: Eric Anholt <eric@anholt.net>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
- <1452867667-2447-3-git-send-email-kernel@martin.sperl.org>
- <87k2mo3tnm.fsf@eliezer.anholt.net>
-From: Martin Sperl <kernel@martin.sperl.org>
-Message-ID: <56B887FC.5070001@martin.sperl.org>
-Date: Mon, 8 Feb 2016 13:20:12 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 18 Feb 2016 18:36:45 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
+Message-ID: <20160219023645.GP4847@codeaurora.org>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+ <1436651307-24098-2-git-send-email-manabian@gmail.com>
+ <20150811204127.31346.16729@quantum>
+ <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
+ <20150818002604.31346.18322@quantum>
+ <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
+ <20160217005629.2278.90197@quark.deferred.io>
+ <CAGhQ9VzB_WgB8b4_c3Z17W+K2MC7Fq7SD9zEvZUN_UJVGDZ3Wg@mail.gmail.com>
+ <20160217202824.2278.25956@quark.deferred.io>
+ <CAGhQ9VxPt7FmE4JN_-rBJMNpLpGoKVKocVFPWc3siV29Pk0_mQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87k2mo3tnm.fsf@eliezer.anholt.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAGhQ9VxPt7FmE4JN_-rBJMNpLpGoKVKocVFPWc3siV29Pk0_mQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02/17, Joachim Eastwood wrote:
+> 
+> For creg-clk it would probably work.
+> 
+> cgu would need to register most of clocks early since it needs to
+> support whatever setup the bootloader throws at it. The only clocks
+> that could be taken out is the base clocks (clk_onecell_data
+> clk_base_data) except for one of them. But splitting this table would
+> be a bad idea as hw clk numbers are used as indexes for easy look up.
+> 
+> Come to think of it; isn't splitting the clock table between a early
+> init and platform driver going become a problem?
+> At least the lookup in the driver or framework would become more complex(?)
+> And won't you confuse the lookup?
+> If the early driver register one clock table with
+> of_clk_add_provider() and then sometime later the platform driver
+> register another clock table, both using the same of_node. How is that
+> suppose to work?
 
+I believe that should work, although I haven't tested it. The
+code looks until it finds a provider that matches the device node
+and gives us a valid clk pointer. If we don't get a valid pointer
+we keep looking for another provider until we exhaust all
+providers.
 
-On 02.02.2016 00:19, Eric Anholt wrote:
-> kernel@martin.sperl.org writes:
->
->> From: Martin Sperl <kernel@martin.sperl.org>
->>
->> The clock divider calculation right now clamps the
->> divider to the highest possible fractional divider.
->> So typically (BIT(div_int_bits) - 1) + 4095 / 4096.
->>
->> As the fractional clock divider is alterating between
->> (Fosc / div_int) and (Fosc / (div_int + 1))
->> the divider will overflow for the (div_int + 1) case.
->> As with the "underflow" case we have seen for (div < 2),
->> we can assume that the same applies on the upper limit
->> as well.
->>
->> So this patch will instead clamp to the divider to the
->> max of (BIT(div_int_bits) - 1)
->
-> Looks like this restriction might be necessary, though it's not quite
-> spelled out in the docs.
->
-> This also needs to be conditional on it being a MASH clock, and the
-> limit on the divider changes in the same way based on the mash number as
-> for the minimum.
->
-See:
-[PATCH V4 7/7] clk: bcm2835: apply limits on dividers to MASH mode.
-That "downgrades" to lower mash values in case we are out of range.
-Also note that it applies to MASH=1 as well.
-
-If the other (non mash-supported) clocks support this "better" (if it 
-works), then we can make that change only apply to mash enabled clocks.
-But so far I doubt it works correctly so I have applied those limits to
-all clocks.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
