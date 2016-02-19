@@ -1,98 +1,118 @@
-Return-Path: <slash.tmp@free.fr>
-Subject: Re: [PATCH RFC] tango4 clk rewrite
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Sebastian Frias <sf84@laposte.net>
-References: <56BE0F25.2040909@free.fr> <20160225220803.GK4847@codeaurora.org>
-From: Mason <slash.tmp@free.fr>
-Message-ID: <56D02E2F.1010908@free.fr>
-Date: Fri, 26 Feb 2016 11:51:27 +0100
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20160225220803.GK4847@codeaurora.org>
-Content-Type: text/plain; charset=ISO-8859-1
+To: Stephen Boyd <sboyd@codeaurora.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160219020333.GO4847@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
+ maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
+ geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
+ rklein@nvidia.com, linux-kernel@vger.kernel.org
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+ <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
+ <20160213011403.GI4847@codeaurora.org>
+ <20160215202734.2278.91610@quark.deferred.io>
+ <20160219020333.GO4847@codeaurora.org>
+Message-ID: <20160219173051.2278.51705@quark.deferred.io>
+Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
+Date: Fri, 19 Feb 2016 09:30:51 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Quoting Stephen Boyd (2016-02-18 18:03:33)
+> On 02/15, Michael Turquette wrote:
+> > Quoting Stephen Boyd (2016-02-12 17:14:03)
+> > > On 02/11, Michael Turquette wrote:
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index b4db67a..993f775 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, st=
+ruct clk *clk_user)
+> > > >       if (core->ops->init)
+> > > >               core->ops->init(core->hw);
+> > > >  =
 
-Thanks for taking a look. Hope either you or Michael will be
-available to discuss some of the issues you raised.
+> > > > +     if (core->flags & CLK_IS_CRITICAL) {
+> > > > +             clk_core_prepare(core);
+> > > > +             clk_core_enable(core);
+> > > > +     }
+> > > =
 
-On 25/02/2016 23:08, Stephen Boyd wrote:
+> > > What do we do if this is an orphan clk? From what I can tell
+> > > we're not going to increment the ref count on the parents that
+> > > may or may not appear at some later time when this flag is set.
+> > =
 
-> On 02/12, Mason wrote:
->
->> +#define FATAL(cond) if (cond) panic("Unsupported clkgen setup!\n")
-> 
-> Please just use BUG_ON instead.
+> > I don't see how this is any different than any other orphan clock.
+> > __clk_set_parent_before and __clk_set_parent_after should still handle
+> > migration and propagation of the {prepare,enable}_count when it is
+> > finally re-parented.
+> =
 
-The issue (from my POV) is that, AFAICT, BUG_ON() can be disabled.
-If one compiles a CONFIG_BUG=n kernel, then BUG_ON() is a NOP, right?
+> From what I can see we don't call __clk_set_parent_before() or
+> __clk_set_parent_after() when we're reparenting orphans to
+> registered clks. We just call clk_core_reparent() that does
 
-But, if the firmware set the clock generator up in a way not supported
-by the driver, then bad things will happen, should the kernel be allowed
-to proceed, so panic() here seems necessary.
+I realized that after sending this reply and I've started to try and fix
+it locally. The idea is for calls to clk_core_{prepare,enable} to
+propagate their ref counts even if a clk is an orphan, which handles
+critical and handoff clocks. Then when we reparent an orphan clk, we
+propagate the refcount up at that time.
 
->> +#define PLL_N(v)	extract(v,  0, 7)
->> +#define PLL_K(v)	extract(v, 13, 3)
->> +#define PLL_M(v)	extract(v, 16, 3)
->> +#define PLL_ISEL(v)	extract(v, 24, 3)
-> 
-> I would have left it like it is, but made it lower case to
-> signify "function" and not "constant".
+However, any clk consumers calling clk_{prepare,enable} when a clk is an
+orphan will get an error code. This allows drivers to -EPROBE_DEFER when
+enabling their clk fails inside of .probe().
 
-OK, I can change the function-macros to lower case.
+It is also a different strategy than Heiko's patch set from last year
+which returned an error while get'ing a clk that is an orphan. I think
+its fine to have the pointer to the orphan clk, but operations on that
+clk must fail until it is no longer an orphan.
 
-> #define pll_n(val)	((val) & 0x7f)
-> #define pll_k(val)	(((val) >> 13) & 0x7)
-> #define pll_m(val)	(((val) >> 16) & 0x7)
-> #define pll_isel(val)	(((val) >> 24) & 0x7)
-> 
-> Note how I didn't use _another_ macro to make writing the
-> shifting and anding logic common. That's because I'd like to know
-> what the pll_n "function" does without having to go through
-> another macro that does little but obscure the code.
+Thoughts?
 
-My rationale was: the documentation specifies offset and width
-for the fields. And the code should mirror the documentation
-(leaving the arithmetic to the compiler).
+Regards,
+Mike
 
-BTW, my preferred version used bit-fields:
-#define REG(name, ...) union name { struct { u32 __VA_ARGS__; }; u32 val; }
-REG(SYS_clkgen_pll, N:7, :6, K:3, M:3, :5, Isel:3, :3, T:1, B:1);
+> mostly a list manipulation and recalc down the tree (BTW we
+> probably shouldn't recalc at all if a clk is still orphaned
+> because the rate is totally bogus).
+> =
 
-But you wrote:
-"This is new to me. Using bitfields like this is not really a good
-idea though. Please just use masks, shifts, etc. instead."
+> > =
 
-IMHO, this is one place where bit-fields /are/ in fact useful.
+> > (as an aside, that code conditionally calls clk_prepare AND clk_enable
+> > based solely on the prepare refcount, which seems weird to me...)
+> =
 
-> And to make things even clearer, maybe calling them
-> extract_pll_n(), extract_pll_k(), etc. would make it clear from
-> the calls sites that we're extracting the pll n and pll k values
-> without having to look at the macro definitions.
+> Yeah I think I was questioning why we need to call clk_enable()
+> there too so we should probably revisit this topic in another
+> thread.
+> =
 
-OK, I can change the names.
+> > =
 
->> +	div = (1 << 28) + readl_relaxed(base + idx*8);
-> 
-> Please add spaces around '*'. Also, just do it on two lines.
-> 
-> 	div = 1 << 28;
-> 	div += readl_relaxed(base + idx * 8)
+> > > Furthermore, do we want to propagate the CLK_IS_CRITICAL flag up
+> > > to all the parent clocks so that the warning mechanism spits out
+> > > errors for parent clocks? I suppose that may not be very useful
+> > > assuming refcounts are correct, but it may be useful to know
+> > > which clocks are critical and which ones aren't during debug.
+> > =
 
-Is that because of the function-like macro?
+> > No, propagating flags is a bad idea. Existing prepare/enable ref counts
+> > should do the job for us.
+> > =
 
->> +	FATAL(readl_relaxed(base + CPUCLK_DIV) & BIT(23));
->> +	FATAL(readl_relaxed(base + SYSCLK_DIV) & BIT(23));
-> 
-> BUG_ON would read much better here. Plus a comment on what
-> BIT(23) means or a macro definition of it would make it clear
-> what we're testing for.
+> > Regarding debug, propagating the flag will hurt debug-ability. We
+> > already expose the clk_core->flags in sysfs, and debuggers can grep for
+> > the CRITICAL flag there to find any spuriously enabled clocks.
+> > =
 
-There is a problem if BUG_ON() is a NOP.
+> =
 
-I can indeed define BIT(23) as BYPASS_ENABLE.
+> Awesome.
+> =
 
-Thanks again for reviewing, hope to hear back from you.
+> -- =
 
-Regards.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
