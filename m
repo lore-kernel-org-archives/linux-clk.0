@@ -1,108 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Joshua Henderson <joshua.henderson@microchip.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
+In-Reply-To: <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+References: <20160219030731.GS4847@codeaurora.org>
+	<1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+Date: Fri, 19 Feb 2016 08:18:50 -0800
+Message-ID: <CAEG3pNAee6e7nnnCB334zecADV58yfcJ5azUjALHaDP40B_pLQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1454966902-15228-2-git-send-email-joshua.henderson@microchip.com>
-Cc: "Purna Chandra Mandal" <purna.mandal@microchip.com>,
- "Joshua Henderson" <joshua.henderson@microchip.com>,
- "Ralf Baechle" <ralf@linux-mips.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, linux-clk@vger.kernel.org
-References: <1454966902-15228-1-git-send-email-joshua.henderson@microchip.com>
- <1454966902-15228-2-git-send-email-joshua.henderson@microchip.com>
-Message-ID: <20160209010246.26445.78949@quark.deferred.io>
-Subject: Re: [PATCH v6 2/2] clk: clk-pic32: Add PIC32 clock driver
-Date: Mon, 08 Feb 2016 17:02:46 -0800
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+	Russell King <rmk+kernel@arm.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Joshua,
+On Thu, Feb 18, 2016 at 7:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>
+> We mis-merged the original patch from Russell here and so the
+> patch went almost all the way, except that we still failed to
+> probe when there wasn't a clocks property in the DT node. Allow
+> that case by making a negative value from
+> of_clk_get_parent_count() into "no parents", like the original
+> patch did.
+>
+> Fixes: 7ed88aa2efa5 ("clk: fix clk-gpio.c with optional clock= DT property")
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Quoting Joshua Henderson (2016-02-08 13:28:17)
-> +static const struct of_device_id pic32_clk_match[] __initconst =3D {
-> +       {
-> +               .compatible =3D "microchip,pic32mzda-refoclk",
-> +               .data =3D of_refo_clk_setup,
-> +       },
-> +       {
-> +               .compatible =3D "microchip,pic32mzda-pbclk",
-> +               .data =3D of_periph_clk_setup,
-> +       },
-> +       {
-> +               .compatible =3D "microchip,pic32mzda-syspll",
-> +               .data =3D of_sys_pll_setup,
-> +       },
-> +       {
-> +               .compatible =3D "microchip,pic32mzda-sosc",
-> +               .data =3D of_sosc_clk_setup,
-> +       },
-> +       {
-> +               .compatible =3D "microchip,pic32mzda-frcdivclk",
-> +               .data =3D of_frcdiv_setup,
-> +       },
-> +       {
-> +               .compatible =3D "microchip,pic32mzda-sysclk-v2",
-> +               .data =3D of_sys_mux_setup,
-> +       },
-> +       {}
-> +};
+Ack.
 
-As I mentioned in my review of the DT binding, instead of having a bunch
-of compatible strings for stuff that is inside of your SoC, you should
-have clock generator nodes in DT, and put the actual clock data here in
-your driver. You might only need one node, perhaps a second for the
-USBPLL.
-
-In your case this would result in static inits of struct pic32_spll,
-struct pic32_sclk, etc.
-
-I'm guessing you have a lot of derivative chips with slightly different
-clock trees? If so you should create a drivers/clk/pic32 directory. The
-code in this patch could be common code re-used by your derivatives and
-then you could store your clock data as a platform_driver in the same
-directory that inits the static data and uses these common clk_ops
-functions.
-
-Each chip derivative would have a new compatible string, instead of each
-clock node having a compatible string, which makes no sense.
-
-> +static void __init of_pic32_soc_clock_init(struct device_node *np)
-> +{
-> +       void (*clk_setup)(struct device_node *);
-> +       const struct of_device_id *clk_id;
-> +       struct device_node *childnp;
-> +
-> +       pic32_clk_regbase =3D of_io_request_and_map(np, 0, of_node_full_n=
-ame(np));
-> +       if (IS_ERR(pic32_clk_regbase))
-> +               panic("pic32-clk: failed to map registers\n");
-> +
-> +       for_each_child_of_node(np, childnp) {
-> +               clk_id =3D of_match_node(pic32_clk_match, childnp);
-> +               if (!clk_id)
-> +                       continue;
-> +               clk_setup =3D clk_id->data;
-> +               clk_setup(childnp);
-> +       }
-> +
-> +       /* register failsafe-clock-monitor NMI */
-> +       register_nmi_notifier(&failsafe_clk_notifier);
-> +}
-> +
-> +CLK_OF_DECLARE(pic32_soc_clk, "microchip,pic32mzda-clk",
-> +              of_pic32_soc_clock_init);
-
-I hate CLK_OF_DECLARE. Sometimes we absolutely must live with
-it, but most of the time you can create a proper platform_driver that
-gets probed and registers its clocks from within the Linux Driver Model.
-
-Please try to make this into a platform_driver. You requested an example
-in V5, so please see:
-
-drivers/clk/qcom/gcc-apq8084.c
-
-Best regards,
+Regards,
 Mike
+
+> ---
+>  drivers/clk/clk-gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 19fed65587e8..7b09a265d79f 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -289,7 +289,7 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+>
+>         num_parents = of_clk_get_parent_count(node);
+>         if (num_parents < 0)
+> -               return;
+> +               num_parents = 0;
+>
+>         data = kzalloc(sizeof(*data), GFP_KERNEL);
+>         if (!data)
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
+
+
+
+-- 
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
