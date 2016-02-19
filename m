@@ -1,76 +1,80 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] clk: sunxi: Improve divs_clk error handling and reporting
-Date: Fri, 12 Feb 2016 15:11:53 +0000
-Message-Id: <1455289913-29514-4-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
-References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v2 1/2] clk: add device tree binding for Artpec-6 clock controller
+Date: Fri, 19 Feb 2016 15:30:14 +0100
+Message-Id: <fd330ff1346758966260cb2bcddd8d3fbff49704.1455891890.git.larper@axis.com>
+In-Reply-To: <cover.1455891890.git.larper@axis.com>
+References: <cover.1455891890.git.larper@axis.com>
+In-Reply-To: <cover.1455891890.git.larper@axis.com>
+References: <cover.1455891890.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We catch errors in the base clock registration, failure to ioremap
-and failures in the final of_clk_add_provider() call.
-Also we unmap the registers when we need to rollback.
+Add device tree documentation for the main clock controller in the
+Artpec-6 SoC.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Lars Persson <larper@axis.com>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 1ac6c9e0..48ed81d 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -987,13 +987,20 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 
- 	/* Set up factor clock that we will be dividing */
- 	pclk = sunxi_factors_clk_setup(node, data->factors);
-+	if (!pclk)
-+		return NULL;
- 	parent = __clk_get_name(pclk);
- 
- 	reg = of_iomap(node, 0);
-+	if (!reg) {
-+		pr_err("Could not map registers for divs-clk: %s\n",
-+		       node->name);
-+		return NULL;
-+	}
- 
- 	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
- 	if (!clk_data)
--		return NULL;
-+		goto out_unmap;
- 
- 	clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
-@@ -1076,9 +1083,10 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 	/* Adjust to the real max */
- 	clk_data->clk_num = i;
- 
--	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (!of_clk_add_provider(node, of_clk_src_onecell_get, clk_data))
-+		return clks;
- 
--	return clks;
-+	pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
- 
- free_gate:
- 	kfree(gate);
-@@ -1086,6 +1094,8 @@ free_clks:
- 	kfree(clks);
- free_clkdata:
- 	kfree(clk_data);
-+out_unmap:
-+	iounmap(reg);
- 	return NULL;
- }
- 
+diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+new file mode 100644
+index 0000000..76e3e7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+@@ -0,0 +1,41 @@
++* Clock bindings for Axis ARTPEC-6 chip
++
++The bindings are based on the clock provider binding in
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++External clocks:
++----------------
++
++There are two external inputs to the main clock controller which should be
++provided using the common clock bindings.
++- "sys_refclk": External 50 Mhz oscillator (required)
++- "i2s_refclk": Alternate audio reference clock (optional).
++
++Main clock controller
++---------------------
++
++Required properties:
++- #clock-cells: Should be <1>
++  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
++- compatible: Should be "axis,artpec6-clkctrl"
++- reg: Must contain the base address and length of the system controller
++- clocks:  Must contain a phandle entry for each clock in clock-names
++- clock-names: Must include the external oscillator ("sys_refclk"). Optional
++  ones are the audio reference clock ("i2s_refclk") and the audio fractional
++  divider ("frac_clk").
++
++Examples:
++
++ext_clk: ext_clk {
++	#clock-cells = <0>;
++	compatible = "fixed-clock";
++	clock-frequency = <50000000>;
++};
++
++clkctrl: clkctrl {
++	#clock-cells = <1>;
++	compatible = "axis,artpec6-clkctrl";
++	reg = <0xf8000000 0x48>;
++	clocks = <&ext_clk>;
++	clock-names = "sys_refclk";
++};
 -- 
-2.6.4
+2.1.4
