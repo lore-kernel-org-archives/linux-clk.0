@@ -1,56 +1,45 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20160225005644.GC4736@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
-	<CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
-	<20160211123648.GN31506@lukather>
-	<CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
-	<20160211151246.GO31506@lukather>
-	<CACRpkdb7=x2bJP1nXpF2bP3U0t+NUHiuw_aeTAhbR8OXOrHn6A@mail.gmail.com>
-	<20160225005644.GC4736@lukather>
-Date: Thu, 25 Feb 2016 15:49:13 +0100
-Message-ID: <CACRpkdYQasUpLhJU16F3_GG7-wKt=wvb1Qqu2cJ62pCHLSii=g@mail.gmail.com>
-Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH] clk: gpio: Really allow an optional clock= DT property
+Date: Thu, 18 Feb 2016 19:12:05 -0800
+Message-Id: <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <20160219030731.GS4847@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 1:56 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
+We mis-merged the original patch from Russell here and so the
+patch went almost all the way, except that we still failed to
+probe when there wasn't a clocks property in the DT node. Allow
+that case by making a negative value from
+of_clk_get_parent_count() into "no parents", like the original
+patch did.
 
-> Hi Linus,
-> On Tue, Feb 16, 2016 at 12:23:37AM +0100, Linus Walleij wrote:
->> On Thu, Feb 11, 2016 at 4:12 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > On Thu, Feb 11, 2016 at 02:47:57PM +0100, Linus Walleij wrote:
->>
->> >> Can you guys supply a MAINTAINERS entry for the sunxi
->> >> stuff?
->> >
->> > We have one, and Chen-Yu is listed as co-maintainer:
->> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n911
->>
->> Modified request:
->> can you put in F: wildcards there to match the files pertaining to
->> the sunxi platform, so that scripts/find-maintainer.pl finds them.
->
-> I don't really know what you mean, on my laptop, if I run it, I get
-> the following result:
+Fixes: 7ed88aa2efa5 ("clk: fix clk-gpio.c with optional clock= DT property")
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OK the file is listed under SoC support, that works too.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 19fed65587e8..7b09a265d79f 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -289,7 +289,7 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+ 	if (num_parents < 0)
+-		return;
++		num_parents = 0;
+ 
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
