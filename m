@@ -1,76 +1,54 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 10 Feb 2016 22:28:21 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- "Gregory CLEMENT" <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] clk: mvebu: Require corediv clock for Armada 38x
-Message-ID: <20160210222821.51cfd91f@free-electrons.com>
-In-Reply-To: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <festevam@gmail.com>
+Return-Path: <festevam@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+To: mturquette@baylibre.com
+Cc: sboyd@codeaurora.org,
+	linux@arm.linux.org.uk,
+	linux-clk@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH] clk: gpio: Fix buggy merge
+Date: Fri, 19 Feb 2016 15:29:16 -0200
+Message-Id: <1455902956-10016-1-git-send-email-festevam@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear Kevin Smith,
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-On Wed, 10 Feb 2016 20:41:13 +0000, Kevin Smith wrote:
-> The corediv clock driver is required for the pxa3xx_nand driver,
-> but is not included in the ARMADA_38X_CLK config.  Add
-> MVEBU_CLK_COREDIV as a dependency of ARMADA_38X_CLK.
-> 
-> Without the corediv driver, nand initialization fails with the
-> message:
-> 
-> pxa3xx-nand f10d0000.flash: failed to get nand clock
-> pxa3xx-nand f10d0000.flash: alloc nand resource failed
-> 
-> With corediv enabled, flash is successfully detected.
-> 
-> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  drivers/clk/mvebu/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-> index 2769625..1107056 100644
-> --- a/drivers/clk/mvebu/Kconfig
-> +++ b/drivers/clk/mvebu/Kconfig
-> @@ -20,6 +20,7 @@ config ARMADA_375_CLK
->  config ARMADA_38X_CLK
->  	bool
->  	select MVEBU_CLK_COMMON
-> +	select MVEBU_CLK_COREDIV
+Clock maintainer mis-merged Russell King's commit 7ed88aa2efa54
+("clk: fix clk-gpio.c with optional clock= DT property")
+causing the gpio-gate-clock not to be registered.
 
-Thanks for the patch!
+Adjust the code, so that it looks like Russell's original submission.
 
-I believe there are some more issues in this Kconfig file:
+With this fix in place, Wifi chip can be successfully probed on a
+imx6q-cubox-i.
 
- - The ARMADA_XP_CLK option selects MVEBU_CLK_COREDIV but there is no
-   corediv clock on Armada XP.
+Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/clk-gpio.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
- - The ARMADA_375_CLK should also select MVEBU_CLK_COREDIV.
-
-However, technically speaking, building ARMADA_38X_CLK or
-ARMADA_375_CLK does not require building clk-corediv.c, it only needs
-common.c. So maybe instead we should change arch/arm/mach-mvebu/Kconfig
-to have MACH_ARMADA_xxx select MVEBU_CLK_COREDIV when needed.
-
-But maybe I'm being overly pedantic here, and your solution is good
-enough. I don't have a strong opinion on this.
-
-But if we go with your solution, then I'd like to fix the Armada XP and
-Armada 375 cases as well.
-
-Thanks!
-
-Thomas
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 19fed65..05cca92 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -287,15 +287,12 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+ 	const char **parent_names;
+ 	int i, num_parents;
+ 
+-	num_parents = of_clk_get_parent_count(node);
+-	if (num_parents < 0)
+-		return;
+-
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return;
+ 
+-	if (num_parents) {
++	num_parents = of_clk_get_parent_count(node);
++	if (num_parents > 0) {
+ 		parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+ 		if (!parent_names) {
+ 			kfree(data);
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
