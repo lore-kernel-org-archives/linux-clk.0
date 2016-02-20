@@ -1,24 +1,50 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: edubezval@gmail.com, huangtao@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 1/8] clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
-Date: Fri, 26 Feb 2016 02:12:33 +0100
-Message-ID: <2572098.0f5Ay4XA4n@phil>
-In-Reply-To: <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com> <1455521613-27340-2-git-send-email-wxt@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/2] CREG clk driver for NXP LPC18xx family
+Date: Sat, 20 Feb 2016 19:53:35 +0100
+Message-Id: <1455994417-4471-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 15. Februar 2016, 15:33:26 schrieb Caesar Wang:
-> This patch adds 'SCLK_TSADC' and 'PCLK_TSADC' id found on rk3228 SoCs.
-> That will be needed by TSADC controller.
-> 
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+This patch set adds a clk driver for the low power clocks found in
+the CREG block on lpc18xx. CREG is a collection of miscellaneous
+configuration registers that can be accessed through a syscon
+regmap interface. The clk driver makes it possible to setup and
+enabled these two clocks.
 
-applied to my clk-branch with Mike's Ack
+This need to support peripherals like the internal RTC on the
+lpc18xx platform.
+
+Mike/Stephen is this what you envisioned?
+It seems to work, but I currently don't have a setup that requires
+the 32khz clock early so that part isn't really tested.
+
+The probe deferral seems to work for the RTC:
+[    3.386861] lpc24xx-rtc 40046000.rtc: error getting rtc clock
+[    6.737615] lpc24xx-rtc 40046000.rtc: rtc core: registered lpc24xx-rtc as rtc0
 
 
-Thanks
-Heiko
+Changes since v1:
+ - Split driver with one early init and one platform driver
+   probe.
+
+Based on v4.5-rc1.
+
+Joachim Eastwood (2):
+  clk: add lpc18xx creg clk driver
+  doc: dt: add documentation for lpc1850-creg-clk driver
+
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 ++++++
+ drivers/clk/nxp/Makefile                           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c                 | 205 +++++++++++++++++++++
+ 3 files changed, 258 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
+
+-- 
+1.8.0
