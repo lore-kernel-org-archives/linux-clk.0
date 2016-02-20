@@ -1,170 +1,258 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Jens Kuske <jenskuske@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 4/8] clk: sunxi: add generic multi-parent bus clock gates driver
-Date: Wed, 17 Feb 2016 11:43:56 +0000
-Message-Id: <1455709440-8668-5-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455709440-8668-1-git-send-email-andre.przywara@arm.com>
-References: <1455709440-8668-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <plaes@plaes.org>
+Message-ID: <1455975941.10551.3.camel@plaes.org>
+Subject: Re: [linux-sunxi] [PATCH v2 00/26] drm: Add Allwinner A10 display
+ engine support
+From: Priit Laes <plaes@plaes.org>
+To: maxime.ripard@free-electrons.com, Mike Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, David
+ Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+ Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods
+ <wynter@nextthing.co>,  Thomas Petazzoni
+ <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Date: Sat, 20 Feb 2016 15:45:41 +0200
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: 
+	<1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner H3 SoC introduced bus clock gates with potentially
-different parents per clock gate. The H3 driver chose to hardcode the
-actual parent clock relation in the code.
-Add a new driver (which has the potential to drive the H3 and also
-the simple clock gates as well) which uses the power of DT to describe
-this relationship in an elegant and flexible way.
-Using one subnode for every parent clock we get away with a single
-DT compatible match, which can be used as a fallback value in the
-actual DTs without the need to add specific compatible strings to the
-code.  This avoids adding a new driver or function for every new SoC.
+On Thu, 2016-01-14 at 16:24 +0100, Maxime Ripard wrote:
+> Hi everyone,
+> 
+> The Allwinner SoCs (except for the very latest ones) all share the
+> same set of controllers, loosely coupled together to form the display
+> pipeline.
+> 
+> Depending on the SoC, the number of instances of the controller will
+> change (2 instances of each in the A10, only one in the A13, for
+> example), and the output availables will change too (HDMI, composite,
+> VGA on the A20, none of them on the A13).
+> 
+> On most featured SoCs, it looks like that:
+> 
+>  +--------------------------------------------+
+>  |                    RAM                     |
+>  +--------------------------------------------+
+>        |            |      |            |
+>        v            |      |            v
+>  +----------------+ |      | +----------------+
+>  |    Frontend    | |      | |    Frontend    |
+>  +----------------+ |      | +----------------+
+>          |          |      |         |
+>          v          |      |         v
+>  +----------------+ |      | +----------------+
+>  |    Backend     |<+      +>|    Backend     |
+>  +----------------+          +----------------+
+>          |                           |
+>          v                           v
+>  +----------------+          +----------------+---> LVDS
+>  |      TCON      |          |      TCON      |---> RGB
+>  +----------------+          +----------------+
+>        |       +---+       +---+          |
+>        |           |       |              |
+>        v           v       v              v
+>  +------------+  +------------+  +------------+---> VGA
+>  | TV Encoder |  |    HDMI    |  | TV Encoder |---> Composite
+>  +------------+  +------------+  +------------+
+> 
+> The current code only assumes that there is a single instance of all
+> the controllers. It also supports only the RGB and Composite
+> interfaces.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Jean-Francois Moine <moinejf@free.fr>
----
- drivers/clk/sunxi/Makefile          |   1 +
- drivers/clk/sunxi/clk-multi-gates.c | 105 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-multi-gates.c
+I found some time to play with it (with intention to get it running
+also on sun7i and sun4i) and ran into this when trying to build
+sun4i_drm as module:
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 3fd7901..3a9dc31 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -11,6 +11,7 @@ obj-y += clk-a10-ve.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
- obj-y += clk-simple-gates.o
-+obj-y += clk-multi-gates.o
- obj-y += clk-sun8i-bus-gates.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
-diff --git a/drivers/clk/sunxi/clk-multi-gates.c b/drivers/clk/sunxi/clk-multi-gates.c
-new file mode 100644
-index 0000000..76e715a
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-multi-gates.c
-@@ -0,0 +1,105 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ *
-+ * Based on clk-sun8i-bus-gates.c, which is:
-+ *  Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
-+ * Based on clk-simple-gates.c, which is:
-+ *  Copyright 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+static DEFINE_SPINLOCK(gates_lock);
-+
-+static void __init sunxi_parse_parent(struct device_node *node,
-+				      struct clk_onecell_data *clk_data,
-+				      void __iomem *reg)
-+{
-+	const char *parent = of_clk_get_parent_name(node, 0);
-+	const char *clk_name;
-+	struct property *prop;
-+	struct clk *clk;
-+	const __be32 *p;
-+	int index, i = 0;
-+
-+	of_property_for_each_u32(node, "clock-indices", prop, p, index) {
-+		of_property_read_string_index(node, "clock-output-names",
-+					      i, &clk_name);
-+
-+		clk = clk_register_gate(NULL, clk_name, parent, 0,
-+					reg + 4 * (index / 32), index % 32,
-+					0, &gates_lock);
-+		i++;
-+		if (IS_ERR(clk)) {
-+			pr_warn("could not register gate clock \"%s\"\n",
-+				clk_name);
-+			continue;
-+		}
-+		if (clk_data->clks[index])
-+			pr_warn("bus-gate clock %s: index #%d already registered as %s\n",
-+				clk_name, index, "?");
-+		else
-+			clk_data->clks[index] = clk;
-+	}
-+}
-+
-+static void __init sunxi_multi_bus_gates_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *child;
-+	struct property *prop;
-+	struct resource res;
-+	void __iomem *reg;
-+	const __be32 *p;
-+	int number = 0;
-+	int index;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
-+	if (!clk_data)
-+		goto err_unmap;
-+
-+	for_each_child_of_node(node, child)
-+		of_property_for_each_u32(child, "clock-indices", prop, p, index)
-+			number = max(number, index);
-+
-+	clk_data->clks = kcalloc(number + 1, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clk_data->clks)
-+		goto err_free_data;
-+
-+	for_each_child_of_node(node, child)
-+		sunxi_parse_parent(child, clk_data, reg);
-+
-+	clk_data->clk_num = number + 1;
-+	if (of_clk_add_provider(node, of_clk_src_onecell_get, clk_data))
-+		pr_err("registering bus-gate clock %s failed\n", node->name);
-+
-+	return;
-+
-+err_free_data:
-+	kfree(clk_data);
-+err_unmap:
-+	iounmap(reg);
-+	of_address_to_resource(node, 0, &res);
-+	release_mem_region(res.start, resource_size(&res));
-+}
-+
-+CLK_OF_DECLARE(sunxi_multi_bus_gates, "allwinner,sunxi-multi-bus-gates-clk",
-+	       sunxi_multi_bus_gates_init);
--- 
-2.6.4
+ERROR: "sun4i_tcon1_mode_set" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
+ERROR: "sun4i_backend_apply_color_correction" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
+ERROR: "sun4i_tcon_channel_disable" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
+ERROR: "sun4i_tcon_channel_enable" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
+ERROR: "clk_unregister_composite" [drivers/gpu/drm/sun4i/sun4i_tcon.ko] undefined!
+ERROR: "sun4i_rgb_init" [drivers/gpu/drm/sun4i/sun4i_tcon.ko] undefined!
+ERROR: "clk_register_composite" [drivers/gpu/drm/sun4i/sun4i_tcon.ko] undefined!
+ERROR: "sun4i_backend_update_layer_coord" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_backend_update_layer_formats" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_tcon_channel_disable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_tcon_enable_vblank" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_backend_update_layer_buffer" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_backend_layer_enable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_tcon_channel_enable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_tcon_enable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_tcon_disable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_tcon0_mode_set" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+ERROR: "sun4i_backend_commit" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+scripts/Makefile.modpost:91: recipe for target '__modpost' failed
+
+
+
+> 
+> Let me know what you think,
+> Maxime
+> 
+> Changes from v1:
+>   - Rebased on top of 4.4
+> 
+>   - Merged the clock drivers for the display and TCON channel 0
+> clocks
+>   - Replaced the container_of calls in the display reset clocks to an
+>     inline function
+>   - Checked the return code of of_clk_parent_fill in the clocks
+>     drivers
+>   - Checked the return code of of_clk_add_provider in the tcon-ch1
+> and
+>     PLL3 clocks
+>   - Added missing clocks headers
+>   - Created a composite clock unregister function
+> 
+>   - Moved the binding documentation to
+>     Documentation/devicetree/bindings/display
+>   - Added the clocks binding documentation
+>   - Added the Olimex vendor to the list of DT vendors
+>   - Moved to the OF graph representation and the component framework
+> 
+>   - Moved the reset cells count check into the reset framework to
+>     avoid duplicating the code in every xlate implementation.
+>   - Made the reset_ops const
+> 
+>   - Reworked the DRM cmdline mode parsing code to allow named mode
+>   - Fixed the TV mode lookup when the mode name is not present (for
+>     example because it was given by the userspace)
+> 
+>   - Made the driver outputs optional (to avoid crashing when a board
+>     doesn't have either a panel or a composite output enabled)
+>   - Added multiple plane support with transparency
+>   - Moved the backend registers writes commit in the CRTC
+> atomic_flush
+>     callback
+>   - Removed the load / unload functions
+>   - Removed the enabled booleans in my private structure and removed
+>     the implicit call to disable_unused_functions in the DRM core to
+>     push it in the drivers.
+>   - Fixed a few bitmasks on some bitfields definition
+>   - Fixed the RGB connector mode validation that was not testing the
+>     right values
+> 
+> Matthias Brugger (1):
+>   clk: Add regmap support
+> 
+> Maxime Ripard (25):
+>   reset: Move DT cell size check to the core
+>   reset: Make reset_control_ops const
+>   clk: composite: Add unregister function
+>   clk: sunxi: Add display and TCON0 clocks driver
+>   clk: sunxi: Add PLL3 clock
+>   clk: sunxi: Add TCON channel1 clock
+>   clk: sun5i: add DRAM gates
+>   ARM: sun5i: dt: Add pll3 and pll7 clocks
+>   ARM: sun5i: a13: Add display and TCON clocks
+>   ARM: sun5i: Add DRAM gates
+>   ARM: sun5i: Add TV encoder gate to the DTSI
+>   drm/fb_cma_helper: Remove implicit call to disable_unused_functions
+>   drm/modes: Rewrite the command line parser
+>   drm/modes: Support modes names on the command line
+>   drm: Add Allwinner A10 Display Engine support
+>   drm: sun4i: Add DT bindings documentation
+>   drm: sun4i: Add RGB output
+>   drm: sun4i: Add composite output
+>   drm: sun4i: tv: Add PAL output standard
+>   drm: sun4i: tv: Add NTSC output standard
+>   ARM: sun5i: r8: Add display blocks to the DTSI
+>   ARM: sun5i: chip: Enable the TV Encoder
+>   devicetree: Add olimex vendor prefix
+>   drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
+>   DO NOT MERGE: ARM: sun5i: chip: Enable the LCD panel
+> 
+>  Documentation/devicetree/bindings/clock/sunxi.txt  |   5 +
+>  .../display/panel/olimex,lcd-olinuxino-43-ts.txt   |   7 +
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++
+>  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+>  arch/arm/boot/dts/sun5i-a10s.dtsi                  |   7 +-
+>  arch/arm/boot/dts/sun5i-a13.dtsi                   |  46 +-
+>  arch/arm/boot/dts/sun5i-r8-chip.dts                |  17 +
+>  arch/arm/boot/dts/sun5i-r8.dtsi                    | 139 ++++-
+>  arch/arm/boot/dts/sun5i.dtsi                       |  62 ++
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/clk-composite.c                        |  15 +
+>  drivers/clk/clk-divider.c                          |  68 ++-
+>  drivers/clk/clk-gate.c                             |  54 +-
+>  drivers/clk/clk-io.c                               |  48 ++
+>  drivers/clk/clk-io.h                               |  22 +
+>  drivers/clk/clk-mux.c                              |  94 ++-
+>  drivers/clk/sunxi/Makefile                         |   3 +
+>  drivers/clk/sunxi/clk-simple-gates.c               |   2 +
+>  drivers/clk/sunxi/clk-sun4i-display.c              | 241 ++++++++
+>  drivers/clk/sunxi/clk-sun4i-pll3.c                 |  90 +++
+>  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c             | 154 +++++
+>  drivers/gpu/drm/Kconfig                            |   2 +
+>  drivers/gpu/drm/Makefile                           |   3 +-
+>  drivers/gpu/drm/drm_crtc.c                         |   3 +-
+>  drivers/gpu/drm/drm_fb_cma_helper.c                |   3 -
+>  drivers/gpu/drm/drm_fb_helper.c                    |   4 +
+>  drivers/gpu/drm/drm_modes.c                        | 327 ++++++----
+>  drivers/gpu/drm/imx/imx-drm-core.c                 |   1 +
+>  drivers/gpu/drm/panel/panel-simple.c               |  26 +
+>  drivers/gpu/drm/sti/sti_drv.c                      |   1 +
+>  drivers/gpu/drm/sun4i/Kconfig                      |  14 +
+>  drivers/gpu/drm/sun4i/Makefile                     |  12 +
+>  drivers/gpu/drm/sun4i/sun4i_backend.c              | 321 ++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_backend.h              | 160 +++++
+>  drivers/gpu/drm/sun4i/sun4i_crtc.c                 | 120 ++++
+>  drivers/gpu/drm/sun4i/sun4i_crtc.h                 |  30 +
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                  | 325 ++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_drv.h                  |  30 +
+>  drivers/gpu/drm/sun4i/sun4i_framebuffer.c          |  54 ++
+>  drivers/gpu/drm/sun4i/sun4i_framebuffer.h          |  19 +
+>  drivers/gpu/drm/sun4i/sun4i_layer.c                | 160 +++++
+>  drivers/gpu/drm/sun4i/sun4i_layer.h                |  30 +
+>  drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 229 +++++++
+>  drivers/gpu/drm/sun4i/sun4i_rgb.h                  |  18 +
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 521
+> ++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h                 | 177 ++++++
+>  drivers/gpu/drm/sun4i/sun4i_tv.c                   | 675
+> +++++++++++++++++++++
+>  drivers/gpu/drm/tilcdc/tilcdc_drv.c                |   1 +
+>  drivers/reset/core.c                               |   6 +-
+>  include/drm/drm_modes.h                            |   1 +
+>  include/linux/clk-provider.h                       |  55 +-
+>  include/linux/reset-controller.h                   |   2 +-
+>  52 files changed, 4455 insertions(+), 179 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino-
+> 43-ts.txt
+>  create mode 100644
+> Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>  create mode 100644 drivers/clk/clk-io.c
+>  create mode 100644 drivers/clk/clk-io.h
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+>  create mode 100644 drivers/gpu/drm/sun4i/Kconfig
+>  create mode 100644 drivers/gpu/drm/sun4i/Makefile
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.h
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.c
+> 
+> -- 
+> 2.6.4
+> 
