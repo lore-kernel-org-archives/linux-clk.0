@@ -1,47 +1,59 @@
-Return-Path: <p.zabel@pengutronix.de>
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Barry Song <baohua@kernel.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 4/7] clk: atlas7: Make reset_control_ops const
-Date: Thu, 25 Feb 2016 10:45:09 +0100
-Message-Id: <1456393512-26602-5-git-send-email-p.zabel@pengutronix.de>
-In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+Return-Path: <Purna.Mandal@microchip.com>
+Subject: Re: [PATCH v7 2/3] clk: clk-pic32: Add PIC32 clock driver
+To: Michael Turquette <mturquette@baylibre.com>, Joshua Henderson
+	<joshua.henderson@microchip.com>, <linux-kernel@vger.kernel.org>
+References: <1455899179-14097-1-git-send-email-joshua.henderson@microchip.com>
+ <1455899179-14097-3-git-send-email-joshua.henderson@microchip.com>
+ <20160219201615.2278.2909@quark.deferred.io>
+CC: <linux-mips@linux-mips.org>, <ralf@linux-mips.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>
+From: Purna Chandra Mandal <purna.mandal@microchip.com>
+Message-ID: <56C80FC3.8050205@microchip.com>
+Date: Sat, 20 Feb 2016 12:33:31 +0530
+MIME-Version: 1.0
+In-Reply-To: <20160219201615.2278.2909@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: purna.mandal@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The atlas7_rst_ops structure is never modified. Make it const.
+On 02/20/2016 01:46 AM, Michael Turquette wrote:
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/sirf/clk-atlas7.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Quoting Joshua Henderson (2016-02-19 08:25:35)
+>> +const struct clk_ops pic32_roclk_ops = {
+>> +       .enable                 = roclk_enable,
+>> +       .disable                = roclk_disable,
+>> +       .is_enabled             = roclk_is_enabled,
+>> +       .get_parent             = roclk_get_parent,
+>> +       .set_parent             = roclk_set_parent,
+>> +       .determine_rate         = roclk_determine_rate,
+>> +       .recalc_rate            = roclk_recalc_rate,
+>> +       .round_rate             = roclk_round_rate,
+>> +       .set_rate_and_parent    = roclk_set_rate_and_parent,
+>> +       .set_rate               = roclk_set_rate,
+>> +       .init                   = roclk_init,
+>> +};
+> You can remove .round_rate and only use .determine_rate.
 
-diff --git a/drivers/clk/sirf/clk-atlas7.c b/drivers/clk/sirf/clk-atlas7.c
-index 957aae6..d0c6c9a 100644
---- a/drivers/clk/sirf/clk-atlas7.c
-+++ b/drivers/clk/sirf/clk-atlas7.c
-@@ -1423,7 +1423,7 @@ static int atlas7_reset_module(struct reset_controller_dev *rcdev,
- 	return 0;
- }
- 
--static struct reset_control_ops atlas7_rst_ops = {
-+static const struct reset_control_ops atlas7_rst_ops = {
- 	.reset = atlas7_reset_module,
- };
- 
--- 
-2.7.0
+Ack. Will remove .round_rate.
+
+> ...
+>> +CLK_OF_DECLARE(pic32mzda_clk, "microchip,pic32mzda-clk", pic32mzda_clock_init);
+> Can you make this a platform_driver instead of using CLK_OF_DECLARE? I
+> asked this in v6 but there was no response.
+
+Mike,
+I tried to use platform_driver approach, but didn't work for me.
+On MIPS/PIC32 first call of clk_get() happens from "start_kernel -> time_init()->
+plat_time_init()" which is very early in boot sequence even before execution of
+early_initcall(). In short, by platform_driver way I'was not able to register clock(s)
+before the first clock user becomes ready. Whereas with CLK_OF_DECLARE() I can
+explicitly call of_clk_init() in plat_time_init() just before calling clk_get().
+
+Please suggest me if you have any reference to avoid my case.
+
+> Regards,
+> Mike
+>
+>> -- 
+>> 1.7.9.5
+>>
