@@ -1,179 +1,65 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 1/3] clk: qcom: Add A53 PLL support
-Date: Mon,  1 Feb 2016 17:07:49 +0200
-Message-Id: <1454339271-643-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1454339271-643-1-git-send-email-georgi.djakov@linaro.org>
-References: <1454339271-643-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Rob Herring <robh@kernel.org>,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
+Cc: "Andrew Lunn" <andrew@lunn.ch>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "linux-clk" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Pawel Moll" <pawel.moll@arm.com>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Kumar Gala" <galak@codeaurora.org>, "Jason Cooper" <jason@lakedaemon.net>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@free-electrons.com>,
+ "Nadav Haklai" <nadavh@marvell.com>, "Lior Amsalem" <alior@marvell.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20160222025357.GE15973@rob-hp-laptop>
+ <20160222091423.4756a579@free-electrons.com> <20160222141617.GA14970@lunn.ch>
+ <20160222183203.2278.60153@quark.deferred.io>
+ <CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
+Message-ID: <20160222202320.2278.62793@quark.deferred.io>
+Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+Date: Mon, 22 Feb 2016 12:23:20 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the PLL, which generates the higher range of CPU
-frequencies on MSM8916 platforms.
+Quoting Rob Herring (2016-02-22 11:42:49)
+> On Mon, Feb 22, 2016 at 12:32 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Quoting Andrew Lunn (2016-02-22 06:16:17)
+> >> > Such information will come later, and we can rework the drivers and =
+DT
+> >> > bindings accordingly. Those DT bindings cannot be stable, as the
+> >> > platform is under heavy development and we'll probably discover some
+> >> > issues down the road.
+> >>
+> >> Hi Thomas
+> >>
+> >> Maybe add a big fat warning that the bindings are unstable, and the DT
+> >> blob must be kept in sync with the kernel?
+> >
+> > +1 and feel free to blame the lack of documentation.  No one can expect
+> > bindings to be finalized when the chip topology is not fully understood.
+> =
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,a53-pll.txt     |   17 ++++
- drivers/clk/qcom/Kconfig                           |    9 ++
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/a53-pll.c                         |   95 ++++++++++++++++++++
- 4 files changed, 122 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
+> I can understand not understanding the full clock tree. I have "full"
+> documentation of a Marvell chip and don't understand the clock tree
+> fully. But I can't believe you don't have some sense of how many
+> clocks you have to deal with. 10? 100? 1000? What I see is 2 nodes of
+> a single register each for clocks at roughly the same address. That
+> tells me your binding is too fine grained. If you really don't know
+> what is right, then err on the side of a single clock provider node
+> and don't put the clock details in DT.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
-new file mode 100644
-index 000000000000..50e71e4e13a6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
-@@ -0,0 +1,17 @@
-+A53 PLL Binding
-+---------------
-+The A53 PLL is the main CPU PLL used for frequencies above 1GHz.
-+
-+Required properties :
-+- compatible : Shall contain only one of the following:
-+
-+		"qcom,a53-pll"
-+
-+- reg : shall contain base register location and length
-+
-+Example:
-+
-+	a53pll: a53pll@0b016000 {
-+		compatible = "qcom,a53-pll";
-+		reg = <0x0b016000 0x40>;
-+	};
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index b552eceec2be..d06cf687be4f 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -123,3 +123,12 @@ config MSM_MMCC_8996
- 	  Support for the multimedia clock controller on msm8996 devices.
- 	  Say Y if you want to support multimedia devices such as display,
- 	  graphics, video encode/decode, camera, etc.
-+
-+config QCOM_A53PLL
-+	bool "A53 PLL"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the A53 PLL on some Qualcomm devices. It provides
-+	  support for CPU frequencies above 1GHz.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8916.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index dc4280b85db1..c7c26eeab67c 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -25,3 +25,4 @@ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-new file mode 100644
-index 000000000000..987bf75f087a
---- /dev/null
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -0,0 +1,95 @@
-+/*
-+ * Copyright (c) 2016, Linaro Limited. All rights reserved.
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+
-+static struct pll_freq_tbl a53pll_freq[] = {
-+	{  998400000, 52, 0x0, 0x1, 0 },
-+	{ 1094400000, 57, 0x0, 0x1, 0 },
-+	{ 1152000000, 62, 0x0, 0x1, 0 },
-+	{ 1209600000, 65, 0x0, 0x1, 0 },
-+	{ 1401600000, 73, 0x0, 0x1, 0 },
-+};
-+
-+static const struct regmap_config a53pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x40,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static const struct of_device_id qcom_a53pll_match_table[] = {
-+	{ .compatible = "qcom,a53-pll" },
-+	{ }
-+};
-+
-+static int qcom_a53pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_pll *pll;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+	struct clk_init_data init;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pll->l_reg = 0x04,
-+	pll->m_reg = 0x08,
-+	pll->n_reg = 0x0c,
-+	pll->config_reg = 0x14,
-+	pll->mode_reg = 0x00,
-+	pll->status_reg = 0x1c,
-+	pll->status_bit = 16,
-+	pll->freq_tbl = a53pll_freq,
-+
-+	init.name = "a53pll",
-+	init.parent_names = (const char *[]){ "xo" },
-+	init.num_parents = 1,
-+	init.ops = &clk_pll_sr2_ops,
-+	pll->clkr.hw.init = &init;
-+
-+	clk = devm_clk_register_regmap(dev, &pll->clkr);
-+
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static struct platform_driver qcom_a53pll_driver = {
-+	.probe = qcom_a53pll_probe,
-+	.driver = {
-+		.name = "qcom-a53pll",
-+		.of_match_table = qcom_a53pll_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_a53pll_driver);
+I like the "err on the side of caution" part. I'll add that to
+clock-bindings.txt.
+
+Regards,
+Mike
+
+> =
+
+> Rob
