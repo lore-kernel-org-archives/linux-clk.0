@@ -1,48 +1,26 @@
-Return-Path: <lars.persson@axis.com>
-From: Lars Persson <lars.persson@axis.com>
-To: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: [PATCH v2 0/2] clk: Add Artpec-6 SoC support
-Date: Fri, 19 Feb 2016 15:30:13 +0100
-Message-Id: <cover.1455891890.git.larper@axis.com>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160218013839.2278.23558@quark.deferred.io>
+References: <CAOMZO5AZbe2PKysy353Q-3w_+WY0HQD4EYtq24SzwadoQ4ikeA@mail.gmail.com>
+	<20160218013839.2278.23558@quark.deferred.io>
+Date: Mon, 22 Feb 2016 14:18:00 -0300
+Message-ID: <CAOMZO5BnmSoi9oNJLi4+EzVxr+bFo2bZo0X_ktv5aK+5QnAGRQ@mail.gmail.com>
+Subject: Re: Keeping a clock enabled during suspend
+From: Fabio Estevam <festevam@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, peter.chen@nxp.com,
+	Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock support for the Artpec-6 SoC port. The ARM parts are in the series
-"arm: Add Artpec-6 SoC" and it goes through the arm-soc tree.
+On Wed, Feb 17, 2016 at 11:38 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
 
-Changes since v1:
+> That link didn't resolve for me but I'm guessing those are the CRITICAL
+> clk patches.
+>
+> That flag is designed to keep a clock on always, so it may do what you
+> want, but I'd like to know more first.
 
-- The driver now provides all clocks from the main clock controller block
-  through one DT node.
-- Added a header file for the clock indexes.
-- Refer to clock-bindings.txt in the bindings document.
-
-A platform driver was not possible because the clocks are needed earlier in the
-kernel startup.
-
-Lars Persson (2):
-  clk: add device tree binding for Artpec-6 clock controller
-  clk: add artpec-6 clock controller
-
- .../devicetree/bindings/clock/artpec6.txt          |  41 +++++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/axis/Makefile                          |   1 +
- drivers/clk/axis/clk-artpec6.c                     | 177 +++++++++++++++++++++
- include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 +++++
- 5 files changed, 258 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
- create mode 100644 drivers/clk/axis/Makefile
- create mode 100644 drivers/clk/axis/clk-artpec6.c
- create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
-
--- 
-2.1.4
+Yes, let me give it a try with CLK_IS_CRITICAL once it reaches
+linux-next. I think that should solve this issue, thanks.
