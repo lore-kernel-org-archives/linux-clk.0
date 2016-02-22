@@ -1,159 +1,299 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<jacky.baip@gmail.com>
-Subject: [PATCH V3 2/5] ARM: dts: imx: Add basic dts support for imx6qp SOC
-Date: Tue, 2 Feb 2016 18:01:35 +0800
-Message-ID: <1454407298-15545-2-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
-References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
+Return-Path: <akinobu.mita@gmail.com>
+Return-Path: <akinobu.mita@gmail.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Akinobu Mita <akinobu.mita@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2] clk: add userspace clock consumer
+Date: Mon, 22 Feb 2016 20:48:39 +0900
+Message-Id: <1456141719-2543-1-git-send-email-akinobu.mita@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The i.MX6Quad Plus processor is an high performance SOC of i.MX6 family.
-It has enhanced graphics performance and increased overall memory bandwidth
-compared to i.MX6Q. Most of the design are same as i.MX6Quad/Dual, so code
-for i.MX6Quad can be resued by this chip. The revision number is identied as
-i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
-overall architecture.
+This adds userspace consumer for common clock.
 
-This patch adds basic dtsi file support for the new i.MX6Quad Plus processor.
+This driver is inspired from Userspace regulator consumer
+(REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
+some classes of devices that are controlled entirely from user space.
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Example binding and usages:
+
+clksqw_userspace_consumer {
+	compatible = "linux,clock-userspace-consumer";
+	clocks = <&clksqw>;
+};
+
+	# cd /sys/devices/platform/clksqw_userspace_consumer
+	# echo 8192 > rate
+	# echo 1 > enable
+
+This also create new COMMON_CLK_DEBUG option and this userspace clock
+consumer depends on it.
+
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
 ---
+* v2
+- change compatible property to "linux,clock-userspace-consumer"
+- rename sysfs file from 'state' to 'enable'
+- create new COMMON_CLK_DEBUG option
 
-change for V3:
---remove some device node that the driver is not ready or stable in upstream
--- update the copyright header
+ .../bindings/clock/clk-userspace-consumer.txt      |  17 +++
+ drivers/clk/Kconfig                                |   9 ++
+ drivers/clk/Kconfig.debug                          |   9 ++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-userspace-consumer.c               | 169 +++++++++++++++++++++
+ 5 files changed, 205 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt
+ create mode 100644 drivers/clk/Kconfig.debug
+ create mode 100644 drivers/clk/clk-userspace-consumer.c
 
-
- arch/arm/boot/dts/imx6q.dtsi           |  2 +-
- arch/arm/boot/dts/imx6qdl-sabresd.dtsi |  1 +
- arch/arm/boot/dts/imx6qp.dtsi          | 86 ++++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/imx6qp.dtsi
-
-diff --git a/arch/arm/boot/dts/imx6q.dtsi b/arch/arm/boot/dts/imx6q.dtsi
-index 0d93c0e..ddcb37b 100644
---- a/arch/arm/boot/dts/imx6q.dtsi
-+++ b/arch/arm/boot/dts/imx6q.dtsi
-@@ -22,7 +22,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			compatible = "arm,cortex-a9";
- 			device_type = "cpu";
- 			reg = <0>;
-diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index a6d445c..f65f57b 100644
---- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-@@ -238,6 +238,7 @@
- 				regulator-max-microvolt = <3300000>;
- 				regulator-boot-on;
- 				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
- 			};
- 
- 			sw3a_reg: sw3a {
-diff --git a/arch/arm/boot/dts/imx6qp.dtsi b/arch/arm/boot/dts/imx6qp.dtsi
+diff --git a/Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt b/Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt
 new file mode 100644
-index 0000000..1ada714
+index 0000000..f513a40
 --- /dev/null
-+++ b/arch/arm/boot/dts/imx6qp.dtsi
-@@ -0,0 +1,86 @@
++++ b/Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt
+@@ -0,0 +1,17 @@
++* Userspace consumer for common clock
++
++Required properties:
++- compatible: Should be "linux,clock-userspace-consumer"
++- clocks: clock phandle to control from userspace
++
++Examples:
++
++clk32k_userspace_consumer {
++	compatible = "linux,clock-userspace-consumer";
++	clocks = <&clk32k>;
++};
++
++sqw_userspace_consumer {
++	compatible = "linux,clock-userspace-consumer";
++	clocks = <&sqw>;
++};
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index eca8e01..d4b5184 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -25,6 +25,15 @@ config COMMON_CLK
+ menu "Common Clock Framework"
+ 	depends on COMMON_CLK
+ 
++config COMMON_CLK_DEBUG
++	bool "Clock driver debugging support"
++	depends on DEBUG_KERNEL
++	---help---
++	  Say Y here if you are developing clock drivers or trying to
++	  debug and identify the problems.
++
++source "drivers/clk/Kconfig.debug"
++
+ config COMMON_CLK_WM831X
+ 	tristate "Clock driver for WM831x/2x PMICs"
+ 	depends on MFD_WM831X
+diff --git a/drivers/clk/Kconfig.debug b/drivers/clk/Kconfig.debug
+new file mode 100644
+index 0000000..01a7ed4
+--- /dev/null
++++ b/drivers/clk/Kconfig.debug
+@@ -0,0 +1,9 @@
++config COMMON_CLK_USERSPACE_CONSUMER
++	tristate "Userspace clock consumer support"
++	depends on COMMON_CLK_DEBUG
++	help
++	  There are some classes of devices that are controlled entirely
++	  from user space. Userspace consumer driver provides ability to
++	  control clock for such devices.
++
++	  If unsure, say no.
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index b038e36..f3b51f1 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
+ ifeq ($(CONFIG_OF), y)
+ obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
+ endif
++obj-$(CONFIG_COMMON_CLK_USERSPACE_CONSUMER)	+= clk-userspace-consumer.o
+ 
+ # hardware specific clock types
+ # please keep this section sorted lexicographically by file/directory path name
+diff --git a/drivers/clk/clk-userspace-consumer.c b/drivers/clk/clk-userspace-consumer.c
+new file mode 100644
+index 0000000..846665a
+--- /dev/null
++++ b/drivers/clk/clk-userspace-consumer.c
+@@ -0,0 +1,169 @@
 +/*
-+ * Copyright 2016 Freescale Semiconductor, Inc.
++ * Copyright (c) 2016 Akinobu Mita <akinobu.mita@gmail.com>
 + *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
++ * This file is subject to the terms and conditions of version 2 of
++ * the GNU General Public License.  See the file COPYING in the main
++ * directory of this archive for more details.
 + *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
++ * Inspired from reg-userspace-consumer
 + */
 +
-+#include "imx6q.dtsi"
++#include <linux/err.h>
++#include <linux/mutex.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/clk.h>
++#include <linux/of.h>
 +
-+/ {
-+	soc {
-+		ocram2: sram@00940000 {
-+			compatible = "mmio-sram";
-+			reg = <0x00940000 0x20000>;
-+			clocks = <&clks IMX6QDL_CLK_OCRAM>;
-+		};
-+
-+		ocram3: sram@00960000 {
-+			compatible = "mmio-sram";
-+			reg = <0x00960000 0x20000>;
-+			clocks = <&clks IMX6QDL_CLK_OCRAM>;
-+		};
-+
-+		ipu1: ipu@02400000 {
-+			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
-+			clocks = <&clks IMX6QDL_CLK_IPU1>,
-+				 <&clks IMX6QDL_CLK_IPU1_DI0>, <&clks IMX6QDL_CLK_IPU1_DI1>,
-+				 <&clks IMX6QDL_CLK_IPU1_DI0_SEL>, <&clks IMX6QDL_CLK_IPU1_DI1_SEL>,
-+				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
-+				 <&clks IMX6QDL_CLK_PRG0_APB>;
-+			clock-names = "bus",
-+				      "di0", "di1",
-+				      "di0_sel", "di1_sel",
-+				      "ldb_di0", "ldb_di1", "prg";
-+		};
-+
-+		ipu2: ipu@02800000 {
-+			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
-+			clocks = <&clks IMX6QDL_CLK_IPU2>,
-+				 <&clks IMX6QDL_CLK_IPU2_DI0>, <&clks IMX6QDL_CLK_IPU2_DI1>,
-+				 <&clks IMX6QDL_CLK_IPU2_DI0_SEL>, <&clks IMX6QDL_CLK_IPU2_DI1_SEL>,
-+				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
-+				 <&clks IMX6QDL_CLK_PRG1_APB>;
-+			clock-names = "bus",
-+				      "di0", "di1",
-+				      "di0_sel", "di1_sel",
-+				      "ldb_di0", "ldb_di1", "prg";
-+		};
-+
-+	};
++struct clk_userspace_consumer {
++	struct mutex lock;
++	bool enabled;
++	struct clk *clk;
 +};
++
++static ssize_t clk_show_enable(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%d\n", consumer->enabled);
++}
++
++static ssize_t clk_store_enable(struct device *dev,
++				struct device_attribute *attr, const char *buf,
++				size_t count)
++{
++	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
++	bool enabled;
++	int ret;
++
++	ret = strtobool(buf, &enabled);
++	if (ret)
++		return ret;
++
++	mutex_lock(&consumer->lock);
++
++	if (enabled != consumer->enabled) {
++		int ret = 0;
++
++		if (enabled) {
++			ret = clk_prepare_enable(consumer->clk);
++			if (ret) {
++				dev_err(dev, "Failed to configure state: %d\n",
++					ret);
++			}
++		} else {
++			clk_disable_unprepare(consumer->clk);
++		}
++
++		if (!ret)
++			consumer->enabled = enabled;
++	}
++
++	mutex_unlock(&consumer->lock);
++
++	return count;
++}
++static DEVICE_ATTR(enable, 0644, clk_show_enable, clk_store_enable);
++
++static ssize_t clk_show_rate(struct device *dev, struct device_attribute *attr,
++			char *buf)
++{
++	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%ld\n", clk_get_rate(consumer->clk));
++}
++
++static ssize_t clk_store_rate(struct device *dev, struct device_attribute *attr,
++			const char *buf, size_t count)
++{
++	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
++	unsigned long rate;
++	int err;
++
++	err = kstrtoul(buf, 0, &rate);
++	if (err)
++		return err;
++
++	err = clk_set_rate(consumer->clk, rate);
++	if (err)
++		return err;
++
++	return count;
++}
++static DEVICE_ATTR(rate, 0644, clk_show_rate, clk_store_rate);
++
++static struct attribute *attributes[] = {
++	&dev_attr_enable.attr,
++	&dev_attr_rate.attr,
++	NULL,
++};
++
++static const struct attribute_group attr_group = {
++	.attrs	= attributes,
++};
++
++static int clk_userspace_consumer_probe(struct platform_device *pdev)
++{
++	struct clk_userspace_consumer *consumer;
++	int ret;
++
++	consumer = devm_kzalloc(&pdev->dev, sizeof(*consumer), GFP_KERNEL);
++	if (!consumer)
++		return -ENOMEM;
++
++	mutex_init(&consumer->lock);
++
++	consumer->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(consumer->clk)) {
++		ret = PTR_ERR(consumer->clk);
++		dev_err(&pdev->dev, "Failed to get clock: %d\n", ret);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, consumer);
++
++	ret = sysfs_create_group(&pdev->dev.kobj, &attr_group);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int clk_userspace_consumer_remove(struct platform_device *pdev)
++{
++	struct clk_userspace_consumer *consumer = platform_get_drvdata(pdev);
++
++	sysfs_remove_group(&pdev->dev.kobj, &attr_group);
++
++	mutex_lock(&consumer->lock);
++	if (consumer->enabled)
++		clk_disable_unprepare(consumer->clk);
++	mutex_unlock(&consumer->lock);
++
++	return 0;
++}
++
++#ifdef CONFIG_OF
++
++static const struct of_device_id userspace_consumer_id[] = {
++	{ .compatible = "linux,clock-userspace-consumer" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, userspace_consumer_id);
++
++#endif
++
++static struct platform_driver clk_userspace_consumer_driver = {
++	.probe = clk_userspace_consumer_probe,
++	.remove = clk_userspace_consumer_remove,
++	.driver = {
++		.name = "clk-userspace-consumer",
++		.of_match_table = of_match_ptr(userspace_consumer_id),
++	},
++};
++module_platform_driver(clk_userspace_consumer_driver);
++
++MODULE_AUTHOR("Akinobu Mita <akinobu.mita@gmail.com>");
++MODULE_DESCRIPTION("Userspace consumer for common clock");
++MODULE_LICENSE("GPL");
 -- 
-1.9.1
+2.5.0
