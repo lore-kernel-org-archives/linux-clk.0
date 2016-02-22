@@ -1,66 +1,85 @@
-Return-Path: <stefan.wahren@i2se.com>
-Date: Sun, 28 Feb 2016 19:04:57 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
-	kernel@martin.sperl.org, Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Message-ID: <413895849.331121.eb44c2f6-8870-42b4-ada5-1ccea76f532b.open-xchange@email.1und1.de>
-In-Reply-To: <1456673831-2408-4-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
- <1456673831-2408-4-git-send-email-kernel@martin.sperl.org>
-Subject: Re: [PATCH v5 03/20] clk: bcm2835: add locking to pll*_on/off
- methods
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	uclinux-h8-devel@lists.sourceforge.jp,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Tero Kristo <t-kristo@ti.com>,
+	Felipe Balbi <balbi@ti.com>,
+	linux-usb@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	linux-fbdev@vger.kernel.org
+Subject: [PATCH 0/9] Change return type of of_clk_get_parent_count() to unsigned
+Date: Mon, 22 Feb 2016 12:54:38 -0800
+Message-Id: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+Russell King recently pointed out that of_clk_get_parent_count() can
+return a negative number if the "clocks" property isn't present in a
+node. Upon investigating all the callers of this API, none of the them
+seem to care about that case, and furthermore some callers are assigning
+the return value to an unsigned int which could cause very large numbers
+of parents to be used.
 
-> kernel@martin.sperl.org hat am 28. Februar 2016 um 16:36 geschrieben:
->
->
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> Add missing locking to:
-> * bcm2835_pll_on
-> * bcm2835_pll_off
-> * bcm2835_pll_divider_on
+This series changes the API to return an unsigned int from 0 (no parents)
+to N, thereby avoiding any problems with negative return values.
 
-this should be obvious. Please explain the why.
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: <uclinux-h8-devel@lists.sourceforge.jp>
+Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org> 
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Felipe Balbi <balbi@ti.com>
+Cc: <linux-usb@vger.kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: <linux-fbdev@vger.kernel.org>
 
->
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Stephen Boyd (9):
+  clk: Make of_clk_get_parent_count() return unsigned ints
+  clk: at91: Remove impossible checks for of_clk_get_parent_count()
+  clk: gpio: Remove impossible check for of_clk_get_parent_count() < 0
+  clk: h8300: Remove impossible check for of_clk_get_parent_count()
+  clk: st: Remove impossible check for of_clk_get_parent_count() < 0
+  clk: sunxi: Use proper type for of_clk_get_parent_count() return value
+  clk: ti: Update for of_clk_get_parent_count() returning unsigned int
+  usb: dwc3: Remove impossible check for of_clk_get_parent_count() < 0
+  simplefb: Remove impossible check for of_clk_get_parent_count() < 0
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain
-clocks")
+ drivers/clk/at91/clk-generated.c    |  4 ++--
+ drivers/clk/at91/clk-main.c         |  4 ++--
+ drivers/clk/at91/clk-master.c       |  4 ++--
+ drivers/clk/at91/clk-programmable.c |  4 ++--
+ drivers/clk/at91/clk-slow.c         |  6 +++---
+ drivers/clk/at91/clk-smd.c          |  4 ++--
+ drivers/clk/at91/clk-usb.c          |  4 ++--
+ drivers/clk/clk-gpio.c              |  6 ++----
+ drivers/clk/clk.c                   | 16 ++++++++++++++--
+ drivers/clk/h8300/clk-div.c         |  4 ++--
+ drivers/clk/h8300/clk-h8s2678.c     |  4 ++--
+ drivers/clk/st/clk-flexgen.c        |  4 ++--
+ drivers/clk/st/clkgen-mux.c         |  4 ++--
+ drivers/clk/sunxi/clk-sun6i-ar100.c |  2 +-
+ drivers/clk/ti/clockdomain.c        |  2 +-
+ drivers/clk/ti/composite.c          |  8 ++++----
+ drivers/clk/ti/dpll.c               |  2 +-
+ drivers/clk/ti/mux.c                |  4 ++--
+ drivers/usb/dwc3/dwc3-of-simple.c   |  9 +++++----
+ drivers/video/fbdev/simplefb.c      |  4 ++--
+ include/linux/clk-provider.h        |  2 +-
+ 21 files changed, 56 insertions(+), 45 deletions(-)
 
-> ---
-> drivers/clk/bcm/clk-bcm2835.c | 6 ++++++
-> 1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 3aa3e7a..d999a13 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -910,12 +910,14 @@ static void bcm2835_pll_off(struct clk_hw *hw)
-> struct bcm2835_cprman *cprman = pll->cprman;
-> const struct bcm2835_pll_data *data = pll->data;
->
-> + spin_lock(&cprman->regs_lock);
-> cprman_write(cprman, data->cm_ctrl_reg,
-> cprman_read(cprman, data->cm_ctrl_reg) |
-> CM_PLL_ANARST);
-> cprman_write(cprman, data->a2w_ctrl_reg,
-> cprman_read(cprman, data->a2w_ctrl_reg) |
-> A2W_PLL_CTRL_PWRDN);
-> + spin_unlock(&cprman->regs_lock);
-> }
-
-As i told please move this particular change into 01/20, the rest is okay.
-
-Regards
-Stefan
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
