@@ -1,33 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.5-rc5
-Date: Fri, 26 Feb 2016 16:07:24 -0800
-Message-Id: <1456531644-32524-1-git-send-email-sboyd@codeaurora.org>
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 0/2] CREG clk driver for NXP LPC18xx family
+Date: Mon, 22 Feb 2016 23:53:13 +0100
+Message-Id: <1456181595-10392-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 4462b4bbfc33a44f19710ead784ff361bda2c3b3:
+This patch set adds a clk driver for the low power clocks found in
+the CREG block on lpc18xx. CREG is a collection of miscellaneous
+configuration registers that can be accessed through a syscon
+regmap interface. The clk driver makes it possible to setup and
+enabled these two clocks.
 
-  clk: gpio: Really allow an optional clock= DT property (2016-02-18 19:10:22 -0800)
+This need to support peripherals like the internal RTC on the
+lpc18xx platform.
 
-are available in the git repository at:
+The driver has one early init using CLK_OF_DECLARE and a standard
+platform driver. The early init is used to register the 32KHZ clk
+which may be needed early on. The other clock (1KHZ) is registered
+when the platform driver probe runs.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+This version splits clk array into clk_creg_early and clk_creg. I
+think this will work as long as clk_creg_early is _not_ used after
+the clk_creg is registered.
 
-for you to fetch changes up to a0d54c3899aaeb047969d9479263c6bcf385c331:
+You can find a diff of changes between v2 and v3 here:
+https://github.com/manabian/linux-lpc/commit/32e1e5da9bf30be3631c4ee93dbe4550d366431b
 
-  clk: ti: omap3+: dpll: use non-locking version of clk_get_rate (2016-02-22 14:03:02 -0800)
+This seems to work, but I currently don't have a setup that requires
+the 32khz clock early so that part isn't really tested.
 
-----------------------------------------------------------------
-One small fix to keep OMAP platforms working across a suspend/resume
-cycle.
+The probe deferral seems to work for the RTC:
+[    3.386861] lpc24xx-rtc 40046000.rtc: error getting rtc clock
+[    6.737615] lpc24xx-rtc 40046000.rtc: rtc core: registered lpc24xx-rtc as rtc0
 
-----------------------------------------------------------------
-Tero Kristo (1):
-      clk: ti: omap3+: dpll: use non-locking version of clk_get_rate
+Changes since v2:
+ - Use two clk arrays for registration.
+ - Couple of minor cleanups.
 
- drivers/clk/ti/dpll3xxx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes since v1:
+ - Split driver with one early init and one platform driver
+   probe.
+ - Rebase on v4.5-rc1.
+
+Joachim Eastwood (2):
+  clk: add lpc18xx creg clk driver
+  doc: dt: add documentation for lpc1850-creg-clk driver
+
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 +++++
+ drivers/clk/nxp/Makefile                           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c                 | 210 +++++++++++++++++++++
+ 3 files changed, 263 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
+
+-- 
+1.8.0
