@@ -1,161 +1,72 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>
+CC: <dinh.linux@gmail.com>, <mturquette@baylibre.com>,
+	<mgerlach@opensource.altera.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCH] clk: socfpga: allow for multiple parents on Arria10 periph clocks
+Date: Mon, 22 Feb 2016 13:53:11 -0600
+Message-ID: <1456170791-22718-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160217173949.GB21202@atomide.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Tero Kristo" <t-kristo@ti.com>,
- linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "Brian Hutchinson" <b.hutchman@gmail.com>,
- "Delio Brignoli" <dbrignoli@audioscience.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>,
- "Matthijs van Duin" <matthijsvanduin@gmail.com>,
- "Philipp Rosenberger" <ilu@linutronix.de>,
- "Russell King - ARM Linux" <linux@arm.linux.org.uk>
-References: <1455312009-808-1-git-send-email-tony@atomide.com>
- <1455312009-808-3-git-send-email-tony@atomide.com>
- <20160217011930.2278.38316@quark.deferred.io>
- <20160217173949.GB21202@atomide.com>
-Message-ID: <20160217205257.2278.11639@quark.deferred.io>
-Subject: Re: [PATCH 2/2] clk: ti: Add support for dm814x ADPLL
-Date: Wed, 17 Feb 2016 12:52:57 -0800
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2016-02-17 09:39:49)
-> * Michael Turquette <mturquette@baylibre.com> [160216 17:32]:
-> > Quoting Tony Lindgren (2016-02-12 13:20:09)
-> > > =
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-> > > - Split the device tree binding into a separate patch as requested
-> > >   by Mike for his conditional ack of the binding
-> > =
+There are some Arria10 clocks of type "altr,socfpga-a10-perip-clk" that can
+have multiple parents. Fix up the __socfpga_periph_init() to call
+of_clk_parent_fill() that will return the appropriate number of parents.
 
-> > Just to make life fun for you, the clk tree is once more merging DT
-> > bindings descriptions and headers. You don't need to merge the patches,
-> > it doesn't matter to me, but just as a heads up for the future.
-> =
+Also, update __socfpga_gate_init() to call of_clk_parent_fill() helper
+function.
 
-> OK :)
-> =
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+---
+ drivers/clk/socfpga/clk-gate-a10.c   | 5 +----
+ drivers/clk/socfpga/clk-periph-a10.c | 5 ++---
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
-> > > --- /dev/null
-> > > +++ b/drivers/clk/ti/Kconfig
-> > > @@ -0,0 +1,6 @@
-> > > +config COMMON_CLK_TI_ADPLL
-> > > +       tristate "Clock driver for dm814x ADPLL"
-> > > +       depends on ARCH_OMAP2PLUS
-> > > +       default y if SOC_TI81XX
-> > =
-
-> > Can we add COMPILE_TEST here?
-> =
-
-> Good idea, will add.
-> =
-
-> > > +static int ti_adpll_init_inputs(struct ti_adpll_data *d)
-> > > +{
-> > > +       const char *error =3D "need at least %i inputs";
-> > > +       struct clk *clock;
-> > > +       int nr_inputs;
-> > > +
-> > > +       nr_inputs =3D of_clk_get_parent_count(d->np);
-> > > +       if (nr_inputs < d->c->nr_max_inputs) {
-> > > +               dev_err(d->dev, error, nr_inputs);
-> > > +               return -EINVAL;
-> > > +       }
-> > > +       of_clk_parent_fill(d->np, d->parent_names, nr_inputs);
-> > > +
-> > > +       clock =3D devm_clk_get(d->dev, d->parent_names[0]);
-> > > +       if (IS_ERR(clock)) {
-> > > +               dev_err(d->dev, "could not get clkinp\n");
-> > > +               return PTR_ERR(clock);
-> > > +       }
-> > > +       d->parent_clocks[TI_ADPLL_CLKINP] =3D clock;
-> > > +
-> > > +       clock =3D devm_clk_get(d->dev, d->parent_names[1]);
-> > > +       if (IS_ERR(clock)) {
-> > > +               dev_err(d->dev, "could not get clkinpulow clock\n");
-> > > +               return PTR_ERR(clock);
-> > > +       }
-> > > +       d->parent_clocks[TI_ADPLL_CLKINPULOW] =3D clock;
-> > =
-
-> > Are the clock parents known at compile-time? Can we just put that data
-> > in C instead of whatever is going on here?
-> =
-
-> No they can be board specific depending how the inputs for
-> clkin, clkinpulow and clkinphif are wired.
-> =
-
-> > ...
-> > > +int __init dm814x_adpll_enable_init_clocks(void)
-> > > +{
-> > > +       int i, err;
-> > > +
-> > > +       if (!timer_clocks_initialized)
-> > > +               return -ENODEV;
-> > > +
-> > > +       for (i =3D 0; i < ARRAY_SIZE(init_clocks); i++) {
-> > > +               struct clk *clock;
-> > > +
-> > > +               clock =3D clk_get(NULL, init_clocks[i]);
-> > > +               if (WARN(IS_ERR(clock), "could not find init clock %s=
-\n",
-> > > +                        init_clocks[i]))
-> > > +                       continue;
-> > > +               err =3D clk_prepare_enable(clock);
-> > > +               if (WARN(err, "could not enable init clock %s\n",
-> > > +                        init_clocks[i]))
-> > > +                       continue;
-> > =
-
-> > We have a shiny new series that provides a standard way to do this:
-> > =
-
-> > http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@=
-baylibre.com>
-> =
-
-> OK nice, so tagging the MPU and DDR clocks with CLK_IS_CRITICAL or
-> "clock-critical" should allow removing this code. I think in this
-> case I still need to set CLK_IS_CRITICAL as the clock is output 1
-> of the dts defined clock and does not have a separate dts node.
-
-In fact I hate clock-critical as a DT property and it's only there to
-support legacy DT bindings that store all clk data in DT and have zero
-clk data in C. So please use the CLK_IS_CRITICAL or CLK_ENABLE_HAND_OFF
-flags in C.
-
-Do you think you will ever have a driver that wants to gate these
-clocks? Probably not for MPU/DDR, but the HAND_OFF flag is a better fit
-if you do. It's the same as CRITICAL but transfers the prepare/enable
-reference counting to the consumer driver after that driver calls
-clk_get() and clk_prepare_enable() on the HAND_OFF clk.
-
-> =
-
-> I can update when those patches hit Linux next, or I can do a
-> follow-up patch later on if we want to avoid the dependency
-> here. Which do you prefer?
-
-Well, testing is always welcome :-)
-
-If you rebase onto those patches then I'll add your patches to that
-series for testing and merge it that way.
-
-Regards,
-Mike
-
-> =
-
-> Regards,
-> =
-
-> Tony
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
+index 1cebf25..0b6ee7b 100644
+--- a/drivers/clk/socfpga/clk-gate-a10.c
++++ b/drivers/clk/socfpga/clk-gate-a10.c
+@@ -167,12 +167,9 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	init.name = clk_name;
+ 	init.ops = ops;
+ 	init.flags = 0;
+-	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
+-			of_clk_get_parent_name(node, i)) != NULL)
+-		i++;
+ 
++	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+ 	init.parent_names = parent_name;
+-	init.num_parents = i;
+ 	socfpga_clk->hw.hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
+diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
+index 1f397cb..2b7e215 100644
+--- a/drivers/clk/socfpga/clk-periph-a10.c
++++ b/drivers/clk/socfpga/clk-periph-a10.c
+@@ -74,7 +74,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 	struct clk *clk;
+ 	struct socfpga_periph_clk *periph_clk;
+ 	const char *clk_name = node->name;
+-	const char *parent_name;
++	const char *parent_name[SOCFPGA_MAX_PARENTS];
+ 	struct clk_init_data init;
+ 	int rc;
+ 	u32 fixed_div;
+@@ -109,8 +109,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 	init.ops = ops;
+ 	init.flags = 0;
+ 
+-	parent_name = of_clk_get_parent_name(node, 0);
+-	init.num_parents = 1;
++	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+ 	init.parent_names = &parent_name;
+ 
+ 	periph_clk->hw.hw.init = &init;
+-- 
+2.6.2
