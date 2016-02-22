@@ -1,88 +1,97 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: lee.jones@linaro.org,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	maxime.coquelin@st.com,
-	geert@linux-m68k.org,
-	heiko@sntech.de,
-	andre.przywara@arm.com,
-	rklein@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH v42 4/6] clk: per-user clk prepare & enable ref counts
-Date: Thu, 11 Feb 2016 13:19:12 -0800
-Message-Id: <1455225554-13267-5-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:53760 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752304AbcBVBkn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Sun, 21 Feb 2016 20:40:43 -0500
+From: Andre Przywara <andre.przywara@arm.com>
+To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com
+Subject: [PATCH] clk: sunxi: allow PLL6 clock to be reused
+Date: Mon, 22 Feb 2016 01:39:58 +0000
+Message-Id: <1456105198-25295-1-git-send-email-andre.przywara@arm.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds prepare and enable reference counts for the per-user
-handles that clock consumers have for a clock node. This patch warns if
-an imbalance occurs while trying to disable or unprepare a clock and
-aborts, leaving the hardware unaffected.
+Currently we hard-code the base name for the PLL6 clock for both the
+sun4i and sun6i variants in the driver (pll6 and pll6x2, respectively).
+This unfortunately denies reusing this clock for the H3 and A64 PLL8
+clock, which is the same otherwise.
+Remove the hard-coded name in the source code and replace it with an
+appropriate index into the clock-output-names array in the DT.
+This is compatible with all current device trees, since they all carry
+the hard-coded base name in there.
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
-Changed in v2ish:
-  * Fixed locking bug (Thanks Maxime!)
+Salut Maxime,
 
- drivers/clk/clk.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+does that patch make sense?
+It fixes the re-usability problem while still keeping compatibility
+with existing DTs and also is pretty small.
+If you agree with this, I'll send out a v3 of the A64 series including
+this patch and the H3 PLL8 enablement later.
+I tested this on my BananaPi, the clk_summary output was identical
+with and without this patch.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5181a15..01183e3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -85,6 +85,8 @@ struct clk {
- 	unsigned long min_rate;
- 	unsigned long max_rate;
- 	struct hlist_node clks_node;
-+	unsigned int enable_count;
-+	unsigned int prepare_count;
+Cheers,
+Andre.
+
+ drivers/clk/sunxi/clk-factors.c | 3 ++-
+ drivers/clk/sunxi/clk-factors.h | 1 +
+ drivers/clk/sunxi/clk-sunxi.c   | 4 ++--
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+index ddefe96..7daf01d 100644
+--- a/drivers/clk/sunxi/clk-factors.c
++++ b/drivers/clk/sunxi/clk-factors.c
+@@ -202,7 +202,8 @@ struct clk *sunxi_factors_register(struct device_node *node,
+ 	if (data->name)
+ 		clk_name = data->name;
+ 	else
+-		of_property_read_string(node, "clock-output-names", &clk_name);
++		of_property_read_string_index(node, "clock-output-names",
++					      data->name_idx, &clk_name);
+ 
+ 	factors = kzalloc(sizeof(struct clk_factors), GFP_KERNEL);
+ 	if (!factors)
+diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
+index 1e63c5b..3a7da86 100644
+--- a/drivers/clk/sunxi/clk-factors.h
++++ b/drivers/clk/sunxi/clk-factors.h
+@@ -36,6 +36,7 @@ struct factors_data {
+ 	void (*getter)(struct factors_request *req);
+ 	void (*recalc)(struct factors_request *req);
+ 	const char *name;
++	int name_idx;
  };
  
- /***           locking             ***/
-@@ -609,7 +611,11 @@ void clk_unprepare(struct clk *clk)
- 		return;
+ struct clk_factors {
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 99f60ef..53f5927 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -530,14 +530,14 @@ static const struct factors_data sun4i_pll6_data __initconst = {
+ 	.enable = 31,
+ 	.table = &sun4i_pll5_config,
+ 	.getter = sun4i_get_pll5_factors,
+-	.name = "pll6",
++	.name_idx = 2,
+ };
  
- 	clk_prepare_lock();
-+	if (WARN_ON(clk->prepare_count == 0))
-+		goto out;
-+	clk->prepare_count--;
- 	clk_core_unprepare(clk->core);
-+out:
- 	clk_prepare_unlock();
- }
- EXPORT_SYMBOL_GPL(clk_unprepare);
-@@ -666,6 +672,7 @@ int clk_prepare(struct clk *clk)
- 		return 0;
+ static const struct factors_data sun6i_a31_pll6_data __initconst = {
+ 	.enable = 31,
+ 	.table = &sun6i_a31_pll6_config,
+ 	.getter = sun6i_a31_get_pll6_factors,
+-	.name = "pll6x2",
++	.name_idx = 1,
+ };
  
- 	clk_prepare_lock();
-+	clk->prepare_count++;
- 	ret = clk_core_prepare(clk->core);
- 	clk_prepare_unlock();
- 
-@@ -719,7 +726,11 @@ void clk_disable(struct clk *clk)
- 		return;
- 
- 	flags = clk_enable_lock();
-+	if (WARN_ON(clk->enable_count == 0))
-+		goto out;
-+	clk->enable_count--;
- 	clk_core_disable(clk->core);
-+out:
- 	clk_enable_unlock(flags);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
-@@ -781,6 +792,7 @@ int clk_enable(struct clk *clk)
- 		return 0;
- 
- 	flags = clk_enable_lock();
-+	clk->enable_count++;
- 	ret = clk_core_enable(clk->core);
- 	clk_enable_unlock(flags);
- 
+ static const struct factors_data sun5i_a13_ahb_data __initconst = {
 -- 
-2.1.4
+1.8.4
+
