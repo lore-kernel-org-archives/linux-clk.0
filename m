@@ -1,450 +1,295 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [RFC PATCH 3/4] clk: sunxi: revert .dtsi changes for DTs with a sun6i_a31_pll6 clock
-Date: Fri, 12 Feb 2016 17:59:59 +0000
-Message-Id: <1455300000-18723-4-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v9 6/6] ARM: dts: add dts files for Hi3519
+Date: Mon, 22 Feb 2016 15:48:00 +0800
+Message-ID: <1456127280-23275-7-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
+References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The changes made to the driver broke compatibilty with older DTs.
-For most of the boards the new driver does not bring any advantage,
-so for the sake of compatibility bring them back to the previous
-version.
-This also affects the new H3 .dtsi - at least for this patch, the
-next one will fix this.
+add dts files for Hi3519
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
- Documentation/devicetree/bindings/clock/sunxi.txt |  2 +-
- arch/arm/boot/dts/sun6i-a31.dtsi                  | 36 +++++++++++-----------
- arch/arm/boot/dts/sun8i-a23-a33.dtsi              | 25 +++++----------
- arch/arm/boot/dts/sun8i-a23.dtsi                  |  2 +-
- arch/arm/boot/dts/sun8i-a33.dtsi                  |  4 +--
- arch/arm/boot/dts/sun8i-h3.dtsi                   | 37 +++++++++--------------
- drivers/clk/sunxi/clk-sunxi.c                     |  8 ++++-
- 7 files changed, 51 insertions(+), 63 deletions(-)
+ arch/arm/boot/dts/Makefile        |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
+ arch/arm/boot/dts/hi3519.dtsi     | 187 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 231 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 966dcaf..c09f59b 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -88,7 +88,7 @@ Required properties for all clocks:
- - #clock-cells : from common clock binding; shall be set to 0 except for
- 	the following compatibles where it shall be set to 1:
- 	"allwinner,*-gates-clk", "allwinner,sun4i-pll5-clk",
--	"allwinner,sun4i-pll6-clk",
-+	"allwinner,sun4i-pll6-clk", "allwinner,sun6i-a31-pll6-clk",
- 	"allwinner,*-usb-clk", "allwinner,*-mmc-clk",
- 	"allwinner,*-mmc-config-clk"
- - clock-output-names : shall be the corresponding names of the outputs.
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index 7a198dc..1867af2 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -65,7 +65,7 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
--			clocks = <&pll6>;
-+			clocks = <&pll6 0>;
- 			status = "disabled";
- 		};
- 
-@@ -73,7 +73,7 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll6>;
-+			clocks = <&pll6 0>;
- 			status = "disabled";
- 		};
- 	};
-@@ -201,11 +201,11 @@
- 		};
- 
- 		pll6: clk@01c20028 {
--			#clock-cells = <0>;
-+			#clock-cells = <1>;
- 			compatible = "allwinner,sun6i-a31-pll6-clk";
- 			reg = <0x01c20028 0x4>;
- 			clocks = <&osc24M>;
--			clock-output-names = "pll6";
-+			clock-output-names = "pll6", "pll6x2";
- 		};
- 
- 		cpu: cpu@01c20050 {
-@@ -235,7 +235,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-ahb1-clk";
- 			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
-+			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
- 			clock-output-names = "ahb1";
- 
- 			/*
-@@ -244,7 +244,7 @@
- 			 * controller requires AHB1 clocked from PLL6.
- 			 */
- 			assigned-clocks = <&ahb1>;
--			assigned-clock-parents = <&pll6>;
-+			assigned-clock-parents = <&pll6 0>;
- 		};
- 
- 		ahb1_gates: clk@01c20060 {
-@@ -307,7 +307,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-apb1-clk";
- 			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6>, <&pll6>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
- 			clock-output-names = "apb2";
- 		};
- 
-@@ -331,7 +331,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc0",
- 					     "mmc0_output",
- 					     "mmc0_sample";
-@@ -341,7 +341,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc1",
- 					     "mmc1_output",
- 					     "mmc1_sample";
-@@ -351,7 +351,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc2",
- 					     "mmc2_output",
- 					     "mmc2_sample";
-@@ -361,7 +361,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20094 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc3",
- 					     "mmc3_output",
- 					     "mmc3_sample";
-@@ -371,7 +371,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c2009c 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "ss";
- 		};
- 
-@@ -379,7 +379,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200a0 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "spi0";
- 		};
- 
-@@ -387,7 +387,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200a4 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "spi1";
- 		};
- 
-@@ -395,7 +395,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200a8 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "spi2";
- 		};
- 
-@@ -403,7 +403,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200ac 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "spi3";
- 		};
- 
-@@ -1052,8 +1052,8 @@
- 			ar100: ar100_clk {
- 				compatible = "allwinner,sun6i-a31-ar100-clk";
- 				#clock-cells = <0>;
--				clocks = <&osc32k>, <&osc24M>, <&pll6>,
--					 <&pll6>;
-+				clocks = <&osc32k>, <&osc24M>, <&pll6 0>,
-+					 <&pll6 0>;
- 				clock-output-names = "ar100";
- 			};
- 
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 783b4b8..7e05e09 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -60,7 +60,7 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll6>;
-+			clocks = <&pll6 0>;
- 			status = "disabled";
- 		};
- 	};
-@@ -129,20 +129,11 @@
- 		};
- 
- 		pll6: clk@01c20028 {
--			#clock-cells = <0>;
-+			#clock-cells = <1>;
- 			compatible = "allwinner,sun6i-a31-pll6-clk";
- 			reg = <0x01c20028 0x4>;
- 			clocks = <&osc24M>;
--			clock-output-names = "pll6";
--		};
--
--                pll6x2: pll6x2_clk {
--			compatible = "fixed-factor-clock";
--			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <2>;
--			clocks = <&pll6>;
--			clock-output-names = "pll6-2x";
-+			clock-output-names = "pll6", "pll6x2";
- 		};
- 
- 		cpu: cpu_clk@01c20050 {
-@@ -172,7 +163,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-ahb1-clk";
- 			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
-+			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
- 			clock-output-names = "ahb1";
- 		};
- 
-@@ -199,7 +190,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-apb1-clk";
- 			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6>, <&pll6>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
- 			clock-output-names = "apb2";
- 		};
- 
-@@ -222,7 +213,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc0",
- 					     "mmc0_output",
- 					     "mmc0_sample";
-@@ -232,7 +223,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc1",
- 					     "mmc1_output",
- 					     "mmc1_sample";
-@@ -242,7 +233,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "mmc2",
- 					     "mmc2_output",
- 					     "mmc2_sample";
-diff --git a/arch/arm/boot/dts/sun8i-a23.dtsi b/arch/arm/boot/dts/sun8i-a23.dtsi
-index 5e589c1..92e6616 100644
---- a/arch/arm/boot/dts/sun8i-a23.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23.dtsi
-@@ -79,7 +79,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
- 			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6x2>, <&pll5>;
-+			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
- 			clock-output-names = "mbus";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index f3eb618..001d840 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -103,7 +103,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c2009c 0x4>;
--			clocks = <&osc24M>, <&pll6>;
-+			clocks = <&osc24M>, <&pll6 0>;
- 			clock-output-names = "ss";
- 		};
- 
-@@ -111,7 +111,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
- 			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6x2>, <&pll5>, <&pll11>;
-+			clocks = <&osc24M>, <&pll6 1>, <&pll5>, <&pll11>;
- 			clock-output-names = "mbus";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 6f6b4e4..1524130e 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -121,11 +121,11 @@
- 		};
- 
- 		pll6: clk@01c20028 {
--			#clock-cells = <0>;
-+			#clock-cells = <1>;
- 			compatible = "allwinner,sun6i-a31-pll6-clk";
- 			reg = <0x01c20028 0x4>;
- 			clocks = <&osc24M>;
--			clock-output-names = "pll6";
-+			clock-output-names = "pll6", "pll6x2";
- 		};
- 
- 		pll6d2: pll6d2_clk {
-@@ -133,24 +133,15 @@
- 			compatible = "fixed-factor-clock";
- 			clock-div = <2>;
- 			clock-mult = <1>;
--			clocks = <&pll6>;
--			clock-output-names = "pll6-d2";
-+			clocks = <&pll6 0>;
-+			clock-output-names = "pll6d2";
- 		};
- 
--		pll6x2: pll6x2_clk {
-+		/* dummy clock until pll6 can be reused */
-+		pll8: pll8_clk {
- 			#clock-cells = <0>;
--			compatible = "fixed-factor-clock";
--			clock-div = <1>;
--			clock-mult = <2>;
--			clocks = <&pll6>;
--			clock-output-names = "pll6-2x";
--		};
--
--		pll8: clk@01c20044 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun6i-a31-pll6-clk";
--			reg = <0x01c20044 0x4>;
--			clocks = <&osc24M>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <1>;
- 			clock-output-names = "pll8";
- 		};
- 
-@@ -174,7 +165,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-ahb1-clk";
- 			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
-+			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
- 			clock-output-names = "ahb1";
- 		};
- 
-@@ -198,7 +189,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-apb1-clk";
- 			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6>, <&pll6>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
- 			clock-output-names = "apb2";
- 		};
- 
-@@ -252,7 +243,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6>, <&pll8>;
-+			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
- 			clock-output-names = "mmc0",
- 					     "mmc0_output",
- 					     "mmc0_sample";
-@@ -262,7 +253,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6>, <&pll8>;
-+			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
- 			clock-output-names = "mmc1",
- 					     "mmc1_output",
- 					     "mmc1_sample";
-@@ -272,7 +263,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6>, <&pll8>;
-+			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
- 			clock-output-names = "mmc2",
- 					     "mmc2_output",
- 					     "mmc2_sample";
-@@ -282,7 +273,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
- 			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6x2>, <&pll5>;
-+			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
- 			clock-output-names = "mbus";
- 		};
- 	};
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 12131ba..0ed0a8e 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -648,7 +648,7 @@ static void __init sun6i_pll_clk_setup(struct device_node *node)
- {
- 	sunxi_factors_clk_setup(node, &sun6i_a31_pll_data);
- }
--CLK_OF_DECLARE(sun6i_pll, "allwinner,sun6i-a31-pll6-clk",
-+CLK_OF_DECLARE(sun6i_pll, "allwinner,sun6i-a31-pll-clk",
- 	       sun6i_pll_clk_setup);
- 
- static void __init sun5i_ahb_clk_setup(struct device_node *node)
-@@ -1152,3 +1152,9 @@ static void __init sun4i_pll6_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun4i_pll6, "allwinner,sun4i-a10-pll6-clk",
- 	       sun4i_pll6_clk_setup);
- 
-+static void __init sun6i_pll6_clk_setup(struct device_node *node)
-+{
-+	sunxi_divs_clk_setup(node, &sun6i_a31_pll6_divs_data);
-+}
-+CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
-+	       sun6i_pll6_clk_setup);
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index a4a6d70..3ce36ff 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -141,6 +141,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5800-peach-pi.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += \
+ 	hi3620-hi4511.dtb
++dtb-$(CONFIG_ARCH_HISI) += \
++	hi3519-demb.dtb
+ dtb-$(CONFIG_ARCH_HIX5HD2) += \
+ 	hisi-x5hd2-dkb.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += \
+diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
+new file mode 100644
+index 0000000..6991ab6
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519-demb.dts
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++/dts-v1/;
++#include "hi3519.dtsi"
++
++/ {
++	model = "HiSilicon HI3519 DEMO Board";
++	compatible = "hisilicon,hi3519";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x40000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dual_timer0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+new file mode 100644
+index 0000000..5729ecf
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519.dtsi
+@@ -0,0 +1,187 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	chosen { };
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++	};
++
++	gic: interrupt-controller@10300000 {
++		compatible = "arm,cortex-a7-gic";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
++	};
++
++	clk_3m: clk_3m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <3000000>;
++	};
++
++	crg: clock-reset-controller@12010000 {
++		compatible = "hisilicon,hi3519-crg";
++		#clock-cells = <1>;
++		#reset-cells = <2>;
++		reg = <0x12010000 0x10000>;
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		uart0: serial@12100000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12100000 0x1000>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART0_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart1: serial@12101000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12101000 0x1000>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART1_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart2: serial@12102000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12102000 0x1000>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART2_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart3: serial@12103000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12103000 0x1000>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART3_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart4: serial@12104000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12104000 0x1000>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART4_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer0: timer@12000000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12000000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer1: timer@12001000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12001000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer2: timer@12002000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12002000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		spi_bus0: spi@12120000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12120000 0x1000>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI0_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus1: spi@12121000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12121000 0x1000>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI1_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus2: spi@12122000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12122000 0x1000>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI2_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		sysctrl: system-controller@12020000 {
++			compatible = "hisilicon,hi3519-sysctrl", "syscon";
++			reg = <0x12020000 0x1000>;
++		};
++
++		reboot {
++			compatible = "syscon-reboot";
++			regmap = <&sysctrl>;
++			offset = <0x4>;
++			mask = <0xdeadbeef>;
++		};
++	};
++};
 -- 
-2.6.4
+1.9.1
