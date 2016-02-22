@@ -1,37 +1,25 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Feb 2016 14:08:19 -0800
+Date: Mon, 22 Feb 2016 12:59:03 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2] clk: add userspace clock consumer
-Message-ID: <20160224220819.GF4847@codeaurora.org>
-References: <1456141719-2543-1-git-send-email-akinobu.mita@gmail.com>
- <20160223214944.GA20852@rob-hp-laptop>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: msm8960: fix ce3_core clk enable register
+Message-ID: <20160222205903.GU4847@codeaurora.org>
+References: <1456141419-7439-1-git-send-email-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160223214944.GA20852@rob-hp-laptop>
+In-Reply-To: <1456141419-7439-1-git-send-email-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/23, Rob Herring wrote:
-> On Mon, Feb 22, 2016 at 08:48:39PM +0900, Akinobu Mita wrote:
-> > This adds userspace consumer for common clock.
-> > 
-> > This driver is inspired from Userspace regulator consumer
-> > (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
-> > some classes of devices that are controlled entirely from user space.
+On 02/22, Srinivas Kandagatla wrote:
+> This patch corrects the enable register offset which is actually 0x36cc
+> instead of 0x36c4
 > 
-> Whether the kernel handles a clock or userspace does should have nothing 
-> to do with DT. Plus DT does not expose many of the clocks, so any 
-> debug feature needs to expose all clocks and be independent of DT.
-> 
-> Beyond debug, I don't think we should be exposing clock control to 
-> userspace.
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 
-Agreed. Plus, the userspace regulator consumer doesn't have any
-DT binding for it, so I don't see why we would have a DT binding
-for the clk one.
+Applied to clk-next + added fixes tag
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
