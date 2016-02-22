@@ -1,165 +1,60 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sun, 21 Feb 2016 20:54:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Wenyou Yang <wenyou.yang@atmel.com>
+Subject: Re: [PATCH v3 4/4] Documentation: atmel-pmc: add DT bindings for
+ fast startup
+Message-ID: <20160222025417.GH15973@rob-hp-laptop>
+References: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
+ <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <1456672738-4993-3-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com> <1456672738-4993-3-git-send-email-vishnupatekar0510@gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 28 Feb 2016 20:09:48 -0800
-Message-ID: <CAGb2v66P5zKkbriUOnvg9ms-HSpmYDQ7RtQ5MG9fLopo3pwPoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 02/13] clk: sunxi: add ahb1 clock for A83T
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Nicolas Ferre <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Kumar Gala <galak@codeaurora.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On Sun, Feb 28, 2016 at 7:18 AM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-> clock index 0b1x is PLL6.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+On Mon, Feb 15, 2016 at 11:40:30AM +0800, Wenyou Yang wrote:
+> Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
+> to trigger a fast restart signal to PMC.
+> 
+> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+> Document: binding
+> 
 > ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
->  2 files changed, 77 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index c09f59b..2ee7841 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -29,6 +29,7 @@ Required properties:
->         "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
->         "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->         "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-> +       "allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
->         "allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
->         "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->         "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 99f60ef..0ae1f09 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
->         req->rate >>= req->p;
->  }
->
-> +#define SUN8I_A83T_AHB1_PARENT_PLL6    2
-> +/**
-> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
-> + * AHB rate is calculated as follows
-> + * rate = parent_rate >> p
-> + *
-> + * if parent is pll6, then
-> + * parent_rate = pll6 rate / (m + 1)
-> + */
-> +
-> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
-> +{
-> +       u8 div, calcp, calcm = 1;
-> +
-> +       /*
-> +        * clock can only divide, so we will never be able to achieve
-> +        * frequencies higher than the parent frequency
-> +        */
-> +       if (req->parent_rate && req->rate > req->parent_rate)
-> +               req->rate = req->parent_rate;
-> +
-> +       div = DIV_ROUND_UP(req->parent_rate, req->rate);
-> +
-> +       /* calculate pre-divider if parent is pll6 */
-> +       if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
-> +               if (div < 4)
-> +                       calcp = 0;
-> +               else if (div / 2 < 4)
-> +                       calcp = 1;
-> +               else if (div / 4 < 4)
-> +                       calcp = 2;
-> +               else
-> +                       calcp = 3;
-> +
-> +               calcm = DIV_ROUND_UP(div, 1 << calcp);
-> +       } else {
-> +               calcp = __roundup_pow_of_two(div);
-> +               calcp = calcp > 3 ? 3 : calcp;
-> +}
+> 
+> Changes in v3:
+>  - update the property description.
 
-Indent here.
+This is not helpful. Assume I don't remember what I told you and you 
+need to jog my memory what exactly changed so I don't have to go look it 
+up.
 
-> +
-> +       req->rate = (req->parent_rate / calcm) >> calcp;
-> +       req->p = calcp;
-> +       req->m = calcm - 1;
-> +}
-> +
-> +/**
-> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
-> +*                       parent index
+> 
+> Changes in v2:
+>  - change the property name and property description.
+> 
+>  .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
 
-Whitespace here.
+Acked-by: Rob Herring <robh@kernel.org>
 
-> +*/
-> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
-> +{
-> +       req->rate = req->parent_rate;
-> +
-> +/* apply pre-divider first if parent is pll6 */
-
-Indent here.
-
-ChenYu
-
-> +       if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
-> +               req->rate /= req->m + 1;
-> +
-> +       /* clk divider */
-> +       req->rate >>= req->p;
-> +}
-> +
->  /**
->   * sun4i_get_apb1_factors() - calculates m, p factors for APB1
->   * APB1 rate is calculated as follows
-> @@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
->         .recalc = sun6i_ahb1_recalc,
->  };
->
-> +static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
-> +       .mux = 12,
-> +       .muxmask = BIT(1) | BIT(0),
-> +       .table = &sun6i_ahb1_config,
-> +       .getter = sun8i_a83t_get_ahb1_factors,
-> +       .recalc = sun8i_a83t_ahb1_recalc,
-> +};
-> +
->  static const struct factors_data sun4i_apb1_data __initconst = {
->         .mux = 24,
->         .muxmask = BIT(1) | BIT(0),
-> @@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
->  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
->                sun6i_ahb1_clk_setup);
->
-> +static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
-> +{
-> +       sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
-> +}
-> +CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
-> +              sun8i_a83t_ahb1_clk_setup);
-> +
->  static void __init sun4i_apb1_clk_setup(struct device_node *node)
->  {
->         sunxi_factors_clk_setup(node, &sun4i_apb1_data);
-> --
-> 1.9.1
->
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
