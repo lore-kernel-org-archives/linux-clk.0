@@ -1,47 +1,47 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] soc: rockchip: power-domain: check the existing of regmap
-Date: Mon, 15 Feb 2016 22:26:04 +0100
-Message-ID: <1766177.2LWUTugthY@phil>
-In-Reply-To: <1455507237-13161-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com> <1455507237-13161-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47075 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755470AbcBVWKZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 22 Feb 2016 17:10:25 -0500
+Date: Mon, 22 Feb 2016 14:10:22 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tero Kristo <t-kristo@ti.com>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2] clk: ti: omap3+: dpll: use non-locking version of
+ clk_get_rate
+Message-ID: <20160222221021.GW13417@atomide.com>
+References: <1455966777-30576-1-git-send-email-t-kristo@ti.com>
+ <20160222165252.GF13417@atomide.com>
+ <20160222220514.GZ4847@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160222220514.GZ4847@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 15. Februar 2016, 11:33:57 schrieb Shawn Lin:
-> Check return value of syscon_node_to_regmap for
-> rockchip_pm_domain_probe. If err value is returned, probe
-> procedure should abort.
+* Stephen Boyd <sboyd@codeaurora.org> [160222 14:05]:
+> On 02/22, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [160220 03:12]:
+> > > As the code in this file is being executed within irq context in some
+> > > cases, we must avoid the clk_get_rate which uses mutex internally.
+> > > Switch the code to use clk_hw_get_rate instead which is non-locking.
+> > > 
+> > > This fixes an issue where PM runtime will hang the system if enabled
+> > > with a serial console before a suspend-resume cycle.
+> > 
+> > Can you please add the "Fixes: " line here?
+> > 
+> > And when applying, please tag this one Cc stable.
+> > 
+> > Other than that, please feel free to add:
+> > 
+> > Tested-by: Tony Lindgren <tony@atomide.com>
+> > 
 > 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> This is what I got. "Fixes" should take care of stable.
 
-applied to my armsoc/drivers branch for 4.6 with one change below
+OK thanks!
 
-> ---
-> 
->  drivers/soc/rockchip/pm_domains.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/soc/rockchip/pm_domains.c
-> b/drivers/soc/rockchip/pm_domains.c index 534c589..3c4a44d 100644
-> --- a/drivers/soc/rockchip/pm_domains.c
-> +++ b/drivers/soc/rockchip/pm_domains.c
-> @@ -402,6 +402,10 @@ static int rockchip_pm_domain_probe(struct
-> platform_device *pdev) }
-> 
->  	pmu->regmap = syscon_node_to_regmap(parent->of_node);
-> +	if (IS_ERR(pmu->regmap)) {
-> +		dev_err(dev, "no regmap available\n");
-> +		return -ENODEV;
-
-Instead of returning ENODEV I did go with
-
-		return PTR_ERR(pmu->regmap);
-
-the error from trying to grab the regmap.
-
-
-Heiko
+Tony
