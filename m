@@ -1,148 +1,35 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <tony@atomide.com>
+Date: Mon, 22 Feb 2016 08:52:53 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2] clk: ti: omap3+: dpll: use non-locking version of
+ clk_get_rate
+Message-ID: <20160222165252.GF13417@atomide.com>
+References: <1455966777-30576-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, "Rob Herring" <robh@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1454665050-37776-8-git-send-email-jamesjj.liao@mediatek.com>
-Cc: "John Crispin" <blogic@openwrt.org>, "Arnd Bergmann" <arnd@arndb.de>,
- "Sascha Hauer" <kernel@pengutronix.de>,
- "Daniel Kurtz" <djkurtz@chromium.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, "James Liao" <jamesjj.liao@mediatek.com>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
- <1454665050-37776-8-git-send-email-jamesjj.liao@mediatek.com>
-Message-ID: <20160211213542.26445.82983@quark.deferred.io>
-Subject: Re: [PATCH v6 7/7] clk: mediatek: Enable critical clocks for MT2701
-Date: Thu, 11 Feb 2016 13:35:42 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455966777-30576-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+* Tero Kristo <t-kristo@ti.com> [160220 03:12]:
+> As the code in this file is being executed within irq context in some
+> cases, we must avoid the clk_get_rate which uses mutex internally.
+> Switch the code to use clk_hw_get_rate instead which is non-locking.
+> 
+> This fixes an issue where PM runtime will hang the system if enabled
+> with a serial console before a suspend-resume cycle.
 
-Quoting James Liao (2016-02-05 01:37:30)
-> Some system clocks should be turned on by default on MT2701.
-> This patch enable these clocks when related clocks have
-> been registered.
-> =
+Can you please add the "Fixes: " line here?
 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt2701.c | 23 +++++++++++++++++++++--
->  1 file changed, 21 insertions(+), 2 deletions(-)
-> =
+And when applying, please tag this one Cc stable.
 
-> diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk=
--mt2701.c
-> index 01722e0..f7b4d52 100644
-> --- a/drivers/clk/mediatek/clk-mt2701.c
-> +++ b/drivers/clk/mediatek/clk-mt2701.c
-> @@ -573,6 +573,21 @@ static const struct mtk_gate top_clks[] __initconst =
-=3D {
->         GATE_TOP_AUD(CLK_TOP_AUD_I2S6_MCLK, "aud_i2s6_mclk", "aud_k6_src_=
-div", 28),
->  };
->  =
+Other than that, please feel free to add:
 
-> +static struct clk_onecell_data *top_clk_data __initdata;
-> +static struct clk_onecell_data *pll_clk_data __initdata;
-> +
-> +static void __init mtk_clk_enable_critical(void)
-> +{
-> +       if (!top_clk_data || !pll_clk_data)
-> +               return;
-> +
-> +       clk_prepare_enable(pll_clk_data->clks[CLK_APMIXED_ARMPLL]);
-> +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_AXI_SEL]);
-> +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_MEM_SEL]);
-> +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_DDRPHYCFG_SEL]);
-> +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_RTC_SEL]);
-> +}
-
-I think we're close to having a better solution. Please see this patch
-series[0] and let me know if it provides a better way for you to enable
-these critical clocks instead of the open-coded solution.
-
-[0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@=
-baylibre.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
 
 Regards,
-Mike
 
-> +
->  static void __init mtk_topckgen_init(struct device_node *node)
->  {
->         struct clk_onecell_data *clk_data;
-> @@ -585,7 +600,7 @@ static void __init mtk_topckgen_init(struct device_no=
-de *node)
->                 return;
->         }
->  =
-
-> -       clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR);
-> +       top_clk_data =3D clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR);
->  =
-
->         mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_=
-clks),
->                                                                 clk_data);
-> @@ -606,6 +621,8 @@ static void __init mtk_topckgen_init(struct device_no=
-de *node)
->         if (r)
->                 pr_err("%s(): could not register clock provider: %d\n",
->                         __func__, r);
-> +
-> +       mtk_clk_enable_critical();
-
-So you call the function here, and ...
->  }
->  CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_in=
-it);
->  =
-
-> @@ -1201,7 +1218,7 @@ static void __init mtk_apmixedsys_init(struct devic=
-e_node *node)
->         struct clk_onecell_data *clk_data;
->         int r;
->  =
-
-> -       clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-> +       pll_clk_data =3D clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(apmix=
-ed_plls));
->         if (!clk_data)
->                 return;
->  =
-
-> @@ -1212,6 +1229,8 @@ static void __init mtk_apmixedsys_init(struct devic=
-e_node *node)
->         if (r)
->                 pr_err("%s(): could not register clock provider: %d\n",
->                         __func__, r);
-> +
-> +       mtk_clk_enable_critical();
-
-... here as well. So the prepare_count and enable_count will be 2? I'm
-not sure that this makes sense. If you have different clocks that need
-to be enabled at different times (due to the split registration scheme
-that you employ in this driver) then why not pass an array of those
-clocks into mtk_clk_enable_critical?
-
-Anyways, like I mentioned above I think we're close to a solution to
-handle this in the framework.
-
-One question: do you ever want these critical clocks to be gated by a
-driver, or do you want them always on, forever?
-
-Regards,
-Mike
-
->  }
->  CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
->                                                         mtk_apmixedsys_in=
-it);
-> -- =
-
-> 1.9.1
->=20
+Tony
