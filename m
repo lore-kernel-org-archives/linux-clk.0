@@ -1,88 +1,81 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:49236 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750877AbcBVIDF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2016 03:03:05 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v9 3/6] ARM: hisi: add compatible string for Hi3519 soc
+Date: Mon, 22 Feb 2016 15:47:57 +0800
+Message-ID: <1456127280-23275-4-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
+References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-To: Lars Persson <lars.persson@axis.com>, "Rob Herring" <robh@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <56C034BA.7070806@axis.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
- pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
- galak@codeaurora.org, linux-kernel@vger.kernel.org
-References: <cover.1455206007.git.larper@axis.com>
- <2686b3bbb9ec1c86828b365645bd7f997a9780b4.1455206007.git.larper@axis.com>
- <20160212163916.GA7677@rob-hp-laptop> <56C034BA.7070806@axis.com>
-Message-ID: <20160216235927.2278.40353@quark.deferred.io>
-Subject: Re: [PATCH 1/2] clk: add device tree binding for artpec-6 pll1 clock
-Date: Tue, 16 Feb 2016 15:59:27 -0800
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Lars Persson (2016-02-14 00:03:06)
-> =
+add compatible string for Hi3519 soc.
 
-> =
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-> On 02/12/2016 05:39 PM, Rob Herring wrote:
-> > On Thu, Feb 11, 2016 at 05:01:03PM +0100, Lars Persson wrote:
-> >> Add device tree documentation for the main PLL in the Artpec-6 SoC.
-> > Roughly how many clocks does this SoC have?
-> It will have 17 clocks declared in the device tree and three =
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index 8cc6215..00dae89 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
+ 	.dt_compat	= hi3xxx_compat,
+ MACHINE_END
+ 
+-static const char *const hix5hd2_compat[] __initconst = {
++static const char *const hisilicon_compat[] __initconst = {
+ 	"hisilicon,hix5hd2",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
+-	.dt_compat	= hix5hd2_compat,
+-MACHINE_END
+-
+-static const char *const hip04_compat[] __initconst = {
+ 	"hisilicon,hip04-d01",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
+-	.dt_compat	= hip04_compat,
+-MACHINE_END
+-
+-static const char *const hip01_compat[] __initconst = {
+ 	"hisilicon,hip01",
+ 	"hisilicon,hip01-ca9x2",
++	"hisilicon,hi3519",
+ 	NULL,
+ };
+ 
+-DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+-	.dt_compat      = hip01_compat,
++DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
++	.dt_compat	= hisilicon_compat,
+ MACHINE_END
+-- 
+1.9.1
 
-> SoC-specific clock drivers.
-
-Are all of those clks going to individual DT nodes with clock-cells =3D 0?
-
-If so, I wonder if you should be targeting a clock-controller style
-binding description, with a node that represents the clock-controller IP
-block, with clock-cells >=3D 1. It really comes down to whether or not
-these clock controls exist in the same IP block.
-
-You mentioned three distinct clock drivers. So possibly three clock
-controller nodes in DT then?
-
-Is there a reference manual/register map available for this SoC?
-
-> =
-
-> >
-> >> Signed-off-by: Lars Persson <larper@axis.com>
-> >> ---
-> >>   Documentation/devicetree/bindings/clock/artpec6.txt | 16 +++++++++++=
-+++++
-> >>   1 file changed, 16 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/clock/artpec6.t=
-xt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Doc=
-umentation/devicetree/bindings/clock/artpec6.txt
-> >> new file mode 100644
-> >> index 0000000..521fec8
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/artpec6.txt
-> >> @@ -0,0 +1,16 @@
-> >> +* Clock bindings for Axis ARTPEC-6 chip
-
-Please specify that this is based on the clock provider binding in
-Documentation/devicetree/bindings/clock/clock-bindings.txt
-
-Regards,
-Mike
-
-> >> +
-> >> +Required properties:
-> >> +- #clock-cells: Should be <0>
-> >> +- compatible: Should be "axis,artpec6-pll1-clock"
-> >> +- reg: Address and length of the DEVSTAT register.
-> >> +- clocks: The PLL's input clock.
-> >> +
-> >> +Examples:
-> >> +
-> >> +pll1_clk: pll1_clk {
-> >> +    #clock-cells =3D <0>;
-> >> +    compatible =3D "axis,artpec6-pll1-clock";
-> >> +    reg =3D <0xf8000000 4>;
-> >> +    clocks =3D <&ext_clk>;
-> >> +};
-> >> -- =
-
-> >> 2.1.4
-> >>
->=20
