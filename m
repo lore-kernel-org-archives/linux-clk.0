@@ -1,60 +1,62 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 10/13] ARM: dts: sun8i-a83t: add mmc0 CD pin
-Date: Sun, 28 Feb 2016 23:18:55 +0800
-Message-Id: <1456672738-4993-11-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:47585 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753206AbcBVDF7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 21 Feb 2016 22:05:59 -0500
+From: "Yang, Wenyou" <Wenyou.Yang@atmel.com>
+To: Rob Herring <robh@kernel.org>
+CC: "Ferre, Nicolas" <Nicolas.FERRE@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v3 4/4] Documentation: atmel-pmc: add DT bindings for
+ fast startup
+Date: Mon, 22 Feb 2016 03:03:53 +0000
+Message-ID: <B256D81BAE5131468A838E5D7A243641D642649E@penmbx01>
+References: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
+ <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
+ <20160222025417.GH15973@rob-hp-laptop>
+In-Reply-To: <20160222025417.GH15973@rob-hp-laptop>
+Content-Type: text/plain; charset="gb2312"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-A83T Boards BPI-m3 and Allwinner H8Homletv2 boards use PF6 as
-Card Detect pin., so use PF6 as reference design CD pin in dtsi.
-
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 675fc01..c336833 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -390,6 +390,13 @@
- 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
- 			};
- 
-+			mmc0_cd_pin_reference_design: mmc0_cd_pin@0 {
-+				allwinner,pins = "PF6";
-+				allwinner,function = "gpio_in";
-+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+			};
-+
- 			uart0_pins_a: uart0@0 {
- 				allwinner,pins = "PF2", "PF4";
- 				allwinner,function = "uart0";
--- 
-1.9.1
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSb2IgSGVycmluZyBbbWFpbHRv
+OnJvYmhAa2VybmVsLm9yZ10NCj4gU2VudDogMjAxNsTqMtTCMjLI1SAxMDo1NA0KPiBUbzogWWFu
+ZywgV2VueW91IDxXZW55b3UuWWFuZ0BhdG1lbC5jb20+DQo+IENjOiBGZXJyZSwgTmljb2xhcyA8
+Tmljb2xhcy5GRVJSRUBhdG1lbC5jb20+OyBBbGV4YW5kcmUgQmVsbG9uaQ0KPiA8YWxleGFuZHJl
+LmJlbGxvbmlAZnJlZS1lbGVjdHJvbnMuY29tPjsgSmVhbi1DaHJpc3RvcGhlIFBsYWduaW9sLVZp
+bGxhcmQNCj4gPHBsYWduaW9qQGpjcm9zb2Z0LmNvbT47IFJ1c3NlbGwgS2luZyA8bGludXhAYXJt
+LmxpbnV4Lm9yZy51az47IGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnOyBQYXdlbCBNb2xs
+IDxwYXdlbC5tb2xsQGFybS5jb20+OyBNYXJrIEJyb3duDQo+IDxicm9vbmllQGtlcm5lbC5vcmc+
+OyBJYW4gQ2FtcGJlbGwgPGlqYytkZXZpY2V0cmVlQGhlbGxpb24ub3JnLnVrPjsgS3VtYXINCj4g
+R2FsYSA8Z2FsYWtAY29kZWF1cm9yYS5vcmc+OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZn
+ZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDQvNF0gRG9jdW1lbnRhdGlv
+bjogYXRtZWwtcG1jOiBhZGQgRFQgYmluZGluZ3MgZm9yIGZhc3QNCj4gc3RhcnR1cA0KPiANCj4g
+T24gTW9uLCBGZWIgMTUsIDIwMTYgYXQgMTE6NDA6MzBBTSArMDgwMCwgV2VueW91IFlhbmcgd3Jv
+dGU6DQo+ID4gQWRkIERUIGJpbmRpbmdzIHRvIGNvbmZpZ3VyYXRlIHRoZSBQTUNfRlNNUiBhbmQg
+UE1DX0ZTUFIgcmVnaXN0ZXJzIHRvDQo+ID4gdHJpZ2dlciBhIGZhc3QgcmVzdGFydCBzaWduYWwg
+dG8gUE1DLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogV2VueW91IFlhbmcgPHdlbnlvdS55YW5n
+QGF0bWVsLmNvbT4NCj4gPiBEb2N1bWVudDogYmluZGluZw0KPiA+DQo+ID4gLS0tDQo+ID4NCj4g
+PiBDaGFuZ2VzIGluIHYzOg0KPiA+ICAtIHVwZGF0ZSB0aGUgcHJvcGVydHkgZGVzY3JpcHRpb24u
+DQo+IA0KPiBUaGlzIGlzIG5vdCBoZWxwZnVsLiBBc3N1bWUgSSBkb24ndCByZW1lbWJlciB3aGF0
+IEkgdG9sZCB5b3UgYW5kIHlvdSBuZWVkIHRvIGpvZw0KPiBteSBtZW1vcnkgd2hhdCBleGFjdGx5
+IGNoYW5nZWQgc28gSSBkb24ndCBoYXZlIHRvIGdvIGxvb2sgaXQgdXAuDQoNClRoYW5rIHlvdSBm
+b3IgeW91ciBpbnN0cnVjdGlvbiwgSSB3aWxsIGtlZXAgaXQgaW4gbWluZC4NCg0KPiANCj4gPg0K
+PiA+IENoYW5nZXMgaW4gdjI6DQo+ID4gIC0gY2hhbmdlIHRoZSBwcm9wZXJ0eSBuYW1lIGFuZCBw
+cm9wZXJ0eSBkZXNjcmlwdGlvbi4NCj4gPg0KPiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9h
+cm0vYXRtZWwtcG1jLnR4dCAgICAgICAgICB8ICAgNjMNCj4gKysrKysrKysrKysrKysrKysrKysN
+Cj4gPiAgMSBmaWxlIGNoYW5nZWQsIDYzIGluc2VydGlvbnMoKykNCj4gDQo+IEFja2VkLWJ5OiBS
+b2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KDQpUaGFuayB5b3UgZm9yIHlvdXIgQWNrZWQu
+DQoNCg0KQmVzdCBSZWdhcmRzLA0KV2VueW91IFlhbmcNCg==
