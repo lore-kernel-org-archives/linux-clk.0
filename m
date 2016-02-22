@@ -1,51 +1,66 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	heiko@sntech.de,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 0/5] clk: sunxi: Rework the clocks code to deal with orphans
-Date: Tue,  2 Feb 2016 09:47:09 +0100
-Message-Id: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Jens Kuske <jenskuske@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 05/10] DT: clk: sunxi: add binding doc for the multi-bus-gates clock
+Date: Mon, 22 Feb 2016 18:20:50 +0000
+Message-Id: <1456165255-31013-6-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1456165255-31013-1-git-send-email-andre.przywara@arm.com>
+References: <1456165255-31013-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Recent Allwinner SoCs introduced a bus gates clock which can have
+different parents for individual gates.
+For the time being we encoded this relation in the driver.
+This commit specifies a new binding which allows to encode this in
+the DT by using a child node for each parent clock used. This allows
+to specify any kind of relation efficiently and also keeps the very
+same kernel driver for all SoCs at the same time.
 
-Here is an attempt at making the whole clk-sunxi code register the
-clocks without creating any orphans by relying on CLK_OF_DECLARE.
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-This also has the net benefit of not having to add the SoC compatible
-to the list of compatibles that trigger the clock registration, which
-has started to be a pain.
-
-I tested this on an A13 (R8 actually), everything seems to be working
-just fine. I also tested it both with and without Heiko's patch to
-defer clk_get if the clock is orphan, and previously broke everything.
-
-Let me know what you think,
-Maxime
-
-Maxime Ripard (5):
-  clk: sunxi: Make clocks setup functions return their clock
-  clk: sunxi: Make clocks setup functions take const pointer
-  clk: sunxi: convert current clocks registration to CLK_OF_DECLARE
-  clk: sunxi: Remove old probe and protection code
-  clk: sunxi: Remove clk_register_clkdev calls
-
- drivers/clk/sunxi/clk-a10-hosc.c         |   3 +-
- drivers/clk/sunxi/clk-a20-gmac.c         |   2 -
- drivers/clk/sunxi/clk-factors.c          |   7 -
- drivers/clk/sunxi/clk-factors.h          |   1 -
- drivers/clk/sunxi/clk-mod0.c             |   1 +
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c |   2 -
- drivers/clk/sunxi/clk-sun9i-core.c       |   1 +
- drivers/clk/sunxi/clk-sunxi.c            | 263 ++++++++++++++++---------------
- 8 files changed, 135 insertions(+), 145 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index c09f59b..323af8e 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -79,6 +79,7 @@ Required properties:
+ 	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
+ 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
+ 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
++	"allwinner,sunxi-multi-bus-gates-clk" - for the multi-parent bus gates
+ 
+ Required properties for all clocks:
+ - reg : shall be the control register address for the clock.
+@@ -119,6 +120,11 @@ For "allwinner,sun6i-a31-pll6-clk", there are 2 outputs. The first output
+ is the normal PLL6 output, or "pll6". The second output is rate doubled
+ PLL6, or "pll6x2".
+ 
++The "allwinner,sunxi-multi-bus-gates-clk" holds the actual clocks in
++child nodes, where each one specifies the parent clock that the particular
++gates are depending from. The child nodes each follow the common clock
++binding as described in this document.
++
+ The "allwinner,*-mmc-clk" clocks have three different outputs: the
+ main clock, with the ID 0, and the output and sample clocks, with the
+ IDs 1 and 2, respectively.
 -- 
 2.6.4
