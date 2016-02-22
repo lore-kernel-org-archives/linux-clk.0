@@ -1,109 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:2847 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751036AbcBECo1 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 21:44:27 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v8 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Fri, 5 Feb 2016 10:31:06 +0800
-Message-ID: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Gabriel Fernandez <gabriel.fernandez@st.com>
+Subject: [PATCH 5/9] clk: st: Remove impossible check for of_clk_get_parent_count() < 0
+Date: Mon, 22 Feb 2016 12:54:43 -0800
+Message-Id: <1456174487-28397-6-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+The checks for < 0 are impossible now that
+of_clk_get_parent_count() returns an unsigned int. Simplify the
+code and update the types.
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/st/clk-flexgen.c | 4 ++--
+ drivers/clk/st/clkgen-mux.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Any comments will be appreciated!
-
-Thanks!
-
-Change Log
-----------
-v8:
---Made hi3519 clock driver can be compiled as a module
---Fixed an issue in arch/arm/Kconfig.debug
-
-v7:
---Rebase to v4.5-rc1
-
-v6:
--Change clock driver to a real platform driver
-
-v5:
--Adjust clock and reset controller driver code
-
-v4:
--Rebase to v4.4-rc7
--Divide patches according to Rob's comments
--Add spi nodes in hi3519-demb.dts
-
-v3:
--Rebase to v4.4-rc4
--Adjust according to Arnd's comments
--Remove ARCH_HI3519, using ARCH_HISI directly
-
-v2:
--Rebase to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Delete unused clocks definitions.
--Adjust the ARCH_xxx order in Kconfig file
--Rename ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-  ARM: debug: add hi3519 debug uart
-  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   1 +
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |   7 +
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 133 +++++++++++++++
- drivers/clk/hisilicon/clk.c                        |  23 ++-
- drivers/clk/hisilicon/clk.h                        |  14 +-
- drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
- 16 files changed, 672 insertions(+), 34 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 24d99594c0b3..627267c7ec5c 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -244,10 +244,10 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+ 						       int *num_parents)
+ {
+ 	const char **parents;
+-	int nparents;
++	unsigned int nparents;
+ 
+ 	nparents = of_clk_get_parent_count(np);
+-	if (WARN_ON(nparents <= 0))
++	if (WARN_ON(!nparents))
+ 		return NULL;
+ 
+ 	parents = kcalloc(nparents, sizeof(const char *), GFP_KERNEL);
+diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+index 0d9a74b66ea3..b1e10ffe7a44 100644
+--- a/drivers/clk/st/clkgen-mux.c
++++ b/drivers/clk/st/clkgen-mux.c
+@@ -26,10 +26,10 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
+ 						       int *num_parents)
+ {
+ 	const char **parents;
+-	int nparents;
++	unsigned int nparents;
+ 
+ 	nparents = of_clk_get_parent_count(np);
+-	if (WARN_ON(nparents <= 0))
++	if (WARN_ON(!nparents))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	parents = kcalloc(nparents, sizeof(const char *), GFP_KERNEL);
 -- 
-1.9.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
