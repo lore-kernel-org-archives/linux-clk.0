@@ -1,66 +1,63 @@
-Return-Path: <yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-In-Reply-To: <56B9507B.9000201@kernel.org>
-References: <56B9507B.9000201@kernel.org>
-Date: Tue, 9 Feb 2016 13:00:47 +0900
-Message-ID: <CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
-Subject: Re: commit 5146e0b05963 is causing a kernel crash on SoCFPGA
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Vladimir Zapolskiy <vz@mleia.com>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+From: slemieux.tyco@gmail.com
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: stigge@antcom.de,
+	vz@mleia.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: lpc32xx: fix compilation warning
+Date: Mon, 22 Feb 2016 13:49:00 -0500
+Message-Id: <1456166940-30268-1-git-send-email-slemieux.tyco@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dinh,
+From: Sylvain Lemieux <slemieux@tycoint.com>
 
-Thanks for your report.
+This patch remove the following compilation warning:
+- drivers/clk/nxp/clk-lpc32xx.c: In function 'lpc32xx_clk_register':
+  warning: 'hw' may be used uninitialized in this function [-Wmaybe-uninitialized]
+- drivers/clk/nxp/clk-lpc32xx.c: In function 'clk_hclk_pll_round_rate':
+  warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  warning: 'n' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
+Tested using gcc version 4.7.3.
 
-2016-02-09 11:35 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
-> Hi Stephen,
->
-> It appears that commit 5146e0b05966 "clk: simplify __clk_init_parent()"
-> that is currently in linux-next is causing the following kernel crash on
-> SoCFGPA[1].
->
-> I have bisected to this commit and doing a revert of the commit fixes
-> the issue.
+Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-Could you check if the following simple patch fixes your problem?
-
-
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1662,7 +1662,7 @@ static struct clk_core *__clk_init_parent(struct
-clk_core *core)
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 48b3a11..331f91b 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -13,6 +13,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+ #include <linux/regmap.h>
++#include <linux/compiler-gcc.h>
+ 
+ #include <dt-bindings/clock/lpc32xx-clock.h>
+ 
+@@ -588,7 +589,8 @@ static long clk_hclk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long *parent_rate)
  {
-        u8 index = 0;
-
--       if (core->ops->get_parent)
-+       if (core->num_parents > 1 && core->ops->get_parent)
-                index = core->ops->get_parent(core->hw);
-
-        return clk_core_get_parent_by_index(core, index);
-
-
-
-
-Let me ask one more question.
-
-Do SoCFPGA clocks define .get_parent callback even if num_parents <= 1 ?
-
-
-I just skimmed over driver/clk/socfpga/clk-gate.c
-and found it defines .get_parent().
-
-I think a gating clock is usually single-parent (so not need to have
-.get_parent),
-but I am not sure if this is the case.
-
-
+ 	struct lpc32xx_pll_clk *clk = to_lpc32xx_pll_clk(hw);
+-	u64 m_i, m, n, p, o = rate, i = *parent_rate, d = (u64)rate << 6;
++	u64 m_i, o = rate, i = *parent_rate, d = (u64)rate << 6;
++	u64 uninitialized_var(m), uninitialized_var(n), uninitialized_var(p);
+ 	int p_i, n_i;
+ 
+ 	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
+@@ -1414,7 +1416,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
+ 			.flags = lpc32xx_clk->flags,
+ 			.ops = clk_hw->hw0.ops,
+ 		};
+-		struct clk_hw *hw;
++		struct clk_hw *uninitialized_var(hw);
+ 
+ 		if (clk_hw->type == CLK_LPC32XX)
+ 			hw = &clk_hw->hw0.clk.hw;
 -- 
-Best Regards
-Masahiro Yamada
+1.8.3.1
