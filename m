@@ -1,64 +1,47 @@
-Return-Path: <slash.tmp@free.fr>
-To: linux-clk <linux-clk@vger.kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sebastian Frias <sf84@laposte.net>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>
-From: Mason <slash.tmp@free.fr>
-Subject: Common/typical fractional divider HW API
-Message-ID: <56B4B67D.2080707@free.fr>
-Date: Fri, 5 Feb 2016 15:49:33 +0100
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+To: Andrew Lunn <andrew@lunn.ch>,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160222141617.GA14970@lunn.ch>
+Cc: "Rob Herring" <robh@kernel.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Pawel Moll" <pawel.moll@arm.com>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Kumar Gala" <galak@codeaurora.org>, "Jason Cooper" <jason@lakedaemon.net>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@free-electrons.com>,
+ "Nadav Haklai" <nadavh@marvell.com>, "Lior Amsalem" <alior@marvell.com>,
+ linux-arm-kernel@lists.infradead.org
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20160222025357.GE15973@rob-hp-laptop>
+ <20160222091423.4756a579@free-electrons.com> <20160222141617.GA14970@lunn.ch>
+Message-ID: <20160222183203.2278.60153@quark.deferred.io>
+Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+Date: Mon, 22 Feb 2016 10:32:03 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Quoting Andrew Lunn (2016-02-22 06:16:17)
+> > Such information will come later, and we can rework the drivers and DT
+> > bindings accordingly. Those DT bindings cannot be stable, as the
+> > platform is under heavy development and we'll probably discover some
+> > issues down the road.
+> =
 
-AFAICT, the clk-fractional-divider driver implements the following
-hardware API:
+> Hi Thomas
+> =
 
-  M and N are two fields in the same register.
-  DIV = M / N
+> Maybe add a big fat warning that the bindings are unstable, and the DT
+> blob must be kept in sync with the kernel?
 
-Is this HW API common/typical in the embedded world?
-in the PC world?
++1 and feel free to blame the lack of documentation.  No one can expect
+bindings to be finalized when the chip topology is not fully understood.
 
+Regards,
+Mike
 
-My hardware uses a slightly weird (to me) API:
+> =
 
-  I = 0-255 (8 bits)
-  F = 0-15  (4 bits)
-
-  I = 0 => DIV = +INF
-  I = 1 => DIV = 1 + F/(32-F)
-  I > 1 => DIV = I + F/16
-
-Is this HW API common/typical in the embedded world?
-(Perhaps just the linear part for I > 1)
-
-I see two downsides to this API:
-
-1) I = 1 is a special case
-2) A lot of the value space is wasted on large values.
-
-For example, when I = 250, we don't really care about 250.0625, 250.125,
-etc, or even nearby integer values, for that matter.
-
-I think it's better to have a distribution with high density in small
-values, and low density in high values (sort of like floating point).
-
-For example:
-
-  I = 0-15  (4 bits)
-  F = 0-255 (8 bits)
-  DIV = 2^I * (1 + F/256)
-
-(We could probably even shave 2-4 bits on F.)
-
-Are there downsides to this HW API?
-Is this HW API common/typical in the embedded world?
-
-Regards.
+>      Andrew
