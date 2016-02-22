@@ -1,44 +1,95 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 15:56:55 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <b20788@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
-	Bai Ping <b51503@freescale.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
+Return-Path: <robh@kernel.org>
+Date: Sun, 21 Feb 2016 20:53:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jaroslav Kysela <perex@perex.cz>, Kumar Gala <galak@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>, Takashi Iwai <tiwai@suse.com>,
-	Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 0/2] clk: imx6: add kpp clock for i.MX6UL
-Message-ID: <20160225235655.GN28849@codeaurora.org>
-References: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
+	Kumar Gala <galak@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+Message-ID: <20160222025357.GE15973@rob-hp-laptop>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/12, Lothar Waßmann wrote:
-> This patchset adds the clock which is necessary to operate the KPP
-> unit on i.MX6UL.
-> The first patch removes bogus whitespace before TABs in indentation.
-> The second patch adds the clock definition.
+On Mon, Feb 15, 2016 at 08:34:57AM +0100, Thomas Petazzoni wrote:
+> This commit adds a new driver to handle the core clocks found in the
+> AP806 HW block, which is the core block of all Armada 7K and 8K
+> Marvell 64-bits processors. This core clock driver reads the
+> Sample-At-Reset register to determine the frequencies of several core
+> clocks: DDR, Ring and CPU clocks.
 > 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  .../clock/mvebu-armada-ap806-core-clock.txt        |  33 ++++++
+>  drivers/clk/mvebu/Kconfig                          |   3 +
+>  drivers/clk/mvebu/Makefile                         |   2 +-
+>  drivers/clk/mvebu/ap806-core.c                     | 112 +++++++++++++++++++++
+>  4 files changed, 149 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+>  create mode 100644 drivers/clk/mvebu/ap806-core.c
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+> new file mode 100644
+> index 0000000..b2131bb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+> @@ -0,0 +1,33 @@
+> +* Clock bindings for Marvell MVEBU AP806 Core clocks
+> +
+> +The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
+> +hosting the CPU and other core components of the CPU. This Device Tree
+> +binding allows to describe the core clocks of the AP806, whose
+> +frequencies are determined by reading the Sample-At-Reset (SAR)
+> +register.
 
-Both look fine. Shawn?
+What else is in the AP806?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +
+> +Clock consumers must specify the desired clock by having the clock ID
+> +in its "clocks" phandle cell.
+> +
+> +The following is a list of provided IDs and clock names for the core
+> +Armada AP806 clocks:
+> +
+> + 0 = DDR
+> + 1 = Ring
+> + 2 = CPU
+> +
+> +Required properties:
+> +- compatible: must be be one of the following:
+> +	"marvell,armada-ap806-core-clock"
+
+I'd expect this to be a sub-node of a syscon block or just a single 
+clock provider for the full block. Hard to tell reviewing this without 
+context of what the full clock tree looks like. 
+
+> +- reg: must be the register address of the Sample-At-Reset (SAR) register
+> +- #clock-cells: from common clock binding; shall be set to 1
+> +- clock-output-names: name of the output clocks
+> +
+> +Example:
+> +
+> +	coreclk: clk@0x6F8204 {
+
+Drop 0x and lowercase hex.
+
+> +		compatible = "marvell,armada-ap806-core-clock";
+> +		reg = <0x6F8204 0x04>;
+
+lowercase hex.
+
+> +		#clock-cells = <1>;
+> +		clock-output-names = "ddr", "ring", "cpu";
+> +	};
