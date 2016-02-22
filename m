@@ -1,63 +1,77 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-From: slemieux.tyco@gmail.com
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: stigge@antcom.de,
-	vz@mleia.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: lpc32xx: fix compilation warning
-Date: Mon, 22 Feb 2016 13:49:00 -0500
-Message-Id: <1456166940-30268-1-git-send-email-slemieux.tyco@gmail.com>
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <CAGhQ9VyaG+hcwNfXr7soP84G8Sq7DJmz8oMqZ1ALef6hcc0auw@mail.gmail.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+	<1451297429-21689-13-git-send-email-yamada.masahiro@socionext.com>
+	<CAGhQ9VyaG+hcwNfXr7soP84G8Sq7DJmz8oMqZ1ALef6hcc0auw@mail.gmail.com>
+Date: Mon, 22 Feb 2016 11:29:46 +0900
+Message-ID: <CAK7LNARhh0o8t_qLHc4_+yyZE6Hx6cwL2XEKbFsHZJmeHndzyA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/16] clk: avoid circular clock topology
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sylvain Lemieux <slemieux@tycoint.com>
+Hi Joachim,
 
-This patch remove the following compilation warning:
-- drivers/clk/nxp/clk-lpc32xx.c: In function 'lpc32xx_clk_register':
-  warning: 'hw' may be used uninitialized in this function [-Wmaybe-uninitialized]
-- drivers/clk/nxp/clk-lpc32xx.c: In function 'clk_hclk_pll_round_rate':
-  warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  warning: 'n' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-Tested using gcc version 4.7.3.
+2016-02-22 6:39 GMT+09:00 Joachim Eastwood <manabian@gmail.com>:
+> Hi everyone,
+>
+> On 28 December 2015 at 11:10, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> Currently, clk_register() never checks a circular parent looping,
+>> but clock providers could register such an insane clock topology.
+>> For example, "clk_a" could have "clk_b" as a parent, and vice versa.
+>> In this case, clk_core_reparent() creates a circular parent list
+>> and __clk_recalc_accuracies() calls itself recursively forever.
+>>
+>> The core infrastructure should be kind enough to bail out, showing
+>> an appropriate error message in such a case.  This helps to easily
+>> find a bug in clock providers.  (uh, I made such a silly mistake
+>> when I was implementing my clock providers first.  I was upset
+>> because the kernel did not respond, without any error message.)
+>>
+>> This commit adds a new helper function, __clk_is_ancestor().  It
+>> returns true if the second argument is a possible ancestor of the
+>> first one.  If a clock core is a possible ancestor of itself, it
+>> would make a loop when it were registered.  That should be detected
+>> as an error.
+>
+> This commit breaks lpc18xx boot in next right now. See
+> http://marc.info/?l=linux-arm-kernel&m=145608597106087&w=2
+>
+> The Clock Generation Unit (CGU) on lpc18xx allow for circular parents
+> in hardware. While it is obliviously not a good idea to configure the
+> clocks in that manner there is nothing that stops you either.
+>
+> Please take a look at the second figure on:
+> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
+> All PLLs can feed clock into the dividers and the dividers can feed
+> clock into the PLLs.
+>
+> The reason why this is made possible in the CGU is because you can
+> then choose where to put your divider; either before the PLL or after.
+>
 
-Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
----
- drivers/clk/nxp/clk-lpc32xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 48b3a11..331f91b 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -13,6 +13,7 @@
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/regmap.h>
-+#include <linux/compiler-gcc.h>
- 
- #include <dt-bindings/clock/lpc32xx-clock.h>
- 
-@@ -588,7 +589,8 @@ static long clk_hclk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long *parent_rate)
- {
- 	struct lpc32xx_pll_clk *clk = to_lpc32xx_pll_clk(hw);
--	u64 m_i, m, n, p, o = rate, i = *parent_rate, d = (u64)rate << 6;
-+	u64 m_i, o = rate, i = *parent_rate, d = (u64)rate << 6;
-+	u64 uninitialized_var(m), uninitialized_var(n), uninitialized_var(p);
- 	int p_i, n_i;
- 
- 	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
-@@ -1414,7 +1416,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
- 			.flags = lpc32xx_clk->flags,
- 			.ops = clk_hw->hw0.ops,
- 		};
--		struct clk_hw *hw;
-+		struct clk_hw *uninitialized_var(hw);
- 
- 		if (clk_hw->type == CLK_LPC32XX)
- 			hw = &clk_hw->hw0.clk.hw;
+Sorry for breaking your board.
+
+I am OK with reverting b58f75aa83fb.
+
+
+
+I guess your hardware could make clock looping for the best flexibility
+but you do not make clock looping in actual use cases.
+
+Maybe, does it make sense to check the parent looping
+in clk_set_parent() or somewhere, not in clk_register()?
+
+
 -- 
-1.8.3.1
+Best Regards
+Masahiro Yamada
