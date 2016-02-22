@@ -1,37 +1,83 @@
-Return-Path: <ramesh.shanmugasundaram@bp.renesas.com>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
 To: mturquette@baylibre.com,
 	sboyd@codeaurora.org
-Cc: geert+renesas@glider.be,
-	laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
+Cc: Joachim Eastwood <manabian@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 2/3] clk: shmobile: r8a7795: Add CANFD clock
-Date: Thu, 25 Feb 2016 17:05:25 +0000
-Message-Id: <1456419926-8732-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
+Date: Mon, 22 Feb 2016 23:53:15 +0100
+Message-Id: <1456181595-10392-3-git-send-email-manabian@gmail.com>
+In-Reply-To: <1456181595-10392-1-git-send-email-manabian@gmail.com>
+References: <1456181595-10392-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Add DT binding documentation for lpc1850-creg-clk driver.
 
-diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-index b2b9880..9961405 100644
---- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-@@ -112,6 +112,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
-+	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- };
- 
- static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+new file mode 100644
+index 000000000000..0c83d373b766
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+@@ -0,0 +1,52 @@
++* NXP LPC1850 CREG clocks
++
++The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
++control registers for two low speed clocks. One of the clocks is a
++32 kHz oscillator driver with power up/down and clock gating. Next
++is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
++
++These clocks are used by the RTC and the Event Router peripherials.
++The 32 kHz can also be routed to other peripherials to enable low
++power modes.
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible:
++	Should be "nxp,lpc1850-creg-clk"
++- #clock-cells:
++	Shall have value <1>.
++- clocks:
++	Shall contain a phandle to the fix 32 kHz crystall.
++
++The creg-clk node must be a child of the creg syscon node.
++
++The following clocks are available from the clock node.
++
++Clock ID	Name
++   0		 1 kHz clock
++   1		32 kHz Oscillator
++
++Example:
++soc {
++	creg: syscon@40043000 {
++		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
++		reg = <0x40043000 0x1000>;
++
++		creg_clk: clock-controller@004 {
++			compatible = "nxp,lpc1850-creg-clk";
++			clocks = <&xtal32>;
++			#clock-cells = <1>;
++		};
++
++		...
++	};
++
++	rtc: rtc@40046000 {
++		...
++		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
++		clock-names = "rtc", "reg";
++		...
++	};
++};
 -- 
-1.9.1
+1.8.0
