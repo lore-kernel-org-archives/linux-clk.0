@@ -1,49 +1,90 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 11 Feb 2016 11:08:38 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
-Message-ID: <20160211110838.GI3782@x1>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
- <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <CAK7LNARhh0o8t_qLHc4_+yyZE6Hx6cwL2XEKbFsHZJmeHndzyA@mail.gmail.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+	<1451297429-21689-13-git-send-email-yamada.masahiro@socionext.com>
+	<CAGhQ9VyaG+hcwNfXr7soP84G8Sq7DJmz8oMqZ1ALef6hcc0auw@mail.gmail.com>
+	<CAK7LNARhh0o8t_qLHc4_+yyZE6Hx6cwL2XEKbFsHZJmeHndzyA@mail.gmail.com>
+Date: Tue, 23 Feb 2016 00:32:39 +0100
+Message-ID: <CAGhQ9VzoPp2R_v701zjG=wHN_8Q2FVjr1XAMSaY61dfTE649WA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/16] clk: avoid circular clock topology
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
+On 22 February 2016 at 03:29, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Hi Joachim,
+>
+>
+> 2016-02-22 6:39 GMT+09:00 Joachim Eastwood <manabian@gmail.com>:
+>> Hi everyone,
+>>
+>> On 28 December 2015 at 11:10, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>>> Currently, clk_register() never checks a circular parent looping,
+>>> but clock providers could register such an insane clock topology.
+>>> For example, "clk_a" could have "clk_b" as a parent, and vice versa.
+>>> In this case, clk_core_reparent() creates a circular parent list
+>>> and __clk_recalc_accuracies() calls itself recursively forever.
+>>>
+>>> The core infrastructure should be kind enough to bail out, showing
+>>> an appropriate error message in such a case.  This helps to easily
+>>> find a bug in clock providers.  (uh, I made such a silly mistake
+>>> when I was implementing my clock providers first.  I was upset
+>>> because the kernel did not respond, without any error message.)
+>>>
+>>> This commit adds a new helper function, __clk_is_ancestor().  It
+>>> returns true if the second argument is a possible ancestor of the
+>>> first one.  If a clock core is a possible ancestor of itself, it
+>>> would make a loop when it were registered.  That should be detected
+>>> as an error.
+>>
+>> This commit breaks lpc18xx boot in next right now. See
+>> http://marc.info/?l=linux-arm-kernel&m=145608597106087&w=2
+>>
+>> The Clock Generation Unit (CGU) on lpc18xx allow for circular parents
+>> in hardware. While it is obliviously not a good idea to configure the
+>> clocks in that manner there is nothing that stops you either.
+>>
+>> Please take a look at the second figure on:
+>> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
+>> All PLLs can feed clock into the dividers and the dividers can feed
+>> clock into the PLLs.
+>>
+>> The reason why this is made possible in the CGU is because you can
+>> then choose where to put your divider; either before the PLL or after.
+>>
+>
+>
+> Sorry for breaking your board.
 
-The upstream patch.  Enjoy!
+No worries, that is why we have next so we can catch it before it hits
+mainline :-)
 
-The following changes since commit 36f90b0a2ddd60823fe193a85e60ff1906c2a9b3:
 
-  Linux 4.5-rc2 (2016-01-31 18:12:16 -0800)
+> I am OK with reverting b58f75aa83fb.
+>
+>
+>
+> I guess your hardware could make clock looping for the best flexibility
+> but you do not make clock looping in actual use cases.
 
-are available in the git repository at:
+That's right.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-clk-v4.6
 
-for you to fetch changes up to c4726abce63bf9b1887ce68fdf012a823bd94ec3:
+> Maybe, does it make sense to check the parent looping
+> in clk_set_parent() or somewhere, not in clk_register()?
 
-  mfd: intel_quark_i2c_gpio: Use clkdev_create() (2016-02-11 11:03:07 +0000)
+I think that would be a nice addition. While the CGU can certainly be
+configured with loops it is indeed something that we should prevent
+from happening.
 
-----------------------------------------------------------------
-Immutable branch between MFD and Clk due for v4.6
 
-----------------------------------------------------------------
-Stephen Boyd (1):
-      mfd: intel_quark_i2c_gpio: Use clkdev_create()
-
- drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+regards,
+Joachim Eastwood
