@@ -1,135 +1,42 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH 1/5] clk: sunxi: Make clocks setup functions return their
- clock
-To: Chen-Yu Tsai <wens@csie.org>,
-   Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v66CyhkM0vabbede43eAaf7WVg0Lm8w_OUKwqHnFO182uw@mail.gmail.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-   Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
-   =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-   linux-clk <linux-clk@vger.kernel.org>,
-   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56B093CD.6000806@arm.com>
-Date: Tue, 2 Feb 2016 11:32:29 +0000
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v6 0/2] Add initial support for RPM clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1450182602-6996-1-git-send-email-georgi.djakov@linaro.org>
+ <20160212003757.GD4847@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Message-ID: <56CB2966.5060403@linaro.org>
+Date: Mon, 22 Feb 2016 17:29:42 +0200
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v66CyhkM0vabbede43eAaf7WVg0Lm8w_OUKwqHnFO182uw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160212003757.GD4847@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
-
-On 02/02/16 10:35, Chen-Yu Tsai wrote:
-> On Tue, Feb 2, 2016 at 4:47 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> The clocks registration code in clk-sunxi was most of the time not
->> returning the struct clk (or struct clk array) that was registered,
->> preventing the users of such functions to manipulate it, for example to
->> protect it.
+On 02/12/2016 02:37 AM, Stephen Boyd wrote:
+> On 12/15, Georgi Djakov wrote:
 >>
->> Make them return it so that we can start using it.
+>>  .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
+>>  drivers/clk/qcom/Kconfig                           |   29 ++
+>>  drivers/clk/qcom/Makefile                          |    2 +
+>>  drivers/clk/qcom/clk-rpm.c                         |  290 +++++++++++++
+>>  drivers/clk/qcom/clk-rpm.h                         |   71 ++++
 > 
-> Should they return error codes as well? So the CLK_OF_DECLARE setup functions
-> can report errors. Or make these helper functions report errors directly?
-
-Yeah, I was about the reply the same.
-It looks like we can use the ERR_PTR facility to achieve this, as it's
-already used in other parts of the clk framework.
-
-For instance ...
-
-> ChenYu
+> Do we need this header file?
 > 
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->>  drivers/clk/sunxi/clk-sunxi.c | 16 +++++++++-------
->>  1 file changed, 9 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->> index e460a6b0068c..67ef94948544 100644
->> --- a/drivers/clk/sunxi/clk-sunxi.c
->> +++ b/drivers/clk/sunxi/clk-sunxi.c
->> @@ -615,8 +615,8 @@ static const struct mux_data sun8i_h3_ahb2_mux_data __initconst = {
->>         .shift = 0,
->>  };
->>
->> -static void __init sunxi_mux_clk_setup(struct device_node *node,
->> -                                      struct mux_data *data)
->> +static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->> +                                              struct mux_data *data)
->>  {
->>         struct clk *clk;
->>         const char *clk_name = node->name;
->> @@ -638,6 +638,8 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
->>                 of_clk_add_provider(node, of_clk_src_simple_get, clk);
->>                 clk_register_clkdev(clk, clk_name, NULL);
-
-... here we have two functions that could fail and actually return an
-error code.
-This whole clock tree is quite complex already, so having clock
-initialisations fail without any error message is not really helping.
-Doing: "if (ret) {pr_warn(...); return ERR_PTR(ret);}" should be doable,
-I think. Or we do it in the upper layers, when we have the error reason.
-
-Otherwise I like the approach!
-
-Cheers,
-Andre.
-
->>         }
->> +
->> +       return clk;
->>  }
->>
->>
->> @@ -722,7 +724,6 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
->>  }
->>
->>
->> -
->>  /**
->>   * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
->>   */
->> @@ -808,8 +809,8 @@ static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
->>   *           |________________________|
->>   */
->>
->> -static void __init sunxi_divs_clk_setup(struct device_node *node,
->> -                                       struct divs_data *data)
->> +static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
->> +                                                struct divs_data *data)
->>  {
->>         struct clk_onecell_data *clk_data;
->>         const char *parent;
->> @@ -836,7 +837,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
->>
->>         clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
->>         if (!clk_data)
->> -               return;
->> +               return NULL;
->>
->>         clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
->>         if (!clks)
->> @@ -922,7 +923,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
->>
->>         of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
->>
->> -       return;
->> +       return clks;
->>
->>  free_gate:
->>         kfree(gate);
->> @@ -930,6 +931,7 @@ free_clks:
->>         kfree(clks);
->>  free_clkdata:
->>         kfree(clk_data);
->> +       return NULL;
->>  }
->>
->>
->> --
->> 2.6.4
->>
+>>  drivers/clk/qcom/clk-smd-rpm.c                     |  433 ++++++++++++++++++++
+>>  drivers/clk/qcom/clk-smd-rpm.h                     |  142 +++++++
 > 
+> And this one too?
+> 
+> From what I can tell they're only going to be included by the
+> clk-rpm and clk-smd-rpm C files. We can also avoid exporting the
+> RPM ops then if we're going to make the C files into full blown
+> platform drivers.
+> 
+
+Of course, good idea. Fixed it and will resubmit shortly.
+
+Thanks,
+Georgi
