@@ -1,57 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:35240 "EHLO
-	mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932551AbcBWIRs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2016 03:17:48 -0500
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Mon, 22 Feb 2016 09:14:23 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew
+ Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+ Lior Amsalem <alior@marvell.com>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+Message-ID: <20160222091423.4756a579@free-electrons.com>
+In-Reply-To: <20160222025357.GE15973@rob-hp-laptop>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160222025357.GE15973@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
-References: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
-Date: Tue, 23 Feb 2016 09:17:47 +0100
-Message-ID: <CAMuHMdX+FbJ=nhw8MSKLXyc0yRt7gUBQ7nvBsHqMjHhMDKkmDQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: Remove ARCH_SHMOBILE_MULTI
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 23, 2016 at 1:57 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> As of 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") all platforms
-> that use Renesas clock drivers now select ARCH_RENESAS. As it is present in
-> drivers/clk/Makefile ARCH_SHMOBILE_MULTI may now be removed.
->
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Dear Rob Herring,
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sun, 21 Feb 2016 20:53:57 -0600, Rob Herring wrote:
 
-> ---
->  drivers/clk/Makefile | 1 -
->  1 file changed, 1 deletion(-)
+> > +The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
+> > +hosting the CPU and other core components of the CPU. This Device Tree
+> > +binding allows to describe the core clocks of the AP806, whose
+> > +frequencies are determined by reading the Sample-At-Reset (SAR)
+> > +register.
+> 
+> What else is in the AP806?
 
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += shmobile/
->  obj-$(CONFIG_ARCH_RENESAS)             += shmobile/
+Lots of things: CPU core, caches, GIC, XOR engines, UART, I2C
+controller, etc.
 
-Should we rename clk/shmobile/ to clk/renesas/?
-Or is that too much of a hassle?
+> > +Clock consumers must specify the desired clock by having the clock ID
+> > +in its "clocks" phandle cell.
+> > +
+> > +The following is a list of provided IDs and clock names for the core
+> > +Armada AP806 clocks:
+> > +
+> > + 0 = DDR
+> > + 1 = Ring
+> > + 2 = CPU
+> > +
+> > +Required properties:
+> > +- compatible: must be be one of the following:
+> > +	"marvell,armada-ap806-core-clock"
+> 
+> I'd expect this to be a sub-node of a syscon block or just a single 
+> clock provider for the full block. Hard to tell reviewing this without 
+> context of what the full clock tree looks like. 
 
-Gr{oetje,eeting}s,
+I indeed wondered about adding a syscon block. However, I don't have at
+this point a full datasheet for the AP806, so it is hard to get a good
+view of what the register set looks like to create a proper syscon. And
+I don't have better informations about the full clock tree.
 
-                        Geert
+Such information will come later, and we can rework the drivers and DT
+bindings accordingly. Those DT bindings cannot be stable, as the
+platform is under heavy development and we'll probably discover some
+issues down the road.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Right now, the only information I have about the AP806 clock tree are
+about those core clocks and ring clocks.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > +- reg: must be the register address of the Sample-At-Reset (SAR) register
+> > +- #clock-cells: from common clock binding; shall be set to 1
+> > +- clock-output-names: name of the output clocks
+> > +
+> > +Example:
+> > +
+> > +	coreclk: clk@0x6F8204 {
+> 
+> Drop 0x and lowercase hex.
+> 
+> > +		compatible = "marvell,armada-ap806-core-clock";
+> > +		reg = <0x6F8204 0x04>;
+> 
+> lowercase hex.
+
+Sure, will fix.
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
