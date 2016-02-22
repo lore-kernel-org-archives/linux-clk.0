@@ -1,142 +1,64 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:39219 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752570AbcBDHkm (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 02:40:42 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v2 1/4] ARM: at91: pm: create a separate procedure for the ULP0 mode
-Date: Thu, 4 Feb 2016 15:37:48 +0800
-Message-ID: <1454571471-4434-2-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
-References: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:60102 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752933AbcBVIAA (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2016 03:00:00 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v9 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Mon, 22 Feb 2016 15:47:59 +0800
+Message-ID: <1456127280-23275-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
+References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To make the code more legible and prepare to add the ULP1 mode
-support in the future, create a separate procedure for the ULP0 mode.
+Add device tree bindings for Hi3519 system controller.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
+ .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
 
-Changes in v2: None
-
- arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
-
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index a25defd..5fcffdc 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
- 
- 	ldr	r0, .pm_mode
- 	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_disable_main_clock
-+	beq	standby_mode
- 
- 	ldr	pmc, .pmc_base
- 
-@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 
--	/* Turn off the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--skip_disable_main_clock:
--	ldr	pmc, .pmc_base
--
--	/* Wait for interrupt */
--	at91_cpu_idle
--
--	ldr	r0, .pm_mode
--	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_enable_main_clock
-+ulp0_mode:
-+	bl	at91_pm_ulp0_mode
-+	b	ulp_exit
- 
-+ulp_exit:
- 	ldr	pmc, .pmc_base
- 
--	/* Turn on the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--	wait_moscrdy
--
- 	/* Restore PLLA setting */
- 	ldr	tmp1, .saved_pllar
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-@@ -177,7 +158,15 @@ skip_disable_main_clock:
- 
- 	wait_mckrdy
- 
--skip_enable_main_clock:
-+	b	pm_exit
+diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+new file mode 100644
+index 0000000..115c5be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
 +
-+standby_mode:
-+	ldr	pmc, .pmc_base
++This bindings use the following binding:
++Documentation/devicetree/bindings/mfd/syscon.txt
 +
-+	/* Wait for interrupt */
-+	at91_cpu_idle
++Required properties:
++- compatible: "hisilicon,hi3519-sysctrl".
++- reg: the register region of this block
 +
-+pm_exit:
- 	/* Exit the self-refresh mode */
- 	mov	r0, #SRAMC_SELF_FRESH_EXIT
- 	bl	at91_sramc_self_refresh
-@@ -311,6 +300,32 @@ exit_sramc_sf:
- 	mov	pc, lr
- ENDPROC(at91_sramc_self_refresh)
- 
-+/*
-+ * void at91_pm_ulp0_mode(void)
-+ */
-+ENTRY(at91_pm_ulp0_mode)
-+	ldr	pmc, .pmc_base
-+
-+	/* Turn off the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+	/* Turn on the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscrdy
-+
-+	mov	pc, lr
-+ENDPROC(at91_pm_ulp0_mode)
-+
- .pmc_base:
- 	.word 0
- .sramc_base:
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
 -- 
-1.7.9.5
+1.9.1
 
