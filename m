@@ -1,75 +1,36 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
+Return-Path: <tony@atomide.com>
+Date: Mon, 22 Feb 2016 08:59:59 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/3] clk: sunxi: improve mux_clk error handling and reporting
-Date: Tue, 16 Feb 2016 10:46:06 +0000
-Message-Id: <1455619568-1906-2-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
-References: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
+Subject: Re: [PATCHv2] clk: ti: dpll: convert DPLL support code to use clk_hw
+ instead of clk ptrs
+Message-ID: <20160222165959.GG13417@atomide.com>
+References: <1455967466-3812-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455967466-3812-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We now catch and report a failing ioremap, also a failure in the final
-step of the clock registration is now handled and reported.
-Also warnings are turned into errors.
+* Tero Kristo <t-kristo@ti.com> [160220 03:24]:
+> Convert DPLL support code to use clk_hw pointers for reference and bypass
+> clocks. This allows us to use clk_hw_* APIs for accessing any required
+> parameters for these clocks, avoiding some locking problems at least with
+> DPLL enable code; this used clk_get_rate which uses mutex but isn't
+> good under clk_enable / clk_disable.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+> v2: rebased the patch on top of v2 of 'clk: ti: omap3+: dpll: use non-locking
+>     version of clk_get_rate', as that one is required already for -rc. This
+>     patch can follow in 4.6 merge window.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+Yeah seems this one can wait for v4.6 merge window no problem:
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 99f60ef..775e137 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -674,11 +674,16 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
- 	int i;
- 
- 	reg = of_iomap(node, 0);
-+	if (!reg) {
-+		pr_err("Could not map registers for mux-clk: %s\n",
-+		       of_node_full_name(node));
-+		return NULL;
-+	}
- 
- 	i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
- 	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
--		pr_warn("%s: could not read clock-output-names for \"%s\"\n",
--			__func__, clk_name);
-+		pr_err("%s: could not read clock-output-names from \"%s\"\n",
-+		       __func__, of_node_full_name(node));
- 		goto out_unmap;
- 	}
- 
-@@ -688,15 +693,19 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
- 			       0, &clk_lock);
- 
- 	if (IS_ERR(clk)) {
--		pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
--			clk_name, PTR_ERR(clk));
-+		pr_err("%s: failed to register mux clock %s: %ld\n", __func__,
-+		       clk_name, PTR_ERR(clk));
- 		goto out_unmap;
- 	}
- 
--	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (of_clk_add_provider(node, of_clk_src_simple_get, clk)) {
-+		pr_err("%s: failed to add clock provider for %s\n",
-+		       __func__, clk_name);
-+		clk_unregister_divider(clk);
-+		goto out_unmap;
-+	}
- 
- 	return clk;
--
- out_unmap:
- 	iounmap(reg);
- 	return NULL;
--- 
-2.6.4
+Acked-by: Tony Lindgren <tony@atomide.com>
+
+Regards,
+
+Tony
