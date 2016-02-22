@@ -1,164 +1,51 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 5/8] clk: bcm2835: add the dsi clocks
-Date: Mon, 29 Feb 2016 15:43:59 +0000
-Message-Id: <1456760642-2412-6-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20160222183203.2278.60153@quark.deferred.io>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20160222025357.GE15973@rob-hp-laptop> <20160222091423.4756a579@free-electrons.com>
+ <20160222141617.GA14970@lunn.ch> <20160222183203.2278.60153@quark.deferred.io>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 22 Feb 2016 13:42:49 -0600
+Message-ID: <CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+To: Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Mon, Feb 22, 2016 at 12:32 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Quoting Andrew Lunn (2016-02-22 06:16:17)
+>> > Such information will come later, and we can rework the drivers and DT
+>> > bindings accordingly. Those DT bindings cannot be stable, as the
+>> > platform is under heavy development and we'll probably discover some
+>> > issues down the road.
+>>
+>> Hi Thomas
+>>
+>> Maybe add a big fat warning that the bindings are unstable, and the DT
+>> blob must be kept in sync with the kernel?
+>
+> +1 and feel free to blame the lack of documentation.  No one can expect
+> bindings to be finalized when the chip topology is not fully understood.
 
-Add the missing dsi clocks using the currently "best known"
-parent-mux available for these clocks.
+I can understand not understanding the full clock tree. I have "full"
+documentation of a Marvell chip and don't understand the clock tree
+fully. But I can't believe you don't have some sense of how many
+clocks you have to deal with. 10? 100? 1000? What I see is 2 nodes of
+a single register each for clocks at roughly the same address. That
+tells me your binding is too fine grained. If you really don't know
+what is right, then err on the side of a single clock provider node
+and don't put the clock details in DT.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   88 +++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |    4 ++
- 2 files changed, 92 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index aec9b22..91a6086 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -199,6 +199,8 @@
- # define CM_LOCK_FLOCKA			BIT(8)
- 
- #define CM_EVENT		0x118
-+#define CM_DSI0HSCK		0x120
-+# define CM_DSI0HSCK_SELPLLD		BIT(0)
- #define CM_DSI1ECTL		0x158
- #define CM_DSI1EDIV		0x15c
- #define CM_DSI1PCTL		0x160
-@@ -1483,10 +1485,68 @@ static const char * const bcm2835_clock_ccp2_parents[] = {
- 	.parents = bcm2835_clock_ccp2_parents,				\
- 	__VA_ARGS__)
- 
-+/* dsi0 parent mux */
-+static const char * const bcm2835_clock_dsi0_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	/*
-+	 * more parent clocks, but unknown at this time
-+	 * the current definition follows the "common" pattern
-+	 * that already applies to all the other parent mux
-+	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
-+	 * as the first 3 entries.
-+	 * The mux should contain "plla_dsi0/plld_dsi0" at one position.
-+	 *   the selection which pll is used depends on CM_DSI0HSCK_SELPLLD
-+	 * here some possible candidates for the next parents in the list.
-+	 *   plla_core/per or plla_dsi0/plld_dsi0
-+	 *   pllc_core/per
-+	 *   plld_core/per
-+	 *   pllh_aux/pix
-+	 *   maybe plla_dsi0/plld_dsi0 (depends on CM_DSI0HSCK_SELPLLD)
-+	 * up to 16 different parents
-+	 */
-+};
-+
-+#define REGISTER_DSI0_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi0_parents),	\
-+	.parents = bcm2835_clock_dsi0_parents,				\
-+	__VA_ARGS__)
-+
-+/* dsi1 parent mux */
-+static const char * const bcm2835_clock_dsi1_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	/*
-+	 * more parent clocks, but unknown at this time
-+	 * the current definition follows the "common" pattern
-+	 * that already applies to all the other parent mux
-+	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
-+	 * as the first 3 entries.
-+	 * The mux should contain "plld_dsi1" at one position.
-+	 * here some possible candidates for the next parents in the list.
-+	 *   plla_core/per
-+	 *   pllc_core/per
-+	 *   plld_core/per or plld_dsi1
-+	 *   pllh_aux/pix
-+	 *   maybe plld_dsi1
-+	 * up to 16 different parents
-+	 */
-+};
-+
-+#define REGISTER_DSI1_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi1_parents),	\
-+	.parents = bcm2835_clock_dsi1_parents,				\
-+	__VA_ARGS__)
-+
- /*
-  * the real definition of all the pll, pll_dividers and clocks
-  * these make use of the above REGISTER_* macros
-  */
-+
- static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	/* the PLL + PLL dividers */
- 
-@@ -1950,6 +2010,34 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.int_bits = 1,
- 		.frac_bits = 0),
- 
-+	/* dsi clocks */
-+	[BCM2835_CLOCK_DSI0E]	= REGISTER_DSI0_CLK(
-+		.name = "dsi0e",
-+		.ctl_reg = CM_DSI0ECTL,
-+		.div_reg = CM_DSI0EDIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
-+	[BCM2835_CLOCK_DSI0_IMAGE] = REGISTER_DSI0_CLK(
-+		/* this is in principle a gate with a 4 bit mux */
-+		.name = "dsi0_image",
-+		.ctl_reg = CM_DSI0PCTL,
-+		.div_reg = CM_DSI0PDIV,
-+		.int_bits = 1,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DSI1E]	= REGISTER_DSI1_CLK(
-+		.name = "dsi1e",
-+		.ctl_reg = CM_DSI1ECTL,
-+		.div_reg = CM_DSI1EDIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
-+	[BCM2835_CLOCK_DSI1_IMAGE] = REGISTER_DSI1_CLK(
-+		/* this is in principle a gate with a 4 bit mux */
-+		.name = "dsi1_image",
-+		.ctl_reg = CM_DSI1PCTL,
-+		.div_reg = CM_DSI1PDIV,
-+		.int_bits = 1,
-+		.frac_bits = 0),
-+
- 	/* the gates */
- 
- 	/*
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 1d70088..9254c78 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -66,3 +66,7 @@
- #define BCM2835_CLOCK_CAM0		48
- #define BCM2835_CLOCK_CAM1		49
- #define BCM2835_CLOCK_CCP2		50
-+#define BCM2835_CLOCK_DSI0E		51
-+#define BCM2835_CLOCK_DSI0_IMAGE	52
-+#define BCM2835_CLOCK_DSI1E		53
-+#define BCM2835_CLOCK_DSI1_IMAGE	54
--- 
-1.7.10.4
+Rob
