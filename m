@@ -1,57 +1,71 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 23 Feb 2016 10:25:50 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andrew Lunn
+ <andrew@lunn.ch>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
+ <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+ Lior Amsalem <alior@marvell.com>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/3] clk: mvebu: add AP806 core clock driver
+Message-ID: <20160223102550.2e0cba04@free-electrons.com>
+In-Reply-To: <CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
+References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1455521698-7905-3-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160222025357.GE15973@rob-hp-laptop>
+	<20160222091423.4756a579@free-electrons.com>
+	<20160222141617.GA14970@lunn.ch>
+	<20160222183203.2278.60153@quark.deferred.io>
+	<CAL_Jsq+iiUBcTdnqzFWLJ+5jPvq0rmWgBboab4xyj1dQyDQE+Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1451297429-21689-13-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-	<1451297429-21689-13-git-send-email-yamada.masahiro@socionext.com>
-Date: Sun, 21 Feb 2016 22:39:58 +0100
-Message-ID: <CAGhQ9VyaG+hcwNfXr7soP84G8Sq7DJmz8oMqZ1ALef6hcc0auw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/16] clk: avoid circular clock topology
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Hello,
 
-On 28 December 2015 at 11:10, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Currently, clk_register() never checks a circular parent looping,
-> but clock providers could register such an insane clock topology.
-> For example, "clk_a" could have "clk_b" as a parent, and vice versa.
-> In this case, clk_core_reparent() creates a circular parent list
-> and __clk_recalc_accuracies() calls itself recursively forever.
->
-> The core infrastructure should be kind enough to bail out, showing
-> an appropriate error message in such a case.  This helps to easily
-> find a bug in clock providers.  (uh, I made such a silly mistake
-> when I was implementing my clock providers first.  I was upset
-> because the kernel did not respond, without any error message.)
->
-> This commit adds a new helper function, __clk_is_ancestor().  It
-> returns true if the second argument is a possible ancestor of the
-> first one.  If a clock core is a possible ancestor of itself, it
-> would make a loop when it were registered.  That should be detected
-> as an error.
+On Mon, 22 Feb 2016 13:42:49 -0600, Rob Herring wrote:
 
-This commit breaks lpc18xx boot in next right now. See
-http://marc.info/?l=linux-arm-kernel&m=145608597106087&w=2
+> >> Maybe add a big fat warning that the bindings are unstable, and the DT
+> >> blob must be kept in sync with the kernel?
+> >
+> > +1 and feel free to blame the lack of documentation.  No one can expect
+> > bindings to be finalized when the chip topology is not fully understood.
+> 
+> I can understand not understanding the full clock tree. I have "full"
+> documentation of a Marvell chip and don't understand the clock tree
+> fully. But I can't believe you don't have some sense of how many
+> clocks you have to deal with. 10? 100? 1000? What I see is 2 nodes of
+> a single register each for clocks at roughly the same address. That
+> tells me your binding is too fine grained. If you really don't know
+> what is right, then err on the side of a single clock provider node
+> and don't put the clock details in DT.
 
-The Clock Generation Unit (CGU) on lpc18xx allow for circular parents
-in hardware. While it is obliviously not a good idea to configure the
-clocks in that manner there is nothing that stops you either.
+I don't quite understand the reasoning behind this conclusion. We know
+for sure that those two registers control only those core and ring
+clocks. Maybe there are other registers controlling other clocks,  that
+we don't know. But for sure, those two registers only give details
+about those core and ring clocks, so I don't see what would be the
+usefulness of merging that into a single DT node.
 
-Please take a look at the second figure on:
-https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
-All PLLs can feed clock into the dividers and the dividers can feed
-clock into the PLLs.
+We would lose the fact that the relationship between the ring clocks
+and one of the core clock is represented in the DT. Instead of having a
+clear <&coreclk X> or <&ringclk Y> reference, we would have a
+mysterious <&allclk XYZ> reference, which doesn't tell immediately
+whether it's a core clock or ring clock.
 
-The reason why this is made possible in the CGU is because you can
-then choose where to put your divider; either before the PLL or after.
+So, while I definitely agree that a syscon is probably in order to
+cover all the system registers, I don't see the point of having a
+single node to cover all the clocks.
 
+Best regards,
 
-regards,
-Joachim Eastwood
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
