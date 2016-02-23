@@ -1,91 +1,84 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robh@kernel.org>
+Date: Tue, 23 Feb 2016 14:43:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Lars Persson <lars.persson@axis.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: Re: [PATCH v2 1/2] clk: add device tree binding for Artpec-6 clock
+ controller
+Message-ID: <20160223204307.GA19883@rob-hp-laptop>
+References: <cover.1455891890.git.larper@axis.com>
+ <fd330ff1346758966260cb2bcddd8d3fbff49704.1455891890.git.larper@axis.com>
 MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455527982.29688.8.camel@mtksdaap41>
-Cc: "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, "Rob Herring" <robh@kernel.org>,
- "John Crispin" <blogic@openwrt.org>, "Arnd Bergmann" <arnd@arndb.de>,
- "Sascha Hauer" <kernel@pengutronix.de>,
- "Daniel Kurtz" <djkurtz@chromium.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, "Shunli Wang" <shunli.wang@mediatek.com>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
- <1454665050-37776-5-git-send-email-jamesjj.liao@mediatek.com>
- <20160210200853.26445.15165@quark.deferred.io>
- <1455527982.29688.8.camel@mtksdaap41>
-Message-ID: <20160224212533.2278.7597@quark.deferred.io>
-Subject: Re: [PATCH v6 4/7] clk: mediatek: Add MT2701 clock support
-Date: Wed, 24 Feb 2016 13:25:33 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <fd330ff1346758966260cb2bcddd8d3fbff49704.1455891890.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+On Fri, Feb 19, 2016 at 03:30:14PM +0100, Lars Persson wrote:
+> Add device tree documentation for the main clock controller in the
+> Artpec-6 SoC.
+> 
+> Signed-off-by: Lars Persson <larper@axis.com>
+> ---
+>  .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+> new file mode 100644
+> index 0000000..76e3e7f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+> @@ -0,0 +1,41 @@
+> +* Clock bindings for Axis ARTPEC-6 chip
+> +
+> +The bindings are based on the clock provider binding in
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +External clocks:
+> +----------------
+> +
+> +There are two external inputs to the main clock controller which should be
+> +provided using the common clock bindings.
+> +- "sys_refclk": External 50 Mhz oscillator (required)
+> +- "i2s_refclk": Alternate audio reference clock (optional).
+> +
+> +Main clock controller
+> +---------------------
+> +
+> +Required properties:
+> +- #clock-cells: Should be <1>
+> +  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
 
-Quoting James Liao (2016-02-15 01:19:42)
-> Hi Mike,
-> =
+This header should be part of this patch. Otherwise:
 
-> On Wed, 2016-02-10 at 12:08 -0800, Michael Turquette wrote:
-> > Quoting James Liao (2016-02-05 01:37:27)
-> > > +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckge=
-n_init);
-> > > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasy=
-s_init);
-> > > +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_i=
-nit);
-> > > +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
-> > > +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init=
-);
-> > > +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_i=
-nit);
-> > > +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init=
-);
-> > > +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init=
-);
-> > > +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init=
-);
-> > > +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
-> > =
+Acked-by: Rob Herring <robh@kernel.org>
 
-> > :-/
-> > =
-
-> > This is way too much CLK_OF_DECLARE and not enough Linux Driver Model.
-> > =
-
-> > I understand that some platforms really must initialize some clocks very
-> > early, but can we please separate those into one table and call
-> > CLK_OF_DECLARE on only that set, and then register the rest through a
-> > platform_driver later on?
-> =
-
-> I know CLK_OF_DECLARE is much earlier than platform_driver, so it can
-> ensure all drivers lookup their clocks successfully during
-> platform_driver probe. Is there anything different to init these clock
-> providers in CLK_OF_DECLARE and platform_driver?
-
-This a common pattern we're seeing right now. Joachim did a nice job of
-supporting early clocks with CLK_OF_DECLARE, and also using a proper
-driver in his lpc18xx implementation:
-
-http://marc.info/?l=3Ddevicetree&m=3D145618160610001
-
-Regards,
-Mike
-
-> =
-
-> =
-
-> Best regards,
-> =
-
-> James
-> =
-
-> =
-
->=20
+> +- compatible: Should be "axis,artpec6-clkctrl"
+> +- reg: Must contain the base address and length of the system controller
+> +- clocks:  Must contain a phandle entry for each clock in clock-names
+> +- clock-names: Must include the external oscillator ("sys_refclk"). Optional
+> +  ones are the audio reference clock ("i2s_refclk") and the audio fractional
+> +  divider ("frac_clk").
+> +
+> +Examples:
+> +
+> +ext_clk: ext_clk {
+> +	#clock-cells = <0>;
+> +	compatible = "fixed-clock";
+> +	clock-frequency = <50000000>;
+> +};
+> +
+> +clkctrl: clkctrl {
+> +	#clock-cells = <1>;
+> +	compatible = "axis,artpec6-clkctrl";
+> +	reg = <0xf8000000 0x48>;
+> +	clocks = <&ext_clk>;
+> +	clock-names = "sys_refclk";
+> +};
+> -- 
+> 2.1.4
+> 
