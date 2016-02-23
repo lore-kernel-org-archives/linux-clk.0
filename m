@@ -1,110 +1,91 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 06/13] ARM: dts: sun8i-a83t: Add mmc controller nodes
-Date: Sun, 28 Feb 2016 23:18:51 +0800
-Message-Id: <1456672738-4993-7-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <manabian@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160223180844.GA11770@rob-hp-laptop>
+References: <1455994417-4471-1-git-send-email-manabian@gmail.com>
+	<1455994417-4471-3-git-send-email-manabian@gmail.com>
+	<20160223180844.GA11770@rob-hp-laptop>
+Date: Tue, 23 Feb 2016 19:53:17 +0100
+Message-ID: <CAGhQ9VxYsQSccS2dyWL_DPLTc80SJUkjFupbHAeXX3-WY-1Ofw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-A83T mmc is compatible with earliers sunxi socs.
-This adds mmc0, mmc1, and mmc2 controller nodes for A83T.
+On 23 February 2016 at 19:08, Rob Herring <robh@kernel.org> wrote:
+> On Sat, Feb 20, 2016 at 07:53:37PM +0100, Joachim Eastwood wrote:
+>> Add DT binding documentation for lpc1850-creg-clk driver.
+>>
+>> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+>> ---
+>>  .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
+>>  1 file changed, 52 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+>> new file mode 100644
+>> index 000000000000..0c83d373b766
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+>> @@ -0,0 +1,52 @@
+>> +* NXP LPC1850 CREG clocks
+>> +
+>> +The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
+>> +control registers for two low speed clocks. One of the clocks is a
+>> +32 kHz oscillator driver with power up/down and clock gating. Next
+>> +is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
+>> +
+>> +These clocks are used by the RTC and the Event Router peripherials.
+>> +The 32 kHz can also be routed to other peripherials to enable low
+>> +power modes.
+>> +
+>> +This binding uses the common clock binding:
+>> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Required properties:
+>> +- compatible:
+>> +     Should be "nxp,lpc1850-creg-clk"
+>> +- #clock-cells:
+>> +     Shall have value <1>.
+>> +- clocks:
+>> +     Shall contain a phandle to the fix 32 kHz crystall.
+>> +
+>> +The creg-clk node must be a child of the creg syscon node.
+>> +
+>> +The following clocks are available from the clock node.
+>> +
+>> +Clock ID     Name
+>> +   0          1 kHz clock
+>> +   1         32 kHz Oscillator
+>> +
+>> +Example:
+>> +soc {
+>> +     creg: syscon@40043000 {
+>> +             compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
+>> +             reg = <0x40043000 0x1000>;
+>> +
+>> +             creg_clk: clock-controller@004 {
+>
+> What is 4? A unit address should have a corresponding reg prop. and no
+> leading zeros.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 57 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+It is the fourth register in the creg syscon block.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index d2a9435..dfb510e 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -275,6 +275,63 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		mmc0: mmc@01c0f000 {
-+			compatible = "allwinner,sun5i-a13-mmc";
-+			reg = <0x01c0f000 0x1000>;
-+			clocks = <&bus_gates 8>,
-+				 <&mmc0_clk 0>,
-+				 <&mmc0_clk 1>,
-+				 <&mmc0_clk 2>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ahb_reset 8>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc1: mmc@01c10000 {
-+			compatible = "allwinner,sun5i-a13-mmc";
-+			reg = <0x01c10000 0x1000>;
-+			clocks = <&bus_gates 9>,
-+				 <&mmc1_clk 0>,
-+				 <&mmc1_clk 1>,
-+				 <&mmc1_clk 2>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ahb_reset 9>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc2: mmc@01c11000 {
-+			compatible = "allwinner,sun5i-a13-mmc";
-+			reg = <0x01c11000 0x1000>;
-+			clocks = <&bus_gates 10>,
-+				 <&mmc2_clk 0>,
-+				 <&mmc2_clk 1>,
-+				 <&mmc2_clk 2>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ahb_reset 10>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		pio: pinctrl@01c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
--- 
-1.9.1
+Does this look better:
+creg_clk: clock-controller@4 {
+    compatible = "nxp,lpc1850-creg-clk";
+    reg = <0x4>;
+    clocks = <&xtal32>;
+    #clock-cells = <1>;
+};
+
+Note that the reg property isn't really useful in the driver, but I
+guess we should have it either way(?).
+
+Alternatively I could drop the unit address and reg property. What do you think?
+
+
+regards,
+Joachim Eastwood
