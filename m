@@ -1,43 +1,51 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH 08/11] clk: sunxi: improve error reporting for the mux
- clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
- <1454348370-3816-9-git-send-email-andre.przywara@arm.com>
- <20160202180227.GC4652@lukather>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-   Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-   linux-kernel@vger.kernel.org,
-   =?UTF-8?Q?Emilio_L=c3=b3pez?=
- <emilio@elopez.com.ar>,
-   Michael Turquette <mturquette@baylibre.com>,
-   Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56B0EFFD.8070900@arm.com>
-Date: Tue, 2 Feb 2016 18:05:49 +0000
-MIME-Version: 1.0
-In-Reply-To: <20160202180227.GC4652@lukather>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 2/3] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+To: Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+ <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
+ <56C44578.5010009@samsung.com> <20160222182656.2278.68402@quark.deferred.io>
+Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <56CBA45E.9070105@samsung.com>
+Date: Tue, 23 Feb 2016 09:14:22 +0900
+MIME-version: 1.0
+In-reply-to: <20160222182656.2278.68402@quark.deferred.io>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Salut,
-
-On 02/02/16 18:02, Maxime Ripard wrote:
-> On Mon, Feb 01, 2016 at 05:39:27PM +0000, Andre Przywara wrote:
->> clk_register_mux returns a pointer wrapped error value in case of
->> failure, so a simple NULL check is not sufficient to catch errors.
->> Fix that and elaborate on the failure reason on the way. The whole
->> function does not return any error value, so silently failing may
->> leave users scratching their heads because the kernel does not
->> provide any clues on what's wrong.
+On 23.02.2016 03:26, Michael Turquette wrote:
+> Quoting Sylwester Nawrocki (2016-02-17 02:03:36)
+>> On 16/02/16 07:20, Krzysztof Kozlowski wrote:
+>>> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+>>> so it is built also on ARMv7. This does not bring any kind of benefit.
+>>> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+>>> multi_v7 for ARMv7).
+>>>
+>>> Instead build clock drivers only for respective SoC's architecture.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >>
->> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>
 > 
-> Applied, thanks.
+> Thanks for the Ack.
 > 
-> Any chance you do that for the other functions? :)
+> I've rebased patches #1 and #2 against James's b9e65ebc654d and pushed
+> the clk-samsung branch to the clk tree. I have deleted the
+> clk-samsung-kconfig branch that was blowing up the kbuild robot.
+> clk-samsung will not be rebased and can be used as a dependency for
+> arm-soc. It has been merged into clk-next.
 
-Sure, that was actually a test balloon ;-)
+Thanks, pulled!
 
-Cheers,
-Andre
+Best regards,
+Krzysztof
