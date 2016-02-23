@@ -1,75 +1,79 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [RFC PATCH 1/4] clk: sunxi: rename new sun6i_a31_pll6 clock to sun6i_a31_pll clock
-Date: Fri, 12 Feb 2016 17:59:57 +0000
-Message-Id: <1455300000-18723-2-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v7 0/2] Add initial support for RPM clocks
+Date: Tue, 23 Feb 2016 18:13:17 +0200
+Message-Id: <1456243999-22652-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-In preparation for bringing back the old driver for keeping
-compatibility, we rename the new A31 PLL6 clock driver. This only
-affects the internal naming, the compatible name stays on pll6 for
-now.
+This patchset adds initial support for the clocks controlled by
+the RPM (Resource Power Manager) processor on Qualcomm platforms.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+The RPM is a dedicated hardware engine for managing the shared
+SoC resources in order to keep the lowest power profile. It
+communicates with other hardware subsystems via shared memory
+and accepts clock requests, aggregates the requests and turns
+the clocks on/off or scales them on demand.
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 48ed81d..b4ab84b 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -233,7 +233,7 @@ static void sun4i_get_pll5_factors(struct factors_request *req)
-  * parent_rate is always 24Mhz
-  */
- 
--static void sun6i_a31_get_pll6_factors(struct factors_request *req)
-+static void sun6i_a31_get_pll_factors(struct factors_request *req)
- {
- 	u8 div;
- 
-@@ -542,10 +542,10 @@ static const struct factors_data sun4i_pll6_data __initconst = {
- 	.name = "pll6",
- };
- 
--static const struct factors_data sun6i_a31_pll6_data __initconst = {
-+static const struct factors_data sun6i_a31_pll_data __initconst = {
- 	.enable = 31,
- 	.table = &sun6i_a31_pll6_config,
--	.getter = sun6i_a31_get_pll6_factors,
-+	.getter = sun6i_a31_get_pll_factors,
- 	.recalc = sun6i_a31_pll6_recalc,
- };
- 
-@@ -622,12 +622,12 @@ static void __init sun7i_pll4_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun7i_pll4, "allwinner,sun7i-a20-pll4-clk",
- 	       sun7i_pll4_clk_setup);
- 
--static void __init sun6i_pll6_clk_setup(struct device_node *node)
-+static void __init sun6i_pll_clk_setup(struct device_node *node)
- {
--	sunxi_factors_clk_setup(node, &sun6i_a31_pll6_data);
-+	sunxi_factors_clk_setup(node, &sun6i_a31_pll_data);
- }
--CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
--	       sun6i_pll6_clk_setup);
-+CLK_OF_DECLARE(sun6i_pll, "allwinner,sun6i-a31-pll6-clk",
-+	       sun6i_pll_clk_setup);
- 
- static void __init sun5i_ahb_clk_setup(struct device_node *node)
- {
--- 
-2.6.4
+Until now the RPM clock controller was not supported and a hard-
+coded fixed-rate clocks were registered in the drivers. Now we
+are moving the on-board clocks to the DT (where they actually
+belong). If the RPM clock controller is enabled we insert it
+right after the DT clocks making it a parent of some GCC clocks.
+
+Changes since v6 (https://lkml.org/lkml/2015/12/15/279)
+* Remove header files and exported ops.
+* Add support for active only RPM clocks.
+
+Changes since v5 (https://lkml.org/lkml/2015/12/3/376)
+* Drop all DT patches as they are already picked.
+* Fix dependencies in Kconfig.
+* Minor changes.
+
+Changes since v4 (https://lkml.org/lkml/2015/11/19/309)
+* Re-organize code into two separate drivers:
+  - clk-smd-rpm for RPM over SMD based clocks like msm8916
+  - clk-rpm for RPM based clocks like apq8064
+* Drop the patches that are already merged.
+* Added the extra compatible string to docs and example.
+
+Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
+* Drop some of the patches as now we handle both scenarios -
+  RPMCC enabled or disabled.
+* Addressed more comments from Stephen. Thanks again!
+
+Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
+* Addressed various comments from Stephen. Thanks!
+* Added sleep sets support.
+* Added a mutex in the RPM driver.
+* Support both scenarios - RPMCC enabled or disabled.
+* Make RPMCC more generic in order to support other SMD RPM
+  based platforms.
+
+Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
+* Changed the driver name to clk-smd-rpm, also build it only
+  when it is needed - suggested by Srini and Bjorn.
+* More detailed binding example.
+* Minor changes.
+
+Georgi Djakov (2):
+  clk: qcom: Add support for SMD-RPM Clocks
+  clk: qcom: Add support for RPM Clocks
+
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
+ drivers/clk/qcom/Kconfig                           |   29 ++
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rpm.c                         |  474 +++++++++++++++++
+ drivers/clk/qcom/clk-smd-rpm.c                     |  548 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |   69 +++
+ 6 files changed, 1159 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 drivers/clk/qcom/clk-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
