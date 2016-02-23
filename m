@@ -1,95 +1,76 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 10/20] clk: bcm2835: implement correct clamping for mash clocks
-Date: Sun, 28 Feb 2016 15:37:01 +0000
-Message-Id: <1456673831-2408-11-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <robh@kernel.org>
+Date: Tue, 23 Feb 2016 12:08:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] doc: dt: add documentation for lpc1850-creg-clk
+ driver
+Message-ID: <20160223180844.GA11770@rob-hp-laptop>
+References: <1455994417-4471-1-git-send-email-manabian@gmail.com>
+ <1455994417-4471-3-git-send-email-manabian@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455994417-4471-3-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Sat, Feb 20, 2016 at 07:53:37PM +0100, Joachim Eastwood wrote:
+> Add DT binding documentation for lpc1850-creg-clk driver.
+> 
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+> new file mode 100644
+> index 000000000000..0c83d373b766
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+> @@ -0,0 +1,52 @@
+> +* NXP LPC1850 CREG clocks
+> +
+> +The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
+> +control registers for two low speed clocks. One of the clocks is a
+> +32 kHz oscillator driver with power up/down and clock gating. Next
+> +is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
+> +
+> +These clocks are used by the RTC and the Event Router peripherials.
+> +The 32 kHz can also be routed to other peripherials to enable low
+> +power modes.
+> +
+> +This binding uses the common clock binding:
+> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible:
+> +	Should be "nxp,lpc1850-creg-clk"
+> +- #clock-cells:
+> +	Shall have value <1>.
+> +- clocks:
+> +	Shall contain a phandle to the fix 32 kHz crystall.
+> +
+> +The creg-clk node must be a child of the creg syscon node.
+> +
+> +The following clocks are available from the clock node.
+> +
+> +Clock ID	Name
+> +   0		 1 kHz clock
+> +   1		32 kHz Oscillator
+> +
+> +Example:
+> +soc {
+> +	creg: syscon@40043000 {
+> +		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
+> +		reg = <0x40043000 0x1000>;
+> +
+> +		creg_clk: clock-controller@004 {
 
-The bcm2835-soc has 2 kindes of clocks:
-* normal clocks
-* mash-enabled clocks that can spread frequency noise better
-  into non-audiable frequency ranges
+What is 4? A unit address should have a corresponding reg prop. and no 
+leading zeros.
 
-The mash clocks have distinct clock-divider requirements
-and if the requested divider is not in range, then there will
-no clock output.
-
-This patch implements the clamping limits for first order
-fractual mash dividers.
-
-Only dividers that are impacted by this patch are: pcm and pwm
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 3df17a5..2fb9923 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -407,6 +407,7 @@ struct bcm2835_clock_data {
- 	/* Number of fractional bits in the divider */
- 	u32 frac_bits;
- 
-+	bool is_mash_clock;
- 	bool is_vpu_clock;
- };
- 
-@@ -780,10 +781,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 		div += unused_frac_mask + 1;
- 	div &= ~unused_frac_mask;
- 
--	/* Clamp to the limits. */
--	div = max(div, unused_frac_mask + 1);
--	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
--				      CM_DIV_FRAC_BITS - data->frac_bits));
-+	/* Clamp to the limits for the clock type */
-+	if (data->is_mash_clock) {
-+		/* clamp to min divider 2 */
-+		div = max_t(u32, div, 2 << CM_DIV_FRAC_BITS);
-+		/* clamp to max int divider */
-+		div = min_t(u32, div,
-+			    (BIT(data->int_bits) - 1) << CM_DIV_FRAC_BITS);
-+	} else {
-+		div = max(div, unused_frac_mask + 1);
-+		div = min_t(u32, div,
-+			    GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
-+				    CM_DIV_FRAC_BITS - data->frac_bits));
-+	}
- 
- 	return div;
- }
-@@ -1512,13 +1522,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.ctl_reg = CM_PCMCTL,
- 		.div_reg = CM_PCMDIV,
- 		.int_bits = 12,
--		.frac_bits = 12),
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
- 		.name = "pwm",
- 		.ctl_reg = CM_PWMCTL,
- 		.div_reg = CM_PWMDIV,
- 		.int_bits = 12,
--		.frac_bits = 12),
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
- 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
- 		.name = "uart",
- 		.ctl_reg = CM_UARTCTL,
--- 
-1.7.10.4
+> +			compatible = "nxp,lpc1850-creg-clk";
+> +			clocks = <&xtal32>;
+> +			#clock-cells = <1>;
+> +		};
