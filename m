@@ -1,85 +1,62 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/3] clk: sunxi: improve divider_clk error handling and reporting
-Date: Tue, 16 Feb 2016 10:46:07 +0000
-Message-Id: <1455619568-1906-3-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
-References: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <horms@verge.net.au>
+Date: Tue, 23 Feb 2016 18:10:06 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: shmobile: Remove ARCH_SHMOBILE_MULTI
+Message-ID: <20160223091000.GA18694@verge.net.au>
+References: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdVDneo95F3JyFuvGZ_Bk4dL=ve41XONHj4b8DC4X7NMcQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdVDneo95F3JyFuvGZ_Bk4dL=ve41XONHj4b8DC4X7NMcQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We now report a failing ioremap, failing output names parsing,
-failures in table registration and in the final step.
-Also there was a bug where clk_register_divider_table() would return
-an ERR_PTR value instead of NULL, which we were checking for.
-We now implement proper rollback in case of an error.
+On Tue, Feb 23, 2016 at 09:19:27AM +0100, Geert Uytterhoeven wrote:
+> CC The New Mike ;-)
+> 
+> On Tue, Feb 23, 2016 at 1:57 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > As of 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") all platforms
+> > that use Renesas clock drivers now select ARCH_RENESAS. As it is present in
+> > drivers/clk/Makefile ARCH_SHMOBILE_MULTI may now be removed.
+> >
+> > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+> > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+> > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > ---
+> >  drivers/clk/Makefile | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> >  Based on clk-next
+> >
+> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > index bae4be6501df..b19af449d2f3 100644
+> > --- a/drivers/clk/Makefile
+> > +++ b/drivers/clk/Makefile
+> > @@ -70,7 +70,6 @@ obj-$(CONFIG_COMMON_CLK_PXA)          += pxa/
+> >  obj-$(CONFIG_COMMON_CLK_QCOM)          += qcom/
+> >  obj-$(CONFIG_ARCH_ROCKCHIP)            += rockchip/
+> >  obj-$(CONFIG_COMMON_CLK_SAMSUNG)       += samsung/
+> > -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += shmobile/
+> 
+> Should we rename clk/shmobile/ to clk/renesas/?
+> Or is that too much of a hassle?
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 36 +++++++++++++++++++++++++++++++++---
- 1 file changed, 33 insertions(+), 3 deletions(-)
+I think it is a good idea.  And I suspect it shouldn't be too difficult if
+we coordinate things with Mike to handle any in-flight patches for that
+directory.
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 775e137..4bd0917 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -805,17 +805,47 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
- 	void __iomem *reg;
- 
- 	reg = of_iomap(node, 0);
-+	if (!reg) {
-+		pr_err("Could not map registers for mux-clk: %s\n",
-+		       of_node_full_name(node));
-+		return;
-+	}
- 
- 	clk_parent = of_clk_get_parent_name(node, 0);
- 
--	of_property_read_string(node, "clock-output-names", &clk_name);
-+	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-+		pr_err("%s: could not read clock-output-names from \"%s\"\n",
-+		       __func__, of_node_full_name(node));
-+		goto out_unmap;
-+	}
- 
- 	clk = clk_register_divider_table(NULL, clk_name, clk_parent, 0,
- 					 reg, data->shift, data->width,
- 					 data->pow ? CLK_DIVIDER_POWER_OF_TWO : 0,
- 					 data->table, &clk_lock);
--	if (clk)
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register divider clock %s: %ld\n",
-+		       __func__, clk_name, PTR_ERR(clk));
-+		goto out_unmap;
-+	}
-+
-+	if (of_clk_add_provider(node, of_clk_src_simple_get, clk)) {
-+		pr_err("%s: failed to add clock provider for %s\n",
-+		       __func__, clk_name);
-+		goto out_unregister;
-+	}
-+
-+	if (clk_register_clkdev(clk, clk_name, NULL)) {
-+		of_clk_del_provider(node);
-+		goto out_unregister;
-+	}
-+
-+	return;
-+out_unregister:
-+	clk_unregister_divider(clk);
-+
-+out_unmap:
-+	iounmap(reg);
- }
- 
- static void __init sun4i_ahb_clk_setup(struct device_node *node)
--- 
-2.6.4
+> >  obj-$(CONFIG_ARCH_RENESAS)             += shmobile/
+> >  obj-$(CONFIG_ARCH_SIRF)                        += sirf/
+> >  obj-$(CONFIG_ARCH_SOCFPGA)             += socfpga/
