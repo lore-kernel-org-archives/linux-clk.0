@@ -1,134 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 13/14] clk: fixed-rate: Add hw based registration APIs
-Date: Mon,  8 Feb 2016 17:45:40 -0800
-Message-Id: <1454982341-22715-14-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <balbif@gmail.com>
+Return-Path: <balbif@gmail.com>
+Sender: Felipe Balbi <balbif@gmail.com>
+From: Felipe Balbi <balbi@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 8/9] usb: dwc3: Remove impossible check for of_clk_get_parent_count() < 0
+In-Reply-To: <1456174487-28397-9-git-send-email-sboyd@codeaurora.org>
+References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org> <1456174487-28397-9-git-send-email-sboyd@codeaurora.org>
+Date: Tue, 23 Feb 2016 08:48:55 +0200
+Message-ID: <87d1rnorag.fsf@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk fixed-rate code to return struct
-clk_hw pointers instead of struct clk pointers. This way we hide
-the struct clk pointer from providers unless they need to use
-consumer facing APIs.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-fixed-rate.c | 44 ++++++++++++++++++++++++++++++++++++--------
- include/linux/clk-provider.h |  6 ++++++
- 2 files changed, 42 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index f85ec8d1711f..fe9f83fc04ac 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -47,8 +47,8 @@ const struct clk_ops clk_fixed_rate_ops = {
- EXPORT_SYMBOL_GPL(clk_fixed_rate_ops);
- 
- /**
-- * clk_register_fixed_rate_with_accuracy - register fixed-rate clock with the
-- *					   clock framework
-+ * clk_hw_register_fixed_rate_with_accuracy - register fixed-rate clock with
-+ * the clock framework
-  * @dev: device that is registering this clock
-  * @name: name of this clock
-  * @parent_name: name of clock's parent
-@@ -56,13 +56,14 @@ EXPORT_SYMBOL_GPL(clk_fixed_rate_ops);
-  * @fixed_rate: non-adjustable clock rate
-  * @fixed_accuracy: non-adjustable clock rate
-  */
--struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
-+struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy)
- {
- 	struct clk_fixed_rate *fixed;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init;
-+	int ret;
- 
- 	/* allocate fixed-rate clock */
- 	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
-@@ -81,22 +82,49 @@ struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
- 	fixed->hw.init = &init;
- 
- 	/* register the clock */
--	clk = clk_register(dev, &fixed->hw);
--	if (IS_ERR(clk))
-+	hw = &fixed->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
- 		kfree(fixed);
-+		hw = ERR_PTR(ret);
-+	}
- 
--	return clk;
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_fixed_rate_with_accuracy);
-+
-+struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		unsigned long fixed_rate, unsigned long fixed_accuracy)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_fixed_rate_with_accuracy(dev, name, parent_name,
-+			flags, fixed_rate, fixed_accuracy);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
- }
- EXPORT_SYMBOL_GPL(clk_register_fixed_rate_with_accuracy);
- 
- /**
-- * clk_register_fixed_rate - register fixed-rate clock with the clock framework
-+ * clk_hw_register_fixed_rate - register fixed-rate clock with the clock
-+ * framework
-  * @dev: device that is registering this clock
-  * @name: name of this clock
-  * @parent_name: name of clock's parent
-  * @flags: framework-specific flags
-  * @fixed_rate: non-adjustable clock rate
-  */
-+struct clk_hw *clk_hw_register_fixed_rate(struct device *dev, const char *name,
-+		const char *parent_name, unsigned long flags,
-+		unsigned long fixed_rate)
-+{
-+	return clk_hw_register_fixed_rate_with_accuracy(dev, name, parent_name,
-+						     flags, fixed_rate, 0);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_fixed_rate);
-+
- struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 148ad0dc2906..98fad9fb8a7d 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -280,9 +280,15 @@ extern const struct clk_ops clk_fixed_rate_ops;
- struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate);
-+struct clk_hw *clk_hw_register_fixed_rate(struct device *dev, const char *name,
-+		const char *parent_name, unsigned long flags,
-+		unsigned long fixed_rate);
- struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy);
-+struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		unsigned long fixed_rate, unsigned long fixed_accuracy);
- 
- void of_fixed_clk_setup(struct device_node *np);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hi,
+
+Stephen Boyd <sboyd@codeaurora.org> writes:
+> The check for < 0 is impossible now that
+> of_clk_get_parent_count() returns an unsigned int. Simplify the
+> code and update the types.
+>
+> Cc: Felipe Balbi <balbi@ti.com>
+> Cc: <linux-usb@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>
+> Please ack so this can go through clk tree along with patch 1.
+
+sure, no problem ;-) patch looks okay
+
+Acked-by: Felipe Balbi <balbi@kernel.org>
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIbBAEBAgAGBQJWzADYAAoJEIaOsuA1yqREJR0P90MHVyEHbWfTENPxEGTilNlC
+IeSrQVMDS0mvM4oy0ETPq4NAlJWjqXSP2pMdyH8RpCvNLhcv4ApfNwNctNdLlw4N
+kSkqvuksJPf2lDU9PsxYUtJNChHsWY5oLOIS3ZUAbRi5YbBAsBJEQrSai+7sAq2K
+uxvz5GxTWI2XRLnJ+JJzOrHpRPUgmmeM6eJZfqzxAYS63cVedfwGgEB+j5XBeUZv
+bjx0JZaTrJ9W/9n7LV17kNHFjxpz2XU2oUaJ6AOuOKML+Qmri2zD23CgiGdKn1x7
+me0ssF8TcEww2uGMrxPu16wHFzak7dLsVuxLJEIT8bkpCd/sHlJaSNHmpUxil/Ju
+R2yOP01th5cy6pV6AOtb3iCgPCSCweh6/9I75YGnOB9fspleFWUfLAOzmZbktlUA
+wI8NERzbYMayx8NcMirp+r4tZDn4jioUf7vDvXM+BcRH4hlyLuQHg7H7g/hksDdv
+EO4zrD4WzNrgL+R8nqEwzvk+uYmjbc2R/ICIquwSnYn5CKFhjvAeZNjmxNTAoXPl
+/y2BZVArh2aOKl5ZDpGOk8QC+WBtujwq61XJytEJJNYLSHLUDHNOXgukjXCbch7O
+QzdrWLKvu2NOnZsRfjH39MkVfelnFWIKapNMzPYJBrZgEQWbTpyr8Uj17yGrsavE
+uCM1I2iHJradlyhuZkM=
+=gy2Q
+-----END PGP SIGNATURE-----
+--=-=-=--
