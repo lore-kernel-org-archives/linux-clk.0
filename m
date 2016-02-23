@@ -1,91 +1,43 @@
-Return-Path: <manabian@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160223180844.GA11770@rob-hp-laptop>
-References: <1455994417-4471-1-git-send-email-manabian@gmail.com>
-	<1455994417-4471-3-git-send-email-manabian@gmail.com>
-	<20160223180844.GA11770@rob-hp-laptop>
-Date: Tue, 23 Feb 2016 19:53:17 +0100
-Message-ID: <CAGhQ9VxYsQSccS2dyWL_DPLTc80SJUkjFupbHAeXX3-WY-1Ofw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ jonghwa3.lee@samsung.com, m.szyprowski@samsung.com,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 3/6] clk: samsung: exynos5433: Fix definitions of SCLK ISP
+ SENSOR0 clocks
+Date: Tue, 23 Feb 2016 13:14:29 +0100
+Message-id: <1456229672-13445-4-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
+References: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23 February 2016 at 19:08, Rob Herring <robh@kernel.org> wrote:
-> On Sat, Feb 20, 2016 at 07:53:37PM +0100, Joachim Eastwood wrote:
->> Add DT binding documentation for lpc1850-creg-clk driver.
->>
->> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
->> ---
->>  .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
->>  1 file changed, 52 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
->> new file mode 100644
->> index 000000000000..0c83d373b766
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
->> @@ -0,0 +1,52 @@
->> +* NXP LPC1850 CREG clocks
->> +
->> +The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
->> +control registers for two low speed clocks. One of the clocks is a
->> +32 kHz oscillator driver with power up/down and clock gating. Next
->> +is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
->> +
->> +These clocks are used by the RTC and the Event Router peripherials.
->> +The 32 kHz can also be routed to other peripherials to enable low
->> +power modes.
->> +
->> +This binding uses the common clock binding:
->> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Required properties:
->> +- compatible:
->> +     Should be "nxp,lpc1850-creg-clk"
->> +- #clock-cells:
->> +     Shall have value <1>.
->> +- clocks:
->> +     Shall contain a phandle to the fix 32 kHz crystall.
->> +
->> +The creg-clk node must be a child of the creg syscon node.
->> +
->> +The following clocks are available from the clock node.
->> +
->> +Clock ID     Name
->> +   0          1 kHz clock
->> +   1         32 kHz Oscillator
->> +
->> +Example:
->> +soc {
->> +     creg: syscon@40043000 {
->> +             compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
->> +             reg = <0x40043000 0x1000>;
->> +
->> +             creg_clk: clock-controller@004 {
->
-> What is 4? A unit address should have a corresponding reg prop. and no
-> leading zeros.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-It is the fourth register in the creg syscon block.
+This fixes bit field offsets in the CMU_TOP CLK_DIV_SCLK_ISP_SENSOR_{A,B}
+clock definitions.
 
-Does this look better:
-creg_clk: clock-controller@4 {
-    compatible = "nxp,lpc1850-creg-clk";
-    reg = <0x4>;
-    clocks = <&xtal32>;
-    #clock-cells = <1>;
-};
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Note that the reg property isn't really useful in the driver, but I
-guess we should have it either way(?).
-
-Alternatively I could drop the unit address and reg property. What do you think?
-
-
-regards,
-Joachim Eastwood
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index cf096f9..a1dfcb8 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -490,9 +490,9 @@ static struct samsung_div_clock top_div_clks[] __initdata = {
+ 	DIV(CLK_DIV_SCLK_ISP_SENSOR1_A, "div_sclk_isp_sensor1_a",
+ 			"mout_sclk_isp_sensor1", DIV_TOP_CAM11, 8, 4),
+ 	DIV(CLK_DIV_SCLK_ISP_SENSOR0_B, "div_sclk_isp_sensor0_b",
+-			"div_sclk_isp_sensor0_a", DIV_TOP_CAM11, 12, 4),
++			"div_sclk_isp_sensor0_a", DIV_TOP_CAM11, 4, 4),
+ 	DIV(CLK_DIV_SCLK_ISP_SENSOR0_A, "div_sclk_isp_sensor0_a",
+-			"mout_sclk_isp_sensor0", DIV_TOP_CAM11, 8, 4),
++			"mout_sclk_isp_sensor0", DIV_TOP_CAM11, 0, 4),
+ 
+ 	/* DIV_TOP_FSYS0 */
+ 	DIV(CLK_DIV_SCLK_MMC1_B, "div_sclk_mmc1_b", "div_sclk_mmc1_a",
+-- 
+1.9.1
