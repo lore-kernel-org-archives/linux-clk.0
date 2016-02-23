@@ -1,55 +1,89 @@
-Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <20160202131725.GQ4652@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com> <20160202131725.GQ4652@lukather>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Thu, 4 Feb 2016 14:06:45 +0800
-Message-ID: <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
-Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+	"Linus Walleij" <linus.walleij@linaro.org>,
+	linux-clk@vger.kernel.org, "Pawel Moll" <pawel.moll@arm.com>,
+	"Russell King" <rmk+kernel@arm.linux.org.uk>
+Date: Tue, 23 Feb 2016 21:42:03 +0000
+Message-ID: <lsq.1456263723.930555686@decadent.org.uk>
+Subject: [PATCH 3.2 54/67] ARM: 8517/1: ICST: avoid arithmetic overflow in
+ icst_hz()
+In-Reply-To: <lsq.1456263722.390955919@decadent.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Maxime,
+3.2.78-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
->> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
->> clock index 0b1x is PLL6.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->
-> If the clock is the same but the parents are different, then we don't
-> need to duplicate all the logic. Simply add the number of parents to
-> mux_data, and you're all set.
+From: Linus Walleij <linus.walleij@linaro.org>
 
-Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
-0b10 and 0b11 is pll6/pre_div.
-So, just adding number of parents to mux_data will not solve problem.
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
 
-Regards,
-Vishnu
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
+
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
+
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+ 
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+ 
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+ 
+ EXPORT_SYMBOL(icst_hz);
