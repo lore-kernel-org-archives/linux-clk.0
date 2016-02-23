@@ -1,291 +1,732 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jiancheng Xue <xuejiancheng@huawei.com>, sboyd@codeaurora.org,
- p.zabel@pengutronix.de, robh+dt@kernel.org, pawel.moll@arm.com,
- mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
- linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de, olof@lixom.net,
- xuwei5@hisilicon.com, haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
- bintian.wang@huawei.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1454639472-17373-2-git-send-email-xuejiancheng@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com, suwenping@hisilicon.com,
- raojun@hisilicon.com, ml.yang@hisilicon.com, gaofei@hisilicon.com,
- zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com,
- lidongpo@hisilicon.com, "Jiancheng Xue" <xuejiancheng@huawei.com>
-References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
- <1454639472-17373-2-git-send-email-xuejiancheng@huawei.com>
-Message-ID: <20160217004648.2278.64006@quark.deferred.io>
-Subject: Re: [RESEND PATCH v8 1/6] clk: hisilicon: add CRG driver for hi3519 soc
-Date: Tue, 16 Feb 2016 16:46:48 -0800
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v7 1/2] clk: qcom: Add support for SMD-RPM Clocks
+Date: Tue, 23 Feb 2016 18:13:18 +0200
+Message-Id: <1456243999-22652-2-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1456243999-22652-1-git-send-email-georgi.djakov@linaro.org>
+References: <1456243999-22652-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Jiancheng Xue,
+This adds initial support for clocks controlled by the Resource
+Power Manager (RPM) processor on some Qualcomm SoCs, which use
+the qcom_smd_rpm driver to communicate with RPM.
+Such platforms are msm8916, apq8084 and msm8974.
 
-Quoting Jiancheng Xue (2016-02-04 18:31:07)
-> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makef=
-ile
-> index 74dba31..3f57b09 100644
-> --- a/drivers/clk/hisilicon/Makefile
-> +++ b/drivers/clk/hisilicon/Makefile
-> @@ -4,8 +4,10 @@
->  =
+The RPM is a dedicated hardware engine for managing the shared
+SoC resources in order to keep the lowest power profile. It
+communicates with other hardware subsystems via shared memory
+and accepts clock requests, aggregates the requests and turns
+the clocks on/off or scales them on demand.
 
->  obj-y  +=3D clk.o clkgate-separated.o clkdivider-hi6220.o
->  =
+This driver is based on the codeaurora.org driver:
+https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
 
-> +obj-$(CONFIG_RESET_CONTROLLER) +=3D reset.o
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   36 ++
+ drivers/clk/qcom/Kconfig                           |   16 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-smd-rpm.c                     |  548 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |   45 ++
+ 5 files changed, 646 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
 
-Do you really want to build reset.o for all hisi SoCs?
-
->  obj-$(CONFIG_ARCH_HI3xxx)      +=3D clk-hi3620.o
->  obj-$(CONFIG_ARCH_HIP04)       +=3D clk-hip04.o
->  obj-$(CONFIG_ARCH_HIX5HD2)     +=3D clk-hix5hd2.o
->  obj-$(CONFIG_COMMON_CLK_HI6220)        +=3D clk-hi6220.o
->  obj-$(CONFIG_STUB_CLK_HI6220)  +=3D clk-hi6220-stub.o
-> +obj-$(CONFIG_COMMON_CLK_HI3519)        +=3D clk-hi3519.o
-> diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/c=
-lk-hi3519.c
-> new file mode 100644
-> index 0000000..ed983af
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/clk-hi3519.c
-> @@ -0,0 +1,133 @@
-> +/*
-> + * Hi3519 Clock Driver
-> + *
-> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <dt-bindings/clock/hi3519-clock.h>
-> +#include <linux/delay.h>
-
-Remove this header.
-
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-
-Remove this header.
-
-> +#include <linux/of_platform.h>
-
-Remove this header.
-
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-
-Remove this header.
-
-> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> index 9f8e766..06ec3fe 100644
-> --- a/drivers/clk/hisilicon/clk.c
-> +++ b/drivers/clk/hisilicon/clk.c
-> @@ -37,7 +37,7 @@
->  =
-
->  static DEFINE_SPINLOCK(hisi_clk_lock);
->  =
-
-> -struct hisi_clock_data __init *hisi_clk_init(struct device_node *np,
-> +struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->                                              int nr_clks)
->  {
->         struct hisi_clock_data *clk_data;
-> @@ -71,8 +71,9 @@ err_data:
->  err:
->         return NULL;
->  }
-> +EXPORT_SYMBOL(hisi_clk_init);
->  =
-
-> -void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *c=
-lks,
-> +void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *cl=
-ks,
->                                          int nums, struct hisi_clock_data=
- *data)
->  {
->         struct clk *clk;
-> @@ -91,8 +92,9 @@ void __init hisi_clk_register_fixed_rate(struct hisi_fi=
-xed_rate_clock *clks,
->                 data->clk_data.clks[clks[i].id] =3D clk;
->         }
->  }
-> +EXPORT_SYMBOL(hisi_clk_register_fixed_rate);
->  =
-
-> -void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_cloc=
-k *clks,
-> +void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock=
- *clks,
->                                            int nums,
->                                            struct hisi_clock_data *data)
->  {
-> @@ -112,8 +114,9 @@ void __init hisi_clk_register_fixed_factor(struct his=
-i_fixed_factor_clock *clks,
->                 data->clk_data.clks[clks[i].id] =3D clk;
->         }
->  }
-> +EXPORT_SYMBOL(hisi_clk_register_fixed_factor);
->  =
-
-> -void __init hisi_clk_register_mux(struct hisi_mux_clock *clks,
-> +void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
->                                   int nums, struct hisi_clock_data *data)
->  {
->         struct clk *clk;
-> @@ -141,8 +144,9 @@ void __init hisi_clk_register_mux(struct hisi_mux_clo=
-ck *clks,
->                 data->clk_data.clks[clks[i].id] =3D clk;
->         }
->  }
-> +EXPORT_SYMBOL(hisi_clk_register_mux);
->  =
-
-> -void __init hisi_clk_register_divider(struct hisi_divider_clock *clks,
-> +void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
->                                       int nums, struct hisi_clock_data *d=
-ata)
->  {
->         struct clk *clk;
-> @@ -170,8 +174,9 @@ void __init hisi_clk_register_divider(struct hisi_div=
-ider_clock *clks,
->                 data->clk_data.clks[clks[i].id] =3D clk;
->         }
->  }
-> +EXPORT_SYMBOL(hisi_clk_register_divider);
->  =
-
-> -void __init hisi_clk_register_gate(struct hisi_gate_clock *clks,
-> +void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
->                                        int nums, struct hisi_clock_data *=
-data)
->  {
->         struct clk *clk;
-> @@ -198,8 +203,9 @@ void __init hisi_clk_register_gate(struct hisi_gate_c=
-lock *clks,
->                 data->clk_data.clks[clks[i].id] =3D clk;
->         }
->  }
-> +EXPORT_SYMBOL(hisi_clk_register_gate);
->  =
-
-> -void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *clks,
-> +void hisi_clk_register_gate_sep(const struct hisi_gate_clock *clks,
->                                        int nums, struct hisi_clock_data *=
-data)
->  {
->         struct clk *clk;
-> @@ -226,8 +232,9 @@ void __init hisi_clk_register_gate_sep(struct hisi_ga=
-te_clock *clks,
->                 data->clk_data.clks[clks[i].id] =3D clk;
->         }
->  }
-> +EXPORT_SYMBOL(hisi_clk_register_gate_sep);
->  =
-
-> -void __init hi6220_clk_register_divider(struct hi6220_divider_clock *clk=
-s,
-> +void __init hi6220_clk_register_divider(const struct hi6220_divider_cloc=
-k *clks,
->                                         int nums, struct hisi_clock_data =
-*data)
-
-It would have been better to break out all of the changes to clk.c into
-a separate patch.
-
->  {
->         struct clk *clk;
-> diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-> index b56fbc1..20d64af 100644
-> --- a/drivers/clk/hisilicon/clk.h
-> +++ b/drivers/clk/hisilicon/clk.h
-> @@ -111,18 +111,18 @@ struct clk *hi6220_register_clkdiv(struct device *d=
-ev, const char *name,
->         u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
->  =
-
->  struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
-> -void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
-> +void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
->                                 int, struct hisi_clock_data *);
-> -void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
-> +void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock=
- *,
->                                 int, struct hisi_clock_data *);
-> -void hisi_clk_register_mux(struct hisi_mux_clock *, int,
-> +void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
->                                 struct hisi_clock_data *);
-> -void hisi_clk_register_divider(struct hisi_divider_clock *,
-> +void hisi_clk_register_divider(const struct hisi_divider_clock *,
->                                 int, struct hisi_clock_data *);
-> -void hisi_clk_register_gate(struct hisi_gate_clock *,
-> +void hisi_clk_register_gate(const struct hisi_gate_clock *,
->                                 int, struct hisi_clock_data *);
-> -void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
-> +void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
->                                 int, struct hisi_clock_data *);
-> -void hi6220_clk_register_divider(struct hi6220_divider_clock *,
-> +void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
->                                 int, struct hisi_clock_data *);
->  #endif /* __HISI_CLK_H */
-
-Ditto.
-
-> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-> new file mode 100644
-> index 0000000..4fc7c8f
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/reset.c
-> @@ -0,0 +1,130 @@
-> +/*
-> + * Hisilicon Reset Controller Driver
-> + *
-> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-
-I didn't look into these headers but I'm guessing they aren't all
-needed?
-
-Best regards,
-Mike
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+new file mode 100644
+index 000000000000..e3e13226d798
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -0,0 +1,36 @@
++Qualcomm RPM Clock Controller Binding
++------------------------------------------------
++The RPM is a dedicated hardware engine for managing the shared
++SoC resources in order to keep the lowest power profile. It
++communicates with other hardware subsystems via shared memory
++and accepts clock requests, aggregates the requests and turns
++the clocks on/off or scales them on demand.
++
++Required properties :
++- compatible : shall contain only one of the following. The generic
++               compatible "qcom,rpmcc" should be also included.
++
++			"qcom,rpmcc-msm8916", "qcom,rpmcc"
++
++- #clock-cells : shall contain 1
++
++Example:
++	smd {
++		compatible = "qcom,smd";
++
++		rpm {
++			interrupts = <0 168 1>;
++			qcom,ipc = <&apcs 8 0>;
++			qcom,smd-edge = <15>;
++
++			rpm_requests {
++				compatible = "qcom,rpm-msm8916";
++				qcom,smd-channels = "rpm_requests";
++
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
++					#clock-cells = <1>;
++				};
++			};
++		};
++	};
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index b552eceec2be..5963d36f0c45 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -2,6 +2,9 @@ config QCOM_GDSC
+ 	bool
+ 	select PM_GENERIC_DOMAINS if PM
+ 
++config QCOM_RPMCC
++	bool
++
+ config COMMON_CLK_QCOM
+ 	tristate "Support for Qualcomm's clock controllers"
+ 	depends on OF
+@@ -9,6 +12,19 @@ config COMMON_CLK_QCOM
+ 	select REGMAP_MMIO
+ 	select RESET_CONTROLLER
+ 
++config QCOM_CLK_SMD_RPM
++	tristate "RPM over SMD based Clock Controller"
++	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
++	select QCOM_RPMCC
++	help
++	  The RPM (Resource Power Manager) is a dedicated hardware engine for
++	  managing the shared SoC resources in order to keep the lowest power
++	  profile. It communicates with other hardware subsystems via shared
++	  memory and accepts clock requests, aggregates the requests and turns
++	  the clocks on/off or scales them on demand.
++	  Say Y if you want to support the clocks exposed by the RPM on
++	  platforms such as apq8016, apq8084, msm8974 etc.
++
+ config APQ_GCC_8084
+ 	tristate "APQ8084 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index dc4280b85db1..5f4673b7b03a 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -25,3 +25,4 @@ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
+ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
++obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+new file mode 100644
+index 000000000000..6df1761e376e
+--- /dev/null
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -0,0 +1,548 @@
++/*
++ * Copyright (c) 2016, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/export.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/soc/qcom/smd-rpm.h>
++
++#include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/mfd/qcom-rpm.h>
++
++#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
++#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
++#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
++#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
++#define QCOM_RPM_SMD_KEY_STATE				0x54415453
++#define QCOM_RPM_SCALING_ENABLE_ID			0x2
++
++#define __DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id, stat_id,  \
++			     key)					      \
++	static struct clk_smd_rpm _platform##_##_active;		      \
++	static struct clk_smd_rpm _platform##_##_name = {		      \
++		.rpm_res_type = (type),					      \
++		.rpm_clk_id = (r_id),					      \
++		.rpm_status_id = (stat_id),				      \
++		.rpm_key = (key),					      \
++		.peer = &_platform##_##_active,				      \
++		.rate = INT_MAX,					      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_smd_rpm_ops,			      \
++			.name = #_name,					      \
++			.parent_names = (const char *[]){ "xo_board" },       \
++			.num_parents = 1,				      \
++		},							      \
++	};								      \
++	static struct clk_smd_rpm _platform##_##_active = {		      \
++		.rpm_res_type = (type),					      \
++		.rpm_clk_id = (r_id),					      \
++		.rpm_status_id = (stat_id),				      \
++		.active_only = true,					      \
++		.rpm_key = (key),					      \
++		.peer = &_platform##_##_name,				      \
++		.rate = INT_MAX,					      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_smd_rpm_ops,			      \
++			.name = #_active,				      \
++			.parent_names = (const char *[]){ "xo_board" },	      \
++			.num_parents = 1,				      \
++		},							      \
++	}
++
++#define __DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id,    \
++				    stat_id, r, key)			      \
++	static struct clk_smd_rpm _platform##_##_active;		      \
++	static struct clk_smd_rpm _platform##_##_name = {		      \
++		.rpm_res_type = (type),					      \
++		.rpm_clk_id = (r_id),					      \
++		.rpm_status_id = (stat_id),				      \
++		.rpm_key = (key),					      \
++		.branch = true,						      \
++		.peer = &_platform##_##_active,				      \
++		.rate = (r),						      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_smd_rpm_branch_ops,			      \
++			.name = #_name,					      \
++			.parent_names = (const char *[]){ "xo_board" },	      \
++			.num_parents = 1,				      \
++		},							      \
++	};								      \
++	static struct clk_smd_rpm _platform##_##_active = {		      \
++		.rpm_res_type = (type),					      \
++		.rpm_clk_id = (r_id),					      \
++		.rpm_status_id = (stat_id),				      \
++		.active_only = true,					      \
++		.rpm_key = (key),					      \
++		.branch = true,						      \
++		.peer = &_platform##_##_name,				      \
++		.rate = (r),						      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_smd_rpm_branch_ops,			      \
++			.name = #_active,				      \
++			.parent_names = (const char *[]){ "xo_board" },	      \
++			.num_parents = 1,				      \
++		},							      \
++	}
++
++#define DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id)	      \
++		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
++		0, QCOM_RPM_SMD_KEY_RATE)
++
++#define DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id, r)   \
++		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type,  \
++		r_id, 0, r, QCOM_RPM_SMD_KEY_ENABLE)
++
++#define DEFINE_CLK_SMD_RPM_QDSS(_platform, _name, _active, type, r_id)	      \
++		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
++		0, QCOM_RPM_SMD_KEY_STATE)
++
++#define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_id)	      \
++		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
++		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
++		QCOM_RPM_KEY_SOFTWARE_ENABLE)
++
++#define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _active, r_id) \
++		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
++		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
++		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
++
++#define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
++
++struct clk_smd_rpm {
++	const int rpm_res_type;
++	const int rpm_key;
++	const int rpm_clk_id;
++	const int rpm_status_id;
++	const bool active_only;
++	bool enabled;
++	bool branch;
++	struct clk_smd_rpm *peer;
++	struct clk_hw hw;
++	unsigned long rate;
++	struct qcom_smd_rpm *rpm;
++};
++
++struct clk_smd_rpm_req {
++	__le32 key;
++	__le32 nbytes;
++	__le32 value;
++};
++
++struct rpm_cc {
++	struct qcom_rpm *rpm;
++	struct clk_onecell_data data;
++	struct clk *clks[];
++};
++
++struct rpm_smd_clk_desc {
++	struct clk_smd_rpm **clks;
++	size_t num_clks;
++};
++
++static DEFINE_MUTEX(rpm_smd_clk_lock);
++
++static int clk_smd_rpm_set_rate_active(struct clk_smd_rpm *r,
++				       unsigned long rate)
++{
++	struct clk_smd_rpm_req req = {
++		.key = cpu_to_le32(r->rpm_key),
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
++	};
++
++	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
++				  r->rpm_res_type, r->rpm_clk_id, &req,
++				  sizeof(req));
++}
++
++static int clk_smd_rpm_set_rate_sleep(struct clk_smd_rpm *r,
++				      unsigned long rate)
++{
++	struct clk_smd_rpm_req req = {
++		.key = cpu_to_le32(r->rpm_key),
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
++	};
++
++	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_SLEEP_STATE,
++				  r->rpm_res_type, r->rpm_clk_id, &req,
++				  sizeof(req));
++}
++
++static void to_active_sleep(struct clk_smd_rpm *r, unsigned long rate,
++			    unsigned long *active, unsigned long *sleep)
++{
++	*active = rate;
++
++	/*
++	 * Active-only clocks don't care what the rate is during sleep. So,
++	 * they vote for zero.
++	 */
++	if (r->active_only)
++		*sleep = 0;
++	else
++		*sleep = *active;
++}
++
++static int clk_smd_rpm_prepare(struct clk_hw *hw)
++{
++	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
++	struct clk_smd_rpm *peer = r->peer;
++	unsigned long this_rate = 0, this_sleep_rate = 0;
++	unsigned long peer_rate = 0, peer_sleep_rate = 0;
++	unsigned long active_rate, sleep_rate;
++	int ret = 0;
++
++	mutex_lock(&rpm_smd_clk_lock);
++
++	/* Don't send requests to the RPM if the rate has not been set. */
++	if (!r->rate)
++		goto out;
++
++	to_active_sleep(r, r->rate, &this_rate, &this_sleep_rate);
++
++	/* Take peer clock's rate into account only if it's enabled. */
++	if (peer->enabled)
++		to_active_sleep(peer, peer->rate,
++				&peer_rate, &peer_sleep_rate);
++
++	active_rate = max(this_rate, peer_rate);
++
++	if (r->branch)
++		active_rate = !!active_rate;
++
++	ret = clk_smd_rpm_set_rate_active(r, active_rate);
++	if (ret)
++		goto out;
++
++	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
++	if (r->branch)
++		sleep_rate = !!sleep_rate;
++
++	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
++	if (ret)
++		/* Undo the active set vote and restore it */
++		ret = clk_smd_rpm_set_rate_active(r, peer_rate);
++
++out:
++	if (!ret)
++		r->enabled = true;
++
++	mutex_unlock(&rpm_smd_clk_lock);
++
++	return ret;
++}
++
++static void clk_smd_rpm_unprepare(struct clk_hw *hw)
++{
++	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
++	struct clk_smd_rpm *peer = r->peer;
++	unsigned long peer_rate = 0, peer_sleep_rate = 0;
++	unsigned long active_rate, sleep_rate;
++	int ret;
++
++	mutex_lock(&rpm_smd_clk_lock);
++
++	if (!r->rate)
++		goto out;
++
++	/* Take peer clock's rate into account only if it's enabled. */
++	if (peer->enabled)
++		to_active_sleep(peer, peer->rate, &peer_rate,
++				&peer_sleep_rate);
++
++	active_rate = r->branch ? !!peer_rate : peer_rate;
++	ret = clk_smd_rpm_set_rate_active(r, active_rate);
++	if (ret)
++		goto out;
++
++	sleep_rate = r->branch ? !!peer_sleep_rate : peer_sleep_rate;
++	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
++	if (ret)
++		goto out;
++
++	r->enabled = false;
++
++out:
++	mutex_unlock(&rpm_smd_clk_lock);
++}
++
++static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
++	struct clk_smd_rpm *peer = r->peer;
++	unsigned long active_rate, sleep_rate;
++	unsigned long this_rate = 0, this_sleep_rate = 0;
++	unsigned long peer_rate = 0, peer_sleep_rate = 0;
++	int ret = 0;
++
++	mutex_lock(&rpm_smd_clk_lock);
++
++	if (!r->enabled)
++		goto out;
++
++	to_active_sleep(r, rate, &this_rate, &this_sleep_rate);
++
++	/* Take peer clock's rate into account only if it's enabled. */
++	if (peer->enabled)
++		to_active_sleep(peer, peer->rate,
++				&peer_rate, &peer_sleep_rate);
++
++	active_rate = max(this_rate, peer_rate);
++	ret = clk_smd_rpm_set_rate_active(r, active_rate);
++	if (ret)
++		goto out;
++
++	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
++	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
++	if (ret)
++		goto out;
++
++	r->rate = rate;
++
++out:
++	mutex_unlock(&rpm_smd_clk_lock);
++
++	return ret;
++}
++
++static long clk_smd_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long *parent_rate)
++{
++	/*
++	 * RPM handles rate rounding and we don't have a way to
++	 * know what the rate will be, so just return whatever
++	 * rate is requested.
++	 */
++	return rate;
++}
++
++static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
++
++	/*
++	 * RPM handles rate rounding and we don't have a way to
++	 * know what the rate will be, so just return whatever
++	 * rate was set.
++	 */
++	return r->rate;
++}
++
++static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
++{
++	int ret;
++	struct clk_smd_rpm_req req = {
++		.key = cpu_to_le32(QCOM_RPM_SMD_KEY_ENABLE),
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(1),
++	};
++
++	ret = qcom_rpm_smd_write(rpm, QCOM_SMD_RPM_SLEEP_STATE,
++				 QCOM_SMD_RPM_MISC_CLK,
++				 QCOM_RPM_SCALING_ENABLE_ID, &req, sizeof(req));
++	if (ret) {
++		pr_err("RPM clock scaling (sleep set) not enabled!\n");
++		return ret;
++	}
++
++	ret = qcom_rpm_smd_write(rpm, QCOM_SMD_RPM_ACTIVE_STATE,
++				 QCOM_SMD_RPM_MISC_CLK,
++				 QCOM_RPM_SCALING_ENABLE_ID, &req, sizeof(req));
++	if (ret) {
++		pr_err("RPM clock scaling (active set) not enabled!\n");
++		return ret;
++	}
++
++	pr_debug("%s: RPM clock scaling is enabled\n", __func__);
++	return 0;
++}
++
++static const struct clk_ops clk_smd_rpm_ops = {
++	.prepare	= clk_smd_rpm_prepare,
++	.unprepare	= clk_smd_rpm_unprepare,
++	.set_rate	= clk_smd_rpm_set_rate,
++	.round_rate	= clk_smd_rpm_round_rate,
++	.recalc_rate	= clk_smd_rpm_recalc_rate,
++};
++
++static const struct clk_ops clk_smd_rpm_branch_ops = {
++	.prepare	= clk_smd_rpm_prepare,
++	.unprepare	= clk_smd_rpm_unprepare,
++	.round_rate	= clk_smd_rpm_round_rate,
++	.recalc_rate	= clk_smd_rpm_recalc_rate,
++};
++
++/* msm8916 */
++DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8916, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8916, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM_BRANCH(msm8916, xo, xo_a, QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
++DEFINE_CLK_SMD_RPM_QDSS(msm8916, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk1, bb_clk1_a, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk2, bb_clk2_a, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, rf_clk1, rf_clk1_a, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, rf_clk2, rf_clk2_a, 5);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk1_pin, bb_clk1_a_pin, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk2_pin, bb_clk2_a_pin, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk1_pin, rf_clk1_a_pin, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk2_pin, rf_clk2_a_pin, 5);
++
++static struct clk_smd_rpm *msm8916_clks[] = {
++	[RPM_XO_CLK_SRC]	= &msm8916_xo,
++	[RPM_XO_A_CLK_SRC]	= &msm8916_xo_a,
++	[RPM_PCNOC_CLK]		= &msm8916_pcnoc_clk,
++	[RPM_PCNOC_A_CLK]	= &msm8916_pcnoc_a_clk,
++	[RPM_SNOC_CLK]		= &msm8916_snoc_clk,
++	[RPM_SNOC_A_CLK]	= &msm8916_snoc_a_clk,
++	[RPM_BIMC_CLK]		= &msm8916_bimc_clk,
++	[RPM_BIMC_A_CLK]	= &msm8916_bimc_a_clk,
++	[RPM_QDSS_CLK]		= &msm8916_qdss_clk,
++	[RPM_QDSS_A_CLK]	= &msm8916_qdss_a_clk,
++	[RPM_BB_CLK1]		= &msm8916_bb_clk1,
++	[RPM_BB_CLK1_A]		= &msm8916_bb_clk1_a,
++	[RPM_BB_CLK2]		= &msm8916_bb_clk2,
++	[RPM_BB_CLK2_A]		= &msm8916_bb_clk2_a,
++	[RPM_RF_CLK1]		= &msm8916_rf_clk1,
++	[RPM_RF_CLK1_A]		= &msm8916_rf_clk1_a,
++	[RPM_RF_CLK2]		= &msm8916_rf_clk2,
++	[RPM_RF_CLK2_A]		= &msm8916_rf_clk2_a,
++	[RPM_BB_CLK1_PIN]	= &msm8916_bb_clk1_pin,
++	[RPM_BB_CLK1_A_PIN]	= &msm8916_bb_clk1_a_pin,
++	[RPM_BB_CLK2_PIN]	= &msm8916_bb_clk2_pin,
++	[RPM_BB_CLK2_A_PIN]	= &msm8916_bb_clk2_a_pin,
++	[RPM_RF_CLK1_PIN]	= &msm8916_rf_clk1_pin,
++	[RPM_RF_CLK1_A_PIN]	= &msm8916_rf_clk1_a_pin,
++	[RPM_RF_CLK2_PIN]	= &msm8916_rf_clk2_pin,
++	[RPM_RF_CLK2_A_PIN]	= &msm8916_rf_clk2_a_pin,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8916 = {
++	.clks = msm8916_clks,
++	.num_clks = ARRAY_SIZE(msm8916_clks),
++};
++
++static const struct of_device_id rpm_smd_clk_match_table[] = {
++	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
++
++static int rpm_smd_clk_probe(struct platform_device *pdev)
++{
++	struct clk **clks;
++	struct clk *clk;
++	struct rpm_cc *rcc;
++	struct clk_onecell_data *data;
++	int ret;
++	size_t num_clks, i;
++	struct qcom_smd_rpm *rpm;
++	struct clk_smd_rpm **rpm_smd_clks;
++	const struct rpm_smd_clk_desc *desc;
++
++	rpm = dev_get_drvdata(pdev->dev.parent);
++	if (!rpm) {
++		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
++		return -ENODEV;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	rpm_smd_clks = desc->clks;
++	num_clks = desc->num_clks;
++
++	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
++			   GFP_KERNEL);
++	if (!rcc)
++		return -ENOMEM;
++
++	clks = rcc->clks;
++	data = &rcc->data;
++	data->clks = clks;
++	data->clk_num = num_clks;
++
++	for (i = 0; i < num_clks; i++) {
++		if (!rpm_smd_clks[i]) {
++			clks[i] = ERR_PTR(-ENOENT);
++			continue;
++		}
++
++		rpm_smd_clks[i]->rpm = rpm;
++		clk = devm_clk_register(&pdev->dev, &rpm_smd_clks[i]->hw);
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++			goto err;
++		}
++
++		clks[i] = clk;
++	}
++
++	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++				  data);
++	if (ret)
++		goto err;
++
++	ret = clk_smd_rpm_enable_scaling(rpm);
++	if (ret) {
++		of_clk_del_provider(pdev->dev.of_node);
++		goto err;
++	}
++
++	return 0;
++err:
++	dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
++	return ret;
++}
++
++static int rpm_smd_clk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++	return 0;
++}
++
++static struct platform_driver rpm_smd_clk_driver = {
++	.driver = {
++		.name = "qcom-clk-smd-rpm",
++		.of_match_table = rpm_smd_clk_match_table,
++	},
++	.probe = rpm_smd_clk_probe,
++	.remove = rpm_smd_clk_remove,
++};
++
++static int __init rpm_smd_clk_init(void)
++{
++	return platform_driver_register(&rpm_smd_clk_driver);
++}
++core_initcall(rpm_smd_clk_init);
++
++static void __exit rpm_smd_clk_exit(void)
++{
++	platform_driver_unregister(&rpm_smd_clk_driver);
++}
++module_exit(rpm_smd_clk_exit);
++
++MODULE_DESCRIPTION("Qualcomm RPM over SMD Clock Controller Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-clk-smd-rpm");
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+new file mode 100644
+index 000000000000..7800ab465d48
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -0,0 +1,45 @@
++/*
++ * Copyright 2015 Linaro Limited
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_CLK_MSM_RPMCC_H
++#define _DT_BINDINGS_CLK_MSM_RPMCC_H
++
++/* msm8916 */
++#define RPM_XO_CLK_SRC				0
++#define RPM_XO_A_CLK_SRC			1
++#define RPM_PCNOC_CLK				2
++#define RPM_PCNOC_A_CLK				3
++#define RPM_SNOC_CLK				4
++#define RPM_SNOC_A_CLK				5
++#define RPM_BIMC_CLK				6
++#define RPM_BIMC_A_CLK				7
++#define RPM_QDSS_CLK				8
++#define RPM_QDSS_A_CLK				9
++#define RPM_BB_CLK1				10
++#define RPM_BB_CLK1_A				11
++#define RPM_BB_CLK2				12
++#define RPM_BB_CLK2_A				13
++#define RPM_RF_CLK1				14
++#define RPM_RF_CLK1_A				15
++#define RPM_RF_CLK2				16
++#define RPM_RF_CLK2_A				17
++#define RPM_BB_CLK1_PIN				18
++#define RPM_BB_CLK1_A_PIN			19
++#define RPM_BB_CLK2_PIN				20
++#define RPM_BB_CLK2_A_PIN			21
++#define RPM_RF_CLK1_PIN				22
++#define RPM_RF_CLK1_A_PIN			23
++#define RPM_RF_CLK2_PIN				24
++#define RPM_RF_CLK2_A_PIN			25
++
++#endif
