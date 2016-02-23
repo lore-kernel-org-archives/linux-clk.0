@@ -1,62 +1,45 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 1/6] clk: bcm2835: pll_off should only set CM_PLL_ANARST
-Date: Mon, 29 Feb 2016 11:39:17 +0000
-Message-Id: <1456745963-2403-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
-References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] clk: shmobile: check for failure
+Date: Tue, 23 Feb 2016 15:00:03 +0530
+Message-Id: <1456219803-24824-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+We were not checking the return from devm_add_action() which can fail.
+Start using the helper devm_add_action_or_reset() and return directly
+as we know that the cleanup has been done by this helper.
 
-bcm2835_pll_off is currently assigning CM_PLL_ANARST
-to the control register.
-
-This patch only sets the CM_PLL_ANARST bit
-not resetting any of the other bits, which allows
-restoring the register to its original value
-via bcm2834_pll_on.
-
-It also now locks during the read/modify/write cycle of
-both registers.
-
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
-audio domain clocks")
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 ---
- drivers/clk/bcm/clk-bcm2835.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 5747a9d..2b7c6af 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -913,8 +913,14 @@ static void bcm2835_pll_off(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = pll->cprman;
- 	const struct bcm2835_pll_data *data = pll->data;
+I think this will go throuh clk tree, so this doesnot have to wait as
+devm_add_action_or_reset() is already in clk tree.
 
--	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
--	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-+	spin_lock(&cprman->regs_lock);
-+	cprman_write(cprman, data->cm_ctrl_reg,
-+		     cprman_read(cprman, data->cm_ctrl_reg) |
-+		     CM_PLL_ANARST);
-+	cprman_write(cprman, data->a2w_ctrl_reg,
-+		     cprman_read(cprman, data->a2w_ctrl_reg) |
-+		     A2W_PLL_CTRL_PWRDN);
-+	spin_unlock(&cprman->regs_lock);
- }
+ drivers/clk/shmobile/renesas-cpg-mssr.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- static int bcm2835_pll_on(struct clk_hw *hw)
---
-1.7.10.4
+diff --git a/drivers/clk/shmobile/renesas-cpg-mssr.c b/drivers/clk/shmobile/renesas-cpg-mssr.c
+index 9a4d888..925b600 100644
+--- a/drivers/clk/shmobile/renesas-cpg-mssr.c
++++ b/drivers/clk/shmobile/renesas-cpg-mssr.c
+@@ -568,7 +568,11 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
+-	devm_add_action(dev, cpg_mssr_del_clk_provider, np);
++	error = devm_add_action_or_reset(dev,
++					 cpg_mssr_del_clk_provider,
++					 np);
++	if (error)
++		return error;
+ 
+ 	error = cpg_mssr_add_clk_domain(dev, info->core_pm_clks,
+ 					info->num_core_pm_clks);
+-- 
+1.9.1
