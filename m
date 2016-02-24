@@ -1,120 +1,127 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v67iO-816KaLttWRRPL2f7hpfgJ1--p69tD_oOrewmOjCA@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-11-git-send-email-vishnupatekar0510@gmail.com> <CAGb2v67iO-816KaLttWRRPL2f7hpfgJ1--p69tD_oOrewmOjCA@mail.gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Sat, 13 Feb 2016 00:06:00 +0800
-Message-ID: <CAEzqOZtsdHC2tCgjC=Bj5q3RFip2Uyni8bFC16u03PRLCra5KA@mail.gmail.com>
-Subject: Re: [PATCH 10/14] ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v3 1/2] clk: add device tree binding for Artpec-6 clock controller
+Date: Wed, 24 Feb 2016 09:38:58 +0100
+Message-Id: <5aafa862cfee5cbcb7aabb286c34aa250f269d4f.1456302520.git.larper@axis.com>
+In-Reply-To: <cover.1456302520.git.larper@axis.com>
+References: <cover.1456302520.git.larper@axis.com>
+In-Reply-To: <cover.1456302520.git.larper@axis.com>
+References: <cover.1456302520.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Wens,
+Add device tree documentation for the main clock controller in the
+Artpec-6 SoC.
 
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   | 38 ++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
 
-On Tue, Feb 2, 2016 at 2:44 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sun, Jan 31, 2016 at 9:21 AM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
->> This adds A83T PRCM related clocks, clock resets.
->>
->> As a83t apb0 gates clock support is added earlier, this enables it.
->> Apart from apb0 gates, other added clocks are compatible with
->> earlier sun8i socs.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> ---
->>  arch/arm/boot/dts/sun8i-a83t.dtsi | 44 +++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 44 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
->> index ac96aa1..5ea20ff 100644
->> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
->> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
->> @@ -268,6 +268,44 @@
->>                                              "mmc2_output",
->>                                              "mmc2_sample";
->>                 };
->> +
->> +               cpus_clk: clk@01f01400 {
->> +                       compatible = "allwinner,sun9i-a80-cpus-clk";
->> +                       reg = <0x01f01400 0x4>;
->> +                       #clock-cells = <0>;
->> +                       clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&osc16M>;
->> +                       clock-output-names = "cpus";
->> +               };
->> +
->> +               ahb0: ahb0_clk {
->> +                       compatible = "fixed-factor-clock";
->> +                       #clock-cells = <0>;
->> +                       clock-div = <1>;
->> +                       clock-mult = <1>;
->> +                       clocks = <&cpus_clk>;
->> +                       clock-output-names = "ahb0";
->> +               };
->> +
->> +               apb0: clk@01f0140c {
->> +                       compatible = "allwinner,sun8i-a23-apb0-clk";
->
-> This is actually wrong, as it is wrong in sun9i-a80.dtsi.
-> I've sent a patch series for it.
-A83T apb0 is different from A80, and it's same as A23, so this should
-be correct.
-Please correct me in case I'm missing something.
-
-> Also the drivers for "allwinner,sun9i-a80-cpus-clk" and
-> "allwinner,sun9i-a80-apbs-clk"
-> are only compiled for CONFIG_MACH_SUN9I. Please add a patch to address this.
-Okie.
->
-> Regards
-> ChenYu
->
->> +                       reg = <0x01f0140c 0x4>;
->> +                       #clock-cells = <0>;
->> +                       clocks = <&ahb0>;
->> +                       clock-output-names = "apb0";
->> +               };
->> +
->> +               apb0_gates: clk@01f01428 {
->> +                       compatible = "allwinner,sun8i-a83t-apb0-gates-clk";
->> +                       reg = <0x01f01428 0x4>;
->> +                       #clock-cells = <1>;
->> +                       clocks = <&apb0>;
->> +                       clock-indices = <0>, <1>,
->> +                                       <2>, <3>,
->> +                                       <4>, <6>, <7>;
->> +                       clock-output-names = "apb0_pio", "apb0_ir",
->> +                                       "apb0_timer", "apb0_rsb",
->> +                                       "apb0_uart", "apb0_i2c0", "apb0_twd";
->> +               };
->>         };
->>
->>         soc {
->> @@ -434,5 +472,11 @@
->>                         #interrupt-cells = <3>;
->>                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
->>                 };
->> +
->> +               apb0_reset: reset@01f014b0 {
->> +                       reg = <0x01f014b0 0x4>;
->> +                       compatible = "allwinner,sun6i-a31-clock-reset";
->> +                       #reset-cells = <1>;
->> +               };
->>         };
->>  };
->> --
->> 1.9.1
->>
+diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+new file mode 100644
+index 0000000..76e3e7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+@@ -0,0 +1,41 @@
++* Clock bindings for Axis ARTPEC-6 chip
++
++The bindings are based on the clock provider binding in
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++External clocks:
++----------------
++
++There are two external inputs to the main clock controller which should be
++provided using the common clock bindings.
++- "sys_refclk": External 50 Mhz oscillator (required)
++- "i2s_refclk": Alternate audio reference clock (optional).
++
++Main clock controller
++---------------------
++
++Required properties:
++- #clock-cells: Should be <1>
++  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
++- compatible: Should be "axis,artpec6-clkctrl"
++- reg: Must contain the base address and length of the system controller
++- clocks:  Must contain a phandle entry for each clock in clock-names
++- clock-names: Must include the external oscillator ("sys_refclk"). Optional
++  ones are the audio reference clock ("i2s_refclk") and the audio fractional
++  divider ("frac_clk").
++
++Examples:
++
++ext_clk: ext_clk {
++	#clock-cells = <0>;
++	compatible = "fixed-clock";
++	clock-frequency = <50000000>;
++};
++
++clkctrl: clkctrl {
++	#clock-cells = <1>;
++	compatible = "axis,artpec6-clkctrl";
++	reg = <0xf8000000 0x48>;
++	clocks = <&ext_clk>;
++	clock-names = "sys_refclk";
++};
+diff --git a/include/dt-bindings/clock/axis,artpec6-clkctrl.h b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
+new file mode 100644
+index 0000000..f9f04dc
+--- /dev/null
++++ b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
+@@ -0,0 +1,38 @@
++/*
++ * ARTPEC-6 clock controller indexes
++ *
++ * Copyright 2016 Axis Comunications AB.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
++#define DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
++
++#define ARTPEC6_CLK_CPU			0
++#define ARTPEC6_CLK_CPU_PERIPH		1
++#define ARTPEC6_CLK_NAND_CLKA		2
++#define ARTPEC6_CLK_NAND_CLKB		3
++#define ARTPEC6_CLK_ETH_ACLK		4
++#define ARTPEC6_CLK_DMA_ACLK		5
++#define ARTPEC6_CLK_PTP_REF		6
++#define ARTPEC6_CLK_SD_PCLK		7
++#define ARTPEC6_CLK_SD_IMCLK		8
++#define ARTPEC6_CLK_I2S_HST		9
++#define ARTPEC6_CLK_I2S0_CLK		10
++#define ARTPEC6_CLK_I2S1_CLK		11
++#define ARTPEC6_CLK_UART_PCLK		12
++#define ARTPEC6_CLK_UART_REFCLK		13
++#define ARTPEC6_CLK_I2C			14
++#define ARTPEC6_CLK_SPI_PCLK		15
++#define ARTPEC6_CLK_SPI_SSPCLK		16
++#define ARTPEC6_CLK_SYS_TIMER		17
++#define ARTPEC6_CLK_FRACDIV_IN		18
++#define ARTPEC6_CLK_DBG_PCLK		19
++
++/* This must be the highest clock index plus one. */
++#define ARTPEC6_CLK_NUMCLOCKS		20
++
++#endif
+-- 
+2.1.4
