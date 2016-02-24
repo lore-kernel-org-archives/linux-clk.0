@@ -1,34 +1,65 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH 1/2] clk: lpc32xx: add clock frequency output
- configuration
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: robh+dt@kernel.org, mturquette@baylibre.com, stigge@antcom.de,
- vz@mleia.com,  devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <20160209185723.GC31947@codeaurora.org>
-References: <1455043670-19025-1-git-send-email-slemieux.tyco@gmail.com>
-	 <20160209185723.GC31947@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Date: Tue, 09 Feb 2016 15:07:10 -0500
-Message-ID: <1455048430.19294.3.camel@localhost>
-Mime-Version: 1.0
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 0/2] CREG clk driver for NXP LPC18xx family
+Date: Wed, 24 Feb 2016 23:04:18 +0100
+Message-Id: <1456351460-15483-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2016-02-09 at 10:57 -0800, Stephen Boyd wrote:
-> On 02/09, slemieux.tyco@gmail.com wrote:
-> > From: Sylvain Lemieux <slemieux@tycoint.com>
-> > 
-> > This patch add the support to setup the clock frequency output
-> > using an optional parameter from the device tree.
-> > 
-> > The previous kernel version did not change the clock frequency
-> > output setup by the kickstart and/or bootloader;
-> > this version always setup the clock frequency output to 208MHz.
-> > 
-> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> > ---
-> 
-> We have assigned-clock-rates, can you use that instead?
-> 
-OK, I will submit a new version of the patch tomorrow.
+This patch set adds a clk driver for the low power clocks found in
+the CREG block on lpc18xx. CREG is a collection of miscellaneous
+configuration registers that can be accessed through a syscon
+regmap interface. The clk driver makes it possible to setup and
+enabled these two clocks.
+
+This need to support peripherals like the internal RTC on the
+lpc18xx platform.
+
+The driver has one early init using CLK_OF_DECLARE and a standard
+platform driver. The early init is used to register the 32KHZ clk
+which may be needed early on. The other clock (1KHZ) is registered
+when the platform driver probe runs.
+
+This version splits clk array into clk_creg_early and clk_creg. I
+think this will work as long as clk_creg_early is _not_ used after
+the clk_creg is registered.
+
+This seems to work, but I currently don't have a setup that requires
+the 32khz clock early so that part isn't really tested.
+
+The probe deferral seems to work for the RTC:
+[    3.386861] lpc24xx-rtc 40046000.rtc: error getting rtc clock
+[    6.737615] lpc24xx-rtc 40046000.rtc: rtc core: registered lpc24xx-rtc as rtc0
+
+
+Changes since v3:
+ - Add .is_enabled function to both creg clks.
+ - Remove unit address from bindings as requested by Rob Herring.
+
+Changes since v2:
+ - Use two clk arrays for registration.
+ - Couple of minor cleanups.
+
+Changes since v1:
+ - Split driver with one early init and one platform driver
+   probe.
+ - Rebase on v4.5-rc1.
+
+Joachim Eastwood (2):
+  clk: add lpc18xx creg clk driver
+  doc: dt: add documentation for lpc1850-creg-clk driver
+
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 +++++
+ drivers/clk/nxp/Makefile                           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c                 | 222 +++++++++++++++++++++
+ 3 files changed, 275 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
+
+-- 
+1.8.0
