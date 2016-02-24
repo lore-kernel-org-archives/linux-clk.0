@@ -1,79 +1,199 @@
-Return-Path: <vz@mleia.com>
-Message-ID: <56CB7594.2040605@mleia.com>
-Date: Mon, 22 Feb 2016 22:54:44 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
-MIME-Version: 1.0
-To: slemieux.tyco@gmail.com, sboyd@codeaurora.org,
- mturquette@baylibre.com
-CC: stigge@antcom.de, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: lpc32xx: fix compilation warning
-References: <1456166940-30268-1-git-send-email-slemieux.tyco@gmail.com>
-In-Reply-To: <1456166940-30268-1-git-send-email-slemieux.tyco@gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 5/6] clk: mvebu: add AP806 core clock driver
+Date: Wed, 24 Feb 2016 16:14:25 +0100
+Message-Id: <1456326866-30854-6-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylvain,
+This commit adds a new driver to handle the core clocks found in the
+AP806 HW block, which is the core block of all Armada 7K and 8K
+Marvell 64-bits processors. This core clock driver reads the
+Sample-At-Reset register to determine the frequencies of several core
+clocks: DDR, Ring and CPU clocks.
 
-On 22.02.2016 20:49, slemieux.tyco@gmail.com wrote:
-> From: Sylvain Lemieux <slemieux@tycoint.com>
-> 
-> This patch remove the following compilation warning:
-> - drivers/clk/nxp/clk-lpc32xx.c: In function 'lpc32xx_clk_register':
->   warning: 'hw' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> - drivers/clk/nxp/clk-lpc32xx.c: In function 'clk_hclk_pll_round_rate':
->   warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   warning: 'n' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/mvebu/Kconfig      |   3 +
+ drivers/clk/mvebu/Makefile     |   2 +-
+ drivers/clk/mvebu/ap806-core.c | 121 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 125 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mvebu/ap806-core.c
 
-All warnings are false positives, please explicitly mention this in the commit message.
-
-> Tested using gcc version 4.7.3.
-> 
-> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> ---
->  drivers/clk/nxp/clk-lpc32xx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-> index 48b3a11..331f91b 100644
-> --- a/drivers/clk/nxp/clk-lpc32xx.c
-> +++ b/drivers/clk/nxp/clk-lpc32xx.c
-> @@ -13,6 +13,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of_address.h>
->  #include <linux/regmap.h>
-> +#include <linux/compiler-gcc.h>
->  
->  #include <dt-bindings/clock/lpc32xx-clock.h>
->  
-> @@ -588,7 +589,8 @@ static long clk_hclk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->  				    unsigned long *parent_rate)
->  {
->  	struct lpc32xx_pll_clk *clk = to_lpc32xx_pll_clk(hw);
-> -	u64 m_i, m, n, p, o = rate, i = *parent_rate, d = (u64)rate << 6;
-> +	u64 m_i, o = rate, i = *parent_rate, d = (u64)rate << 6;
-> +	u64 uninitialized_var(m), uninitialized_var(n), uninitialized_var(p);
-
-I think that dummy initialization is good enough here, i.e. assigning
-the variables to 0, AFAIU that's a common way to deal with compiler's false
-positives, usage of uninitialized_var() looks exotic.
-
->  	int p_i, n_i;
->  
->  	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
-> @@ -1414,7 +1416,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
->  			.flags = lpc32xx_clk->flags,
->  			.ops = clk_hw->hw0.ops,
->  		};
-> -		struct clk_hw *hw;
-> +		struct clk_hw *uninitialized_var(hw);
-
-Same as above, struct clk_hw *hw = NULL would be good enough here.
-
->  		if (clk_hw->type == CLK_LPC32XX)
->  			hw = &clk_hw->hw0.clk.hw;
-> 
-
---
-With best wishes,
-Vladimir
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index 2769625..fd84172 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -42,3 +42,6 @@ config KIRKWOOD_CLK
+ config ORION_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
++
++config ARMADA_AP806_CORE_CLK
++	bool
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 8866115..db5c28c 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -1,11 +1,11 @@
+ obj-$(CONFIG_MVEBU_CLK_COMMON)	+= common.o
+ obj-$(CONFIG_MVEBU_CLK_CPU) 	+= clk-cpu.o
+ obj-$(CONFIG_MVEBU_CLK_COREDIV)	+= clk-corediv.o
+-
+ obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
+ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
++obj-$(CONFIG_ARMADA_AP806_CORE_CLK) += ap806-core.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
+ obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
+diff --git a/drivers/clk/mvebu/ap806-core.c b/drivers/clk/mvebu/ap806-core.c
+new file mode 100644
+index 0000000..b858d6b
+--- /dev/null
++++ b/drivers/clk/mvebu/ap806-core.c
+@@ -0,0 +1,121 @@
++/*
++ * Marvell Armada AP806 core clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#define pr_fmt(fmt) "ap806-core-clk: " fmt
++
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/regmap.h>
++
++/*
++ * AP806 PLLs:
++ *   0 - DDR
++ *   1 - Ring
++ *   2 - CPU
++ */
++
++#define AP806_SAMPLE_AT_RESET_REG 0x204
++
++#define AP806_PLL_NUM	3
++#define AP806_PLL_FREQ  7
++
++/* SAR parameters to get the PLL data */
++struct apclk_sar {
++	int mask;
++	int offset;
++	const char *name;
++};
++
++static const struct apclk_sar
++ap806_core_clk_sar[AP806_PLL_NUM]  __initconst = {
++	{ .mask = 0x7,	.offset = 21 },
++	{ .mask = 0x7,	.offset = 18 },
++	{ .mask = 0x7,	.offset = 15 },
++};
++
++static struct clk *ap806_core_clks[AP806_PLL_NUM];
++
++static struct clk_onecell_data ap806_core_clk_data = {
++	.clks = ap806_core_clks,
++	.clk_num = AP806_PLL_NUM,
++};
++
++/* mapping between SAR value to frequency */
++static const u32
++ap806_core_clk_freq[AP806_PLL_NUM][AP806_PLL_FREQ] __initconst = {
++	{ 2400000000, 2100000000, 1800000000,
++	  1600000000, 1300000000, 1300000000,
++	  1300000000 },
++	{ 2000000000, 1800000000, 1600000000,
++	  1400000000, 1200000000, 1200000000,
++	  1200000000 },
++	{ 2500000000, 2200000000, 2000000000,
++	  1700000000, 1600000000, 1200000000,
++	  1200000000 },
++};
++
++static unsigned long __init ap806_core_clk_get_freq(u32 reg, int clk_idx)
++{
++	int freq_idx;
++	const struct apclk_sar *clk_info;
++
++	clk_info = &ap806_core_clk_sar[clk_idx];
++
++	freq_idx = (reg >> clk_info->offset) & clk_info->mask;
++	if (WARN_ON(freq_idx > AP806_PLL_FREQ))
++		return 0;
++	else
++		return ap806_core_clk_freq[clk_idx][freq_idx];
++}
++
++static void __init ap806_core_clk_init(struct device_node *np)
++{
++	struct regmap *regmap;
++	u32 reg;
++	int i;
++
++	regmap = syscon_node_to_regmap(np->parent);
++	if (IS_ERR(regmap)) {
++		pr_err("cannot get regmap\n");
++		return;
++	}
++
++	if (regmap_read(regmap, AP806_SAMPLE_AT_RESET_REG, &reg)) {
++		pr_err("cannot read from regmap\n");
++		return;
++	}
++
++	for (i = 0; i < AP806_PLL_NUM; i++) {
++		unsigned long freq;
++		const char *name;
++
++		freq = ap806_core_clk_get_freq(reg, i);
++
++		of_property_read_string_index(np, "clock-output-names",
++					      i, &name);
++
++		ap806_core_clks[i] =
++			clk_register_fixed_rate(NULL, name, NULL,
++						CLK_IS_ROOT, freq);
++	}
++
++	of_clk_add_provider(np, of_clk_src_onecell_get,
++			    &ap806_core_clk_data);
++}
++
++CLK_OF_DECLARE(ap806_core_clk, "marvell,armada-ap806-core-clock",
++	       ap806_core_clk_init);
+-- 
+2.6.4
