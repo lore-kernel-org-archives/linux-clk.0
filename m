@@ -1,109 +1,38 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Feb 2016 14:08:19 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 10/14] clk: fractional-divider: Add hw based registration APIs
-Date: Mon,  8 Feb 2016 17:45:37 -0800
-Message-Id: <1454982341-22715-11-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2] clk: add userspace clock consumer
+Message-ID: <20160224220819.GF4847@codeaurora.org>
+References: <1456141719-2543-1-git-send-email-akinobu.mita@gmail.com>
+ <20160223214944.GA20852@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160223214944.GA20852@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk fractional divider code to
-return struct clk_hw pointers instead of struct clk pointers.
-This way we hide the struct clk pointer from providers unless
-they need to use consumer facing APIs.
+On 02/23, Rob Herring wrote:
+> On Mon, Feb 22, 2016 at 08:48:39PM +0900, Akinobu Mita wrote:
+> > This adds userspace consumer for common clock.
+> > 
+> > This driver is inspired from Userspace regulator consumer
+> > (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
+> > some classes of devices that are controlled entirely from user space.
+> 
+> Whether the kernel handles a clock or userspace does should have nothing 
+> to do with DT. Plus DT does not expose many of the clocks, so any 
+> debug feature needs to expose all clocks and be independent of DT.
+> 
+> Beyond debug, I don't think we should be exposing clock control to 
+> userspace.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-fractional-divider.c | 40 +++++++++++++++++++++++++++++++-----
- include/linux/clk-provider.h         |  5 +++++
- 2 files changed, 40 insertions(+), 5 deletions(-)
+Agreed. Plus, the userspace regulator consumer doesn't have any
+DT binding for it, so I don't see why we would have a DT binding
+for the clk one.
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 5c4955e33f7a..e7a315e840e6 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -118,14 +118,15 @@ const struct clk_ops clk_fractional_divider_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_fractional_divider_ops);
- 
--struct clk *clk_register_fractional_divider(struct device *dev,
-+struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
- 		u8 clk_divider_flags, spinlock_t *lock)
- {
- 	struct clk_fractional_divider *fd;
- 	struct clk_init_data init;
--	struct clk *clk;
-+	struct clk_hw *hw;
-+	int ret;
- 
- 	fd = kzalloc(sizeof(*fd), GFP_KERNEL);
- 	if (!fd)
-@@ -148,10 +149,39 @@ struct clk *clk_register_fractional_divider(struct device *dev,
- 	fd->lock = lock;
- 	fd->hw.init = &init;
- 
--	clk = clk_register(dev, &fd->hw);
--	if (IS_ERR(clk))
-+	hw = &fd->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
- 		kfree(fd);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_fractional_divider);
- 
--	return clk;
-+struct clk *clk_register_fractional_divider(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
-+		u8 clk_divider_flags, spinlock_t *lock)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_fractional_divider(dev, name, parent_name, flags,
-+			reg, mshift, mwidth, nshift, nwidth, clk_divider_flags,
-+			lock);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
- }
- EXPORT_SYMBOL_GPL(clk_register_fractional_divider);
-+
-+void clk_hw_unregister_fractional_divider(struct clk_hw *hw)
-+{
-+	struct clk_fractional_divider *fd;
-+
-+	fd = to_clk_fd(hw);
-+
-+	clk_hw_unregister(hw);
-+	kfree(fd);
-+}
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index d4d65f60b85e..549ed3844876 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -549,6 +549,11 @@ struct clk *clk_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
- 		u8 clk_divider_flags, spinlock_t *lock);
-+struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
-+		u8 clk_divider_flags, spinlock_t *lock);
-+void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
- 
- /**
-  * struct clk_multiplier - adjustable multiplier clock
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
