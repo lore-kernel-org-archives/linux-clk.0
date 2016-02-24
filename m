@@ -1,62 +1,91 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 17 Feb 2016 12:07:59 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-	Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Kristo, Tero" <t-kristo@ti.com>
-Message-ID: <20160217120759.GO7544@sirena.org.uk>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk>
- <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io>
- <56C42BAF.3050900@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, linux-clk@vger.kernel.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH 3.14 48/70] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+Date: Tue, 23 Feb 2016 19:33:57 -0800
+Message-Id: <20160224033355.647978508@linuxfoundation.org>
+In-Reply-To: <20160224033354.061464831@linuxfoundation.org>
+References: <20160224033354.061464831@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qi3SIpffvxS/TM8d"
-In-Reply-To: <56C42BAF.3050900@ti.com>
-Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
- clocks by ID
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+3.14-stable review patch.  If anyone has any objections, please let me know.
 
---qi3SIpffvxS/TM8d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------------------
 
-On Wed, Feb 17, 2016 at 10:13:35AM +0200, Peter Ujfalusi wrote:
+From: Linus Walleij <linus.walleij@linaro.org>
 
-> With this change we don't need to write custom machine drivers for setup not
-> using sysclk_id == 0.
-> I do think this is reasonable change by itself.
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
 
-> However I do think that the current simple-card is flawed regarding to clock
-> selection and the change Jyri and me are proposing is reasonable.
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
 
-But you define a new ABI to specify it in the process, I'd rather fix
-the flaws by using the common clock ABI than extend any device stuff.
-If it didn't define a new ABI I'd probably not worry about it but one of
-the issues we have with DT is that we do end up making ABIs every time
-we put something in DT.
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
 
---qi3SIpffvxS/TM8d
-Content-Type: application/pgp-signature; name="signature.asc"
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
 
-iQEcBAEBCAAGBQJWxGKeAAoJECTWi3JdVIfQWX0H/2DHTWHHEXQujN/q9jvyMVye
-coE0ygd7GYZmtpMwhzH2Sjn2kFnAl9aRpfwckzVm6we9m+GGlv0lPHIga6CyZ86m
-B5UgWhaWQ0IA3V7D50kLRIsvihc5H49Extp2l1TUFNspro7vpbGS5fL0PWhoyD1S
-aOfe9ifEBnIMIzNs9t095LayVS3HNz+4YUw2mVIbFjsOURiskunGwVEwxgoBSAW7
-SnTSaG8DC7/O5RwSJ6wJlp3dWTpKulYSlhl6/F9ZN8aoCzMVV1koIBmR9Jd0FbJG
-TULx2jtVzWsn2KaDIKcVLlkPvcrpNTyurYVYS1jbimZFL8r7VFlVhYCCkRzER7M=
-=dA2F
------END PGP SIGNATURE-----
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
 
---qi3SIpffvxS/TM8d--
+Tested on the ARM Versatile.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/arm/common/icst.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+ 
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+ 
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+ 
+ EXPORT_SYMBOL(icst_hz);
