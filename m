@@ -1,39 +1,91 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 11 Feb 2016 16:31:11 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] clk: qcom: gdsc: Add support for gdscs with gds
- hw controller
-Message-ID: <20160212003111.GN30978@codeaurora.org>
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
- <1448986336-16846-3-git-send-email-rnayak@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448986336-16846-3-git-send-email-rnayak@codeaurora.org>
+To: James Liao <jamesjj.liao@mediatek.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1455527982.29688.8.camel@mtksdaap41>
+Cc: "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Rob Herring" <robh@kernel.org>,
+ "John Crispin" <blogic@openwrt.org>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Sascha Hauer" <kernel@pengutronix.de>,
+ "Daniel Kurtz" <djkurtz@chromium.org>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, "Shunli Wang" <shunli.wang@mediatek.com>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1454665050-37776-5-git-send-email-jamesjj.liao@mediatek.com>
+ <20160210200853.26445.15165@quark.deferred.io>
+ <1455527982.29688.8.camel@mtksdaap41>
+Message-ID: <20160224212533.2278.7597@quark.deferred.io>
+Subject: Re: [PATCH v6 4/7] clk: mediatek: Add MT2701 clock support
+Date: Wed, 24 Feb 2016 13:25:33 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/01, Rajendra Nayak wrote:
-> Some gdsc power domains can have a gds_hw_controller block inside
-> to help ensure all slave devices within the power domain are idle
-> before the gdsc is actually switched off.
-> This is mainly useful in power domains which host a MMU, in which
-> case its necessary to make sure there are no outstanding MMU operations
-> or pending bus transactions before the power domain is turned off.
-> 
-> In gdscs with gds_hw_controller block, its necessary to check the
-> gds_hw_ctrl status bits instead of the ones in gdscr, to determine
-> the state of the powerdomain.
-> 
-> While at it, also move away from using jiffies and use ktime APIs
-> instead for busy looping on status bits.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+Hi James,
 
-Applied to clk-next
+Quoting James Liao (2016-02-15 01:19:42)
+> Hi Mike,
+> =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> On Wed, 2016-02-10 at 12:08 -0800, Michael Turquette wrote:
+> > Quoting James Liao (2016-02-05 01:37:27)
+> > > +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckge=
+n_init);
+> > > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasy=
+s_init);
+> > > +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_i=
+nit);
+> > > +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
+> > > +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init=
+);
+> > > +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_i=
+nit);
+> > > +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init=
+);
+> > > +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init=
+);
+> > > +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init=
+);
+> > > +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+> > =
+
+> > :-/
+> > =
+
+> > This is way too much CLK_OF_DECLARE and not enough Linux Driver Model.
+> > =
+
+> > I understand that some platforms really must initialize some clocks very
+> > early, but can we please separate those into one table and call
+> > CLK_OF_DECLARE on only that set, and then register the rest through a
+> > platform_driver later on?
+> =
+
+> I know CLK_OF_DECLARE is much earlier than platform_driver, so it can
+> ensure all drivers lookup their clocks successfully during
+> platform_driver probe. Is there anything different to init these clock
+> providers in CLK_OF_DECLARE and platform_driver?
+
+This a common pattern we're seeing right now. Joachim did a nice job of
+supporting early clocks with CLK_OF_DECLARE, and also using a proper
+driver in his lpc18xx implementation:
+
+http://marc.info/?l=3Ddevicetree&m=3D145618160610001
+
+Regards,
+Mike
+
+> =
+
+> =
+
+> Best regards,
+> =
+
+> James
+> =
+
+> =
+
+>=20
