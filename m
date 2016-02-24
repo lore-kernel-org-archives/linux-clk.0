@@ -1,106 +1,65 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Feb 2016 11:15:22 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] clk: qcom: Add support for SMD-RPM Clocks
+Message-ID: <20160224191522.GE4847@codeaurora.org>
+References: <1456243999-22652-1-git-send-email-georgi.djakov@linaro.org>
+ <1456243999-22652-2-git-send-email-georgi.djakov@linaro.org>
+ <56CD835A.1010608@linaro.org>
 MIME-Version: 1.0
-To: Rhyland Klein <rklein@nvidia.com>,
- =?utf-8?q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <56BB82A8.8010701@nvidia.com>
-Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-References: <1455058120-7398-1-git-send-email-rklein@nvidia.com>
- <56BAA6D9.9090009@elopez.com.ar> <56BB82A8.8010701@nvidia.com>
-Message-ID: <20160211213247.26445.28956@quark.deferred.io>
-Subject: Re: [PATCH] clk: clk_register: Correctly initialize enable_count
-Date: Thu, 11 Feb 2016 13:32:47 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56CD835A.1010608@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rhyland Klein (2016-02-10 10:34:16)
-> On 2/9/2016 9:56 PM, Emilio L=C3=B3pez wrote:
-> > Hi,
-> > =
+On 02/24, Srinivas Kandagatla wrote:
+> 
+> 
+> On 23/02/16 16:13, Georgi Djakov wrote:
+> >+/* msm8916 */
+> >+#define RPM_XO_CLK_SRC				0
+> >+#define RPM_XO_A_CLK_SRC			1
+> >+#define RPM_PCNOC_CLK				2
+> >+#define RPM_PCNOC_A_CLK				3
+> >+#define RPM_SNOC_CLK				4
+> >+#define RPM_SNOC_A_CLK				5
+> >+#define RPM_BIMC_CLK				6
+> >+#define RPM_BIMC_A_CLK				7
+> >+#define RPM_QDSS_CLK				8
+> >+#define RPM_QDSS_A_CLK				9
+> >+#define RPM_BB_CLK1				10
+> >+#define RPM_BB_CLK1_A				11
+> >+#define RPM_BB_CLK2				12
+> >+#define RPM_BB_CLK2_A				13
+> >+#define RPM_RF_CLK1				14
+> >+#define RPM_RF_CLK1_A				15
+> >+#define RPM_RF_CLK2				16
+> >+#define RPM_RF_CLK2_A				17
+> >+#define RPM_BB_CLK1_PIN				18
+> >+#define RPM_BB_CLK1_A_PIN			19
+> >+#define RPM_BB_CLK2_PIN				20
+> >+#define RPM_BB_CLK2_A_PIN			21
+> >+#define RPM_RF_CLK1_PIN				22
+> >+#define RPM_RF_CLK1_A_PIN			23
+> >+#define RPM_RF_CLK2_PIN				24
+> >+#define RPM_RF_CLK2_A_PIN			25
+> >+
+> 
+> These names are more generic, and offsets are specific to the 8916
+> chip, adding soc prefix to these would make more sense and also set
+> a rule for the next soc support patches too.
+> 
 
-> > El 09/02/16 a las 19:48, Rhyland Klein escribi=C3=B3:
-> >> When clocks are registered, they could be enabled already in
-> >> hardware. As of now, the enable count will start at 0. When this
-> >> happens, it means a clock is enabled and the framework doesn't know
-> >> that, so it will always report it as disabled.
+Do these ever change though? Maybe we should remove the msm8916
+specificness and let the rpm clk consumers choose the clks they
+want to use. Combine all the different SoCs into the same "RPM
+clk" numberspace so that we don't have a handful of different
+headers and different RPM clk definitions in the driver when
+they're almost the same across chips.
 
-Nak.
-
-> > =
-
-> > Keep in mind that during the boot process, towards the end, unused
-> > clocks get disabled, so the state remains in sync. If suddenly the
-> > enable_count on unused clocks is not 0, this will break and unused
-> > clocks will remain on, wasting power.
-> =
-
-> Hmm, I had misread the logic in clk_disable_unused_subtree(), namely I
-> inverted the check on enable_count when I was looking at it. It does
-> seem like it would take care of the clocks I was referring to.
-
-clk_disable_unused() will gate clocks left on by the bootloader AND not
-yet claimed and enabled by a clock consumer.
-
-> =
-
-> > =
-
-> > http://lxr.free-electrons.com/source/drivers/clk/clk.c#L244
-> > =
-
-> > What issue were you having that prompted you to write this patch?
-> =
-
-> I ran into the situation where a peripheral clock was enabled before the
-> kernel loaded, and I was trying to disable it in the clk-tegra210
-> driver. Calling clk_disable() won't work, as the clock doesn't have an
-> enable_count.
-
-Please check out include/linux/clk.h one more time. Calling
-clk_disable() before ever calling clk_enable() is a violation of the
-api. We try our best to avoid playing refcount games by enforcing that
-rule.
-
-> =
-
-> I do think that the clk_disable_unused_subtree() should pick up the
-> slack, but I was trying to disable it before the cleanup code to remove
-> unused clocks ran.
-
-clk_disable_unused() handles the case where spurious clocks were left
-enabled by the bootloader and need to be gated. This sounds like the
-only thing you were after.
-
-We also have a case where clocks are gated by clk_disable_unused()
-because no driver has claimed them yet, but we really want those clocks
-to be left enabled. For example, clocks supplying DDR & CPU shouldn't be
-cut, ever. Alternatively, your bootloader put something on the display
-but your display controller module hasn't loaded yet. Cutting the clock
-isn't fatal but causes unnecessary screen flicker because the module has
-not loaded up.
-
-To solve those sets of problems there is the critical clocks and handoff
-clocks thread[0].
-
-[0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@=
-baylibre.com>
-
-Best regards,
-Mike
-
-> =
-
-> I think you are right and the clean up code should cover the situation I
-> was looking at.
-> =
-
-> Thanks.
-> -rhyland
-> =
-
-> =
-
-> -- =
-
-> nvpublic
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
