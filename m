@@ -1,99 +1,37 @@
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20160215233102.2278.88855@quark.deferred.io>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160215233102.2278.88855@quark.deferred.io>
-Date: Mon, 15 Feb 2016 15:36:49 -0800
-Message-ID: <CAEG3pNCRa_CQx70aPHfQpG+7jEZ_=_-FxBWDkXVYbgH=j=1rmA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] clk: mvebu: initial support for AP806 clocks
+To: Joachim Eastwood <manabian@gmail.com>,  sboyd@codeaurora.org
 From: Michael Turquette <mturquette@baylibre.com>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1455994417-4471-2-git-send-email-manabian@gmail.com>
+Cc: "Joachim Eastwood" <manabian@gmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <1455994417-4471-1-git-send-email-manabian@gmail.com>
+ <1455994417-4471-2-git-send-email-manabian@gmail.com>
+Message-ID: <20160224210553.2278.56679@quark.deferred.io>
+Subject: Re: [PATCH v2 1/2] clk: add lpc18xx creg clk driver
+Date: Wed, 24 Feb 2016 13:05:53 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Thomas,
+Quoting Joachim Eastwood (2016-02-20 10:53:36)
+> +static const struct clk_ops clk_creg_32k =3D {
+> +       .enable         =3D clk_creg_enable,
+> +       .disable        =3D clk_creg_disable,
 
-On Mon, Feb 15, 2016 at 3:31 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Hi Thomas,
->
-> Quoting Thomas Petazzoni (2016-02-14 23:34:55)
->> Hello,
->>
->> The following set of patches add initial support for the main clocks
->> found in the AP806 hardware block, which is the central block used in
->> the newest Marvell 7K and 8K 64-bits processors.
->>
->> Two new drivers are added, one for the so-called "core" clocks and one
->> for the "ring" clocks. The latter are child clocks from one of the
->> core clocks. The "core" clocks are fixed rate clocks, but their rate
->> is calculated from values in the Sample At Reset register.
->>
->> The support for the Marvell 7K/8K platform (Device Tree, etc.) will be
->> submitted as a separate patch series.
->
-> Yay, new SoC! Just FYI, we worked out an agreement in December[0] that
-> the clk git tree can take DT bindings and headers, and we'll always host
-> them in an immutable branch by default in case arm-soc (or anyone else)
-> needs them. Stephen and I are doing this now.
+There should be a .is_enabled here.
 
-Oops, I misunderstood your point (and I should have looked at the
-patches before replying). The patches in this series do indeed have
-the clk DT binding descriptions.
+> +       .prepare        =3D clk_creg_32k_prepare,
+> +       .unprepare      =3D clk_creg_32k_unprepare,
+> +       .is_prepared    =3D clk_creg_32k_is_prepared,
+> +};
+> +
+> +static const struct clk_ops clk_creg_1k =3D {
+> +       .enable         =3D clk_creg_enable,
+> +       .disable        =3D clk_creg_disable,
 
-Pardon the noise, nothing to see here, move along ;-)
+Ditto.
+
+Otherwise patch looks good to me. Thanks a lot for all of the rework.
 
 Regards,
 Mike
-
->
-> It's nice for us to review those bindings at the same time that we
-> review the driver.
->
-> [0] http://lkml.kernel.org/r/<20151231001859.19557.99512@quark.deferred.io>
->
-> Best regards,
-> Mike
->
->>
->> Thanks!
->>
->> Thomas
->>
->> Thomas Petazzoni (3):
->>   clk: unconditionally recurse into clk/mvebu/
->>   clk: mvebu: add AP806 core clock driver
->>   clk: mvebu: add AP806 ring clock driver
->>
->>  .../clock/mvebu-armada-ap806-core-clock.txt        |  33 ++++++
->>  .../clock/mvebu-armada-ap806-ring-clock.txt        |  32 ++++++
->>  drivers/clk/Makefile                               |   2 +-
->>  drivers/clk/mvebu/Kconfig                          |   6 ++
->>  drivers/clk/mvebu/Makefile                         |   3 +-
->>  drivers/clk/mvebu/ap806-core.c                     | 112 +++++++++++++++++++++
->>  drivers/clk/mvebu/ap806-ring.c                     |  65 ++++++++++++
->>  7 files changed, 251 insertions(+), 2 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
->>  create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
->>  create mode 100644 drivers/clk/mvebu/ap806-core.c
->>  create mode 100644 drivers/clk/mvebu/ap806-ring.c
->>
->> --
->> 2.6.4
->>
-
-
-
--- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
