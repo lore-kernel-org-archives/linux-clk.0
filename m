@@ -1,54 +1,106 @@
-Return-Path: <matthijsvanduin@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160217230253.2278.80903@quark.deferred.io>
-References: <1455312009-808-1-git-send-email-tony@atomide.com>
- <1455312009-808-3-git-send-email-tony@atomide.com> <20160217011930.2278.38316@quark.deferred.io>
- <20160217173949.GB21202@atomide.com> <20160217205257.2278.11639@quark.deferred.io>
- <20160217212045.GE21202@atomide.com> <20160217230253.2278.80903@quark.deferred.io>
-From: Matthijs van Duin <matthijsvanduin@gmail.com>
-Date: Tue, 23 Feb 2016 14:47:31 +0100
-Message-ID: <CAALWOA-dA1r5Ac-y7d3yLhDR1fNM5WJvOmQ3YvvNM+6NP84VLw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: ti: Add support for dm814x ADPLL
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Wed, 24 Feb 2016 22:18:18 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 To: Michael Turquette <mturquette@baylibre.com>
-Cc: Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Brian Hutchinson <b.hutchman@gmail.com>, Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>, Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
+Message-ID: <20160224221818.GO19428@n2100.arm.linux.org.uk>
+References: <20160219030731.GS4847@codeaurora.org>
+ <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+ <20160223113059.GH19428@n2100.arm.linux.org.uk>
+ <20160224214706.2278.79643@quark.deferred.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160224214706.2278.79643@quark.deferred.io>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17 February 2016 at 22:20, Tony Lindgren <tony@atomide.com> wrote:
->* Michael Turquette <mturquette@baylibre.com> [160217 12:53]:
->> Do you think you will ever have a driver that wants to gate these
->> clocks? Probably not for MPU/DDR, but the HAND_OFF flag is a better fit
->> if you do. It's the same as CRITICAL but transfers the prepare/enable
->> reference counting to the consumer driver after that driver calls
->> clk_get() and clk_prepare_enable() on the HAND_OFF clk.
->
-> OK I'll use CLK_ENABLE_HAND_OFF then. Who knows maybe somebody
-> somewhere has code running on one of the coprocessors in SRAM that
-> actually allows gating these :)
+On Wed, Feb 24, 2016 at 01:47:06PM -0800, Michael Turquette wrote:
+> Hi Russell,
+> 
+> Quoting Russell King - ARM Linux (2016-02-23 03:30:59)
+> > On Thu, Feb 18, 2016 at 07:12:05PM -0800, Stephen Boyd wrote:
+> > > We mis-merged the original patch from Russell here and so the
+> > > patch went almost all the way, except that we still failed to
+> > > probe when there wasn't a clocks property in the DT node. Allow
+> > > that case by making a negative value from
+> > > of_clk_get_parent_count() into "no parents", like the original
+> > > patch did.
+> > 
+> > So you apply it anyway, and ignore all further discussion.  I've
+> > no idea what kind of politics is going on here, but it has to stop.
+> 
+> Stephen fixed the bug, and I didn't ask you to test because you made it
+> clear that you did not have the time (understandable). Stephen
+> reproduced the issue locally and insured that his version of the fix
+> does actually fix it.
 
-An arrangement somewhat similar to the one the am335x has should
-indeed be doable, but note that it would be the coprocessor that would
-gate and ungate the clocks, not linux. The L3 clock is actually even
-more essential and can never be gated at all.
+Right, so let's go back shall we.
 
-In the absence of help from a coprocessor linux could still put the L3
-and MPU PLLs into bypass for power saving, and DDR can be gated if
-it's first put into self-refresh and helper code in on-chip SRAM is
-used to manage the transitions.
+The reason this bug happened is because you changed fully tested code
+as a result of a merge conflict.  The result was not tested.
 
-On 18 February 2016 at 00:02, Michael Turquette <mturquette@baylibre.com> wrote:
-> Low power mp3 decoder executing out of ARM icache with DDR clock cut ;-)
+Now, rather than going back to the tested patch, you maintainers decide
+to create yet another change, which is also untested and merge it
+immediately into mainline.
 
-L1 cache is rather tricky since you can't lock it. You can however
-lock 448 KB of the 512 KB L2 cache, which should be plenty of space.
-There's also quite a bit of SRAM on chip usable for buffering data.
+That's really insane - you had a choice to do the sane thing: you could
+have gone back and looked at my patch, realised that my patch resolves
+the same problem that the conflicting patch did, and therefore the
+correct resolution would be to make the code look the same after both
+patches have been applied, as if it would have done if only my patch
+had been applied.
 
-The C674x DSP would probably also be a good candidate for such an application.
+And the resulting code would have been tested by implication of the
+fact that the original code plus my patch was what I tested here.
 
-Matthijs
+But no, you guys think it's better to create some other solution to the
+fuck up.
+
+> He is an equal co-maintainer so of course I support him to merge the
+> fix, plus I find his version more readable.
+
+I really detest this maintainer shite - it seems anyone can walk up and
+take 
+
+> > I'm also still waiting for that apology from Mike - never apply a
+> 
+> No thematics please. When you wrongly accused me of merging code outside
+> of the merge window[0] did I ask for an apology?
+> 
+> > modified patch without stating in the commit log that it was modified.
+> > It's basically fraud.
+> 
+> An oversight for which we are both equally guilty.
+
+Sorry, I disagree.  I'm not guilty of doing that, because when I apply
+patches, they come straight from the patch system and are applied to
+my tree unmodified.  There's no intermediate modification step possible.
+Any changes I want to make are done in a separate commit.
+
+So that's another apology you now owe me.
+
+> The "change" was the
+> resolution of a merge conflict, and I posted the resolved version of the
+> patch to the thread[0]. You said, "Looks fine, thanks."
+
+Yes, it _looked_ fine for a quick read, and I didn't test it.  I
+trusted you to be competent at merge resolution, but I now see that
+trust was misplaced.  I'll try to remember to pay more attention to
+any changes you make in the future - or I'll merge them through my
+tree.
+
+Trust is something I initially give without earning - break that
+trust and you've got to work really hard to regain it.
+
+I'll also remind you that _I_ used to look after the clk code, until
+you walked onto the scene and effectively took it away from me - I
+didn't say a word about that (or all the other stuff that Linaro
+"took" from me without asking.)  So you won't mind if I do a bit of
+that myself by merging my own fixes through my tree.
+
+-- 
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
