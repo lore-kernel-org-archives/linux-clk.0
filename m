@@ -1,74 +1,269 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
 	linux-clk@vger.kernel.org,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	uclinux-h8-devel@lists.sourceforge.jp
-Subject: [PATCH 4/9] clk: h8300: Remove impossible check for of_clk_get_parent_count()
-Date: Mon, 22 Feb 2016 12:54:42 -0800
-Message-Id: <1456174487-28397-5-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 1/2] clk: add lpc18xx creg clk driver
+Date: Wed, 24 Feb 2016 23:04:19 +0100
+Message-Id: <1456351460-15483-2-git-send-email-manabian@gmail.com>
+In-Reply-To: <1456351460-15483-1-git-send-email-manabian@gmail.com>
+References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The checks for < 1 can be simplified now that
-of_clk_get_parent_count() returns an unsigned int. Update the
-code to reflect the int to unsigned int change.
+The CREG block on lpc18xx contains configuration register
+for two low power clocks. Support enabling of these two
+clocks with a clk driver that access CREG trough the
+syscon regmap interface.
 
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: <uclinux-h8-devel@lists.sourceforge.jp>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+These clocks are needed to support peripherals like the
+internal RTC on lpc18xx.
+
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
 ---
- drivers/clk/h8300/clk-div.c     | 4 ++--
- drivers/clk/h8300/clk-h8s2678.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/nxp/Makefile           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c | 222 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 223 insertions(+)
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
 
-diff --git a/drivers/clk/h8300/clk-div.c b/drivers/clk/h8300/clk-div.c
-index d71d01157dbb..5ecc0664e33c 100644
---- a/drivers/clk/h8300/clk-div.c
-+++ b/drivers/clk/h8300/clk-div.c
-@@ -13,7 +13,7 @@ static DEFINE_SPINLOCK(clklock);
- 
- static void __init h8300_div_clk_setup(struct device_node *node)
- {
--	int num_parents;
-+	unsigned int num_parents;
- 	struct clk *clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name;
-@@ -22,7 +22,7 @@ static void __init h8300_div_clk_setup(struct device_node *node)
- 	int offset;
- 
- 	num_parents = of_clk_get_parent_count(node);
--	if (num_parents < 1) {
-+	if (!num_parents) {
- 		pr_err("%s: no parent found", clk_name);
- 		return;
- 	}
-diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
-index 6cf38dc1c929..c9c2fd575ef7 100644
---- a/drivers/clk/h8300/clk-h8s2678.c
-+++ b/drivers/clk/h8300/clk-h8s2678.c
-@@ -83,7 +83,7 @@ static const struct clk_ops pll_ops = {
- 
- static void __init h8s2678_pll_clk_setup(struct device_node *node)
- {
--	int num_parents;
-+	unsigned int num_parents;
- 	struct clk *clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name;
-@@ -91,7 +91,7 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
- 	struct clk_init_data init;
- 
- 	num_parents = of_clk_get_parent_count(node);
--	if (num_parents < 1) {
-+	if (!num_parents) {
- 		pr_err("%s: no parent found", clk_name);
- 		return;
- 	}
+diff --git a/drivers/clk/nxp/Makefile b/drivers/clk/nxp/Makefile
+index 607bd48c6563..d456ee6cc3d3 100644
+--- a/drivers/clk/nxp/Makefile
++++ b/drivers/clk/nxp/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-cgu.o
+ obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-ccu.o
++obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-creg.o
+ obj-$(CONFIG_ARCH_LPC32XX)	+= clk-lpc32xx.o
+diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
+new file mode 100644
+index 000000000000..a7c8f966d925
+--- /dev/null
++++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
+@@ -0,0 +1,222 @@
++/*
++ * Clk driver for NXP LPC18xx/43xx Configuration Registers (CREG)
++ *
++ * Copyright (C) 2015 Joachim Eastwood <manabian@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define LPC18XX_CREG_CREG0			0x004
++#define  LPC18XX_CREG_CREG0_EN1KHZ		BIT(0)
++#define  LPC18XX_CREG_CREG0_EN32KHZ		BIT(1)
++#define  LPC18XX_CREG_CREG0_RESET32KHZ		BIT(2)
++#define  LPC18XX_CREG_CREG0_PD32KHZ		BIT(3)
++
++#define to_clk_creg(_hw) container_of(_hw, struct clk_creg_data, hw)
++
++enum {
++	CREG_CLK_1KHZ,
++	CREG_CLK_32KHZ,
++	CREG_CLK_MAX,
++};
++
++struct clk_creg_data {
++	struct clk_hw hw;
++	const char *name;
++	struct regmap *reg;
++	unsigned int en_mask;
++	const struct clk_ops *ops;
++};
++
++#define CREG_CLK(_name, _emask, _ops)		\
++{						\
++	.name = _name,				\
++	.en_mask = LPC18XX_CREG_CREG0_##_emask,	\
++	.ops = &_ops,				\
++}
++
++static int clk_creg_32k_prepare(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++	int ret;
++
++	ret = regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++				 LPC18XX_CREG_CREG0_PD32KHZ |
++				 LPC18XX_CREG_CREG0_RESET32KHZ, 0);
++
++	/*
++	 * Powering up the 32k oscillator takes a long while
++	 * and sadly there aren't any status bit to poll.
++	 */
++	msleep(2500);
++
++	return ret;
++}
++
++static void clk_creg_32k_unprepare(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++
++	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++			   LPC18XX_CREG_CREG0_PD32KHZ,
++			   LPC18XX_CREG_CREG0_PD32KHZ);
++}
++
++static int clk_creg_32k_is_prepared(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++	u32 reg;
++
++	regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
++
++	return !(reg & LPC18XX_CREG_CREG0_PD32KHZ) &&
++	       !(reg & LPC18XX_CREG_CREG0_RESET32KHZ);
++}
++
++static unsigned long clk_creg_1k_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	return parent_rate / 32;
++}
++
++static int clk_creg_enable(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++
++	return regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++				  creg->en_mask, creg->en_mask);
++}
++
++static void clk_creg_disable(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++
++	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++			   creg->en_mask, 0);
++}
++
++static int clk_creg_is_enabled(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++	u32 reg;
++
++	regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
++
++	return !!(reg & creg->en_mask);
++}
++
++static const struct clk_ops clk_creg_32k = {
++	.enable		= clk_creg_enable,
++	.disable	= clk_creg_disable,
++	.is_enabled	= clk_creg_is_enabled,
++	.prepare	= clk_creg_32k_prepare,
++	.unprepare	= clk_creg_32k_unprepare,
++	.is_prepared	= clk_creg_32k_is_prepared,
++};
++
++static const struct clk_ops clk_creg_1k = {
++	.enable		= clk_creg_enable,
++	.disable	= clk_creg_disable,
++	.is_enabled	= clk_creg_is_enabled,
++	.recalc_rate	= clk_creg_1k_recalc_rate,
++};
++
++static struct clk_creg_data clk_creg_clocks[] = {
++	[CREG_CLK_1KHZ]  = CREG_CLK("1khz_clk",  EN1KHZ,  clk_creg_1k),
++	[CREG_CLK_32KHZ] = CREG_CLK("32khz_clk", EN32KHZ, clk_creg_32k),
++};
++
++static struct clk *clk_register_creg_clk(struct clk_creg_data *creg_clk,
++					 const char **parent_name,
++					 struct regmap *syscon)
++{
++	struct clk_init_data init;
++
++	init.ops = creg_clk->ops;
++	init.name = creg_clk->name;
++	init.parent_names = parent_name;
++	init.num_parents = 1;
++
++	creg_clk->reg = syscon;
++	creg_clk->hw.init = &init;
++
++	return clk_register(NULL, &creg_clk->hw);
++}
++
++static struct clk *clk_creg_early[CREG_CLK_MAX];
++static struct clk_onecell_data clk_creg_early_data = {
++	.clks = clk_creg_early,
++	.clk_num = CREG_CLK_MAX,
++};
++
++static void __init lpc18xx_creg_clk_init(struct device_node *np)
++{
++	const char *clk_32khz_parent;
++	struct regmap *syscon;
++
++	syscon = syscon_node_to_regmap(np->parent);
++	if (IS_ERR(syscon)) {
++		pr_err("%s: syscon lookup failed\n", __func__);
++		return;
++	}
++
++	clk_32khz_parent = of_clk_get_parent_name(np, 0);
++
++	clk_creg_early[CREG_CLK_32KHZ] =
++		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
++				      &clk_32khz_parent, syscon);
++	clk_creg_early[CREG_CLK_1KHZ] = ERR_PTR(-EPROBE_DEFER);
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_creg_early_data);
++}
++CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
++
++static struct clk *clk_creg[CREG_CLK_MAX];
++static struct clk_onecell_data clk_creg_data = {
++	.clks = clk_creg,
++	.clk_num = CREG_CLK_MAX,
++};
++
++static int lpc18xx_creg_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct regmap *syscon;
++
++	syscon = syscon_node_to_regmap(np->parent);
++	if (IS_ERR(syscon)) {
++		dev_err(&pdev->dev, "syscon lookup failed\n");
++		return PTR_ERR(syscon);
++	}
++
++	clk_creg[CREG_CLK_32KHZ] = clk_creg_early[CREG_CLK_32KHZ];
++	clk_creg[CREG_CLK_1KHZ] =
++		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
++				      &clk_creg_clocks[CREG_CLK_32KHZ].name,
++				      syscon);
++
++	return of_clk_add_provider(np, of_clk_src_onecell_get, &clk_creg_data);
++}
++
++static const struct of_device_id lpc18xx_creg_clk_of_match[] = {
++	{ .compatible = "nxp,lpc1850-creg-clk" },
++	{},
++};
++
++static struct platform_driver lpc18xx_creg_clk_driver = {
++	.probe = lpc18xx_creg_clk_probe,
++	.driver = {
++		.name = "lpc18xx-creg-clk",
++		.of_match_table = lpc18xx_creg_clk_of_match,
++	},
++};
++builtin_platform_driver(lpc18xx_creg_clk_driver);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.8.0
