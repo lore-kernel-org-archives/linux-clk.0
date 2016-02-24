@@ -1,84 +1,85 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
 	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 3/6] clk: bcm2835: enable clocks that have been enabled by firmware
-Date: Mon, 29 Feb 2016 11:39:19 +0000
-Message-Id: <1456745963-2403-4-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
-References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 3/6] dt-bindings: clock: add DT bindings for AP806 ring clocks
+Date: Wed, 24 Feb 2016 16:14:23 +0100
+Message-Id: <1456326866-30854-4-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+This commit adds the Device Tree binding description for the AP806
+ring clocks, used on Marvell Armada 7K/8K SOCs.
 
-If a clock that has been enabled by the firmware gets disabled
-by a driver this may right now result in a crash of the system
-as then also the corresponding PLL_dividers as well as PLLs
-get disabled (if not used) - some of which are used by the
-VideoCore GPU (which also runs the firmware)
+Since the AP806 ring clocks register is part of the "DFX Server"
+register area, the DT binding is meant to be used as a sub-node of the
+DFX Server DT binding, which is described separately.
 
-This patch prepares/enables those clocks that have been
-configured by the firmware.
-
-Whenever the clock framework implements either
-CLK_IS_CRITICAL or HAND_OFF this can get changed to use this
-new mechanism.
-
-For this to be completely successful (i.e not missing a clock
-and subsequently a pll) it is recommended to add all the known
-clocks of the soc so that this can get applied to all clocks.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ .../clock/mvebu-armada-ap806-ring-clock.txt        | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 30d6486..1fbb55d 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -37,6 +37,7 @@
-  * generator).
-  */
-
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk/bcm2835.h>
-@@ -1478,6 +1479,7 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	struct clk_init_data init;
- 	const char *parents[1 << CM_SRC_BITS];
- 	size_t i;
-+	struct clk *clk;
-
- 	/*
- 	 * Replace our "xosc" references with the oscillator's
-@@ -1511,7 +1513,18 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	clock->data = data;
- 	clock->hw.init = &init;
-
--	return devm_clk_register(cprman->dev, &clock->hw);
-+	clk = devm_clk_register(cprman->dev, &clock->hw);
-+	if (IS_ERR_OR_NULL(clk))
-+		return clk;
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+new file mode 100644
+index 0000000..8c8030a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+@@ -0,0 +1,36 @@
++* Clock bindings for Marvell MVEBU AP806 Ring clocks
 +
-+	/* enable/prepare if the clock is enabled by the firmware */
-+	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
-+		dev_info(cprman->dev,
-+			 "found firmware enabled clock %pC\n", clk);
-+		clk_prepare_enable(clk);
-+	}
++The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
++hosting the CPU and other core components of the CPU. This Device Tree
++binding allows to describe the ring clocks of the AP806, which are
++derived from the Ring Core clock, after a dividing factor.
 +
-+	return clk;
- }
-
- static int bcm2835_clk_probe(struct platform_device *pdev)
---
-1.7.10.4
++The register giving the dividing factors is part of the DFX server
++register area, covered by the DT binding described at
++Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt. Therefore,
++the DT node for the AP806 Ring clocks must appear as a child node of
++the DFX server Device Tree node.
++
++The following is a list of provided IDs and clock names on Armada
++AP806 RING dividers:
++
++ 0 = Ring 0
++ 1 = Ring 2
++ 2 = Ring 3
++ 3 = Ring 4
++ 4 = Ring 5
++
++Required properties:
++- compatible: must be one of the following:
++	"marvell,armada-ap806-ring-clock"
++- #clock-cells : from common clock binding; shall be set to 1
++- clock-output-names: name of the output clocks
++
++Example:
++
++	ringclk: clk@250 {
++		compatible = "marvell,armada-ap806-ring-clock";
++		#clock-cells = <1>;
++		clock-output-names = "ring-0", "ring-2", "ring-3", "ring-4", "ring-5";
++		clocks = <&coreclk 1>;
++	};
+-- 
+2.6.4
