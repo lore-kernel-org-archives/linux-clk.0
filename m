@@ -1,29 +1,56 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Mon, 8 Feb 2016 15:14:00 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <ykk@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] devm: add helper devm_add_action_or_reset()
-Message-ID: <20160208231400.GA19380@kroah.com>
-References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
- <20160208223546.GA10791@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160208223546.GA10791@codeaurora.org>
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v1 3/4] clk: rockchip: add the new clock ids for RK3228 HDMI
+Date: Wed, 24 Feb 2016 18:14:25 +0800
+Message-Id: <1456308865-30876-1-git-send-email-ykk@rock-chips.com>
+In-Reply-To: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
+References: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 08, 2016 at 02:35:46PM -0800, Stephen Boyd wrote:
-> On 12/23, Sudip Mukherjee wrote:
-> > Add a helper function devm_add_action_or_reset() which will internally
-> > call devm_add_action(). But if devm_add_action() fails then it will
-> > execute the action mentioned and return the error code.
-> > 
-> > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
-> > ---
-> 
-> Greg, can I get your ack here to take this through clk-tree?
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+ include/dt-bindings/clock/rk3228-cru.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
+index 5656bf6..fda9308 100644
+--- a/include/dt-bindings/clock/rk3228-cru.h
++++ b/include/dt-bindings/clock/rk3228-cru.h
+@@ -50,9 +50,11 @@
+ #define SCLK_SDIO_SAMPLE	119
+ #define SCLK_EMMC_SAMPLE	121
+ #define SCLK_VOP		122
++#define SCLK_HDMI_HDCP		123
+ 
+ /* dclk gates */
+ #define DCLK_VOP		190
++#define DCLK_HDMI_PHY		191
+ 
+ /* aclk gates */
+ #define ACLK_DMAC		194
+@@ -76,6 +78,8 @@
+ #define PCLK_PWM		350
+ #define PCLK_TIMER		353
+ #define PCLK_PERI		363
++#define PCLK_HDMI_CTRL		364
++#define PCLK_HDMI_PHY		365
+ 
+ /* hclk gates */
+ #define HCLK_VOP		452
+-- 
+1.9.1
