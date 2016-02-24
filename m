@@ -1,32 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 15:06:50 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
-Message-ID: <20160225230650.GC28849@codeaurora.org>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
- <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v3 0/2] clk: Add Artpec-6 SoC support
+Date: Wed, 24 Feb 2016 09:38:57 +0100
+Message-Id: <cover.1456302520.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/11, Kevin Smith wrote:
-> There is no corediv clock on Armada XP, so this is unnecessary.
-> 
-> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
+Add clock support for the Artpec-6 SoC port. The ARM parts are in the series
+"arm: Add Artpec-6 SoC" and it goes through the arm-soc tree.
 
-Applied to clk-next
+Changes since v2:
+- Moved axis,artpec6-clkctrl.h to the first patch with the DT bindings.
+
+Changes since v1:
+
+- The driver now provides all clocks from the main clock controller block
+  through one DT node.
+- Added a header file for the clock indexes.
+- Refer to clock-bindings.txt in the bindings document.
+
+A platform driver was not possible because the clocks are needed earlier in the
+kernel startup.
+
+
+Lars Persson (2):
+  clk: add device tree binding for Artpec-6 clock controller
+  clk: add artpec-6 clock controller
+
+ .../devicetree/bindings/clock/artpec6.txt          |  41 +++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axis/Makefile                          |   1 +
+ drivers/clk/axis/clk-artpec6.c                     | 177 +++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 +++++
+ 5 files changed, 258 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 drivers/clk/axis/Makefile
+ create mode 100644 drivers/clk/axis/clk-artpec6.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
