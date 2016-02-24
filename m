@@ -1,53 +1,62 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <56C13B40.7070207@codeaurora.org>
-Date: Mon, 15 Feb 2016 08:13:12 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] clk: qcom: mmcc8974: Use gdscs .parent and remove
- genpd calls
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org> <1448986336-16846-7-git-send-email-rnayak@codeaurora.org> <20160212003313.GB4847@codeaurora.org>
-In-Reply-To: <20160212003313.GB4847@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <ykk@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v1 1/4] clk: rockchip: add the new clock ids for RK3228 VOP
+Date: Wed, 24 Feb 2016 18:08:20 +0800
+Message-Id: <1456308500-30075-1-git-send-email-ykk@rock-chips.com>
+In-Reply-To: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
+References: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+There are four clocks that vop module would need to operate:
+    DCLK_VOP,  HCLK_VOP,  SCLK_VOP,  ACLK_VOP,
 
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+ include/dt-bindings/clock/rk3228-cru.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On 02/12/2016 06:03 AM, Stephen Boyd wrote:
-> On 12/01, Rajendra Nayak wrote:
->> With gdsc driver capable of handling hierarchical power domains,
->> specify oxili_gdsc as parent of oxilicx_gdsc.
->>
->> Remove all direct calls to genpd from the mmcc clock driver. The
->> adding and removing of subdomains is now handled from within
->> the gdsc driver.
->>
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> ---
-> 
-> Applied to clk-next + this squashed in
-
-Thanks Stephen, for fixing these up before pulling in.
-I will resubmit the dtsi parts as a separate patch.
-
-> 
-> ---8<----
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-> index 6b2e4e808125..bcda56e81503 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -2617,7 +2617,6 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8974_match_table);
->  static int mmcc_msm8974_probe(struct platform_device *pdev)
->  {
->  	struct regmap *regmap;
-> -	int ret;
->  
->  	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
->  	if (IS_ERR(regmap))
-> 
-
+diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
+index a78dd89..5656bf6 100644
+--- a/include/dt-bindings/clock/rk3228-cru.h
++++ b/include/dt-bindings/clock/rk3228-cru.h
+@@ -49,10 +49,15 @@
+ #define SCLK_SDMMC_SAMPLE	118
+ #define SCLK_SDIO_SAMPLE	119
+ #define SCLK_EMMC_SAMPLE	121
++#define SCLK_VOP		122
++
++/* dclk gates */
++#define DCLK_VOP		190
+ 
+ /* aclk gates */
+ #define ACLK_DMAC		194
+ #define ACLK_PERI		210
++#define ACLK_VOP		211
+ 
+ /* pclk gates */
+ #define PCLK_GPIO0		320
+@@ -73,6 +78,7 @@
+ #define PCLK_PERI		363
+ 
+ /* hclk gates */
++#define HCLK_VOP		452
+ #define HCLK_NANDC		453
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+1.9.1
