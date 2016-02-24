@@ -1,58 +1,72 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 2/2] clk: bcm2835: Reuse CLK_DIVIDER_MAX_AT_ZERO for recalc_rate()
-Date: Mon, 15 Feb 2016 19:03:58 -0800
-Message-Id: <1455591838-22725-2-git-send-email-eric@anholt.net>
-In-Reply-To: <1455591838-22725-1-git-send-email-eric@anholt.net>
-References: <1455591838-22725-1-git-send-email-eric@anholt.net>
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 0/6] clk: mvebu: initial support for AP806 clocks
+Date: Wed, 24 Feb 2016 16:14:20 +0100
+Message-Id: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We were rolling this ourselves, but clk-divider can do it now.
+Hello,
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- drivers/clk/bcm/clk-bcm2835.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+The following set of patches add initial support for the main clocks
+found in the AP806 hardware block, which is the central block used in
+the newest Marvell 7K and 8K 64-bits processors.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 9f4df8f..353e438 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1060,16 +1060,7 @@ static long bcm2835_pll_divider_round_rate(struct clk_hw *hw,
- static unsigned long bcm2835_pll_divider_get_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
--	struct bcm2835_pll_divider *divider = bcm2835_pll_divider_from_hw(hw);
--	struct bcm2835_cprman *cprman = divider->cprman;
--	const struct bcm2835_pll_divider_data *data = divider->data;
--	u32 div = cprman_read(cprman, data->a2w_reg);
--
--	div &= (1 << A2W_PLL_DIV_BITS) - 1;
--	if (div == 0)
--		div = 256;
--
--	return parent_rate / div;
-+	return clk_divider_ops.recalc_rate(hw, parent_rate);
- }
- 
- static void bcm2835_pll_divider_off(struct clk_hw *hw)
-@@ -1430,7 +1421,7 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
- 	divider->div.reg = cprman->regs + data->a2w_reg;
- 	divider->div.shift = A2W_PLL_DIV_SHIFT;
- 	divider->div.width = A2W_PLL_DIV_BITS;
--	divider->div.flags = 0;
-+	divider->div.flags = CLK_DIVIDER_MAX_AT_ZERO;
- 	divider->div.lock = &cprman->regs_lock;
- 	divider->div.hw.init = &init;
- 	divider->div.table = NULL;
+Two new drivers are added, one for the so-called "core" clocks and one
+for the "ring" clocks. The latter are child clocks from one of the
+core clocks. The "core" clocks are fixed rate clocks, but their rate
+is calculated from values in the Sample At Reset register.
+
+Changes since v1:
+ - Introduce a minimal DT binding for the AP806 DFX Server register
+   area, and make the clock DT nodes child nodes of the DFX server
+   node. Implementation-wise, we use the simple-mfd/syscon mechanism.
+ - Separate the DT binding documentation into its own patches.
+
+Thanks!
+
+Thomas
+
+Thomas Petazzoni (6):
+  dt-bindings: arm/marvell: add DT bindings for AP806 DFX Server
+  dt-bindings: clock: add DT bindings for AP806 core clocks
+  dt-bindings: clock: add DT bindings for AP806 ring clocks
+  clk: unconditionally recurse into clk/mvebu/
+  clk: mvebu: add AP806 core clock driver
+  clk: mvebu: add AP806 ring clock driver
+
+ .../arm/marvell/marvell,ap806-dfx-server.txt       |  19 ++++
+ .../clock/mvebu-armada-ap806-core-clock.txt        |  35 ++++++
+ .../clock/mvebu-armada-ap806-ring-clock.txt        |  36 ++++++
+ drivers/clk/Makefile                               |   2 +-
+ drivers/clk/mvebu/Kconfig                          |   6 +
+ drivers/clk/mvebu/Makefile                         |   3 +-
+ drivers/clk/mvebu/ap806-core.c                     | 121 +++++++++++++++++++++
+ drivers/clk/mvebu/ap806-ring.c                     |  74 +++++++++++++
+ 8 files changed, 294 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-core-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+ create mode 100644 drivers/clk/mvebu/ap806-core.c
+ create mode 100644 drivers/clk/mvebu/ap806-ring.c
+
 -- 
-2.7.0
+2.6.4
