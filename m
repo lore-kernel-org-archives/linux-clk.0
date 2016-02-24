@@ -1,93 +1,83 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1455289913-29514-2-git-send-email-andre.przywara@arm.com>
-References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com> <1455289913-29514-2-git-send-email-andre.przywara@arm.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 13 Feb 2016 10:44:15 +0800
-Message-ID: <CAGb2v65hxNiY8XAL=yBbV4qazscJd+six432CKWAm+GfM6bd2Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: sunxi: improve mux_clk error handling and reporting
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
+Date: Wed, 24 Feb 2016 23:04:20 +0100
+Message-Id: <1456351460-15483-3-git-send-email-manabian@gmail.com>
+In-Reply-To: <1456351460-15483-1-git-send-email-manabian@gmail.com>
+References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add DT binding documentation for lpc1850-creg-clk driver.
 
-On Fri, Feb 12, 2016 at 11:11 PM, Andre Przywara <andre.przywara@arm.com> wrote:
-> We now catch and report a failing ioremap, also a failure in the final
-> step of the clock registration is now handled and reported.
-> Also warnings are turned into errors.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  drivers/clk/sunxi/clk-sunxi.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 49ce283..361f396 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -690,11 +690,15 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->         int i;
->
->         reg = of_iomap(node, 0);
-> +       if (!reg) {
-> +               pr_err("Could not map registers for mux-clk: %s\n", node->name);
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
 
-of_node_full_name(node->name) is better. node->name is almost always "clk",
-which is useless. (Unless someone goes through the dts files to replace all
-of them.)
-
-> +               return NULL;
-> +       }
->
->         i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
->         if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-> -               pr_warn("%s: could not read clock-output-names for \"%s\"\n",
-> -                       __func__, clk_name);
-> +               pr_err("%s: could not read clock-output-names for \"%s\"\n",
-> +                      __func__, clk_name);
-
-Same here. clk_name defaults to node->name. If you could, please replace it.
-
->                 goto out_unmap;
->         }
->
-> @@ -704,14 +708,17 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->                                0, &clk_lock);
->
->         if (IS_ERR(clk)) {
-> -               pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
-> -                       clk_name, PTR_ERR(clk));
-> +               pr_err("%s: failed to register mux clock %s: %ld\n", __func__,
-> +                      clk_name, PTR_ERR(clk));
->                 goto out_unmap;
->         }
->
-> -       of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +       if (!of_clk_add_provider(node, of_clk_src_simple_get, clk))
-> +               return clk;
-> +
-> +       pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
->
-> -       return clk;
-
-I'd have all the error path in ifs, and have the normal return path
-here for consistency.
-But I guess this works as well.
-
-Thanks!
-ChenYu
-
-> +       clk_unregister_divider(clk);
->
->  out_unmap:
->         iounmap(reg);
-> --
-> 2.6.4
->
+diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+new file mode 100644
+index 000000000000..4e13586d083c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+@@ -0,0 +1,52 @@
++* NXP LPC1850 CREG clocks
++
++The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
++control registers for two low speed clocks. One of the clocks is a
++32 kHz oscillator driver with power up/down and clock gating. Next
++is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
++
++These clocks are used by the RTC and the Event Router peripherials.
++The 32 kHz can also be routed to other peripherials to enable low
++power modes.
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible:
++	Should be "nxp,lpc1850-creg-clk"
++- #clock-cells:
++	Shall have value <1>.
++- clocks:
++	Shall contain a phandle to the fixed 32 kHz crystall.
++
++The creg-clk node must be a child of the creg syscon node.
++
++The following clocks are available from the clock node.
++
++Clock ID	Name
++   0		 1 kHz clock
++   1		32 kHz Oscillator
++
++Example:
++soc {
++	creg: syscon@40043000 {
++		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
++		reg = <0x40043000 0x1000>;
++
++		creg_clk: clock-controller {
++			compatible = "nxp,lpc1850-creg-clk";
++			clocks = <&xtal32>;
++			#clock-cells = <1>;
++		};
++
++		...
++	};
++
++	rtc: rtc@40046000 {
++		...
++		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
++		clock-names = "rtc", "reg";
++		...
++	};
++};
+-- 
+1.8.0
