@@ -1,45 +1,68 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- jonghwa3.lee@samsung.com, m.szyprowski@samsung.com,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 6/6] clk: samsung: exynos5433: Fix wrong registers of
- PCLK_GSCL_SMMU clocks
-Date: Tue, 23 Feb 2016 13:14:32 +0100
-Message-id: <1456229672-13445-7-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
-References: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160223113059.GH19428@n2100.arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20160219030731.GS4847@codeaurora.org>
+ <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+ <20160223113059.GH19428@n2100.arm.linux.org.uk>
+Message-ID: <20160224214706.2278.79643@quark.deferred.io>
+Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
+Date: Wed, 24 Feb 2016 13:47:06 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+Hi Russell,
 
-This fixes register assignment in the CLK_PCLK_SMMU_GSCL{1,2}
-clocks definition.
+Quoting Russell King - ARM Linux (2016-02-23 03:30:59)
+> On Thu, Feb 18, 2016 at 07:12:05PM -0800, Stephen Boyd wrote:
+> > We mis-merged the original patch from Russell here and so the
+> > patch went almost all the way, except that we still failed to
+> > probe when there wasn't a clocks property in the DT node. Allow
+> > that case by making a negative value from
+> > of_clk_get_parent_count() into "no parents", like the original
+> > patch did.
+> =
 
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> So you apply it anyway, and ignore all further discussion.  I've
+> no idea what kind of politics is going on here, but it has to stop.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 23dd651..707a814 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3411,11 +3411,11 @@ static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
- 
- 	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1 */
- 	GATE(CLK_PCLK_SMMU_GSCL1, "pclk_smmu_gscl1", "mout_aclk_gscl_111_user",
--		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1, 0, 0, 0),
- 
- 	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2 */
- 	GATE(CLK_PCLK_SMMU_GSCL2, "pclk_smmu_gscl2", "mout_aclk_gscl_111_user",
--		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2, 0, 0, 0),
- };
- 
- static struct samsung_cmu_info gscl_cmu_info __initdata = {
--- 
-1.9.1
+Stephen fixed the bug, and I didn't ask you to test because you made it
+clear that you did not have the time (understandable). Stephen
+reproduced the issue locally and insured that his version of the fix
+does actually fix it.
+
+He is an equal co-maintainer so of course I support him to merge the
+fix, plus I find his version more readable.
+
+> =
+
+> I'm also still waiting for that apology from Mike - never apply a
+
+No thematics please. When you wrongly accused me of merging code outside
+of the merge window[0] did I ask for an apology?
+
+> modified patch without stating in the commit log that it was modified.
+> It's basically fraud.
+
+An oversight for which we are both equally guilty. The "change" was the
+resolution of a merge conflict, and I posted the resolved version of the
+patch to the thread[0]. You said, "Looks fine, thanks."
+
+In summary: bugs happen. Let's please just move on and get back to work.
+
+[0] http://lkml.kernel.org/r/<20160103105319.GB5779@n2100.arm.linux.org.uk>
+
+Regards,
+Mike
+
+> =
+
+> -- =
+
+> RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+> according to speedtest.net.
