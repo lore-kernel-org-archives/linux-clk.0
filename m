@@ -1,45 +1,112 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH] clk: meson: Fix meson_clk_register_clks() signature type
- mismatch
-To: Carlo Caione <carlo@caione.org>
-References: <1454879583-27036-1-git-send-email-afaerber@suse.de>
- <CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Matthias Brugger <mbrugger@suse.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-meson@googlegroups.com
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <56B87430.3040804@suse.de>
-Date: Mon, 8 Feb 2016 11:55:44 +0100
-MIME-Version: 1.0
-In-Reply-To: <CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:39619 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933286AbcBYSeb (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2016 13:34:31 -0500
+From: Luis Henriques <luis.henriques@canonical.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Luis Henriques <luis.henriques@canonical.com>,
+	kernel-team@lists.ubuntu.com
+Subject: [3.16.y-ckt stable] Patch "ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()" has been added to the 3.16.y-ckt tree
+Date: Thu, 25 Feb 2016 18:34:26 +0000
+Message-Id: <1456425266-18194-1-git-send-email-luis.henriques@canonical.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 08.02.2016 um 09:34 schrieb Carlo Caione:
-> On Sun, Feb 7, 2016 at 10:13 PM, Andreas Färber <afaerber@suse.de> wrote:
->> As preparation for arm64 based mesongxbb, which pulls in this code once
->> enabling ARCH_MESON, fix a size_t vs. unsigned int type mismatch.
->> The loop uses a local unsigned int variable, so adopt that type,
->> matching the header.
->>
->> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>  drivers/clk/meson/clkc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-[...]
-> Also please, CC linux-meson@googlegroups.com on meson related patches.
+This is a note to let you know that I have just added a patch titled
 
-I used scripts/get_maintainer.pl --nogit-fallback on next-20160111. :)
+    ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
 
-If there is no in-flight patch I've missed, I can send a patch against
-MAINTAINERS to update it with that list address.
+to the linux-3.16.y-queue branch of the 3.16.y-ckt extended stable tree 
+which can be found at:
 
-Cheers,
-Andreas
+    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-3.16.y-queue
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton; HRB 21284 (AG Nürnberg)
+This patch is scheduled to be released in version 3.16.7-ckt25.
+
+If you, or anyone else, feels it should not be added to this tree, please 
+reply to this email.
+
+For more information about the 3.16.y-ckt tree, see
+https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
+
+Thanks.
+-Luis
+
+---8<------------------------------------------------------------
+
+>From 47f15523276f4686f985616bd9a21edcff903ddd Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 Feb 2016 09:14:37 +0100
+Subject: ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
+
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
+
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
+
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Luis Henriques <luis.henriques@canonical.com>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
+index 2dc6da70ae59..d3c0e69df259 100644
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+
+ EXPORT_SYMBOL(icst_hz);
