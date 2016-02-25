@@ -1,43 +1,47 @@
-Return-Path: <richardcochran@gmail.com>
-Return-Path: <richardcochran@gmail.com>
-Date: Thu, 11 Feb 2016 15:51:58 +0100
-From: Richard Cochran <richardcochran@gmail.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <rob.herring@linaro.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>, linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi:
- Refactor A31 PLL6 so that it can be reused)
-Message-ID: <20160211145158.GA8824@localhost.localdomain>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com>
- <56BB2D79.6090402@arm.com>
- <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
- <20160210143755.GE31506@lukather>
- <20160210163001.GG2632@leverpostej>
- <20160211100048.GK31506@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160211100048.GK31506@lukather>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Barry Song <baohua@kernel.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 3/7] clk: rockchip: Make reset_control_ops const
+Date: Thu, 25 Feb 2016 10:45:08 +0100
+Message-Id: <1456393512-26602-4-git-send-email-p.zabel@pengutronix.de>
+In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 11, 2016 at 11:00:48AM +0100, Maxime Ripard wrote:
-> None of our existing users ever complained.
+The rockchip_softrst_ops structure is never modified. Make it const.
 
-Note to self:
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/rockchip/softrst.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Avoid choosing this SoC for new projects.  The maintainers do not
-   care about the end users.
-
-Thanks,
-Richard
+diff --git a/drivers/clk/rockchip/softrst.c b/drivers/clk/rockchip/softrst.c
+index 552f7bb..21218987 100644
+--- a/drivers/clk/rockchip/softrst.c
++++ b/drivers/clk/rockchip/softrst.c
+@@ -81,7 +81,7 @@ static int rockchip_softrst_deassert(struct reset_controller_dev *rcdev,
+ 	return 0;
+ }
+ 
+-static struct reset_control_ops rockchip_softrst_ops = {
++static const struct reset_control_ops rockchip_softrst_ops = {
+ 	.assert		= rockchip_softrst_assert,
+ 	.deassert	= rockchip_softrst_deassert,
+ };
+-- 
+2.7.0
