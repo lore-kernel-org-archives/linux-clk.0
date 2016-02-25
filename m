@@ -1,79 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Lee Jones <lee.jones@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH 00/14] clk_hw based clkdev/DT providers
-Date: Mon,  8 Feb 2016 17:45:27 -0800
-Message-Id: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
+Date: Thu, 25 Feb 2016 16:36:34 -0600
+Message-Id: <1456439796-28546-4-git-send-email-fcooper@ti.com>
+In-Reply-To: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We've mostly split the clk API between consumers and providers
-along struct clk and struct clk_hw, but the registration and
-clkdev/DT code is still struct clk focused. This series
-lays the foundation for changing that design by making
-clk_register() return an int instead of a struct clk and
-clkdev/DT lookups take a struct clk_hw instead of a struct clk.
+From: Vignesh R <vigneshr@ti.com>
 
-After this series is applied, we can avoid using struct clk
-in provider drivers entirely, unless we want to use the consumer
-APIs. There are quite a few registration callers, so this change
-will require converting all of them. I plan to do that gradually
-over the coming weeks, but I've included a change to qcom
-platforms because I could easily test it and show how things
-will work.
+tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
+clock to control ehrpwm tbclk.
+The TRM says, tbclk is derived from SYSCLKOUT. SYSCLKOUT is nothing but
+ehrpwm functional clock derived from the gateable interface and
+functional clock of PWMSS(l4_root_clk_div).
+Refer AM57x TRM SPRUHZ6[1], October 2014, Table 29-4 and Section 29.2.2.1,
+Table 29-19 and the NOTE at the end of the table.
 
-The first two patches are cleanups to clkdev APIs that I found
-while doing this work. I'd like to take those into clk-next
-with the appropriate acks. They're mostly included because
-they cause merge conflicts otherwise.
+[1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+Version 3 changes:
+None
 
-Stephen Boyd (14):
-  mfd: intel_quark_i2c_gpio: Use clkdev_create()
-  clkdev: Remove clk_register_clkdevs()
-  clk: Add {devm_}clk_hw_{register,unregister}() APIs
-  clk: Add clk_hw OF clk providers
-  clkdev: Add clk_hw based registration APIs
-  clk: divider: Add hw based registration APIs
-  clk: gate: Add hw based registration APIs
-  clk: mux: Add hw based registration APIs
-  clk: fixed-factor: Add hw based registration APIs
-  clk: fractional-divider: Add hw based registration APIs
-  clk: composite: Add hw based registration APIs
-  clk: gpio: Add hw based registration APIs
-  clk: fixed-rate: Add hw based registration APIs
-  clk: qcom: Migrate to clk_hw based registration and OF APIs
+ arch/arm/boot/dts/dra7xx-clocks.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
- Documentation/driver-model/devres.txt |   1 +
- drivers/clk/clk-composite.c           |  45 ++++++---
- drivers/clk/clk-divider.c             |  91 ++++++++++++++++--
- drivers/clk/clk-fixed-factor.c        |  41 ++++++--
- drivers/clk/clk-fixed-rate.c          |  44 +++++++--
- drivers/clk/clk-fractional-divider.c  |  40 +++++++-
- drivers/clk/clk-gate.c                |  43 +++++++--
- drivers/clk/clk-gpio.c                |  52 ++++++++---
- drivers/clk/clk-mux.c                 |  57 ++++++++++--
- drivers/clk/clk.c                     | 170 +++++++++++++++++++++++++++++++++-
- drivers/clk/clkdev.c                  |  71 ++++++++++----
- drivers/clk/qcom/clk-regmap.c         |   5 +-
- drivers/clk/qcom/clk-regmap.h         |   3 +-
- drivers/clk/qcom/common.c             |  41 ++++----
- drivers/clk/qcom/gcc-msm8996.c        |   9 +-
- drivers/clk/qcom/mmcc-msm8996.c       |   9 +-
- drivers/mfd/intel_quark_i2c_gpio.c    |  26 ++----
- include/linux/clk-provider.h          |  92 ++++++++++++++++++
- include/linux/clkdev.h                |   8 +-
- 19 files changed, 706 insertions(+), 142 deletions(-)
-
+diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+index 357bede..d0bae06 100644
+--- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
++++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+@@ -2146,4 +2146,28 @@
+ 		ti,bit-shift = <0>;
+ 		reg = <0x558>;
+ 	};
++
++       ehrpwm0_tbclk: ehrpwm0_tbclk {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&l4_root_clk_div>;
++		ti,bit-shift = <20>;
++		reg = <0x0558>;
++	};
++
++	ehrpwm1_tbclk: ehrpwm1_tbclk {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&l4_root_clk_div>;
++		ti,bit-shift = <21>;
++		reg = <0x0558>;
++	};
++
++	ehrpwm2_tbclk: ehrpwm2_tbclk {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&l4_root_clk_div>;
++		ti,bit-shift = <22>;
++		reg = <0x0558>;
++	};
+ };
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
