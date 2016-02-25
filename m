@@ -1,58 +1,47 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 1/6] clk: rockchip: handle alt_parent in err cases when registering cpuclk
-Date: Mon, 15 Feb 2016 11:33:15 +0800
-Message-Id: <1455507195-12955-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Barry Song <baohua@kernel.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 1/7] clk: mediatek: Make reset_control_ops const
+Date: Thu, 25 Feb 2016 10:45:06 +0100
+Message-Id: <1456393512-26602-2-git-send-email-p.zabel@pengutronix.de>
+In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clk_disable_unprepare to handle cpuclk->alt_parent if
-rockchip_clk_register_cpuclk fails.
+The mtk_reset_ops structure is never modified. Make it const.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
+ drivers/clk/mediatek/reset.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/rockchip/clk-cpu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index d07374f..68a2a87 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -290,14 +290,14 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 		pr_err("%s: could not lookup parent clock %s\n",
- 		       __func__, parent_names[0]);
- 		ret = -EINVAL;
--		goto free_cpuclk;
-+		goto free_alt_parent;
- 	}
+diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+index 9e9fe4b..309049d 100644
+--- a/drivers/clk/mediatek/reset.c
++++ b/drivers/clk/mediatek/reset.c
+@@ -57,7 +57,7 @@ static int mtk_reset(struct reset_controller_dev *rcdev,
+ 	return mtk_reset_deassert(rcdev, id);
+ }
  
- 	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
- 	if (ret) {
- 		pr_err("%s: failed to register clock notifier for %s\n",
- 				__func__, name);
--		goto free_cpuclk;
-+		goto free_alt_parent;
- 	}
- 
- 	if (nrates > 0) {
-@@ -326,6 +326,8 @@ free_rate_table:
- 	kfree(cpuclk->rate_table);
- unregister_notifier:
- 	clk_notifier_unregister(clk, &cpuclk->clk_nb);
-+free_alt_parent:
-+	clk_disable_unprepare(cpuclk->alt_parent);
- free_cpuclk:
- 	kfree(cpuclk);
- 	return ERR_PTR(ret);
+-static struct reset_control_ops mtk_reset_ops = {
++static const struct reset_control_ops mtk_reset_ops = {
+ 	.assert = mtk_reset_assert,
+ 	.deassert = mtk_reset_deassert,
+ 	.reset = mtk_reset,
 -- 
-2.3.7
+2.7.0
