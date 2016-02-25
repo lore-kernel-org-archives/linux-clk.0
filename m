@@ -1,38 +1,44 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Roman Volkov <v1ron@mail.ru>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Andrzej Hajda <a.hajda@samsung.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: vt8500: don't return possibly uninitialized data
-Date: Wed, 03 Feb 2016 10:15:34 +0100
-Message-ID: <1624352.DBIo65mLZO@wuerfel>
-In-Reply-To: <20160203113626.4a3f4f8a@v1ron-s7>
-References: <4790407.6zgSQCdsSB@wuerfel> <2326140.nrZ9Ej2PSt@wuerfel> <20160203113626.4a3f4f8a@v1ron-s7>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:50364 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751968AbcBYWdT (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2016 17:33:19 -0500
+Date: Thu, 25 Feb 2016 14:33:16 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Matthew McClintock <mmcclint@qca.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	qca-upstream.external@qca.qualcomm.com,
+	Pradeep Banavathi <pradeepb@codeaurora.org>,
+	Senthilkumar N L <snlakshm@codeaurora.org>,
+	Matthew McClintock <mmcclint@codeaurora.org>,
+	Andy Gross <andy.gross@linaro.org>
+Subject: Re: [PATCH v3 2/6] clk: qcom: Add IPQ4019 Global Clock Controller
+ support
+Message-ID: <20160225223316.GN4847@codeaurora.org>
+References: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
+ <1447975173-29485-3-git-send-email-mmcclint@qca.qualcomm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1447975173-29485-3-git-send-email-mmcclint@qca.qualcomm.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 03 February 2016 11:36:26 Roman Volkov wrote:
+On 11/19, Matthew McClintock wrote:
+> From: Varadarajan Narayanan <varada@codeaurora.org>
 > 
-> Hi Arnd,
+> This patch adds support for the global clock controller found on
+> the IPQ4019 based devices. This includes UART, I2C, SPI etc.
 > 
-> Thanks for fixing this code! Did someone reproduce this bug, or this
-> is something theoretical, based on the code analysis? I just never
-> heard about the issue. I can look into the code on the weekends too, I
-> have WM8505\WM8650 machines to test.
+> Signed-off-by: Pradeep Banavathi <pradeepb@codeaurora.org>
+> Signed-off-by: Senthilkumar N L <snlakshm@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
+> ---
 
-I only fixed it after analysing the gcc warnings I got after Andrzej Hajda's
-patch, and he also did it to fix the initial problem he found using
-coccinelle, so I don't think anyone has run into the problem on live
-hardware.
+Applied to clk-ipq4019 and merged into clk-next.
 
-As long as all drivers ask for clock rates that are valid, you won't
-see either problem.
- 
-> Is it enough to run the regular kernel build for WM8650 to see the
-> warnings, or there are special options in the kernel to run the compiler
-> test?
-
-The warning is hidden if you build with -Os (CONFIG_CC_OPTIMIZE_FOR_SIZE),
-and it may not happen with all gcc versions. I was using gcc-5.2.
-
-	Arnd
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
