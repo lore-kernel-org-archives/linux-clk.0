@@ -1,63 +1,64 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 28 Feb 2016 14:49:12 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: ARM: dts: imx6ul: add more functionality to i.MX6UL
-Message-ID: <20160228064912.GH22051@tiger>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH] clk: sunxi: allow PLL6 clock to be reused
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <1456105198-25295-1-git-send-email-andre.przywara@arm.com>
+ <CAGb2v66Fkvpqay+pNYjN1KP_KSUmv-du+PVSsyeuK+Y7bzEt+g@mail.gmail.com>
+ <56CAD72D.7050102@arm.com> <20160225181105.GE4736@lukather>
+Cc: Chen-Yu Tsai <wens@csie.org>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
+ <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-sunxi <linux-sunxi@googlegroups.com>
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <56CF6ADD.1000803@arm.com>
+Date: Thu, 25 Feb 2016 20:58:05 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <20160225181105.GE4736@lukather>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 20, 2016 at 11:08:53AM +0100, Lothar Waßmann wrote:
-> This patchset adds more functionality to the i.MX6UL machines.
+On 25/02/16 18:11, Maxime Ripard wrote:
+> On Mon, Feb 22, 2016 at 09:38:53AM +0000, Andre Przywara wrote:
+>>>> diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
+>>>> index 1e63c5b..3a7da86 100644
+>>>> --- a/drivers/clk/sunxi/clk-factors.h
+>>>> +++ b/drivers/clk/sunxi/clk-factors.h
+>>>> @@ -36,6 +36,7 @@ struct factors_data {
+>>>>         void (*getter)(struct factors_request *req);
+>>>>         void (*recalc)(struct factors_request *req);
+>>>>         const char *name;
+>>>> +       int name_idx;
+>>>
+>>> I would drop the .name field. It was a bad workaround
+>>> due to limitations of the factors clk code at the time
+>>> by me. We really shouldn't hard-code the name if we want
+>>> to reuse the driver.
+>>
+>> I know what you mean (my first thought, too) and I totally agree, but we
+>> need it still for PLL5, which does not carry the original name in the DT
+>> output names.
+>> So at least this workaround here does not work, I guess we have to come
+>> up with something different - which would be a different patch.
+>> I can take a look into this later.
 > 
-> The first three patches are cleanup patches with no functional changes
-> intended.
-> The other patches make various subsystems functional.
-> 
-> ARM: dts: imx6ul: whitespace cleanup; no functional
+> Actually, it could be easily worked around. Always take the first
+> clock output name, take whatever is before '_', and you can remove the
+> name field entirely.
 
-This has been applied from another series.
+Yeah, I was thinking about that, too, but wanted to give an easy patch a
+try first.
 
-> ARM: dts: imx6ul: move tsc node to appropriate place
-> ARM: dts: imx6ul: move dt-bindings/input/input.h
-> ARM: dts: imx6ul: specify proper clocks for GPT node
-> ARM: dts: imx6ul: specify proper clocks for the PWM
-> ARM: dts: imx6ul: disable PWMs by default
-> ARM: dts: imx6ul: add pwm[1-4] nodes
-> ARM: dts: imx6ul: add sdma support
-> ARM: dts: imx6ul: add flexcan support
-> ARM: dts: imx6ul: add sai support
-> ARM: dts: imx6ul: add lcdif support
-> ARM: dts: imx6ul: add gpmi support
+> Jens did something along these lines here:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/379900.html
 
-Just applied the above.
+Indeed, I stumbled upon this by accident today. Looks great on the first
+glance: using .self first, then the stub till the underscore. I can
+review and test this, if needed.
 
-> clk: imx: whitespace cleanup; no functional change
-> clk: imx: add kpp clock for i.MX6UL
+> Maybe we should simply rebase this patch, and remove the part that
+> falls back on the name field.
 
-These two have been applied from a separate series.
+I am totally fine with this!
 
-> ARM: dts: imx6ul: add kpp support
-
-It was just applied.
-
-Shawn
-
-> ARM: dts: imx6ul: add support for Ka-Ro electronics TX6UL module
+Thanks!
+Andre.
