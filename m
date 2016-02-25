@@ -1,102 +1,54 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Barry Song <baohua@kernel.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 00/20] add additional clocks and frac/mash support
-Date: Sun, 28 Feb 2016 15:36:51 +0000
-Message-Id: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+	kernel@pengutronix.de,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 0/7] clk: Make reset_control_ops const
+Date: Thu, 25 Feb 2016 10:45:05 +0100
+Message-Id: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Since commit 203d4f347d86 ("reset: Make reset_control_ops const") marked
+the ops pointer in struct reset_controller_dev as const, these structs
+can be made const, too. The commit is currently sitting in the
+arm-soc/for-next branch.
 
-Fix issues found with current driver with regards to:
-* coding style
-* locking
-* setting register instead of bits in register
-* the use of BCM2835_CLOCK_COUNT in the device tree bindings
+regards
+Philipp
 
-adds:
-* frac/mash support (with correct limits)
-* exposing of additional clock parameters in debugfs
-  (registers, divider and parent)
-* added all the missing pll dividers
-* almost all so far undefined clocks
+Philipp Zabel (7):
+  clk: mediatek: Make reset_control_ops const
+  clk: mmp: Make reset_control_ops const
+  clk: rockchip: Make reset_control_ops const
+  clk: atlas7: Make reset_control_ops const
+  clk: sunxi: Make reset_control_ops const
+  clk: tegra: Make reset_control_ops const
+  clk: qcom: Make reset_control_ops const
 
-Clocks still missing:
-* gnric - Eric says that this is not really a clock
-          (but it has corresponding registers set)
-* tcnt - this seems to be more of a counter clock gate
-         used for some other purpose - there are 4 CNT registers
-* pllt - totally unidentified clock with a strange mux size of
-         8 clocks (3 bit, not the typical 4 or 16 bit)
+ drivers/clk/mediatek/reset.c      | 2 +-
+ drivers/clk/mmp/reset.c           | 2 +-
+ drivers/clk/qcom/reset.c          | 2 +-
+ drivers/clk/qcom/reset.h          | 2 +-
+ drivers/clk/rockchip/softrst.c    | 2 +-
+ drivers/clk/sirf/clk-atlas7.c     | 2 +-
+ drivers/clk/sunxi/clk-a10-ve.c    | 2 +-
+ drivers/clk/sunxi/clk-sun9i-mmc.c | 2 +-
+ drivers/clk/sunxi/clk-usb.c       | 2 +-
+ drivers/clk/tegra/clk.c           | 2 +-
+ 10 files changed, 10 insertions(+), 10 deletions(-)
 
-Lots of information here has been gathered from the broadcom
-provided header files for the VC4 and some information has
-been inferred.
-
-I also hope that all the feedback so far has been included
-in this patch-set.
-
-Complete mash clock divider support has been left out for now.
-We now only support the basic fractional divider option (MASH=1)
-but with the corresponding divider limits that apply to mash clocks.
-
-Some measurements on I2S-DACs show unexpected noise levels using
-different mash levels, so that an automatic "best" selection does
-not seem wise - this exercise is left for a later patch-set.
-
-Changelog:
-        V1 -> V2: split the asoc/sound patches from the clock patches
-                  enable frac/mash support
-        V2 -> V3: clamp clock divider to be >= 2
-                  clamp max clock divider to be integer (not fractional)
-                  added additional limit checks for divider selection
-                    allowing fallback to lower mash levels.
-                  use a newer probing mechanism based on a single array
-        V3 -> V4: fixed bad NULL pointer check in init
-                  fixed (mash) limit checks
-                  separated basic mash support from limits checks
-                  really tested with I2S device (unfortunately V3 was
-                  not well tested in this respect)
-        V4 -> V5: major reorganisation of patchset
-	      	  including fixes for newly discovered bugs
-		  split up clock commits into several chunks
-		  separate clamping for mash enabled clocks
-		  made better use of static assignment reducing
-		    efforts to add a new clock - see specifically patch 7
-
-Martin Sperl (20):
-  clk: bcm2835: pll_off should only set CM_PLL_ANARST
-  clk: bcm2835: clean up coding style issues
-  clk: bcm2835: add locking to pll*_on/off methods
-  clk: bcm2835: remove uart0/1_pclk fixed clocks
-  clk: bcm2835: enable clocks that have been enabled by firmware
-  clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
-  clk: bcm2835: reorganize bcm2835_clock_array assignment
-  clk: bcm2835: add fractional support
-  clk: bcm2835: enable management of PCM clock
-  clk: bcm2835: implement correct clamping for mash clocks
-  clk: bcm2835: divider value has to be 1 or more
-  clk: bcm2835: expose raw clock-registers via debugfs
-  clk: bcm2835: expose current divider, parent and mash via debugfs
-  clk: bcm2835: added missing PLL clock divider
-  clk: bcm2835: add additional clocks
-  clk: bcm2835: add the camera related clocks cam0, cam1 and ccp2
-  clk: bcm2835: add the dsi clocks
-  clk: bcm2835: add arm clock
-  clk: bcm2835: add gates that require PM_DEBUG to be set
-  clk: bcm2835: add the testdebug clock generators
-
- drivers/clk/bcm/clk-bcm2835.c       | 1536 +++++++++++++++++++++++------------
- include/dt-bindings/clock/bcm2835.h |   31 +-
- 2 files changed, 1061 insertions(+), 506 deletions(-)
-
---
-1.7.10.4
+-- 
+2.7.0
