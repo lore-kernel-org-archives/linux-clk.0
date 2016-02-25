@@ -1,71 +1,75 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 08/11] clk: sunxi: improve error reporting for the mux clock
-Date: Mon,  1 Feb 2016 17:39:27 +0000
-Message-Id: <1454348370-3816-9-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Feb 2016 15:37:10 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm/marvell: add DT bindings for
+ AP806 DFX Server
+Message-ID: <20160225233710.GJ28849@codeaurora.org>
+References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_register_mux returns a pointer wrapped error value in case of
-failure, so a simple NULL check is not sufficient to catch errors.
-Fix that and elaborate on the failure reason on the way. The whole
-function does not return any error value, so silently failing may
-leave users scratching their heads because the kernel does not
-provide any clues on what's wrong.
+On 02/24, Thomas Petazzoni wrote:
+> +Marvell AP806 DFX Server
+> +------------------------
+> +
+> +The Marvell AP806 HW block (which is a core component of the Marvell
+> +Armada 7K and 8K SOCs) has a set of registers called "DFX
+> +Server". This set of registers contains miscellaneous registers, most
+> +of them being used for silicon fine-tuning and manufacturing testing,
+> +and as such are not publicly documented. However, this DFX server
+> +register range also contains a few documented and useful registers,
+> +for example for clock control.
+> +
+> +This Device Tree binding allows to represent the entire DFX server
+> +register space as one single DT node.
+> +
+> +Required properties:
+> +- compatible: the first and second values must be:
+> +	"simple-mfd", "syscon"
+> +- reg: address and length of following register sets for the DFX
+> +  server
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Example?
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index efcce85..9416e0f3 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -627,17 +627,29 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
- 	reg = of_iomap(node, 0);
- 
- 	i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
--	of_property_read_string(node, "clock-output-names", &clk_name);
-+	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-+		pr_warn("%s: could not read clock-output-names for \"%s\"\n",
-+			__func__, clk_name);
-+		goto out_unmap;
-+	}
- 
- 	clk = clk_register_mux(NULL, clk_name, parents, i,
- 			       CLK_SET_RATE_PARENT, reg,
- 			       data->shift, SUNXI_MUX_GATE_WIDTH,
- 			       0, &clk_lock);
- 
--	if (clk) {
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		clk_register_clkdev(clk, clk_name, NULL);
-+	if (IS_ERR(clk)) {
-+		pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
-+			clk_name, PTR_ERR(clk));
-+		goto out_unmap;
- 	}
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	clk_register_clkdev(clk, clk_name, NULL);
-+	return;
-+
-+out_unmap:
-+	iounmap(reg);
- }
- 
- 
+I would think the binding would be done in a way that we don't
+have to describe every little register in this misc register
+block. Instead, dfx server has a compatible:
+
+ node@f00 {
+ 	reg = <0xf00 0x100>;
+	compatible = "marvell,dfx-ap806";
+	#clock-cells = <1>;
+ };
+
+And then a driver that probes this compatible string and
+registers a handful of clks. If we ever get into a situation
+where we want to expose non-clk functionality from this device
+node, we would make some sort of mfd driver that probes based on
+the same compatible string and creates platform devices in
+software to register the clk device component and whatever other
+device type is used. In that situation, we could assign a regmap
+to the mfd device and the clk device would be a child of the mfd
+and get a regmap through the dev->parent pointer.
+
+TL;DR I'm still lost why we have to describe each clk in DT.
+
 -- 
-2.6.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
