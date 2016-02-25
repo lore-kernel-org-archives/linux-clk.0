@@ -1,40 +1,66 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 2 Feb 2016 14:12:26 +0100
+Date: Thu, 25 Feb 2016 10:11:05 -0800
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar,
-	jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/14] clk: sunxi: Add apb0 gates for A83T
-Message-ID: <20160202131226.GO4652@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-3-git-send-email-vishnupatekar0510@gmail.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH] clk: sunxi: allow PLL6 clock to be reused
+Message-ID: <20160225181105.GE4736@lukather>
+References: <1456105198-25295-1-git-send-email-andre.przywara@arm.com>
+ <CAGb2v66Fkvpqay+pNYjN1KP_KSUmv-du+PVSsyeuK+Y7bzEt+g@mail.gmail.com>
+ <56CAD72D.7050102@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ABYnUdqoGSokwVM+"
-In-Reply-To: <1454203266-4450-3-git-send-email-vishnupatekar0510@gmail.com>
+	protocol="application/pgp-signature"; boundary="ryJZkp9/svQ58syV"
+In-Reply-To: <56CAD72D.7050102@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---ABYnUdqoGSokwVM+
+--ryJZkp9/svQ58syV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 31, 2016 at 09:20:54AM +0800, Vishnu Patekar wrote:
-> APB0 is part of PRCM, and is compatible with earlier SOCs.
-> apb0 gates controls R_PIO, R_UART, R_RSB, etc clocks.
-> This patch adds support for APB0 gates for A83T.
+On Mon, Feb 22, 2016 at 09:38:53AM +0000, Andre Przywara wrote:
+> >> diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-f=
+actors.h
+> >> index 1e63c5b..3a7da86 100644
+> >> --- a/drivers/clk/sunxi/clk-factors.h
+> >> +++ b/drivers/clk/sunxi/clk-factors.h
+> >> @@ -36,6 +36,7 @@ struct factors_data {
+> >>         void (*getter)(struct factors_request *req);
+> >>         void (*recalc)(struct factors_request *req);
+> >>         const char *name;
+> >> +       int name_idx;
+> >=20
+> > I would drop the .name field. It was a bad workaround
+> > due to limitations of the factors clk code at the time
+> > by me. We really shouldn't hard-code the name if we want
+> > to reuse the driver.
 >=20
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> I know what you mean (my first thought, too) and I totally agree, but we
+> need it still for PLL5, which does not carry the original name in the DT
+> output names.
+> So at least this workaround here does not work, I guess we have to come
+> up with something different - which would be a different patch.
+> I can take a look into this later.
 
-Applied, thanks!
+Actually, it could be easily worked around. Always take the first
+clock output name, take whatever is before '_', and you can remove the
+name field entirely.
+
+Jens did something along these lines here:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/379900.h=
+tml
+
+Maybe we should simply rebase this patch, and remove the part that
+falls back on the name field.
+
 Maxime
 
 --=20
@@ -42,26 +68,26 @@ Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
 
---ABYnUdqoGSokwVM+
+--ryJZkp9/svQ58syV
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJWsKs6AAoJEBx+YmzsjxAgy9IQAJEw0Q1H+mFeYIk1yqlWWNqt
-EYyOUdsDSyTxW28L37tN+NYvf1hlYTY5S82qyR+iVYgea229UuWiBIsRIvzIxGoy
-XGfcZkRlMHOTY575q5CjwsSSoYFNU8scDOWY2lMlVYwZSOaW7RAwXO40Xns1qvjf
-AoL/oMn4iXjhJyyHs/U+CfUpNWd5dJ2axGRQ5Mfy8sRdq/Hplix5esElx/CUhnS8
-6cO6v6or0n4EPkPUpveN2BMamHShocve7FYZXaQtv8Eb7NQtAs1K0IeTIMsWr8P0
-wj9E/theB0gIjRahodAVB+zzOU9iYHSCfGfwcTWBmo7r0igAV+dn6hbNPOMWiEpq
-AOVDAKdI1PBxh0TNIoCMlTYh142ywQlFcqfRAC4RSvCq3bpw/4tRuKzJupCZNKbX
-ZFl19zQPOlN1aUak8fg16VypouUycHNeDE035lt5wkkpWTmlpyFLAn+q8TS7sm4R
-NfQ7nNrHhXhhBOvo8KDCej+FaTfE5kSwsdXU2qc1J3pVNiBiBa/GygSwae6E+vm8
-4BkzBrXjQL6U+WHYq8YXxDrtbWMOCGuzS0y/qq1DGCtU28Pm+awOMuInkP7zwiYR
-Bwm4LbLzYIkE9n4uAbuSQsHGcECHMzs1oqaNEMTMIUnwD9dSnz5DMaNyqsaRz/bW
-tndOEhbgw4QvJ14BHV2G
-=RzDP
+iQIcBAEBAgAGBQJWz0O5AAoJEBx+YmzsjxAggRwP/15RV0A71UuatBGYjE7BQDKj
+pvYFJRfv6SCGp2gQ9lLPyFbS0vFKXzg7ej3lmy4SWIui49pPMDSIUUvSuv6yxuAm
+P1ruFVH34HvE6EWITY9a3w8i6KbD7wU5Xy8oWYANzQGzWlFtEUqC41ssFZPmU/Sa
+uKw0mlPijnfcC8aWBvYV1hXraqihxOR9OlAahVBzKWA+EGDC/Rf9q+haqA2iGPxY
+0z9pV3wS9pHgqkyKzgjWh0g8M/nWPR4ubwX46s+aIzN9cRglJmoYwFyyU1aV60YN
+yr2IkJK0ZIARUaFXEG6309wx42yW5CDOOcAsJoyDX5idvNWZ9Zsu3/hvRAZQEkUX
+Mvcx/RzhMbUpUuNKLBCj/1Oq1wnppN2kON1FFR+pSj/YzFf7fRjpsI558VT10utn
+zlrdthhC5QgEbUVMxRynoSZWO36/mKyrNI4AP8ocYwfd9enllhnJX7QSV/EbmpMZ
+wd3T67BYsldfHxcIeS7P9/T4CNlIPa+lfivBGq2k5NYlAhDWQtXLRiAxuhPGmCk+
+5z9brjF5y0kzuYIEqTr+Tlw7QazP9P6ANb0fus00vLyUpBPnTULFy99hfpZzysjT
+mPdnxSYaJpNyltVSTXnZNHLQNAIGDFoDoIJu5Sc1uWVZh6qLnViDMu9hb5IcbmIh
+BUkUBI5tSFnB3CaNSNyz
+=gx4g
 -----END PGP SIGNATURE-----
 
---ABYnUdqoGSokwVM+--
+--ryJZkp9/svQ58syV--
