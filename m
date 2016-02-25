@@ -1,28 +1,47 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 16:25:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 08/16] clk: drop the initial core->parents
- look-ups from __clk_core_init()
-Message-ID: <20160202002512.GN4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-9-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451298191-30815-9-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Barry Song <baohua@kernel.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 4/7] clk: atlas7: Make reset_control_ops const
+Date: Thu, 25 Feb 2016 10:45:09 +0100
+Message-Id: <1456393512-26602-5-git-send-email-p.zabel@pengutronix.de>
+In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Masahiro Yamada wrote:
-> The core->parents is a cache to save expensive clock parent look-ups.
-> It will be filled as needed later.  We do not have to do it here.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+The atlas7_rst_ops structure is never modified. Make it const.
 
-Ah we drop it here.. I guess my point is not too important then.
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/sirf/clk-atlas7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/sirf/clk-atlas7.c b/drivers/clk/sirf/clk-atlas7.c
+index 957aae6..d0c6c9a 100644
+--- a/drivers/clk/sirf/clk-atlas7.c
++++ b/drivers/clk/sirf/clk-atlas7.c
+@@ -1423,7 +1423,7 @@ static int atlas7_reset_module(struct reset_controller_dev *rcdev,
+ 	return 0;
+ }
+ 
+-static struct reset_control_ops atlas7_rst_ops = {
++static const struct reset_control_ops atlas7_rst_ops = {
+ 	.reset = atlas7_reset_module,
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
