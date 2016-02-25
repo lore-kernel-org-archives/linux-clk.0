@@ -1,59 +1,67 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH] clk: clk_register: Correctly initialize enable_count
-To: Michael Turquette <mturquette@baylibre.com>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
-	<emilio@elopez.com.ar>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1455058120-7398-1-git-send-email-rklein@nvidia.com>
- <56BAA6D9.9090009@elopez.com.ar> <56BB82A8.8010701@nvidia.com>
- <20160211213247.26445.28956@quark.deferred.io>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <56BD03F6.1050907@nvidia.com>
-Date: Thu, 11 Feb 2016 16:58:14 -0500
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/5] Add support for PWMSS on DRA7
+Date: Thu, 25 Feb 2016 16:36:31 -0600
+Message-Id: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20160211213247.26445.28956@quark.deferred.io>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2/11/2016 4:32 PM, Michael Turquette wrote:
-> Quoting Rhyland Klein (2016-02-10 10:34:16)
->> On 2/9/2016 9:56 PM, Emilio L=C3=B3pez wrote:
->>> Hi,
->>>
->>> El 09/02/16 a las 19:48, Rhyland Klein escribi=C3=B3:
->>>> When clocks are registered, they could be enabled already in
->>>> hardware. As of now, the enable count will start at 0. When this
->>>> happens, it means a clock is enabled and the framework doesn't know
->>>> that, so it will always report it as disabled.
-...
->=20
-> clk_disable_unused() handles the case where spurious clocks were left
-> enabled by the bootloader and need to be gated. This sounds like the
-> only thing you were after.
->=20
-> We also have a case where clocks are gated by clk_disable_unused()
-> because no driver has claimed them yet, but we really want those clocks
-> to be left enabled. For example, clocks supplying DDR & CPU shouldn't be
-> cut, ever. Alternatively, your bootloader put something on the display
-> but your display controller module hasn't loaded yet. Cutting the clock
-> isn't fatal but causes unnecessary screen flicker because the module has
-> not loaded up.
->=20
-> To solve those sets of problems there is the critical clocks and handoff
-> clocks thread[0].
->=20
-> [0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquett=
-e@baylibre.com>
->=20
-> Best regards,
-> Mike
->=20
+This patch series adds support for PWMSS on DRA7. The IP is same as that
+present in AM33XX and AM43XX.
 
-Thanks. I agree the clk_disable_unused should clear up the situation I
-was in. And the critical clocks and handoff logic should be useful. I am
-sure we can make use of it once its in for Tegra support.
+This is an updated version of the patch series originally sent by Vignesh.
+The biggest difference is the removal of local clock gating support from
+various drivers due to silicon issue.
 
--rhyland
+Links to v2 series:
+https://patchwork.ozlabs.org/patch/479933/ (already in mainline)
+https://patchwork.ozlabs.org/patch/479932/
+https://patchwork.ozlabs.org/patch/479931/
+https://patchwork.ozlabs.org/patch/479930/
+https://patchwork.ozlabs.org/patch/479929/
 
---=20
-nvpublic
+Franklin S Cooper Jr (1):
+  pwms: pwm-ti*: Remove support for local clock gating
+
+Vignesh R (4):
+  ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+  ARM: dts: DRA7: Add TBCLK for PWMSS
+  clk: ti: DRA7: Add tbclk data for ehrpwm
+  ARM: dts: DRA7: Add dt nodes for PWMSS
+
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |   8 +
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        |  17 +-
+ arch/arm/boot/dts/dra7.dtsi                        |  64 ++++++
+ arch/arm/boot/dts/dra7xx-clocks.dtsi               |  24 +++
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c          | 239 +++++++++++++++++++++
+ drivers/clk/ti/clk-7xx.c                           |   3 +
+ drivers/pwm/pwm-tiecap.c                           |  28 ---
+ drivers/pwm/pwm-tiehrpwm.c                         |  29 ---
+ drivers/pwm/pwm-tipwmss.c                          |  49 -----
+ drivers/pwm/pwm-tipwmss.h                          |  39 ----
+ 10 files changed, 354 insertions(+), 146 deletions(-)
+ delete mode 100644 drivers/pwm/pwm-tipwmss.h
+
+-- 
+2.7.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
