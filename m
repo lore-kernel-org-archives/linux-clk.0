@@ -1,56 +1,39 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Feb 2016 15:06:54 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 1/3] clk: unconditionally recurse into clk/mvebu/
-Date: Mon, 15 Feb 2016 08:34:56 +0100
-Message-Id: <1455521698-7905-2-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3 2/2] clk: mvebu: Move corediv config to mvebu config
+Message-ID: <20160225230654.GD28849@codeaurora.org>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+ <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
+ <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The drivers/clk/mvebu directory is only being built when
-CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
-platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
-we need to recurse into this directory regardless of the value of
-CONFIG_PLAT_ORION.
+On 02/11, Kevin Smith wrote:
+> The core clock does not depend on corediv, so enabling corediv
+> based on the clock is not really correct.  Move the corediv
+> config option from the clock driver Kconfig to the mvebu Kconfig
+> so that it can be enabled by the MACH option instead.
+> 
+> This also enables corediv on Armada 375 and 38X, which was
+> previously missing.
+> 
+> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
 
-Since all files in drivers/clk/mvebu/ are already conditionally
-compiled depending on various Kconfig options, we can recurse
-unconditionally into drivers/clk/mvebu without any other change.
+Applied to clk-next
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b038e36..e08bb0e 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -61,7 +61,7 @@ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
--obj-$(CONFIG_PLAT_ORION)		+= mvebu/
-+obj-y					+= mvebu/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
 -- 
-2.6.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
