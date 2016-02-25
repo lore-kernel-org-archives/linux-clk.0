@@ -1,67 +1,161 @@
-Return-Path: <kevin.smith@elecsyscorp.com>
-From: Kevin Smith <kevin.smith@elecsyscorp.com>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Gregory
- CLEMENT" <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
-Date: Thu, 11 Feb 2016 16:01:03 +0000
-Message-ID: <56BCB043.5040909@elecsyscorp.com>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
- <20160211091651.765cd91c@free-electrons.com>
-In-Reply-To: <20160211091651.765cd91c@free-electrons.com>
-Content-Type: text/plain; charset="Windows-1252"
-MIME-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
+Date: Thu, 25 Feb 2016 16:36:36 -0600
+Message-Id: <1456439796-28546-6-git-send-email-fcooper@ti.com>
+In-Reply-To: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Thomas,
+From: Vignesh R <vigneshr@ti.com>
 
-On 02/11/2016 02:16 AM, Thomas Petazzoni wrote:
-> Kevin,
->
-> On Wed, 10 Feb 2016 23:40:26 +0000, Kevin Smith wrote:
->> The corediv clock is not required for all builds, only those that
->> enable peripherals that need it.  Move the corediv config option
->> from the clock driver Kconfig to the mvebu Kconfig and make it
->> conditional.
->>
->> This also enables corediv on Armada 375 and 38X as needed.
->>
->> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
->> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
->> ---
->>   arch/arm/mach-mvebu/Kconfig | 3 +++
->>   drivers/clk/mvebu/Kconfig   | 1 -
->>   2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
->> index 64e3d2c..794e7c5 100644
->> --- a/arch/arm/mach-mvebu/Kconfig
->> +++ b/arch/arm/mach-mvebu/Kconfig
->> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
->>   	select CPU_PJ4B
->>   	select MACH_MVEBU_V7
->>   	select PINCTRL_ARMADA_370
->> +	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
-> Thanks for the new iteration. I know the corediv clock is only used for
-> the NAND, but I'm wondering if it's really worth doing this "if
-> MTD_NAND_PXA3xx.
->
-> Thomas
-Maybe I misunderstood.  In your previous e-mail you said "building=20
-ARMADA_38X_CLK or ARMADA_375_CLK does not require building=20
-clk-corediv.c, it only needs common.c.  So maybe instead we should=20
-change arch/arm/mach-mvebu/Kconfig to have MACH_ARMADA_xxx select=20
-MVEBU_CLK_COREDIV when needed."  I thought you meant only when a=20
-peripheral depended on the coreclk.
+Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+for dt bindings.
 
-Should I remove the conditional and just have MACH_ARMADA_XXX always=20
-enable MVEBU_CLK_COREDIV for platforms that have it?
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+Version 3 changes:
+None
 
-Thank you,
-Kevin=
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
+ arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
+ 3 files changed, 88 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 9c100b2..25d91ae 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible: Must be "ti,<soc>-ehrpwm".
+   for am33xx - compatible = "ti,am33xx-ehrpwm";
+   for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+ 	#pwm-cells = <3>;
+ 	reg = <0x300000 0x2000>;
+ };
++
++ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
++	compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
++	#pwm-cells = <3>;
++	reg = <0x48440200 0x80>;
++	ti,hwmods = "ehrpwm0";
++};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+index f7eae77..9270ce6 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+@@ -1,7 +1,9 @@
+ TI SOC based PWM Subsystem
+ 
+ Required properties:
+-- compatible: Must be "ti,am33xx-pwmss";
++- compatible: Must be "ti,<soc>-pwmss".
++  for am33xx - compatible = "ti,am33xx-pwmss"
++  for dra7xx - compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss"
+ - reg: physical base address and size of the registers map.
+ - address-cells: Specify the number of u32 entries needed in child nodes.
+ 		  Should set to 1.
+@@ -29,3 +31,16 @@ pwmss0: pwmss@48300000 {
+ 
+ 	/* child nodes go here */
+ };
++
++epwmss0: epwmss@4843e000 { /* On DRA7xx */
++	compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
++	reg = <0x4843e000 0x30>;
++	ti,hwmods = "epwmss0";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges = <0x4843e100  0x4843e100 0x80	/* ECAP */
++		  0x4843e180  0x4843e180 0x80	/* EQEP */
++		  0x4843e200  0x4843e200 0x80>; /* EHRPWM */
++
++	/* child nodes go here */
++};
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index c4d9175..9143db0 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -1597,6 +1597,70 @@
+ 				clock-names = "fck", "sys_clk";
+ 			};
+ 		};
++
++		epwmss0: epwmss@4843e000 {
++			compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
++			reg = <0x4843e000 0x30>;
++			ti,hwmods = "epwmss0";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges = <0x4843e100  0x4843e100 0x80  /* ECAP */
++				  0x4843e180  0x4843e180 0x80  /* EQEP */
++				  0x4843e200  0x4843e200 0x80>;/* EHRPWM */
++
++			ehrpwm0: ehrpwm@4843e200 {
++				compatible = "ti,dra7xx-ehrpwm",
++					     "ti,am33xx-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x4843e200 0x80>;
++				ti,hwmods = "ehrpwm0";
++				status = "disabled";
++			};
++		};
++
++		epwmss1: epwmss@48440000 {
++			compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
++			reg = <0x48440000 0x30>;
++			ti,hwmods = "epwmss1";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges = <0x48440100  0x48440100  0x80   /* ECAP */
++				  0x48440180  0x48440180  0x80   /* EQEP */
++				  0x48440200  0x48440200  0x80>; /* EHRPWM */
++
++			ehrpwm1: ehrpwm@48440200 {
++				compatible = "ti,dra7xx-ehrpwm",
++					     "ti,am33xx-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x48440200 0x80>;
++				ti,hwmods = "ehrpwm1";
++				status = "disabled";
++			};
++		};
++
++		epwmss2: epwmss@48442000 {
++			compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
++			reg = <0x48442000 0x30>;
++			ti,hwmods = "epwmss2";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++
++			ranges = <0x48442100  0x48442100  0x80   /* ECAP */
++				  0x48442180  0x48442180  0x80   /* EQEP */
++				  0x48442200  0x48442200  0x80>; /* EHRPWM */
++
++			ehrpwm2: ehrpwm@48442200 {
++				compatible = "ti,dra7xx-ehrpwm",
++					     "ti,am33xx-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x48442200 0x80>;
++				ti,hwmods = "ehrpwm2";
++				status = "disabled";
++			};
++		};
+ 	};
+ 
+ 	thermal_zones: thermal-zones {
+-- 
+2.7.0
