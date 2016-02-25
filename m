@@ -1,61 +1,89 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <Joshua.Henderson@microchip.com>
+Subject: Re: [PATCH] clk: Get rid of HAVE_MACH_CLKDEV
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
+	<mturquette@baylibre.com>
+References: <1453933020-8577-1-git-send-email-sboyd@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Ralf Baechle
+	<ralf@linux-mips.org>, <linux-mips@linux-mips.org>
+From: Joshua Henderson <joshua.henderson@microchip.com>
+Message-ID: <56CF6461.9040308@microchip.com>
+Date: Thu, 25 Feb 2016 13:30:25 -0700
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <SG2PR06MB0919563D4CD793A18AC3D839D8DE0@SG2PR06MB0919.apcprd06.prod.outlook.com>
-References: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-	<CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
-	<SG2PR06MB0919563D4CD793A18AC3D839D8DE0@SG2PR06MB0919.apcprd06.prod.outlook.com>
-Date: Mon, 1 Feb 2016 12:15:42 +0100
-Message-ID: <CAMuHMdUr-nrP3z4qXiSwnwP-Exjcy3=fOh0NVgPBDmuF94fAQw@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: r8a7795: Add USB-DMAC clocks
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1453933020-8577-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: joshua.henderson@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shimoda-san,
+On 01/27/2016 03:17 PM, Stephen Boyd wrote:
+> This config was used for the ARM port so that it could use a
+> machine specific clkdev.h include, but those are all gone now.
+> The MIPS architecture is the last user, and from what I can tell
+> it doesn't actually use it anyway, so let's remove the config all
+> together.
+> 
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: <linux-mips@linux-mips.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-On Mon, Feb 1, 2016 at 12:06 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> From: geert.uytterhoeven@gmail.com [mailto:geert.uytterhoeven@gmail.com] On Behalf Of Geert Uytterhoeven
->> > --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->> > +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->> > @@ -124,6 +124,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
->> >         DEF_MOD("pcie0",                 319,   R8A7795_CLK_S3D1),
->> >         DEF_MOD("usb3-if1",              327,   R8A7795_CLK_S3D1),
->> >         DEF_MOD("usb3-if0",              328,   R8A7795_CLK_S3D1),
->> > +       DEF_MOD("usb-dmac0",             330,   R8A7795_CLK_S3D2),
->> > +       DEF_MOD("usb-dmac1",             331,   R8A7795_CLK_S3D2),
->>
->> The datasheet is not very clear about whether the module clock is based of s3d1
->> (266 MHz) or s3d2 (133 MHz), but given the comment "... it is recommended to
->> allow several tens of clocks if operating at 260 MHz ..." in section 75.2.2
->> "DMA0/1 Software Reset Register" of the datasheet, I'm inclined to believe s3d1
->> would be correct.
->
-> According to the HW team (in case of gen2 though):
->
-> In gen2 (In gen3 I assumed)
->  ZS (S3D1)     : For using DRAM access
->  HP (S3D2)     : For using register access
->  48MHz (50MHz) : For using USB transfer
->
-> So, I also think that s3d1 would be correct.
-> What do you think?
+Reviewed-by: Joshua Henderson <joshua.henderson@microchip.com>
 
-Thanks, that makes two of us :-)
-Hence please use s3d1.
+Thanks,
+Josh
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+> 
+> I don't see a problem if this goes through the MIPS tree or the clk tree.
+> Let me know and I can take it through clk.
+> 
+>  arch/mips/Kconfig       | 2 --
+>  arch/mips/pic32/Kconfig | 1 -
+>  drivers/clk/Kconfig     | 3 ---
+>  3 files changed, 6 deletions(-)
+> 
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 56f57816613e..8e1be2889af3 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -328,7 +328,6 @@ config LANTIQ
+>  	select ARCH_REQUIRE_GPIOLIB
+>  	select SWAP_IO_SPACE
+>  	select BOOT_RAW
+> -	select HAVE_MACH_CLKDEV
+>  	select CLKDEV_LOOKUP
+>  	select USE_OF
+>  	select PINCTRL
+> @@ -590,7 +589,6 @@ config RALINK
+>  	select SYS_SUPPORTS_LITTLE_ENDIAN
+>  	select SYS_SUPPORTS_MIPS16
+>  	select SYS_HAS_EARLY_PRINTK
+> -	select HAVE_MACH_CLKDEV
+>  	select CLKDEV_LOOKUP
+>  	select ARCH_HAS_RESET_CONTROLLER
+>  	select RESET_CONTROLLER
+> diff --git a/arch/mips/pic32/Kconfig b/arch/mips/pic32/Kconfig
+> index fde56a8b85ca..1985971b9890 100644
+> --- a/arch/mips/pic32/Kconfig
+> +++ b/arch/mips/pic32/Kconfig
+> @@ -15,7 +15,6 @@ config PIC32MZDA
+>  	select SYS_SUPPORTS_32BIT_KERNEL
+>  	select SYS_SUPPORTS_LITTLE_ENDIAN
+>  	select ARCH_REQUIRE_GPIOLIB
+> -	select HAVE_MACH_CLKDEV
+>  	select COMMON_CLK
+>  	select CLKDEV_LOOKUP
+>  	select LIBFDT
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index eca8e019e005..35cbde8449a0 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -6,9 +6,6 @@ config CLKDEV_LOOKUP
+>  config HAVE_CLK_PREPARE
+>  	bool
+>  
+> -config HAVE_MACH_CLKDEV
+> -	bool
+> -
+>  config COMMON_CLK
+>  	bool
+>  	select HAVE_CLK_PREPARE
+> 
