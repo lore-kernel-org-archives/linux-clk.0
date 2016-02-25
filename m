@@ -1,52 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:51900 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750927AbcBPKqQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 16 Feb 2016 05:46:16 -0500
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/3] clk: sunxi: error checking on clock setup
-Date: Tue, 16 Feb 2016 10:46:05 +0000
-Message-Id: <1455619568-1906-1-git-send-email-andre.przywara@arm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Feb 2016 14:41:11 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joshua Henderson <joshua.henderson@microchip.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org
+Subject: Re: [PATCH] clk: Get rid of HAVE_MACH_CLKDEV
+Message-ID: <20160225224111.GO4847@codeaurora.org>
+References: <1453933020-8577-1-git-send-email-sboyd@codeaurora.org>
+ <56CF6461.9040308@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56CF6461.9040308@microchip.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Setting up the clocks properly is quite critical to the system's
-operation, but currently our error handling is not very verbose.
-This series adds error handling and reporting to the sunxi clocks,
-so that any errors are correctly detected and reported. Also previous
-actions are rolled back in case something went wrong.
-This proves to be helpful in debugging clock tree issues,
-especially when adding support for new SoCs.
-I tested this on a BananaPi by deliberately misspelling
-"clock-output-names". The resulting kernel crash in
-sun4i_timer_interrupt is totally misleading, but now there is a line
-in the dmesg before saying:
-=======
-sunxi_divider_clk_setup: could not read clock-output-names for "apb0"
-=======
+On 02/25, Joshua Henderson wrote:
+> On 01/27/2016 03:17 PM, Stephen Boyd wrote:
+> > This config was used for the ARM port so that it could use a
+> > machine specific clkdev.h include, but those are all gone now.
+> > The MIPS architecture is the last user, and from what I can tell
+> > it doesn't actually use it anyway, so let's remove the config all
+> > together.
+> > 
+> > Cc: Ralf Baechle <ralf@linux-mips.org>
+> > Cc: <linux-mips@linux-mips.org>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Reviewed-by: Joshua Henderson <joshua.henderson@microchip.com>
+> 
 
-This applies on top of Maxime's sunxi/for-next branch.
-
-Changes v1 .. v2:
-- in all three patches:
-  - use of_clock_full_name() instead of node->name
-  - don't report the uninitialized clk_name
-  - handle error in final check in if-clause
-
-Andre Przywara (3):
-  clk: sunxi: improve mux_clk error handling and reporting
-  clk: sunxi: improve divider_clk error handling and reporting
-  clk: sunxi: Improve divs_clk error handling and reporting
-
- drivers/clk/sunxi/clk-sunxi.c | 75 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 63 insertions(+), 12 deletions(-)
+Thanks. Merged to clk-next.
 
 -- 
-2.6.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
