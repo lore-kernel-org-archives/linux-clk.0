@@ -1,123 +1,21 @@
-Return-Path: <lars.persson@axis.com>
-From: Lars Persson <lars.persson@axis.com>
-To: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: [PATCH 2/2] clk: add artpec-6 pll1 clock driver
-Date: Thu, 11 Feb 2016 17:01:04 +0100
-Message-Id: <6d47cfe5ab7596e91a7fcc5647c5907cc12a4d83.1455206007.git.larper@axis.com>
-In-Reply-To: <cover.1455206007.git.larper@axis.com>
-References: <cover.1455206007.git.larper@axis.com>
-In-Reply-To: <cover.1455206007.git.larper@axis.com>
-References: <cover.1455206007.git.larper@axis.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Barry Song <baohua@kernel.org>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH 3/7] clk: rockchip: Make reset_control_ops const
+Date: Thu, 25 Feb 2016 22:05:58 +0100
+Message-ID: <3824099.j8MfGe0JYT@phil>
+In-Reply-To: <1456393512-26602-4-git-send-email-p.zabel@pengutronix.de>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de> <1456393512-26602-4-git-send-email-p.zabel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The PLL1 clock is a fixed-factor clock with factors derived from boot
-mode pins. This driver is a simple wrapper to register the fixed
-factor clock according to the pin settings.
+Am Donnerstag, 25. Februar 2016, 10:45:08 schrieb Philipp Zabel:
+> The rockchip_softrst_ops structure is never modified. Make it const.
+> 
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- drivers/clk/Makefile      |  1 +
- drivers/clk/clk-artpec6.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 71 insertions(+)
- create mode 100644 drivers/clk/clk-artpec6.c
+looks sane, so
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b038e36..388f0cf 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -17,6 +17,7 @@ endif
- 
- # hardware specific clock types
- # please keep this section sorted lexicographically by file/directory path name
-+obj-$(CONFIG_MACH_ARTPEC6)		+= clk-artpec6.o
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-diff --git a/drivers/clk/clk-artpec6.c b/drivers/clk/clk-artpec6.c
-new file mode 100644
-index 0000000..3664c44
---- /dev/null
-+++ b/drivers/clk/clk-artpec6.c
-@@ -0,0 +1,70 @@
-+/*
-+ * ARTPEC-6 clock initialization
-+ *
-+ * Copyright 2015 Axis Comunications AB.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+static void __init of_artpec6_pll1_setup(struct device_node *np)
-+{
-+	void __iomem *devstat;
-+	struct clk *clk;
-+	const char *clk_name = np->name;
-+	const char *parent_name;
-+	u32 pll_mode, pll_m, pll_n;
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	devstat = of_iomap(np, 0);
-+	if (devstat == NULL) {
-+		pr_err("error to ioremap DEVSTAT\n");
-+		return;
-+	}
-+
-+	/* DEVSTAT register contains PLL settings */
-+	pll_mode = (readl(devstat) >> 6) & 3;
-+	iounmap(devstat);
-+
-+	/*
-+	 * pll1 settings are designed for different DDR speeds using a fixed
-+	 * 50MHz external clock. However, a different external clock could be
-+	 * used on different boards.
-+	 * CPU clock is half the DDR clock.
-+	 */
-+	switch (pll_mode) {
-+	case 0: /* DDR3-2133 mode */
-+		pll_m = 4;
-+		pll_n = 85;
-+		break;
-+	case 1: /* DDR3-1866 mode */
-+		pll_m = 6;
-+		pll_n = 112;
-+		break;
-+	case 2: /* DDR3-1600 mode */
-+		pll_m = 4;
-+		pll_n = 64;
-+		break;
-+	case 3: /* DDR3-1333 mode */
-+		pll_m = 8;
-+		pll_n = 106;
-+		break;
-+	}
-+	/* ext_clk is defined in device tree */
-+	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
-+			pll_n, pll_m);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s not registered\n", clk_name);
-+		return;
-+	}
-+	of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(artpec6_pll1, "axis,artpec6-pll1-clock", of_artpec6_pll1_setup);
--- 
-2.1.4
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
