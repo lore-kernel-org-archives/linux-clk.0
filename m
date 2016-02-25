@@ -1,52 +1,29 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Feb 2016 15:03:18 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Pawel Moll <pawel.moll@arm.com>
+Subject: Re: [PATCH] clk: versatile: sp810: support reentrance
+Message-ID: <20160225230318.GB28849@codeaurora.org>
+References: <1456303151-29413-1-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-To: "Andrew F. Davis" <afd@ti.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455303016-8997-1-git-send-email-afd@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Andrew F. Davis" <afd@ti.com>
-References: <1455303016-8997-1-git-send-email-afd@ti.com>
-Message-ID: <20160218005033.2278.60015@quark.deferred.io>
-Subject: Re: [PATCH] clk: Make of_clk_get_from_provider() available to modules
-Date: Wed, 17 Feb 2016 16:50:33 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456303151-29413-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Andrew F. Davis (2016-02-12 10:50:16)
-> Export symbol of_clk_get_from_provider so it can be used in
-> loadable kernel modules
-> =
+On 02/24, Linus Walleij wrote:
+> Despite care take to allocate clocks state containers the
+> SP810 driver actually just supports creating one instance:
+> all clocks registered for every instance will end up with the
+> exact same name and __clk_init() will fail.
+> 
+> Rename the timclken<0> .. timclken<n> to sp810_<instance>_<n>
+> so every clock on every instance gets a unique name.
 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+The subject made me think clk framework reentrancy. Anyway,
+applied to clk-next.
 
-Applied.
-
-Regards,
-Mike
-
-> ---
-> We will be pushing stuff that needs this next cycle.
-> =
-
->  drivers/clk/clk.c | 1 +
->  1 file changed, 1 insertion(+)
-> =
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b4db67a..0a24736 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3061,6 +3061,7 @@ struct clk *of_clk_get_from_provider(struct of_phan=
-dle_args *clkspec)
->  {
->         return __of_clk_get_from_provider(clkspec, NULL, __func__);
->  }
-> +EXPORT_SYMBOL_GPL(of_clk_get_from_provider);
->  =
-
->  int of_clk_get_parent_count(struct device_node *np)
->  {
-> -- =
-
-> 2.7.1
->=20
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
