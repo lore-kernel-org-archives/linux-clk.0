@@ -1,46 +1,64 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 28 Feb 2016 10:51:07 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>,
-	Anson Huang <b20788@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
-	Bai Ping <b51503@freescale.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jaroslav Kysela <perex@perex.cz>, Kumar Gala <galak@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>, Takashi Iwai <tiwai@suse.com>,
-	Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 0/2] clk: imx6: add kpp clock for i.MX6UL
-Message-ID: <20160228025107.GC22051@tiger>
-References: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
- <20160225235655.GN28849@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Feb 2016 15:14:58 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: check the actual phase if get_phase is provided
+Message-ID: <20160225231458.GH28849@codeaurora.org>
+References: <1455759499-9622-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20160225235655.GN28849@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455759499-9622-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 03:56:55PM -0800, Stephen Boyd wrote:
-> On 01/12, Lothar Waßmann wrote:
-> > This patchset adds the clock which is necessary to operate the KPP
-> > unit on i.MX6UL.
-> > The first patch removes bogus whitespace before TABs in indentation.
-> > The second patch adds the clock definition.
-> > 
+On 02/18, Shawn Lin wrote:
+> set_phase does sanity checking of degree and ask sub-driver
+> to set the degree. If set_phase is limited to support the
+> degree what the caller need, sub-driver may select a
+> approximate value and return success state. In this case, it's
+> inappropriate to assign the degree directly to clk->core->phase.
+> We should ask sub-driver to decide the strategy. If sub-driver just
+> want to support accurate degree, it can fail the set_phase. Otherwise,
+> store the actual degree provided by sub-driver into clk->core->phase
+> if get_phase is provided. Another improvemnt by this patch is that
+> we can avoid to do unnecessary set_phase if the request defrees is
+> already there.
 > 
-> Both look fine. Shawn?
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> 
+> ---
 
-Oops, the patches were overlooked.  Applied now.  Thanks for reminding.
+Knee jerk reaction is why does the provider code set a phase that
+isn't requested? Do we need some sort of clk_round_phase() API
+that parallels clk_round_rate() so that drivers know what phase
+they're going to get? Or do drivers not care what phase they get
+when they call clk_set_phase()?
 
-Shawn
+> 
+> Changes in v2:
+> - remove actual_degree to simplify the changes
+> - bail early if nothing to to
+> 
+>  drivers/clk/clk.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b4db67a..275e70f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1902,6 +1902,10 @@ int clk_set_phase(struct clk *clk, int degrees)
+>  
+>  	clk_prepare_lock();
+>  
+> +	/* bail early if nothing to do */
+> +	if (degrees == clk->core->phase)
+> +		goto out;
+> +
+
+This could be split out into a different "optimization" patch and
+applied today.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
