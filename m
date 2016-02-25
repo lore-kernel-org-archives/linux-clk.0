@@ -1,167 +1,57 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Jens Kuske <jenskuske@gmail.com>
-Subject: [PATCH 06/11] clk: sunxi: add generic multi-parent bus clock gates driver
-Date: Mon,  1 Feb 2016 17:39:25 +0000
-Message-Id: <1454348370-3816-7-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v4 0/2] clk: Add Artpec-6 SoC support
+Date: Thu, 25 Feb 2016 15:58:13 +0100
+Message-Id: <cover.1456411894.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner H3 SoC introduced bus clock gates with potentially
-different parents per clock gate. The H3 driver chose to hardcode the
-actual parent clock relation in the code.
-Add a new driver (which has the potential to drive the H3 and also
-the simple clock gates as well) which uses the power of DT to describe
-this relationship in an elegant and flexible way.
-Using one subnode for every parent clock we get away with a single
-DT compatible match, which can be used as a fallback value in the
-actual DTs without the need to add specific compatible strings to the
-code.  This avoids adding a new driver or function for every new SoC.
+Add clock support for the Artpec-6 SoC port. The ARM parts are in the series
+"arm: Add Artpec-6 SoC" and it goes through the arm-soc tree.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
-Changelog RFC .. v1:
-- fix IRQ muxes to cover the three banks of the SoC
-- amend naming of PCM pins
+Changes since v3:
+- The binding was corrected to handle two fractional divider clocks as input to
+  the clock controller.
+- Updated clk-artpec6.c to handle a distinct fractional divider input for each
+  i2s clock mux.
 
- drivers/clk/sunxi/Makefile          |   1 +
- drivers/clk/sunxi/clk-multi-gates.c | 105 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-multi-gates.c
+Changes since v2:
+- Moved axis,artpec6-clkctrl.h to the first patch with the DT bindings.
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 3fd7901..3a9dc31 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -11,6 +11,7 @@ obj-y += clk-a10-ve.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
- obj-y += clk-simple-gates.o
-+obj-y += clk-multi-gates.o
- obj-y += clk-sun8i-bus-gates.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
-diff --git a/drivers/clk/sunxi/clk-multi-gates.c b/drivers/clk/sunxi/clk-multi-gates.c
-new file mode 100644
-index 0000000..76e715a
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-multi-gates.c
-@@ -0,0 +1,105 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ *
-+ * Based on clk-sun8i-bus-gates.c, which is:
-+ *  Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
-+ * Based on clk-simple-gates.c, which is:
-+ *  Copyright 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+static DEFINE_SPINLOCK(gates_lock);
-+
-+static void __init sunxi_parse_parent(struct device_node *node,
-+				      struct clk_onecell_data *clk_data,
-+				      void __iomem *reg)
-+{
-+	const char *parent = of_clk_get_parent_name(node, 0);
-+	const char *clk_name;
-+	struct property *prop;
-+	struct clk *clk;
-+	const __be32 *p;
-+	int index, i = 0;
-+
-+	of_property_for_each_u32(node, "clock-indices", prop, p, index) {
-+		of_property_read_string_index(node, "clock-output-names",
-+					      i, &clk_name);
-+
-+		clk = clk_register_gate(NULL, clk_name, parent, 0,
-+					reg + 4 * (index / 32), index % 32,
-+					0, &gates_lock);
-+		i++;
-+		if (IS_ERR(clk)) {
-+			pr_warn("could not register gate clock \"%s\"\n",
-+				clk_name);
-+			continue;
-+		}
-+		if (clk_data->clks[index])
-+			pr_warn("bus-gate clock %s: index #%d already registered as %s\n",
-+				clk_name, index, "?");
-+		else
-+			clk_data->clks[index] = clk;
-+	}
-+}
-+
-+static void __init sunxi_multi_bus_gates_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *child;
-+	struct property *prop;
-+	struct resource res;
-+	void __iomem *reg;
-+	const __be32 *p;
-+	int number = 0;
-+	int index;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
-+	if (!clk_data)
-+		goto err_unmap;
-+
-+	for_each_child_of_node(node, child)
-+		of_property_for_each_u32(child, "clock-indices", prop, p, index)
-+			number = max(number, index);
-+
-+	clk_data->clks = kcalloc(number + 1, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clk_data->clks)
-+		goto err_free_data;
-+
-+	for_each_child_of_node(node, child)
-+		sunxi_parse_parent(child, clk_data, reg);
-+
-+	clk_data->clk_num = number + 1;
-+	if (of_clk_add_provider(node, of_clk_src_onecell_get, clk_data))
-+		pr_err("registering bus-gate clock %s failed\n", node->name);
-+
-+	return;
-+
-+err_free_data:
-+	kfree(clk_data);
-+err_unmap:
-+	iounmap(reg);
-+	of_address_to_resource(node, 0, &res);
-+	release_mem_region(res.start, resource_size(&res));
-+}
-+
-+CLK_OF_DECLARE(sunxi_multi_bus_gates, "allwinner,sunxi-multi-bus-gates-clk",
-+	       sunxi_multi_bus_gates_init);
+Changes since v1:
+
+- The driver now provides all clocks from the main clock controller block
+  through one DT node.
+- Added a header file for the clock indexes.
+- Refer to clock-bindings.txt in the bindings document.
+
+A platform driver was not possible because the clocks are needed earlier in the
+kernel startup.
+
+Lars Persson (2):
+  clk: add device tree binding for Artpec-6 clock controller
+  clk: add artpec-6 clock controller
+
+ .../devicetree/bindings/clock/artpec6.txt          |  41 +++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axis/Makefile                          |   1 +
+ drivers/clk/axis/clk-artpec6.c                     | 189 +++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 +++++
+ 5 files changed, 270 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 drivers/clk/axis/Makefile
+ create mode 100644 drivers/clk/axis/clk-artpec6.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
+
 -- 
-2.6.4
+2.1.4
