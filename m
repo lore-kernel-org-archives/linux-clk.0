@@ -1,64 +1,93 @@
-Return-Path: <andre.przywara@arm.com>
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Subject: Re: [PATCH 06/11] clk: sunxi: add generic multi-parent bus clock
- gates driver
-To: Jean-Francois Moine <moinejf@free.fr>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
- <1454348370-3816-7-git-send-email-andre.przywara@arm.com>
- <20160201194000.282a253b14a2ab35df8b8cc7@free.fr>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
- Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
- <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <56AFE3D8.1000701@arm.com>
-Date: Mon, 1 Feb 2016 23:01:44 +0000
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1456381477.22545.24.camel@mtksdaap41>
+Subject: Re: [PATCH v6 4/7] clk: mediatek: Add MT2701 clock support
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>
+Date: Thu, 25 Feb 2016 14:24:37 +0800
+In-Reply-To: <20160224212533.2278.7597@quark.deferred.io>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1454665050-37776-5-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160210200853.26445.15165@quark.deferred.io>
+	 <1455527982.29688.8.camel@mtksdaap41>
+	 <20160224212533.2278.7597@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <20160201194000.282a253b14a2ab35df8b8cc7@free.fr>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/02/16 18:40, Jean-Francois Moine wrote:
-> On Mon,  1 Feb 2016 17:39:25 +0000
-> Andre Przywara <andre.przywara@arm.com> wrote:
+Hi Mike,
+
+On Wed, 2016-02-24 at 13:25 -0800, Michael Turquette wrote:
+> Hi James,
 > 
->> The Allwinner H3 SoC introduced bus clock gates with potentially
->> different parents per clock gate. The H3 driver chose to hardcode the
->> actual parent clock relation in the code.
->> Add a new driver (which has the potential to drive the H3 and also
->> the simple clock gates as well) which uses the power of DT to describe
->> this relationship in an elegant and flexible way.
->> Using one subnode for every parent clock we get away with a single
->> DT compatible match, which can be used as a fallback value in the
->> actual DTs without the need to add specific compatible strings to the
->> code.  This avoids adding a new driver or function for every new SoC.
->>
->> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->> ---
->> Changelog RFC .. v1:
->> - fix IRQ muxes to cover the three banks of the SoC
->> - amend naming of PCM pins
-
-Just got embarrassed with seeing that this changelog here actually
-belongs into the previous patch :$
-
->>
->>  drivers/clk/sunxi/Makefile          |   1 +
->>  drivers/clk/sunxi/clk-multi-gates.c | 105 ++++++++++++++++++++++++++++++++++++
->>  2 files changed, 106 insertions(+)
->>  create mode 100644 drivers/clk/sunxi/clk-multi-gates.c
-> 	[snip]
+> Quoting James Liao (2016-02-15 01:19:42)
+> > Hi Mike,
+> > 
+> > On Wed, 2016-02-10 at 12:08 -0800, Michael Turquette wrote:
+> > > Quoting James Liao (2016-02-05 01:37:27)
+> > > > +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
+> > > > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+> > > > +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+> > > > +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
+> > > > +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
+> > > > +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
+> > > > +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
+> > > > +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
+> > > > +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
+> > > > +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+> > > 
+> > > :-/
+> > > 
+> > > This is way too much CLK_OF_DECLARE and not enough Linux Driver Model.
+> > > 
+> > > I understand that some platforms really must initialize some clocks very
+> > > early, but can we please separate those into one table and call
+> > > CLK_OF_DECLARE on only that set, and then register the rest through a
+> > > platform_driver later on?
+> > 
+> > I know CLK_OF_DECLARE is much earlier than platform_driver, so it can
+> > ensure all drivers lookup their clocks successfully during
+> > platform_driver probe. Is there anything different to init these clock
+> > providers in CLK_OF_DECLARE and platform_driver?
 > 
-> Glad to see that things are moving to the right way. Thanks.
+> This a common pattern we're seeing right now. Joachim did a nice job of
+> supporting early clocks with CLK_OF_DECLARE, and also using a proper
+> driver in his lpc18xx implementation:
+> 
+> http://marc.info/?l=devicetree&m=145618160610001
 
-> Acked-by: Jean-Francois Moine <moinejf@free.fr>
+Do you mean we should keep most clock init in platform_driver_probe and
+use CLK_OF_DECLARE for some early clocks only?
 
-Thanks! I am relived to hear that (and hope that others agree as well
-;-) If people are Ok with that approach I can do patches to move all
-existing clock gates into one driver, but I guess this would be part of
-a later series.
+Using CLK_OF_DECLARE() for all clock providers is convenient. The
+convenience includes coding structure and driver init order. The coding
+structure means we can use a consistency way to add clock providers, so
+we can reduce errors and apply code generator on clock drivers.
 
-Cheers,
-Andre.
+The driver init order is another issue. In lpc18xx driver you mentioned
+in [1], it uses ERR_PTR(-EPROBE_DEFER) to be the place holder for
+non-early clocks in arch_init (CLK_OF_DECLARE), and then register early
+and non-early clocks again in module_init. The EPROBE_DEFER place holder
+is an interesting idea to resolve init order issue. But to register
+clocks twice on the same clock provider seems not a good idea, although
+it can still work in current CCF implementation.
+
+Is it important to move clock init into platform_driver? If not, I
+prefer to keep current implementation on MT2701, and look for a better
+way to init clocks in platform_driver in new SoCs.
+
+
+[1] http://marc.info/?l=devicetree&m=145618160610001
+
+
+Best regards,
+
+James
