@@ -1,64 +1,56 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH] clk: sunxi: allow PLL6 clock to be reused
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <1456105198-25295-1-git-send-email-andre.przywara@arm.com>
- <CAGb2v66Fkvpqay+pNYjN1KP_KSUmv-du+PVSsyeuK+Y7bzEt+g@mail.gmail.com>
- <56CAD72D.7050102@arm.com> <20160225181105.GE4736@lukather>
-Cc: Chen-Yu Tsai <wens@csie.org>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
- <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Message-ID: <56CF6ADD.1000803@arm.com>
-Date: Thu, 25 Feb 2016 20:58:05 +0000
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20160225181105.GE4736@lukather>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20160225005644.GC4736@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+	<CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+	<20160211123648.GN31506@lukather>
+	<CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
+	<20160211151246.GO31506@lukather>
+	<CACRpkdb7=x2bJP1nXpF2bP3U0t+NUHiuw_aeTAhbR8OXOrHn6A@mail.gmail.com>
+	<20160225005644.GC4736@lukather>
+Date: Thu, 25 Feb 2016 15:49:13 +0100
+Message-ID: <CACRpkdYQasUpLhJU16F3_GG7-wKt=wvb1Qqu2cJ62pCHLSii=g@mail.gmail.com>
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/02/16 18:11, Maxime Ripard wrote:
-> On Mon, Feb 22, 2016 at 09:38:53AM +0000, Andre Przywara wrote:
->>>> diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
->>>> index 1e63c5b..3a7da86 100644
->>>> --- a/drivers/clk/sunxi/clk-factors.h
->>>> +++ b/drivers/clk/sunxi/clk-factors.h
->>>> @@ -36,6 +36,7 @@ struct factors_data {
->>>>         void (*getter)(struct factors_request *req);
->>>>         void (*recalc)(struct factors_request *req);
->>>>         const char *name;
->>>> +       int name_idx;
->>>
->>> I would drop the .name field. It was a bad workaround
->>> due to limitations of the factors clk code at the time
->>> by me. We really shouldn't hard-code the name if we want
->>> to reuse the driver.
+On Thu, Feb 25, 2016 at 1:56 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+
+> Hi Linus,
+> On Tue, Feb 16, 2016 at 12:23:37AM +0100, Linus Walleij wrote:
+>> On Thu, Feb 11, 2016 at 4:12 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > On Thu, Feb 11, 2016 at 02:47:57PM +0100, Linus Walleij wrote:
 >>
->> I know what you mean (my first thought, too) and I totally agree, but we
->> need it still for PLL5, which does not carry the original name in the DT
->> output names.
->> So at least this workaround here does not work, I guess we have to come
->> up with something different - which would be a different patch.
->> I can take a look into this later.
-> 
-> Actually, it could be easily worked around. Always take the first
-> clock output name, take whatever is before '_', and you can remove the
-> name field entirely.
+>> >> Can you guys supply a MAINTAINERS entry for the sunxi
+>> >> stuff?
+>> >
+>> > We have one, and Chen-Yu is listed as co-maintainer:
+>> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n911
+>>
+>> Modified request:
+>> can you put in F: wildcards there to match the files pertaining to
+>> the sunxi platform, so that scripts/find-maintainer.pl finds them.
+>
+> I don't really know what you mean, on my laptop, if I run it, I get
+> the following result:
 
-Yeah, I was thinking about that, too, but wanted to give an easy patch a
-try first.
+OK the file is listed under SoC support, that works too.
 
-> Jens did something along these lines here:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/379900.html
-
-Indeed, I stumbled upon this by accident today. Looks great on the first
-glance: using .self first, then the stub till the underscore. I can
-review and test this, if needed.
-
-> Maybe we should simply rebase this patch, and remove the part that
-> falls back on the name field.
-
-I am totally fine with this!
-
-Thanks!
-Andre.
+Yours,
+Linus Walleij
