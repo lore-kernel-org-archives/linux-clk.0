@@ -1,43 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Feb 2016 17:14:03 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
-	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
-	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
-	rklein@nvidia.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
-Message-ID: <20160213011403.GI4847@codeaurora.org>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
- <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
+Return-Path: <akinobu.mita@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <20160224220819.GF4847@codeaurora.org>
+References: <1456141719-2543-1-git-send-email-akinobu.mita@gmail.com>
+	<20160223214944.GA20852@rob-hp-laptop>
+	<20160224220819.GF4847@codeaurora.org>
+Date: Thu, 25 Feb 2016 23:40:34 +0900
+Message-ID: <CAC5umyjs_Q_G4jpcmPWk4Ug16tdwq+7c3UH1kwastj2P1UenqA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: add userspace clock consumer
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/11, Michael Turquette wrote:
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b4db67a..993f775 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
->  	if (core->ops->init)
->  		core->ops->init(core->hw);
->  
-> +	if (core->flags & CLK_IS_CRITICAL) {
-> +		clk_core_prepare(core);
-> +		clk_core_enable(core);
-> +	}
+2016-02-25 7:08 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 02/23, Rob Herring wrote:
+>> On Mon, Feb 22, 2016 at 08:48:39PM +0900, Akinobu Mita wrote:
+>> > This adds userspace consumer for common clock.
+>> >
+>> > This driver is inspired from Userspace regulator consumer
+>> > (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
+>> > some classes of devices that are controlled entirely from user space.
+>>
+>> Whether the kernel handles a clock or userspace does should have nothing
+>> to do with DT. Plus DT does not expose many of the clocks, so any
+>> debug feature needs to expose all clocks and be independent of DT.
+>>
+>> Beyond debug, I don't think we should be exposing clock control to
+>> userspace.
+>
+> Agreed. Plus, the userspace regulator consumer doesn't have any
+> DT binding for it, so I don't see why we would have a DT binding
+> for the clk one.
 
-What do we do if this is an orphan clk? From what I can tell
-we're not going to increment the ref count on the parents that
-may or may not appear at some later time when this flag is set.
-Furthermore, do we want to propagate the CLK_IS_CRITICAL flag up
-to all the parent clocks so that the warning mechanism spits out
-errors for parent clocks? I suppose that may not be very useful
-assuming refcounts are correct, but it may be useful to know
-which clocks are critical and which ones aren't during debug.
+OK.  I'll drop a DT binding part of this driver.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I'll still try to expose this feature by platform device instead of
+exposing under clk debugfs.  Because we don't want to allow controlling
+all clock devices (which may result abuse of the feature).  Instead,
+this userspace consumer only allows explicitly specified devices to
+control.
