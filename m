@@ -1,61 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH 1/8] clk: add device tree binding for artpec-6 pll1 clock
-Date: Wed, 10 Feb 2016 13:41:50 +0100
-Message-Id: <c092f501a595032f9b76f18fc4bf093503a181c8.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
- Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org, galak@codeaurora.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v7 1/2] clk: qcom: Add support for SMD-RPM Clocks
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+References: <1456243999-22652-1-git-send-email-georgi.djakov@linaro.org>
+ <1456243999-22652-2-git-send-email-georgi.djakov@linaro.org>
+ <56CD835A.1010608@linaro.org> <20160224191522.GE4847@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <56D08252.1000904@linaro.org>
+Date: Fri, 26 Feb 2016 18:50:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20160224191522.GE4847@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- Documentation/devicetree/bindings/clock/artpec6.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+On 02/24/2016 09:15 PM, Stephen Boyd wrote:
+> On 02/24, Srinivas Kandagatla wrote:
+>>
+>>
+>> On 23/02/16 16:13, Georgi Djakov wrote:
+>>> +/* msm8916 */
+>>> +#define RPM_XO_CLK_SRC				0
+>>> +#define RPM_XO_A_CLK_SRC			1
+>>> +#define RPM_PCNOC_CLK				2
+>>> +#define RPM_PCNOC_A_CLK				3
+>>> +#define RPM_SNOC_CLK				4
+>>> +#define RPM_SNOC_A_CLK				5
+>>> +#define RPM_BIMC_CLK				6
+>>> +#define RPM_BIMC_A_CLK				7
+>>> +#define RPM_QDSS_CLK				8
+>>> +#define RPM_QDSS_A_CLK				9
+>>> +#define RPM_BB_CLK1				10
+>>> +#define RPM_BB_CLK1_A				11
+>>> +#define RPM_BB_CLK2				12
+>>> +#define RPM_BB_CLK2_A				13
+>>> +#define RPM_RF_CLK1				14
+>>> +#define RPM_RF_CLK1_A				15
+>>> +#define RPM_RF_CLK2				16
+>>> +#define RPM_RF_CLK2_A				17
+>>> +#define RPM_BB_CLK1_PIN				18
+>>> +#define RPM_BB_CLK1_A_PIN			19
+>>> +#define RPM_BB_CLK2_PIN				20
+>>> +#define RPM_BB_CLK2_A_PIN			21
+>>> +#define RPM_RF_CLK1_PIN				22
+>>> +#define RPM_RF_CLK1_A_PIN			23
+>>> +#define RPM_RF_CLK2_PIN				24
+>>> +#define RPM_RF_CLK2_A_PIN			25
+>>> +
+>>
+>> These names are more generic, and offsets are specific to the 8916
+>> chip, adding soc prefix to these would make more sense and also set
+>> a rule for the next soc support patches too.
+>>
+> 
+> Do these ever change though? Maybe we should remove the msm8916
+> specificness and let the rpm clk consumers choose the clks they
+> want to use. Combine all the different SoCs into the same "RPM
+> clk" numberspace so that we don't have a handful of different
+> headers and different RPM clk definitions in the driver when
+> they're almost the same across chips.
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
-new file mode 100644
-index 0000000..e50f7a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/artpec6.txt
-@@ -0,0 +1,14 @@
-+* Clock bindings for Axis ARTPEC-6 chip
-+
-+Required properties:
-+- compatible: Should be "axis,artpec6-pll1-clock"
-+- #clock-cells: Should be <1>
-+
-+Examples:
-+
-+pll1_clk: pll1_clk {
-+	#clock-cells = <1>;
-+	compatible = "axis,artpec6-pll1-clock";
-+	clocks = <&ext_clk>;
-+	status = "okay";
-+};
--- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Yes, these change actually. Some of them are common like the xo, bimc,
+nocs and qdss, but the rest varies as count (21-47) and naming at the
+different SoCs. I have a few that fit into the same numberspace, but
+with some newer SoCs we will have issues. So we can have the same
+definitions for the common clks, and the rest could be added to the
+same header file with SoC prefix.
