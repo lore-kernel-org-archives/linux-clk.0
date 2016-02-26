@@ -1,59 +1,60 @@
-Return-Path: <carlo.caione@gmail.com>
-MIME-Version: 1.0
-Sender: carlo.caione@gmail.com
-In-Reply-To: <CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
-References: <1454879583-27036-1-git-send-email-afaerber@suse.de>
-	<CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
-Date: Mon, 8 Feb 2016 09:54:46 +0100
-Message-ID: <CAOQ7t2brTxmE-snjXxZG1ZrHNYCEugj6EwORBpVtaMHME_pewQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: Fix meson_clk_register_clks() signature type mismatch
-From: Carlo Caione <carlo@caione.org>
-To: Carlo Caione <carlo@caione.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [RFC PATCH 2/3] clk: add clk_hw_set_phase_range support
+Date: Fri, 26 Feb 2016 13:08:57 +0800
+Message-Id: <1456463337-3666-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1456463290-3581-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1456463290-3581-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 8, 2016 at 9:34 AM, Carlo Caione <carlo@caione.org> wrote:
-> On Sun, Feb 7, 2016 at 10:13 PM, Andreas F=C3=A4rber <afaerber@suse.de> w=
-rote:
->> As preparation for arm64 based mesongxbb, which pulls in this code once
->> enabling ARCH_MESON, fix a size_t vs. unsigned int type mismatch.
->> The loop uses a local unsigned int variable, so adopt that type,
->> matching the header.
->>
->> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller=
-")
->> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
->> ---
->>  drivers/clk/meson/clkc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/meson/clkc.c b/drivers/clk/meson/clkc.c
->> index c83ae1367abc..d920d410b51d 100644
->> --- a/drivers/clk/meson/clkc.c
->> +++ b/drivers/clk/meson/clkc.c
->> @@ -198,7 +198,7 @@ meson_clk_register_fixed_rate(const struct clk_conf =
-*clk_conf,
->>  }
->>
->>  void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
->> -                                   size_t nr_confs,
->> +                                   unsigned int nr_confs,
->>                                     void __iomem *clk_base)
->>  {
->>         unsigned int i;
->
-> Nit: I'd prefer to fix declaration in drivers/clk/meson/clkc.h with
-> size_t since we are going to use it for array indexing.
+clk_hw_set_phase_range can be used by clk-driver to
+set the supported phase range for a specific clk.
 
-On a second thought it's ok since we use i to cycle through clocks.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-Acked-by: Carlo Caione <carlo@endlessm.com>
+ drivers/clk/clk.c            | 9 +++++++++
+ include/linux/clk-provider.h | 3 ++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-Cheers,
-
---=20
-Carlo Caione
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3a8407c..55be863 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -555,6 +555,15 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
+ 
++void clk_hw_set_phase_range(struct clk_hw *hw, unsigned long min_phase,
++			   unsigned long max_phase)
++{
++	hw->core->min_phase = min_phase;
++	hw->core->max_phase = max_phase;
++}
++EXPORT_SYMBOL_GPL(clk_hw_set_phase_range);
++
++
+ /*
+  * Helper for finding best parent to provide a given frequency. This can be used
+  * directly as a determine_rate callback (e.g. for a mux), or from a more
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f7e58ae..e871690 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -686,7 +686,8 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
+ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
+ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+ 			   unsigned long max_rate);
+-
++void clk_hw_set_phase_range(struct clk_hw *hw, unsigned long min_phase,
++			   unsigned long max_phase);
+ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ {
+ 	dst->clk = src->clk;
+-- 
+2.3.7
