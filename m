@@ -1,28 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 17:08:28 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 15/16] clk: simplify clk_fetch_parent_index()
- function
-Message-ID: <20160202010828.GD4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-16-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <ykk@rock-chips.com>
+Subject: Re: [PATCH v1 0/4] Add clock ids for RK3228 HDMI/VOP modules
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
+ <2198453.NY4VYR4LaI@phil>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll
+ <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Yakir Yang <ykk@rock-chips.com>
+Message-ID: <56CFEF89.7020003@rock-chips.com>
+Date: Fri, 26 Feb 2016 14:24:09 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451298191-30815-16-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <2198453.NY4VYR4LaI@phil>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Masahiro Yamada wrote:
-> The clk_core_get_parent_by_index can be used as a helper function
-> to simplify the implementation of clk_fetch_parent_index().
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
 
-Applied to clk-next
+On 02/26/2016 09:14 AM, Heiko Stuebner wrote:
+> Am Mittwoch, 24. Februar 2016, 18:05:03 schrieb Yakir Yang:
+>> Add clocks ids for RK3228 HDMI/VOP modules which driver already have been
+>> posted.
+>>
+>> RK3228 HDMI driver: https://patchwork.kernel.org/patch/7974671
+>> RK3228 VOP driver: https://patchwork.kernel.org/patch/7952591
+>>
+>> Yakir Yang (4):
+>>    clk: rockchip: add the new clock ids for RK3228 VOP
+>>    clk: rockchip: set the clock ids for RK3228 VOP
+>>    clk: rockchip: add the new clock ids for RK3228 HDMI
+>>    clk: rockchip: set the clock ids for RK3228 HDMI
+> applied all 4 to my clk-branch
+Thanks
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+- Yakir
+>
+> Thanks
+> Heiko
+>
+>
+>
