@@ -1,1735 +1,1888 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <76ae5b406ad64b2717c0b1c62c3005a62b2715b8.1454435944.git.moinejf@free.fr>
-In-Reply-To: <cover.1454435944.git.moinejf@free.fr>
-References: <cover.1454435944.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 2 Feb 2016 16:25:51 +0100
-Subject: [PATCH v4 2/2] drm: sunxi: Add a basic DRM driver for Allwinner DE2
-To: Dave Airlie <airlied@linux.ie>,
-    Chen-Yu Tsai <wens@csie.org>,
-    Emilio Lopez <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-    dri-devel@lists.freedesktop.org,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: imx6ul: whitespace cleanup; no functional change
+Date: Fri, 26 Feb 2016 15:52:58 +0100
+Message-Id: <1456498379-6109-2-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
+References: <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-In recent SoCs, as the H3, Allwinner uses a new display interface, DE2.
-This patch adds a DRM video driver for this interface.
+Remove whitespace before TAB in indentation and reduce indentation
+level to improve readability.
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
 ---
-v4: (no change)
-v3:
-	- add the hardware cursor
-	- simplify and fix the DE2 init sequences
-	- generation for all SUNXI SoCs (Andre Przywara)
-v2:
-	- remarks from Russell King
-	- DT documentation added
-	- working resolution change with xrandr
-	- removal of the HDMI driver
----
- .../devicetree/bindings/display/sunxi.txt          |  81 ++++
- drivers/gpu/drm/Kconfig                            |   2 +
- drivers/gpu/drm/Makefile                           |   1 +
- drivers/gpu/drm/sunxi/Kconfig                      |  20 +
- drivers/gpu/drm/sunxi/Makefile                     |   7 +
- drivers/gpu/drm/sunxi/de2_crtc.c                   | 421 +++++++++++++++++
- drivers/gpu/drm/sunxi/de2_crtc.h                   |  61 +++
- drivers/gpu/drm/sunxi/de2_de.c                     | 505 +++++++++++++++++++++
- drivers/gpu/drm/sunxi/de2_drm.h                    |  40 ++
- drivers/gpu/drm/sunxi/de2_drv.c                    | 377 +++++++++++++++
- drivers/gpu/drm/sunxi/de2_plane.c                  |  91 ++++
- 11 files changed, 1606 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
- create mode 100644 drivers/gpu/drm/sunxi/Kconfig
- create mode 100644 drivers/gpu/drm/sunxi/Makefile
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
+ arch/arm/boot/dts/imx6ul-pinfunc.h | 1836 ++++++++++++++++++------------------
+ 1 file changed, 918 insertions(+), 918 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi.txt b/Documentation/devicetree/bindings/display/sunxi.txt
-new file mode 100644
-index 0000000..35f9763
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/sunxi.txt
-@@ -0,0 +1,81 @@
-+Allwinner sunxi display subsystem
-+=================================
-+
-+The sunxi display subsystems contain a display controller (DE),
-+one or two LCD controllers (TCON) and their external interfaces.
-+
-+Display controller
-+==================
-+
-+Required properties:
-+
-+- compatible: value should be one of the following
-+		"allwinner,sun8i-h3-display-engine"
-+
-+- clocks: must include clock specifiers corresponding to entries in the
-+		clock-names property.
-+
-+- clock-names: must contain
-+		gate: for DE activation
-+		clock: DE clock
-+
-+- resets: phandle to the reset of the device
-+
-+- ports: phandle's to the LCD ports
-+
-+LCD controller
-+==============
-+
-+Required properties:
-+
-+- compatible: value should be one of the following
-+		"allwinner,sun8i-h3-lcd"
-+
-+- clocks: must include clock specifiers corresponding to entries in the
-+		clock-names property.
-+
-+- clock-names: must contain
-+		gate: for LCD activation
-+		clock: pixel clock
-+
-+- resets: phandle to the reset of the device
-+
-+- port: port node with endpoint definitions as defined in
-+	Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Example:
-+
-+	de: de-controller@01000000 {
-+		compatible = "allwinner,sun8i-h3-display-engine";
-+		...
-+		clocks = <&bus_gates 44>, <&de_clk>;
-+		clock-names = "gate", "clock";
-+		resets = <&ahb_rst 44>;
-+		ports = <&lcd0_p>;
-+	};
-+
-+	lcd0: lcd-controller@01c0c000 {
-+		compatible = "allwinner,sun8i-h3-lcd";
-+		...
-+		clocks = <&bus_gates 35>, <&tcon0_clk>;
-+		clock-names = "gate", "clock";
-+		resets = <&ahb_rst 35>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		lcd0_p: port {
-+			lcd0_ep: endpoint {
-+				remote-endpoint = <&hdmi_ep>;
-+			};
-+		};
-+	};
-+
-+	hdmi: hdmi@01ee0000 {
-+		...
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port {
-+			hdmi_ep: endpoint {
-+				remote-endpoint = <&lcd0_ep>;
-+			};
-+		};
-+	};
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 8ae7ab6..0cec9a1 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -269,3 +269,5 @@ source "drivers/gpu/drm/imx/Kconfig"
- source "drivers/gpu/drm/vc4/Kconfig"
+diff --git a/arch/arm/boot/dts/imx6ul-pinfunc.h b/arch/arm/boot/dts/imx6ul-pinfunc.h
+index 20c7da1..c00d230 100644
+--- a/arch/arm/boot/dts/imx6ul-pinfunc.h
++++ b/arch/arm/boot/dts/imx6ul-pinfunc.h
+@@ -14,925 +14,925 @@
+  * The pin function ID is a tuple of
+  * <mux_reg conf_reg input_reg mux_mode input_val>
+  */
+-#define MX6UL_PAD_BOOT_MODE0__GPIO5_IO10				0x0014 0x02a0 0x0000 5 0
+-#define MX6UL_PAD_BOOT_MODE1__GPIO5_IO11				0x0018 0x02a4 0x0000 5 0
++#define MX6UL_PAD_BOOT_MODE0__GPIO5_IO10		0x0014 0x02a0 0x0000 5 0
++#define MX6UL_PAD_BOOT_MODE1__GPIO5_IO11		0x0018 0x02a4 0x0000 5 0
  
- source "drivers/gpu/drm/etnaviv/Kconfig"
-+
-+source "drivers/gpu/drm/sunxi/Kconfig"
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 61766de..eef53f2 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -74,3 +74,4 @@ obj-y			+= panel/
- obj-y			+= bridge/
- obj-$(CONFIG_DRM_FSL_DCU) += fsl-dcu/
- obj-$(CONFIG_DRM_ETNAVIV) += etnaviv/
-+obj-$(CONFIG_DRM_SUNXI) += sunxi/
-diff --git a/drivers/gpu/drm/sunxi/Kconfig b/drivers/gpu/drm/sunxi/Kconfig
-new file mode 100644
-index 0000000..e452930
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/Kconfig
-@@ -0,0 +1,20 @@
-+#
-+# Allwinner Video configuration
-+#
-+
-+config DRM_SUNXI
-+	tristate "DRM Support for Allwinner Video"
-+	depends on DRM && ARCH_SUNXI
-+	depends on OF
-+	select DRM_KMS_HELPER
-+	select DRM_KMS_CMA_HELPER
-+	select DRM_GEM_CMA_HELPER
-+	help
-+	  Choose this option if you have a Allwinner chipset.
-+
-+config DRM_SUNXI_DE2
-+	tristate "Support for Allwinner Video with DE2 interface"
-+	depends on DRM_SUNXI
-+	help
-+	  Choose this option if your Allwinner chipset has the DE2 interface
-+	  as the H3.
-diff --git a/drivers/gpu/drm/sunxi/Makefile b/drivers/gpu/drm/sunxi/Makefile
-new file mode 100644
-index 0000000..3778877
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/Makefile
-@@ -0,0 +1,7 @@
-+#
-+# Makefile for Allwinner's DRM device driver
-+#
-+
-+sunxi-de2-drm-objs := de2_drv.o de2_de.o de2_crtc.o de2_plane.o
-+
-+obj-$(CONFIG_DRM_SUNXI_DE2) += sunxi-de2-drm.o
-diff --git a/drivers/gpu/drm/sunxi/de2_crtc.c b/drivers/gpu/drm/sunxi/de2_crtc.c
-new file mode 100644
-index 0000000..b5a093e
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/de2_crtc.c
-@@ -0,0 +1,421 @@
-+/*
-+ * Allwinner DRM driver - DE2 CRTC
-+ *
-+ * Copyright (C) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/component.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <asm/io.h>
-+
-+#include "de2_drm.h"
-+#include "de2_crtc.h"
-+
-+/* I/O map */
-+
-+struct tcon {
-+	u32 gctl;
-+#define		TCON_GCTL_TCON_En BIT(31)
-+	u32 gint0;
-+#define		TCON_GINT0_TCON1_Vb_Int_En BIT(30)
-+#define		TCON_GINT0_TCON1_Vb_Int_Flag BIT(12)
-+	u32 gint1;
-+	u32 dum0[13];
-+	u32 tcon0_ctl;
-+#define		TCON0_CTL_TCON_En BIT(31)
-+	u32 dum1[19];
-+	u32 tcon1_ctl;
-+#define		TCON1_CTL_TCON_En BIT(31)
-+#define		TCON1_CTL_Interlace_En BIT(20)
-+#define		TCON1_CTL_Start_Delay_SHIFT 4
-+#define		TCON1_CTL_Start_Delay_MASK GENMASK(8, 4)
-+	u32 basic0;			/* XI/YI */
-+	u32 basic1;			/* LS_XO/LS_YO */
-+	u32 basic2;			/* XO/YO */
-+	u32 basic3;			/* HT/HBP */
-+	u32 basic4;			/* VT/VBP */
-+	u32 basic5;			/* HSPW/VSPW */
-+	u32 dum2;
-+	u32 ps_sync;
-+	u32 dum3[15];
-+	u32 io_pol;
-+#define		TCON1_IO_POL_IO0_inv BIT(24)
-+#define		TCON1_IO_POL_IO1_inv BIT(25)
-+#define		TCON1_IO_POL_IO2_inv BIT(26)
-+	u32 io_tri;
-+	u32 dum4[2];
-+
-+	u32 ceu_ctl;			/* 100 */
-+#define     TCON_CEU_CTL_ceu_en BIT(31)
-+	u32 dum5[3];
-+	u32 ceu_rr;
-+	u32 ceu_rg;
-+	u32 ceu_rb;
-+	u32 ceu_rc;
-+	u32 ceu_gr;
-+	u32 ceu_gg;
-+	u32 ceu_gb;
-+	u32 ceu_gc;
-+	u32 ceu_br;
-+	u32 ceu_bg;
-+	u32 ceu_bb;
-+	u32 ceu_bc;
-+	u32 ceu_rv;
-+	u32 ceu_gv;
-+	u32 ceu_bv;
-+	u32 dum6[45];
-+
-+	u32 mux_ctl;			/* 200 */
-+#define		TCON_MUX_CTL_HDMI_SRC_SHIFT 8
-+#define		TCON_MUX_CTL_HDMI_SRC_MASK GENMASK(9, 8)
-+	u32 dum7[63];
-+
-+	u32 fill_ctl;			/* 300 */
-+	u32 fill_start0;
-+	u32 fill_end0;
-+	u32 fill_data0;
-+};
-+
-+#define XY(x, y) (((x) << 16) | (y))
-+
-+#define tcon_read(base, member) \
-+	readl_relaxed(base + offsetof(struct tcon, member))
-+#define tcon_write(base, member, data) \
-+	writel_relaxed(data, base + offsetof(struct tcon, member))
-+
-+/*
-+ * vertical blank functions
-+ */
-+int de2_enable_vblank(struct drm_device *drm, unsigned crtc)
-+{
-+	return 0;
-+}
-+
-+void de2_disable_vblank(struct drm_device *drm, unsigned crtc)
-+{
-+}
-+
-+static void de2_set_frame_timings(struct lcd *lcd)
-+{
-+	struct drm_crtc *crtc = &lcd->crtc;
-+	const struct drm_display_mode *mode = &crtc->mode;
-+	int interlace = mode->flags & DRM_MODE_FLAG_INTERLACE ? 2 : 1;
-+	int start_delay;
-+	u32 data;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	data = XY(mode->hdisplay - 1, mode->vdisplay / interlace - 1);
-+	tcon_write(lcd->mmio, basic0, data);
-+	tcon_write(lcd->mmio, basic1, data);
-+	tcon_write(lcd->mmio, basic2, data);
-+	tcon_write(lcd->mmio, basic3,
-+			XY(mode->htotal - 1,
-+				mode->htotal - mode->hsync_start - 1));
-+	tcon_write(lcd->mmio, basic4,
-+			XY(mode->vtotal * (3 - interlace),
-+				mode->vtotal - mode->vsync_start - 1));
-+	tcon_write(lcd->mmio, basic5,
-+			 XY(mode->hsync_end - mode->hsync_start - 1,
-+				mode->vsync_end - mode->vsync_start - 1));
-+
-+	tcon_write(lcd->mmio, ps_sync, XY(1, 1));
-+
-+	data = TCON1_IO_POL_IO2_inv;
-+	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-+		data |= TCON1_IO_POL_IO0_inv;
-+	if (mode->flags & DRM_MODE_FLAG_PHSYNC)
-+		data |= TCON1_IO_POL_IO1_inv;
-+	tcon_write(lcd->mmio, io_pol, data);
-+
-+	tcon_write(lcd->mmio, ceu_ctl,
-+		tcon_read(lcd->mmio, ceu_ctl) & ~TCON_CEU_CTL_ceu_en);
-+
-+	data = tcon_read(lcd->mmio, tcon1_ctl);
-+	if (interlace == 2)
-+		data |= TCON1_CTL_Interlace_En;
-+	else
-+		data &= ~TCON1_CTL_Interlace_En;
-+	tcon_write(lcd->mmio, tcon1_ctl, data);
-+
-+	tcon_write(lcd->mmio, fill_ctl, 0);
-+	tcon_write(lcd->mmio, fill_start0, mode->vtotal + 1);
-+	tcon_write(lcd->mmio, fill_end0, mode->vtotal);
-+	tcon_write(lcd->mmio, fill_data0, 0);
-+
-+	start_delay = (mode->vtotal - mode->vdisplay) / interlace - 5;
-+	if (start_delay > 31)
-+		start_delay = 31;
-+	data = tcon_read(lcd->mmio, tcon1_ctl);
-+	data &= ~TCON1_CTL_Start_Delay_MASK;
-+	data |= start_delay << TCON1_CTL_Start_Delay_SHIFT;
-+	tcon_write(lcd->mmio, tcon1_ctl, data);
-+
-+	tcon_write(lcd->mmio, io_tri, 0x0fffffff);
-+}
-+
-+static void de2_crtc_enable(struct drm_crtc *crtc)
-+{
-+	struct lcd *lcd = crtc_to_lcd(crtc);
-+	struct drm_display_mode *mode = &crtc->mode;
-+	u32 data;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	de2_set_frame_timings(lcd);
-+
-+	clk_set_rate(lcd->clk, mode->clock * 1000);
-+
-+	if (lcd->num == 0) {				/* HDMI */
-+		data = tcon_read(lcd->mmio, mux_ctl);
-+		data &= ~TCON_MUX_CTL_HDMI_SRC_MASK;
-+		data |= lcd->num << TCON_MUX_CTL_HDMI_SRC_SHIFT;
-+		tcon_write(lcd->mmio, mux_ctl, data);
-+	}
-+
-+	tcon_write(lcd->mmio, tcon1_ctl,
-+		tcon_read(lcd->mmio, tcon1_ctl) | TCON1_CTL_TCON_En);
-+
-+	de2_de_panel_init(lcd->priv, lcd->num, mode);
-+
-+	drm_mode_debug_printmodeline(mode);
-+}
-+
-+static void de2_crtc_disable(struct drm_crtc *crtc)
-+{
-+	struct lcd *lcd = crtc_to_lcd(crtc);
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	tcon_write(lcd->mmio, tcon1_ctl,
-+		tcon_read(lcd->mmio, tcon1_ctl) & ~TCON1_CTL_TCON_En);
-+}
-+
-+static const struct drm_crtc_funcs de2_crtc_funcs = {
-+	.destroy	= drm_crtc_cleanup,
-+	.set_config	= drm_atomic_helper_set_config,
-+	.page_flip	= drm_atomic_helper_page_flip,
-+	.reset		= drm_atomic_helper_crtc_reset,
-+	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
-+};
-+
-+static const struct drm_crtc_helper_funcs de2_crtc_helper_funcs = {
-+	.enable		= de2_crtc_enable,
-+	.disable	= de2_crtc_disable,
-+};
-+
-+static void de2_tcon_enable(struct lcd *lcd)
-+{
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	tcon_write(lcd->mmio, tcon0_ctl,
-+		tcon_read(lcd->mmio, tcon0_ctl) & ~TCON0_CTL_TCON_En);
-+	tcon_write(lcd->mmio, tcon1_ctl,
-+		tcon_read(lcd->mmio, tcon1_ctl) & ~TCON1_CTL_TCON_En);
-+	tcon_write(lcd->mmio, gctl,
-+		tcon_read(lcd->mmio, gctl) & ~TCON_GCTL_TCON_En);
-+
-+	tcon_write(lcd->mmio, gint0,
-+		tcon_read(lcd->mmio, gint0) & ~(TCON_GINT0_TCON1_Vb_Int_En |
-+						TCON_GINT0_TCON1_Vb_Int_Flag));
-+
-+	tcon_write(lcd->mmio, gctl,
-+		tcon_read(lcd->mmio, gctl) | TCON_GCTL_TCON_En);
-+}
-+
-+static int de2_crtc_init(struct drm_device *drm, struct lcd *lcd)
-+{
-+	struct drm_crtc *crtc = &lcd->crtc;
-+	int ret;
-+
-+	ret = de2_plane_init(drm, lcd);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = drm_crtc_init_with_planes(drm, crtc,
-+					&lcd->planes[DE2_PRIMARY_PLANE],
-+					&lcd->planes[DE2_CURSOR_PLANE],
-+					&de2_crtc_funcs, NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	de2_tcon_enable(lcd);
-+
-+	de2_de_enable(lcd->priv, lcd->num);
-+
-+	drm_crtc_helper_add(crtc, &de2_crtc_helper_funcs);
-+
-+	return 0;
-+}
-+
-+/*
-+ * device init
-+ */
-+static int de2_lcd_bind(struct device *dev, struct device *master,
-+			void *data)
-+{
-+	struct drm_device *drm = data;
-+	struct priv *priv = drm->dev_private;
-+	struct lcd *lcd = dev_get_drvdata(dev);
-+	int ret;
-+
-+	lcd->priv = priv;
-+
-+	ret = de2_crtc_init(drm, lcd);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to init the crtc\n");
-+		return ret;
-+	}
-+
-+	priv->lcds[lcd->num] = lcd;
-+
-+	return 0;
-+}
-+
-+static void de2_lcd_unbind(struct device *dev, struct device *master,
-+			void *data)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct lcd *lcd = platform_get_drvdata(pdev);
-+
-+	if (lcd->mmio) {
-+		if (lcd->priv)
-+			de2_de_disable(lcd->priv, lcd->num);
-+		tcon_write(lcd->mmio, gctl,
-+			tcon_read(lcd->mmio, gctl) & ~TCON_GCTL_TCON_En);
-+	}
-+}
-+
-+static const struct component_ops de2_lcd_ops = {
-+	.bind = de2_lcd_bind,
-+	.unbind = de2_lcd_unbind,
-+};
-+
-+static int de2_lcd_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node, *tmp, *parent, *port;
-+	struct lcd *lcd;
-+	struct resource *res;
-+	int id, ret;
-+
-+	id = of_alias_get_id(np, "lcd");
-+	if (id < 0) {
-+		dev_err(dev, "no alias for lcd\n");
-+		id = 0;
-+	}
-+	lcd = devm_kzalloc(dev, sizeof *lcd, GFP_KERNEL);
-+	if (!lcd) {
-+		dev_err(dev, "failed to allocate private data\n");
-+		return -ENOMEM;
-+	}
-+	dev_set_drvdata(dev, lcd);
-+	lcd->dev = dev;
-+	lcd->num = id;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(dev, "failed to get memory resource\n");
-+		return -EINVAL;
-+	}
-+
-+	lcd->mmio = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(lcd->mmio)) {
-+		dev_err(dev, "failed to map registers\n");
-+		return PTR_ERR(lcd->mmio);
-+	}
-+
-+	snprintf(lcd->name, sizeof(lcd->name), "sunxi-lcd%d", id);
-+
-+	/* possible CRTCs */
-+	parent = np;
-+	tmp = of_get_child_by_name(np, "ports");
-+	if (tmp)
-+		parent = tmp;
-+	port = of_get_child_by_name(parent, "port");
-+	of_node_put(tmp);
-+	if (!port) {
-+		dev_err(dev, "no port node\n");
-+		return -ENXIO;
-+	}
-+	lcd->crtc.port = port;
-+
-+	lcd->gate = devm_clk_get(dev, "gate");
-+	if (IS_ERR(lcd->gate)) {
-+		dev_err(dev, "gate clock err %d\n", (int) PTR_ERR(lcd->gate));
-+		ret = PTR_ERR(lcd->gate);
-+		goto err;
-+	}
-+
-+	lcd->clk = devm_clk_get(dev, "clock");
-+	if (IS_ERR(lcd->clk)) {
-+		dev_err(dev, "video clock err %d\n", (int) PTR_ERR(lcd->clk));
-+		ret = PTR_ERR(lcd->clk);
-+		goto err;
-+	}
-+
-+	lcd->rstc = devm_reset_control_get(dev, NULL);
-+	if (IS_ERR(lcd->rstc)) {
-+		dev_err(dev, "reset controller err %d\n",
-+				(int) PTR_ERR(lcd->rstc));
-+		ret = PTR_ERR(lcd->rstc);
-+		goto err;
-+	}
-+
-+	ret = clk_prepare_enable(lcd->clk);
-+	if (ret)
-+		goto err;
-+	ret = clk_prepare_enable(lcd->gate);
-+	if (ret)
-+		goto err;
-+
-+	ret = reset_control_deassert(lcd->rstc);
-+	if (ret) {
-+		dev_err(dev, "reset deassert err %d\n", ret);
-+		goto err;
-+	}
-+
-+	return component_add(&pdev->dev, &de2_lcd_ops);
-+
-+err:
-+	clk_disable_unprepare(lcd->gate);
-+	clk_disable_unprepare(lcd->clk);
-+	of_node_put(lcd->crtc.port);
-+	return ret;
-+}
-+
-+static int de2_lcd_remove(struct platform_device *pdev)
-+{
-+	struct lcd *lcd = platform_get_drvdata(pdev);
-+
-+	component_del(&pdev->dev, &de2_lcd_ops);
-+
-+	if (!IS_ERR_OR_NULL(lcd->rstc))
-+		reset_control_assert(lcd->rstc);
-+	clk_disable_unprepare(lcd->gate);
-+	clk_disable_unprepare(lcd->clk);
-+	of_node_put(lcd->crtc.port);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id de2_lcd_ids[] = {
-+	{ .compatible = "allwinner,sun8i-h3-lcd", },
-+	{ }
-+};
-+
-+struct platform_driver de2_lcd_platform_driver = {
-+	.probe = de2_lcd_probe,
-+	.remove = de2_lcd_remove,
-+	.driver = {
-+		.name = "sun8i-h3-lcd",
-+		.of_match_table = of_match_ptr(de2_lcd_ids),
-+	},
-+};
-diff --git a/drivers/gpu/drm/sunxi/de2_crtc.h b/drivers/gpu/drm/sunxi/de2_crtc.h
-new file mode 100644
-index 0000000..789bd6e
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/de2_crtc.h
-@@ -0,0 +1,61 @@
-+#ifndef __DE2_CRTC_H__
-+#define __DE2_CRTC_H__
-+/*
-+ * Copyright (C) 2016 Jean-François Moine
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/reset.h>
-+#include <drm/drm_plane_helper.h>
-+
-+struct priv;
-+
-+enum de2_plane2 {
-+	DE2_PRIMARY_PLANE,
-+	DE2_CURSOR_PLANE,
-+	DE2_N_PLANES,
-+};
-+struct lcd {
-+	void __iomem *mmio;
-+
-+	struct device *dev;
-+	struct drm_crtc crtc;
-+	struct priv *priv;	/* DRM/DE private data */
-+
-+	int num;		/* LCD index 0/1 */
-+
-+	struct clk *clk;
-+	struct clk *gate;
-+	struct reset_control *rstc;
-+
-+	char name[16];
-+
-+	struct drm_pending_vblank_event *event;
-+
-+	struct drm_plane planes[DE2_N_PLANES];
-+};
-+
-+#define crtc_to_lcd(x) container_of(x, struct lcd, crtc)
-+
-+/* in de2_de.c */
-+void de2_de_enable(struct priv *priv, int lcd_num);
-+void de2_de_disable(struct priv *priv, int lcd_num);
-+void de2_de_hw_init(struct priv *priv, int lcd_num);
-+void de2_de_panel_init(struct priv *priv, int lcd_num,
-+			struct drm_display_mode *mode);
-+void de2_de_plane_disable(struct priv *priv,
-+			int lcd_num, int plane_ix);
-+void de2_de_plane_update(struct priv *priv,
-+			int lcd_num, int plane_ix,
-+			struct drm_plane_state *state,
-+			struct drm_plane_state *old_state);
-+
-+/* in de2_plane.c */
-+int de2_plane_init(struct drm_device *drm, struct lcd *lcd);
-+
-+#endif /* __DE2_CRTC_H__ */
-diff --git a/drivers/gpu/drm/sunxi/de2_de.c b/drivers/gpu/drm/sunxi/de2_de.c
-new file mode 100644
-index 0000000..9469b11
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/de2_de.c
-@@ -0,0 +1,505 @@
-+/*
-+ * ALLWINNER DRM driver - Display Engine 2
-+ *
-+ * Copyright (C) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <asm/io.h>
-+#include <drm/drm_gem_cma_helper.h>
-+
-+#include "de2_drm.h"
-+#include "de2_crtc.h"
-+
-+static DEFINE_SPINLOCK(de_lock);
-+
-+/* I/O map */
-+
-+#define DE_MOD_REG 0x0000	/* 1 bit per LCD */
-+#define DE_GATE_REG 0x0004
-+#define DE_RESET_REG 0x0008
-+#define DE_DIV_REG 0x000c	/* 4 bits per LCD */
-+#define DE_SEL_REG 0x0010
-+
-+#define DE_MUX0_BASE 0x00100000
-+#define DE_MUX1_BASE 0x00200000
-+
-+/* MUX registers (addr / MUX base) */
-+#define DE_MUX_GLB_REGS 0x00000		/* global control */
-+#define DE_MUX_BLD_REGS 0x01000		/* alpha blending */
-+#define DE_MUX_CHAN_REGS 0x02000	/* VI/UI overlay channels */
-+#define		DE_MUX_CHAN_SZ 0x1000	/* size of a channel */
-+#define DE_MUX_VSU_REGS 0x20000		/* VSU */
-+#define DE_MUX_GSU1_REGS 0x40000	/* GSUs */
-+#define DE_MUX_GSU2_REGS 0x60000
-+#define DE_MUX_GSU3_REGS 0x80000
-+#define DE_MUX_FCE_REGS 0xa0000		/* FCE */
-+#define DE_MUX_BWS_REGS 0xa2000		/* BWS */
-+#define DE_MUX_LTI_REGS 0xa4000		/* LTI */
-+#define DE_MUX_PEAK_REGS 0xa6000	/* PEAK */
-+#define DE_MUX_ASE_REGS 0xa8000		/* ASE */
-+#define DE_MUX_FCC_REGS 0xaa000		/* FCC */
-+#define DE_MUX_DCSC_REGS 0xb0000	/* DCSC */
-+
-+/* global control */
-+struct de_glb {
-+	u32 ctl;
-+#define		DE_MUX_GLB_CTL_rt_en BIT(0)
-+#define		DE_MUX_GLB_CTL_finish_irq_en BIT(4)
-+#define		DE_MUX_GLB_CTL_rtwb_port BIT(12)
-+	u32 status;
-+	u32 dbuff;
-+	u32 size;
-+};
-+
-+/* alpha blending */
-+struct de_bld {
-+	u32 fcolor_ctl;			/* 00 */
-+	struct {
-+		u32 fcolor;
-+		u32 insize;
-+		u32 offset;
-+		u32 dum;
-+	} attr[4];
-+	u32 dum0[15];			/* (end of clear offset) */
-+	u32 route;			/* 80 */
-+	u32 premultiply;
-+	u32 bkcolor;
-+	u32 output_size;
-+	u32 bld_mode[4];
-+	u32 dum1[4];
-+	u32 ck_ctl;			/* b0 */
-+	u32 ck_cfg;
-+	u32 dum2[2];
-+	u32 ck_max[4];
-+	u32 dum3[4];
-+	u32 ck_min[4];
-+	u32 dum4[3];
-+	u32 out_ctl;			/* fc */
-+};
-+
-+/* VI channel */
-+struct de_vi {
-+	struct {
-+		u32 attr;
-+#define			VI_CFG_ATTR_en BIT(0)
-+#define			VI_CFG_ATTR_fcolor_en BIT(4)
-+#define			VI_CFG_ATTR_fmt_SHIFT 8
-+#define			VI_CFG_ATTR_fmt_MASK GENMASK(12, 8)
-+#define			VI_CFG_ATTR_ui_sel BIT(15)
-+#define			VI_CFG_ATTR_top_down BIT(23)
-+		u32 size;
-+		u32 coord;
-+		u32 pitch[3];
-+		u32 top_laddr[3];
-+		u32 bot_laddr[3];
-+	} cfg[4];
-+	u32 fcolor[4];			/* c0 */
-+	u32 top_haddr[3];		/* d0 */
-+	u32 bot_haddr[3];		/* dc */
-+	u32 ovl_size[2];		/* e8 */
-+	u32 hori[2];			/* f0 */
-+	u32 vert[2];			/* f8 */
-+};
-+
-+/* UI channel */
-+struct de_ui {
-+	struct {
-+		u32 attr;
-+#define			UI_CFG_ATTR_en BIT(0)
-+#define			UI_CFG_ATTR_alpmod_SHIFT 1
-+#define			UI_CFG_ATTR_alpmod_MASK GENMASK(2, 1)
-+#define			UI_CFG_ATTR_fcolor_en BIT(4)
-+#define			UI_CFG_ATTR_fmt_SHIFT 8
-+#define			UI_CFG_ATTR_fmt_MASK GENMASK(12, 8)
-+#define			UI_CFG_ATTR_top_down BIT(23)
-+#define			UI_CFG_ATTR_alpha_SHIFT 24
-+#define			UI_CFG_ATTR_alpha_MASK GENMASK(31, 24)
-+		u32 size;
-+		u32 coord;
-+		u32 pitch;
-+		u32 top_laddr;
-+		u32 bot_laddr;
-+		u32 fcolor;
-+		u32 dum;
-+	} cfg[4];			/* 00 */
-+	u32 top_haddr;			/* 80 */
-+	u32 bot_haddr;
-+	u32 ovl_size;			/* 88 */
-+};
-+
-+#define DE_CORE_CLK_RATE 432000000
-+
-+/* coordinates and sizes */
-+#define XY(x, y) (((y) << 16) | (x))
-+#define WH(w, h) (((h - 1) << 16) | (w - 1))
-+
-+/* UI video formats */
-+#define DE2_FORMAT_ARGB_8888 0
-+#define DE2_FORMAT_XRGB_8888 4
-+#define DE2_FORMAT_RGB_888 8
-+#define DE2_FORMAT_BGR_888 9
-+
-+#define glb_read(base, member) \
-+	readl_relaxed(base + offsetof(struct de_glb, member))
-+#define glb_write(base, member, data) \
-+	writel_relaxed(data, base + offsetof(struct de_glb, member))
-+#define bld_read(base, member) \
-+	readl_relaxed(base + offsetof(struct de_bld, member))
-+#define bld_write(base, member, data) \
-+	writel_relaxed(data, base + offsetof(struct de_bld, member))
-+#define ui_read(base, member) \
-+	readl_relaxed(base + offsetof(struct de_ui, member))
-+#define ui_write(base, member, data) \
-+	writel_relaxed(data, base + offsetof(struct de_ui, member))
-+#define vi_read(base, member) \
-+	readl_relaxed(base + offsetof(struct de_vi, member))
-+#define vi_write(base, member, data) \
-+	writel_relaxed(data, base + offsetof(struct de_vi, member))
-+
-+static const struct {
-+	char chan;
-+	char layer;
-+} plane2layer[DE2_N_PLANES] = {
-+	[DE2_PRIMARY_PLANE] = {.chan = 1, .layer = 0,},
-+	[DE2_CURSOR_PLANE] = {.chan = 2, .layer = 0,},
-+};
-+
-+static inline void de_write(struct priv *priv, int reg, u32 data)
-+{
-+	writel_relaxed(data, priv->mmio + reg);
-+}
-+
-+static inline u32 de_read(struct priv *priv, int reg)
-+{
-+	return readl_relaxed(priv->mmio + reg);
-+}
-+
-+static void de_lcd_select(struct priv *priv,
-+			int lcd_num,
-+			void __iomem *mux_o)
-+{
-+	u32 data;
-+
-+	/* select the LCD */
-+	data = de_read(priv, DE_SEL_REG);
-+	if (lcd_num == 0)
-+		data &= ~1;
-+	else
-+		data |= 1;
-+	de_write(priv, DE_SEL_REG, data);
-+
-+	/* double register switch */
-+	glb_write(mux_o + DE_MUX_GLB_REGS, dbuff, 1);
-+}
-+
-+void de2_de_plane_update(struct priv *priv,
-+			int lcd_num, int plane_ix,
-+			struct drm_plane_state *state,
-+			struct drm_plane_state *old_state)
-+{
-+	struct drm_framebuffer *fb = state->fb;
-+	struct drm_gem_cma_object *gem;
-+	void __iomem *mux_o = priv->mmio;
-+	void __iomem *chan_o;
-+	u32 size = WH(state->crtc_w, state->crtc_h);
-+	u32 coord = XY(state->crtc_x, state->crtc_y);
-+	u32 screen_size;
-+	u32 data;
-+	int chan, layer;
-+	unsigned fmt, alpha_glob;
-+	unsigned long flags;
-+
-+	mux_o += (lcd_num == 0) ? DE_MUX0_BASE : DE_MUX1_BASE;
-+
-+	chan = plane2layer[plane_ix].chan;
-+	layer = plane2layer[plane_ix].layer;
-+
-+	chan_o = mux_o;
-+	chan_o += DE_MUX_CHAN_REGS + DE_MUX_CHAN_SZ * chan;
-+
-+	if (fb == old_state->fb
-+	 && ui_read(chan_o, cfg[layer].attr) != 0) {
-+		spin_lock_irqsave(&de_lock, flags);
-+		de_lcd_select(priv, lcd_num, mux_o);
-+		ui_write(chan_o, cfg[layer].coord, coord);
-+		spin_unlock_irqrestore(&de_lock, flags);
-+		return;
-+	}
-+
-+	gem = drm_fb_cma_get_gem_obj(fb, 0);
-+
-+	alpha_glob = 0;
-+	switch (fb->pixel_format) {
-+	case DRM_FORMAT_ARGB8888:
-+		fmt = DE2_FORMAT_ARGB_8888;
-+		break;
-+	case DRM_FORMAT_XRGB8888:
-+		fmt = DE2_FORMAT_XRGB_8888;
-+		alpha_glob = 1;
-+		break;
-+	case DRM_FORMAT_RGB888:
-+		fmt = DE2_FORMAT_RGB_888;
-+		break;
-+	case DRM_FORMAT_BGR888:
-+		fmt = DE2_FORMAT_BGR_888;
-+		break;
-+	default:
-+		pr_err("format %.4s not yet treated\n",
-+			(char *) &fb->pixel_format);
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&de_lock, flags);
-+
-+	if (plane_ix == DE2_PRIMARY_PLANE)
-+		screen_size = size;
-+	else
-+		screen_size = glb_read(mux_o + DE_MUX_GLB_REGS, size);
-+
-+	de_lcd_select(priv, lcd_num, mux_o);
-+
-+	data = UI_CFG_ATTR_en |
-+			(fmt << UI_CFG_ATTR_fmt_SHIFT);
-+	if (alpha_glob)
-+		data |= (1 << UI_CFG_ATTR_alpmod_SHIFT) |
-+			(0xff << UI_CFG_ATTR_alpha_SHIFT);
-+	ui_write(chan_o, cfg[layer].attr, data);
-+	ui_write(chan_o, cfg[layer].size, size);
-+	ui_write(chan_o, cfg[layer].coord, coord);
-+	ui_write(chan_o, cfg[layer].pitch, fb->pitches[0]);
-+	ui_write(chan_o, cfg[layer].top_laddr,
-+			gem->paddr + fb->offsets[0]);
-+	ui_write(chan_o, ovl_size, screen_size);
-+
-+	if (plane_ix == DE2_PRIMARY_PLANE)
-+		bld_write(mux_o + DE_MUX_BLD_REGS,
-+					fcolor_ctl, 0x0101);
-+	else
-+		bld_write(mux_o + DE_MUX_BLD_REGS,
-+					fcolor_ctl, 0x0301);
-+
-+	spin_unlock_irqrestore(&de_lock, flags);
-+}
-+
-+void de2_de_plane_disable(struct priv *priv,
-+			int lcd_num, int plane_ix)
-+{
-+	void __iomem *mux_o = priv->mmio;
-+	void __iomem *chan_o;
-+	int chan, layer;
-+	unsigned long flags;
-+
-+	chan = plane2layer[plane_ix].chan;
-+	layer = plane2layer[plane_ix].layer;
-+
-+	mux_o += (lcd_num == 0) ? DE_MUX0_BASE : DE_MUX1_BASE;
-+	chan_o = mux_o + DE_MUX_CHAN_REGS + DE_MUX_CHAN_SZ * chan;
-+
-+	spin_lock_irqsave(&de_lock, flags);
-+
-+	de_lcd_select(priv, lcd_num, mux_o);
-+
-+	ui_write(chan_o, cfg[layer].attr, 0);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, fcolor_ctl, 0x0101);
-+
-+	spin_unlock_irqrestore(&de_lock, flags);
-+}
-+
-+void de2_de_panel_init(struct priv *priv, int lcd_num,
-+			struct drm_display_mode *mode)
-+{
-+	void __iomem *mux_o = priv->mmio;
-+	u32 size = WH(mode->hdisplay, mode->vdisplay);
-+	unsigned i;
-+	unsigned long flags;
-+
-+	mux_o += (lcd_num == 0) ? DE_MUX0_BASE : DE_MUX1_BASE;
-+
-+	DRM_DEBUG_DRIVER("%dx%d\n", mode->hdisplay, mode->vdisplay);
-+
-+	spin_lock_irqsave(&de_lock, flags);
-+
-+	de_lcd_select(priv, lcd_num, mux_o);
-+
-+	glb_write(mux_o + DE_MUX_GLB_REGS, size, size);
-+
-+	/* set alpha blending */
-+	for (i = 0; i < 4; i++)
-+		bld_write(mux_o + DE_MUX_BLD_REGS, attr[i].insize, size);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, output_size, size);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, out_ctl,
-+			mode->flags & DRM_MODE_FLAG_INTERLACE ? 2 : 0);
-+
-+	spin_unlock_irqrestore(&de_lock, flags);
-+}
-+
-+void de2_de_enable(struct priv *priv, int lcd_num)
-+{
-+	void __iomem *mux_o = priv->mmio;
-+	unsigned chan;
-+	u32 size = WH(1920, 1080);
-+	u32 data;
-+	unsigned long flags;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	data = 1 << lcd_num;			/* 1 bit / lcd */
-+	de_write(priv, DE_RESET_REG,
-+			de_read(priv, DE_RESET_REG) | data);
-+	de_write(priv, DE_GATE_REG,
-+			de_read(priv, DE_GATE_REG) | data);
-+	de_write(priv, DE_MOD_REG,
-+			de_read(priv, DE_MOD_REG) | data);
-+
-+	mux_o += (lcd_num == 0) ? DE_MUX0_BASE : DE_MUX1_BASE;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	spin_lock_irqsave(&de_lock, flags);
-+
-+	/* select the LCD */
-+	data = de_read(priv, DE_SEL_REG);
-+	if (lcd_num == 0)
-+		data &= ~1;
-+	else
-+		data |= 1;
-+	de_write(priv, DE_SEL_REG, data);
-+
-+	/* start init */
-+	glb_write(mux_o + DE_MUX_GLB_REGS, ctl,
-+		DE_MUX_GLB_CTL_rt_en | DE_MUX_GLB_CTL_rtwb_port);
-+	glb_write(mux_o + DE_MUX_GLB_REGS, status, 0);
-+	glb_write(mux_o + DE_MUX_GLB_REGS, dbuff, 1);	/* dble reg switch */
-+	glb_write(mux_o + DE_MUX_GLB_REGS, size, size);
-+
-+	/* clear the VI/UI channels */
-+	for (chan = 0; chan < 4; chan++) {
-+		void __iomem *chan_o = mux_o + DE_MUX_CHAN_REGS +
-+				DE_MUX_CHAN_SZ * chan;
-+
-+		if (chan == 0)
-+			memset_io(chan_o, 0, sizeof(struct de_vi));
-+		else
-+			memset_io(chan_o, 0, sizeof(struct de_ui));
-+		if (chan == 2 && lcd_num != 0)
-+			break;		/* lcd1 only 1 VI and 1 UI */
-+	}
-+
-+	/* clear and set alpha blending */
-+	memset_io(mux_o + DE_MUX_BLD_REGS, 0, offsetof(struct de_bld, dum0));
-+	bld_write(mux_o + DE_MUX_BLD_REGS, fcolor_ctl, 0x00000101);
-+						/* fcolor for primary */
-+	bld_write(mux_o + DE_MUX_BLD_REGS, route, 0x0021);
-+					/* prepare route primary and cursor */
-+	bld_write(mux_o + DE_MUX_BLD_REGS, premultiply, 0);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, bkcolor, 0xff000000);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, bld_mode[0], 0x03010301);
-+								/* SRCOVER */
-+	bld_write(mux_o + DE_MUX_BLD_REGS, bld_mode[1], 0x03010301);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, bld_mode[2], 0x03010301);
-+	bld_write(mux_o + DE_MUX_BLD_REGS, out_ctl, 0);
-+
-+	/* disable the enhancements */
-+	writel_relaxed(0, mux_o + DE_MUX_VSU_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_GSU1_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_GSU2_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_GSU3_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_FCE_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_BWS_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_LTI_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_PEAK_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_ASE_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_FCC_REGS);
-+	writel_relaxed(0, mux_o + DE_MUX_DCSC_REGS);
-+
-+	spin_unlock_irqrestore(&de_lock, flags);
-+}
-+
-+void de2_de_disable(struct priv *priv, int lcd_num)
-+{
-+	u32 data;
-+
-+	data = ~(1 << lcd_num);
-+	de_write(priv, DE_MOD_REG,
-+			de_read(priv, DE_MOD_REG) & data);
-+	de_write(priv, DE_GATE_REG,
-+			de_read(priv, DE_GATE_REG) & data);
-+	de_write(priv, DE_RESET_REG,
-+			de_read(priv, DE_RESET_REG) & data);
-+}
-+
-+int de2_de_init(struct priv *priv, struct device *dev)
-+{
-+	struct resource *res;
-+	int ret;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	res = platform_get_resource(to_platform_device(dev),
-+				IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(dev, "failed to get memory resource\n");
-+		return -EINVAL;
-+	}
-+
-+	priv->mmio = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->mmio)) {
-+		dev_err(dev, "failed to map registers\n");
-+		return PTR_ERR(priv->mmio);
-+	}
-+
-+	priv->gate = devm_clk_get(dev, "gate");
-+	if (IS_ERR(priv->gate)) {
-+		dev_err(dev, "gate clock err %d\n", (int) PTR_ERR(priv->gate));
-+		return PTR_ERR(priv->gate);
-+	}
-+
-+	priv->clk = devm_clk_get(dev, "clock");
-+	if (IS_ERR(priv->clk)) {
-+		dev_err(dev, "video clock err %d\n", (int) PTR_ERR(priv->clk));
-+		return PTR_ERR(priv->clk);
-+	}
-+
-+	priv->rstc = devm_reset_control_get(dev, NULL);
-+	if (IS_ERR(priv->rstc)) {
-+		dev_err(dev, "reset controller err %d\n",
-+				(int) PTR_ERR(priv->rstc));
-+		return PTR_ERR(priv->rstc);
-+	}
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+	ret = clk_prepare_enable(priv->gate);
-+	if (ret)
-+		goto err_gate;
-+
-+	/* the DE has a fixed clock rate */
-+	clk_set_rate(priv->clk, DE_CORE_CLK_RATE);
-+
-+	ret = reset_control_deassert(priv->rstc);
-+	if (ret) {
-+		dev_err(dev, "reset deassert err %d\n", ret);
-+		goto err_reset;
-+	}
-+
-+	return 0;
-+
-+err_reset:
-+	clk_disable_unprepare(priv->gate);
-+err_gate:
-+	clk_disable_unprepare(priv->clk);
-+	return ret;
-+}
-+
-+void de2_de_cleanup(struct priv *priv)
-+{
-+	reset_control_assert(priv->rstc);
-+	clk_disable_unprepare(priv->gate);
-+	clk_disable_unprepare(priv->clk);
-+}
-diff --git a/drivers/gpu/drm/sunxi/de2_drm.h b/drivers/gpu/drm/sunxi/de2_drm.h
-new file mode 100644
-index 0000000..1e6cf6d
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/de2_drm.h
-@@ -0,0 +1,40 @@
-+#ifndef __DE2_DRM_H__
-+#define __DE2_DRM_H__
-+/*
-+ * Copyright (C) 2016 Jean-François Moine
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/reset.h>
-+#include <drm/drmP.h>
-+#include <drm/drm_fb_cma_helper.h>
-+
-+struct lcd;
-+
-+#define N_LCDS 2
-+struct priv {
-+	void __iomem *mmio;
-+	struct clk *clk;
-+	struct clk *gate;
-+	struct reset_control *rstc;
-+
-+	struct drm_fbdev_cma *fbdev;
-+
-+	struct lcd *lcds[N_LCDS];
-+};
-+
-+/* in de2_crtc.c */
-+int de2_enable_vblank(struct drm_device *drm, unsigned crtc);
-+void de2_disable_vblank(struct drm_device *drm, unsigned crtc);
-+extern struct platform_driver de2_lcd_platform_driver;
-+
-+/* in de2_de.c */
-+int de2_de_init(struct priv *priv, struct device *dev);
-+void de2_de_cleanup(struct priv *priv);
-+
-+#endif /* __DE2_DRM_H__ */
-diff --git a/drivers/gpu/drm/sunxi/de2_drv.c b/drivers/gpu/drm/sunxi/de2_drv.c
-new file mode 100644
-index 0000000..bfb9100
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/de2_drv.c
-@@ -0,0 +1,377 @@
-+/*
-+ * Allwinner DRM driver - DE2 DRM driver
-+ *
-+ * Copyright (C) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/pm.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/of_graph.h>
-+#include <linux/component.h>
-+#include <drm/drm_of.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_gem_cma_helper.h>
-+
-+#include "de2_drm.h"
-+
-+#define DRIVER_NAME	"sunxi-de2"
-+#define DRIVER_DESC	"Allwinner DRM DE2"
-+#define DRIVER_DATE	"20160201"
-+#define DRIVER_MAJOR	1
-+#define DRIVER_MINOR	0
-+
-+static void de2_fb_output_poll_changed(struct drm_device *drm)
-+{
-+	struct priv *priv = drm->dev_private;
-+
-+	if (priv->fbdev)
-+		drm_fbdev_cma_hotplug_event(priv->fbdev);
-+}
-+
-+static const struct drm_mode_config_funcs de2_mode_config_funcs = {
-+	.fb_create = drm_fb_cma_create,
-+	.output_poll_changed = de2_fb_output_poll_changed,
-+	.atomic_check = drm_atomic_helper_check,
-+	.atomic_commit = drm_atomic_helper_commit,
-+};
-+
-+/*
-+ * DRM operations:
-+ */
-+static void de2_lastclose(struct drm_device *drm)
-+{
-+	struct priv *priv = drm->dev_private;
-+
-+	if (priv->fbdev)
-+		drm_fbdev_cma_restore_mode(priv->fbdev);
-+}
-+
-+static const struct file_operations de2_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= drm_open,
-+	.release	= drm_release,
-+	.unlocked_ioctl	= drm_ioctl,
-+	.poll		= drm_poll,
-+	.read		= drm_read,
-+	.llseek		= no_llseek,
-+	.mmap		= drm_gem_cma_mmap,
-+};
-+
-+static struct drm_driver de2_drm_driver = {
-+	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME |
-+					DRIVER_ATOMIC,
-+	.lastclose		= de2_lastclose,
-+	.get_vblank_counter	= drm_vblank_no_hw_counter,
-+	.enable_vblank		= de2_enable_vblank,
-+	.disable_vblank		= de2_disable_vblank,
-+	.gem_free_object	= drm_gem_cma_free_object,
-+	.gem_vm_ops		= &drm_gem_cma_vm_ops,
-+	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
-+	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
-+	.gem_prime_import	= drm_gem_prime_import,
-+	.gem_prime_export	= drm_gem_prime_export,
-+	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
-+	.gem_prime_import_sg_table = drm_gem_cma_prime_import_sg_table,
-+	.gem_prime_vmap		= drm_gem_cma_prime_vmap,
-+	.gem_prime_vunmap	= drm_gem_cma_prime_vunmap,
-+	.gem_prime_mmap		= drm_gem_cma_prime_mmap,
-+	.dumb_create		= drm_gem_cma_dumb_create,
-+	.dumb_map_offset	= drm_gem_cma_dumb_map_offset,
-+	.dumb_destroy		= drm_gem_dumb_destroy,
-+	.fops			= &de2_fops,
-+	.name			= DRIVER_NAME,
-+	.desc			= DRIVER_DESC,
-+	.date			= DRIVER_DATE,
-+	.major			= DRIVER_MAJOR,
-+	.minor			= DRIVER_MINOR,
-+};
-+
-+#ifdef CONFIG_PM_SLEEP
-+/*
-+ * Power management
-+ */
-+static int de2_pm_suspend(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+
-+	drm_kms_helper_poll_disable(drm);
-+	return 0;
-+}
-+
-+static int de2_pm_resume(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+
-+	drm_kms_helper_poll_enable(drm);
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops de2_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(de2_pm_suspend, de2_pm_resume)
-+};
-+
-+/*
-+ * Platform driver
-+ */
-+
-+static int de2_drm_bind(struct device *dev)
-+{
-+	struct drm_device *drm;
-+	struct priv *priv;
-+	int ret;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	drm = drm_dev_alloc(&de2_drm_driver, dev);
-+	if (!drm)
-+		return -ENOMEM;
-+
-+	ret = drm_dev_set_unique(drm, dev_name(dev));
-+	if (ret < 0)
-+		goto out1;
-+
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv) {
-+		dev_err(dev, "failed to allocate private area\n");
-+		ret = -ENOMEM;
-+		goto out1;
-+	}
-+
-+	dev_set_drvdata(dev, drm);
-+	drm->dev_private = priv;
-+
-+	drm_mode_config_init(drm);
-+	drm->mode_config.min_width = 32;	/* needed for cursor */
-+	drm->mode_config.min_height = 32;
-+	drm->mode_config.max_width = 1920;
-+	drm->mode_config.max_height = 1080;
-+	drm->mode_config.funcs = &de2_mode_config_funcs;
-+
-+	ret = drm_dev_register(drm, 0);
-+	if (ret < 0)
-+		goto out2;
-+
-+	/* initialize the display engine */
-+	ret = de2_de_init(priv, dev);
-+	if (ret)
-+		goto out3;
-+
-+	/* start the subdevices */
-+	ret = component_bind_all(dev, drm);
-+	if (ret < 0)
-+		goto out3;
-+
-+	DRM_DEBUG_DRIVER("%d crtcs %d connectors\n",
-+			 drm->mode_config.num_crtc,
-+			 drm->mode_config.num_connector);
-+
-+	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
-+	if (ret < 0)
-+		dev_warn(dev, "failed to initialize vblank\n");
-+
-+	drm_mode_config_reset(drm);
-+
-+	priv->fbdev = drm_fbdev_cma_init(drm,
-+					32,	/* bpp */
-+					drm->mode_config.num_crtc,
-+					drm->mode_config.num_connector);
-+	if (IS_ERR(priv->fbdev)) {
-+		ret = PTR_ERR(priv->fbdev);
-+		priv->fbdev = NULL;
-+		goto out4;
-+	}
-+
-+	drm_kms_helper_poll_init(drm);
-+
-+	return 0;
-+
-+out4:
-+	component_unbind_all(dev, drm);
-+out3:
-+	drm_dev_unregister(drm);
-+out2:
-+	kfree(priv);
-+out1:
-+	drm_dev_unref(drm);
-+	return ret;
-+}
-+
-+static void de2_drm_unbind(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+	struct priv *priv = drm->dev_private;
-+
-+	if (priv)
-+		drm_fbdev_cma_fini(priv->fbdev);
-+
-+	drm_kms_helper_poll_fini(drm);
-+
-+	component_unbind_all(dev, drm);
-+
-+	drm_dev_unregister(drm);
-+
-+	drm_mode_config_cleanup(drm);
-+
-+	if (priv) {
-+		de2_de_cleanup(priv);
-+		kfree(priv);
-+	}
-+
-+	drm_dev_unref(drm);
-+}
-+
-+static const struct component_master_ops de2_drm_comp_ops = {
-+	.bind = de2_drm_bind,
-+	.unbind = de2_drm_unbind,
-+};
-+
-+static int compare_of(struct device *dev, void *data)
-+{
-+	return dev->of_node == data;
-+}
-+
-+static int de2_drm_add_components(struct device *dev,
-+				  int (*compare_of)(struct device *, void *),
-+				  const struct component_master_ops *m_ops)
-+{
-+	struct device_node *ep, *port, *remote;
-+	struct component_match *match = NULL;
-+	int i;
-+
-+	if (!dev->of_node)
-+		return -EINVAL;
-+
-+	/* bind the CRTCs */
-+	for (i = 0; ; i++) {
-+		port = of_parse_phandle(dev->of_node, "ports", i);
-+		if (!port)
-+			break;
-+
-+		if (!of_device_is_available(port->parent)) {
-+			of_node_put(port);
-+			continue;
-+		}
-+
-+		component_match_add(dev, &match, compare_of, port->parent);
-+		of_node_put(port);
-+	}
-+
-+	if (i == 0) {
-+		dev_err(dev, "missing 'ports' property\n");
-+		return -ENODEV;
-+	}
-+	if (!match) {
-+		dev_err(dev, "no available port\n");
-+		return -ENODEV;
-+	}
-+
-+	/* bind the encoders/connectors */
-+	for (i = 0; ; i++) {
-+		port = of_parse_phandle(dev->of_node, "ports", i);
-+		if (!port)
-+			break;
-+
-+		if (!of_device_is_available(port->parent)) {
-+			of_node_put(port);
-+			continue;
-+		}
-+
-+		for_each_child_of_node(port, ep) {
-+			remote = of_graph_get_remote_port_parent(ep);
-+			if (!remote || !of_device_is_available(remote)) {
-+				of_node_put(remote);
-+				continue;
-+			}
-+			if (!of_device_is_available(remote->parent)) {
-+				dev_warn(dev,
-+					 "parent device of %s is not available\n",
-+					 remote->full_name);
-+				of_node_put(remote);
-+				continue;
-+			}
-+
-+			component_match_add(dev, &match, compare_of, remote);
-+			of_node_put(remote);
-+		}
-+		of_node_put(port);
-+	}
-+
-+	return component_master_add_with_match(dev, m_ops, match);
-+}
-+
-+static int de2_drm_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	ret = de2_drm_add_components(&pdev->dev,
-+				     compare_of,
-+				     &de2_drm_comp_ops);
-+	if (ret == -EINVAL)
-+		ret = -ENXIO;
-+	return ret;
-+}
-+
-+static int de2_drm_remove(struct platform_device *pdev)
-+{
-+	component_master_del(&pdev->dev, &de2_drm_comp_ops);
-+
-+	return 0;
-+}
-+
-+static struct of_device_id de2_drm_of_match[] = {
-+	{ .compatible = "allwinner,sun8i-h3-display-engine" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, de2_drm_of_match);
-+
-+static struct platform_driver de2_drm_platform_driver = {
-+	.probe      = de2_drm_probe,
-+	.remove     = de2_drm_remove,
-+	.driver     = {
-+		.name = "sun8i-h3-display-engine",
-+		.pm = &de2_pm_ops,
-+		.of_match_table = de2_drm_of_match,
-+	},
-+};
-+
-+static int __init de2_drm_init(void)
-+{
-+	int ret;
-+
-+/* uncomment to activate the drm traces at startup time */
-+/*	drm_debug = DRM_UT_CORE | DRM_UT_DRIVER | DRM_UT_KMS |
-+			DRM_UT_PRIME | DRM_UT_ATOMIC; */
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	ret = platform_driver_register(&de2_lcd_platform_driver);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = platform_driver_register(&de2_drm_platform_driver);
-+	if (ret < 0)
-+		platform_driver_unregister(&de2_lcd_platform_driver);
-+
-+	return ret;
-+}
-+
-+static void __exit de2_drm_fini(void)
-+{
-+	platform_driver_unregister(&de2_lcd_platform_driver);
-+	platform_driver_unregister(&de2_drm_platform_driver);
-+}
-+
-+module_init(de2_drm_init);
-+module_exit(de2_drm_fini);
-+
-+MODULE_AUTHOR("Jean-Francois Moine <moinejf@free.fr>");
-+MODULE_DESCRIPTION("Allwinner DE2 DRM Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/sunxi/de2_plane.c b/drivers/gpu/drm/sunxi/de2_plane.c
-new file mode 100644
-index 0000000..ae3e13f
---- /dev/null
-+++ b/drivers/gpu/drm/sunxi/de2_plane.c
-@@ -0,0 +1,91 @@
-+/*
-+ * Allwinner DRM driver - DE2 planes
-+ *
-+ * Copyright (C) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_plane_helper.h>
-+#include <drm/drm_crtc_helper.h>
-+
-+#include "de2_drm.h"
-+#include "de2_crtc.h"
-+
-+/* plane formats */
-+static const uint32_t ui_formats[] = {
-+	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_BGR888,
-+};
-+
-+static void de2_plane_disable(struct drm_plane *plane,
-+				struct drm_plane_state *old_state)
-+{
-+	struct drm_crtc *crtc = old_state->crtc;
-+	struct lcd *lcd = crtc_to_lcd(crtc);
-+	int plane_num = plane - lcd->planes;
-+
-+	de2_de_plane_disable(lcd->priv, lcd->num, plane_num);
-+}
-+
-+static void de2_plane_update(struct drm_plane *plane,
-+				struct drm_plane_state *old_state)
-+{
-+	struct drm_plane_state *state = plane->state;
-+	struct drm_crtc *crtc = state->crtc;
-+	struct lcd *lcd = crtc_to_lcd(crtc);
-+	struct drm_framebuffer *fb = state->fb;
-+	int plane_num = plane - lcd->planes;
-+
-+	if (!crtc || !fb) {
-+		DRM_DEBUG_DRIVER("no crtc/fb\n");
-+		return;
-+	}
-+
-+	de2_de_plane_update(lcd->priv, lcd->num, plane_num,
-+			    state, old_state);
-+}
-+
-+static const struct drm_plane_helper_funcs plane_helper_funcs = {
-+	.atomic_disable = de2_plane_disable,
-+	.atomic_update = de2_plane_update,
-+};
-+
-+static const struct drm_plane_funcs plane_funcs = {
-+	.update_plane = drm_atomic_helper_update_plane,
-+	.disable_plane = drm_atomic_helper_disable_plane,
-+	.destroy = drm_plane_cleanup,
-+	.reset = drm_atomic_helper_plane_reset,
-+	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
-+};
-+
-+int de2_plane_init(struct drm_device *drm, struct lcd *lcd)
-+{
-+	int ret, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(lcd->planes); i++) {
-+		ret = drm_universal_plane_init(drm, &lcd->planes[i], 0,
-+					&plane_funcs,
-+					ui_formats, ARRAY_SIZE(ui_formats),
-+					i == DE2_PRIMARY_PLANE ?
-+						DRM_PLANE_TYPE_PRIMARY :
-+						DRM_PLANE_TYPE_CURSOR,
-+					NULL);
-+		if (ret < 0) {
-+			dev_err(lcd->dev,
-+				"Couldn't initialize plane err %d\n", ret);
-+			return ret;
-+		}
-+		drm_plane_helper_add(&lcd->planes[i],
-+				     &plane_helper_funcs);
-+	}
-+
-+	return 0;
-+}
+-#define MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00				0x001c 0x02a8 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01				0x0020 0x02ac 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02				0x0024 0x02b0 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER3__GPIO5_IO03				0x0028 0x02b4 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04				0x002c 0x02b8 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER5__GPIO5_IO05				0x0030 0x02bc 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER6__GPIO5_IO06				0x0034 0x02c0 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07				0x0038 0x02c4 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER8__GPIO5_IO08				0x003c 0x02c8 0x0000 5 0
+-#define MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09				0x0040 0x02cc 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00		0x001c 0x02a8 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01		0x0020 0x02ac 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02		0x0024 0x02b0 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER3__GPIO5_IO03		0x0028 0x02b4 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04		0x002c 0x02b8 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER5__GPIO5_IO05		0x0030 0x02bc 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER6__GPIO5_IO06		0x0034 0x02c0 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07		0x0038 0x02c4 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER8__GPIO5_IO08		0x003c 0x02c8 0x0000 5 0
++#define MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09		0x0040 0x02cc 0x0000 5 0
+ 
+-#define MX6UL_PAD_JTAG_MOD__SJC_MOD                              	0x0044 0x02d0 0x0000 0 0
+-#define MX6UL_PAD_JTAG_MOD__GPT2_CLK                             	0x0044 0x02d0 0x05a0 1 0
+-#define MX6UL_PAD_JTAG_MOD__SPDIF_OUT                            	0x0044 0x02d0 0x0000 2 0
+-#define MX6UL_PAD_JTAG_MOD__ENET1_REF_CLK_25M                    	0x0044 0x02d0 0x0000 3 0
+-#define MX6UL_PAD_JTAG_MOD__CCM_PMIC_RDY                         	0x0044 0x02d0 0x04c0 4 0
+-#define MX6UL_PAD_JTAG_MOD__GPIO1_IO10                           	0x0044 0x02d0 0x0000 5 0
+-#define MX6UL_PAD_JTAG_MOD__SDMA_EXT_EVENT00                     	0x0044 0x02d0 0x0000 6 0
+-#define MX6UL_PAD_JTAG_TMS__SJC_TMS                              	0x0048 0x02d4 0x0000 0 0
+-#define MX6UL_PAD_JTAG_TMS__GPT2_CAPTURE1                        	0x0048 0x02d4 0x0598 1 0
+-#define MX6UL_PAD_JTAG_TMS__SAI2_MCLK                            	0x0048 0x02d4 0x0000 2 0
+-#define MX6UL_PAD_JTAG_TMS__CCM_CLKO1                            	0x0048 0x02d4 0x0000 3 0
+-#define MX6UL_PAD_JTAG_TMS__CCM_WAIT                             	0x0048 0x02d4 0x0000 4 0
+-#define MX6UL_PAD_JTAG_TMS__GPIO1_IO11                           	0x0048 0x02d4 0x0000 5 0
+-#define MX6UL_PAD_JTAG_TMS__SDMA_EXT_EVENT01                     	0x0048 0x02d4 0x0000 6 0
+-#define MX6UL_PAD_JTAG_TMS__EPIT1_OUT                            	0x0048 0x02d4 0x0000 8 0
+-#define MX6UL_PAD_JTAG_TDO__SJC_TDO                              	0x004c 0x02d8 0x0000 0 0
+-#define MX6UL_PAD_JTAG_TDO__GPT2_CAPTURE2                        	0x004c 0x02d8 0x059c 1 0
+-#define MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC                         	0x004c 0x02d8 0x05fc 2 0
+-#define MX6UL_PAD_JTAG_TDO__CCM_CLKO2                            	0x004c 0x02d8 0x0000 3 0
+-#define MX6UL_PAD_JTAG_TDO__CCM_STOP                             	0x004c 0x02d8 0x0000 4 0
+-#define MX6UL_PAD_JTAG_TDO__GPIO1_IO12                           	0x004c 0x02d8 0x0000 5 0
+-#define MX6UL_PAD_JTAG_TDO__MQS_RIGHT                            	0x004c 0x02d8 0x0000 6 0
+-#define MX6UL_PAD_JTAG_TDO__EPIT2_OUT                            	0x004c 0x02d8 0x0000 8 0
+-#define MX6UL_PAD_JTAG_TDI__SJC_TDI                              	0x0050 0x02dc 0x0000 0 0
+-#define MX6UL_PAD_JTAG_TDI__GPT2_COMPARE1                        	0x0050 0x02dc 0x0000 1 0
+-#define MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK                         	0x0050 0x02dc 0x05f8 2 0
+-#define MX6UL_PAD_JTAG_TDI__PWM6_OUT                             	0x0050 0x02dc 0x0000 4 0
+-#define MX6UL_PAD_JTAG_TDI__GPIO1_IO13                           	0x0050 0x02dc 0x0000 5 0
+-#define MX6UL_PAD_JTAG_TDI__MQS_LEFT                             	0x0050 0x02dc 0x0000 6 0
+-#define MX6UL_PAD_JTAG_TDI__SIM1_POWER_FAIL                      	0x0050 0x02dc 0x0000 8 0
+-#define MX6UL_PAD_JTAG_TCK__SJC_TCK                              	0x0054 0x02e0 0x0000 0 0
+-#define MX6UL_PAD_JTAG_TCK__GPT2_COMPARE2                        	0x0054 0x02e0 0x0000 1 0
+-#define MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA                         	0x0054 0x02e0 0x0000 2 0
+-#define MX6UL_PAD_JTAG_TCK__PWM7_OUT                             	0x0054 0x02e0 0x0000 4 0
+-#define MX6UL_PAD_JTAG_TCK__GPIO1_IO14                           	0x0054 0x02e0 0x0000 5 0
+-#define MX6UL_PAD_JTAG_TCK__SIM2_POWER_FAIL                      	0x0054 0x02e0 0x0000 8 0
+-#define MX6UL_PAD_JTAG_TRST_B__SJC_TRSTB                         	0x0058 0x02e4 0x0000 0 0
+-#define MX6UL_PAD_JTAG_TRST_B__GPT2_COMPARE3                     	0x0058 0x02e4 0x0000 1 0
+-#define MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA                      	0x0058 0x02e4 0x0000 2 0
+-#define MX6UL_PAD_JTAG_TRST_B__PWM8_OUT                          	0x0058 0x02e4 0x0000 4 0
+-#define MX6UL_PAD_JTAG_TRST_B__GPIO1_IO15                        	0x0058 0x02e4 0x0000 5 0
+-#define MX6UL_PAD_JTAG_TRST_B__CAAM_RNG_OSC_OBS                  	0x0058 0x02e4 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO00__I2C2_SCL                           	0x005c 0x02e8 0x05ac 0 1
+-#define MX6UL_PAD_GPIO1_IO00__GPT1_CAPTURE1                      	0x005c 0x02e8 0x058c 1 0
+-#define MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID                     	0x005c 0x02e8 0x04b8 2 0
+-#define MX6UL_PAD_GPIO1_IO00__ENET1_REF_CLK1                     	0x005c 0x02e8 0x0574 3 0
+-#define MX6UL_PAD_GPIO1_IO00__MQS_RIGHT                          	0x005c 0x02e8 0x0000 4 0
+-#define MX6UL_PAD_GPIO1_IO00__GPIO1_IO00                         	0x005c 0x02e8 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO00__ENET1_1588_EVENT0_IN               	0x005c 0x02e8 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO00__SRC_SYSTEM_RESET                   	0x005c 0x02e8 0x0000 7 0
+-#define MX6UL_PAD_GPIO1_IO00__WDOG3_WDOG_B                       	0x005c 0x02e8 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO01__I2C2_SDA                           	0x0060 0x02ec 0x05b0 0 1
+-#define MX6UL_PAD_GPIO1_IO01__GPT1_COMPARE1                      	0x0060 0x02ec 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO01__USB_OTG1_OC                        	0x0060 0x02ec 0x0664 2 0
+-#define MX6UL_PAD_GPIO1_IO01__ENET2_REF_CLK2                     	0x0060 0x02ec 0x057c 3 0
+-#define MX6UL_PAD_GPIO1_IO01__MQS_LEFT                           	0x0060 0x02ec 0x0000 4 0
+-#define MX6UL_PAD_GPIO1_IO01__GPIO1_IO01                         	0x0060 0x02ec 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO01__ENET1_1588_EVENT0_OUT              	0x0060 0x02ec 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO01__SRC_EARLY_RESET                    	0x0060 0x02ec 0x0000 7 0
+-#define MX6UL_PAD_GPIO1_IO01__WDOG1_WDOG_B                       	0x0060 0x02ec 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO02__I2C1_SCL                           	0x0064 0x02f0 0x05a4 0 0
+-#define MX6UL_PAD_GPIO1_IO02__GPT1_COMPARE2                      	0x0064 0x02f0 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO02__USB_OTG2_PWR                       	0x0064 0x02f0 0x0000 2 0
+-#define MX6UL_PAD_GPIO1_IO02__ENET1_REF_CLK_25M                  	0x0064 0x02f0 0x0000 3 0
+-#define MX6UL_PAD_GPIO1_IO02__USDHC1_WP                          	0x0064 0x02f0 0x066c 4 0
+-#define MX6UL_PAD_GPIO1_IO02__GPIO1_IO02                         	0x0064 0x02f0 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO02__SDMA_EXT_EVENT00                   	0x0064 0x02f0 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO02__SRC_ANY_PU_RESET                   	0x0064 0x02f0 0x0000 7 0
+-#define MX6UL_PAD_GPIO1_IO02__UART1_DCE_TX                           	0x0064 0x02f0 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO02__UART1_DTE_RX                           	0x0064 0x02f0 0x0624 8 0
+-#define MX6UL_PAD_GPIO1_IO03__I2C1_SDA                           	0x0068 0x02f4 0x05a8 0 1
+-#define MX6UL_PAD_GPIO1_IO03__GPT1_COMPARE3                      	0x0068 0x02f4 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO03__USB_OTG2_OC                        	0x0068 0x02f4 0x0660 2 0
+-#define MX6UL_PAD_GPIO1_IO03__USDHC1_CD_B                        	0x0068 0x02f4 0x0668 4 0
+-#define MX6UL_PAD_GPIO1_IO03__GPIO1_IO03                         	0x0068 0x02f4 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO03__CCM_DI0_eXT_CLK                    	0x0068 0x02f4 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO03__SRC_TESTER_ACK                     	0x0068 0x02f4 0x0000 7 0
+-#define MX6UL_PAD_GPIO1_IO03__UART1_DTE_TX                           	0x0068 0x02f4 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO03__UART1_DCE_RX                           	0x0068 0x02f4 0x0624 8 1
+-#define MX6UL_PAD_GPIO1_IO04__ENET1_REF_CLK1                     	0x006c 0x02f8 0x0574 0 1
+-#define MX6UL_PAD_GPIO1_IO04__PWM3_OUT                           	0x006c 0x02f8 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO04__USB_OTG1_PWR                       	0x006c 0x02f8 0x0000 2 0
+-#define MX6UL_PAD_GPIO1_IO04__USDHC1_RESET_B                     	0x006c 0x02f8 0x0000 4 0
+-#define MX6UL_PAD_GPIO1_IO04__GPIO1_IO04                         	0x006c 0x02f8 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO04__ENET2_1588_EVENT0_IN               	0x006c 0x02f8 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO04__UART5_DCE_TX                           	0x006c 0x02f8 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO04__UART5_DTE_RX                           	0x006c 0x02f8 0x0644 8 2
+-#define MX6UL_PAD_GPIO1_IO05__ENET2_REF_CLK2                     	0x0070 0x02fc 0x057c 0 1
+-#define MX6UL_PAD_GPIO1_IO05__PWM4_OUT                           	0x0070 0x02fc 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO05__ANATOP_OTG2_ID                     	0x0070 0x02fc 0x04bc 2 0
+-#define MX6UL_PAD_GPIO1_IO05__CSI_FIELD                          	0x0070 0x02fc 0x0530 3 0
+-#define MX6UL_PAD_GPIO1_IO05__USDHC1_VSELECT                     	0x0070 0x02fc 0x0000 4 0
+-#define MX6UL_PAD_GPIO1_IO05__GPIO1_IO05                         	0x0070 0x02fc 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO05__ENET2_1588_EVENT0_OUT              	0x0070 0x02fc 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO05__UART5_DCE_RX                           	0x0070 0x02fc 0x0644 8 3
+-#define MX6UL_PAD_GPIO1_IO05__UART5_DTE_TX                           	0x0070 0x02fc 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO06__ENET1_MDIO                         	0x0074 0x0300 0x0578 0 0
+-#define MX6UL_PAD_GPIO1_IO06__ENET2_MDIO                         	0x0074 0x0300 0x0580 1 0
+-#define MX6UL_PAD_GPIO1_IO06__USB_OTG_PWR_WAKE                   	0x0074 0x0300 0x0000 2 0
+-#define MX6UL_PAD_GPIO1_IO06__CSI_MCLK                           	0x0074 0x0300 0x0000 3 0
+-#define MX6UL_PAD_GPIO1_IO06__USDHC2_WP                          	0x0074 0x0300 0x069c 4 0
+-#define MX6UL_PAD_GPIO1_IO06__GPIO1_IO06                         	0x0074 0x0300 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO06__CCM_WAIT                           	0x0074 0x0300 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO06__CCM_REF_EN_B                       	0x0074 0x0300 0x0000 7 0
+-#define MX6UL_PAD_GPIO1_IO06__UART1_DCE_CTS                      	0x0074 0x0300 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO06__UART1_DTE_RTS                      	0x0074 0x0300 0x0620 8 0
+-#define MX6UL_PAD_GPIO1_IO07__ENET1_MDC                          	0x0078 0x0304 0x0000 0 0
+-#define MX6UL_PAD_GPIO1_IO07__ENET2_MDC                          	0x0078 0x0304 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO07__USB_OTG_HOST_MODE                  	0x0078 0x0304 0x0000 2 0
+-#define MX6UL_PAD_GPIO1_IO07__CSI_PIXCLK                         	0x0078 0x0304 0x0528 3 0
+-#define MX6UL_PAD_GPIO1_IO07__USDHC2_CD_B                        	0x0078 0x0304 0x0674 4 1
+-#define MX6UL_PAD_GPIO1_IO07__GPIO1_IO07                         	0x0078 0x0304 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO07__CCM_STOP                           	0x0078 0x0304 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO07__UART1_DCE_RTS                      	0x0078 0x0304 0x0620 8 1
+-#define MX6UL_PAD_GPIO1_IO07__UART1_DTE_CTS                      	0x0078 0x0304 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO08__PWM1_OUT                           	0x007c 0x0308 0x0000 0 0
+-#define MX6UL_PAD_GPIO1_IO08__WDOG1_WDOG_B                       	0x007c 0x0308 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO08__SPDIF_OUT                          	0x007c 0x0308 0x0000 2 0
+-#define MX6UL_PAD_GPIO1_IO08__CSI_VSYNC                          	0x007c 0x0308 0x052c 3 1
+-#define MX6UL_PAD_GPIO1_IO08__USDHC2_VSELECT                     	0x007c 0x0308 0x0000 4 0
+-#define MX6UL_PAD_GPIO1_IO08__GPIO1_IO08                         	0x007c 0x0308 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO08__CCM_PMIC_RDY                       	0x007c 0x0308 0x04c0 6 1
+-#define MX6UL_PAD_GPIO1_IO08__UART5_DCE_RTS                      	0x007c 0x0308 0x0640 8 1
+-#define MX6UL_PAD_GPIO1_IO08__UART5_DTE_CTS                      	0x007c 0x0308 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO09__PWM2_OUT                           	0x0080 0x030c 0x0000 0 0
+-#define MX6UL_PAD_GPIO1_IO09__WDOG1_WDOG_ANY                     	0x0080 0x030c 0x0000 1 0
+-#define MX6UL_PAD_GPIO1_IO09__SPDIF_IN                           	0x0080 0x030c 0x0618 2 0
+-#define MX6UL_PAD_GPIO1_IO09__CSI_HSYNC                          	0x0080 0x030c 0x0524 3 1
+-#define MX6UL_PAD_GPIO1_IO09__USDHC2_RESET_B                     	0x0080 0x030c 0x0000 4 0
+-#define MX6UL_PAD_GPIO1_IO09__GPIO1_IO09                         	0x0080 0x030c 0x0000 5 0
+-#define MX6UL_PAD_GPIO1_IO09__USDHC1_RESET_B                     	0x0080 0x030c 0x0000 6 0
+-#define MX6UL_PAD_GPIO1_IO09__UART5_DCE_CTS                      	0x0080 0x030c 0x0000 8 0
+-#define MX6UL_PAD_GPIO1_IO09__UART5_DTE_RTS                      	0x0080 0x030c 0x0640 8 2
+-#define MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX                        	0x0084 0x0310 0x0000 0 0
+-#define MX6UL_PAD_UART1_TX_DATA__UART1_DTE_RX                        	0x0084 0x0310 0x0624 0 2
+-#define MX6UL_PAD_UART1_TX_DATA__ENET1_RDATA02                   	0x0084 0x0310 0x0000 1 0
+-#define MX6UL_PAD_UART1_TX_DATA__I2C3_SCL                        	0x0084 0x0310 0x05b4 2 0
+-#define MX6UL_PAD_UART1_TX_DATA__CSI_DATA02                      	0x0084 0x0310 0x0000 3 0
+-#define MX6UL_PAD_UART1_TX_DATA__GPT1_COMPARE1                   	0x0084 0x0310 0x0000 4 0
+-#define MX6UL_PAD_UART1_TX_DATA__GPIO1_IO16                      	0x0084 0x0310 0x0000 5 0
+-#define MX6UL_PAD_UART1_TX_DATA__SPDIF_OUT                       	0x0084 0x0310 0x0000 8 0
+-#define MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX                        	0x0088 0x0314 0x0624 0 3
+-#define MX6UL_PAD_UART1_RX_DATA__UART1_DTE_TX                        	0x0088 0x0314 0x0000 0 0
+-#define MX6UL_PAD_UART1_RX_DATA__ENET1_RDATA03                   	0x0088 0x0314 0x0000 1 0
+-#define MX6UL_PAD_UART1_RX_DATA__I2C3_SDA                        	0x0088 0x0314 0x05b8 2 0
+-#define MX6UL_PAD_UART1_RX_DATA__CSI_DATA03                      	0x0088 0x0314 0x0000 3 0
+-#define MX6UL_PAD_UART1_RX_DATA__GPT1_CLK                        	0x0088 0x0314 0x0594 4 0
+-#define MX6UL_PAD_UART1_RX_DATA__GPIO1_IO17                      	0x0088 0x0314 0x0000 5 0
+-#define MX6UL_PAD_UART1_RX_DATA__SPDIF_IN                        	0x0088 0x0314 0x0000 8 0
+-#define MX6UL_PAD_UART1_CTS_B__UART1_DCE_CTS                     	0x008c 0x0318 0x0000 0 0
+-#define MX6UL_PAD_UART1_CTS_B__UART1_DTE_RTS                     	0x008c 0x0318 0x0620 0 2
+-#define MX6UL_PAD_UART1_CTS_B__ENET1_RX_CLK                      	0x008c 0x0318 0x0000 1 0
+-#define MX6UL_PAD_UART1_CTS_B__USDHC1_WP                         	0x008c 0x0318 0x066c 2 1
+-#define MX6UL_PAD_UART1_CTS_B__CSI_DATA04                        	0x008c 0x0318 0x0000 3 0
+-#define MX6UL_PAD_UART1_CTS_B__ENET2_1588_EVENT1_IN              	0x008c 0x0318 0x0000 4 0
+-#define MX6UL_PAD_UART1_CTS_B__GPIO1_IO18                        	0x008c 0x0318 0x0000 5 0
+-#define MX6UL_PAD_UART1_CTS_B__USDHC2_WP                         	0x008c 0x0318 0x0000 8 0
+-#define MX6UL_PAD_UART1_RTS_B__UART1_DCE_RTS                     	0x0090 0x031c 0x0620 0 3
+-#define MX6UL_PAD_UART1_RTS_B__UART1_DTE_CTS                     	0x0090 0x031c 0x0000 0 0
+-#define MX6UL_PAD_UART1_RTS_B__ENET1_TX_ER                       	0x0090 0x031c 0x0000 1 0
+-#define MX6UL_PAD_UART1_RTS_B__USDHC1_CD_B                       	0x0090 0x031c 0x0668 2 1
+-#define MX6UL_PAD_UART1_RTS_B__CSI_DATA05                        	0x0090 0x031c 0x0000 3 0
+-#define MX6UL_PAD_UART1_RTS_B__ENET2_1588_EVENT1_OUT             	0x0090 0x031c 0x0000 4 0
+-#define MX6UL_PAD_UART1_RTS_B__GPIO1_IO19                        	0x0090 0x031c 0x0000 5 0
+-#define MX6UL_PAD_UART1_RTS_B__USDHC2_CD_B                       	0x0090 0x031c 0x0000 8 0
+-#define MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX                        	0x0094 0x0320 0x0000 0 0
+-#define MX6UL_PAD_UART2_TX_DATA__UART2_DTE_RX                        	0x0094 0x0320 0x062c 0 0
+-#define MX6UL_PAD_UART2_TX_DATA__ENET1_TDATA02                   	0x0094 0x0320 0x0000 1 0
+-#define MX6UL_PAD_UART2_TX_DATA__I2C4_SCL                        	0x0094 0x0320 0x05bc 2 0
+-#define MX6UL_PAD_UART2_TX_DATA__CSI_DATA06                      	0x0094 0x0320 0x0000 3 0
+-#define MX6UL_PAD_UART2_TX_DATA__GPT1_CAPTURE1                   	0x0094 0x0320 0x058c 4 1
+-#define MX6UL_PAD_UART2_TX_DATA__GPIO1_IO20                      	0x0094 0x0320 0x0000 5 0
+-#define MX6UL_PAD_UART2_TX_DATA__ECSPI3_SS0                      	0x0094 0x0320 0x0000 8 0
+-#define MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX                        	0x0098 0x0324 0x062c 0 1
+-#define MX6UL_PAD_UART2_RX_DATA__UART2_DTE_TX                        	0x0098 0x0324 0x0000 0 0
+-#define MX6UL_PAD_UART2_RX_DATA__ENET1_TDATA03                   	0x0098 0x0324 0x0000 1 0
+-#define MX6UL_PAD_UART2_RX_DATA__I2C4_SDA                        	0x0098 0x0324 0x05c0 2 0
+-#define MX6UL_PAD_UART2_RX_DATA__CSI_DATA07                      	0x0098 0x0324 0x0000 3 0
+-#define MX6UL_PAD_UART2_RX_DATA__GPT1_CAPTURE2                   	0x0098 0x0324 0x0590 4 0
+-#define MX6UL_PAD_UART2_RX_DATA__GPIO1_IO21                      	0x0098 0x0324 0x0000 5 0
+-#define MX6UL_PAD_UART2_RX_DATA__SJC_DONE                        	0x0098 0x0324 0x0000 7 0
+-#define MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK                     	0x0098 0x0324 0x0000 8 0
+-#define MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS                     	0x009c 0x0328 0x0000 0 0
+-#define MX6UL_PAD_UART2_CTS_B__UART2_DTE_RTS                     	0x009c 0x0328 0x0628 0 0
+-#define MX6UL_PAD_UART2_CTS_B__ENET1_CRS                         	0x009c 0x0328 0x0000 1 0
+-#define MX6UL_PAD_UART2_CTS_B__FLEXCAN2_TX                       	0x009c 0x0328 0x0000 2 0
+-#define MX6UL_PAD_UART2_CTS_B__CSI_DATA08                        	0x009c 0x0328 0x0000 3 0
+-#define MX6UL_PAD_UART2_CTS_B__GPT1_COMPARE2                     	0x009c 0x0328 0x0000 4 0
+-#define MX6UL_PAD_UART2_CTS_B__GPIO1_IO22                        	0x009c 0x0328 0x0000 5 0
+-#define MX6UL_PAD_UART2_CTS_B__SJC_DE_B                          	0x009c 0x0328 0x0000 7 0
+-#define MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI                       	0x009c 0x0328 0x0000 8 0
+-#define MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS                     	0x00a0 0x032c 0x0628 0 1
+-#define MX6UL_PAD_UART2_RTS_B__UART2_DTE_CTS                     	0x00a0 0x032c 0x0000 0 0
+-#define MX6UL_PAD_UART2_RTS_B__ENET1_COL                         	0x00a0 0x032c 0x0000 1 0
+-#define MX6UL_PAD_UART2_RTS_B__FLEXCAN2_RX                       	0x00a0 0x032c 0x0588 2 0
+-#define MX6UL_PAD_UART2_RTS_B__CSI_DATA09                        	0x00a0 0x032c 0x0000 3 0
+-#define MX6UL_PAD_UART2_RTS_B__GPT1_COMPARE3                     	0x00a0 0x032c 0x0000 4 0
+-#define MX6UL_PAD_UART2_RTS_B__GPIO1_IO23                        	0x00a0 0x032c 0x0000 5 0
+-#define MX6UL_PAD_UART2_RTS_B__SJC_FAIL                          	0x00a0 0x032c 0x0000 7 0
+-#define MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO                       	0x00a0 0x032c 0x0000 8 0
+-#define MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX                        	0x00a4 0x0330 0x0000 0 0
+-#define MX6UL_PAD_UART3_TX_DATA__UART3_DTE_RX                        	0x00a4 0x0330 0x0634 0 0
+-#define MX6UL_PAD_UART3_TX_DATA__ENET2_RDATA02                   	0x00a4 0x0330 0x0000 1 0
+-#define MX6UL_PAD_UART3_TX_DATA__SIM1_PORT0_PD                   	0x00a4 0x0330 0x0000 2 0
+-#define MX6UL_PAD_UART3_TX_DATA__CSI_DATA01                      	0x00a4 0x0330 0x0000 3 0
+-#define MX6UL_PAD_UART3_TX_DATA__UART2_DCE_CTS                   	0x00a4 0x0330 0x0000 4 0
+-#define MX6UL_PAD_UART3_TX_DATA__UART2_DTE_RTS                   	0x00a4 0x0330 0x0628 4 2
+-#define MX6UL_PAD_UART3_TX_DATA__GPIO1_IO24                      	0x00a4 0x0330 0x0000 5 0
+-#define MX6UL_PAD_UART3_TX_DATA__SJC_JTAG_ACT                    	0x00a4 0x0330 0x0000 7 0
+-#define MX6UL_PAD_UART3_TX_DATA__ANATOP_OTG1_ID                  	0x00a4 0x0330 0x0000 8 0
+-#define MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX                        	0x00a8 0x0334 0x0634 0 1
+-#define MX6UL_PAD_UART3_RX_DATA__UART3_DTE_TX                        	0x00a8 0x0334 0x0000 0 0
+-#define MX6UL_PAD_UART3_RX_DATA__ENET2_RDATA03                   	0x00a8 0x0334 0x0000 1 0
+-#define MX6UL_PAD_UART3_RX_DATA__SIM2_PORT0_PD                   	0x00a8 0x0334 0x0000 2 0
+-#define MX6UL_PAD_UART3_RX_DATA__CSI_DATA00                      	0x00a8 0x0334 0x0000 3 0
+-#define MX6UL_PAD_UART3_RX_DATA__UART2_DCE_RTS                   	0x00a8 0x0334 0x0628 4 3
+-#define MX6UL_PAD_UART3_RX_DATA__UART2_DTE_CTS                   	0x00a8 0x0334 0x0000 4 0
+-#define MX6UL_PAD_UART3_RX_DATA__GPIO1_IO25                      	0x00a8 0x0334 0x0000 5 0
+-#define MX6UL_PAD_UART3_RX_DATA__EPIT1_OUT                       	0x00a8 0x0334 0x0000 8 0
+-#define MX6UL_PAD_UART3_CTS_B__UART3_DCE_CTS                     	0x00ac 0x0338 0x0000 0 0
+-#define MX6UL_PAD_UART3_CTS_B__UART3_DTE_RTS                     	0x00ac 0x0338 0x0630 0 0
+-#define MX6UL_PAD_UART3_CTS_B__ENET2_RX_CLK                      	0x00ac 0x0338 0x0000 1 0
+-#define MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX                       	0x00ac 0x0338 0x0000 2 0
+-#define MX6UL_PAD_UART3_CTS_B__CSI_DATA10                        	0x00ac 0x0338 0x0000 3 0
+-#define MX6UL_PAD_UART3_CTS_B__ENET1_1588_EVENT1_IN              	0x00ac 0x0338 0x0000 4 0
+-#define MX6UL_PAD_UART3_CTS_B__GPIO1_IO26                        	0x00ac 0x0338 0x0000 5 0
+-#define MX6UL_PAD_UART3_CTS_B__EPIT2_OUT                         	0x00ac 0x0338 0x0000 8 0
+-#define MX6UL_PAD_UART3_RTS_B__UART3_DCE_RTS                     	0x00b0 0x033c 0x0630 0 1
+-#define MX6UL_PAD_UART3_RTS_B__UART3_DTE_CTS                     	0x00b0 0x033c 0x0000 0 0
+-#define MX6UL_PAD_UART3_RTS_B__ENET2_TX_ER                       	0x00b0 0x033c 0x0000 1 0
+-#define MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX                       	0x00b0 0x033c 0x0584 2 0
+-#define MX6UL_PAD_UART3_RTS_B__CSI_DATA11                        	0x00b0 0x033c 0x0000 3 0
+-#define MX6UL_PAD_UART3_RTS_B__ENET1_1588_EVENT1_OUT             	0x00b0 0x033c 0x0000 4 0
+-#define MX6UL_PAD_UART3_RTS_B__GPIO1_IO27                        	0x00b0 0x033c 0x0000 5 0
+-#define MX6UL_PAD_UART3_RTS_B__WDOG1_WDOG_B                      	0x00b0 0x033c 0x0000 8 0
+-#define MX6UL_PAD_UART4_TX_DATA__UART4_DCE_TX                        	0x00b4 0x0340 0x0000 0 0
+-#define MX6UL_PAD_UART4_TX_DATA__UART4_DTE_RX                        	0x00b4 0x0340 0x063c 0 0
+-#define MX6UL_PAD_UART4_TX_DATA__ENET2_TDATA02                   	0x00b4 0x0340 0x0000 1 0
+-#define MX6UL_PAD_UART4_TX_DATA__I2C1_SCL                        	0x00b4 0x0340 0x05a4 2 1
+-#define MX6UL_PAD_UART4_TX_DATA__CSI_DATA12                      	0x00b4 0x0340 0x0000 3 0
+-#define MX6UL_PAD_UART4_TX_DATA__CSU_CSU_ALARM_AUT02             	0x00b4 0x0340 0x0000 4 0
+-#define MX6UL_PAD_UART4_TX_DATA__GPIO1_IO28                      	0x00b4 0x0340 0x0000 5 0
+-#define MX6UL_PAD_UART4_TX_DATA__ECSPI2_SCLK                     	0x00b4 0x0340 0x0000 8 0
+-#define MX6UL_PAD_UART4_RX_DATA__UART4_DCE_RX                        	0x00b8 0x0344 0x063c 0 1
+-#define MX6UL_PAD_UART4_RX_DATA__UART4_DTE_TX                        	0x00b8 0x0344 0x0000 0 0
+-#define MX6UL_PAD_UART4_RX_DATA__ENET2_TDATA03                   	0x00b8 0x0344 0x0000 1 0
+-#define MX6UL_PAD_UART4_RX_DATA__I2C1_SDA                        	0x00b8 0x0344 0x05a8 2 2
+-#define MX6UL_PAD_UART4_RX_DATA__CSI_DATA13                      	0x00b8 0x0344 0x0000 3 0
+-#define MX6UL_PAD_UART4_RX_DATA__CSU_CSU_ALARM_AUT01             	0x00b8 0x0344 0x0000 4 0
+-#define MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29                      	0x00b8 0x0344 0x0000 5 0
+-#define MX6UL_PAD_UART4_RX_DATA__ECSPI2_SS0                      	0x00b8 0x0344 0x0000 8 0
+-#define MX6UL_PAD_UART5_TX_DATA__GPIO1_IO30                      	0x00bc 0x0348 0x0000 5 0
+-#define MX6UL_PAD_UART5_TX_DATA__ECSPI2_MOSI                     	0x00bc 0x0348 0x0000 8 0
+-#define MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX                        	0x00bc 0x0348 0x0000 0 0
+-#define MX6UL_PAD_UART5_TX_DATA__UART5_DTE_RX                        	0x00bc 0x0348 0x0644 0 4
+-#define MX6UL_PAD_UART5_TX_DATA__ENET2_CRS                       	0x00bc 0x0348 0x0000 1 0
+-#define MX6UL_PAD_UART5_TX_DATA__I2C2_SCL                        	0x00bc 0x0348 0x05ac 2 2
+-#define MX6UL_PAD_UART5_TX_DATA__CSI_DATA14                      	0x00bc 0x0348 0x0000 3 0
+-#define MX6UL_PAD_UART5_TX_DATA__CSU_CSU_ALARM_AUT00             	0x00bc 0x0348 0x0000 4 0
+-#define MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX                        	0x00c0 0x034c 0x0644 0 5
+-#define MX6UL_PAD_UART5_RX_DATA__UART5_DTE_TX                        	0x00c0 0x034c 0x0000 0 0
+-#define MX6UL_PAD_UART5_RX_DATA__ENET2_COL                       	0x00c0 0x034c 0x0000 1 0
+-#define MX6UL_PAD_UART5_RX_DATA__I2C2_SDA                        	0x00c0 0x034c 0x05b0 2 2
+-#define MX6UL_PAD_UART5_RX_DATA__CSI_DATA15                      	0x00c0 0x034c 0x0000 3 0
+-#define MX6UL_PAD_UART5_RX_DATA__CSU_CSU_INT_DEB                 	0x00c0 0x034c 0x0000 4 0
+-#define MX6UL_PAD_UART5_RX_DATA__GPIO1_IO31                      	0x00c0 0x034c 0x0000 5 0
+-#define MX6UL_PAD_UART5_RX_DATA__ECSPI2_MISO                     	0x00c0 0x034c 0x0000 8 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00                  	0x00c4 0x0350 0x0000 0 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__UART4_DCE_RTS                  	0x00c4 0x0350 0x0638 1 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__UART4_DTE_CTS                  	0x00c4 0x0350 0x0000 1 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__PWM1_OUT                       	0x00c4 0x0350 0x0000 2 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__CSI_DATA16                     	0x00c4 0x0350 0x0000 3 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__FLEXCAN1_TX                    	0x00c4 0x0350 0x0000 4 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__GPIO2_IO00                     	0x00c4 0x0350 0x0000 5 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__KPP_ROW00                      	0x00c4 0x0350 0x0000 6 0
+-#define MX6UL_PAD_ENET1_RX_DATA0__USDHC1_LCTL                    	0x00c4 0x0350 0x0000 8 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01                  	0x00c8 0x0354 0x0000 0 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__UART4_DCE_CTS                  	0x00c8 0x0354 0x0000 1 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__UART4_DTE_RTS                  	0x00c8 0x0354 0x0638 1 1
+-#define MX6UL_PAD_ENET1_RX_DATA1__PWM2_OUT                       	0x00c8 0x0354 0x0000 2 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__CSI_DATA17                     	0x00c8 0x0354 0x0000 3 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__FLEXCAN1_RX                    	0x00c8 0x0354 0x0584 4 1
+-#define MX6UL_PAD_ENET1_RX_DATA1__GPIO2_IO01                     	0x00c8 0x0354 0x0000 5 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__KPP_COL00                      	0x00c8 0x0354 0x0000 6 0
+-#define MX6UL_PAD_ENET1_RX_DATA1__USDHC2_LCTL                    	0x00c8 0x0354 0x0000 8 0
+-#define MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN                       	0x00cc 0x0358 0x0000 0 0
+-#define MX6UL_PAD_ENET1_RX_EN__UART5_DCE_RTS                     	0x00cc 0x0358 0x0640 1 3
+-#define MX6UL_PAD_ENET1_RX_EN__UART5_DTE_CTS                     	0x00cc 0x0358 0x0000 1 0
+-#define MX6UL_PAD_ENET1_RX_EN__CSI_DATA18                        	0x00cc 0x0358 0x0000 3 0
+-#define MX6UL_PAD_ENET1_RX_EN__FLEXCAN2_TX                       	0x00cc 0x0358 0x0000 4 0
+-#define MX6UL_PAD_ENET1_RX_EN__GPIO2_IO02                        	0x00cc 0x0358 0x0000 5 0
+-#define MX6UL_PAD_ENET1_RX_EN__KPP_ROW01                         	0x00cc 0x0358 0x0000 6 0
+-#define MX6UL_PAD_ENET1_RX_EN__USDHC1_VSELECT                    	0x00cc 0x0358 0x0000 8 0
+-#define MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00                  	0x00d0 0x035c 0x0000 0 0
+-#define MX6UL_PAD_ENET1_TX_DATA0__UART5_DCE_CTS                  	0x00d0 0x035c 0x0000 1 0
+-#define MX6UL_PAD_ENET1_TX_DATA0__UART5_DTE_RTS                  	0x00d0 0x035c 0x0640 1 4
+-#define MX6UL_PAD_ENET1_TX_DATA0__CSI_DATA19                     	0x00d0 0x035c 0x0000 3 0
+-#define MX6UL_PAD_ENET1_TX_DATA0__FLEXCAN2_RX                    	0x00d0 0x035c 0x0588 4 1
+-#define MX6UL_PAD_ENET1_TX_DATA0__GPIO2_IO03                     	0x00d0 0x035c 0x0000 5 0
+-#define MX6UL_PAD_ENET1_TX_DATA0__KPP_COL01                      	0x00d0 0x035c 0x0000 6 0
+-#define MX6UL_PAD_ENET1_TX_DATA0__USDHC2_VSELECT                 	0x00d0 0x035c 0x0000 8 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01                  	0x00d4 0x0360 0x0000 0 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__UART6_DCE_CTS                  	0x00d4 0x0360 0x0000 1 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__UART6_DTE_RTS                  	0x00d4 0x0360 0x0648 1 2
+-#define MX6UL_PAD_ENET1_TX_DATA1__PWM5_OUT                       	0x00d4 0x0360 0x0000 2 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__CSI_DATA20                     	0x00d4 0x0360 0x0000 3 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__ENET2_MDIO                     	0x00d4 0x0360 0x0580 4 1
+-#define MX6UL_PAD_ENET1_TX_DATA1__GPIO2_IO04                     	0x00d4 0x0360 0x0000 5 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__KPP_ROW02                      	0x00d4 0x0360 0x0000 6 0
+-#define MX6UL_PAD_ENET1_TX_DATA1__WDOG1_WDOG_RST_B_DEB           	0x00d4 0x0360 0x0000 8 0
+-#define MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN                       	0x00d8 0x0364 0x0000 0 0
+-#define MX6UL_PAD_ENET1_TX_EN__UART6_DCE_RTS                     	0x00d8 0x0364 0x0648 1 3
+-#define MX6UL_PAD_ENET1_TX_EN__UART6_DTE_CTS                     	0x00d8 0x0364 0x0000 1 0
+-#define MX6UL_PAD_ENET1_TX_EN__PWM6_OUT                          	0x00d8 0x0364 0x0000 2 0
+-#define MX6UL_PAD_ENET1_TX_EN__CSI_DATA21                        	0x00d8 0x0364 0x0000 3 0
+-#define MX6UL_PAD_ENET1_TX_EN__ENET2_MDC                         	0x00d8 0x0364 0x0000 4 0
+-#define MX6UL_PAD_ENET1_TX_EN__GPIO2_IO05                        	0x00d8 0x0364 0x0000 5 0
+-#define MX6UL_PAD_ENET1_TX_EN__KPP_COL02                         	0x00d8 0x0364 0x0000 6 0
+-#define MX6UL_PAD_ENET1_TX_EN__WDOG2_WDOG_RST_B_DEB              	0x00d8 0x0364 0x0000 8 0
+-#define MX6UL_PAD_ENET1_TX_CLK__ENET1_TX_CLK                     	0x00dc 0x0368 0x0000 0 0
+-#define MX6UL_PAD_ENET1_TX_CLK__UART7_DCE_CTS                    	0x00dc 0x0368 0x0000 1 0
+-#define MX6UL_PAD_ENET1_TX_CLK__UART7_DTE_RTS                    	0x00dc 0x0368 0x0650 1 0
+-#define MX6UL_PAD_ENET1_TX_CLK__PWM7_OUT                         	0x00dc 0x0368 0x0000 2 0
+-#define MX6UL_PAD_ENET1_TX_CLK__CSI_DATA22                       	0x00dc 0x0368 0x0000 3 0
+-#define MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1                   	0x00dc 0x0368 0x0574 4 2
+-#define MX6UL_PAD_ENET1_TX_CLK__GPIO2_IO06                       	0x00dc 0x0368 0x0000 5 0
+-#define MX6UL_PAD_ENET1_TX_CLK__KPP_ROW03                        	0x00dc 0x0368 0x0000 6 0
+-#define MX6UL_PAD_ENET1_TX_CLK__GPT1_CLK                         	0x00dc 0x0368 0x0000 8 0
+-#define MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER                       	0x00e0 0x036c 0x0000 0 0
+-#define MX6UL_PAD_ENET1_RX_ER__UART7_DCE_RTS                     	0x00e0 0x036c 0x0650 1 1
+-#define MX6UL_PAD_ENET1_RX_ER__UART7_DTE_CTS                     	0x00e0 0x036c 0x0000 1 0
+-#define MX6UL_PAD_ENET1_RX_ER__PWM8_OUT                          	0x00e0 0x036c 0x0000 2 0
+-#define MX6UL_PAD_ENET1_RX_ER__CSI_DATA23                        	0x00e0 0x036c 0x0000 3 0
+-#define MX6UL_PAD_ENET1_RX_ER__EIM_CRE                           	0x00e0 0x036c 0x0000 4 0
+-#define MX6UL_PAD_ENET1_RX_ER__GPIO2_IO07                        	0x00e0 0x036c 0x0000 5 0
+-#define MX6UL_PAD_ENET1_RX_ER__KPP_COL03                         	0x00e0 0x036c 0x0000 6 0
+-#define MX6UL_PAD_ENET1_RX_ER__GPT1_CAPTURE2                     	0x00e0 0x036c 0x0000 8 0
+-#define MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00                  	0x00e4 0x0370 0x0000 0 0
+-#define MX6UL_PAD_ENET2_RX_DATA0__UART6_DCE_TX                       	0x00e4 0x0370 0x0000 1 0
+-#define MX6UL_PAD_ENET2_RX_DATA0__UART6_DTE_RX                    	0x00e4 0x0370 0x064c 1 1
+-#define MX6UL_PAD_ENET2_RX_DATA0__SIM1_PORT0_TRXD                	0x00e4 0x0370 0x0000 2 0
+-#define MX6UL_PAD_ENET2_RX_DATA0__I2C3_SCL                       	0x00e4 0x0370 0x05b4 3 1
+-#define MX6UL_PAD_ENET2_RX_DATA0__ENET1_MDIO                     	0x00e4 0x0370 0x0578 4 1
+-#define MX6UL_PAD_ENET2_RX_DATA0__GPIO2_IO08                     	0x00e4 0x0370 0x0000 5 0
+-#define MX6UL_PAD_ENET2_RX_DATA0__KPP_ROW04                      	0x00e4 0x0370 0x0000 6 0
+-#define MX6UL_PAD_ENET2_RX_DATA0__USB_OTG1_PWR                   	0x00e4 0x0370 0x0000 8 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01                  	0x00e8 0x0374 0x0000 0 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__UART6_DCE_RX                       	0x00e8 0x0374 0x064c 1 2
+-#define MX6UL_PAD_ENET2_RX_DATA1__UART6_DTE_TX                       	0x00e8 0x0374 0x0000 1 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__SIM1_PORT0_cLK                 	0x00e8 0x0374 0x0000 2 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__I2C3_SDA                       	0x00e8 0x0374 0x05b8 3 1
+-#define MX6UL_PAD_ENET2_RX_DATA1__ENET1_MDC                      	0x00e8 0x0374 0x0000 4 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__GPIO2_IO09                     	0x00e8 0x0374 0x0000 5 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__KPP_COL04                      	0x00e8 0x0374 0x0000 6 0
+-#define MX6UL_PAD_ENET2_RX_DATA1__USB_OTG1_OC                    	0x00e8 0x0374 0x0000 8 0
+-#define MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN                       	0x00ec 0x0378 0x0000 0 0
+-#define MX6UL_PAD_ENET2_RX_EN__UART7_DCE_TX                          	0x00ec 0x0378 0x0000 1 0
+-#define MX6UL_PAD_ENET2_RX_EN__UART7_DTE_RX                          	0x00ec 0x0378 0x0654 1 0
+-#define MX6UL_PAD_ENET2_RX_EN__SIM1_PORT0_RST_B                  	0x00ec 0x0378 0x0000 2 0
+-#define MX6UL_PAD_ENET2_RX_EN__I2C4_SCL                          	0x00ec 0x0378 0x05bc 3 1
+-#define MX6UL_PAD_ENET2_RX_EN__EIM_ADDR26                        	0x00ec 0x0378 0x0000 4 0
+-#define MX6UL_PAD_ENET2_RX_EN__GPIO2_IO10                        	0x00ec 0x0378 0x0000 5 0
+-#define MX6UL_PAD_ENET2_RX_EN__KPP_ROW05                         	0x00ec 0x0378 0x0000 6 0
+-#define MX6UL_PAD_ENET2_RX_EN__ENET1_REF_CLK_25M                 	0x00ec 0x0378 0x0000 8 0
+-#define MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00                  	0x00f0 0x037c 0x0000 0 0
+-#define MX6UL_PAD_ENET2_TX_DATA0__UART7_DCE_RX                       	0x00f0 0x037c 0x0654 1 1
+-#define MX6UL_PAD_ENET2_TX_DATA0__UART7_DTE_TX                       	0x00f0 0x037c 0x0000 1 0
+-#define MX6UL_PAD_ENET2_TX_DATA0__SIM1_PORT0_SVEN                	0x00f0 0x037c 0x0000 2 0
+-#define MX6UL_PAD_ENET2_TX_DATA0__I2C4_SDA                       	0x00f0 0x037c 0x05c0 3 1
+-#define MX6UL_PAD_ENET2_TX_DATA0__EIM_EB_B02                     	0x00f0 0x037c 0x0000 4 0
+-#define MX6UL_PAD_ENET2_TX_DATA0__GPIO2_IO11                     	0x00f0 0x037c 0x0000 5 0
+-#define MX6UL_PAD_ENET2_TX_DATA0__KPP_COL05                      	0x00f0 0x037c 0x0000 6 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01                  	0x00f4 0x0380 0x0000 0 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__UART8_DCE_TX                       	0x00f4 0x0380 0x0000 1 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__UART8_DTE_RX                       	0x00f4 0x0380 0x065c 1 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__SIM2_PORT0_TRXD                	0x00f4 0x0380 0x0000 2 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__ECSPI4_SCLK                    	0x00f4 0x0380 0x0564 3 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__EIM_EB_B03                     	0x00f4 0x0380 0x0000 4 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__GPIO2_IO12                     	0x00f4 0x0380 0x0000 5 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__KPP_ROW06                      	0x00f4 0x0380 0x0000 6 0
+-#define MX6UL_PAD_ENET2_TX_DATA1__USB_OTG2_PWR                   	0x00f4 0x0380 0x0000 8 0
+-#define MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN                       	0x00f8 0x0384 0x0000 0 0
+-#define MX6UL_PAD_ENET2_TX_EN__UART8_DCE_RX                          	0x00f8 0x0384 0x065c 1 1
+-#define MX6UL_PAD_ENET2_TX_EN__UART8_DTE_TX                          	0x00f8 0x0384 0x0000 1 0
+-#define MX6UL_PAD_ENET2_TX_EN__SIM2_PORT0_cLK                    	0x00f8 0x0384 0x0000 2 0
+-#define MX6UL_PAD_ENET2_TX_EN__ECSPI4_MOSI                       	0x00f8 0x0384 0x056c 3 0
+-#define MX6UL_PAD_ENET2_TX_EN__EIM_ACLK_FREERUN                  	0x00f8 0x0384 0x0000 4 0
+-#define MX6UL_PAD_ENET2_TX_EN__GPIO2_IO13                        	0x00f8 0x0384 0x0000 5 0
+-#define MX6UL_PAD_ENET2_TX_EN__KPP_COL06                         	0x00f8 0x0384 0x0000 6 0
+-#define MX6UL_PAD_ENET2_TX_EN__USB_OTG2_OC                       	0x00f8 0x0384 0x0000 8 0
+-#define MX6UL_PAD_ENET2_TX_CLK__ENET2_TX_CLK                     	0x00fc 0x0388 0x0000 0 0
+-#define MX6UL_PAD_ENET2_TX_CLK__UART8_DCE_CTS                    	0x00fc 0x0388 0x0000 1 0
+-#define MX6UL_PAD_ENET2_TX_CLK__UART8_DTE_RTS                    	0x00fc 0x0388 0x0658 1 0
+-#define MX6UL_PAD_ENET2_TX_CLK__SIM2_PORT0_RST_B                 	0x00fc 0x0388 0x0000 2 0
+-#define MX6UL_PAD_ENET2_TX_CLK__ECSPI4_MISO                      	0x00fc 0x0388 0x0568 3 0
+-#define MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2                   	0x00fc 0x0388 0x057c 4 2
+-#define MX6UL_PAD_ENET2_TX_CLK__GPIO2_IO14                       	0x00fc 0x0388 0x0000 5 0
+-#define MX6UL_PAD_ENET2_TX_CLK__KPP_ROW07                        	0x00fc 0x0388 0x0000 6 0
+-#define MX6UL_PAD_ENET2_TX_CLK__ANATOP_OTG2_ID                   	0x00fc 0x0388 0x0000 8 0
+-#define MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER                       	0x0100 0x038c 0x0000 0 0
+-#define MX6UL_PAD_ENET2_RX_ER__UART8_DCE_RTS                     	0x0100 0x038c 0x0658 1 1
+-#define MX6UL_PAD_ENET2_RX_ER__UART8_DTE_CTS                     	0x0100 0x038c 0x0000 1 0
+-#define MX6UL_PAD_ENET2_RX_ER__SIM2_PORT0_SVEN                   	0x0100 0x038c 0x0000 2 0
+-#define MX6UL_PAD_ENET2_RX_ER__ECSPI4_SS0                        	0x0100 0x038c 0x0000 3 0
+-#define MX6UL_PAD_ENET2_RX_ER__EIM_ADDR25                        	0x0100 0x038c 0x0000 4 0
+-#define MX6UL_PAD_ENET2_RX_ER__GPIO2_IO15                        	0x0100 0x038c 0x0000 5 0
+-#define MX6UL_PAD_ENET2_RX_ER__KPP_COL07                         	0x0100 0x038c 0x0000 6 0
+-#define MX6UL_PAD_ENET2_RX_ER__WDOG1_WDOG_ANY                    	0x0100 0x038c 0x0000 8 0
+-#define MX6UL_PAD_LCD_CLK__LCDIF_CLK                             	0x0104 0x0390 0x0000 0 0
+-#define MX6UL_PAD_LCD_CLK__LCDIF_WR_RWN                          	0x0104 0x0390 0x0000 1 0
+-#define MX6UL_PAD_LCD_CLK__UART4_DCE_TX                              	0x0104 0x0390 0x0000 2 0
+-#define MX6UL_PAD_LCD_CLK__UART4_DTE_RX                              	0x0104 0x0390 0x063c 2 2
+-#define MX6UL_PAD_LCD_CLK__SAI3_MCLK                             	0x0104 0x0390 0x0000 3 0
+-#define MX6UL_PAD_LCD_CLK__EIM_CS2_B                             	0x0104 0x0390 0x0000 4 0
+-#define MX6UL_PAD_LCD_CLK__GPIO3_IO00                            	0x0104 0x0390 0x0000 5 0
+-#define MX6UL_PAD_LCD_CLK__WDOG1_WDOG_RST_B_DEB                  	0x0104 0x0390 0x0000 8 0
+-#define MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE                       	0x0108 0x0394 0x0000 0 0
+-#define MX6UL_PAD_LCD_ENABLE__LCDIF_RD_E                         	0x0108 0x0394 0x0000 1 0
+-#define MX6UL_PAD_LCD_ENABLE__UART4_DCE_RX                           	0x0108 0x0394 0x063c 2 3
+-#define MX6UL_PAD_LCD_ENABLE__UART4_DTE_TX                           	0x0108 0x0394 0x0000 2 0
+-#define MX6UL_PAD_LCD_ENABLE__SAI3_TX_SYNC                       	0x0108 0x0394 0x060c 3 0
+-#define MX6UL_PAD_LCD_ENABLE__EIM_CS3_B                          	0x0108 0x0394 0x0000 4 0
+-#define MX6UL_PAD_LCD_ENABLE__GPIO3_IO01                         	0x0108 0x0394 0x0000 5 0
+-#define MX6UL_PAD_LCD_ENABLE__ECSPI2_RDY                         	0x0108 0x0394 0x0000 8 0
+-#define MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC                         	0x010c 0x0398 0x05dc 0 0
+-#define MX6UL_PAD_LCD_HSYNC__LCDIF_RS                            	0x010c 0x0398 0x0000 1 0
+-#define MX6UL_PAD_LCD_HSYNC__UART4_DCE_CTS                       	0x010c 0x0398 0x0000 2 0
+-#define MX6UL_PAD_LCD_HSYNC__UART4_DTE_RTS                       	0x010c 0x0398 0x0638 2 2
+-#define MX6UL_PAD_LCD_HSYNC__SAI3_TX_BCLK                        	0x010c 0x0398 0x0608 3 0
+-#define MX6UL_PAD_LCD_HSYNC__WDOG3_WDOG_RST_B_DEB                	0x010c 0x0398 0x0000 4 0
+-#define MX6UL_PAD_LCD_HSYNC__GPIO3_IO02                          	0x010c 0x0398 0x0000 5 0
+-#define MX6UL_PAD_LCD_HSYNC__ECSPI2_SS1                          	0x010c 0x0398 0x0000 8 0
+-#define MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC                         	0x0110 0x039c 0x0000 0 0
+-#define MX6UL_PAD_LCD_VSYNC__LCDIF_BUSY                          	0x0110 0x039c 0x05dc 1 1
+-#define MX6UL_PAD_LCD_VSYNC__UART4_DCE_RTS                       	0x0110 0x039c 0x0638 2 3
+-#define MX6UL_PAD_LCD_VSYNC__UART4_DTE_CTS                       	0x0110 0x039c 0x0000 2 0
+-#define MX6UL_PAD_LCD_VSYNC__SAI3_RX_DATA                        	0x0110 0x039c 0x0000 3 0
+-#define MX6UL_PAD_LCD_VSYNC__WDOG2_WDOG_B                        	0x0110 0x039c 0x0000 4 0
+-#define MX6UL_PAD_LCD_VSYNC__GPIO3_IO03                          	0x0110 0x039c 0x0000 5 0
+-#define MX6UL_PAD_LCD_VSYNC__ECSPI2_SS2                          	0x0110 0x039c 0x0000 8 0
+-#define MX6UL_PAD_LCD_RESET__LCDIF_RESET                         	0x0114 0x03a0 0x0000 0 0
+-#define MX6UL_PAD_LCD_RESET__LCDIF_CS                            	0x0114 0x03a0 0x0000 1 0
+-#define MX6UL_PAD_LCD_RESET__CA7_MX6UL_EVENTI                    	0x0114 0x03a0 0x0000 2 0
+-#define MX6UL_PAD_LCD_RESET__SAI3_TX_DATA                        	0x0114 0x03a0 0x0000 3 0
+-#define MX6UL_PAD_LCD_RESET__WDOG1_WDOG_ANY                      	0x0114 0x03a0 0x0000 4 0
+-#define MX6UL_PAD_LCD_RESET__GPIO3_IO04                          	0x0114 0x03a0 0x0000 5 0
+-#define MX6UL_PAD_LCD_RESET__ECSPI2_SS3                          	0x0114 0x03a0 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA00__LCDIF_DATA00                       	0x0118 0x03a4 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA00__PWM1_OUT                           	0x0118 0x03a4 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA00__ENET1_1588_EVENT2_IN               	0x0118 0x03a4 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA00__I2C3_SDA                           	0x0118 0x03a4 0x05b8 4 2
+-#define MX6UL_PAD_LCD_DATA00__GPIO3_IO05                         	0x0118 0x03a4 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA00__SRC_BT_CFG00                       	0x0118 0x03a4 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA00__SAI1_MCLK                          	0x0118 0x03a4 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA01__LCDIF_DATA01                       	0x011c 0x03a8 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA01__PWM2_OUT                           	0x011c 0x03a8 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA01__ENET1_1588_EVENT2_OUT              	0x011c 0x03a8 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA01__I2C3_SCL                           	0x011c 0x03a8 0x05b4 4 2
+-#define MX6UL_PAD_LCD_DATA01__GPIO3_IO06                         	0x011c 0x03a8 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA01__SRC_BT_CFG01                       	0x011c 0x03a8 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA01__SAI1_TX_SYNC                       	0x011c 0x03a8 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA02__LCDIF_DATA02                       	0x0120 0x03ac 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA02__PWM3_OUT                           	0x0120 0x03ac 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA02__ENET1_1588_EVENT3_IN               	0x0120 0x03ac 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA02__I2C4_SDA                           	0x0120 0x03ac 0x05c0 4 2
+-#define MX6UL_PAD_LCD_DATA02__GPIO3_IO07                         	0x0120 0x03ac 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA02__SRC_BT_CFG02                       	0x0120 0x03ac 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA02__SAI1_TX_BCLK                       	0x0120 0x03ac 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA03__LCDIF_DATA03                       	0x0124 0x03b0 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA03__PWM4_OUT                           	0x0124 0x03b0 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA03__ENET1_1588_EVENT3_OUT              	0x0124 0x03b0 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA03__I2C4_SCL                           	0x0124 0x03b0 0x05bc 4 2
+-#define MX6UL_PAD_LCD_DATA03__GPIO3_IO08                         	0x0124 0x03b0 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA03__SRC_BT_CFG03                       	0x0124 0x03b0 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA03__SAI1_RX_DATA                       	0x0124 0x03b0 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA04__LCDIF_DATA04                       	0x0128 0x03b4 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA04__UART8_DCE_CTS                      	0x0128 0x03b4 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA04__UART8_DTE_RTS                      	0x0128 0x03b4 0x0658 1 2
+-#define MX6UL_PAD_LCD_DATA04__ENET2_1588_EVENT2_IN               	0x0128 0x03b4 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA04__SPDIF_SR_CLK                       	0x0128 0x03b4 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA04__GPIO3_IO09                         	0x0128 0x03b4 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA04__SRC_BT_CFG04                       	0x0128 0x03b4 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA04__SAI1_TX_DATA                       	0x0128 0x03b4 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA05__LCDIF_DATA05                       	0x012c 0x03b8 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA05__UART8_DCE_RTS                      	0x012c 0x03b8 0x0658 1 3
+-#define MX6UL_PAD_LCD_DATA05__UART8_DTE_CTS                      	0x012c 0x03b8 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA05__ENET2_1588_EVENT2_OUT              	0x012c 0x03b8 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA05__SPDIF_OUT                          	0x012c 0x03b8 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA05__GPIO3_IO10                         	0x012c 0x03b8 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA05__SRC_BT_CFG05                       	0x012c 0x03b8 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA05__ECSPI1_SS1                         	0x012c 0x03b8 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA06__LCDIF_DATA06                       	0x0130 0x03bc 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA06__UART7_DCE_CTS                      	0x0130 0x03bc 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA06__UART7_DTE_RTS                      	0x0130 0x03bc 0x0650 1 2
+-#define MX6UL_PAD_LCD_DATA06__ENET2_1588_EVENT3_IN               	0x0130 0x03bc 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA06__SPDIF_LOCK                         	0x0130 0x03bc 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA06__GPIO3_IO11                         	0x0130 0x03bc 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA06__SRC_BT_CFG06                       	0x0130 0x03bc 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA06__ECSPI1_SS2                         	0x0130 0x03bc 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA07__LCDIF_DATA07                       	0x0134 0x03c0 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA07__UART7_DCE_RTS                      	0x0134 0x03c0 0x0650 1 3
+-#define MX6UL_PAD_LCD_DATA07__UART7_DTE_CTS                      	0x0134 0x03c0 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA07__ENET2_1588_EVENT3_OUT              	0x0134 0x03c0 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA07__SPDIF_EXT_CLK                      	0x0134 0x03c0 0x061c 4 0
+-#define MX6UL_PAD_LCD_DATA07__GPIO3_IO12                         	0x0134 0x03c0 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA07__SRC_BT_CFG07                       	0x0134 0x03c0 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA07__ECSPI1_SS3                         	0x0134 0x03c0 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA08__LCDIF_DATA08                       	0x0138 0x03c4 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA08__SPDIF_IN                           	0x0138 0x03c4 0x0618 1 2
+-#define MX6UL_PAD_LCD_DATA08__CSI_DATA16                         	0x0138 0x03c4 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA08__EIM_DATA00                         	0x0138 0x03c4 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA08__GPIO3_IO13                         	0x0138 0x03c4 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA08__SRC_BT_CFG08                       	0x0138 0x03c4 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA08__FLEXCAN1_TX                        	0x0138 0x03c4 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA09__LCDIF_DATA09                       	0x013c 0x03c8 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA09__SAI3_MCLK                          	0x013c 0x03c8 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA09__CSI_DATA17                         	0x013c 0x03c8 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA09__EIM_DATA01                         	0x013c 0x03c8 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA09__GPIO3_IO14                         	0x013c 0x03c8 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA09__SRC_BT_CFG09                       	0x013c 0x03c8 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA09__FLEXCAN1_RX                        	0x013c 0x03c8 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA10__LCDIF_DATA10                       	0x0140 0x03cc 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA10__SAI3_RX_SYNC                       	0x0140 0x03cc 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA10__CSI_DATA18                         	0x0140 0x03cc 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA10__EIM_DATA02                         	0x0140 0x03cc 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA10__GPIO3_IO15                         	0x0140 0x03cc 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA10__SRC_BT_CFG10                       	0x0140 0x03cc 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA10__FLEXCAN2_TX                        	0x0140 0x03cc 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA11__LCDIF_DATA11                       	0x0144 0x03d0 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA11__SAI3_RX_BCLK                       	0x0144 0x03d0 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA11__CSI_DATA19                         	0x0144 0x03d0 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA11__EIM_DATA03                         	0x0144 0x03d0 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA11__GPIO3_IO16                         	0x0144 0x03d0 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA11__SRC_BT_CFG11                       	0x0144 0x03d0 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA11__FLEXCAN2_RX                        	0x0144 0x03d0 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA12__LCDIF_DATA12                       	0x0148 0x03d4 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA12__SAI3_TX_SYNC                       	0x0148 0x03d4 0x060c 1 1
+-#define MX6UL_PAD_LCD_DATA12__CSI_DATA20                         	0x0148 0x03d4 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA12__EIM_DATA04                         	0x0148 0x03d4 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA12__GPIO3_IO17                         	0x0148 0x03d4 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA12__SRC_BT_CFG12                       	0x0148 0x03d4 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA12__ECSPI1_RDY                         	0x0148 0x03d4 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA13__LCDIF_DATA13                       	0x014c 0x03d8 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA13__SAI3_TX_BCLK                       	0x014c 0x03d8 0x0608 1 1
+-#define MX6UL_PAD_LCD_DATA13__CSI_DATA21                         	0x014c 0x03d8 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA13__EIM_DATA05                         	0x014c 0x03d8 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA13__GPIO3_IO18                         	0x014c 0x03d8 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA13__SRC_BT_CFG13                       	0x014c 0x03d8 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA13__USDHC2_RESET_B                     	0x014c 0x03d8 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA14__LCDIF_DATA14                       	0x0150 0x03dc 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA14__SAI3_RX_DATA                       	0x0150 0x03dc 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA14__CSI_DATA22                         	0x0150 0x03dc 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA14__EIM_DATA06                         	0x0150 0x03dc 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA14__GPIO3_IO19                         	0x0150 0x03dc 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA14__SRC_BT_CFG14                       	0x0150 0x03dc 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA14__USDHC2_DATA4                       	0x0150 0x03dc 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA15__LCDIF_DATA15                       	0x0154 0x03e0 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA15__SAI3_TX_DATA                       	0x0154 0x03e0 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA15__CSI_DATA23                         	0x0154 0x03e0 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA15__EIM_DATA07                         	0x0154 0x03e0 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA15__GPIO3_IO20                         	0x0154 0x03e0 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA15__SRC_BT_CFG15                       	0x0154 0x03e0 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA15__USDHC2_DATA5                       	0x0154 0x03e0 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA16__LCDIF_DATA16                       	0x0158 0x03e4 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA16__UART7_DCE_TX                           	0x0158 0x03e4 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA16__UART7_DTE_RX                           	0x0158 0x03e4 0x0654 1 2
+-#define MX6UL_PAD_LCD_DATA16__CSI_DATA01                         	0x0158 0x03e4 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA16__EIM_DATA08                         	0x0158 0x03e4 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA16__GPIO3_IO21                         	0x0158 0x03e4 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA16__SRC_BT_CFG24                       	0x0158 0x03e4 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA16__USDHC2_DATA6                       	0x0158 0x03e4 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA17__LCDIF_DATA17                       	0x015c 0x03e8 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA17__UART7_DCE_RX                           	0x015c 0x03e8 0x0654 1 3
+-#define MX6UL_PAD_LCD_DATA17__UART7_DTE_TX                           	0x015c 0x03e8 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA17__CSI_DATA00                         	0x015c 0x03e8 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA17__EIM_DATA09                         	0x015c 0x03e8 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA17__GPIO3_IO22                         	0x015c 0x03e8 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA17__SRC_BT_CFG25                       	0x015c 0x03e8 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA17__USDHC2_DATA7                       	0x015c 0x03e8 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA18__LCDIF_DATA18                       	0x0160 0x03ec 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA18__PWM5_OUT                           	0x0160 0x03ec 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA18__CA7_MX6UL_EVENTO                   	0x0160 0x03ec 0x0000 2 0
+-#define MX6UL_PAD_LCD_DATA18__CSI_DATA10                         	0x0160 0x03ec 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA18__EIM_DATA10                         	0x0160 0x03ec 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA18__GPIO3_IO23                         	0x0160 0x03ec 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA18__SRC_BT_CFG26                       	0x0160 0x03ec 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA18__USDHC2_CMD                         	0x0160 0x03ec 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA19__EIM_DATA11                         	0x0164 0x03f0 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA19__GPIO3_IO24                         	0x0164 0x03f0 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA19__SRC_BT_CFG27                       	0x0164 0x03f0 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA19__USDHC2_CLK                         	0x0164 0x03f0 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA19__LCDIF_DATA19                       	0x0164 0x03f0 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA19__PWM6_OUT                           	0x0164 0x03f0 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA19__WDOG1_WDOG_ANY                     	0x0164 0x03f0 0x0000 2 0
+-#define MX6UL_PAD_LCD_DATA19__CSI_DATA11                         	0x0164 0x03f0 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA20__EIM_DATA12                         	0x0168 0x03f4 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA20__GPIO3_IO25                         	0x0168 0x03f4 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA20__SRC_BT_CFG28                       	0x0168 0x03f4 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA20__USDHC2_DATA0                       	0x0168 0x03f4 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA20__LCDIF_DATA20                       	0x0168 0x03f4 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA20__UART8_DCE_TX                           	0x0168 0x03f4 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA20__UART8_DTE_RX                           	0x0168 0x03f4 0x065c 1 2
+-#define MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK                        	0x0168 0x03f4 0x0534 2 0
+-#define MX6UL_PAD_LCD_DATA20__CSI_DATA12                         	0x0168 0x03f4 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA21__LCDIF_DATA21                       	0x016c 0x03f8 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA21__UART8_DCE_RX                           	0x016c 0x03f8 0x065c 1 3
+-#define MX6UL_PAD_LCD_DATA21__UART8_DTE_TX                           	0x016c 0x03f8 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA21__ECSPI1_SS0                         	0x016c 0x03f8 0x0000 2 0
+-#define MX6UL_PAD_LCD_DATA21__CSI_DATA13                         	0x016c 0x03f8 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA21__EIM_DATA13                         	0x016c 0x03f8 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA21__GPIO3_IO26                         	0x016c 0x03f8 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA21__SRC_BT_CFG29                       	0x016c 0x03f8 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA21__USDHC2_DATA1                       	0x016c 0x03f8 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA22__LCDIF_DATA22                       	0x0170 0x03fc 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA22__MQS_RIGHT                          	0x0170 0x03fc 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI                        	0x0170 0x03fc 0x053c 2 0
+-#define MX6UL_PAD_LCD_DATA22__CSI_DATA14                         	0x0170 0x03fc 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA22__EIM_DATA14                         	0x0170 0x03fc 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA22__GPIO3_IO27                         	0x0170 0x03fc 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA22__SRC_BT_CFG30                       	0x0170 0x03fc 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA22__USDHC2_DATA2                       	0x0170 0x03fc 0x0000 8 0
+-#define MX6UL_PAD_LCD_DATA23__LCDIF_DATA23                       	0x0174 0x0400 0x0000 0 0
+-#define MX6UL_PAD_LCD_DATA23__MQS_LEFT                           	0x0174 0x0400 0x0000 1 0
+-#define MX6UL_PAD_LCD_DATA23__ECSPI1_MISO                        	0x0174 0x0400 0x0538 2 0
+-#define MX6UL_PAD_LCD_DATA23__CSI_DATA15                         	0x0174 0x0400 0x0000 3 0
+-#define MX6UL_PAD_LCD_DATA23__EIM_DATA15                         	0x0174 0x0400 0x0000 4 0
+-#define MX6UL_PAD_LCD_DATA23__GPIO3_IO28                         	0x0174 0x0400 0x0000 5 0
+-#define MX6UL_PAD_LCD_DATA23__SRC_BT_CFG31                       	0x0174 0x0400 0x0000 6 0
+-#define MX6UL_PAD_LCD_DATA23__USDHC2_DATA3                       	0x0174 0x0400 0x0000 8 0
+-#define MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B                        	0x0178 0x0404 0x0000 0 0
+-#define MX6UL_PAD_NAND_RE_B__USDHC2_CLK                          	0x0178 0x0404 0x0670 1 2
+-#define MX6UL_PAD_NAND_RE_B__QSPI_B_SCLK                         	0x0178 0x0404 0x0000 2 0
+-#define MX6UL_PAD_NAND_RE_B__KPP_ROW00                           	0x0178 0x0404 0x0000 3 0
+-#define MX6UL_PAD_NAND_RE_B__EIM_EB_B00                          	0x0178 0x0404 0x0000 4 0
+-#define MX6UL_PAD_NAND_RE_B__GPIO4_IO00                          	0x0178 0x0404 0x0000 5 0
+-#define MX6UL_PAD_NAND_RE_B__ECSPI3_SS2                          	0x0178 0x0404 0x0000 8 0
+-#define MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B                        	0x017c 0x0408 0x0000 0 0
+-#define MX6UL_PAD_NAND_WE_B__USDHC2_CMD                          	0x017c 0x0408 0x0678 1 2
+-#define MX6UL_PAD_NAND_WE_B__QSPI_B_SS0_B                        	0x017c 0x0408 0x0000 2 0
+-#define MX6UL_PAD_NAND_WE_B__KPP_COL00                           	0x017c 0x0408 0x0000 3 0
+-#define MX6UL_PAD_NAND_WE_B__EIM_EB_B01                          	0x017c 0x0408 0x0000 4 0
+-#define MX6UL_PAD_NAND_WE_B__GPIO4_IO01                          	0x017c 0x0408 0x0000 5 0
+-#define MX6UL_PAD_NAND_WE_B__ECSPI3_SS3                          	0x017c 0x0408 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00                    	0x0180 0x040c 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA00__USDHC2_DATA0                      	0x0180 0x040c 0x067c 1 2
+-#define MX6UL_PAD_NAND_DATA00__QSPI_B_SS1_B                      	0x0180 0x040c 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA00__KPP_ROW01                         	0x0180 0x040c 0x0000 3 0
+-#define MX6UL_PAD_NAND_DATA00__EIM_AD08                          	0x0180 0x040c 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA00__GPIO4_IO02                        	0x0180 0x040c 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA00__ECSPI4_RDY                        	0x0180 0x040c 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01                    	0x0184 0x0410 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA01__USDHC2_DATA1                      	0x0184 0x0410 0x0680 1 2
+-#define MX6UL_PAD_NAND_DATA01__QSPI_B_DQS                        	0x0184 0x0410 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA01__KPP_COL01                         	0x0184 0x0410 0x0000 3 0
+-#define MX6UL_PAD_NAND_DATA01__EIM_AD09                          	0x0184 0x0410 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA01__GPIO4_IO03                        	0x0184 0x0410 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA01__ECSPI4_SS1                        	0x0184 0x0410 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02                    	0x0188 0x0414 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA02__USDHC2_DATA2                      	0x0188 0x0414 0x0684 1 1
+-#define MX6UL_PAD_NAND_DATA02__QSPI_B_DATA00                     	0x0188 0x0414 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA02__KPP_ROW02                         	0x0188 0x0414 0x0000 3 0
+-#define MX6UL_PAD_NAND_DATA02__EIM_AD10                          	0x0188 0x0414 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA02__GPIO4_IO04                        	0x0188 0x0414 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA02__ECSPI4_SS2                        	0x0188 0x0414 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03                    	0x018c 0x0418 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA03__USDHC2_DATA3                      	0x018c 0x0418 0x0688 1 2
+-#define MX6UL_PAD_NAND_DATA03__QSPI_B_DATA01                     	0x018c 0x0418 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA03__KPP_COL02                         	0x018c 0x0418 0x0000 3 0
+-#define MX6UL_PAD_NAND_DATA03__EIM_AD11                          	0x018c 0x0418 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA03__GPIO4_IO05                        	0x018c 0x0418 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA03__ECSPI4_SS3                        	0x018c 0x0418 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04                    	0x0190 0x041c 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA04__USDHC2_DATA4                      	0x0190 0x041c 0x068c 1 1
+-#define MX6UL_PAD_NAND_DATA04__QSPI_B_DATA02                     	0x0190 0x041c 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA04__ECSPI4_SCLK                       	0x0190 0x041c 0x0564 3 1
+-#define MX6UL_PAD_NAND_DATA04__EIM_AD12                          	0x0190 0x041c 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA04__GPIO4_IO06                        	0x0190 0x041c 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA04__UART2_DCE_TX                          	0x0190 0x041c 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA04__UART2_DTE_RX                          	0x0190 0x041c 0x062c 8 2
+-#define MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05                    	0x0194 0x0420 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA05__USDHC2_DATA5                      	0x0194 0x0420 0x0690 1 1
+-#define MX6UL_PAD_NAND_DATA05__QSPI_B_DATA03                     	0x0194 0x0420 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA05__ECSPI4_MOSI                       	0x0194 0x0420 0x056c 3 1
+-#define MX6UL_PAD_NAND_DATA05__EIM_AD13                          	0x0194 0x0420 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA05__GPIO4_IO07                        	0x0194 0x0420 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA05__UART2_DCE_RX                          	0x0194 0x0420 0x062c 8 3
+-#define MX6UL_PAD_NAND_DATA05__UART2_DTE_TX                          	0x0194 0x0420 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06                    	0x0198 0x0424 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA06__USDHC2_DATA6                      	0x0198 0x0424 0x0694 1 1
+-#define MX6UL_PAD_NAND_DATA06__SAI2_RX_BCLK                      	0x0198 0x0424 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA06__ECSPI4_MISO                       	0x0198 0x0424 0x0568 3 1
+-#define MX6UL_PAD_NAND_DATA06__EIM_AD14                          	0x0198 0x0424 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA06__GPIO4_IO08                        	0x0198 0x0424 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA06__UART2_DCE_CTS                     	0x0198 0x0424 0x0000 8 0
+-#define MX6UL_PAD_NAND_DATA06__UART2_DTE_RTS                     	0x0198 0x0424 0x0628 8 4
+-#define MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07                    	0x019c 0x0428 0x0000 0 0
+-#define MX6UL_PAD_NAND_DATA07__USDHC2_DATA7                      	0x019c 0x0428 0x0698 1 1
+-#define MX6UL_PAD_NAND_DATA07__QSPI_A_SS1_B                      	0x019c 0x0428 0x0000 2 0
+-#define MX6UL_PAD_NAND_DATA07__ECSPI4_SS0                        	0x019c 0x0428 0x0000 3 0
+-#define MX6UL_PAD_NAND_DATA07__EIM_AD15                          	0x019c 0x0428 0x0000 4 0
+-#define MX6UL_PAD_NAND_DATA07__GPIO4_IO09                        	0x019c 0x0428 0x0000 5 0
+-#define MX6UL_PAD_NAND_DATA07__UART2_DCE_RTS                     	0x019c 0x0428 0x0628 8 5
+-#define MX6UL_PAD_NAND_DATA07__UART2_DTE_CTS                     	0x019c 0x0428 0x0000 8 0
+-#define MX6UL_PAD_NAND_ALE__RAWNAND_ALE                          	0x01a0 0x042c 0x0000 0 0
+-#define MX6UL_PAD_NAND_ALE__USDHC2_RESET_B                       	0x01a0 0x042c 0x0000 1 0
+-#define MX6UL_PAD_NAND_ALE__QSPI_A_DQS                           	0x01a0 0x042c 0x0000 2 0
+-#define MX6UL_PAD_NAND_ALE__PWM3_OUT                             	0x01a0 0x042c 0x0000 3 0
+-#define MX6UL_PAD_NAND_ALE__EIM_ADDR17                           	0x01a0 0x042c 0x0000 4 0
+-#define MX6UL_PAD_NAND_ALE__GPIO4_IO10                           	0x01a0 0x042c 0x0000 5 0
+-#define MX6UL_PAD_NAND_ALE__ECSPI3_SS1                           	0x01a0 0x042c 0x0000 8 0
+-#define MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B                        	0x01a4 0x0430 0x0000 0 0
+-#define MX6UL_PAD_NAND_WP_B__USDHC1_RESET_B                      	0x01a4 0x0430 0x0000 1 0
+-#define MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK                         	0x01a4 0x0430 0x0000 2 0
+-#define MX6UL_PAD_NAND_WP_B__PWM4_OUT                            	0x01a4 0x0430 0x0000 3 0
+-#define MX6UL_PAD_NAND_WP_B__EIM_BCLK                            	0x01a4 0x0430 0x0000 4 0
+-#define MX6UL_PAD_NAND_WP_B__GPIO4_IO11                          	0x01a4 0x0430 0x0000 5 0
+-#define MX6UL_PAD_NAND_WP_B__ECSPI3_RDY                          	0x01a4 0x0430 0x0000 8 0
+-#define MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B                  	0x01a8 0x0434 0x0000 0 0
+-#define MX6UL_PAD_NAND_READY_B__USDHC1_DATA4                     	0x01a8 0x0434 0x0000 1 0
+-#define MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00                    	0x01a8 0x0434 0x0000 2 0
+-#define MX6UL_PAD_NAND_READY_B__ECSPI3_SS0                       	0x01a8 0x0434 0x0000 3 0
+-#define MX6UL_PAD_NAND_READY_B__EIM_CS1_B                        	0x01a8 0x0434 0x0000 4 0
+-#define MX6UL_PAD_NAND_READY_B__GPIO4_IO12                       	0x01a8 0x0434 0x0000 5 0
+-#define MX6UL_PAD_NAND_READY_B__UART3_DCE_TX                         	0x01a8 0x0434 0x0000 8 0
+-#define MX6UL_PAD_NAND_READY_B__UART3_DTE_RX                         	0x01a8 0x0434 0x0634 8 2
+-#define MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B                      	0x01ac 0x0438 0x0000 0 0
+-#define MX6UL_PAD_NAND_CE0_B__USDHC1_DATA5                       	0x01ac 0x0438 0x0000 1 0
+-#define MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01                      	0x01ac 0x0438 0x0000 2 0
+-#define MX6UL_PAD_NAND_CE0_B__ECSPI3_SCLK                        	0x01ac 0x0438 0x0554 3 1
+-#define MX6UL_PAD_NAND_CE0_B__EIM_DTACK_B                        	0x01ac 0x0438 0x0000 4 0
+-#define MX6UL_PAD_NAND_CE0_B__GPIO4_IO13                         	0x01ac 0x0438 0x0000 5 0
+-#define MX6UL_PAD_NAND_CE0_B__UART3_DCE_RX                           	0x01ac 0x0438 0x0634 8 3
+-#define MX6UL_PAD_NAND_CE0_B__UART3_DTE_TX                           	0x01ac 0x0438 0x0000 8 0
+-#define MX6UL_PAD_NAND_CE1_B__RAWNAND_CE1_B                      	0x01b0 0x043c 0x0000 0 0
+-#define MX6UL_PAD_NAND_CE1_B__USDHC1_DATA6                       	0x01b0 0x043c 0x0000 1 0
+-#define MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02                      	0x01b0 0x043c 0x0000 2 0
+-#define MX6UL_PAD_NAND_CE1_B__ECSPI3_MOSI                        	0x01b0 0x043c 0x055c 3 1
+-#define MX6UL_PAD_NAND_CE1_B__EIM_ADDR18                         	0x01b0 0x043c 0x0000 4 0
+-#define MX6UL_PAD_NAND_CE1_B__GPIO4_IO14                         	0x01b0 0x043c 0x0000 5 0
+-#define MX6UL_PAD_NAND_CE1_B__UART3_DCE_CTS                      	0x01b0 0x043c 0x0000 8 0
+-#define MX6UL_PAD_NAND_CE1_B__UART3_DTE_RTS                      	0x01b0 0x043c 0x0630 8 2
+-#define MX6UL_PAD_NAND_CLE__RAWNAND_CLE                          	0x01b4 0x0440 0x0000 0 0
+-#define MX6UL_PAD_NAND_CLE__USDHC1_DATA7                         	0x01b4 0x0440 0x0000 1 0
+-#define MX6UL_PAD_NAND_CLE__QSPI_A_DATA03                        	0x01b4 0x0440 0x0000 2 0
+-#define MX6UL_PAD_NAND_CLE__ECSPI3_MISO                          	0x01b4 0x0440 0x0558 3 1
+-#define MX6UL_PAD_NAND_CLE__EIM_ADDR16                           	0x01b4 0x0440 0x0000 4 0
+-#define MX6UL_PAD_NAND_CLE__GPIO4_IO15                           	0x01b4 0x0440 0x0000 5 0
+-#define MX6UL_PAD_NAND_CLE__UART3_DCE_RTS                        	0x01b4 0x0440 0x0630 8 3
+-#define MX6UL_PAD_NAND_CLE__UART3_DTE_CTS                        	0x01b4 0x0440 0x0000 8 0
+-#define MX6UL_PAD_NAND_DQS__RAWNAND_DQS                          	0x01b8 0x0444 0x0000 0 0
+-#define MX6UL_PAD_NAND_DQS__CSI_FIELD                            	0x01b8 0x0444 0x0530 1 1
+-#define MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B                         	0x01b8 0x0444 0x0000 2 0
+-#define MX6UL_PAD_NAND_DQS__PWM5_OUT                             	0x01b8 0x0444 0x0000 3 0
+-#define MX6UL_PAD_NAND_DQS__EIM_WAIT                             	0x01b8 0x0444 0x0000 4 0
+-#define MX6UL_PAD_NAND_DQS__GPIO4_IO16                           	0x01b8 0x0444 0x0000 5 0
+-#define MX6UL_PAD_NAND_DQS__SDMA_EXT_EVENT01                     	0x01b8 0x0444 0x0000 6 0
+-#define MX6UL_PAD_NAND_DQS__SPDIF_EXT_CLK                        	0x01b8 0x0444 0x0000 8 0
+-#define MX6UL_PAD_SD1_CMD__USDHC1_CMD                            	0x01bc 0x0448 0x0000 0 0
+-#define MX6UL_PAD_SD1_CMD__GPT2_COMPARE1                         	0x01bc 0x0448 0x0000 1 0
+-#define MX6UL_PAD_SD1_CMD__SAI2_RX_SYNC                          	0x01bc 0x0448 0x0000 2 0
+-#define MX6UL_PAD_SD1_CMD__SPDIF_OUT                             	0x01bc 0x0448 0x0000 3 0
+-#define MX6UL_PAD_SD1_CMD__EIM_ADDR19                            	0x01bc 0x0448 0x0000 4 0
+-#define MX6UL_PAD_SD1_CMD__GPIO2_IO16                            	0x01bc 0x0448 0x0000 5 0
+-#define MX6UL_PAD_SD1_CMD__SDMA_EXT_EVENT00                      	0x01bc 0x0448 0x0000 6 0
+-#define MX6UL_PAD_SD1_CMD__USB_OTG1_PWR                          	0x01bc 0x0448 0x0000 8 0
+-#define MX6UL_PAD_SD1_CLK__USDHC1_CLK                            	0x01c0 0x044c 0x0000 0 0
+-#define MX6UL_PAD_SD1_CLK__GPT2_COMPARE2                         	0x01c0 0x044c 0x0000 1 0
+-#define MX6UL_PAD_SD1_CLK__SAI2_MCLK                             	0x01c0 0x044c 0x0000 2 0
+-#define MX6UL_PAD_SD1_CLK__SPDIF_IN                              	0x01c0 0x044c 0x0618 3 3
+-#define MX6UL_PAD_SD1_CLK__EIM_ADDR20                            	0x01c0 0x044c 0x0000 4 0
+-#define MX6UL_PAD_SD1_CLK__GPIO2_IO17                            	0x01c0 0x044c 0x0000 5 0
+-#define MX6UL_PAD_SD1_CLK__USB_OTG1_OC                           	0x01c0 0x044c 0x0000 8 0
+-#define MX6UL_PAD_SD1_DATA0__USDHC1_DATA0                        	0x01c4 0x0450 0x0000 0 0
+-#define MX6UL_PAD_SD1_DATA0__GPT2_COMPARE3                       	0x01c4 0x0450 0x0000 1 0
+-#define MX6UL_PAD_SD1_DATA0__SAI2_TX_SYNC                        	0x01c4 0x0450 0x05fc 2 1
+-#define MX6UL_PAD_SD1_DATA0__FLEXCAN1_TX                         	0x01c4 0x0450 0x0000 3 0
+-#define MX6UL_PAD_SD1_DATA0__EIM_ADDR21                          	0x01c4 0x0450 0x0000 4 0
+-#define MX6UL_PAD_SD1_DATA0__GPIO2_IO18                          	0x01c4 0x0450 0x0000 5 0
+-#define MX6UL_PAD_SD1_DATA0__ANATOP_OTG1_ID                      	0x01c4 0x0450 0x0000 8 0
+-#define MX6UL_PAD_SD1_DATA1__USDHC1_DATA1                        	0x01c8 0x0454 0x0000 0 0
+-#define MX6UL_PAD_SD1_DATA1__GPT2_CLK                            	0x01c8 0x0454 0x05a0 1 1
+-#define MX6UL_PAD_SD1_DATA1__SAI2_TX_BCLK                        	0x01c8 0x0454 0x05f8 2 1
+-#define MX6UL_PAD_SD1_DATA1__FLEXCAN1_RX                         	0x01c8 0x0454 0x0584 3 3
+-#define MX6UL_PAD_SD1_DATA1__EIM_ADDR22                          	0x01c8 0x0454 0x0000 4 0
+-#define MX6UL_PAD_SD1_DATA1__GPIO2_IO19                          	0x01c8 0x0454 0x0000 5 0
+-#define MX6UL_PAD_SD1_DATA1__USB_OTG2_PWR                        	0x01c8 0x0454 0x0000 8 0
+-#define MX6UL_PAD_SD1_DATA2__USDHC1_DATA2                        	0x01cc 0x0458 0x0000 0 0
+-#define MX6UL_PAD_SD1_DATA2__GPT2_CAPTURE1                       	0x01cc 0x0458 0x0598 1 1
+-#define MX6UL_PAD_SD1_DATA2__SAI2_RX_DATA                        	0x01cc 0x0458 0x05f4 2 1
+-#define MX6UL_PAD_SD1_DATA2__FLEXCAN2_TX                         	0x01cc 0x0458 0x0000 3 0
+-#define MX6UL_PAD_SD1_DATA2__EIM_ADDR23                          	0x01cc 0x0458 0x0000 4 0
+-#define MX6UL_PAD_SD1_DATA2__GPIO2_IO20                          	0x01cc 0x0458 0x0000 5 0
+-#define MX6UL_PAD_SD1_DATA2__CCM_CLKO1                           	0x01cc 0x0458 0x0000 6 0
+-#define MX6UL_PAD_SD1_DATA2__USB_OTG2_OC                         	0x01cc 0x0458 0x0000 8 0
+-#define MX6UL_PAD_SD1_DATA3__USDHC1_DATA3                        	0x01d0 0x045c 0x0000 0 0
+-#define MX6UL_PAD_SD1_DATA3__GPT2_CAPTURE2                       	0x01d0 0x045c 0x059c 1 1
+-#define MX6UL_PAD_SD1_DATA3__SAI2_TX_DATA                        	0x01d0 0x045c 0x0000 2 0
+-#define MX6UL_PAD_SD1_DATA3__FLEXCAN2_RX                         	0x01d0 0x045c 0x0588 3 3
+-#define MX6UL_PAD_SD1_DATA3__EIM_ADDR24                          	0x01d0 0x045c 0x0000 4 0
+-#define MX6UL_PAD_SD1_DATA3__GPIO2_IO21                          	0x01d0 0x045c 0x0000 5 0
+-#define MX6UL_PAD_SD1_DATA3__CCM_CLKO2                           	0x01d0 0x045c 0x0000 6 0
+-#define MX6UL_PAD_SD1_DATA3__ANATOP_OTG2_ID                      	0x01d0 0x045c 0x0000 8 0
+-#define MX6UL_PAD_CSI_MCLK__CSI_MCLK                             	0x01d4 0x0460 0x0000 0 0
+-#define MX6UL_PAD_CSI_MCLK__USDHC2_CD_B                          	0x01d4 0x0460 0x0674 1 0
+-#define MX6UL_PAD_CSI_MCLK__RAWNAND_CE2_B                        	0x01d4 0x0460 0x0000 2 0
+-#define MX6UL_PAD_CSI_MCLK__I2C1_SDA                             	0x01d4 0x0460 0x05a8 3 0
+-#define MX6UL_PAD_CSI_MCLK__EIM_CS0_B                            	0x01d4 0x0460 0x0000 4 0
+-#define MX6UL_PAD_CSI_MCLK__GPIO4_IO17                           	0x01d4 0x0460 0x0000 5 0
+-#define MX6UL_PAD_CSI_MCLK__SNVS_HP_VIO_5_CTL                    	0x01d4 0x0460 0x0000 6 0
+-#define MX6UL_PAD_CSI_MCLK__UART6_DCE_TX                             	0x01d4 0x0460 0x0000 8 0
+-#define MX6UL_PAD_CSI_MCLK__UART6_DTE_RX                             	0x01d4 0x0460 0x064c 8 0
+-#define MX6UL_PAD_CSI_PIXCLK__CSI_PIXCLK                         	0x01d8 0x0464 0x0528 0 1
+-#define MX6UL_PAD_CSI_PIXCLK__USDHC2_WP                          	0x01d8 0x0464 0x069c 1 2
+-#define MX6UL_PAD_CSI_PIXCLK__RAWNAND_CE3_B                      	0x01d8 0x0464 0x0000 2 0
+-#define MX6UL_PAD_CSI_PIXCLK__I2C1_SCL                           	0x01d8 0x0464 0x05a4 3 2
+-#define MX6UL_PAD_CSI_PIXCLK__EIM_OE                             	0x01d8 0x0464 0x0000 4 0
+-#define MX6UL_PAD_CSI_PIXCLK__GPIO4_IO18                         	0x01d8 0x0464 0x0000 5 0
+-#define MX6UL_PAD_CSI_PIXCLK__SNVS_HP_VIO_5                      	0x01d8 0x0464 0x0000 6 0
+-#define MX6UL_PAD_CSI_PIXCLK__UART6_DCE_RX                           	0x01d8 0x0464 0x064c 8 3
+-#define MX6UL_PAD_CSI_PIXCLK__UART6_DTE_TX                           	0x01d8 0x0464 0x0000 8 0
+-#define MX6UL_PAD_CSI_VSYNC__CSI_VSYNC                           	0x01dc 0x0468 0x052c 0 0
+-#define MX6UL_PAD_CSI_VSYNC__USDHC2_CLK                          	0x01dc 0x0468 0x0670 1 0
+-#define MX6UL_PAD_CSI_VSYNC__SIM1_PORT1_CLK                      	0x01dc 0x0468 0x0000 2 0
+-#define MX6UL_PAD_CSI_VSYNC__I2C2_SDA                            	0x01dc 0x0468 0x05b0 3 0
+-#define MX6UL_PAD_CSI_VSYNC__EIM_RW                              	0x01dc 0x0468 0x0000 4 0
+-#define MX6UL_PAD_CSI_VSYNC__GPIO4_IO19                          	0x01dc 0x0468 0x0000 5 0
+-#define MX6UL_PAD_CSI_VSYNC__PWM7_OUT                            	0x01dc 0x0468 0x0000 6 0
+-#define MX6UL_PAD_CSI_VSYNC__UART6_DCE_RTS                       	0x01dc 0x0468 0x0648 8 0
+-#define MX6UL_PAD_CSI_VSYNC__UART6_DTE_CTS                       	0x01dc 0x0468 0x0000 8 0
+-#define MX6UL_PAD_CSI_HSYNC__CSI_HSYNC                           	0x01e0 0x046c 0x0524 0 0
+-#define MX6UL_PAD_CSI_HSYNC__USDHC2_CMD                          	0x01e0 0x046c 0x0678 1 0
+-#define MX6UL_PAD_CSI_HSYNC__SIM1_PORT1_PD                       	0x01e0 0x046c 0x0000 2 0
+-#define MX6UL_PAD_CSI_HSYNC__I2C2_SCL                            	0x01e0 0x046c 0x05ac 3 0
+-#define MX6UL_PAD_CSI_HSYNC__EIM_LBA_B                           	0x01e0 0x046c 0x0000 4 0
+-#define MX6UL_PAD_CSI_HSYNC__GPIO4_IO20                          	0x01e0 0x046c 0x0000 5 0
+-#define MX6UL_PAD_CSI_HSYNC__PWM8_OUT                            	0x01e0 0x046c 0x0000 6 0
+-#define MX6UL_PAD_CSI_HSYNC__UART6_DCE_CTS                       	0x01e0 0x046c 0x0000 8 0
+-#define MX6UL_PAD_CSI_HSYNC__UART6_DTE_RTS                       	0x01e0 0x046c 0x0648 8 1
+-#define MX6UL_PAD_CSI_DATA00__CSI_DATA02                         	0x01e4 0x0470 0x04c4 0 0
+-#define MX6UL_PAD_CSI_DATA00__USDHC2_DATA0                       	0x01e4 0x0470 0x067c 1 0
+-#define MX6UL_PAD_CSI_DATA00__SIM1_PORT1_RST_B                   	0x01e4 0x0470 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK                        	0x01e4 0x0470 0x0544 3 0
+-#define MX6UL_PAD_CSI_DATA00__EIM_AD00                           	0x01e4 0x0470 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA00__GPIO4_IO21                         	0x01e4 0x0470 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA00__SRC_INT_BOOT                       	0x01e4 0x0470 0x0000 6 0
+-#define MX6UL_PAD_CSI_DATA00__UART5_DCE_TX                           	0x01e4 0x0470 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA00__UART5_DTE_RX                           	0x01e4 0x0470 0x0644 8 0
+-#define MX6UL_PAD_CSI_DATA01__CSI_DATA03                         	0x01e8 0x0474 0x04c8 0 0
+-#define MX6UL_PAD_CSI_DATA01__USDHC2_DATA1                       	0x01e8 0x0474 0x0680 1 0
+-#define MX6UL_PAD_CSI_DATA01__SIM1_PORT1_SVEN                    	0x01e8 0x0474 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA01__ECSPI2_SS0                         	0x01e8 0x0474 0x0000 3 0
+-#define MX6UL_PAD_CSI_DATA01__EIM_AD01                           	0x01e8 0x0474 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA01__GPIO4_IO22                         	0x01e8 0x0474 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA01__SAI1_MCLK                          	0x01e8 0x0474 0x0000 6 0
+-#define MX6UL_PAD_CSI_DATA01__UART5_DCE_RX                           	0x01e8 0x0474 0x0644 8 1
+-#define MX6UL_PAD_CSI_DATA01__UART5_DTE_TX                           	0x01e8 0x0474 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA02__CSI_DATA04                         	0x01ec 0x0478 0x04d8 0 1
+-#define MX6UL_PAD_CSI_DATA02__USDHC2_DATA2                       	0x01ec 0x0478 0x0684 1 2
+-#define MX6UL_PAD_CSI_DATA02__SIM1_PORT1_TRXD                    	0x01ec 0x0478 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI                        	0x01ec 0x0478 0x054c 3 1
+-#define MX6UL_PAD_CSI_DATA02__EIM_AD02                           	0x01ec 0x0478 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA02__GPIO4_IO23                         	0x01ec 0x0478 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA02__SAI1_RX_SYNC                       	0x01ec 0x0478 0x0000 6 0
+-#define MX6UL_PAD_CSI_DATA02__UART5_DCE_RTS                      	0x01ec 0x0478 0x0640 8 5
+-#define MX6UL_PAD_CSI_DATA02__UART5_DTE_CTS                      	0x01ec 0x0478 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA03__CSI_DATA05                         	0x01f0 0x047c 0x04cc 0 0
+-#define MX6UL_PAD_CSI_DATA03__USDHC2_DATA3                       	0x01f0 0x047c 0x0688 1 0
+-#define MX6UL_PAD_CSI_DATA03__SIM2_PORT1_PD                      	0x01f0 0x047c 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA03__ECSPI2_MISO                        	0x01f0 0x047c 0x0548 3 0
+-#define MX6UL_PAD_CSI_DATA03__EIM_AD03                           	0x01f0 0x047c 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA03__GPIO4_IO24                         	0x01f0 0x047c 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA03__SAI1_RX_BCLK                       	0x01f0 0x047c 0x0000 6 0
+-#define MX6UL_PAD_CSI_DATA03__UART5_DCE_CTS                      	0x01f0 0x047c 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA03__UART5_DTE_RTS                      	0x01f0 0x047c 0x0640 8 0
+-#define MX6UL_PAD_CSI_DATA04__CSI_DATA06                         	0x01f4 0x0480 0x04dc 0 1
+-#define MX6UL_PAD_CSI_DATA04__USDHC2_DATA4                       	0x01f4 0x0480 0x068c 1 2
+-#define MX6UL_PAD_CSI_DATA04__SIM2_PORT1_CLK                     	0x01f4 0x0480 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA04__ECSPI1_SCLK                        	0x01f4 0x0480 0x0534 3 1
+-#define MX6UL_PAD_CSI_DATA04__EIM_AD04                           	0x01f4 0x0480 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA04__GPIO4_IO25                         	0x01f4 0x0480 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA04__SAI1_TX_SYNC                       	0x01f4 0x0480 0x05ec 6 1
+-#define MX6UL_PAD_CSI_DATA04__USDHC1_WP                          	0x01f4 0x0480 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA05__CSI_DATA07                         	0x01f8 0x0484 0x04e0 0 1
+-#define MX6UL_PAD_CSI_DATA05__USDHC2_DATA5                       	0x01f8 0x0484 0x0690 1 2
+-#define MX6UL_PAD_CSI_DATA05__SIM2_PORT1_RST_B                   	0x01f8 0x0484 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA05__ECSPI1_SS0                         	0x01f8 0x0484 0x0000 3 0
+-#define MX6UL_PAD_CSI_DATA05__EIM_AD05                           	0x01f8 0x0484 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA05__GPIO4_IO26                         	0x01f8 0x0484 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA05__SAI1_TX_BCLK                       	0x01f8 0x0484 0x05e8 6 1
+-#define MX6UL_PAD_CSI_DATA05__USDHC1_CD_B                        	0x01f8 0x0484 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA06__CSI_DATA08                         	0x01fc 0x0488 0x04e4 0 1
+-#define MX6UL_PAD_CSI_DATA06__USDHC2_DATA6                       	0x01fc 0x0488 0x0694 1 2
+-#define MX6UL_PAD_CSI_DATA06__SIM2_PORT1_SVEN                    	0x01fc 0x0488 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA06__ECSPI1_MOSI                        	0x01fc 0x0488 0x053c 3 1
+-#define MX6UL_PAD_CSI_DATA06__EIM_AD06                           	0x01fc 0x0488 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA06__GPIO4_IO27                         	0x01fc 0x0488 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA06__SAI1_RX_DATA                       	0x01fc 0x0488 0x0000 6 0
+-#define MX6UL_PAD_CSI_DATA06__USDHC1_RESET_B                     	0x01fc 0x0488 0x0000 8 0
+-#define MX6UL_PAD_CSI_DATA07__CSI_DATA09                         	0x0200 0x048c 0x04e8 0 1
+-#define MX6UL_PAD_CSI_DATA07__USDHC2_DATA7                       	0x0200 0x048c 0x0698 1 2
+-#define MX6UL_PAD_CSI_DATA07__SIM2_PORT1_TRXD                    	0x0200 0x048c 0x0000 2 0
+-#define MX6UL_PAD_CSI_DATA07__ECSPI1_MISO                        	0x0200 0x048c 0x0538 3 1
+-#define MX6UL_PAD_CSI_DATA07__EIM_AD07                           	0x0200 0x048c 0x0000 4 0
+-#define MX6UL_PAD_CSI_DATA07__GPIO4_IO28                         	0x0200 0x048c 0x0000 5 0
+-#define MX6UL_PAD_CSI_DATA07__SAI1_TX_DATA                       	0x0200 0x048c 0x0000 6 0
+-#define MX6UL_PAD_CSI_DATA07__USDHC1_VSELECT                     	0x0200 0x048c 0x0000 8 0
++#define MX6UL_PAD_JTAG_MOD__SJC_MOD			0x0044 0x02d0 0x0000 0 0
++#define MX6UL_PAD_JTAG_MOD__GPT2_CLK			0x0044 0x02d0 0x05a0 1 0
++#define MX6UL_PAD_JTAG_MOD__SPDIF_OUT			0x0044 0x02d0 0x0000 2 0
++#define MX6UL_PAD_JTAG_MOD__ENET1_REF_CLK_25M		0x0044 0x02d0 0x0000 3 0
++#define MX6UL_PAD_JTAG_MOD__CCM_PMIC_RDY		0x0044 0x02d0 0x04c0 4 0
++#define MX6UL_PAD_JTAG_MOD__GPIO1_IO10			0x0044 0x02d0 0x0000 5 0
++#define MX6UL_PAD_JTAG_MOD__SDMA_EXT_EVENT00		0x0044 0x02d0 0x0000 6 0
++#define MX6UL_PAD_JTAG_TMS__SJC_TMS			0x0048 0x02d4 0x0000 0 0
++#define MX6UL_PAD_JTAG_TMS__GPT2_CAPTURE1		0x0048 0x02d4 0x0598 1 0
++#define MX6UL_PAD_JTAG_TMS__SAI2_MCLK			0x0048 0x02d4 0x0000 2 0
++#define MX6UL_PAD_JTAG_TMS__CCM_CLKO1			0x0048 0x02d4 0x0000 3 0
++#define MX6UL_PAD_JTAG_TMS__CCM_WAIT			0x0048 0x02d4 0x0000 4 0
++#define MX6UL_PAD_JTAG_TMS__GPIO1_IO11			0x0048 0x02d4 0x0000 5 0
++#define MX6UL_PAD_JTAG_TMS__SDMA_EXT_EVENT01		0x0048 0x02d4 0x0000 6 0
++#define MX6UL_PAD_JTAG_TMS__EPIT1_OUT			0x0048 0x02d4 0x0000 8 0
++#define MX6UL_PAD_JTAG_TDO__SJC_TDO			0x004c 0x02d8 0x0000 0 0
++#define MX6UL_PAD_JTAG_TDO__GPT2_CAPTURE2		0x004c 0x02d8 0x059c 1 0
++#define MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC		0x004c 0x02d8 0x05fc 2 0
++#define MX6UL_PAD_JTAG_TDO__CCM_CLKO2			0x004c 0x02d8 0x0000 3 0
++#define MX6UL_PAD_JTAG_TDO__CCM_STOP			0x004c 0x02d8 0x0000 4 0
++#define MX6UL_PAD_JTAG_TDO__GPIO1_IO12			0x004c 0x02d8 0x0000 5 0
++#define MX6UL_PAD_JTAG_TDO__MQS_RIGHT			0x004c 0x02d8 0x0000 6 0
++#define MX6UL_PAD_JTAG_TDO__EPIT2_OUT			0x004c 0x02d8 0x0000 8 0
++#define MX6UL_PAD_JTAG_TDI__SJC_TDI			0x0050 0x02dc 0x0000 0 0
++#define MX6UL_PAD_JTAG_TDI__GPT2_COMPARE1		0x0050 0x02dc 0x0000 1 0
++#define MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK		0x0050 0x02dc 0x05f8 2 0
++#define MX6UL_PAD_JTAG_TDI__PWM6_OUT			0x0050 0x02dc 0x0000 4 0
++#define MX6UL_PAD_JTAG_TDI__GPIO1_IO13			0x0050 0x02dc 0x0000 5 0
++#define MX6UL_PAD_JTAG_TDI__MQS_LEFT			0x0050 0x02dc 0x0000 6 0
++#define MX6UL_PAD_JTAG_TDI__SIM1_POWER_FAIL		0x0050 0x02dc 0x0000 8 0
++#define MX6UL_PAD_JTAG_TCK__SJC_TCK			0x0054 0x02e0 0x0000 0 0
++#define MX6UL_PAD_JTAG_TCK__GPT2_COMPARE2		0x0054 0x02e0 0x0000 1 0
++#define MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA		0x0054 0x02e0 0x0000 2 0
++#define MX6UL_PAD_JTAG_TCK__PWM7_OUT			0x0054 0x02e0 0x0000 4 0
++#define MX6UL_PAD_JTAG_TCK__GPIO1_IO14			0x0054 0x02e0 0x0000 5 0
++#define MX6UL_PAD_JTAG_TCK__SIM2_POWER_FAIL		0x0054 0x02e0 0x0000 8 0
++#define MX6UL_PAD_JTAG_TRST_B__SJC_TRSTB		0x0058 0x02e4 0x0000 0 0
++#define MX6UL_PAD_JTAG_TRST_B__GPT2_COMPARE3		0x0058 0x02e4 0x0000 1 0
++#define MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA		0x0058 0x02e4 0x0000 2 0
++#define MX6UL_PAD_JTAG_TRST_B__PWM8_OUT			0x0058 0x02e4 0x0000 4 0
++#define MX6UL_PAD_JTAG_TRST_B__GPIO1_IO15		0x0058 0x02e4 0x0000 5 0
++#define MX6UL_PAD_JTAG_TRST_B__CAAM_RNG_OSC_OBS		0x0058 0x02e4 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO00__I2C2_SCL			0x005c 0x02e8 0x05ac 0 1
++#define MX6UL_PAD_GPIO1_IO00__GPT1_CAPTURE1		0x005c 0x02e8 0x058c 1 0
++#define MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID		0x005c 0x02e8 0x04b8 2 0
++#define MX6UL_PAD_GPIO1_IO00__ENET1_REF_CLK1		0x005c 0x02e8 0x0574 3 0
++#define MX6UL_PAD_GPIO1_IO00__MQS_RIGHT			0x005c 0x02e8 0x0000 4 0
++#define MX6UL_PAD_GPIO1_IO00__GPIO1_IO00		0x005c 0x02e8 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO00__ENET1_1588_EVENT0_IN	0x005c 0x02e8 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO00__SRC_SYSTEM_RESET		0x005c 0x02e8 0x0000 7 0
++#define MX6UL_PAD_GPIO1_IO00__WDOG3_WDOG_B		0x005c 0x02e8 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO01__I2C2_SDA			0x0060 0x02ec 0x05b0 0 1
++#define MX6UL_PAD_GPIO1_IO01__GPT1_COMPARE1		0x0060 0x02ec 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO01__USB_OTG1_OC		0x0060 0x02ec 0x0664 2 0
++#define MX6UL_PAD_GPIO1_IO01__ENET2_REF_CLK2		0x0060 0x02ec 0x057c 3 0
++#define MX6UL_PAD_GPIO1_IO01__MQS_LEFT			0x0060 0x02ec 0x0000 4 0
++#define MX6UL_PAD_GPIO1_IO01__GPIO1_IO01		0x0060 0x02ec 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO01__ENET1_1588_EVENT0_OUT	0x0060 0x02ec 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO01__SRC_EARLY_RESET		0x0060 0x02ec 0x0000 7 0
++#define MX6UL_PAD_GPIO1_IO01__WDOG1_WDOG_B		0x0060 0x02ec 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO02__I2C1_SCL			0x0064 0x02f0 0x05a4 0 0
++#define MX6UL_PAD_GPIO1_IO02__GPT1_COMPARE2		0x0064 0x02f0 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO02__USB_OTG2_PWR		0x0064 0x02f0 0x0000 2 0
++#define MX6UL_PAD_GPIO1_IO02__ENET1_REF_CLK_25M		0x0064 0x02f0 0x0000 3 0
++#define MX6UL_PAD_GPIO1_IO02__USDHC1_WP			0x0064 0x02f0 0x066c 4 0
++#define MX6UL_PAD_GPIO1_IO02__GPIO1_IO02		0x0064 0x02f0 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO02__SDMA_EXT_EVENT00		0x0064 0x02f0 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO02__SRC_ANY_PU_RESET		0x0064 0x02f0 0x0000 7 0
++#define MX6UL_PAD_GPIO1_IO02__UART1_DCE_TX		0x0064 0x02f0 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO02__UART1_DTE_RX		0x0064 0x02f0 0x0624 8 0
++#define MX6UL_PAD_GPIO1_IO03__I2C1_SDA			0x0068 0x02f4 0x05a8 0 1
++#define MX6UL_PAD_GPIO1_IO03__GPT1_COMPARE3		0x0068 0x02f4 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO03__USB_OTG2_OC		0x0068 0x02f4 0x0660 2 0
++#define MX6UL_PAD_GPIO1_IO03__USDHC1_CD_B		0x0068 0x02f4 0x0668 4 0
++#define MX6UL_PAD_GPIO1_IO03__GPIO1_IO03		0x0068 0x02f4 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO03__CCM_DI0_eXT_CLK		0x0068 0x02f4 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO03__SRC_TESTER_ACK		0x0068 0x02f4 0x0000 7 0
++#define MX6UL_PAD_GPIO1_IO03__UART1_DTE_TX		0x0068 0x02f4 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO03__UART1_DCE_RX		0x0068 0x02f4 0x0624 8 1
++#define MX6UL_PAD_GPIO1_IO04__ENET1_REF_CLK1		0x006c 0x02f8 0x0574 0 1
++#define MX6UL_PAD_GPIO1_IO04__PWM3_OUT			0x006c 0x02f8 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO04__USB_OTG1_PWR		0x006c 0x02f8 0x0000 2 0
++#define MX6UL_PAD_GPIO1_IO04__USDHC1_RESET_B		0x006c 0x02f8 0x0000 4 0
++#define MX6UL_PAD_GPIO1_IO04__GPIO1_IO04		0x006c 0x02f8 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO04__ENET2_1588_EVENT0_IN	0x006c 0x02f8 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO04__UART5_DCE_TX		0x006c 0x02f8 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO04__UART5_DTE_RX		0x006c 0x02f8 0x0644 8 2
++#define MX6UL_PAD_GPIO1_IO05__ENET2_REF_CLK2		0x0070 0x02fc 0x057c 0 1
++#define MX6UL_PAD_GPIO1_IO05__PWM4_OUT			0x0070 0x02fc 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO05__ANATOP_OTG2_ID		0x0070 0x02fc 0x04bc 2 0
++#define MX6UL_PAD_GPIO1_IO05__CSI_FIELD			0x0070 0x02fc 0x0530 3 0
++#define MX6UL_PAD_GPIO1_IO05__USDHC1_VSELECT		0x0070 0x02fc 0x0000 4 0
++#define MX6UL_PAD_GPIO1_IO05__GPIO1_IO05		0x0070 0x02fc 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO05__ENET2_1588_EVENT0_OUT	0x0070 0x02fc 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO05__UART5_DCE_RX		0x0070 0x02fc 0x0644 8 3
++#define MX6UL_PAD_GPIO1_IO05__UART5_DTE_TX		0x0070 0x02fc 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO06__ENET1_MDIO		0x0074 0x0300 0x0578 0 0
++#define MX6UL_PAD_GPIO1_IO06__ENET2_MDIO		0x0074 0x0300 0x0580 1 0
++#define MX6UL_PAD_GPIO1_IO06__USB_OTG_PWR_WAKE		0x0074 0x0300 0x0000 2 0
++#define MX6UL_PAD_GPIO1_IO06__CSI_MCLK			0x0074 0x0300 0x0000 3 0
++#define MX6UL_PAD_GPIO1_IO06__USDHC2_WP			0x0074 0x0300 0x069c 4 0
++#define MX6UL_PAD_GPIO1_IO06__GPIO1_IO06		0x0074 0x0300 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO06__CCM_WAIT			0x0074 0x0300 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO06__CCM_REF_EN_B		0x0074 0x0300 0x0000 7 0
++#define MX6UL_PAD_GPIO1_IO06__UART1_DCE_CTS		0x0074 0x0300 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO06__UART1_DTE_RTS		0x0074 0x0300 0x0620 8 0
++#define MX6UL_PAD_GPIO1_IO07__ENET1_MDC			0x0078 0x0304 0x0000 0 0
++#define MX6UL_PAD_GPIO1_IO07__ENET2_MDC			0x0078 0x0304 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO07__USB_OTG_HOST_MODE		0x0078 0x0304 0x0000 2 0
++#define MX6UL_PAD_GPIO1_IO07__CSI_PIXCLK		0x0078 0x0304 0x0528 3 0
++#define MX6UL_PAD_GPIO1_IO07__USDHC2_CD_B		0x0078 0x0304 0x0674 4 1
++#define MX6UL_PAD_GPIO1_IO07__GPIO1_IO07		0x0078 0x0304 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO07__CCM_STOP			0x0078 0x0304 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO07__UART1_DCE_RTS		0x0078 0x0304 0x0620 8 1
++#define MX6UL_PAD_GPIO1_IO07__UART1_DTE_CTS		0x0078 0x0304 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO08__PWM1_OUT			0x007c 0x0308 0x0000 0 0
++#define MX6UL_PAD_GPIO1_IO08__WDOG1_WDOG_B		0x007c 0x0308 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO08__SPDIF_OUT			0x007c 0x0308 0x0000 2 0
++#define MX6UL_PAD_GPIO1_IO08__CSI_VSYNC			0x007c 0x0308 0x052c 3 1
++#define MX6UL_PAD_GPIO1_IO08__USDHC2_VSELECT		0x007c 0x0308 0x0000 4 0
++#define MX6UL_PAD_GPIO1_IO08__GPIO1_IO08		0x007c 0x0308 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO08__CCM_PMIC_RDY		0x007c 0x0308 0x04c0 6 1
++#define MX6UL_PAD_GPIO1_IO08__UART5_DCE_RTS		0x007c 0x0308 0x0640 8 1
++#define MX6UL_PAD_GPIO1_IO08__UART5_DTE_CTS		0x007c 0x0308 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO09__PWM2_OUT			0x0080 0x030c 0x0000 0 0
++#define MX6UL_PAD_GPIO1_IO09__WDOG1_WDOG_ANY		0x0080 0x030c 0x0000 1 0
++#define MX6UL_PAD_GPIO1_IO09__SPDIF_IN			0x0080 0x030c 0x0618 2 0
++#define MX6UL_PAD_GPIO1_IO09__CSI_HSYNC			0x0080 0x030c 0x0524 3 1
++#define MX6UL_PAD_GPIO1_IO09__USDHC2_RESET_B		0x0080 0x030c 0x0000 4 0
++#define MX6UL_PAD_GPIO1_IO09__GPIO1_IO09		0x0080 0x030c 0x0000 5 0
++#define MX6UL_PAD_GPIO1_IO09__USDHC1_RESET_B		0x0080 0x030c 0x0000 6 0
++#define MX6UL_PAD_GPIO1_IO09__UART5_DCE_CTS		0x0080 0x030c 0x0000 8 0
++#define MX6UL_PAD_GPIO1_IO09__UART5_DTE_RTS		0x0080 0x030c 0x0640 8 2
++#define MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX		0x0084 0x0310 0x0000 0 0
++#define MX6UL_PAD_UART1_TX_DATA__UART1_DTE_RX		0x0084 0x0310 0x0624 0 2
++#define MX6UL_PAD_UART1_TX_DATA__ENET1_RDATA02		0x0084 0x0310 0x0000 1 0
++#define MX6UL_PAD_UART1_TX_DATA__I2C3_SCL		0x0084 0x0310 0x05b4 2 0
++#define MX6UL_PAD_UART1_TX_DATA__CSI_DATA02		0x0084 0x0310 0x0000 3 0
++#define MX6UL_PAD_UART1_TX_DATA__GPT1_COMPARE1		0x0084 0x0310 0x0000 4 0
++#define MX6UL_PAD_UART1_TX_DATA__GPIO1_IO16		0x0084 0x0310 0x0000 5 0
++#define MX6UL_PAD_UART1_TX_DATA__SPDIF_OUT		0x0084 0x0310 0x0000 8 0
++#define MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX		0x0088 0x0314 0x0624 0 3
++#define MX6UL_PAD_UART1_RX_DATA__UART1_DTE_TX		0x0088 0x0314 0x0000 0 0
++#define MX6UL_PAD_UART1_RX_DATA__ENET1_RDATA03		0x0088 0x0314 0x0000 1 0
++#define MX6UL_PAD_UART1_RX_DATA__I2C3_SDA		0x0088 0x0314 0x05b8 2 0
++#define MX6UL_PAD_UART1_RX_DATA__CSI_DATA03		0x0088 0x0314 0x0000 3 0
++#define MX6UL_PAD_UART1_RX_DATA__GPT1_CLK		0x0088 0x0314 0x0594 4 0
++#define MX6UL_PAD_UART1_RX_DATA__GPIO1_IO17		0x0088 0x0314 0x0000 5 0
++#define MX6UL_PAD_UART1_RX_DATA__SPDIF_IN		0x0088 0x0314 0x0000 8 0
++#define MX6UL_PAD_UART1_CTS_B__UART1_DCE_CTS		0x008c 0x0318 0x0000 0 0
++#define MX6UL_PAD_UART1_CTS_B__UART1_DTE_RTS		0x008c 0x0318 0x0620 0 2
++#define MX6UL_PAD_UART1_CTS_B__ENET1_RX_CLK		0x008c 0x0318 0x0000 1 0
++#define MX6UL_PAD_UART1_CTS_B__USDHC1_WP		0x008c 0x0318 0x066c 2 1
++#define MX6UL_PAD_UART1_CTS_B__CSI_DATA04		0x008c 0x0318 0x0000 3 0
++#define MX6UL_PAD_UART1_CTS_B__ENET2_1588_EVENT1_IN	0x008c 0x0318 0x0000 4 0
++#define MX6UL_PAD_UART1_CTS_B__GPIO1_IO18		0x008c 0x0318 0x0000 5 0
++#define MX6UL_PAD_UART1_CTS_B__USDHC2_WP		0x008c 0x0318 0x0000 8 0
++#define MX6UL_PAD_UART1_RTS_B__UART1_DCE_RTS		0x0090 0x031c 0x0620 0 3
++#define MX6UL_PAD_UART1_RTS_B__UART1_DTE_CTS		0x0090 0x031c 0x0000 0 0
++#define MX6UL_PAD_UART1_RTS_B__ENET1_TX_ER		0x0090 0x031c 0x0000 1 0
++#define MX6UL_PAD_UART1_RTS_B__USDHC1_CD_B		0x0090 0x031c 0x0668 2 1
++#define MX6UL_PAD_UART1_RTS_B__CSI_DATA05		0x0090 0x031c 0x0000 3 0
++#define MX6UL_PAD_UART1_RTS_B__ENET2_1588_EVENT1_OUT	0x0090 0x031c 0x0000 4 0
++#define MX6UL_PAD_UART1_RTS_B__GPIO1_IO19		0x0090 0x031c 0x0000 5 0
++#define MX6UL_PAD_UART1_RTS_B__USDHC2_CD_B		0x0090 0x031c 0x0000 8 0
++#define MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX		0x0094 0x0320 0x0000 0 0
++#define MX6UL_PAD_UART2_TX_DATA__UART2_DTE_RX		0x0094 0x0320 0x062c 0 0
++#define MX6UL_PAD_UART2_TX_DATA__ENET1_TDATA02		0x0094 0x0320 0x0000 1 0
++#define MX6UL_PAD_UART2_TX_DATA__I2C4_SCL		0x0094 0x0320 0x05bc 2 0
++#define MX6UL_PAD_UART2_TX_DATA__CSI_DATA06		0x0094 0x0320 0x0000 3 0
++#define MX6UL_PAD_UART2_TX_DATA__GPT1_CAPTURE1		0x0094 0x0320 0x058c 4 1
++#define MX6UL_PAD_UART2_TX_DATA__GPIO1_IO20		0x0094 0x0320 0x0000 5 0
++#define MX6UL_PAD_UART2_TX_DATA__ECSPI3_SS0		0x0094 0x0320 0x0000 8 0
++#define MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX		0x0098 0x0324 0x062c 0 1
++#define MX6UL_PAD_UART2_RX_DATA__UART2_DTE_TX		0x0098 0x0324 0x0000 0 0
++#define MX6UL_PAD_UART2_RX_DATA__ENET1_TDATA03		0x0098 0x0324 0x0000 1 0
++#define MX6UL_PAD_UART2_RX_DATA__I2C4_SDA		0x0098 0x0324 0x05c0 2 0
++#define MX6UL_PAD_UART2_RX_DATA__CSI_DATA07		0x0098 0x0324 0x0000 3 0
++#define MX6UL_PAD_UART2_RX_DATA__GPT1_CAPTURE2		0x0098 0x0324 0x0590 4 0
++#define MX6UL_PAD_UART2_RX_DATA__GPIO1_IO21		0x0098 0x0324 0x0000 5 0
++#define MX6UL_PAD_UART2_RX_DATA__SJC_DONE		0x0098 0x0324 0x0000 7 0
++#define MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK		0x0098 0x0324 0x0000 8 0
++#define MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS		0x009c 0x0328 0x0000 0 0
++#define MX6UL_PAD_UART2_CTS_B__UART2_DTE_RTS		0x009c 0x0328 0x0628 0 0
++#define MX6UL_PAD_UART2_CTS_B__ENET1_CRS		0x009c 0x0328 0x0000 1 0
++#define MX6UL_PAD_UART2_CTS_B__FLEXCAN2_TX		0x009c 0x0328 0x0000 2 0
++#define MX6UL_PAD_UART2_CTS_B__CSI_DATA08		0x009c 0x0328 0x0000 3 0
++#define MX6UL_PAD_UART2_CTS_B__GPT1_COMPARE2		0x009c 0x0328 0x0000 4 0
++#define MX6UL_PAD_UART2_CTS_B__GPIO1_IO22		0x009c 0x0328 0x0000 5 0
++#define MX6UL_PAD_UART2_CTS_B__SJC_DE_B			0x009c 0x0328 0x0000 7 0
++#define MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI		0x009c 0x0328 0x0000 8 0
++#define MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS		0x00a0 0x032c 0x0628 0 1
++#define MX6UL_PAD_UART2_RTS_B__UART2_DTE_CTS		0x00a0 0x032c 0x0000 0 0
++#define MX6UL_PAD_UART2_RTS_B__ENET1_COL		0x00a0 0x032c 0x0000 1 0
++#define MX6UL_PAD_UART2_RTS_B__FLEXCAN2_RX		0x00a0 0x032c 0x0588 2 0
++#define MX6UL_PAD_UART2_RTS_B__CSI_DATA09		0x00a0 0x032c 0x0000 3 0
++#define MX6UL_PAD_UART2_RTS_B__GPT1_COMPARE3		0x00a0 0x032c 0x0000 4 0
++#define MX6UL_PAD_UART2_RTS_B__GPIO1_IO23		0x00a0 0x032c 0x0000 5 0
++#define MX6UL_PAD_UART2_RTS_B__SJC_FAIL			0x00a0 0x032c 0x0000 7 0
++#define MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO		0x00a0 0x032c 0x0000 8 0
++#define MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX		0x00a4 0x0330 0x0000 0 0
++#define MX6UL_PAD_UART3_TX_DATA__UART3_DTE_RX		0x00a4 0x0330 0x0634 0 0
++#define MX6UL_PAD_UART3_TX_DATA__ENET2_RDATA02		0x00a4 0x0330 0x0000 1 0
++#define MX6UL_PAD_UART3_TX_DATA__SIM1_PORT0_PD		0x00a4 0x0330 0x0000 2 0
++#define MX6UL_PAD_UART3_TX_DATA__CSI_DATA01		0x00a4 0x0330 0x0000 3 0
++#define MX6UL_PAD_UART3_TX_DATA__UART2_DCE_CTS		0x00a4 0x0330 0x0000 4 0
++#define MX6UL_PAD_UART3_TX_DATA__UART2_DTE_RTS		0x00a4 0x0330 0x0628 4 2
++#define MX6UL_PAD_UART3_TX_DATA__GPIO1_IO24		0x00a4 0x0330 0x0000 5 0
++#define MX6UL_PAD_UART3_TX_DATA__SJC_JTAG_ACT		0x00a4 0x0330 0x0000 7 0
++#define MX6UL_PAD_UART3_TX_DATA__ANATOP_OTG1_ID		0x00a4 0x0330 0x0000 8 0
++#define MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX		0x00a8 0x0334 0x0634 0 1
++#define MX6UL_PAD_UART3_RX_DATA__UART3_DTE_TX		0x00a8 0x0334 0x0000 0 0
++#define MX6UL_PAD_UART3_RX_DATA__ENET2_RDATA03		0x00a8 0x0334 0x0000 1 0
++#define MX6UL_PAD_UART3_RX_DATA__SIM2_PORT0_PD		0x00a8 0x0334 0x0000 2 0
++#define MX6UL_PAD_UART3_RX_DATA__CSI_DATA00		0x00a8 0x0334 0x0000 3 0
++#define MX6UL_PAD_UART3_RX_DATA__UART2_DCE_RTS		0x00a8 0x0334 0x0628 4 3
++#define MX6UL_PAD_UART3_RX_DATA__UART2_DTE_CTS		0x00a8 0x0334 0x0000 4 0
++#define MX6UL_PAD_UART3_RX_DATA__GPIO1_IO25		0x00a8 0x0334 0x0000 5 0
++#define MX6UL_PAD_UART3_RX_DATA__EPIT1_OUT		0x00a8 0x0334 0x0000 8 0
++#define MX6UL_PAD_UART3_CTS_B__UART3_DCE_CTS		0x00ac 0x0338 0x0000 0 0
++#define MX6UL_PAD_UART3_CTS_B__UART3_DTE_RTS		0x00ac 0x0338 0x0630 0 0
++#define MX6UL_PAD_UART3_CTS_B__ENET2_RX_CLK		0x00ac 0x0338 0x0000 1 0
++#define MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX		0x00ac 0x0338 0x0000 2 0
++#define MX6UL_PAD_UART3_CTS_B__CSI_DATA10		0x00ac 0x0338 0x0000 3 0
++#define MX6UL_PAD_UART3_CTS_B__ENET1_1588_EVENT1_IN	0x00ac 0x0338 0x0000 4 0
++#define MX6UL_PAD_UART3_CTS_B__GPIO1_IO26		0x00ac 0x0338 0x0000 5 0
++#define MX6UL_PAD_UART3_CTS_B__EPIT2_OUT		0x00ac 0x0338 0x0000 8 0
++#define MX6UL_PAD_UART3_RTS_B__UART3_DCE_RTS		0x00b0 0x033c 0x0630 0 1
++#define MX6UL_PAD_UART3_RTS_B__UART3_DTE_CTS		0x00b0 0x033c 0x0000 0 0
++#define MX6UL_PAD_UART3_RTS_B__ENET2_TX_ER		0x00b0 0x033c 0x0000 1 0
++#define MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX		0x00b0 0x033c 0x0584 2 0
++#define MX6UL_PAD_UART3_RTS_B__CSI_DATA11		0x00b0 0x033c 0x0000 3 0
++#define MX6UL_PAD_UART3_RTS_B__ENET1_1588_EVENT1_OUT	0x00b0 0x033c 0x0000 4 0
++#define MX6UL_PAD_UART3_RTS_B__GPIO1_IO27		0x00b0 0x033c 0x0000 5 0
++#define MX6UL_PAD_UART3_RTS_B__WDOG1_WDOG_B		0x00b0 0x033c 0x0000 8 0
++#define MX6UL_PAD_UART4_TX_DATA__UART4_DCE_TX		0x00b4 0x0340 0x0000 0 0
++#define MX6UL_PAD_UART4_TX_DATA__UART4_DTE_RX		0x00b4 0x0340 0x063c 0 0
++#define MX6UL_PAD_UART4_TX_DATA__ENET2_TDATA02		0x00b4 0x0340 0x0000 1 0
++#define MX6UL_PAD_UART4_TX_DATA__I2C1_SCL		0x00b4 0x0340 0x05a4 2 1
++#define MX6UL_PAD_UART4_TX_DATA__CSI_DATA12		0x00b4 0x0340 0x0000 3 0
++#define MX6UL_PAD_UART4_TX_DATA__CSU_CSU_ALARM_AUT02	0x00b4 0x0340 0x0000 4 0
++#define MX6UL_PAD_UART4_TX_DATA__GPIO1_IO28		0x00b4 0x0340 0x0000 5 0
++#define MX6UL_PAD_UART4_TX_DATA__ECSPI2_SCLK		0x00b4 0x0340 0x0000 8 0
++#define MX6UL_PAD_UART4_RX_DATA__UART4_DCE_RX		0x00b8 0x0344 0x063c 0 1
++#define MX6UL_PAD_UART4_RX_DATA__UART4_DTE_TX		0x00b8 0x0344 0x0000 0 0
++#define MX6UL_PAD_UART4_RX_DATA__ENET2_TDATA03		0x00b8 0x0344 0x0000 1 0
++#define MX6UL_PAD_UART4_RX_DATA__I2C1_SDA		0x00b8 0x0344 0x05a8 2 2
++#define MX6UL_PAD_UART4_RX_DATA__CSI_DATA13		0x00b8 0x0344 0x0000 3 0
++#define MX6UL_PAD_UART4_RX_DATA__CSU_CSU_ALARM_AUT01	0x00b8 0x0344 0x0000 4 0
++#define MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29		0x00b8 0x0344 0x0000 5 0
++#define MX6UL_PAD_UART4_RX_DATA__ECSPI2_SS0		0x00b8 0x0344 0x0000 8 0
++#define MX6UL_PAD_UART5_TX_DATA__GPIO1_IO30		0x00bc 0x0348 0x0000 5 0
++#define MX6UL_PAD_UART5_TX_DATA__ECSPI2_MOSI		0x00bc 0x0348 0x0000 8 0
++#define MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX		0x00bc 0x0348 0x0000 0 0
++#define MX6UL_PAD_UART5_TX_DATA__UART5_DTE_RX		0x00bc 0x0348 0x0644 0 4
++#define MX6UL_PAD_UART5_TX_DATA__ENET2_CRS		0x00bc 0x0348 0x0000 1 0
++#define MX6UL_PAD_UART5_TX_DATA__I2C2_SCL		0x00bc 0x0348 0x05ac 2 2
++#define MX6UL_PAD_UART5_TX_DATA__CSI_DATA14		0x00bc 0x0348 0x0000 3 0
++#define MX6UL_PAD_UART5_TX_DATA__CSU_CSU_ALARM_AUT00	0x00bc 0x0348 0x0000 4 0
++#define MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX		0x00c0 0x034c 0x0644 0 5
++#define MX6UL_PAD_UART5_RX_DATA__UART5_DTE_TX		0x00c0 0x034c 0x0000 0 0
++#define MX6UL_PAD_UART5_RX_DATA__ENET2_COL		0x00c0 0x034c 0x0000 1 0
++#define MX6UL_PAD_UART5_RX_DATA__I2C2_SDA		0x00c0 0x034c 0x05b0 2 2
++#define MX6UL_PAD_UART5_RX_DATA__CSI_DATA15		0x00c0 0x034c 0x0000 3 0
++#define MX6UL_PAD_UART5_RX_DATA__CSU_CSU_INT_DEB	0x00c0 0x034c 0x0000 4 0
++#define MX6UL_PAD_UART5_RX_DATA__GPIO1_IO31		0x00c0 0x034c 0x0000 5 0
++#define MX6UL_PAD_UART5_RX_DATA__ECSPI2_MISO		0x00c0 0x034c 0x0000 8 0
++#define MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00		0x00c4 0x0350 0x0000 0 0
++#define MX6UL_PAD_ENET1_RX_DATA0__UART4_DCE_RTS		0x00c4 0x0350 0x0638 1 0
++#define MX6UL_PAD_ENET1_RX_DATA0__UART4_DTE_CTS		0x00c4 0x0350 0x0000 1 0
++#define MX6UL_PAD_ENET1_RX_DATA0__PWM1_OUT		0x00c4 0x0350 0x0000 2 0
++#define MX6UL_PAD_ENET1_RX_DATA0__CSI_DATA16		0x00c4 0x0350 0x0000 3 0
++#define MX6UL_PAD_ENET1_RX_DATA0__FLEXCAN1_TX		0x00c4 0x0350 0x0000 4 0
++#define MX6UL_PAD_ENET1_RX_DATA0__GPIO2_IO00		0x00c4 0x0350 0x0000 5 0
++#define MX6UL_PAD_ENET1_RX_DATA0__KPP_ROW00		0x00c4 0x0350 0x0000 6 0
++#define MX6UL_PAD_ENET1_RX_DATA0__USDHC1_LCTL		0x00c4 0x0350 0x0000 8 0
++#define MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01		0x00c8 0x0354 0x0000 0 0
++#define MX6UL_PAD_ENET1_RX_DATA1__UART4_DCE_CTS		0x00c8 0x0354 0x0000 1 0
++#define MX6UL_PAD_ENET1_RX_DATA1__UART4_DTE_RTS		0x00c8 0x0354 0x0638 1 1
++#define MX6UL_PAD_ENET1_RX_DATA1__PWM2_OUT		0x00c8 0x0354 0x0000 2 0
++#define MX6UL_PAD_ENET1_RX_DATA1__CSI_DATA17		0x00c8 0x0354 0x0000 3 0
++#define MX6UL_PAD_ENET1_RX_DATA1__FLEXCAN1_RX		0x00c8 0x0354 0x0584 4 1
++#define MX6UL_PAD_ENET1_RX_DATA1__GPIO2_IO01		0x00c8 0x0354 0x0000 5 0
++#define MX6UL_PAD_ENET1_RX_DATA1__KPP_COL00		0x00c8 0x0354 0x0000 6 0
++#define MX6UL_PAD_ENET1_RX_DATA1__USDHC2_LCTL		0x00c8 0x0354 0x0000 8 0
++#define MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN		0x00cc 0x0358 0x0000 0 0
++#define MX6UL_PAD_ENET1_RX_EN__UART5_DCE_RTS		0x00cc 0x0358 0x0640 1 3
++#define MX6UL_PAD_ENET1_RX_EN__UART5_DTE_CTS		0x00cc 0x0358 0x0000 1 0
++#define MX6UL_PAD_ENET1_RX_EN__CSI_DATA18		0x00cc 0x0358 0x0000 3 0
++#define MX6UL_PAD_ENET1_RX_EN__FLEXCAN2_TX		0x00cc 0x0358 0x0000 4 0
++#define MX6UL_PAD_ENET1_RX_EN__GPIO2_IO02		0x00cc 0x0358 0x0000 5 0
++#define MX6UL_PAD_ENET1_RX_EN__KPP_ROW01		0x00cc 0x0358 0x0000 6 0
++#define MX6UL_PAD_ENET1_RX_EN__USDHC1_VSELECT		0x00cc 0x0358 0x0000 8 0
++#define MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00		0x00d0 0x035c 0x0000 0 0
++#define MX6UL_PAD_ENET1_TX_DATA0__UART5_DCE_CTS		0x00d0 0x035c 0x0000 1 0
++#define MX6UL_PAD_ENET1_TX_DATA0__UART5_DTE_RTS		0x00d0 0x035c 0x0640 1 4
++#define MX6UL_PAD_ENET1_TX_DATA0__CSI_DATA19		0x00d0 0x035c 0x0000 3 0
++#define MX6UL_PAD_ENET1_TX_DATA0__FLEXCAN2_RX		0x00d0 0x035c 0x0588 4 1
++#define MX6UL_PAD_ENET1_TX_DATA0__GPIO2_IO03		0x00d0 0x035c 0x0000 5 0
++#define MX6UL_PAD_ENET1_TX_DATA0__KPP_COL01		0x00d0 0x035c 0x0000 6 0
++#define MX6UL_PAD_ENET1_TX_DATA0__USDHC2_VSELECT	0x00d0 0x035c 0x0000 8 0
++#define MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01		0x00d4 0x0360 0x0000 0 0
++#define MX6UL_PAD_ENET1_TX_DATA1__UART6_DCE_CTS		0x00d4 0x0360 0x0000 1 0
++#define MX6UL_PAD_ENET1_TX_DATA1__UART6_DTE_RTS		0x00d4 0x0360 0x0648 1 2
++#define MX6UL_PAD_ENET1_TX_DATA1__PWM5_OUT		0x00d4 0x0360 0x0000 2 0
++#define MX6UL_PAD_ENET1_TX_DATA1__CSI_DATA20		0x00d4 0x0360 0x0000 3 0
++#define MX6UL_PAD_ENET1_TX_DATA1__ENET2_MDIO		0x00d4 0x0360 0x0580 4 1
++#define MX6UL_PAD_ENET1_TX_DATA1__GPIO2_IO04		0x00d4 0x0360 0x0000 5 0
++#define MX6UL_PAD_ENET1_TX_DATA1__KPP_ROW02		0x00d4 0x0360 0x0000 6 0
++#define MX6UL_PAD_ENET1_TX_DATA1__WDOG1_WDOG_RST_B_DEB	0x00d4 0x0360 0x0000 8 0
++#define MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN		0x00d8 0x0364 0x0000 0 0
++#define MX6UL_PAD_ENET1_TX_EN__UART6_DCE_RTS		0x00d8 0x0364 0x0648 1 3
++#define MX6UL_PAD_ENET1_TX_EN__UART6_DTE_CTS		0x00d8 0x0364 0x0000 1 0
++#define MX6UL_PAD_ENET1_TX_EN__PWM6_OUT			0x00d8 0x0364 0x0000 2 0
++#define MX6UL_PAD_ENET1_TX_EN__CSI_DATA21		0x00d8 0x0364 0x0000 3 0
++#define MX6UL_PAD_ENET1_TX_EN__ENET2_MDC		0x00d8 0x0364 0x0000 4 0
++#define MX6UL_PAD_ENET1_TX_EN__GPIO2_IO05		0x00d8 0x0364 0x0000 5 0
++#define MX6UL_PAD_ENET1_TX_EN__KPP_COL02		0x00d8 0x0364 0x0000 6 0
++#define MX6UL_PAD_ENET1_TX_EN__WDOG2_WDOG_RST_B_DEB	0x00d8 0x0364 0x0000 8 0
++#define MX6UL_PAD_ENET1_TX_CLK__ENET1_TX_CLK		0x00dc 0x0368 0x0000 0 0
++#define MX6UL_PAD_ENET1_TX_CLK__UART7_DCE_CTS		0x00dc 0x0368 0x0000 1 0
++#define MX6UL_PAD_ENET1_TX_CLK__UART7_DTE_RTS		0x00dc 0x0368 0x0650 1 0
++#define MX6UL_PAD_ENET1_TX_CLK__PWM7_OUT		0x00dc 0x0368 0x0000 2 0
++#define MX6UL_PAD_ENET1_TX_CLK__CSI_DATA22		0x00dc 0x0368 0x0000 3 0
++#define MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1		0x00dc 0x0368 0x0574 4 2
++#define MX6UL_PAD_ENET1_TX_CLK__GPIO2_IO06		0x00dc 0x0368 0x0000 5 0
++#define MX6UL_PAD_ENET1_TX_CLK__KPP_ROW03		0x00dc 0x0368 0x0000 6 0
++#define MX6UL_PAD_ENET1_TX_CLK__GPT1_CLK		0x00dc 0x0368 0x0000 8 0
++#define MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER		0x00e0 0x036c 0x0000 0 0
++#define MX6UL_PAD_ENET1_RX_ER__UART7_DCE_RTS		0x00e0 0x036c 0x0650 1 1
++#define MX6UL_PAD_ENET1_RX_ER__UART7_DTE_CTS		0x00e0 0x036c 0x0000 1 0
++#define MX6UL_PAD_ENET1_RX_ER__PWM8_OUT			0x00e0 0x036c 0x0000 2 0
++#define MX6UL_PAD_ENET1_RX_ER__CSI_DATA23		0x00e0 0x036c 0x0000 3 0
++#define MX6UL_PAD_ENET1_RX_ER__EIM_CRE			0x00e0 0x036c 0x0000 4 0
++#define MX6UL_PAD_ENET1_RX_ER__GPIO2_IO07		0x00e0 0x036c 0x0000 5 0
++#define MX6UL_PAD_ENET1_RX_ER__KPP_COL03		0x00e0 0x036c 0x0000 6 0
++#define MX6UL_PAD_ENET1_RX_ER__GPT1_CAPTURE2		0x00e0 0x036c 0x0000 8 0
++#define MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00		0x00e4 0x0370 0x0000 0 0
++#define MX6UL_PAD_ENET2_RX_DATA0__UART6_DCE_TX		0x00e4 0x0370 0x0000 1 0
++#define MX6UL_PAD_ENET2_RX_DATA0__UART6_DTE_RX		0x00e4 0x0370 0x064c 1 1
++#define MX6UL_PAD_ENET2_RX_DATA0__SIM1_PORT0_TRXD	0x00e4 0x0370 0x0000 2 0
++#define MX6UL_PAD_ENET2_RX_DATA0__I2C3_SCL		0x00e4 0x0370 0x05b4 3 1
++#define MX6UL_PAD_ENET2_RX_DATA0__ENET1_MDIO		0x00e4 0x0370 0x0578 4 1
++#define MX6UL_PAD_ENET2_RX_DATA0__GPIO2_IO08		0x00e4 0x0370 0x0000 5 0
++#define MX6UL_PAD_ENET2_RX_DATA0__KPP_ROW04		0x00e4 0x0370 0x0000 6 0
++#define MX6UL_PAD_ENET2_RX_DATA0__USB_OTG1_PWR		0x00e4 0x0370 0x0000 8 0
++#define MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01		0x00e8 0x0374 0x0000 0 0
++#define MX6UL_PAD_ENET2_RX_DATA1__UART6_DCE_RX		0x00e8 0x0374 0x064c 1 2
++#define MX6UL_PAD_ENET2_RX_DATA1__UART6_DTE_TX		0x00e8 0x0374 0x0000 1 0
++#define MX6UL_PAD_ENET2_RX_DATA1__SIM1_PORT0_cLK	0x00e8 0x0374 0x0000 2 0
++#define MX6UL_PAD_ENET2_RX_DATA1__I2C3_SDA		0x00e8 0x0374 0x05b8 3 1
++#define MX6UL_PAD_ENET2_RX_DATA1__ENET1_MDC		0x00e8 0x0374 0x0000 4 0
++#define MX6UL_PAD_ENET2_RX_DATA1__GPIO2_IO09		0x00e8 0x0374 0x0000 5 0
++#define MX6UL_PAD_ENET2_RX_DATA1__KPP_COL04		0x00e8 0x0374 0x0000 6 0
++#define MX6UL_PAD_ENET2_RX_DATA1__USB_OTG1_OC		0x00e8 0x0374 0x0000 8 0
++#define MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN		0x00ec 0x0378 0x0000 0 0
++#define MX6UL_PAD_ENET2_RX_EN__UART7_DCE_TX		0x00ec 0x0378 0x0000 1 0
++#define MX6UL_PAD_ENET2_RX_EN__UART7_DTE_RX		0x00ec 0x0378 0x0654 1 0
++#define MX6UL_PAD_ENET2_RX_EN__SIM1_PORT0_RST_B		0x00ec 0x0378 0x0000 2 0
++#define MX6UL_PAD_ENET2_RX_EN__I2C4_SCL			0x00ec 0x0378 0x05bc 3 1
++#define MX6UL_PAD_ENET2_RX_EN__EIM_ADDR26		0x00ec 0x0378 0x0000 4 0
++#define MX6UL_PAD_ENET2_RX_EN__GPIO2_IO10		0x00ec 0x0378 0x0000 5 0
++#define MX6UL_PAD_ENET2_RX_EN__KPP_ROW05		0x00ec 0x0378 0x0000 6 0
++#define MX6UL_PAD_ENET2_RX_EN__ENET1_REF_CLK_25M	0x00ec 0x0378 0x0000 8 0
++#define MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00		0x00f0 0x037c 0x0000 0 0
++#define MX6UL_PAD_ENET2_TX_DATA0__UART7_DCE_RX		0x00f0 0x037c 0x0654 1 1
++#define MX6UL_PAD_ENET2_TX_DATA0__UART7_DTE_TX		0x00f0 0x037c 0x0000 1 0
++#define MX6UL_PAD_ENET2_TX_DATA0__SIM1_PORT0_SVEN	0x00f0 0x037c 0x0000 2 0
++#define MX6UL_PAD_ENET2_TX_DATA0__I2C4_SDA		0x00f0 0x037c 0x05c0 3 1
++#define MX6UL_PAD_ENET2_TX_DATA0__EIM_EB_B02		0x00f0 0x037c 0x0000 4 0
++#define MX6UL_PAD_ENET2_TX_DATA0__GPIO2_IO11		0x00f0 0x037c 0x0000 5 0
++#define MX6UL_PAD_ENET2_TX_DATA0__KPP_COL05		0x00f0 0x037c 0x0000 6 0
++#define MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01		0x00f4 0x0380 0x0000 0 0
++#define MX6UL_PAD_ENET2_TX_DATA1__UART8_DCE_TX		0x00f4 0x0380 0x0000 1 0
++#define MX6UL_PAD_ENET2_TX_DATA1__UART8_DTE_RX		0x00f4 0x0380 0x065c 1 0
++#define MX6UL_PAD_ENET2_TX_DATA1__SIM2_PORT0_TRXD	0x00f4 0x0380 0x0000 2 0
++#define MX6UL_PAD_ENET2_TX_DATA1__ECSPI4_SCLK		0x00f4 0x0380 0x0564 3 0
++#define MX6UL_PAD_ENET2_TX_DATA1__EIM_EB_B03		0x00f4 0x0380 0x0000 4 0
++#define MX6UL_PAD_ENET2_TX_DATA1__GPIO2_IO12		0x00f4 0x0380 0x0000 5 0
++#define MX6UL_PAD_ENET2_TX_DATA1__KPP_ROW06		0x00f4 0x0380 0x0000 6 0
++#define MX6UL_PAD_ENET2_TX_DATA1__USB_OTG2_PWR		0x00f4 0x0380 0x0000 8 0
++#define MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN		0x00f8 0x0384 0x0000 0 0
++#define MX6UL_PAD_ENET2_TX_EN__UART8_DCE_RX		0x00f8 0x0384 0x065c 1 1
++#define MX6UL_PAD_ENET2_TX_EN__UART8_DTE_TX		0x00f8 0x0384 0x0000 1 0
++#define MX6UL_PAD_ENET2_TX_EN__SIM2_PORT0_cLK		0x00f8 0x0384 0x0000 2 0
++#define MX6UL_PAD_ENET2_TX_EN__ECSPI4_MOSI		0x00f8 0x0384 0x056c 3 0
++#define MX6UL_PAD_ENET2_TX_EN__EIM_ACLK_FREERUN		0x00f8 0x0384 0x0000 4 0
++#define MX6UL_PAD_ENET2_TX_EN__GPIO2_IO13		0x00f8 0x0384 0x0000 5 0
++#define MX6UL_PAD_ENET2_TX_EN__KPP_COL06		0x00f8 0x0384 0x0000 6 0
++#define MX6UL_PAD_ENET2_TX_EN__USB_OTG2_OC		0x00f8 0x0384 0x0000 8 0
++#define MX6UL_PAD_ENET2_TX_CLK__ENET2_TX_CLK		0x00fc 0x0388 0x0000 0 0
++#define MX6UL_PAD_ENET2_TX_CLK__UART8_DCE_CTS		0x00fc 0x0388 0x0000 1 0
++#define MX6UL_PAD_ENET2_TX_CLK__UART8_DTE_RTS		0x00fc 0x0388 0x0658 1 0
++#define MX6UL_PAD_ENET2_TX_CLK__SIM2_PORT0_RST_B	0x00fc 0x0388 0x0000 2 0
++#define MX6UL_PAD_ENET2_TX_CLK__ECSPI4_MISO		0x00fc 0x0388 0x0568 3 0
++#define MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2		0x00fc 0x0388 0x057c 4 2
++#define MX6UL_PAD_ENET2_TX_CLK__GPIO2_IO14		0x00fc 0x0388 0x0000 5 0
++#define MX6UL_PAD_ENET2_TX_CLK__KPP_ROW07		0x00fc 0x0388 0x0000 6 0
++#define MX6UL_PAD_ENET2_TX_CLK__ANATOP_OTG2_ID		0x00fc 0x0388 0x0000 8 0
++#define MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER		0x0100 0x038c 0x0000 0 0
++#define MX6UL_PAD_ENET2_RX_ER__UART8_DCE_RTS		0x0100 0x038c 0x0658 1 1
++#define MX6UL_PAD_ENET2_RX_ER__UART8_DTE_CTS		0x0100 0x038c 0x0000 1 0
++#define MX6UL_PAD_ENET2_RX_ER__SIM2_PORT0_SVEN		0x0100 0x038c 0x0000 2 0
++#define MX6UL_PAD_ENET2_RX_ER__ECSPI4_SS0		0x0100 0x038c 0x0000 3 0
++#define MX6UL_PAD_ENET2_RX_ER__EIM_ADDR25		0x0100 0x038c 0x0000 4 0
++#define MX6UL_PAD_ENET2_RX_ER__GPIO2_IO15		0x0100 0x038c 0x0000 5 0
++#define MX6UL_PAD_ENET2_RX_ER__KPP_COL07		0x0100 0x038c 0x0000 6 0
++#define MX6UL_PAD_ENET2_RX_ER__WDOG1_WDOG_ANY		0x0100 0x038c 0x0000 8 0
++#define MX6UL_PAD_LCD_CLK__LCDIF_CLK			0x0104 0x0390 0x0000 0 0
++#define MX6UL_PAD_LCD_CLK__LCDIF_WR_RWN			0x0104 0x0390 0x0000 1 0
++#define MX6UL_PAD_LCD_CLK__UART4_DCE_TX			0x0104 0x0390 0x0000 2 0
++#define MX6UL_PAD_LCD_CLK__UART4_DTE_RX			0x0104 0x0390 0x063c 2 2
++#define MX6UL_PAD_LCD_CLK__SAI3_MCLK			0x0104 0x0390 0x0000 3 0
++#define MX6UL_PAD_LCD_CLK__EIM_CS2_B			0x0104 0x0390 0x0000 4 0
++#define MX6UL_PAD_LCD_CLK__GPIO3_IO00			0x0104 0x0390 0x0000 5 0
++#define MX6UL_PAD_LCD_CLK__WDOG1_WDOG_RST_B_DEB		0x0104 0x0390 0x0000 8 0
++#define MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE		0x0108 0x0394 0x0000 0 0
++#define MX6UL_PAD_LCD_ENABLE__LCDIF_RD_E		0x0108 0x0394 0x0000 1 0
++#define MX6UL_PAD_LCD_ENABLE__UART4_DCE_RX		0x0108 0x0394 0x063c 2 3
++#define MX6UL_PAD_LCD_ENABLE__UART4_DTE_TX		0x0108 0x0394 0x0000 2 0
++#define MX6UL_PAD_LCD_ENABLE__SAI3_TX_SYNC		0x0108 0x0394 0x060c 3 0
++#define MX6UL_PAD_LCD_ENABLE__EIM_CS3_B			0x0108 0x0394 0x0000 4 0
++#define MX6UL_PAD_LCD_ENABLE__GPIO3_IO01		0x0108 0x0394 0x0000 5 0
++#define MX6UL_PAD_LCD_ENABLE__ECSPI2_RDY		0x0108 0x0394 0x0000 8 0
++#define MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC		0x010c 0x0398 0x05dc 0 0
++#define MX6UL_PAD_LCD_HSYNC__LCDIF_RS			0x010c 0x0398 0x0000 1 0
++#define MX6UL_PAD_LCD_HSYNC__UART4_DCE_CTS		0x010c 0x0398 0x0000 2 0
++#define MX6UL_PAD_LCD_HSYNC__UART4_DTE_RTS		0x010c 0x0398 0x0638 2 2
++#define MX6UL_PAD_LCD_HSYNC__SAI3_TX_BCLK		0x010c 0x0398 0x0608 3 0
++#define MX6UL_PAD_LCD_HSYNC__WDOG3_WDOG_RST_B_DEB	0x010c 0x0398 0x0000 4 0
++#define MX6UL_PAD_LCD_HSYNC__GPIO3_IO02			0x010c 0x0398 0x0000 5 0
++#define MX6UL_PAD_LCD_HSYNC__ECSPI2_SS1			0x010c 0x0398 0x0000 8 0
++#define MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC		0x0110 0x039c 0x0000 0 0
++#define MX6UL_PAD_LCD_VSYNC__LCDIF_BUSY			0x0110 0x039c 0x05dc 1 1
++#define MX6UL_PAD_LCD_VSYNC__UART4_DCE_RTS		0x0110 0x039c 0x0638 2 3
++#define MX6UL_PAD_LCD_VSYNC__UART4_DTE_CTS		0x0110 0x039c 0x0000 2 0
++#define MX6UL_PAD_LCD_VSYNC__SAI3_RX_DATA		0x0110 0x039c 0x0000 3 0
++#define MX6UL_PAD_LCD_VSYNC__WDOG2_WDOG_B		0x0110 0x039c 0x0000 4 0
++#define MX6UL_PAD_LCD_VSYNC__GPIO3_IO03			0x0110 0x039c 0x0000 5 0
++#define MX6UL_PAD_LCD_VSYNC__ECSPI2_SS2			0x0110 0x039c 0x0000 8 0
++#define MX6UL_PAD_LCD_RESET__LCDIF_RESET		0x0114 0x03a0 0x0000 0 0
++#define MX6UL_PAD_LCD_RESET__LCDIF_CS			0x0114 0x03a0 0x0000 1 0
++#define MX6UL_PAD_LCD_RESET__CA7_MX6UL_EVENTI		0x0114 0x03a0 0x0000 2 0
++#define MX6UL_PAD_LCD_RESET__SAI3_TX_DATA		0x0114 0x03a0 0x0000 3 0
++#define MX6UL_PAD_LCD_RESET__WDOG1_WDOG_ANY		0x0114 0x03a0 0x0000 4 0
++#define MX6UL_PAD_LCD_RESET__GPIO3_IO04			0x0114 0x03a0 0x0000 5 0
++#define MX6UL_PAD_LCD_RESET__ECSPI2_SS3			0x0114 0x03a0 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA00__LCDIF_DATA00		0x0118 0x03a4 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA00__PWM1_OUT			0x0118 0x03a4 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA00__ENET1_1588_EVENT2_IN	0x0118 0x03a4 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA00__I2C3_SDA			0x0118 0x03a4 0x05b8 4 2
++#define MX6UL_PAD_LCD_DATA00__GPIO3_IO05		0x0118 0x03a4 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA00__SRC_BT_CFG00		0x0118 0x03a4 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA00__SAI1_MCLK			0x0118 0x03a4 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA01__LCDIF_DATA01		0x011c 0x03a8 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA01__PWM2_OUT			0x011c 0x03a8 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA01__ENET1_1588_EVENT2_OUT	0x011c 0x03a8 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA01__I2C3_SCL			0x011c 0x03a8 0x05b4 4 2
++#define MX6UL_PAD_LCD_DATA01__GPIO3_IO06		0x011c 0x03a8 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA01__SRC_BT_CFG01		0x011c 0x03a8 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA01__SAI1_TX_SYNC		0x011c 0x03a8 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA02__LCDIF_DATA02		0x0120 0x03ac 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA02__PWM3_OUT			0x0120 0x03ac 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA02__ENET1_1588_EVENT3_IN	0x0120 0x03ac 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA02__I2C4_SDA			0x0120 0x03ac 0x05c0 4 2
++#define MX6UL_PAD_LCD_DATA02__GPIO3_IO07		0x0120 0x03ac 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA02__SRC_BT_CFG02		0x0120 0x03ac 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA02__SAI1_TX_BCLK		0x0120 0x03ac 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA03__LCDIF_DATA03		0x0124 0x03b0 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA03__PWM4_OUT			0x0124 0x03b0 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA03__ENET1_1588_EVENT3_OUT	0x0124 0x03b0 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA03__I2C4_SCL			0x0124 0x03b0 0x05bc 4 2
++#define MX6UL_PAD_LCD_DATA03__GPIO3_IO08		0x0124 0x03b0 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA03__SRC_BT_CFG03		0x0124 0x03b0 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA03__SAI1_RX_DATA		0x0124 0x03b0 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA04__LCDIF_DATA04		0x0128 0x03b4 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA04__UART8_DCE_CTS		0x0128 0x03b4 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA04__UART8_DTE_RTS		0x0128 0x03b4 0x0658 1 2
++#define MX6UL_PAD_LCD_DATA04__ENET2_1588_EVENT2_IN	0x0128 0x03b4 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA04__SPDIF_SR_CLK		0x0128 0x03b4 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA04__GPIO3_IO09		0x0128 0x03b4 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA04__SRC_BT_CFG04		0x0128 0x03b4 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA04__SAI1_TX_DATA		0x0128 0x03b4 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA05__LCDIF_DATA05		0x012c 0x03b8 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA05__UART8_DCE_RTS		0x012c 0x03b8 0x0658 1 3
++#define MX6UL_PAD_LCD_DATA05__UART8_DTE_CTS		0x012c 0x03b8 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA05__ENET2_1588_EVENT2_OUT	0x012c 0x03b8 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA05__SPDIF_OUT			0x012c 0x03b8 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA05__GPIO3_IO10		0x012c 0x03b8 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA05__SRC_BT_CFG05		0x012c 0x03b8 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA05__ECSPI1_SS1		0x012c 0x03b8 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA06__LCDIF_DATA06		0x0130 0x03bc 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA06__UART7_DCE_CTS		0x0130 0x03bc 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA06__UART7_DTE_RTS		0x0130 0x03bc 0x0650 1 2
++#define MX6UL_PAD_LCD_DATA06__ENET2_1588_EVENT3_IN	0x0130 0x03bc 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA06__SPDIF_LOCK		0x0130 0x03bc 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA06__GPIO3_IO11		0x0130 0x03bc 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA06__SRC_BT_CFG06		0x0130 0x03bc 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA06__ECSPI1_SS2		0x0130 0x03bc 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA07__LCDIF_DATA07		0x0134 0x03c0 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA07__UART7_DCE_RTS		0x0134 0x03c0 0x0650 1 3
++#define MX6UL_PAD_LCD_DATA07__UART7_DTE_CTS		0x0134 0x03c0 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA07__ENET2_1588_EVENT3_OUT	0x0134 0x03c0 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA07__SPDIF_EXT_CLK		0x0134 0x03c0 0x061c 4 0
++#define MX6UL_PAD_LCD_DATA07__GPIO3_IO12		0x0134 0x03c0 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA07__SRC_BT_CFG07		0x0134 0x03c0 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA07__ECSPI1_SS3		0x0134 0x03c0 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA08__LCDIF_DATA08		0x0138 0x03c4 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA08__SPDIF_IN			0x0138 0x03c4 0x0618 1 2
++#define MX6UL_PAD_LCD_DATA08__CSI_DATA16		0x0138 0x03c4 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA08__EIM_DATA00		0x0138 0x03c4 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA08__GPIO3_IO13		0x0138 0x03c4 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA08__SRC_BT_CFG08		0x0138 0x03c4 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA08__FLEXCAN1_TX		0x0138 0x03c4 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA09__LCDIF_DATA09		0x013c 0x03c8 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA09__SAI3_MCLK			0x013c 0x03c8 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA09__CSI_DATA17		0x013c 0x03c8 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA09__EIM_DATA01		0x013c 0x03c8 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA09__GPIO3_IO14		0x013c 0x03c8 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA09__SRC_BT_CFG09		0x013c 0x03c8 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA09__FLEXCAN1_RX		0x013c 0x03c8 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA10__LCDIF_DATA10		0x0140 0x03cc 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA10__SAI3_RX_SYNC		0x0140 0x03cc 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA10__CSI_DATA18		0x0140 0x03cc 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA10__EIM_DATA02		0x0140 0x03cc 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA10__GPIO3_IO15		0x0140 0x03cc 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA10__SRC_BT_CFG10		0x0140 0x03cc 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA10__FLEXCAN2_TX		0x0140 0x03cc 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA11__LCDIF_DATA11		0x0144 0x03d0 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA11__SAI3_RX_BCLK		0x0144 0x03d0 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA11__CSI_DATA19		0x0144 0x03d0 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA11__EIM_DATA03		0x0144 0x03d0 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA11__GPIO3_IO16		0x0144 0x03d0 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA11__SRC_BT_CFG11		0x0144 0x03d0 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA11__FLEXCAN2_RX		0x0144 0x03d0 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA12__LCDIF_DATA12		0x0148 0x03d4 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA12__SAI3_TX_SYNC		0x0148 0x03d4 0x060c 1 1
++#define MX6UL_PAD_LCD_DATA12__CSI_DATA20		0x0148 0x03d4 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA12__EIM_DATA04		0x0148 0x03d4 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA12__GPIO3_IO17		0x0148 0x03d4 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA12__SRC_BT_CFG12		0x0148 0x03d4 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA12__ECSPI1_RDY		0x0148 0x03d4 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA13__LCDIF_DATA13		0x014c 0x03d8 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA13__SAI3_TX_BCLK		0x014c 0x03d8 0x0608 1 1
++#define MX6UL_PAD_LCD_DATA13__CSI_DATA21		0x014c 0x03d8 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA13__EIM_DATA05		0x014c 0x03d8 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA13__GPIO3_IO18		0x014c 0x03d8 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA13__SRC_BT_CFG13		0x014c 0x03d8 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA13__USDHC2_RESET_B		0x014c 0x03d8 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA14__LCDIF_DATA14		0x0150 0x03dc 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA14__SAI3_RX_DATA		0x0150 0x03dc 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA14__CSI_DATA22		0x0150 0x03dc 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA14__EIM_DATA06		0x0150 0x03dc 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA14__GPIO3_IO19		0x0150 0x03dc 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA14__SRC_BT_CFG14		0x0150 0x03dc 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA14__USDHC2_DATA4		0x0150 0x03dc 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA15__LCDIF_DATA15		0x0154 0x03e0 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA15__SAI3_TX_DATA		0x0154 0x03e0 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA15__CSI_DATA23		0x0154 0x03e0 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA15__EIM_DATA07		0x0154 0x03e0 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA15__GPIO3_IO20		0x0154 0x03e0 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA15__SRC_BT_CFG15		0x0154 0x03e0 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA15__USDHC2_DATA5		0x0154 0x03e0 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA16__LCDIF_DATA16		0x0158 0x03e4 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA16__UART7_DCE_TX		0x0158 0x03e4 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA16__UART7_DTE_RX		0x0158 0x03e4 0x0654 1 2
++#define MX6UL_PAD_LCD_DATA16__CSI_DATA01		0x0158 0x03e4 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA16__EIM_DATA08		0x0158 0x03e4 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA16__GPIO3_IO21		0x0158 0x03e4 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA16__SRC_BT_CFG24		0x0158 0x03e4 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA16__USDHC2_DATA6		0x0158 0x03e4 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA17__LCDIF_DATA17		0x015c 0x03e8 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA17__UART7_DCE_RX		0x015c 0x03e8 0x0654 1 3
++#define MX6UL_PAD_LCD_DATA17__UART7_DTE_TX		0x015c 0x03e8 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA17__CSI_DATA00		0x015c 0x03e8 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA17__EIM_DATA09		0x015c 0x03e8 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA17__GPIO3_IO22		0x015c 0x03e8 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA17__SRC_BT_CFG25		0x015c 0x03e8 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA17__USDHC2_DATA7		0x015c 0x03e8 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA18__LCDIF_DATA18		0x0160 0x03ec 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA18__PWM5_OUT			0x0160 0x03ec 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA18__CA7_MX6UL_EVENTO		0x0160 0x03ec 0x0000 2 0
++#define MX6UL_PAD_LCD_DATA18__CSI_DATA10		0x0160 0x03ec 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA18__EIM_DATA10		0x0160 0x03ec 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA18__GPIO3_IO23		0x0160 0x03ec 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA18__SRC_BT_CFG26		0x0160 0x03ec 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA18__USDHC2_CMD		0x0160 0x03ec 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA19__EIM_DATA11		0x0164 0x03f0 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA19__GPIO3_IO24		0x0164 0x03f0 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA19__SRC_BT_CFG27		0x0164 0x03f0 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA19__USDHC2_CLK		0x0164 0x03f0 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA19__LCDIF_DATA19		0x0164 0x03f0 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA19__PWM6_OUT			0x0164 0x03f0 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA19__WDOG1_WDOG_ANY		0x0164 0x03f0 0x0000 2 0
++#define MX6UL_PAD_LCD_DATA19__CSI_DATA11		0x0164 0x03f0 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA20__EIM_DATA12		0x0168 0x03f4 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA20__GPIO3_IO25		0x0168 0x03f4 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA20__SRC_BT_CFG28		0x0168 0x03f4 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA20__USDHC2_DATA0		0x0168 0x03f4 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA20__LCDIF_DATA20		0x0168 0x03f4 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA20__UART8_DCE_TX		0x0168 0x03f4 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA20__UART8_DTE_RX		0x0168 0x03f4 0x065c 1 2
++#define MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK		0x0168 0x03f4 0x0534 2 0
++#define MX6UL_PAD_LCD_DATA20__CSI_DATA12		0x0168 0x03f4 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA21__LCDIF_DATA21		0x016c 0x03f8 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA21__UART8_DCE_RX		0x016c 0x03f8 0x065c 1 3
++#define MX6UL_PAD_LCD_DATA21__UART8_DTE_TX		0x016c 0x03f8 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA21__ECSPI1_SS0		0x016c 0x03f8 0x0000 2 0
++#define MX6UL_PAD_LCD_DATA21__CSI_DATA13		0x016c 0x03f8 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA21__EIM_DATA13		0x016c 0x03f8 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA21__GPIO3_IO26		0x016c 0x03f8 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA21__SRC_BT_CFG29		0x016c 0x03f8 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA21__USDHC2_DATA1		0x016c 0x03f8 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA22__LCDIF_DATA22		0x0170 0x03fc 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA22__MQS_RIGHT			0x0170 0x03fc 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI		0x0170 0x03fc 0x053c 2 0
++#define MX6UL_PAD_LCD_DATA22__CSI_DATA14		0x0170 0x03fc 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA22__EIM_DATA14		0x0170 0x03fc 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA22__GPIO3_IO27		0x0170 0x03fc 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA22__SRC_BT_CFG30		0x0170 0x03fc 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA22__USDHC2_DATA2		0x0170 0x03fc 0x0000 8 0
++#define MX6UL_PAD_LCD_DATA23__LCDIF_DATA23		0x0174 0x0400 0x0000 0 0
++#define MX6UL_PAD_LCD_DATA23__MQS_LEFT			0x0174 0x0400 0x0000 1 0
++#define MX6UL_PAD_LCD_DATA23__ECSPI1_MISO		0x0174 0x0400 0x0538 2 0
++#define MX6UL_PAD_LCD_DATA23__CSI_DATA15		0x0174 0x0400 0x0000 3 0
++#define MX6UL_PAD_LCD_DATA23__EIM_DATA15		0x0174 0x0400 0x0000 4 0
++#define MX6UL_PAD_LCD_DATA23__GPIO3_IO28		0x0174 0x0400 0x0000 5 0
++#define MX6UL_PAD_LCD_DATA23__SRC_BT_CFG31		0x0174 0x0400 0x0000 6 0
++#define MX6UL_PAD_LCD_DATA23__USDHC2_DATA3		0x0174 0x0400 0x0000 8 0
++#define MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B		0x0178 0x0404 0x0000 0 0
++#define MX6UL_PAD_NAND_RE_B__USDHC2_CLK			0x0178 0x0404 0x0670 1 2
++#define MX6UL_PAD_NAND_RE_B__QSPI_B_SCLK		0x0178 0x0404 0x0000 2 0
++#define MX6UL_PAD_NAND_RE_B__KPP_ROW00			0x0178 0x0404 0x0000 3 0
++#define MX6UL_PAD_NAND_RE_B__EIM_EB_B00			0x0178 0x0404 0x0000 4 0
++#define MX6UL_PAD_NAND_RE_B__GPIO4_IO00			0x0178 0x0404 0x0000 5 0
++#define MX6UL_PAD_NAND_RE_B__ECSPI3_SS2			0x0178 0x0404 0x0000 8 0
++#define MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B		0x017c 0x0408 0x0000 0 0
++#define MX6UL_PAD_NAND_WE_B__USDHC2_CMD			0x017c 0x0408 0x0678 1 2
++#define MX6UL_PAD_NAND_WE_B__QSPI_B_SS0_B		0x017c 0x0408 0x0000 2 0
++#define MX6UL_PAD_NAND_WE_B__KPP_COL00			0x017c 0x0408 0x0000 3 0
++#define MX6UL_PAD_NAND_WE_B__EIM_EB_B01			0x017c 0x0408 0x0000 4 0
++#define MX6UL_PAD_NAND_WE_B__GPIO4_IO01			0x017c 0x0408 0x0000 5 0
++#define MX6UL_PAD_NAND_WE_B__ECSPI3_SS3			0x017c 0x0408 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00		0x0180 0x040c 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA00__USDHC2_DATA0		0x0180 0x040c 0x067c 1 2
++#define MX6UL_PAD_NAND_DATA00__QSPI_B_SS1_B		0x0180 0x040c 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA00__KPP_ROW01		0x0180 0x040c 0x0000 3 0
++#define MX6UL_PAD_NAND_DATA00__EIM_AD08			0x0180 0x040c 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA00__GPIO4_IO02		0x0180 0x040c 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA00__ECSPI4_RDY		0x0180 0x040c 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01		0x0184 0x0410 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA01__USDHC2_DATA1		0x0184 0x0410 0x0680 1 2
++#define MX6UL_PAD_NAND_DATA01__QSPI_B_DQS		0x0184 0x0410 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA01__KPP_COL01		0x0184 0x0410 0x0000 3 0
++#define MX6UL_PAD_NAND_DATA01__EIM_AD09			0x0184 0x0410 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA01__GPIO4_IO03		0x0184 0x0410 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA01__ECSPI4_SS1		0x0184 0x0410 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02		0x0188 0x0414 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA02__USDHC2_DATA2		0x0188 0x0414 0x0684 1 1
++#define MX6UL_PAD_NAND_DATA02__QSPI_B_DATA00		0x0188 0x0414 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA02__KPP_ROW02		0x0188 0x0414 0x0000 3 0
++#define MX6UL_PAD_NAND_DATA02__EIM_AD10			0x0188 0x0414 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA02__GPIO4_IO04		0x0188 0x0414 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA02__ECSPI4_SS2		0x0188 0x0414 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03		0x018c 0x0418 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA03__USDHC2_DATA3		0x018c 0x0418 0x0688 1 2
++#define MX6UL_PAD_NAND_DATA03__QSPI_B_DATA01		0x018c 0x0418 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA03__KPP_COL02		0x018c 0x0418 0x0000 3 0
++#define MX6UL_PAD_NAND_DATA03__EIM_AD11			0x018c 0x0418 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA03__GPIO4_IO05		0x018c 0x0418 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA03__ECSPI4_SS3		0x018c 0x0418 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04		0x0190 0x041c 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA04__USDHC2_DATA4		0x0190 0x041c 0x068c 1 1
++#define MX6UL_PAD_NAND_DATA04__QSPI_B_DATA02		0x0190 0x041c 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA04__ECSPI4_SCLK		0x0190 0x041c 0x0564 3 1
++#define MX6UL_PAD_NAND_DATA04__EIM_AD12			0x0190 0x041c 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA04__GPIO4_IO06		0x0190 0x041c 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA04__UART2_DCE_TX		0x0190 0x041c 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA04__UART2_DTE_RX		0x0190 0x041c 0x062c 8 2
++#define MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05		0x0194 0x0420 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA05__USDHC2_DATA5		0x0194 0x0420 0x0690 1 1
++#define MX6UL_PAD_NAND_DATA05__QSPI_B_DATA03		0x0194 0x0420 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA05__ECSPI4_MOSI		0x0194 0x0420 0x056c 3 1
++#define MX6UL_PAD_NAND_DATA05__EIM_AD13			0x0194 0x0420 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA05__GPIO4_IO07		0x0194 0x0420 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA05__UART2_DCE_RX		0x0194 0x0420 0x062c 8 3
++#define MX6UL_PAD_NAND_DATA05__UART2_DTE_TX		0x0194 0x0420 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06		0x0198 0x0424 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA06__USDHC2_DATA6		0x0198 0x0424 0x0694 1 1
++#define MX6UL_PAD_NAND_DATA06__SAI2_RX_BCLK		0x0198 0x0424 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA06__ECSPI4_MISO		0x0198 0x0424 0x0568 3 1
++#define MX6UL_PAD_NAND_DATA06__EIM_AD14			0x0198 0x0424 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA06__GPIO4_IO08		0x0198 0x0424 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA06__UART2_DCE_CTS		0x0198 0x0424 0x0000 8 0
++#define MX6UL_PAD_NAND_DATA06__UART2_DTE_RTS		0x0198 0x0424 0x0628 8 4
++#define MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07		0x019c 0x0428 0x0000 0 0
++#define MX6UL_PAD_NAND_DATA07__USDHC2_DATA7		0x019c 0x0428 0x0698 1 1
++#define MX6UL_PAD_NAND_DATA07__QSPI_A_SS1_B		0x019c 0x0428 0x0000 2 0
++#define MX6UL_PAD_NAND_DATA07__ECSPI4_SS0		0x019c 0x0428 0x0000 3 0
++#define MX6UL_PAD_NAND_DATA07__EIM_AD15			0x019c 0x0428 0x0000 4 0
++#define MX6UL_PAD_NAND_DATA07__GPIO4_IO09		0x019c 0x0428 0x0000 5 0
++#define MX6UL_PAD_NAND_DATA07__UART2_DCE_RTS		0x019c 0x0428 0x0628 8 5
++#define MX6UL_PAD_NAND_DATA07__UART2_DTE_CTS		0x019c 0x0428 0x0000 8 0
++#define MX6UL_PAD_NAND_ALE__RAWNAND_ALE			0x01a0 0x042c 0x0000 0 0
++#define MX6UL_PAD_NAND_ALE__USDHC2_RESET_B		0x01a0 0x042c 0x0000 1 0
++#define MX6UL_PAD_NAND_ALE__QSPI_A_DQS			0x01a0 0x042c 0x0000 2 0
++#define MX6UL_PAD_NAND_ALE__PWM3_OUT			0x01a0 0x042c 0x0000 3 0
++#define MX6UL_PAD_NAND_ALE__EIM_ADDR17			0x01a0 0x042c 0x0000 4 0
++#define MX6UL_PAD_NAND_ALE__GPIO4_IO10			0x01a0 0x042c 0x0000 5 0
++#define MX6UL_PAD_NAND_ALE__ECSPI3_SS1			0x01a0 0x042c 0x0000 8 0
++#define MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B		0x01a4 0x0430 0x0000 0 0
++#define MX6UL_PAD_NAND_WP_B__USDHC1_RESET_B		0x01a4 0x0430 0x0000 1 0
++#define MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK		0x01a4 0x0430 0x0000 2 0
++#define MX6UL_PAD_NAND_WP_B__PWM4_OUT			0x01a4 0x0430 0x0000 3 0
++#define MX6UL_PAD_NAND_WP_B__EIM_BCLK			0x01a4 0x0430 0x0000 4 0
++#define MX6UL_PAD_NAND_WP_B__GPIO4_IO11			0x01a4 0x0430 0x0000 5 0
++#define MX6UL_PAD_NAND_WP_B__ECSPI3_RDY			0x01a4 0x0430 0x0000 8 0
++#define MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B		0x01a8 0x0434 0x0000 0 0
++#define MX6UL_PAD_NAND_READY_B__USDHC1_DATA4		0x01a8 0x0434 0x0000 1 0
++#define MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00		0x01a8 0x0434 0x0000 2 0
++#define MX6UL_PAD_NAND_READY_B__ECSPI3_SS0		0x01a8 0x0434 0x0000 3 0
++#define MX6UL_PAD_NAND_READY_B__EIM_CS1_B		0x01a8 0x0434 0x0000 4 0
++#define MX6UL_PAD_NAND_READY_B__GPIO4_IO12		0x01a8 0x0434 0x0000 5 0
++#define MX6UL_PAD_NAND_READY_B__UART3_DCE_TX		0x01a8 0x0434 0x0000 8 0
++#define MX6UL_PAD_NAND_READY_B__UART3_DTE_RX		0x01a8 0x0434 0x0634 8 2
++#define MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B		0x01ac 0x0438 0x0000 0 0
++#define MX6UL_PAD_NAND_CE0_B__USDHC1_DATA5		0x01ac 0x0438 0x0000 1 0
++#define MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01		0x01ac 0x0438 0x0000 2 0
++#define MX6UL_PAD_NAND_CE0_B__ECSPI3_SCLK		0x01ac 0x0438 0x0554 3 1
++#define MX6UL_PAD_NAND_CE0_B__EIM_DTACK_B		0x01ac 0x0438 0x0000 4 0
++#define MX6UL_PAD_NAND_CE0_B__GPIO4_IO13		0x01ac 0x0438 0x0000 5 0
++#define MX6UL_PAD_NAND_CE0_B__UART3_DCE_RX		0x01ac 0x0438 0x0634 8 3
++#define MX6UL_PAD_NAND_CE0_B__UART3_DTE_TX		0x01ac 0x0438 0x0000 8 0
++#define MX6UL_PAD_NAND_CE1_B__RAWNAND_CE1_B		0x01b0 0x043c 0x0000 0 0
++#define MX6UL_PAD_NAND_CE1_B__USDHC1_DATA6		0x01b0 0x043c 0x0000 1 0
++#define MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02		0x01b0 0x043c 0x0000 2 0
++#define MX6UL_PAD_NAND_CE1_B__ECSPI3_MOSI		0x01b0 0x043c 0x055c 3 1
++#define MX6UL_PAD_NAND_CE1_B__EIM_ADDR18		0x01b0 0x043c 0x0000 4 0
++#define MX6UL_PAD_NAND_CE1_B__GPIO4_IO14		0x01b0 0x043c 0x0000 5 0
++#define MX6UL_PAD_NAND_CE1_B__UART3_DCE_CTS		0x01b0 0x043c 0x0000 8 0
++#define MX6UL_PAD_NAND_CE1_B__UART3_DTE_RTS		0x01b0 0x043c 0x0630 8 2
++#define MX6UL_PAD_NAND_CLE__RAWNAND_CLE			0x01b4 0x0440 0x0000 0 0
++#define MX6UL_PAD_NAND_CLE__USDHC1_DATA7		0x01b4 0x0440 0x0000 1 0
++#define MX6UL_PAD_NAND_CLE__QSPI_A_DATA03		0x01b4 0x0440 0x0000 2 0
++#define MX6UL_PAD_NAND_CLE__ECSPI3_MISO			0x01b4 0x0440 0x0558 3 1
++#define MX6UL_PAD_NAND_CLE__EIM_ADDR16			0x01b4 0x0440 0x0000 4 0
++#define MX6UL_PAD_NAND_CLE__GPIO4_IO15			0x01b4 0x0440 0x0000 5 0
++#define MX6UL_PAD_NAND_CLE__UART3_DCE_RTS		0x01b4 0x0440 0x0630 8 3
++#define MX6UL_PAD_NAND_CLE__UART3_DTE_CTS		0x01b4 0x0440 0x0000 8 0
++#define MX6UL_PAD_NAND_DQS__RAWNAND_DQS			0x01b8 0x0444 0x0000 0 0
++#define MX6UL_PAD_NAND_DQS__CSI_FIELD			0x01b8 0x0444 0x0530 1 1
++#define MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B		0x01b8 0x0444 0x0000 2 0
++#define MX6UL_PAD_NAND_DQS__PWM5_OUT			0x01b8 0x0444 0x0000 3 0
++#define MX6UL_PAD_NAND_DQS__EIM_WAIT			0x01b8 0x0444 0x0000 4 0
++#define MX6UL_PAD_NAND_DQS__GPIO4_IO16			0x01b8 0x0444 0x0000 5 0
++#define MX6UL_PAD_NAND_DQS__SDMA_EXT_EVENT01		0x01b8 0x0444 0x0000 6 0
++#define MX6UL_PAD_NAND_DQS__SPDIF_EXT_CLK		0x01b8 0x0444 0x0000 8 0
++#define MX6UL_PAD_SD1_CMD__USDHC1_CMD			0x01bc 0x0448 0x0000 0 0
++#define MX6UL_PAD_SD1_CMD__GPT2_COMPARE1		0x01bc 0x0448 0x0000 1 0
++#define MX6UL_PAD_SD1_CMD__SAI2_RX_SYNC			0x01bc 0x0448 0x0000 2 0
++#define MX6UL_PAD_SD1_CMD__SPDIF_OUT			0x01bc 0x0448 0x0000 3 0
++#define MX6UL_PAD_SD1_CMD__EIM_ADDR19			0x01bc 0x0448 0x0000 4 0
++#define MX6UL_PAD_SD1_CMD__GPIO2_IO16			0x01bc 0x0448 0x0000 5 0
++#define MX6UL_PAD_SD1_CMD__SDMA_EXT_EVENT00		0x01bc 0x0448 0x0000 6 0
++#define MX6UL_PAD_SD1_CMD__USB_OTG1_PWR			0x01bc 0x0448 0x0000 8 0
++#define MX6UL_PAD_SD1_CLK__USDHC1_CLK			0x01c0 0x044c 0x0000 0 0
++#define MX6UL_PAD_SD1_CLK__GPT2_COMPARE2		0x01c0 0x044c 0x0000 1 0
++#define MX6UL_PAD_SD1_CLK__SAI2_MCLK			0x01c0 0x044c 0x0000 2 0
++#define MX6UL_PAD_SD1_CLK__SPDIF_IN			0x01c0 0x044c 0x0618 3 3
++#define MX6UL_PAD_SD1_CLK__EIM_ADDR20			0x01c0 0x044c 0x0000 4 0
++#define MX6UL_PAD_SD1_CLK__GPIO2_IO17			0x01c0 0x044c 0x0000 5 0
++#define MX6UL_PAD_SD1_CLK__USB_OTG1_OC			0x01c0 0x044c 0x0000 8 0
++#define MX6UL_PAD_SD1_DATA0__USDHC1_DATA0		0x01c4 0x0450 0x0000 0 0
++#define MX6UL_PAD_SD1_DATA0__GPT2_COMPARE3		0x01c4 0x0450 0x0000 1 0
++#define MX6UL_PAD_SD1_DATA0__SAI2_TX_SYNC		0x01c4 0x0450 0x05fc 2 1
++#define MX6UL_PAD_SD1_DATA0__FLEXCAN1_TX		0x01c4 0x0450 0x0000 3 0
++#define MX6UL_PAD_SD1_DATA0__EIM_ADDR21			0x01c4 0x0450 0x0000 4 0
++#define MX6UL_PAD_SD1_DATA0__GPIO2_IO18			0x01c4 0x0450 0x0000 5 0
++#define MX6UL_PAD_SD1_DATA0__ANATOP_OTG1_ID		0x01c4 0x0450 0x0000 8 0
++#define MX6UL_PAD_SD1_DATA1__USDHC1_DATA1		0x01c8 0x0454 0x0000 0 0
++#define MX6UL_PAD_SD1_DATA1__GPT2_CLK			0x01c8 0x0454 0x05a0 1 1
++#define MX6UL_PAD_SD1_DATA1__SAI2_TX_BCLK		0x01c8 0x0454 0x05f8 2 1
++#define MX6UL_PAD_SD1_DATA1__FLEXCAN1_RX		0x01c8 0x0454 0x0584 3 3
++#define MX6UL_PAD_SD1_DATA1__EIM_ADDR22			0x01c8 0x0454 0x0000 4 0
++#define MX6UL_PAD_SD1_DATA1__GPIO2_IO19			0x01c8 0x0454 0x0000 5 0
++#define MX6UL_PAD_SD1_DATA1__USB_OTG2_PWR		0x01c8 0x0454 0x0000 8 0
++#define MX6UL_PAD_SD1_DATA2__USDHC1_DATA2		0x01cc 0x0458 0x0000 0 0
++#define MX6UL_PAD_SD1_DATA2__GPT2_CAPTURE1		0x01cc 0x0458 0x0598 1 1
++#define MX6UL_PAD_SD1_DATA2__SAI2_RX_DATA		0x01cc 0x0458 0x05f4 2 1
++#define MX6UL_PAD_SD1_DATA2__FLEXCAN2_TX		0x01cc 0x0458 0x0000 3 0
++#define MX6UL_PAD_SD1_DATA2__EIM_ADDR23			0x01cc 0x0458 0x0000 4 0
++#define MX6UL_PAD_SD1_DATA2__GPIO2_IO20			0x01cc 0x0458 0x0000 5 0
++#define MX6UL_PAD_SD1_DATA2__CCM_CLKO1			0x01cc 0x0458 0x0000 6 0
++#define MX6UL_PAD_SD1_DATA2__USB_OTG2_OC		0x01cc 0x0458 0x0000 8 0
++#define MX6UL_PAD_SD1_DATA3__USDHC1_DATA3		0x01d0 0x045c 0x0000 0 0
++#define MX6UL_PAD_SD1_DATA3__GPT2_CAPTURE2		0x01d0 0x045c 0x059c 1 1
++#define MX6UL_PAD_SD1_DATA3__SAI2_TX_DATA		0x01d0 0x045c 0x0000 2 0
++#define MX6UL_PAD_SD1_DATA3__FLEXCAN2_RX		0x01d0 0x045c 0x0588 3 3
++#define MX6UL_PAD_SD1_DATA3__EIM_ADDR24			0x01d0 0x045c 0x0000 4 0
++#define MX6UL_PAD_SD1_DATA3__GPIO2_IO21			0x01d0 0x045c 0x0000 5 0
++#define MX6UL_PAD_SD1_DATA3__CCM_CLKO2			0x01d0 0x045c 0x0000 6 0
++#define MX6UL_PAD_SD1_DATA3__ANATOP_OTG2_ID		0x01d0 0x045c 0x0000 8 0
++#define MX6UL_PAD_CSI_MCLK__CSI_MCLK			0x01d4 0x0460 0x0000 0 0
++#define MX6UL_PAD_CSI_MCLK__USDHC2_CD_B			0x01d4 0x0460 0x0674 1 0
++#define MX6UL_PAD_CSI_MCLK__RAWNAND_CE2_B		0x01d4 0x0460 0x0000 2 0
++#define MX6UL_PAD_CSI_MCLK__I2C1_SDA			0x01d4 0x0460 0x05a8 3 0
++#define MX6UL_PAD_CSI_MCLK__EIM_CS0_B			0x01d4 0x0460 0x0000 4 0
++#define MX6UL_PAD_CSI_MCLK__GPIO4_IO17			0x01d4 0x0460 0x0000 5 0
++#define MX6UL_PAD_CSI_MCLK__SNVS_HP_VIO_5_CTL		0x01d4 0x0460 0x0000 6 0
++#define MX6UL_PAD_CSI_MCLK__UART6_DCE_TX		0x01d4 0x0460 0x0000 8 0
++#define MX6UL_PAD_CSI_MCLK__UART6_DTE_RX		0x01d4 0x0460 0x064c 8 0
++#define MX6UL_PAD_CSI_PIXCLK__CSI_PIXCLK		0x01d8 0x0464 0x0528 0 1
++#define MX6UL_PAD_CSI_PIXCLK__USDHC2_WP			0x01d8 0x0464 0x069c 1 2
++#define MX6UL_PAD_CSI_PIXCLK__RAWNAND_CE3_B		0x01d8 0x0464 0x0000 2 0
++#define MX6UL_PAD_CSI_PIXCLK__I2C1_SCL			0x01d8 0x0464 0x05a4 3 2
++#define MX6UL_PAD_CSI_PIXCLK__EIM_OE			0x01d8 0x0464 0x0000 4 0
++#define MX6UL_PAD_CSI_PIXCLK__GPIO4_IO18		0x01d8 0x0464 0x0000 5 0
++#define MX6UL_PAD_CSI_PIXCLK__SNVS_HP_VIO_5		0x01d8 0x0464 0x0000 6 0
++#define MX6UL_PAD_CSI_PIXCLK__UART6_DCE_RX		0x01d8 0x0464 0x064c 8 3
++#define MX6UL_PAD_CSI_PIXCLK__UART6_DTE_TX		0x01d8 0x0464 0x0000 8 0
++#define MX6UL_PAD_CSI_VSYNC__CSI_VSYNC			0x01dc 0x0468 0x052c 0 0
++#define MX6UL_PAD_CSI_VSYNC__USDHC2_CLK			0x01dc 0x0468 0x0670 1 0
++#define MX6UL_PAD_CSI_VSYNC__SIM1_PORT1_CLK		0x01dc 0x0468 0x0000 2 0
++#define MX6UL_PAD_CSI_VSYNC__I2C2_SDA			0x01dc 0x0468 0x05b0 3 0
++#define MX6UL_PAD_CSI_VSYNC__EIM_RW			0x01dc 0x0468 0x0000 4 0
++#define MX6UL_PAD_CSI_VSYNC__GPIO4_IO19			0x01dc 0x0468 0x0000 5 0
++#define MX6UL_PAD_CSI_VSYNC__PWM7_OUT			0x01dc 0x0468 0x0000 6 0
++#define MX6UL_PAD_CSI_VSYNC__UART6_DCE_RTS		0x01dc 0x0468 0x0648 8 0
++#define MX6UL_PAD_CSI_VSYNC__UART6_DTE_CTS		0x01dc 0x0468 0x0000 8 0
++#define MX6UL_PAD_CSI_HSYNC__CSI_HSYNC			0x01e0 0x046c 0x0524 0 0
++#define MX6UL_PAD_CSI_HSYNC__USDHC2_CMD			0x01e0 0x046c 0x0678 1 0
++#define MX6UL_PAD_CSI_HSYNC__SIM1_PORT1_PD		0x01e0 0x046c 0x0000 2 0
++#define MX6UL_PAD_CSI_HSYNC__I2C2_SCL			0x01e0 0x046c 0x05ac 3 0
++#define MX6UL_PAD_CSI_HSYNC__EIM_LBA_B			0x01e0 0x046c 0x0000 4 0
++#define MX6UL_PAD_CSI_HSYNC__GPIO4_IO20			0x01e0 0x046c 0x0000 5 0
++#define MX6UL_PAD_CSI_HSYNC__PWM8_OUT			0x01e0 0x046c 0x0000 6 0
++#define MX6UL_PAD_CSI_HSYNC__UART6_DCE_CTS		0x01e0 0x046c 0x0000 8 0
++#define MX6UL_PAD_CSI_HSYNC__UART6_DTE_RTS		0x01e0 0x046c 0x0648 8 1
++#define MX6UL_PAD_CSI_DATA00__CSI_DATA02		0x01e4 0x0470 0x04c4 0 0
++#define MX6UL_PAD_CSI_DATA00__USDHC2_DATA0		0x01e4 0x0470 0x067c 1 0
++#define MX6UL_PAD_CSI_DATA00__SIM1_PORT1_RST_B		0x01e4 0x0470 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK		0x01e4 0x0470 0x0544 3 0
++#define MX6UL_PAD_CSI_DATA00__EIM_AD00			0x01e4 0x0470 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA00__GPIO4_IO21		0x01e4 0x0470 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA00__SRC_INT_BOOT		0x01e4 0x0470 0x0000 6 0
++#define MX6UL_PAD_CSI_DATA00__UART5_DCE_TX		0x01e4 0x0470 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA00__UART5_DTE_RX		0x01e4 0x0470 0x0644 8 0
++#define MX6UL_PAD_CSI_DATA01__CSI_DATA03		0x01e8 0x0474 0x04c8 0 0
++#define MX6UL_PAD_CSI_DATA01__USDHC2_DATA1		0x01e8 0x0474 0x0680 1 0
++#define MX6UL_PAD_CSI_DATA01__SIM1_PORT1_SVEN		0x01e8 0x0474 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA01__ECSPI2_SS0		0x01e8 0x0474 0x0000 3 0
++#define MX6UL_PAD_CSI_DATA01__EIM_AD01			0x01e8 0x0474 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA01__GPIO4_IO22		0x01e8 0x0474 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA01__SAI1_MCLK			0x01e8 0x0474 0x0000 6 0
++#define MX6UL_PAD_CSI_DATA01__UART5_DCE_RX		0x01e8 0x0474 0x0644 8 1
++#define MX6UL_PAD_CSI_DATA01__UART5_DTE_TX		0x01e8 0x0474 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA02__CSI_DATA04		0x01ec 0x0478 0x04d8 0 1
++#define MX6UL_PAD_CSI_DATA02__USDHC2_DATA2		0x01ec 0x0478 0x0684 1 2
++#define MX6UL_PAD_CSI_DATA02__SIM1_PORT1_TRXD		0x01ec 0x0478 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI		0x01ec 0x0478 0x054c 3 1
++#define MX6UL_PAD_CSI_DATA02__EIM_AD02			0x01ec 0x0478 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA02__GPIO4_IO23		0x01ec 0x0478 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA02__SAI1_RX_SYNC		0x01ec 0x0478 0x0000 6 0
++#define MX6UL_PAD_CSI_DATA02__UART5_DCE_RTS		0x01ec 0x0478 0x0640 8 5
++#define MX6UL_PAD_CSI_DATA02__UART5_DTE_CTS		0x01ec 0x0478 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA03__CSI_DATA05		0x01f0 0x047c 0x04cc 0 0
++#define MX6UL_PAD_CSI_DATA03__USDHC2_DATA3		0x01f0 0x047c 0x0688 1 0
++#define MX6UL_PAD_CSI_DATA03__SIM2_PORT1_PD		0x01f0 0x047c 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA03__ECSPI2_MISO		0x01f0 0x047c 0x0548 3 0
++#define MX6UL_PAD_CSI_DATA03__EIM_AD03			0x01f0 0x047c 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA03__GPIO4_IO24		0x01f0 0x047c 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA03__SAI1_RX_BCLK		0x01f0 0x047c 0x0000 6 0
++#define MX6UL_PAD_CSI_DATA03__UART5_DCE_CTS		0x01f0 0x047c 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA03__UART5_DTE_RTS		0x01f0 0x047c 0x0640 8 0
++#define MX6UL_PAD_CSI_DATA04__CSI_DATA06		0x01f4 0x0480 0x04dc 0 1
++#define MX6UL_PAD_CSI_DATA04__USDHC2_DATA4		0x01f4 0x0480 0x068c 1 2
++#define MX6UL_PAD_CSI_DATA04__SIM2_PORT1_CLK		0x01f4 0x0480 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA04__ECSPI1_SCLK		0x01f4 0x0480 0x0534 3 1
++#define MX6UL_PAD_CSI_DATA04__EIM_AD04			0x01f4 0x0480 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA04__GPIO4_IO25		0x01f4 0x0480 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA04__SAI1_TX_SYNC		0x01f4 0x0480 0x05ec 6 1
++#define MX6UL_PAD_CSI_DATA04__USDHC1_WP			0x01f4 0x0480 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA05__CSI_DATA07		0x01f8 0x0484 0x04e0 0 1
++#define MX6UL_PAD_CSI_DATA05__USDHC2_DATA5		0x01f8 0x0484 0x0690 1 2
++#define MX6UL_PAD_CSI_DATA05__SIM2_PORT1_RST_B		0x01f8 0x0484 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA05__ECSPI1_SS0		0x01f8 0x0484 0x0000 3 0
++#define MX6UL_PAD_CSI_DATA05__EIM_AD05			0x01f8 0x0484 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA05__GPIO4_IO26		0x01f8 0x0484 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA05__SAI1_TX_BCLK		0x01f8 0x0484 0x05e8 6 1
++#define MX6UL_PAD_CSI_DATA05__USDHC1_CD_B		0x01f8 0x0484 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA06__CSI_DATA08		0x01fc 0x0488 0x04e4 0 1
++#define MX6UL_PAD_CSI_DATA06__USDHC2_DATA6		0x01fc 0x0488 0x0694 1 2
++#define MX6UL_PAD_CSI_DATA06__SIM2_PORT1_SVEN		0x01fc 0x0488 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA06__ECSPI1_MOSI		0x01fc 0x0488 0x053c 3 1
++#define MX6UL_PAD_CSI_DATA06__EIM_AD06			0x01fc 0x0488 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA06__GPIO4_IO27		0x01fc 0x0488 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA06__SAI1_RX_DATA		0x01fc 0x0488 0x0000 6 0
++#define MX6UL_PAD_CSI_DATA06__USDHC1_RESET_B		0x01fc 0x0488 0x0000 8 0
++#define MX6UL_PAD_CSI_DATA07__CSI_DATA09		0x0200 0x048c 0x04e8 0 1
++#define MX6UL_PAD_CSI_DATA07__USDHC2_DATA7		0x0200 0x048c 0x0698 1 2
++#define MX6UL_PAD_CSI_DATA07__SIM2_PORT1_TRXD		0x0200 0x048c 0x0000 2 0
++#define MX6UL_PAD_CSI_DATA07__ECSPI1_MISO		0x0200 0x048c 0x0538 3 1
++#define MX6UL_PAD_CSI_DATA07__EIM_AD07			0x0200 0x048c 0x0000 4 0
++#define MX6UL_PAD_CSI_DATA07__GPIO4_IO28		0x0200 0x048c 0x0000 5 0
++#define MX6UL_PAD_CSI_DATA07__SAI1_TX_DATA		0x0200 0x048c 0x0000 6 0
++#define MX6UL_PAD_CSI_DATA07__USDHC1_VSELECT		0x0200 0x048c 0x0000 8 0
+ 
+ #endif /* __DTS_IMX6UL_PINFUNC_H */
 -- 
-2.7.0
+2.1.4
