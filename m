@@ -1,82 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:51458 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752980AbcBVUyu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2016 15:54:50 -0500
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 26 Feb 2016 15:55:49 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 1/9] clk: Make of_clk_get_parent_count() return unsigned ints
-Date: Mon, 22 Feb 2016 12:54:39 -0800
-Message-Id: <1456174487-28397-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm/marvell: add DT bindings for
+ AP806 DFX Server
+Message-ID: <20160226235549.GB28849@codeaurora.org>
+References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20160225233710.GJ28849@codeaurora.org>
+ <20160226093227.5d4dc1a7@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160226093227.5d4dc1a7@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Russell King recently pointed out a bug in the clk-gpio code
-where it fails to register the clk if of_clk_get_parent_count()
-returns an error because the "clocks" property isn't present in
-the DT node. If we're trying to count parents from DT we'd like
-to know the count, not if there is a "clocks" property or not.
-Furthermore, some drivers are assigning the return value to their
-clk_init_data::num_parents member which is unsigned, leading to
-potentially large numbers of parents when the property isn't
-present.
+On 02/26, Thomas Petazzoni wrote:
+> I would entirely agree with you if this DFX Server was some sort of
+> "system control" IP block that provided clocks, resets, and all sort of
+> other features.
+> 
+> But this DFX server thing is just a bunch of registers with absolutely
+> no relation to clocks. Due to this, it would be completely awkward to
+> have clock references like:
+> 
+> 	serial {
+> 		clocks = <&dfxserver 42>;
+> 	};
+> 
+> One will wonder "why the heck this UART controller is using a clock
+> from this really odd dfxserver thing" ? Currently we have:
+> 
+> 	serial {
+> 		clocks = <&coreclk 4>;
+> 	};
+> 
+> which makes a *lot* more sense.
 
-Let's change the API to return an unsigned int instead of an int.
-All the callers just want to know the count anyway, and this
-avoids the bug that was in the clk-gpio driver.
+Sorry I don't see the difference and I don't agree with this
+argument. dfxserver is just a phandle and possibly a poorly named
+one at that. So is coreclk. The second example doesn't make a
+*lot* more sense or really any more sense than the first example.
+Maybe some #define should be used to make things readable:
+&dfxserver CORE_CLK_X or something. Why someone would care what
+the name of the phandle is for where the clk is coming from makes
+no sense to me.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c            | 16 ++++++++++++++--
- include/linux/clk-provider.h |  2 +-
- 2 files changed, 15 insertions(+), 3 deletions(-)
+The miscellaneous register dumping ground, i.e. dfxserver, is a
+total mess in hardware, agreed, but it doesn't mean we need to
+pick it apart and describe the bits and pieces of it so that our
+DT can be read as &coreclk 4 instead of &dfxserver 42.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 58ef3dab894a..0e7206761d27 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3021,9 +3021,21 @@ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- }
- EXPORT_SYMBOL_GPL(of_clk_get_from_provider);
- 
--int of_clk_get_parent_count(struct device_node *np)
-+/**
-+ * of_clk_get_parent_count() - Count the number of clocks a device node has
-+ * @np: device node to count
-+ *
-+ * Returns: The number of clocks that are possible parents of this node
-+ */
-+unsigned int of_clk_get_parent_count(struct device_node *np)
- {
--	return of_count_phandle_with_args(np, "clocks", "#clock-cells");
-+	int count;
-+
-+	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
-+	if (count < 0)
-+		return 0;
-+
-+	return count;
- }
- EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index fce7f027f8a7..da95258127aa 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -716,7 +716,7 @@ void of_clk_del_provider(struct device_node *np);
- struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
- 				  void *data);
- struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
--int of_clk_get_parent_count(struct device_node *np);
-+unsigned int of_clk_get_parent_count(struct device_node *np);
- int of_clk_parent_fill(struct device_node *np, const char **parents,
- 		       unsigned int size);
- const char *of_clk_get_parent_name(struct device_node *np, int index);
+Somebody delivered this dfxserver hardware block into the SoC.
+They decided to put random clk control in there. In terms of
+hardware blocks, I would guess that dfxserver has a couple clk
+wires coming out and some SoC integration engineer had to wire
+those up to the places like the uart that actually use them.
+Embrace these hardware design decisions. Represent the hardware
+in DT as it is represented in hardware by making one node for the
+dfxserver because dfxserver is a hardware block.
+
+> 
+> Also, your idea of just hiding everything behind a MFD bothers me quite
+> a bit. If I push this idea further, then why shouldn't I replace my
+> entire DT with a single node, that covers the entire register space of
+> my SoC, and then handle *everything* as a huge MFD. In a way, it would
+> be quite useful for me, as it would resolve the on-going dispute over
+> DT binding stability with Rob and Mark.
+
+That's a straw man fallacy. Nobody is asking for this. DT is
+about describing relations between hardware blocks and the
+resources they use. It is *not* about describing register level
+details of hardware blocks and providing some data heavy format
+so that drivers are nothing besides DT data driven husks of code.
+Nor is it about grouping clk subtypes into different DT subnodes
+to make writing drivers easier. That's what gets us into the mess
+of DT backward compatibility when the data that should have been
+in the driver has been put into DT.
+
+> 
+> For sure, I wouldn't have any DT backward compatibility issue, because
+> everything is hidden in my big MFD. But in terms of the DT as a
+> representation of the different HW blocks and the relations between
+> then, such a choice would be quite a failure.
+> 
+
+I don't see any failure. The dfxserver is a hardware block and
+that happens to be a clk provider, plain and simple. Consumers of
+those clks are related to the dfxserver and we've properly
+expressed the relations between them.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
