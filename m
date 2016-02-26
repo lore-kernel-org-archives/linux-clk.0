@@ -1,81 +1,35 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 08/20] clk: bcm2835: add fractional support
-Date: Sun, 28 Feb 2016 15:36:59 +0000
-Message-Id: <1456673831-2408-9-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47378 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1422768AbcBZTSw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 26 Feb 2016 14:18:52 -0500
+Date: Fri, 26 Feb 2016 11:18:48 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
+Message-ID: <20160226191848.GJ13417@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-6-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456439796-28546-6-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+* Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+> From: Vignesh R <vigneshr@ti.com>
+> 
+> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+> for dt bindings.
 
-The current driver calculates the clock divider with
-fractional support enabled.
-But it does not enable fractional support in the control register.
+Are the dts changes safe to pick separately? I'm mostly worried
+about clock related hangs unless the clock changes are merged
+first.
 
-This patch enables fractional support in the control register
-whenever there is a fractional bit set in the requested clock divider.
+Regards,
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 144d5d5..ffc5b3c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -49,6 +49,7 @@
- #define CM_GNRICCTL		0x000
- #define CM_GNRICDIV		0x004
- # define CM_DIV_FRAC_BITS	12
-+# define CM_DIV_FRAC_MASK	GENMASK(CM_DIV_FRAC_BITS - 1, 0)
- 
- #define CM_VPUCTL		0x008
- #define CM_VPUDIV		0x00c
-@@ -126,6 +127,7 @@
- # define CM_GATE			BIT(CM_GATE_BIT)
- # define CM_BUSY			BIT(7)
- # define CM_BUSYD			BIT(8)
-+# define CM_FRAC			BIT(9)
- # define CM_SRC_SHIFT			0
- # define CM_SRC_BITS			4
- # define CM_SRC_MASK			0xf
-@@ -875,9 +877,26 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
-+	u32 ctl;
-+
-+	spin_lock(&cprman->regs_lock);
-+
-+	/*
-+	 * Setting up frac support
-+	 *
-+	 * In principle it is recommended to stop/start the clock first,
-+	 * but as we set CLK_SET_RATE_GATE during registration of the
-+	 * clock this requirement should be take care of by the
-+	 * clk-framework.
-+	 */
-+	ctl = cprman_read(cprman, data->ctl_reg) & ~CM_FRAC;
-+	ctl |= (div & CM_DIV_FRAC_MASK) ? CM_FRAC : 0;
-+	cprman_write(cprman, data->ctl_reg, ctl);
- 
- 	cprman_write(cprman, data->div_reg, div);
- 
-+	spin_unlock(&cprman->regs_lock);
-+
- 	return 0;
- }
- 
--- 
-1.7.10.4
+Tony
