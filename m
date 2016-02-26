@@ -1,76 +1,57 @@
-Return-Path: <yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-In-Reply-To: <20160202005051.GO4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-	<1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
-	<20160202005051.GO4848@codeaurora.org>
-Date: Tue, 2 Feb 2016 11:19:51 +0900
-Message-ID: <CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to __clk_core_init()
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v9 2/6] clk: hisilicon: add CRG driver for hi3519 soc
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
+ <1456127280-23275-3-git-send-email-xuejiancheng@huawei.com>
+ <20160225234215.GK28849@codeaurora.org>
+CC: <mturquette@baylibre.com>, <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+        <olof@lixom.net>, <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <lidongpo@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56CFB5CF.2050800@huawei.com>
+Date: Fri, 26 Feb 2016 10:17:51 +0800
+MIME-Version: 1.0
+In-Reply-To: <20160225234215.GK28849@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi Stephen,
 
-
-
-2016-02-02 9:50 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 12/28, Masahiro Yamada wrote:
->> The .git_parent is mandatory for multi-parent clocks.  Move the check
->
-> s/git/get/
->
-> Same for the subject.
->
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index e6e10f5..4ad0a36 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
->>               goto out;
->>       }
->>
->> -     if (!core->ops->get_parent) {
->> -             WARN(!core->ops->get_parent,
->> -                     "%s: multi-parent clocks must implement .get_parent\n",
->> -                     __func__);
->> -             goto out;
->> -     }
->> -
->>       /*
->>        * Do our best to cache parent clocks in core->parents.  This prevents
->>        * unnecessary and expensive lookups.  We don't set core->parent here;
->> @@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
->>               goto out;
->>       }
->>
->> +     if (core->num_parents > 1 && !core->ops->get_parent) {
->> +             pr_err("%s: %s must implement .get_parent as it has multi parents\n",
->> +                    __func__, core->name);
->> +     }
+On 2016/2/26 7:42, Stephen Boyd wrote:
+>> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+>> new file mode 100644
+>> index 0000000..50e00e7
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/reset.c
 >> +
->
-> This would seem to allow a case where we may deref a null
-> get_parent op if it isn't set and we call __clk_init_parent().
-> The next patch removes that case by restructuring
-> __clk_init_parent(), so we should just combine these two patches
-> together and that theoretical problem goes away.
->
+>> +int hisi_reset_init(struct device_node *np)
+>> +{
+>> +	struct hisi_reset_controller *rstc;
+>> +
+>> +	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
+>> +	if (!rstc)
+>> +		return -ENOMEM;
+>> +
+>> +	rstc->membase = of_iomap(np, 0);
+> 
+> Any reason why we can't pass the platform device here and map the
+> register space with platform device APIs?
+> 
+This function can be called by other clock drivers except clk-hi3519. Some
+clock drivers may not be registered as platform drivers. Moreover this function
+may be called early even before platform_bus_init.
 
-I think the case never happens.
+Thank you!
 
-__clk_init_parent() is a static function that is only called from
-__clk_core_init().
-So, the null pointer for .get_parent() has been already checked before
-__clk_init_parent().
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Regards,
+Jiancheng.
