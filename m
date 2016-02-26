@@ -1,100 +1,50 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:56772 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755524AbcBPT3r convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 16 Feb 2016 14:29:47 -0500
-Date: Tue, 16 Feb 2016 20:29:16 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Martin Sperl <kernel@martin.sperl.org>
-Cc: linux-serial@vger.kernel.org,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
-Message-ID: <43491797.472221.74f5f000-03c2-453a-a849-faa85305b11d.open-xchange@email.1und1.de>
-In-Reply-To: <D4D8C3EE-7BDC-44F4-A54F-A6861FE0A174@martin.sperl.org>
-References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org>
- <56BC895E.2010108@sperl.org>
- <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de>
- <662D2FB2-B088-4CFC-8416-A4F35BBAD7DD@sperl.org>
- <F7A2533A-D64C-4187-ABD4-416C446D1637@martin.sperl.org>
- <6CD3FC59-BA17-43D9-897C-A2D122D26EF8@martin.sperl.org>
- <470852136.382408.76a8faee-9235-4ee0-9fd1-e25a1e9f0bb3.open-xchange@email.1und1.de>
- <EE05C090-EB8A-41E8-B9C3-8CCC79F15FE9@martin.sperl.org>
- <359843746.379810.6eb6c2f5-8282-417a-83d1-1fa79425ff73.open-xchange@email.1und1.de>
- <D4D8C3EE-7BDC-44F4-A54F-A6861FE0A174@martin.sperl.org>
-Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in
- console
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from lucky1.263xmail.com ([211.157.147.131]:60039 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750711AbcBZFOn (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2016 00:14:43 -0500
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [RFC PATCH 0/3] Support round phase stuff for clock driver
+Date: Fri, 26 Feb 2016 13:08:10 +0800
+Message-Id: <1456463290-3581-1-git-send-email-shawn.lin@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
 
-> Martin Sperl <kernel@martin.sperl.org> hat am 16. Februar 2016 um 17:31
-> geschrieben:
->
->
->
-> > On 13.02.2016, at 21:45, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> >
-> >
-> > According to the datasheet busy bit shouldn't be set while changing the
-> > clock.
-> > So this isn't good. I hope this could be fixed, too.
-> >
->
-> I had hoped that the patch by Eric:
-> "clk: bcm2835: Fix setting of PLL divider clock rates"
-> would fix the issue, but that was unfortunately not the case.
->
-> Some more investigation using the debugfs patch I had posted,
-> which exposes the registers showed that:
-> plld_per_a2w had a value of 4 before starting getty
-> and a value of 0 after starting getty.
->
-> That made me investigate why this value was changed and I found
-> the culprit in the form of:
-> @@ -1167,7 +1171,9 @@ static void bcm2835_pll_divider_off(struct clk_hw *hw)
-> cprman_write(cprman, data->cm_reg,
-> (cprman_read(cprman, data->cm_reg) &
-> ~data->load_mask) | data->hold_mask);
-> - cprman_write(cprman, data->a2w_reg, A2W_PLL_CHANNEL_DISABLE);
-> + cprman_write(cprman, data->a2w_reg,
-> + cprman_read(cprman, data->a2w_reg) |
-> + A2W_PLL_CHANNEL_DISABLE);
-> }
+clk_set_phase is probably most used for sample tuning stuff, and
+the caller will check whether finding a good degree or not to decide
+how to implement the algorithm for catching the best sample window. Not
+all of the phases are supportted by clock phase generator. So the drivers
+which call clk_set_phase may result in setting the phase which is not
+requestted, which will fininally makes the tuning result different.
+Especially for the cross-platform drivers, they can be used for different
+Socs, so it must care the actual phase supported by different clock phase
+generators.
 
-good job. This change make sense because the divider value shouldn't be zero.
+This RFC patchset introduces new API for phase stuff which parallels rate stuff
+to meet the requirement.
 
-But maybe we should protect the RMW by a lock like in bcm2835_clock_off?
+Based on tag of v4.5-rc5
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
->
-> after that (with plld itself marked as “prepared” during probe) everything is
-> working fine.
->
-> bcm2835_pll_off shows a similar pattern, but patching that
-> the same way:
-> @@ -955,8 +955,12 @@ static void bcm2835_pll_off(struct clk_hw *hw)
-> struct bcm2835_cprman *cprman = pll->cprman;
-> const struct bcm2835_pll_data *data = pll->data;
->
-> - cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
-> - cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-> + cprman_write(cprman, data->cm_ctrl_reg,
-> + cprman_read(cprman, data->cm_ctrl_reg) |
-> + CM_PLL_ANARST);
-> + cprman_write(cprman, data->a2w_ctrl_reg,
-> + cprman_read(cprman, data->a2w_ctrl_reg) |
-> + A2W_PLL_CTRL_PWRDN);
-> }
->
-> does not resolve the issue - the system crashes - but without he pll
-> lock message…
 
-Without the knowledge about the registers it's hard to say what exactly causes
-the crash.
 
-Regards
-Stefan
+Shawn Lin (3):
+  clk: add clk_round_phase support
+  clk: add clk_hw_set_phase_range support
+  Documentation: clk: Add clk phase callback comments
+
+ Documentation/clk.txt        |   5 ++
+ drivers/clk/clk.c            | 147 ++++++++++++++++++++++++++++++++++++++++---
+ include/linux/clk-provider.h |  23 ++++++-
+ include/linux/clk.h          |  23 +++++++
+ 4 files changed, 187 insertions(+), 11 deletions(-)
+
+-- 
+2.3.7
+
+
