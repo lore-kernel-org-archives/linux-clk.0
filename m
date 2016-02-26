@@ -1,112 +1,87 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v9 2/6] clk: hisilicon: add CRG driver for hi3519 soc
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
- <1456127280-23275-3-git-send-email-xuejiancheng@huawei.com>
- <20160225234215.GK28849@codeaurora.org>
-CC: <mturquette@baylibre.com>, <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-        <olof@lixom.net>, <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        <lidongpo@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56CFB051.3050809@huawei.com>
-Date: Fri, 26 Feb 2016 09:54:25 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160225234215.GK28849@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <oss@buserror.net>
+Message-ID: <1456510574.5360.48.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Li Yang <leoli@freescale.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Russell
+ King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>,  "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Tang Yuantian
+ <Yuantian.Tang@freescale.com>
+Date: Fri, 26 Feb 2016 12:16:14 -0600
+In-Reply-To: <CADRPPNRiU-9b5J_9+0ofk6huLCn4LPm1s_2yd=Py0eBBi9GGXg@mail.gmail.com>
+References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+	 <3374654.Hks5DeSGVV@vostro.rjw.lan>
+	 <1443215827.32298.130.camel@freescale.com>
+	 <2148611.GEpYdTfpoR@vostro.rjw.lan>
+	 <CADRPPNRiU-9b5J_9+0ofk6huLCn4LPm1s_2yd=Py0eBBi9GGXg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH v3 5/5] cpufreq: qoriq: Don't look at clock
+ implementation details
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-    Thank you for your advice.  I'll fixed them in next version.
+On Fri, 2016-02-26 at 12:14 -0600, Li Yang wrote:
+> On Fri, Sep 25, 2015 at 4:50 PM, Rafael J. Wysocki <rjw@rjwysocki.net>
+> wrote:
+> > On Friday, September 25, 2015 04:17:07 PM Scott Wood wrote:
+> > > On Fri, 2015-09-25 at 23:42 +0200, Rafael J. Wysocki wrote:
+> > > > On Tuesday, September 22, 2015 12:46:54 PM Viresh Kumar wrote:
+> > > > > On 19-09-15, 23:29, Scott Wood wrote:
+> > > > > > Get the CPU clock's potential parent clocks from the clock
+> > > > > > interface
+> > > > > > itself, rather than manually parsing the clocks property to find a
+> > > > > > phandle, looking at the clock-names property of that, and assuming
+> > > > > > that
+> > > > > > those are valid parent clocks for the cpu clock.
+> > > > > > 
+> > > > > > This is necessary now that the clocks are generated based on the
+> > > > > > clock
+> > > > > > driver's knowledge of the chip rather than a fragile device-tree
+> > > > > > description of the mux options.
+> > > > > > 
+> > > > > > We can now rely on the clock driver to ensure that the mux only
+> > > > > > exposes
+> > > > > > options that are valid.  The cpufreq driver was currently being
+> > > > > > overly
+> > > > > > conservative in some cases -- for example, the "min_cpufreq =
+> > > > > > get_bus_freq()" restriction only applies to chips with erratum
+> > > > > > A-004510, and whether the freq_mask used on p5020 is needed
+> > > > > > depends on
+> > > > > > the actual frequencies of the PLLs (FWIW, p5040 has a similar
+> > > > > > limitation but its .freq_mask was zero) -- and the frequency mask
+> > > > > > mechanism made assumptions about particular parent clock indices
+> > > > > > that
+> > > > > > are no longer valid.
+> > > > > > 
+> > > > > > Signed-off-by: Scott Wood <scottwood@freescale.com>
+> > > > > > ---
+> > > > > > v3: was patch 1/5 and patch 4/5, plus blacklist e6500 and changes
+> > > > > > to clk api usage
+> > > > > > 
+> > > > > >  drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++---------------
+> > > > > > ------
+> > > > > > -------
+> > > > > >  1 file changed, 40 insertions(+), 97 deletions(-)
+> > > > > 
+> > > > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > > 
+> > > > I'm wondering who's supposed to be merging this set?
+> > > 
+> > > As I noted in the cover letter, I'm looking for acks so that I can apply
+> > > these to a topic branch which can be pulled through the PPC and ARM
+> > > trees,
+> > > each of which will have patches that depend on it.
+> > 
+> > OK, so no objections from the cpufreq side and you have the ACK from
+> > Viresh.
+> 
+> Hi Scott,
+> 
+> Did you drop this patch later?  I can not find it in 4.5-rc still.
 
-Regards,
+I was asked to get an ack from Russell King patch 4/5, which this patch
+requires.  Despite repeated pings, I could not get a reply from Russell King.
 
-Jiancheng.
-
-On 2016/2/26 7:42, Stephen Boyd wrote:
-> On 02/22, Jiancheng Xue wrote:
->> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
->> new file mode 100644
->> index 0000000..2d23950
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
->> @@ -0,0 +1,46 @@
->> +Example: CRG nodes
->> +CRG: clock-reset-controller@12010000 {
->> +	compatible = "hisilicon,hi3519-crg";
-> 
-> Indentation is off here.
-> 
->> +        reg = <0x12010000 0x10000>;
->> +        #clock-cells = <1>;
->> +        #reset-cells = <2>;
->> +};
->> +
->> +Example: consumer nodes
->> +i2c0: i2c@12110000 {
->> +	compatible = "hisilicon,hi3519-i2c";
->> +        reg = <0x12110000 0x1000>;
->> +        clocks = <&CRG HI3519_I2C0_RST>;*/
->> +        resets = <&CRG 0xe4 0>;
->> +};
->> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
->> index e434854..296371f 100644
->> --- a/drivers/clk/hisilicon/Kconfig
->> +++ b/drivers/clk/hisilicon/Kconfig
->> @@ -1,3 +1,11 @@
->> +config COMMON_CLK_HI3519
->> +	tristate "Hi3519 Clock Driver"
->> +	depends on ARCH_HISI || COMPILE_TEST
->> +	select RESET_HISI
->> +	default y
-> 
-> default ARCH_HISI
-> 
->> +	help
->> +	  Build the clock driver for hi3519.
->> +
->> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
->> new file mode 100644
->> index 0000000..50e00e7
->> --- /dev/null
->> +++ b/drivers/clk/hisilicon/reset.c
->> +
->> +int hisi_reset_init(struct device_node *np)
->> +{
->> +	struct hisi_reset_controller *rstc;
->> +
->> +	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
->> +	if (!rstc)
->> +		return -ENOMEM;
->> +
->> +	rstc->membase = of_iomap(np, 0);
-> 
-> Any reason why we can't pass the platform device here and map the
-> register space with platform device APIs?
-> 
->> +	if (!rstc->membase)
->> +		return -EINVAL;
->> +
->> +	spin_lock_init(&rstc->lock);
->> +
->> +	rstc->rcdev.owner = THIS_MODULE;
->> +	rstc->rcdev.ops = &hisi_reset_ops;
->> +	rstc->rcdev.of_node = np;
->> +	rstc->rcdev.of_reset_n_cells = 2;
->> +	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
->> +
->> +	return reset_controller_register(&rstc->rcdev);
->> +}
->> +EXPORT_SYMBOL(hisi_reset_init);
-> 
-> Why not GPL?
-> 
+-Scott
