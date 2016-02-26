@@ -1,42 +1,45 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] first bunch of rockchip clock changes for 4.6
-Date: Fri, 12 Feb 2016 12:39:43 +0100
-Message-ID: <1494732.M6VqoIU5NQ@phil>
-In-Reply-To: <20160212021936.3210.79199@quark.deferred.io>
-References: <3862076.Cf1OAGsbuq@phil> <20160212021936.3210.79199@quark.deferred.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1456475057.3383.9.camel@pengutronix.de>
+Subject: Re: [PATCH 0/7] clk: Make reset_control_ops const
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Heiko Stuebner
+ <heiko@sntech.de>, Barry Song <baohua@kernel.org>, Emilio
+ =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>,  Chen-Yu Tsai <wens@csie.org>, Peter De
+ Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry
+ Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
+ kernel@pengutronix.de
+Date: Fri, 26 Feb 2016 09:24:17 +0100
+In-Reply-To: <20160225210439.GI4847@codeaurora.org>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+	 <20160225210439.GI4847@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
-
-Am Donnerstag, 11. Februar 2016, 18:19:36 schrieb Michael Turquette:
-> Quoting Heiko Stuebner (2016-02-11 05:00:02)
+Am Donnerstag, den 25.02.2016, 13:04 -0800 schrieb Stephen Boyd:
+> On 02/25, Philipp Zabel wrote:
+> > Since commit 203d4f347d86 ("reset: Make reset_control_ops const") marked
+> > the ops pointer in struct reset_controller_dev as const, these structs
+> > can be made const, too. The commit is currently sitting in the
+> > arm-soc/for-next branch.
+> > 
 > 
-> > Yakir Yang (1):
-> >       clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
-> >       hclk_vio_bus
-> 
-> Thanks for sending the very readable PR. One question below,
-> 
-> We'll likely have critical clock and handoff clock support merged in the
-> next few days. I'm starting to audit any new CLK_IGNORE_UNUSED flag
-> usage to see if it should use either of those two flags. Is the above
-> patch a candidate?
+> All these patches look fine. I take it we have to wait for a
+> cycle to merge them though because the commit you mention is only
+> in the arm-soc tree?
 
-the above clock is part of the interconnect. We don't model that yet, but I 
-guess that would make it more a candidate for the handoff-type instead.
+Or you could merge commit 203d4f347d86 before applying them, which would
+just pull in another minor reset patch on top of v4.5-rc1. Since this is
+already merged as part of the reset-for-4.6 tag, these commits are
+stable.
 
-I'd guess for the Rockchip side, everything that is CLK_IGNORE_UNUSED should 
-be the handoff type (leaf-clocks used by some component we don't control 
-yet). 
+>  Or did you want to take them through arm-soc?
 
-The clocks we already register as critical most likely are the ones that 
-should be critical, as they are central clocks where it causes havok when 
-they get disabled :-) .
+Not unless that was your preferred option.
 
-
-Heiko
+regards
+Philipp
