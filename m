@@ -1,38 +1,61 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 0/6] clk: bcm2835: fixes clk-bcm2835 driver issues
-Date: Mon, 29 Feb 2016 11:39:16 +0000
-Message-Id: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47366 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751364AbcBZTQE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 26 Feb 2016 14:16:04 -0500
+Date: Fri, 26 Feb 2016 11:16:00 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
+Message-ID: <20160226191559.GH13417@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-5-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456439796-28546-5-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+* Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+> From: Vignesh R <vigneshr@ti.com>
+> 
+> tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
+> the required clock information.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-This patchset - as recommended by Stefan Wahren - is a split
-of the original V5 patchset that now only includes bugfixes
-to the clock driver not adding new clocks or functionality.
+This should be sent to Tero.
 
-There will be another patchset that implements the
-changes required to add all missing clocks of the SOC.
+Regards,
 
-Martin Sperl (6):
-  clk: bcm2835: pll_off should only set CM_PLL_ANARST
-  clk: bcm2835: add locking to pll*_on/off methods
-  clk: bcm2835: enable clocks that have been enabled by firmware
-  clk: bcm2835: divider value has to be 1 or more
-  clk: bcm2835: correctly enable fractional clock support
-  clk: bcm2835: clean up coding style issues
+Tony
 
- drivers/clk/bcm/clk-bcm2835.c |   87 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 70 insertions(+), 17 deletions(-)
-
---
-1.7.10.4
+> ---
+> Version 3 changes:
+> None
+> 
+>  drivers/clk/ti/clk-7xx.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+> index a911d7d..7fcf818 100644
+> --- a/drivers/clk/ti/clk-7xx.c
+> +++ b/drivers/clk/ti/clk-7xx.c
+> @@ -304,6 +304,9 @@ static struct ti_dt_clk dra7xx_clks[] = {
+>  	DT_CLK("4882a000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+>  	DT_CLK("4882c000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+>  	DT_CLK("4882e000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+> +	DT_CLK("4843e200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+> +	DT_CLK("48440200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+> +	DT_CLK("48442200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+>  	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
+>  	DT_CLK(NULL, "dss_deshdcp_clk", "dss_deshdcp_clk"),
+>  	{ .node_name = NULL },
+> -- 
+> 2.7.0
+> 
