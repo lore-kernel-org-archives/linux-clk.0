@@ -1,62 +1,47 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH v2 8/8] arm: mach-artpec: add entry to MAINTAINERS
-Date: Thu, 11 Feb 2016 15:04:42 +0100
-Message-Id: <b5adeda17294fceb282d14446ab684316fc3028b.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
- Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
- Jesper Nilsson <jespern@axis.com>, robh+dt@kernel.org, galak@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: Ignore disabled DT clock providers
+Date: Fri, 26 Feb 2016 16:54:31 +0100
+Message-Id: <1456502071-13516-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
-Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+of_clk_init() uses for_each_matching_node_and_match() to find clock
+providers, which returns all matching device nodes, whether they are
+enabled or not. Hence clock providers that are disabled explicitly in DT
+using e.g.
+
+	"status = "disabled";
+
+are still activated.
+
+Add a check to ignore device nodes that are not enabled, like
+of_irq_init() does.
+
+Reported-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7f1fa4f..d32c1aa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -932,6 +932,16 @@ M:	Tsahee Zidenberg <tsahee@annapurnalabs.com>
- S:	Maintained
- F:	arch/arm/mach-alpine/
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index a1bc8db1c00a064f..4c0cb112390986b2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3247,6 +3247,9 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 	for_each_matching_node_and_match(np, matches, &match) {
+ 		struct clock_provider *parent;
  
-+ARM/ARTPEC MACHINE SUPPORT
-+M:	Jesper Nilsson <jesper.nilsson@axis.com>
-+M:	Lars Persson <lars.persson@axis.com>
-+M:	Niklas Cassel <niklas.cassel@axis.com>
-+S:	Maintained
-+L:	linux-arm-kernel@axis.com
-+F:	arch/arm/mach-artpec
-+F:	arch/arm/boot/dts/artpec6*
-+F:	drivers/clk/clk-artpec6.c
++		if (!of_device_is_available(np))
++			continue;
 +
- ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
- M:	Nicolas Ferre <nicolas.ferre@atmel.com>
- M:	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+ 		parent = kzalloc(sizeof(*parent), GFP_KERNEL);
+ 		if (!parent) {
+ 			list_for_each_entry_safe(clk_provider, next,
 -- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
