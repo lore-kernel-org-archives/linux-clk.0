@@ -1,64 +1,94 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: shmobile: Updates for v4.6
-Date: Fri, 19 Feb 2016 09:55:50 +0100
-Message-Id: <1455872150-7632-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH 9/9] simplefb: Remove impossible check for
+ of_clk_get_parent_count() < 0
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>
+References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+ <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Hans de Goede
+	<hdegoede@redhat.com>,
+        Jean-Christophe Plagniol-Villard
+	<plagnioj@jcrosoft.com>,
+        <linux-fbdev@vger.kernel.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <56D0387D.9040705@ti.com>
+Date: Fri, 26 Feb 2016 13:35:25 +0200
+MIME-Version: 1.0
+In-Reply-To: <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T"
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+--1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T
+Content-Type: multipart/mixed; boundary="cXlsU873t5XgLkNaO1JbvnFTdDfQDiN5h"
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Hans de Goede <hdegoede@redhat.com>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ linux-fbdev@vger.kernel.org
+Message-ID: <56D0387D.9040705@ti.com>
+Subject: Re: [PATCH 9/9] simplefb: Remove impossible check for
+ of_clk_get_parent_count() < 0
+References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+ <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
 
-The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+--cXlsU873t5XgLkNaO1JbvnFTdDfQDiN5h
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-shmobile-for-v4.6
+On 22/02/16 22:54, Stephen Boyd wrote:
+> The check for < 0 is impossible now that
+> of_clk_get_parent_count() returns an unsigned int. Simplify the
+> code and update the types.
+>=20
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: <linux-fbdev@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>=20
+> Please ack so this can go through clk tree along with patch 1.
+>=20
+>  drivers/video/fbdev/simplefb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-for you to fetch changes up to f099aa075749c6fadb79554ce175fbdc31c45d7a:
+Acked-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-  clk: shmobile: r8a7795: Add INTC-EX clock (2016-02-18 09:01:46 +0100)
+ Tomi
 
-Summary:
-  - Add more module clocks for R-Car H3,
-  - Update example in DT bindings.
 
-Thanks for pulling!
+--cXlsU873t5XgLkNaO1JbvnFTdDfQDiN5h--
 
-----------------------------------------------------------------
-Dirk Behme (1):
-      clk: shmobile: r8a7795: Add SD divider support
+--1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Geert Uytterhoeven (1):
-      clk: shmobile: cpg-mssr: Update serial port clock in example
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Magnus Damm (1):
-      clk: shmobile: r8a7795: Add INTC-EX clock
+iQIcBAEBCAAGBQJW0Dh9AAoJEPo9qoy8lh71zU4P/Ao6u5eKhSG2gOvnDBa+oCI8
+0dklVqgwbsuV8pdmNuWLOgwtjgGJXonvOJEtPm4lf8Qoe0Bz79a4cx3VzuI4YJX6
+toL+hn3UHUZjCZ33ACYbMlAiGhfg8RrxKBrtjDQi1m5EzQjoxmxVkuwcfEQQ5pcf
+WM/Ym7M2ObjKWwDON2/BHyemY9MynTnk7KFk6pel2PyPGCuH8+2G5U+uHUXArI9q
+fQ1Ttys9cbmKF+bmtvBZ/ZmmpEByUnxygRfKnsnHvAOZmrAa78hJe7qEmE+x2j4R
+QhfvVLcjUSML1tM0N/SOSUB5tYBI/m6Dm2oiMC98qJ5r66+q24W0DgPDIyxF3z5Y
+8dhurit8nPLGIdoqvJIuo71Ro6c82n8uyU38270EstlLamLFdIwQcsoMoenOhZdG
+PnTyKU0mKuDGIUQVQnbSOX53lNSrNBvrsGjk6Kh9Z/VZdqA1fhHfKyBzAsrDD9Yt
+TZxO+q/xwj8Iy9H9dktqt65yXpfiGlbw5k6XlHdPx7tay/gc5plJK8MwH04kRszo
+SGA1/7ijf1vmeo7hmX0x61rX8dR01FjjU0Qt0v6kOg2ctUdwAH7xox9UfwTS96GM
+SUcQEzh1wYB1W2fBG/Q2ycndqceeTHiOFP42MrDNlJOEJPow/oLPZ/nwjjUZn3K9
+QU71qwaz+fgfWPs/ljT2
+=Y6UK
+-----END PGP SIGNATURE-----
 
-Yoshihiro Shimoda (2):
-      clk: shmobile: r8a7795: Add USB3.0 clocks
-      clk: shmobile: r8a7795: Add USB-DMAC clocks
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   2 +-
- drivers/clk/shmobile/r8a7795-cpg-mssr.c            | 235 +++++++++++++++++++++
- drivers/clk/shmobile/renesas-cpg-mssr.h            |   2 +
- 3 files changed, 238 insertions(+), 1 deletion(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--1i5dj9O8dCn8iuT15ajlAsQkkDsBLmh9T--
