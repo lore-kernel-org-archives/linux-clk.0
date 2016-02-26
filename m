@@ -1,362 +1,300 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-Date: Thu, 11 Feb 2016 15:50:51 +0300
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: Alban <albeu@free.fr>
-Cc: linux-mips@linux-mips.org, Marek Vasut <marex@denx.de>, Wills Wang
- <wills.wang@live.com>, Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Paul Burton
- <paul.burton@imgtec.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [RFC v5 01/15] WIP: clk: add Atheros AR933X SoCs clock driver
-Message-Id: <20160211155051.d6378434246fe94ad4ed2760@gmail.com>
-In-Reply-To: <20160209225134.2bb6b67c@tock>
-References: <1455005641-7079-1-git-send-email-antonynpavlov@gmail.com>
-	<1455005641-7079-2-git-send-email-antonynpavlov@gmail.com>
-	<20160209225134.2bb6b67c@tock>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Feb 2016 16:07:13 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mtd@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: uniphier: add clock drivers for UniPhier SoCs
+Message-ID: <20160226000713.GO28849@codeaurora.org>
+References: <1451298003-28841-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1451298003-28841-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 9 Feb 2016 22:51:34 +0100
-Alban <albeu@free.fr> wrote:
+On 12/28, Masahiro Yamada wrote:
+> This is the initial commit for the UniPhier clock drivers, including
+> support for PH1-sLD3, PH1-LD4, PH1-Pro4, PH1-sLD8, PH1-Pro5, and
+> ProXstream2/PH1-LD6b.
+> 
+> To improve the code maintainability, the driver consists of common
+> functions (clk-uniphier-core.c) and clock data arrays needed to
+> support each SoC.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-> On Tue,  9 Feb 2016 11:13:47 +0300
-> Antony Pavlov <antonynpavlov@gmail.com> wrote:
->=20
-> > This driver can be easely upgraded for other Atheros
-> > SoCs (e.g. AR724X/AR913X) support.
-> >=20
-> > Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-> > Cc: Alban Bedel <albeu@free.fr>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Paul Burton <paul.burton@imgtec.com>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-mips@linux-mips.org
-> > Cc: devicetree@vger.kernel.org
-> > ---
-> >  drivers/clk/Makefile                  |   1 +
-> >  drivers/clk/clk-ath79.c               | 354 ++++++++++++++++++++++++++=
-++++++++
-> >  include/dt-bindings/clock/ath79-clk.h |  22 +++
-> >  3 files changed, 377 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index b038e36..d7ad50e 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -18,6 +18,7 @@ endif
-> >  # hardware specific clock types
-> >  # please keep this section sorted lexicographically by file/directory =
-path name
-> >  obj-$(CONFIG_MACH_ASM9260)		+=3D clk-asm9260.o
-> > +obj-$(CONFIG_ATH79)			+=3D clk-ath79.o
-> >  obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+=3D clk-axi-clkgen.o
-> >  obj-$(CONFIG_ARCH_AXXIA)		+=3D clk-axm5516.o
-> >  obj-$(CONFIG_COMMON_CLK_CDCE706)	+=3D clk-cdce706.o
-> > diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
-> > new file mode 100644
-> > index 0000000..e899d31
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-ath79.c
-> > @@ -0,0 +1,354 @@
-> > +/*
-> > + * Clock driver for Atheros AR933X SoCs
-> > + *
-> > + * Copyright (C) 2016 Antony Pavlov <antonynpavlov@gmail.com>
-> > + *
-> > + * This driver is based on Ingenic CGU linux driver by Paul Burton
-> > + * and AR9331 barebox driver by Antony Pavlov.
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation; either version 2 of
-> > + * the License, or (at your option) any later version.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +
-> > +#include <dt-bindings/clock/ath79-clk.h>
-> > +
-> > +#include "asm/mach-ath79/ar71xx_regs.h"
->=20
-> This header shouldn't be used in new code, just defines the few
-> registers needed here. Not using this header allow the driver
-> to be built in compile test which increase test coverage.
+Where's the DT binding? Also, can these clks be registered from a
+platform device driver instead of from 
+> 
+> diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+> new file mode 100644
+> index 0000000..7606f27
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/Kconfig
+> @@ -0,0 +1,35 @@
+> +menuconfig CLK_UNIPHIER
+> +	bool "Clock drivers for UniPhier SoCs"
+> +	depends on ARCH_UNIPHIER
 
-ok.
+Can we have COMPILE_TEST here?
 
-> > +struct ath79_pll_info {
-> > +	u32 div_shift;
-> > +	u32 div_mask;
-> > +};
-> > +
-> > +struct ath79_cblk;
-> > +
-> > +/**
-> > + * struct ath79_clk_info - information about a clock
-> > + * @name: name of the clock
-> > + * @type: a bitmask formed from ATH79_CLK_* values
-> > + * @parents: an index of parent of this clock
-> > + *           within the clock_info array, or -1
-> > + *           which correspond to no valid parent
-> > + * @pll: information valid if type includes ATH79_CLK_PLL
-> > + */
-> > +struct ath79_clk_info {
-> > +	const char *name;
-> > +
-> > +	enum {
-> > +		ATH79_CLK_NONE		=3D 0,
-> > +		ATH79_CLK_EXT		=3D 1,
-> > +		ATH79_CLK_PLL		=3D 2,
-> > +		ATH79_CLK_ALIAS		=3D 3,
-> > +	} type;
-> > +
-> > +	struct ath79_cblk *cblk;
-> > +	int parent;
-> > +
-> > +	struct ath79_pll_info pll;
-> > +};
-> > +
-> > +struct ath79_cblk {
-> > +	struct device_node *np;
-> > +	void __iomem *base;
-> > +
-> > +	const struct ath79_clk_info *clock_info;
-> > +	struct clk_onecell_data clocks;
-> > +};
-> > +
-> > +/**
-> > + * struct ath79_clk - private data for a clock
-> > + * @hw: see Documentation/clk.txt
-> > + * @cblk: a pointer to the cblk data
-> > + * @idx: the index of this clock cblk->clock_info
-> > + * @pll: information valid if type includes ATH79_CLK_PLL
-> > + */
-> > +struct ath79_clk {
-> > +	struct clk_hw hw;
-> > +	struct ath79_cblk *cblk;
-> > +	unsigned idx;
-> > +};
-> > +
-> > +#define to_ath79_clk(_hw) container_of(_hw, struct ath79_clk, hw)
-> > +
-> > +static const struct ath79_clk_info ar9331_clocks[] =3D {
-> > +
-> > +	/* External clock */
-> > +	[ATH79_CLK_REF] =3D { "ref", ATH79_CLK_EXT },
-> > +
-> > +	[ATH79_CLK_CPU] =3D {
-> > +		"cpu", ATH79_CLK_PLL,
-> > +		.parent =3D ATH79_CLK_REF,
-> > +		.pll =3D {
-> > +			.div_shift =3D AR933X_PLL_CLOCK_CTRL_CPU_DIV_SHIFT,
-> > +			.div_mask =3D AR933X_PLL_CLOCK_CTRL_CPU_DIV_MASK,
-> > +		},
-> > +	},
-> > +
-> > +	[ATH79_CLK_DDR] =3D {
-> > +		"ddr", ATH79_CLK_PLL,
-> > +		.parent =3D ATH79_CLK_REF,
-> > +		.pll =3D {
-> > +			.div_shift =3D AR933X_PLL_CLOCK_CTRL_DDR_DIV_SHIFT,
-> > +			.div_mask =3D AR933X_PLL_CLOCK_CTRL_DDR_DIV_MASK,
-> > +		},
-> > +	},
-> > +
-> > +	[ATH79_CLK_AHB] =3D {
-> > +		"ahb", ATH79_CLK_PLL,
-> > +		.parent =3D ATH79_CLK_REF,
-> > +		.pll =3D {
-> > +			.div_shift =3D AR933X_PLL_CLOCK_CTRL_AHB_DIV_SHIFT,
-> > +			.div_mask =3D AR933X_PLL_CLOCK_CTRL_AHB_DIV_MASK,
-> > +		},
-> > +	},
-> > +
-> > +	[ATH79_CLK_WDT] =3D {
-> > +		"wdt", ATH79_CLK_ALIAS,
-> > +		.parent =3D ATH79_CLK_AHB,
-> > +	},
-> > +
-> > +	[ATH79_CLK_UART] =3D {
-> > +		"uart", ATH79_CLK_ALIAS,
-> > +		.parent =3D ATH79_CLK_REF,
-> > +	},
-> > +};
-> > +
-> > +struct ath79_cblk *
-> > +ath79_cblk_new(const struct ath79_clk_info *clock_info,
-> > +		unsigned num_clocks, struct device_node *np)
-> > +{
-> > +	struct ath79_cblk *cblk;
-> > +
-> > +	cblk =3D kzalloc(sizeof(*cblk), GFP_KERNEL);
-> > +	if (!cblk)
-> > +		goto err_out;
-> > +
-> > +	cblk->base =3D of_iomap(np, 0);
-> > +	if (!cblk->base) {
-> > +		pr_err("%s: failed to map clock block registers\n", __func__);
-> > +		goto err_out_free;
-> > +	}
-> > +
-> > +	cblk->np =3D np;
-> > +	cblk->clock_info =3D clock_info;
-> > +	cblk->clocks.clk_num =3D num_clocks;
-> > +
-> > +	return cblk;
-> > +
-> > +err_out_free:
-> > +	kfree(cblk);
-> > +
-> > +err_out:
-> > +	return NULL;
-> > +}
-> > +
-> > +static unsigned long
-> > +ath79_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> > +{
-> > +	struct ath79_clk *ath79_clk =3D to_ath79_clk(hw);
-> > +	struct ath79_cblk *cblk =3D ath79_clk->cblk;
-> > +	const struct ath79_clk_info *clk_info =3D &cblk->clock_info[ath79_clk=
-->idx];
-> > +	const struct ath79_pll_info *pll_info;
-> > +	unsigned long rate;
-> > +	unsigned long freq;
-> > +	u32 clock_ctrl;
-> > +	u32 cpu_config;
-> > +	u32 t;
-> > +
-> > +	BUG_ON(clk_info->type !=3D ATH79_CLK_PLL);
->=20
-> It's probably debatable if such a BUG_ON() is really needed.
+> +	depends on OF
+> +	default y
 
-In simple RFC v5 driver version this check is redundant.
-I suppose it's reasonable for more advanced version of the driver.
-=20
-> > +	clock_ctrl =3D __raw_readl(cblk->base + AR933X_PLL_CLOCK_CTRL_REG);
-> > +
-> > +	if (clock_ctrl & AR933X_PLL_CLOCK_CTRL_BYPASS) {
-> > +		return parent_rate;
-> > +	}
->=20
-> Those brace should goes away.
+And then default ARCH_UNIPHIER instead.
 
-Ok.
+> +	help
+> +	  Supports clock drivers for UniPhier SoCs.
+> +
+> +if CLK_UNIPHIER
+> +
+> +config CLK_UNIPHIER_PH1_SLD3
+> +	bool "Clock driver for UniPhier PH1-sLD3 SoC"
+> +	default y
 
-> > +	cpu_config =3D __raw_readl(cblk->base + AR933X_PLL_CPU_CONFIG_REG);
-> > +
-> > +	t =3D (cpu_config >> AR933X_PLL_CPU_CONFIG_REFDIV_SHIFT) &
-> > +	    AR933X_PLL_CPU_CONFIG_REFDIV_MASK;
-> > +	freq =3D parent_rate / t;
-> > +
-> > +	t =3D (cpu_config >> AR933X_PLL_CPU_CONFIG_NINT_SHIFT) &
-> > +	    AR933X_PLL_CPU_CONFIG_NINT_MASK;
-> > +	freq *=3D t;
-> > +
-> > +	t =3D (cpu_config >> AR933X_PLL_CPU_CONFIG_OUTDIV_SHIFT) &
-> > +	    AR933X_PLL_CPU_CONFIG_OUTDIV_MASK;
-> > +	if (t =3D=3D 0)
-> > +		t =3D 1;
-> > +
-> > +	freq >>=3D t;
-> > +
-> > +	pll_info =3D &clk_info->pll;
-> > +
-> > +	t =3D ((clock_ctrl >> pll_info->div_shift) & pll_info->div_mask) + 1;
-> > +	rate =3D freq / t;
->=20
-> If we just compute a fixed rate we could as well use
-> clk_register_fixed_factor() and drop 80% of the code of this driver.
+These would all become default ARCH_UNIPHIER as well.
+> +
+> +config CLK_UNIPHIER_PH1_LD4
+> +	bool "Clock driver for UniPhier PH1-LD4 SoC"
+> +	default y
+> +
+> +config CLK_UNIPHIER_PH1_PRO4
+> +	bool "Clock driver for UniPhier PH1-Pro4 SoC"
+> +	default y
+> +
+> +config CLK_UNIPHIER_PH1_SLD8
+> +	bool "Clock driver for UniPhier PH1-sLD8 SoC"
+> +	default y
+> +
+> +config CLK_UNIPHIER_PH1_PRO5
+> +	bool "Clock driver for UniPhier PH1-Pro5 SoC"
+> +	default y
+> +
+> +config CLK_UNIPHIER_PROXSTREAM2
+> +	bool "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
+> +	default y
+> +
+> +endif
+> diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
 
-80% is an overstatement.
+Maybe this patch can be split between core code and SoC specific
+data? That way we can focus on the core code without wading
+through all the random clk data arrays.
 
-> > +	return rate;
-> > +}
-> > +
-> > +static const struct clk_ops ath79_pll_clk_ops =3D {
-> > +	.recalc_rate =3D ath79_pll_recalc_rate,
-> > +};
-> > +
-> > +static int ath79_register_clock(struct ath79_cblk *cblk, unsigned idx)
-> > +{
-> > +	const struct ath79_clk_info *clk_info =3D &cblk->clock_info[idx];
-> > +	const struct ath79_clk_info *parent_clk_info;
-> > +	struct clk_init_data clk_init;
-> > +	struct ath79_clk *ath79_clk =3D NULL;
-> > +	struct clk *clk;
-> > +	int err =3D -EINVAL;
-> > +
-> > +	if (clk_info->type =3D=3D ATH79_CLK_EXT) {
-> > +		clk =3D of_clk_get_by_name(cblk->np, clk_info->name);
-> > +		if (IS_ERR(clk)) {
-> > +			pr_err("%s: no external clock '%s' provided\n",
-> > +			       __func__, clk_info->name);
-> > +			err =3D -ENODEV;
-> > +			goto out;
-> > +		}
-> > +
-> > +		err =3D clk_register_clkdev(clk, clk_info->name, NULL);
-> > +		if (err) {
-> > +			clk_put(clk);
-> > +			goto out;
-> > +		}
->=20
-> clk_register_clkdev() and naming providers is not needed on OF
-> platforms. This should only be used on legacy platforms.
+> new file mode 100644
+> index 0000000..8680101
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-uniphier-core.c
+> @@ -0,0 +1,151 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#define pr_fmt(fmt)		"uniphier-clk: " fmt
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/log2.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static void __init uniphier_clk_update_parent_name(struct device_node *np,
+> +						   const char **parent_name)
+> +{
+> +	const char *new_name;
+> +	int index;
+> +
+> +	if (!parent_name || !*parent_name)
+> +		return;
+> +
+> +	if (strncmp(*parent_name, UNIPHIER_CLK_EXT, strlen(UNIPHIER_CLK_EXT)))
+> +		return;
+> +
+> +	index = of_property_match_string(np, "clock-names",
+> +				*parent_name + strlen(UNIPHIER_CLK_EXT));
 
-I can't drop these clk_register_clkdev() just now without patching legacy c=
-ode.
+If possible please don't use clock-names to set up clock
+hierarchy.
 
-If I just drop clk_register_clkdev() then I get
+> +	new_name = of_clk_get_parent_name(np, index);
+> +	if (new_name)
+> +		*parent_name = new_name;
+> +}
+> +
+> +static struct clk * __init uniphier_clk_register(struct device_node *np,
+> +						 void __iomem *regbase,
+> +					  struct uniphier_clk_init_data *idata)
+> +{
+> +	int i;
+> +
+> +	switch (idata->type) {
+> +	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
+> +		uniphier_clk_update_parent_name(np,
+> +					&idata->data.factor.parent_name);
+> +		return clk_register_fixed_factor(NULL, idata->name,
+> +						 idata->data.factor.parent_name,
+> +						 CLK_SET_RATE_PARENT,
+> +						 idata->data.factor.mult,
+> +						 idata->data.factor.div);
+> +	case UNIPHIER_CLK_TYPE_FIXED_RATE:
+> +		return clk_register_fixed_rate(NULL, idata->name, NULL,
+> +					       CLK_IS_ROOT,
+> +					       idata->data.rate.fixed_rate);
+> +	case UNIPHIER_CLK_TYPE_GATE:
+> +		uniphier_clk_update_parent_name(np,
+> +						&idata->data.gate.parent_name);
+> +		return clk_register_gate(NULL, idata->name,
+> +					 idata->data.gate.parent_name,
+> +					 idata->data.gate.parent_name ?
+> +					 CLK_SET_RATE_PARENT : CLK_IS_ROOT,
+> +					 regbase + idata->data.gate.reg,
+> +					 idata->data.gate.bit_idx, 0, NULL);
+> +	case UNIPHIER_CLK_TYPE_MUX:
+> +		for (i = 0; i < idata->data.mux.num_parents; i++)
+> +			uniphier_clk_update_parent_name(np,
+> +					&idata->data.mux.parent_names[i]);
+> +		return clk_register_mux(NULL, idata->name,
+> +					idata->data.mux.parent_names,
+> +					idata->data.mux.num_parents,
+> +					CLK_SET_RATE_PARENT,
+> +					regbase + idata->data.mux.reg,
+> +					idata->data.mux.shift,
+> +					ilog2(idata->data.mux.num_parents),
+> +					0, NULL);
+> +	default:
+> +		WARN(1, "unsupported clock type\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +}
+> +
+> +int __init uniphier_clk_init(struct device_node *np,
+> +			     struct uniphier_clk_init_data *idata)
+> +{
+> +	struct clk_onecell_data *clk_data;
+> +	struct uniphier_clk_init_data *p;
+> +	void __iomem *regbase;
+> +	int max_index = 0;
+> +	int ret;
+> +
+> +	regbase = of_iomap(np, 0);
 
-    Kernel panic - not syncing: unable to get cpu clock, err=3D-2
+If not a platform device, use of_io_request_and_map()?
 
-on start.
+> +	if (!regbase)
+> +		return -ENOMEM;
+> +
+> +	for (p = idata; p->name; p++)
+> +		max_index = max(max_index, p->output_index);
+> +
+> +	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	clk_data->clk_num = max_index + 1;
+> +	clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
+> +				 GFP_KERNEL);
+> diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
+> new file mode 100644
+> index 0000000..05277b6
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-uniphier.h
+> @@ -0,0 +1,68 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef __CLK_UNIPHIER_H__
+> +#define __CLK_UNIPHIER_H__
+> +
+> +#include <linux/kernel.h>
 
+What's this include for?
 
-> > +		cblk->clocks.clks[idx] =3D clk;
-> > +
-> > +		return 0;
-> > +	}
-> > +
-> > +	parent_clk_info =3D &cblk->clock_info[clk_info->parent];
-> > +
-> > +	if (clk_info->type =3D=3D ATH79_CLK_ALIAS) {
-> > +		clk =3D clk_register_fixed_factor(NULL, clk_info->name,
-> > +						parent_clk_info->name, 0, 1, 1);
-> > +		if (IS_ERR(clk)) {
-> > +			pr_err("%s: failed to register clock '%s'\n", __func__,
-> > +			       clk_info->name);
-> > +			err =3D PTR_ERR(clk);
-> > +			goto out;
-> > +		}
-> > +
-> > +		cblk->clocks.clks[idx] =3D clk;
-> > +
-> > +		return 0;
-> > +	}
->=20
-> I really don't get why you keep insisting on having those useless alias
-> clocks. Alias are only needed on legacy platforms to form connections
-> between clock providers and consumers. On OF platforms these
-> connections are nicely represented in the DT, so it is just not
-> needed at all.
+> +
+> +#define UNIPHIER_CLK_EXT	"[EXT]"
+> +
+> +enum uniphier_clk_type {
+> +	UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +	UNIPHIER_CLK_TYPE_FIXED_RATE,
+> +	UNIPHIER_CLK_TYPE_GATE,
+> +	UNIPHIER_CLK_TYPE_MUX,
+> +};
+> +
+> +struct uniphier_clk_fixed_factor_data {
+> +	const char *parent_name;
+> +	unsigned int mult;
+> +	unsigned int div;
+> +};
+> +
+> +struct uniphier_clk_fixed_rate_data {
+> +	unsigned long fixed_rate;
+> +};
+> +
+> +struct uniphier_clk_gate_data {
+> +	const char *parent_name;
+> +	unsigned int reg;
+> +	u8 bit_idx;
+> +};
+> +
+> +struct uniphier_clk_mux_data {
+> +	const char *parent_names[4];
+> +	u8 num_parents;
+> +	unsigned int reg;
+> +	u8 shift;
+> +};
+> +
+> +struct uniphier_clk_init_data {
+> +	const char *name;
+> +	enum uniphier_clk_type type;
+> +	int output_index;
+> +	union {
+> +		struct uniphier_clk_fixed_factor_data factor;
+> +		struct uniphier_clk_fixed_rate_data rate;
+> +		struct uniphier_clk_gate_data gate;
+> +		struct uniphier_clk_mux_data mux;
+> +	} data;
+> +	struct clk *clk;
 
-I have droppped these aliases in RFC v6 series.
+Probably need to forward declare this struct.
 
---=A0
-Best regards,
-=A0 Antony Pavlov
+> +};
+> +
+> +int uniphier_clk_init(struct device_node *np,
+
+Same for device_node.
+
+> +		      struct uniphier_clk_init_data *idata);
+> +
+> +#endif /* __CLK_UNIPHIER_H__ */
+> -- 
+> 1.9.1
+> 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
