@@ -1,38 +1,35 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 1 Feb 2016 09:00:58 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
-	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
-	wens@csie.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
-Message-ID: <20160201150058.GA3209@rob-hp-laptop>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 09:26:19 +0100
+Message-ID: <CAMuHMdXWEo=mXO4p8EX4fCz+v0r-SV+31R7SHjFRjDDUXA1+xw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: shmobile: r8a7795: Add CAN FD peripheral clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jan 31, 2016 at 09:20:53AM +0800, Vishnu Patekar wrote:
-> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> interrupt bit is 6th and A83T has one extra pin PL12.
-> 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> ---
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->  drivers/pinctrl/sunxi/Kconfig                      |   5 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
->  4 files changed, 126 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
