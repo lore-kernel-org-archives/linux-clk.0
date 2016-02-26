@@ -1,55 +1,35 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH 3/8] arm: add device-tree SoC bindings for Axis Artpec-6
-Date: Wed, 10 Feb 2016 13:41:52 +0100
-Message-Id: <06f7e5ffdef7ba79b5702f063512010329c40cba.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
- Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org, galak@codeaurora.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Caesar Wang <wxt@rock-chips.com>, edubezval@gmail.com
+Cc: huangtao@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
+Date: Fri, 26 Feb 2016 02:16:58 +0100
+Message-ID: <3480898.qXLEaXSdDG@phil>
+In-Reply-To: <3650760.H1YezDtoUE@phil>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com> <3650760.H1YezDtoUE@phil>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- Documentation/devicetree/bindings/arm/axis.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/axis.txt
+Am Dienstag, 16. Februar 2016, 00:25:39 schrieb Heiko Stuebner:
+> Am Montag, 15. Februar 2016, 15:33:25 schrieb Caesar Wang:
+> > 1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+> > 8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+> > bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
+> > 22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
+> 
+> clk and devicetree patches look good and I'll pick those up once Eduardo
+> is
+> ok with (and has taken) the thermal-specific changes:
+> > bd2720c thermal: rockchip: fix a impossible condition caused by the
+> > warning df9c1bd thermal: rockchip: fix calculation error for
+> > code_to_temp
+> > fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
+> > b907b75 thermal: rockchip: fix the tsadc sequence output on
+> > rk3228/rk3399
 
-diff --git a/Documentation/devicetree/bindings/arm/axis.txt b/Documentation/devicetree/bindings/arm/axis.txt
-new file mode 100644
-index 0000000..4c98701
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/axis.txt
-@@ -0,0 +1,8 @@
-+Axis Communications AB
-+ARTPEC series SoC Device Tree Bindings
-+
-+
-+ARTPEC-6 ARM SoC
-+
-+Required root node properties:
-+    - compatible = "axis,artpec6-dev-board", "axis,artpec6";
--- 
-2.1.4
+@Eduardo: any opinion on the patches related to the thermal driver itself?
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks
+Heiko
