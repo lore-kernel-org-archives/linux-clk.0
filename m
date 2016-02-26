@@ -1,37 +1,36 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 14:27:06 -0800
+Date: Thu, 25 Feb 2016 16:07:48 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 14/16] clk: imx: add kpp clock for i.MX6UL
-Message-ID: <20160225222706.GL4847@codeaurora.org>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-15-git-send-email-LW@KARO-electronics.de>
+To: kernel@martin.sperl.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: bcm2835: added missing clock register definitions
+Message-ID: <20160226000748.GP28849@codeaurora.org>
+References: <1450815189-3342-1-git-send-email-kernel@martin.sperl.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1453284549-16363-15-git-send-email-LW@KARO-electronics.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450815189-3342-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20, Lothar Waﬂmann wrote:
-> Add the necessary clock to use the KPP interface on i.MX6UL.
+On 12/22, kernel@martin.sperl.org wrote:
+> From: Martin Sperl <kernel@martin.sperl.org>
 > 
-> Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
+> Added missing CTRL and DIV clock register definitions for:
+> PCM, SLIM, TCNT, TEC, TD0, TD1
+> 
+> Register information taken from:
+> https://rawgit.com/msperl/rpi-registers/master/rpi-registers.html#CM
+> which extracted the information from the header files shared by
+> Broadcom/rpi foundation in this file:
+> http://www.broadcom.com/docs/support/videocore/Brcm_Android_ICS_Graphics_Stack.tar.gz
+> 
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
