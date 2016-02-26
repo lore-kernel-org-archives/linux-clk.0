@@ -1,50 +1,71 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:35947 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752543AbcBZBWN (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2016 20:22:13 -0500
+Subject: Re: [PATCH v2] clk: check the actual phase if get_phase is provided
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1455759499-9622-1-git-send-email-shawn.lin@rock-chips.com>
+ <20160225231458.GH28849@codeaurora.org>
+Cc: shawn.lin@rock-chips.com,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 2/6] clk: rockchip: check grf when waiting pll lock
-Date: Mon, 15 Feb 2016 11:33:25 +0800
-Message-Id: <1455507205-12996-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <56CFA8B4.7070600@rock-chips.com>
+Date: Fri, 26 Feb 2016 09:21:56 +0800
+MIME-Version: 1.0
+In-Reply-To: <20160225231458.GH28849@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-rockchip_clk_get_grf pass on return value from
-syscon_regmap_lookup_by_phandle, so we check grf to
-make sure whether to do the following things or not.
+On 2016/2/26 7:14, Stephen Boyd wrote:
+> On 02/18, Shawn Lin wrote:
+>> set_phase does sanity checking of degree and ask sub-driver
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+[...]
 
- drivers/clk/rockchip/clk-pll.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+>> already there.
+>>
+>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>>
+>> ---
+>
+> Knee jerk reaction is why does the provider code set a phase that
+> isn't requested? Do we need some sort of clk_round_phase() API
+> that parallels clk_round_rate() so that drivers know what phase
+> they're going to get? Or do drivers not care what phase they get
+> when they call clk_set_phase()?
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index b7e66c9..dddbc29 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -90,10 +90,16 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
-  */
- static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
- {
--	struct regmap *grf = rockchip_clk_get_grf();
-+	struct regmap *grf;
- 	unsigned int val;
- 	int delay = 24000000, ret;
- 
-+	grf = rockchip_clk_get_grf();
-+	if (IS_ERR(grf)) {
-+		pr_err("%s: grf regmap not available\n", __func__);
-+		return -ENODEV;
-+	}
-+
- 	while (delay > 0) {
- 		ret = regmap_read(grf, pll->lock_offset, &val);
- 		if (ret) {
+Hi Stephen,
+
+drivers should care what phase they get when calling clk_set_phase(i.e
+the drivers setting phase to do tuning work should know what the actual
+degrees is, which is important for them to decide the sample window
+algorithm).
+
+By looking into the two drivers who use set_phase/get_phase pair
+currently, they actually both don'e care what the actual degrees when
+they call clk_set_phase. I think that is because the drivers are used
+for specific platform which support 0~360 implicitly. But the situation
+is NOT always right for cross-platform drivers. So add some sort of
+round_phase API is probably sane ?
+
+
+>>
+>> +	/* bail early if nothing to do */
+>> +	if (degrees == clk->core->phase)
+>> +		goto out;
+>> +
+>
+> This could be split out into a different "optimization" patch and
+> applied today.
+>
+
+ok, I will split this section into a different patch today.
+
+
 -- 
-2.3.7
+Best Regards
+Shawn Lin
+
