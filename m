@@ -1,33 +1,33 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 28 Feb 2016 11:08:14 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] cleanup and add missing input_sel settings to
- imx6ul-pinfunc.h
-Message-ID: <20160228030814.GD22051@tiger>
-References: <20160226124413.71cef89a@ipc1.ka-ro>
- <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
+Subject: [GIT PULL] clk fixes for v4.5-rc5
+Date: Fri, 26 Feb 2016 16:07:24 -0800
+Message-Id: <1456531644-32524-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 26, 2016 at 03:52:57PM +0100, Lothar Waßmann wrote:
-> This patchset adds missing input_sel settings to imx6ul-pinfunc.h.
-> The first patch is a cleanup patch with no functional changes
-> intended.
+The following changes since commit 4462b4bbfc33a44f19710ead784ff361bda2c3b3:
 
-Applied both, thanks.
+  clk: gpio: Really allow an optional clock= DT property (2016-02-18 19:10:22 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to a0d54c3899aaeb047969d9479263c6bcf385c331:
+
+  clk: ti: omap3+: dpll: use non-locking version of clk_get_rate (2016-02-22 14:03:02 -0800)
+
+----------------------------------------------------------------
+One small fix to keep OMAP platforms working across a suspend/resume
+cycle.
+
+----------------------------------------------------------------
+Tero Kristo (1):
+      clk: ti: omap3+: dpll: use non-locking version of clk_get_rate
+
+ drivers/clk/ti/dpll3xxx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
