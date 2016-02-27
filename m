@@ -1,59 +1,55 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 8 Feb 2016 14:35:46 -0800
+Date: Fri, 26 Feb 2016 16:10:42 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] devm: add helper devm_add_action_or_reset()
-Message-ID: <20160208223546.GA10791@codeaurora.org>
-References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: check the actual phase if get_phase is provided
+Message-ID: <20160227001042.GC28849@codeaurora.org>
+References: <1455759499-9622-1-git-send-email-shawn.lin@rock-chips.com>
+ <20160225231458.GH28849@codeaurora.org>
+ <56CFA8B4.7070600@rock-chips.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
+In-Reply-To: <56CFA8B4.7070600@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/23, Sudip Mukherjee wrote:
-> Add a helper function devm_add_action_or_reset() which will internally
-> call devm_add_action(). But if devm_add_action() fails then it will
-> execute the action mentioned and return the error code.
+On 02/26, Shawn Lin wrote:
+> On 2016/2/26 7:14, Stephen Boyd wrote:
+> >On 02/18, Shawn Lin wrote:
+> >>set_phase does sanity checking of degree and ask sub-driver
 > 
-> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
-> ---
+> [...]
+> 
+> >>already there.
+> >>
+> >>Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> >>
+> >>---
+> >
+> >Knee jerk reaction is why does the provider code set a phase that
+> >isn't requested? Do we need some sort of clk_round_phase() API
+> >that parallels clk_round_rate() so that drivers know what phase
+> >they're going to get? Or do drivers not care what phase they get
+> >when they call clk_set_phase()?
+> 
+> Hi Stephen,
+> 
+> drivers should care what phase they get when calling clk_set_phase(i.e
+> the drivers setting phase to do tuning work should know what the actual
+> degrees is, which is important for them to decide the sample window
+> algorithm).
+> 
+> By looking into the two drivers who use set_phase/get_phase pair
+> currently, they actually both don'e care what the actual degrees when
+> they call clk_set_phase. I think that is because the drivers are used
+> for specific platform which support 0~360 implicitly. But the situation
+> is NOT always right for cross-platform drivers. So add some sort of
+> round_phase API is probably sane ?
+> 
 
-Greg, can I get your ack here to take this through clk-tree?
-
-> 
-> Next patch of the series will use this helper. And from a first glance
-> more use of this helper will be there.
-> 
->  include/linux/device.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index f627ba2..f2455d0 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -682,6 +682,18 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
->  int devm_add_action(struct device *dev, void (*action)(void *), void *data);
->  void devm_remove_action(struct device *dev, void (*action)(void *), void *data);
->  
-> +static inline int devm_add_action_or_reset(struct device *dev,
-> +					   void (*action)(void *), void *data)
-> +{
-> +	int ret;
-> +
-> +	ret = devm_add_action(dev, action, data);
-> +	if (ret)
-> +		action(data);
-> +
-> +	return ret;
-> +}
-> +
->  struct device_dma_parameters {
->  	/*
->  	 * a low level driver may set these to teach IOMMU code about
+Do you have such a platform or driver though? I'd rather not do
+anything unless we actually need to.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
