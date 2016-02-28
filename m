@@ -1,43 +1,33 @@
-Return-Path: <akinobu.mita@gmail.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 28 Feb 2016 11:08:14 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] cleanup and add missing input_sel settings to
+ imx6ul-pinfunc.h
+Message-ID: <20160228030814.GD22051@tiger>
+References: <20160226124413.71cef89a@ipc1.ka-ro>
+ <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-In-Reply-To: <20160224220819.GF4847@codeaurora.org>
-References: <1456141719-2543-1-git-send-email-akinobu.mita@gmail.com>
-	<20160223214944.GA20852@rob-hp-laptop>
-	<20160224220819.GF4847@codeaurora.org>
-Date: Thu, 25 Feb 2016 23:40:34 +0900
-Message-ID: <CAC5umyjs_Q_G4jpcmPWk4Ug16tdwq+7c3UH1kwastj2P1UenqA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: add userspace clock consumer
-From: Akinobu Mita <akinobu.mita@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-02-25 7:08 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 02/23, Rob Herring wrote:
->> On Mon, Feb 22, 2016 at 08:48:39PM +0900, Akinobu Mita wrote:
->> > This adds userspace consumer for common clock.
->> >
->> > This driver is inspired from Userspace regulator consumer
->> > (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
->> > some classes of devices that are controlled entirely from user space.
->>
->> Whether the kernel handles a clock or userspace does should have nothing
->> to do with DT. Plus DT does not expose many of the clocks, so any
->> debug feature needs to expose all clocks and be independent of DT.
->>
->> Beyond debug, I don't think we should be exposing clock control to
->> userspace.
->
-> Agreed. Plus, the userspace regulator consumer doesn't have any
-> DT binding for it, so I don't see why we would have a DT binding
-> for the clk one.
+On Fri, Feb 26, 2016 at 03:52:57PM +0100, Lothar Waßmann wrote:
+> This patchset adds missing input_sel settings to imx6ul-pinfunc.h.
+> The first patch is a cleanup patch with no functional changes
+> intended.
 
-OK.  I'll drop a DT binding part of this driver.
-
-I'll still try to expose this feature by platform device instead of
-exposing under clk debugfs.  Because we don't want to allow controlling
-all clock devices (which may result abuse of the feature).  Instead,
-this userspace consumer only allows explicitly specified devices to
-control.
+Applied both, thanks.
