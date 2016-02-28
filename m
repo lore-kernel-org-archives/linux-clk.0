@@ -1,67 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:49356 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754406AbcBXK4e (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 24 Feb 2016 05:56:34 -0500
-From: Yakir Yang <ykk@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 2/4] clk: rockchip: set the clock ids for RK3228 VOP
-Date: Wed, 24 Feb 2016 18:54:18 +0800
-Message-Id: <1456311258-4311-1-git-send-email-ykk@rock-chips.com>
-In-Reply-To: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
-References: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 03/13] clk: sunxi: Add APB1 clock for A83T
+Date: Sun, 28 Feb 2016 23:18:48 +0800
+Message-Id: <1456672738-4993-4-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3228.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 981a502..8747b25 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -368,7 +368,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(29), 0, 3, DFLAGS),
- 	DIV(0, "sclk_vop_pre", "sclk_vop_src", 0,
- 			RK2928_CLKSEL_CON(27), 8, 8, DFLAGS),
--	MUX(0, "dclk_vop", mux_dclk_vop_p, 0,
-+	MUX(DCLK_VOP, "dclk_vop", mux_dclk_vop_p, 0,
- 			RK2928_CLKSEL_CON(27), 1, 1, MFLAGS),
+This adds support for apb1 on A83T.
+
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 2ee7841..dd24772 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -49,6 +49,7 @@ Required properties:
+ 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
+ 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
+ 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
++	"allwinner,sun8i-a83t-apb1-clk" - for the APB1 clock on A83T
+ 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
+ 	"allwinner,sun4i-a10-apb1-gates-clk" - for the APB1 gates on A10
+ 	"allwinner,sun5i-a13-apb1-gates-clk" - for the APB1 gates on A13
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 0ae1f09..987a12d 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -863,6 +863,12 @@ static const struct div_data sun4i_apb0_data __initconst = {
+ 	.table	= sun4i_apb0_table,
+ };
  
- 	COMPOSITE(0, "i2s0_src", mux_pll_src_2plls_p, 0,
-@@ -503,7 +503,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(0, "aclk_iep", "aclk_iep_pre", 0, RK2928_CLKGATE_CON(13), 2, GFLAGS),
- 	GATE(0, "aclk_iep_noc", "aclk_iep_pre", 0, RK2928_CLKGATE_CON(13), 9, GFLAGS),
++static const struct div_data sun8i_a83t_apb1_data __initconst = {
++	.shift	= 8,
++	.pow	= 0,
++	.width	= 2,
++};
++
+ static void __init sunxi_divider_clk_setup(struct device_node *node,
+ 					   const struct div_data *data)
+ {
+@@ -899,6 +905,13 @@ static void __init sun4i_apb0_clk_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun4i_apb0, "allwinner,sun4i-a10-apb0-clk",
+ 	       sun4i_apb0_clk_setup);
  
--	GATE(0, "aclk_vop", "aclk_vop_pre", 0, RK2928_CLKGATE_CON(13), 5, GFLAGS),
-+	GATE(ACLK_VOP, "aclk_vop", "aclk_vop_pre", 0, RK2928_CLKGATE_CON(13), 5, GFLAGS),
- 	GATE(0, "aclk_vop_noc", "aclk_vop_pre", 0, RK2928_CLKGATE_CON(13), 12, GFLAGS),
- 
- 	GATE(0, "aclk_hdcp", "aclk_hdcp_pre", 0, RK2928_CLKGATE_CON(14), 10, GFLAGS),
-@@ -511,7 +511,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 
- 	GATE(0, "hclk_rga", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 1, GFLAGS),
- 	GATE(0, "hclk_iep", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 3, GFLAGS),
--	GATE(0, "hclk_vop", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 6, GFLAGS),
-+	GATE(HCLK_VOP, "hclk_vop", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 6, GFLAGS),
- 	GATE(0, "hclk_vio_ahb_arbi", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 7, GFLAGS),
- 	GATE(0, "hclk_vio_noc", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 8, GFLAGS),
- 	GATE(0, "hclk_vop_noc", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 13, GFLAGS),
++static void __init sun8i_a83t_apb1_clk_setup(struct device_node *node)
++{
++	sunxi_divider_clk_setup(node, &sun8i_a83t_apb1_data);
++}
++CLK_OF_DECLARE(sun8i_a83t_apb1, "allwinner,sun8i-a83t-apb1-clk",
++	       sun8i_a83t_apb1_clk_setup);
++
+ static void __init sun4i_axi_clk_setup(struct device_node *node)
+ {
+ 	sunxi_divider_clk_setup(node, &sun4i_axi_data);
 -- 
 1.9.1
-
-
