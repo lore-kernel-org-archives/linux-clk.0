@@ -1,54 +1,164 @@
-Return-Path: <festevam@gmail.com>
-Return-Path: <festevam@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-To: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org,
-	linux@arm.linux.org.uk,
-	linux-clk@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH] clk: gpio: Fix buggy merge
-Date: Fri, 19 Feb 2016 15:29:16 -0200
-Message-Id: <1455902956-10016-1-git-send-email-festevam@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:45127 "EHLO
+	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758505AbcB1Phq (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 28 Feb 2016 10:37:46 -0500
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 17/20] clk: bcm2835: add the dsi clocks
+Date: Sun, 28 Feb 2016 15:37:08 +0000
+Message-Id: <1456673831-2408-18-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Clock maintainer mis-merged Russell King's commit 7ed88aa2efa54
-("clk: fix clk-gpio.c with optional clock= DT property")
-causing the gpio-gate-clock not to be registered.
+Add the missing dsi clocks using the currently "best known"
+parent-mux available for these clocks.
 
-Adjust the code, so that it looks like Russell's original submission.
-
-With this fix in place, Wifi chip can be successfully probed on a
-imx6q-cubox-i.
-
-Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/clk-gpio.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c       |   88 +++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |    4 ++
+ 2 files changed, 92 insertions(+)
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 19fed65..05cca92 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -287,15 +287,12 @@ static void __init of_gpio_clk_setup(struct device_node *node,
- 	const char **parent_names;
- 	int i, num_parents;
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 5364f10..a5c108a 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -199,6 +199,8 @@
+ # define CM_LOCK_FLOCKA			BIT(8)
  
--	num_parents = of_clk_get_parent_count(node);
--	if (num_parents < 0)
--		return;
--
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return;
+ #define CM_EVENT		0x118
++#define CM_DSI0HSCK		0x120
++# define CM_DSI0HSCK_SELPLLD		BIT(0)
+ #define CM_DSI1ECTL		0x158
+ #define CM_DSI1EDIV		0x15c
+ #define CM_DSI1PCTL		0x160
+@@ -1456,10 +1458,68 @@ static const char * const bcm2835_clock_ccp2_parents[] = {
+ 	.parents = bcm2835_clock_ccp2_parents,				\
+ 	__VA_ARGS__)
  
--	if (num_parents) {
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents > 0) {
- 		parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
- 		if (!parent_names) {
- 			kfree(data);
++/* dsi0 parent mux */
++static const char * const bcm2835_clock_dsi0_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	/*
++	 * more parent clocks, but unknown at this time
++	 * the current definition follows the "common" pattern
++	 * that already applies to all the other parent mux
++	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
++	 * as the first 3 entries.
++	 * The mux should contain "plla_dsi0/plld_dsi0" at one position.
++	 *   the selection which pll is used depends on CM_DSI0HSCK_SELPLLD
++	 * here some possible candidates for the next parents in the list.
++	 *   plla_core/per or plla_dsi0/plld_dsi0
++	 *   pllc_core/per
++	 *   plld_core/per
++	 *   pllh_aux/pix
++	 *   maybe plla_dsi0/plld_dsi0 (depends on CM_DSI0HSCK_SELPLLD)
++	 * up to 16 different parents
++	 */
++};
++
++#define REGISTER_DSI0_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi0_parents),	\
++	.parents = bcm2835_clock_dsi0_parents,				\
++	__VA_ARGS__)
++
++/* dsi1 parent mux */
++static const char * const bcm2835_clock_dsi1_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	/*
++	 * more parent clocks, but unknown at this time
++	 * the current definition follows the "common" pattern
++	 * that already applies to all the other parent mux
++	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
++	 * as the first 3 entries.
++	 * The mux should contain "plld_dsi1" at one position.
++	 * here some possible candidates for the next parents in the list.
++	 *   plla_core/per
++	 *   pllc_core/per
++	 *   plld_core/per or plld_dsi1
++	 *   pllh_aux/pix
++	 *   maybe plld_dsi1
++	 * up to 16 different parents
++	 */
++};
++
++#define REGISTER_DSI1_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi1_parents),	\
++	.parents = bcm2835_clock_dsi1_parents,				\
++	__VA_ARGS__)
++
+ /*
+  * the real definition of all the pll, pll_dividers and clocks
+  * these make use of the above REGISTER_* macros
+  */
++
+ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	/* the PLL + PLL dividers */
+ 
+@@ -1923,6 +1983,34 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 1,
+ 		.frac_bits = 0),
+ 
++	/* dsi clocks */
++	[BCM2835_CLOCK_DSI0E]	= REGISTER_DSI0_CLK(
++		.name = "dsi0e",
++		.ctl_reg = CM_DSI0ECTL,
++		.div_reg = CM_DSI0EDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	[BCM2835_CLOCK_DSI0_IMAGE] = REGISTER_DSI0_CLK(
++		/* this is in principle a gate with a 4 bit mux */
++		.name = "dsi0_image",
++		.ctl_reg = CM_DSI0PCTL,
++		.div_reg = CM_DSI0PDIV,
++		.int_bits = 1,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DSI1E]	= REGISTER_DSI1_CLK(
++		.name = "dsi1e",
++		.ctl_reg = CM_DSI1ECTL,
++		.div_reg = CM_DSI1EDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	[BCM2835_CLOCK_DSI1_IMAGE] = REGISTER_DSI1_CLK(
++		/* this is in principle a gate with a 4 bit mux */
++		.name = "dsi1_image",
++		.ctl_reg = CM_DSI1PCTL,
++		.div_reg = CM_DSI1PDIV,
++		.int_bits = 1,
++		.frac_bits = 0),
++
+ 	/* the gates */
+ 
+ 	/*
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 1d70088..9254c78 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -66,3 +66,7 @@
+ #define BCM2835_CLOCK_CAM0		48
+ #define BCM2835_CLOCK_CAM1		49
+ #define BCM2835_CLOCK_CCP2		50
++#define BCM2835_CLOCK_DSI0E		51
++#define BCM2835_CLOCK_DSI0_IMAGE	52
++#define BCM2835_CLOCK_DSI1E		53
++#define BCM2835_CLOCK_DSI1_IMAGE	54
 -- 
-1.9.1
+1.7.10.4
+
