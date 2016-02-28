@@ -1,57 +1,66 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v9 2/6] clk: hisilicon: add CRG driver for hi3519 soc
-References: <201602221742.MKAlpbcd%fengguang.wu@intel.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-        <raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-        <xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>
-To: Xuejiancheng <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56CBB4ED.304@huawei.com>
-Date: Tue, 23 Feb 2016 09:25:01 +0800
+Return-Path: <stefan.wahren@i2se.com>
+Date: Sun, 28 Feb 2016 18:58:15 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
+	kernel@martin.sperl.org, Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Message-ID: <440771566.330986.eb44c2f6-8870-42b4-ada5-1ccea76f532b.open-xchange@email.1und1.de>
+In-Reply-To: <1456673831-2408-2-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+ <1456673831-2408-2-git-send-email-kernel@martin.sperl.org>
+Subject: Re: [PATCH v5 01/20] clk: bcm2835: pll_off should only set
+ CM_PLL_ANARST
 MIME-Version: 1.0
-In-Reply-To: <201602221742.MKAlpbcd%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+Hi Martin,
 
-I'll fix this warning in next version.
+> kernel@martin.sperl.org hat am 28. Februar 2016 um 16:36 geschrieben:
+>
+>
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> bcm2835_pll_off is currently assigning CM_PLL_ANARST
+> to the control register.
+>
+> This patch only sets the CM_PLL_ANARST bit
+> not resetting any of the other bits, which allows
+> restoring the register to its original value
+> via bcm2834_pll_on.
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 
-Other comments will be appreciated!
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain
+clocks")
 
-Thank you!
-
-On 2016/2/22 18:01, kbuild test robot wrote:
-> Hi Jiancheng,
-> 
-> [auto build test WARNING on clk/clk-next]
-> [also build test WARNING on v4.5-rc5 next-20160222]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jiancheng-Xue/ARM-hisi-Add-initial-support-including-clock-driver-for-Hi3519-soc/20160222-160736
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: xtensa-allyesconfig (attached as .config)
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=xtensa 
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> warning: (COMMON_CLK_HI3519) selects RESET_HISI which has unmet direct dependencies (COMMON_CLK && ARCH_HISI)
-> 
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+> drivers/clk/bcm/clk-bcm2835.c | 8 ++++++--
+> 1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 5747a9d..d3009a6 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -913,8 +913,12 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+> struct bcm2835_cprman *cprman = pll->cprman;
+> const struct bcm2835_pll_data *data = pll->data;
+>
+> - cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+> - cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
+> + cprman_write(cprman, data->cm_ctrl_reg,
+> + cprman_read(cprman, data->cm_ctrl_reg) |
+> + CM_PLL_ANARST);
+> + cprman_write(cprman, data->a2w_ctrl_reg,
+> + cprman_read(cprman, data->a2w_ctrl_reg) |
+> + A2W_PLL_CTRL_PWRDN);
+
+Since this change adds a RMW cycle we should add the spinlocks for
+bcm2835_pll_off here and not in 03/20.
+
+Regards
+Stefan
