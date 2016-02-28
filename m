@@ -1,113 +1,57 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v5 3/3] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-Date: Tue, 16 Feb 2016 15:20:32 +0900
-Message-id: <1455603632-11158-4-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
-References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 09/20] clk: bcm2835: enable management of PCM clock
+Date: Sun, 28 Feb 2016 15:37:00 +0000
+Message-Id: <1456673831-2408-10-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The ARMv8 Exynos family SoCs in Linux kernel are currently:
- - Exynos5433 (controlled by ARCH_EXYNOS),
- - Exynos7 (controlled by ARCH_EXYNOS7).
+From: Martin Sperl <kernel@martin.sperl.org>
 
-It duplicates Kconfig symbols unnecessarily, so consolidate them into
-one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-symbol.
+Enable the PCM clock in the SOC, which is used by the
+bcm2835-i2s driver.
 
-The commit should not bring any visible functional change.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
+ drivers/clk/bcm/clk-bcm2835.c       |    6 ++++++
+ include/dt-bindings/clock/bcm2835.h |    1 +
+ 2 files changed, 7 insertions(+)
 
-Changes since v4:
-1. Added tags from: Javier, Andi.
-
-Changes since v3:
-1. Rebase on next-20160127.
-
-Changes since v2:
-1. None
-
-Changes since v1:
-1. Minor cleanups after Tomasz's comments.
-2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
----
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- 3 files changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 21074f674bde..653662bbafeb 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -14,21 +14,14 @@ config ARCH_BERLIN
- 	  This enables support for Marvell Berlin SoC Family
- 
- config ARCH_EXYNOS
--	bool
--	help
--	  This enables support for Samsung Exynos SoC family
--
--config ARCH_EXYNOS7
--	bool "ARMv8 based Samsung Exynos7"
--	select ARCH_EXYNOS
-+	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
--
- 	help
--	  This enables support for Samsung Exynos7 SoC family
-+	  This enables support for ARMv8 based Samsung Exynos SoC family.
- 
- config ARCH_LAYERSCAPE
- 	bool "ARMv8 based Freescale Layerscape SoC family"
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 20310e5b6d6f..50c9b9383cfa 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
-+dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
- 
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 18ca9fb9e65f..331a843cf122 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
- # CONFIG_IOSCHED_DEADLINE is not set
- CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
--CONFIG_ARCH_EXYNOS7=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_HISI=y
- CONFIG_ARCH_MEDIATEK=y
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index ffc5b3c..3df17a5 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1507,6 +1507,12 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_HSMDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
++		.name = "pcm",
++		.ctl_reg = CM_PCMCTL,
++		.div_reg = CM_PCMDIV,
++		.int_bits = 12,
++		.frac_bits = 12),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
+ 		.ctl_reg = CM_PWMCTL,
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 87235ac..9a7b4a5 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -44,3 +44,4 @@
+ #define BCM2835_CLOCK_EMMC		28
+ #define BCM2835_CLOCK_PERI_IMAGE	29
+ #define BCM2835_CLOCK_PWM		30
++#define BCM2835_CLOCK_PCM		31
 -- 
-2.5.0
+1.7.10.4
