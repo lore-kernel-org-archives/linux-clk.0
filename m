@@ -1,30 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 22 Feb 2016 16:15:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: mturquette@baylibre.com, tony@atomide.com, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2] clk: ti: dpll: convert DPLL support code to use clk_hw
- instead of clk ptrs
-Message-ID: <20160223001507.GC4847@codeaurora.org>
-References: <1455967466-3812-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455967466-3812-1-git-send-email-t-kristo@ti.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 10/13] ARM: dts: sun8i-a83t: add mmc0 CD pin
+Date: Sun, 28 Feb 2016 23:18:55 +0800
+Message-Id: <1456672738-4993-11-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20, Tero Kristo wrote:
-> Convert DPLL support code to use clk_hw pointers for reference and bypass
-> clocks. This allows us to use clk_hw_* APIs for accessing any required
-> parameters for these clocks, avoiding some locking problems at least with
-> DPLL enable code; this used clk_get_rate which uses mutex but isn't
-> good under clk_enable / clk_disable.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
+A83T Boards BPI-m3 and Allwinner H8Homletv2 boards use PF6 as
+Card Detect pin., so use PF6 as reference design CD pin in dtsi.
 
-Applied to clk-next
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 675fc01..c336833 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -390,6 +390,13 @@
+ 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+ 			};
+ 
++			mmc0_cd_pin_reference_design: mmc0_cd_pin@0 {
++				allwinner,pins = "PF6";
++				allwinner,function = "gpio_in";
++				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				allwinner,pins = "PF2", "PF4";
+ 				allwinner,function = "uart0";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
