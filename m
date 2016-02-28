@@ -1,72 +1,77 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-clk@vger.kernel.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [RESEND PATCH 3/8] thermal: rockchip: fix a impossible condition caused by the warning
-Date: Mon, 15 Feb 2016 15:33:28 +0800
-Message-Id: <1455521613-27340-4-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 09/13] ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
+Date: Sun, 28 Feb 2016 23:18:54 +0800
+Message-Id: <1456672738-4993-10-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the Dan report the smatch check the thermal driver warning:
-drivers/thermal/rockchip_thermal.c:551 rockchip_configure_from_dt()
-warn: impossible condition '(thermal->tshut_temp > ((~0 >> 1))) =>
-(s32min-s32max > s32max)'
+This patch adds a device node for the Reduced Serial Bus (RSB)
+controller and the defacto pinmux setting to the A83T dtsi.
 
-Although The shut_temp read from DT is u32,the temperature is currently
-represented as int not long in the thermal driver.
-Let's change to make shut_temp instead of the thermal->tshut_temp for
-the condition.
+Since there is only one possible pinmux setting for RSB, just
+set it in the dtsi.
 
-Fixes: commit 437df2172e8d
-("thermal: rockchip: consistently use int for temperatures")
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
- drivers/thermal/rockchip_thermal.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index b58e3fb..433085a 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -693,15 +693,14 @@ static int rockchip_configure_from_dt(struct device *dev,
- 			 thermal->chip->tshut_temp);
- 		thermal->tshut_temp = thermal->chip->tshut_temp;
- 	} else {
-+		if (shut_temp > INT_MAX) {
-+			dev_err(dev, "Invalid tshut temperature specified: %d\n",
-+				shut_temp);
-+			return -ERANGE;
-+		}
- 		thermal->tshut_temp = shut_temp;
- 	}
- 
--	if (thermal->tshut_temp > INT_MAX) {
--		dev_err(dev, "Invalid tshut temperature specified: %d\n",
--			thermal->tshut_temp);
--		return -ERANGE;
--	}
--
- 	if (of_property_read_u32(np, "rockchip,hw-tshut-mode", &tshut_mode)) {
- 		dev_warn(dev,
- 			 "Missing tshut mode property, using default (%s)\n",
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index af961a8..675fc01 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -476,6 +476,27 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+ 			#gpio-cells = <3>;
++
++			r_rsb_pins: r_rsb {
++				allwinner,pins = "PL0", "PL1";
++				allwinner,function = "s_rsb";
++				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++			};
++		};
++
++		r_rsb: i2c@01f03400 {
++			compatible = "allwinner,sun8i-a23-rsb";
++			reg = <0x01f03400 0x400>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&apb0_gates 3>;
++			clock-frequency = <3000000>;
++			resets = <&apb0_reset 3>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_rsb_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 		};
+ 	};
+ };
 -- 
 1.9.1
