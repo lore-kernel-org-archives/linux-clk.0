@@ -1,61 +1,69 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: add lpc32xx clock frequency
- output
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: robh+dt@kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
- stigge@antcom.de, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <56BA7EE9.8040703@mleia.com>
-References: <1455043670-19025-2-git-send-email-slemieux.tyco@gmail.com>
-	 <56BA7EE9.8040703@mleia.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 10 Feb 2016 12:21:41 -0500
-Message-ID: <1455124901.14667.3.camel@localhost>
-Mime-Version: 1.0
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 04/20] clk: bcm2835: remove uart0/1_pclk fixed clocks
+Date: Sun, 28 Feb 2016 15:36:55 +0000
+Message-Id: <1456673831-2408-5-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-02-10 at 02:06 +0200, Vladimir Zapolskiy wrote:
-> Hi Sylvain,
-> 
-> On 09.02.2016 20:47, slemieux.tyco@gmail.com wrote:
-> > From: Sylvain Lemieux <slemieux@tycoint.com>
-> > 
-> > This patch add an optional parameter to setup the
-> > xtal clock frequency output.
-> > 
-> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> > ---
-> >  Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> > index 20cbca3..ce51759 100644
-> > --- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> > +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> > @@ -10,6 +10,9 @@ Required properties:
-> >  - clock-names: list of external oscillator clock names, must contain
-> >    "xtal_32k" and may have optional "xtal"
-> >  
-> > +Optional properties:
-> > +- xtal,clock-output-frequency: define the "xtal" clock frequency output in Hz
-> > +
-> 
-> this one looks wrong in sense that from patch 1/2 the property configures
-> a PLL output clock rate, which is not an oscillator (xtal) clock rate.
-> 
-> I believe switching to "assigned-clock-rates" should make this change
-> obsolete.
-> 
-Agreed, this change is not needed;
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Sylvain
+Remove the fixed clocks uart0_pclk and uart1_pclk.
+These are not referred to anywhere and the corresponding
+uart clock is created by default.
 
-> >  Examples:
-> >  
-> >  	/* System Control Block */
-> > 
-> 
-> --
-> With best wishes,
-> Vladimir
+The uart1 clock is created by clk-bcm2835-aux.
+
+Note that the use of apb_pclk is questionable and
+not referred to anywhere.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |   17 -----------------
+ 1 file changed, 17 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index d999a13..c277ecb 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -319,28 +319,11 @@ static inline u32 cprman_read(struct bcm2835_cprman *cprman, u32 reg)
+ void __init bcm2835_init_clocks(void)
+ {
+ 	struct clk *clk;
+-	int ret;
+ 
+ 	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
+ 				      126000000);
+ 	if (IS_ERR(clk))
+ 		pr_err("apb_pclk not registered\n");
+-
+-	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
+-				      3000000);
+-	if (IS_ERR(clk))
+-		pr_err("uart0_pclk not registered\n");
+-	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
+-	if (ret)
+-		pr_err("uart0_pclk alias not registered\n");
+-
+-	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
+-				      125000000);
+-	if (IS_ERR(clk))
+-		pr_err("uart1_pclk not registered\n");
+-	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
+-	if (ret)
+-		pr_err("uart1_pclk alias not registered\n");
+ }
+ 
+ struct bcm2835_pll_data {
+-- 
+1.7.10.4
