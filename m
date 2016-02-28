@@ -1,152 +1,79 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [RESEND PATCH 7/8] ARM: dts: rockchip: add the thermal main info found on rk3228
-Date: Mon, 15 Feb 2016 15:33:32 +0800
-Message-Id: <1455521613-27340-8-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 19/20] clk: bcm2835: add gates that require PM_DEBUG to be set
+Date: Sun, 28 Feb 2016 15:37:10 +0000
+Message-Id: <1456673831-2408-20-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the thermal needed main information for rk3228 SoCS.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Basically has the following content:
+Add clocks that require PM_DEBUG to be set and mark this
+fact in the gate_data structure, so that this fact can get
+referred to if needed.
 
-1) TSADC controller:
-Add the needed attributes for rk3036 TSADC controller.
-
-Especially for the TSHUT, in some cases if we are unable to shut it down
-in orderly fashion (says: kernel is stuck holding a lock or similar), then
-hardware TSHUT will reset it.
-If the temperature is over 95C over a period of time the thermal shutdown
-of the tsadc is invoked with can either reset the entire chip via the CRU,
-or notify the PMIC via a GPIO. This should be set in the specific board.
-
-2) Thermal zones:
-Add the needed device mode for thermal generic framework.
-Detail in Documentation/devicetree/bindings/thermal/thermal.txt.
-
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
+ drivers/clk/bcm/clk-bcm2835.c       |   16 +++++++++++++++-
+ include/dt-bindings/clock/bcm2835.h |    2 ++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
- arch/arm/boot/dts/rk3228.dtsi | 69 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
-
-diff --git a/arch/arm/boot/dts/rk3228.dtsi b/arch/arm/boot/dts/rk3228.dtsi
-index 119ff12..4084081 100644
---- a/arch/arm/boot/dts/rk3228.dtsi
-+++ b/arch/arm/boot/dts/rk3228.dtsi
-@@ -43,6 +43,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/pinctrl/rockchip.h>
- #include <dt-bindings/clock/rk3228-cru.h>
-+#include <dt-bindings/thermal/thermal.h>
- #include "skeleton.dtsi"
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 4f002b7..fb5706c 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -447,6 +447,8 @@ struct bcm2835_gate_data {
+ 	const char *parent;
  
- / {
-@@ -69,6 +70,7 @@
- 				/* KHz    uV */
- 				 816000 1000000
- 			>;
-+			#cooling-cells = <2>; /* min followed by max */
- 			clock-latency = <40000>;
- 			clocks = <&cru ARMCLK>;
- 		};
-@@ -247,6 +249,63 @@
- 		assigned-clock-rates = <594000000>;
- 	};
+ 	u32 ctl_reg;
++
++	bool requires_pm_debug;
+ };
  
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <100>; /* milliseconds */
-+			polling-delay = <5000>; /* milliseconds */
+ struct bcm2835_pll {
+@@ -2051,10 +2053,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	 * don't bother exposing) are individual gates off of the
+ 	 * non-stop vpu clock.
+ 	 */
++	[BCM2835_CLOCK_PERA] = REGISTER_GATE(
++		.name = "pera",
++		.parent = "vpu",
++		.ctl_reg = CM_PERIACTL,
++		.requires_pm_debug = true),
+ 	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
+ 		.name = "peri_image",
+ 		.parent = "vpu",
+-		.ctl_reg = CM_PERIICTL),
++		.ctl_reg = CM_PERIICTL,
++		.requires_pm_debug = true),
++	[BCM2835_CLOCK_SYS] = REGISTER_GATE(
++		.name = "sys",
++		.parent = "vpu",
++		.ctl_reg = CM_SYSCTL,
++		.requires_pm_debug = true),
 +
-+			thermal-sensors = <&tsadc 0>;
-+
-+			trips {
-+				cpu_alert0: cpu_alert0 {
-+					temperature = <70000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "passive";
-+				};
-+				cpu_alert1: cpu_alert1 {
-+					temperature = <75000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "passive";
-+				};
-+				cpu_crit: cpu_crit {
-+					temperature = <90000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device =
-+						<&cpu0 THERMAL_NO_LIMIT 6>;
-+				};
-+				map1 {
-+					trip = <&cpu_alert1>;
-+					cooling-device =
-+						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+
-+	tsadc: tsadc@11150000 {
-+		compatible = "rockchip,rk3228-tsadc";
-+		reg = <0x11150000 0x100>;
-+		interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_TSADC>, <&cru PCLK_TSADC>;
-+		clock-names = "tsadc", "apb_pclk";
-+		resets = <&cru SRST_TSADC>;
-+		reset-names = "tsadc-apb";
-+		pinctrl-names = "init", "default", "sleep";
-+		pinctrl-0 = <&otp_gpio>;
-+		pinctrl-1 = <&otp_out>;
-+		pinctrl-2 = <&otp_gpio>;
-+		#thermal-sensor-cells = <0>;
-+		rockchip,hw-tshut-temp = <95000>;
-+		status = "disabled";
-+	};
-+
- 	emmc: dwmmc@30020000 {
- 		compatible = "rockchip,rk3288-dw-mshc";
- 		reg = <0x30020000 0x4000>;
-@@ -394,6 +453,16 @@
- 			};
- 		};
+ };
  
-+		tsadc {
-+			otp_gpio: otp-gpio {
-+				rockchip,pins = <0 24 RK_FUNC_GPIO &pcfg_pull_none>;
-+			};
-+
-+			otp_out: otp-out {
-+				rockchip,pins = <0 24 RK_FUNC_2 &pcfg_pull_none>;
-+			};
-+		};
-+
- 		uart0 {
- 			uart0_xfer: uart0-xfer {
- 				rockchip,pins = <2 26 RK_FUNC_1 &pcfg_pull_none>,
+ static int bcm2835_clk_probe(struct platform_device *pdev)
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 109086e..7bc03cd 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -71,3 +71,5 @@
+ #define BCM2835_CLOCK_DSI1E		53
+ #define BCM2835_CLOCK_DSI1_IMAGE	54
+ #define BCM2835_CLOCK_ARM		55
++#define BCM2835_CLOCK_PERA		56
++#define BCM2835_CLOCK_SYS		57
 -- 
-1.9.1
+1.7.10.4
