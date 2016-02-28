@@ -1,50 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 10 Feb 2016 10:35:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
-Message-ID: <20160210183504.GG30978@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
- <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
- <20160210162349.GJ3782@x1>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 28 Feb 2016 14:49:12 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: ARM: dts: imx6ul: add more functionality to i.MX6UL
+Message-ID: <20160228064912.GH22051@tiger>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160210162349.GJ3782@x1>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/10, Lee Jones wrote:
-> On Mon, 08 Feb 2016, Stephen Boyd wrote:
+On Wed, Jan 20, 2016 at 11:08:53AM +0100, Lothar Waßmann wrote:
+> This patchset adds more functionality to the i.MX6UL machines.
 > 
-> > Convert this driver to use clkdev_create() instead of
-> > clk_register_clkdevs(). The latter API is only used by this driver,
-> > although this driver only allocates one clk to add anyway.
-> > Furthermore, this driver allocates the clk_lookup structure with
-> > devm, but clkdev_drop() will free that structure when passed,
-> > leading to a double free when this driver is removed. Clean it
-> > all up and pave the way for the removal of clk_register_clkdevs().
-> > 
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: Russell King <linux@arm.linux.org.uk>
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > ---
-> >  drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
-> >  1 file changed, 9 insertions(+), 17 deletions(-)
+> The first three patches are cleanup patches with no functional changes
+> intended.
+> The other patches make various subsystems functional.
 > 
-> I never much liked this code [0]
-> 
-> Glad for it to be simplified.
-> 
-> Applied, thanks.
-> 
+> ARM: dts: imx6ul: whitespace cleanup; no functional
 
-Can you please ack the patch instead? I'd like to take it through
-the clk tree so that I can remove clk_register_clkdevs() as well.
+This has been applied from another series.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ARM: dts: imx6ul: move tsc node to appropriate place
+> ARM: dts: imx6ul: move dt-bindings/input/input.h
+> ARM: dts: imx6ul: specify proper clocks for GPT node
+> ARM: dts: imx6ul: specify proper clocks for the PWM
+> ARM: dts: imx6ul: disable PWMs by default
+> ARM: dts: imx6ul: add pwm[1-4] nodes
+> ARM: dts: imx6ul: add sdma support
+> ARM: dts: imx6ul: add flexcan support
+> ARM: dts: imx6ul: add sai support
+> ARM: dts: imx6ul: add lcdif support
+> ARM: dts: imx6ul: add gpmi support
+
+Just applied the above.
+
+> clk: imx: whitespace cleanup; no functional change
+> clk: imx: add kpp clock for i.MX6UL
+
+These two have been applied from a separate series.
+
+> ARM: dts: imx6ul: add kpp support
+
+It was just applied.
+
+Shawn
+
+> ARM: dts: imx6ul: add support for Ka-Ro electronics TX6UL module
