@@ -1,88 +1,66 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <stefan.wahren@i2se.com>
+Date: Sun, 28 Feb 2016 19:04:57 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
+	kernel@martin.sperl.org, Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH 1/2] dt-bindings: clock: adpll: Add binding documentation for TI adpll
-Date: Fri, 12 Feb 2016 13:20:08 -0800
-Message-Id: <1455312009-808-2-git-send-email-tony@atomide.com>
-In-Reply-To: <1455312009-808-1-git-send-email-tony@atomide.com>
-References: <1455312009-808-1-git-send-email-tony@atomide.com>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Message-ID: <413895849.331121.eb44c2f6-8870-42b4-ada5-1ccea76f532b.open-xchange@email.1und1.de>
+In-Reply-To: <1456673831-2408-4-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+ <1456673831-2408-4-git-send-email-kernel@martin.sperl.org>
+Subject: Re: [PATCH v5 03/20] clk: bcm2835: add locking to pll*_on/off
+ methods
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Let's add binding documentation for the ADPLL found on dm814x
-and dra62x. The binding uses the standard clock binding.
+Hi Martin,
 
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Tero Kristo <t-kristo@ti.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- .../devicetree/bindings/clock/ti/adpll.txt         | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/adpll.txt
+> kernel@martin.sperl.org hat am 28. Februar 2016 um 16:36 geschrieben:
+>
+>
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> Add missing locking to:
+> * bcm2835_pll_on
+> * bcm2835_pll_off
+> * bcm2835_pll_divider_on
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/adpll.txt b/Documentation/devicetree/bindings/clock/ti/adpll.txt
-new file mode 100644
-index 0000000..8516bf0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/adpll.txt
-@@ -0,0 +1,43 @@
-+Binding for Texas Instruments ADPLL clock.
-+
-+Binding status: Unstable - ABI compatibility may be broken in the future
-+
-+This binding uses the common clock binding[1]. It assumes a
-+register-mapped ADPLL with two to three selectable input clocks
-+and three to four children.
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible : shall be one of "ti,dm814-adpll-s-clock" or
-+  "ti,dm814-adpll-lj-clock" depending on the type of the ADPLL
-+- #clock-cells : from common clock binding; shall be set to 0.
-+- clocks : link phandles of parent clocks clkinp and clkinpulow, note
-+  that the adpll-s-clock also has an optional clkinphif
-+- reg : address and length of the register set for controlling the ADPLL.
-+
-+Examples:
-+	adpll_mpu_ck: adpll@40 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-s-clock";
-+		reg = <0x40 0x40>;
-+		clocks = <&devosc_ck &devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow", "clkinphif";
-+		clock-indices = <0>, <1>, <2>, <3>;
-+		clock-output-names = "481c5040.adpll.dcoclkldo",
-+				     "481c5040.adpll.clkout",
-+				     "481c5040.adpll.clkoutx2",
-+				     "481c5040.adpll.clkouthif";
-+	};
-+
-+	adpll_dsp_ck: adpll@80 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-lj-clock";
-+		reg = <0x80 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5080.adpll.dcoclkldo",
-+				     "481c5080.adpll.clkout",
-+				     "481c5080.adpll.clkoutldo";
-+	};
--- 
-2.7.0
+this should be obvious. Please explain the why.
+
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain
+clocks")
+
+> ---
+> drivers/clk/bcm/clk-bcm2835.c | 6 ++++++
+> 1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 3aa3e7a..d999a13 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -910,12 +910,14 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+> struct bcm2835_cprman *cprman = pll->cprman;
+> const struct bcm2835_pll_data *data = pll->data;
+>
+> + spin_lock(&cprman->regs_lock);
+> cprman_write(cprman, data->cm_ctrl_reg,
+> cprman_read(cprman, data->cm_ctrl_reg) |
+> CM_PLL_ANARST);
+> cprman_write(cprman, data->a2w_ctrl_reg,
+> cprman_read(cprman, data->a2w_ctrl_reg) |
+> A2W_PLL_CTRL_PWRDN);
+> + spin_unlock(&cprman->regs_lock);
+> }
+
+As i told please move this particular change into 01/20, the rest is okay.
+
+Regards
+Stefan
