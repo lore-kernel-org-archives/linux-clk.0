@@ -1,61 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47366 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751364AbcBZTQE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 26 Feb 2016 14:16:04 -0500
-Date: Fri, 26 Feb 2016 11:16:00 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
-Message-ID: <20160226191559.GH13417@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-5-git-send-email-fcooper@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456439796-28546-5-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 01/20] clk: bcm2835: pll_off should only set CM_PLL_ANARST
+Date: Sun, 28 Feb 2016 15:36:52 +0000
+Message-Id: <1456673831-2408-2-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
-> From: Vignesh R <vigneshr@ti.com>
-> 
-> tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
-> the required clock information.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
+From: Martin Sperl <kernel@martin.sperl.org>
 
-This should be sent to Tero.
+bcm2835_pll_off is currently assigning CM_PLL_ANARST
+to the control register.
 
-Regards,
+This patch only sets the CM_PLL_ANARST bit
+not resetting any of the other bits, which allows
+restoring the register to its original value
+via bcm2834_pll_on.
 
-Tony
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> ---
-> Version 3 changes:
-> None
-> 
->  drivers/clk/ti/clk-7xx.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-> index a911d7d..7fcf818 100644
-> --- a/drivers/clk/ti/clk-7xx.c
-> +++ b/drivers/clk/ti/clk-7xx.c
-> @@ -304,6 +304,9 @@ static struct ti_dt_clk dra7xx_clks[] = {
->  	DT_CLK("4882a000.timer", "timer_sys_ck", "timer_sys_clk_div"),
->  	DT_CLK("4882c000.timer", "timer_sys_ck", "timer_sys_clk_div"),
->  	DT_CLK("4882e000.timer", "timer_sys_ck", "timer_sys_clk_div"),
-> +	DT_CLK("4843e200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
-> +	DT_CLK("48440200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
-> +	DT_CLK("48442200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
->  	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
->  	DT_CLK(NULL, "dss_deshdcp_clk", "dss_deshdcp_clk"),
->  	{ .node_name = NULL },
-> -- 
-> 2.7.0
-> 
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 5747a9d..d3009a6 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -913,8 +913,12 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+ 	struct bcm2835_cprman *cprman = pll->cprman;
+ 	const struct bcm2835_pll_data *data = pll->data;
+ 
+-	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+-	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
++	cprman_write(cprman, data->cm_ctrl_reg,
++		     cprman_read(cprman, data->cm_ctrl_reg) |
++		     CM_PLL_ANARST);
++	cprman_write(cprman, data->a2w_ctrl_reg,
++		     cprman_read(cprman, data->a2w_ctrl_reg) |
++		     A2W_PLL_CTRL_PWRDN);
+ }
+ 
+ static int bcm2835_pll_on(struct clk_hw *hw)
+-- 
+1.7.10.4
