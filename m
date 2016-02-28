@@ -1,64 +1,84 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
 	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 1/6] dt-bindings: arm/marvell: add DT bindings for AP806 DFX Server
-Date: Wed, 24 Feb 2016 16:14:21 +0100
-Message-Id: <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 05/13] ARM: dts: sun8i-a83t: add mmc clock nodes
+Date: Sun, 28 Feb 2016 23:18:50 +0800
+Message-Id: <1456672738-4993-6-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following patch adds a Device Tree binding documentation for the
-AP806 DFX Server register area found in Marvell Armada 7K/8K SOCs.
+mmc clocks are compatible with that of earlier sun8i socs.
+This adds mmc0, mmc1, and mmc2 clock nodes for A83T.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../bindings/arm/marvell/marvell,ap806-dfx-server.txt | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt b/Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt
-new file mode 100644
-index 0000000..44eb3f0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt
-@@ -0,0 +1,19 @@
-+Marvell AP806 DFX Server
-+------------------------
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index fa7ded5..d2a9435 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -237,6 +237,36 @@
+ 					     "bus_uart2", "bus_uart3",
+ 					     "bus_uart4";
+ 		};
 +
-+The Marvell AP806 HW block (which is a core component of the Marvell
-+Armada 7K and 8K SOCs) has a set of registers called "DFX
-+Server". This set of registers contains miscellaneous registers, most
-+of them being used for silicon fine-tuning and manufacturing testing,
-+and as such are not publicly documented. However, this DFX server
-+register range also contains a few documented and useful registers,
-+for example for clock control.
++		mmc0_clk: clk@01c20088 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-mmc-clk";
++			reg = <0x01c20088 0x4>;
++			clocks = <&osc24M>, <&pll6>;
++			clock-output-names = "mmc0",
++					     "mmc0_output",
++					     "mmc0_sample";
++		};
 +
-+This Device Tree binding allows to represent the entire DFX server
-+register space as one single DT node.
++		mmc1_clk: clk@01c2008c {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-mmc-clk";
++			reg = <0x01c2008c 0x4>;
++			clocks = <&osc24M>, <&pll6>;
++			clock-output-names = "mmc1",
++					     "mmc1_output",
++					     "mmc1_sample";
++		};
 +
-+Required properties:
-+- compatible: the first and second values must be:
-+	"simple-mfd", "syscon"
-+- reg: address and length of following register sets for the DFX
-+  server
++		mmc2_clk: clk@01c20090 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-mmc-clk";
++			reg = <0x01c20090 0x4>;
++			clocks = <&osc24M>, <&pll6>;
++			clock-output-names = "mmc2",
++					     "mmc2_output",
++					     "mmc2_sample";
++		};
+ 	};
+ 
+ 	soc {
 -- 
-2.6.4
+1.9.1
