@@ -1,60 +1,64 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 09/11] clk: sunxi: add critical-clocks property to mux clocks
-Date: Mon,  1 Feb 2016 17:39:28 +0000
-Message-Id: <1454348370-3816-10-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+Subject: [PATCH v2 08/13] ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
+Date: Sun, 28 Feb 2016 23:18:53 +0800
+Message-Id: <1456672738-4993-9-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The only reason we match the different root compatible strings when
-registering the different sunxi clock types is to provide a list of
-critical clocks.
-Tell the mux clock (for a start) to get this property from the
-device tree, allowing new SoCs to refer to the generic fallback
-compatible string when the DT provides the critical clock information.
+Now that we have a driver for the R_PIO controller,
+add the corresponding device node to the dtsi.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 9416e0f3..e1e5a8f 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -644,6 +644,11 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
- 		goto out_unmap;
- 	}
- 
-+	if (of_property_read_bool(node, "critical-clocks")) {
-+		pr_debug("marked clock %s as critical\n", clk_name);
-+		clk_prepare_enable(clk);
-+	}
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index b184ea3..af961a8 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -465,5 +465,17 @@
+ 			compatible = "allwinner,sun6i-a31-clock-reset";
+ 			#reset-cells = <1>;
+ 		};
 +
- 	of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 	clk_register_clkdev(clk, clk_name, NULL);
- 	return;
-@@ -1064,6 +1069,10 @@ CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
- CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
- CLK_OF_DECLARE(sun8i_h3_clk_init, "allwinner,sun8i-h3", sun6i_init_clocks);
- 
-+/*
-+ * Those SoCs here either don't have a specific critical clock to
-+ * protect or they mark the critical clocks as such in their DT.
-+ */
- static void __init sunxi_generic_init_clocks(struct device_node *node)
- {
- 	sunxi_init_clocks(NULL, 0);
++		r_pio: pinctrl@01f02c00 {
++			compatible = "allwinner,sun8i-a83t-r-pinctrl";
++			reg = <0x01f02c00 0x400>;
++			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&apb0_gates 0>;
++			resets = <&apb0_reset 0>;
++			gpio-controller;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			#gpio-cells = <3>;
++		};
+ 	};
+ };
 -- 
-2.6.4
+1.9.1
