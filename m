@@ -1,76 +1,74 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/8] arm: Add Artpec-6 SoC
-Date: Thu, 11 Feb 2016 15:04:34 +0100
-Message-Id: <cover.1455198819.git.larper@axis.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
- Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org, galak@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 13/13] ARM: sunxi: Introduce MACH_SUN8I_A83T option
+Date: Sun, 28 Feb 2016 23:18:58 +0800
+Message-Id: <1456672738-4993-14-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Basic support for the Axis Artpec-6 ARM SoC. Timers, interrupts, UARTs and
-ethernet are wired up.
+A83T has CPUS clock similar to A80's. currently, a80 cpus clock only
+compiled for A80. So, Introduce MACH_SUN8I_A83T to compile it for
+A83T as well.
 
-Changes since v1:
-- Corrected bindings for axis,artpec6-pll1-clock.
-- Moved the uart aliases to the board dts.
-- Kconfig cleanup.
-- Added a device tree binding for the dma configuration.
-- Added CONFIG_SYNOPSYS_DWC_ETH_QOS to multi_v7_defconfig.
-- Added binding documentation for axis,artpec6-dev-board.
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/mach-sunxi/Kconfig | 5 +++++
+ drivers/clk/sunxi/Makefile  | 3 +++
+ 2 files changed, 8 insertions(+)
 
-Lars Persson (8):
-  clk: add device tree binding for artpec-6 pll1 clock
-  clk: add artpec-6 pll1 clock driver
-  arm: add device-tree SoC bindings for Axis Artpec-6
-  arm: dts: add Artpec-6 SoC dtsi file
-  arm: dts: add Artpec-6 development board dts
-  arm: initial machine port for artpec-6 SoC
-  arm: multi_v7_defconfig: add MACH_ARTPEC6
-  arm: mach-artpec: add entry to MAINTAINERS
-
- Documentation/devicetree/bindings/arm/axis.txt     |  29 +++
- .../devicetree/bindings/clock/artpec6.txt          |  16 ++
- MAINTAINERS                                        |  10 +
- arch/arm/Kconfig                                   |   2 +
- arch/arm/Makefile                                  |   1 +
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/artpec6-devboard.dts             |  64 ++++++
- arch/arm/boot/dts/artpec6.dtsi                     | 236 +++++++++++++++++++++
- arch/arm/configs/multi_v7_defconfig                |   3 +
- arch/arm/mach-artpec/Kconfig                       |  20 ++
- arch/arm/mach-artpec/Makefile                      |   1 +
- arch/arm/mach-artpec/board-artpec6.c               |  72 +++++++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-artpec6.c                          |  70 ++++++
- 14 files changed, 527 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/axis.txt
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
- create mode 100644 arch/arm/boot/dts/artpec6-devboard.dts
- create mode 100644 arch/arm/boot/dts/artpec6.dtsi
- create mode 100644 arch/arm/mach-artpec/Kconfig
- create mode 100644 arch/arm/mach-artpec/Makefile
- create mode 100644 arch/arm/mach-artpec/board-artpec6.c
- create mode 100644 drivers/clk/clk-artpec6.c
-
+diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+index c124d65..424b76d 100644
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -41,6 +41,11 @@ config MACH_SUN8I
+ 	select ARM_GIC
+ 	select MFD_SUN6I_PRCM
+ 
++config MACH_SUN8I_A83T
++	bool "Allwinner A83T (sun8i) SoCs support"
++	default ARCH_SUNXI
++	select ARM_GIC
++
+ config MACH_SUN9I
+ 	bool "Allwinner (sun9i) SoCs support"
+ 	default ARCH_SUNXI
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 3fd7901..2aabfc4 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -20,6 +20,9 @@ obj-y += clk-usb.o
+ obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
+ obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
+ 
++obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun8i-apb0.o
++obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun9i-cpus.o
++
+ obj-$(CONFIG_MFD_SUN6I_PRCM) += \
+ 	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+ 	clk-sun8i-apb0.o
 -- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
