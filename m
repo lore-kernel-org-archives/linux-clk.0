@@ -1,65 +1,48 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 16 Feb 2016 09:47:52 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>
-Subject: Re: [PATCH v3] clk: sunxi: Fix sun8i-a23-apb0-clk divider flags
-Message-ID: <20160216084752.GG4344@lukather>
-References: <1455529219-30204-1-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z9ECzHErBrwFF8sy"
-In-Reply-To: <1455529219-30204-1-git-send-email-wens@csie.org>
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 11/20] clk: bcm2835: divider value has to be 1 or more
+Date: Sun, 28 Feb 2016 15:37:02 +0000
+Message-Id: <1456673831-2408-12-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Martin Sperl <kernel@martin.sperl.org>
 
---z9ECzHErBrwFF8sy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Current clamping of a normal divider allows a value < 1 to be valid.
 
-On Mon, Feb 15, 2016 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
-> The APB0 clock on A23 is a zero-based divider, not a power-of-two based
-> divider.
->=20
-> Note that this patch does not apply cleanly to kernels before 4.5-rc1,
-> which added CLK_OF_DECLARE support to this driver.
->=20
-> Fixes: 57a1fbf28424 ("clk: sunxi: Add A23 APB0 divider clock support")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+A divider of < 1 would actually only be possible if we had a PLL...
 
-Applied, thanks!
-Maxime
+So this patch clamps the divider for non-mash clocks to 1.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---z9ECzHErBrwFF8sy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWwuI4AAoJEBx+YmzsjxAg9tEQAMG41ZS+iYFOBm6uqSI+mdBm
-RZK7PVyH8ptzTEOXAs8fVR6wyjAxvOHA8gBU957Onu1VEf0lUWBXbi/8wjBN9gp+
-Ait0JCZ27naBSQfx9AxQ8yEyPv3PWMkbECRrH5/fIP2UTIpskVA2XzR0LBrwUYAJ
-yCSd7o8wd6t2FbY472WRcKLZ1ummDtpGjTAymIEI0rqAxpFggIlmRaP5ydbQY6Yt
-HaJwcsouoNH5w5ghnDsrrx507oxd7qJwkQ3zHV/+98jGRRGDZoSCfP0u0C6tSQ+Q
-qV4RewM0UOZMzz+irpmOot4ymcskAy/a4g3zqRqdTYzoO6uMp1BEA9fQgygjII7X
-hcBU0nmJy12VDyCqP932XsPP3QGw2uAg4724T6kk3rZcmynkuXx1zogjezoDFIBG
-wMYvtcTcaWXI3l5w+1kz25ooDigo9lq54MQifVlCzhSTTf7WDDs8oI3TTPnzhgvf
-TpqxBVoAnxmBjQ46gUJDo1ymU6jyx0FH7ZomL0JpXzhv+GBtjoWh0OCNZYSS57Bj
-d/uQIfpwxh8AYqDhoT8WTL86atXMlHWoMPGwRvDfNR1xMBQCFOTj1+HMqu7fF3Pv
-xM/tK6wqlT8ThNQDT8MnxQQlWdDSrL0CuzQCuuoqyDVy00qafS90HModonR1WdlO
-gchZWIs2u3mqIMqx18zQ
-=3lFo
------END PGP SIGNATURE-----
-
---z9ECzHErBrwFF8sy--
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2fb9923..211d231 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -789,7 +789,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 		div = min_t(u32, div,
+ 			    (BIT(data->int_bits) - 1) << CM_DIV_FRAC_BITS);
+ 	} else {
+-		div = max(div, unused_frac_mask + 1);
++		/* clamp to min divider of 1 */
++		div = max_t(u32, div, 1 << CM_DIV_FRAC_BITS);
++		/* clamp to the highest possible fractional divider */
+ 		div = min_t(u32, div,
+ 			    GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
+ 				    CM_DIV_FRAC_BITS - data->frac_bits));
+-- 
+1.7.10.4
