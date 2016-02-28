@@ -1,73 +1,83 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 22 Feb 2016 14:05:14 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Tero Kristo <t-kristo@ti.com>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2] clk: ti: omap3+: dpll: use non-locking version of
- clk_get_rate
-Message-ID: <20160222220514.GZ4847@codeaurora.org>
-References: <1455966777-30576-1-git-send-email-t-kristo@ti.com>
- <20160222165252.GF13417@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160222165252.GF13417@atomide.com>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 05/20] clk: bcm2835: enable clocks that have been enabled by firmware
+Date: Sun, 28 Feb 2016 15:36:56 +0000
+Message-Id: <1456673831-2408-6-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/22, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [160220 03:12]:
-> > As the code in this file is being executed within irq context in some
-> > cases, we must avoid the clk_get_rate which uses mutex internally.
-> > Switch the code to use clk_hw_get_rate instead which is non-locking.
-> > 
-> > This fixes an issue where PM runtime will hang the system if enabled
-> > with a serial console before a suspend-resume cycle.
-> 
-> Can you please add the "Fixes: " line here?
-> 
-> And when applying, please tag this one Cc stable.
-> 
-> Other than that, please feel free to add:
-> 
-> Tested-by: Tony Lindgren <tony@atomide.com>
-> 
+From: Martin Sperl <kernel@martin.sperl.org>
 
-This is what I got. "Fixes" should take care of stable.
+If a clock that has been enabled by the firmware gets disabled
+by a driver this may right now result in a crash of the system
+as then also the corresponding PLL_dividers as well as PLLs
+get disabled (if not used) - some of which are used by the
+VideoCore GPU (which also runs the firmware)
 
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
- clk_get_rate
+This patch prepares/enables those clocks that have been
+configured by the firmware.
 
-As the code in this file is being executed within irq context in some
-cases, we must avoid the clk_get_rate which uses mutex internally.
-Switch the code to use clk_hw_get_rate instead which is non-locking.
+Whenever the clock framework implements either
+CLK_IS_CRITICAL or HAND_OFF this can get changed to use this
+new mechanism.
 
-This fixes an issue where PM runtime will hang the system if enabled
-with a serial console before a suspend-resume cycle.
+For this to be completely successful it is recommended to
+add all the known clock so that this can get applied to all clocks.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Fixes: a53ad8ef3dcc ("clk: ti: Convert to clk_hw based provider APIs")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/ti/dpll3xxx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 1c300388782b..cc739291a3ce 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -460,7 +460,8 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index c277ecb..14ff81e 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -34,6 +34,7 @@
+  * generator).
+  */
  
- 	parent = clk_hw_get_parent(hw);
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk/bcm2835.h>
+@@ -1457,6 +1458,7 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	struct clk_init_data init;
+ 	const char *parents[1 << CM_SRC_BITS];
+ 	size_t i;
++	struct clk *clk;
  
--	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
-+	if (clk_hw_get_rate(hw) ==
-+	    clk_hw_get_rate(__clk_get_hw(dd->clk_bypass))) {
- 		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
- 		r = _omap3_noncore_dpll_bypass(clk);
- 	} else {
+ 	/*
+ 	 * Replace our "xosc" references with the oscillator's
+@@ -1490,7 +1492,18 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	clock->data = data;
+ 	clock->hw.init = &init;
+ 
+-	return devm_clk_register(cprman->dev, &clock->hw);
++	clk = devm_clk_register(cprman->dev, &clock->hw);
++	if (IS_ERR_OR_NULL(clk))
++		return clk;
++
++	/* enable/prepare if the clock is enabled by the firmware */
++	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
++		dev_info(cprman->dev,
++			 "found firmware enabled clock %pC\n", clk);
++		clk_prepare_enable(clk);
++	}
++
++	return clk;
+ }
+ 
+ static int bcm2835_clk_probe(struct platform_device *pdev)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.10.4
