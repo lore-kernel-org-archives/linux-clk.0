@@ -9,172 +9,73 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
 Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 15/20] clk: bcm2835: add additional clocks
-Date: Sun, 28 Feb 2016 15:37:06 +0000
-Message-Id: <1456673831-2408-16-git-send-email-kernel@martin.sperl.org>
+Subject: [PATCH v5 08/20] clk: bcm2835: add fractional support
+Date: Sun, 28 Feb 2016 15:36:59 +0000
+Message-Id: <1456673831-2408-9-git-send-email-kernel@martin.sperl.org>
 In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Martin Sperl <kernel@martin.sperl.org>
 
-Add definitions for the following clocks:
-* AVE0
-* DFT
-* GP0
-* GP1
-* GP2
-* PULSE
-* SLIM
-* SMI
-* TEC
+The current driver calculates the clock divider with
+fractional support enabled.
+But it does not enable fractional support in the control register.
+
+This patch enables fractional support in the control register
+whenever there is a fractional bit set in the requested clock divider.
 
 Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c       |   71 +++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |   10 +++++
- 2 files changed, 81 insertions(+)
+ drivers/clk/bcm/clk-bcm2835.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index ff02871..5c62672 100644
+index 144d5d5..ffc5b3c 100644
 --- a/drivers/clk/bcm/clk-bcm2835.c
 +++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -118,6 +118,8 @@
- #define CM_SDCCTL		0x1a8
- #define CM_SDCDIV		0x1ac
- #define CM_ARMCTL		0x1b0
-+#define CM_AVEOCTL		0x1b8
-+#define CM_AVEODIV		0x1bc
- #define CM_EMMCCTL		0x1c0
- #define CM_EMMCDIV		0x1c4
+@@ -49,6 +49,7 @@
+ #define CM_GNRICCTL		0x000
+ #define CM_GNRICDIV		0x004
+ # define CM_DIV_FRAC_BITS	12
++# define CM_DIV_FRAC_MASK	GENMASK(CM_DIV_FRAC_BITS - 1, 0)
  
-@@ -1711,6 +1713,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_TSENSDIV,
- 		.int_bits = 5,
- 		.frac_bits = 0),
-+	[BCM2835_CLOCK_PULSE]	= REGISTER_OSC_CLK(
-+		.name = "pulse",
-+		.ctl_reg = CM_PULSECTL,
-+		.div_reg = CM_PULSEDIV,
-+		.int_bits = 12,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_TEC]	= REGISTER_OSC_CLK(
-+		.name = "tec",
-+		.ctl_reg = CM_TECCTL,
-+		.div_reg = CM_TECDIV,
-+		.int_bits = 6,
-+		.frac_bits = 0),
+ #define CM_VPUCTL		0x008
+ #define CM_VPUDIV		0x00c
+@@ -126,6 +127,7 @@
+ # define CM_GATE			BIT(CM_GATE_BIT)
+ # define CM_BUSY			BIT(7)
+ # define CM_BUSYD			BIT(8)
++# define CM_FRAC			BIT(9)
+ # define CM_SRC_SHIFT			0
+ # define CM_SRC_BITS			4
+ # define CM_SRC_MASK			0xf
+@@ -875,9 +877,26 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
++	u32 ctl;
++
++	spin_lock(&cprman->regs_lock);
++
++	/*
++	 * Setting up frac support
++	 *
++	 * In principle it is recommended to stop/start the clock first,
++	 * but as we set CLK_SET_RATE_GATE during registration of the
++	 * clock this requirement should be take care of by the
++	 * clk-framework.
++	 */
++	ctl = cprman_read(cprman, data->ctl_reg) & ~CM_FRAC;
++	ctl |= (div & CM_DIV_FRAC_MASK) ? CM_FRAC : 0;
++	cprman_write(cprman, data->ctl_reg, ctl);
  
- 	/* clocks with vpu parent mux */
- 	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
-@@ -1725,6 +1739,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_ISPDIV,
- 		.int_bits = 4,
- 		.frac_bits = 8),
-+
- 	/*
- 	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
- 	 * in the SDRAM controller can't be used.
-@@ -1756,6 +1771,24 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.is_vpu_clock = true),
+ 	cprman_write(cprman, data->div_reg, div);
  
- 	/* clocks with per parent mux */
-+	[BCM2835_CLOCK_AVEO]	= REGISTER_PER_CLK(
-+		.name = "aveo",
-+		.ctl_reg = CM_AVEOCTL,
-+		.div_reg = CM_AVEODIV,
-+		.int_bits = 4,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
-+		.name = "dft",
-+		.ctl_reg = CM_DFTCTL,
-+		.div_reg = CM_DFTDIV,
-+		.int_bits = 5,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
-+		.name = "dpi",
-+		.ctl_reg = CM_DPICTL,
-+		.div_reg = CM_DPIDIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
++	spin_unlock(&cprman->regs_lock);
++
+ 	return 0;
+ }
  
- 	/* Arasan EMMC clock */
- 	[BCM2835_CLOCK_EMMC]	= REGISTER_PER_CLK(
-@@ -1764,6 +1797,30 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_EMMCDIV,
- 		.int_bits = 4,
- 		.frac_bits = 8),
-+
-+	/* General purpose (GPIO) clocks */
-+	[BCM2835_CLOCK_GP0]	= REGISTER_PER_CLK(
-+		.name = "gp0",
-+		.ctl_reg = CM_GP0CTL,
-+		.div_reg = CM_GP0DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+	[BCM2835_CLOCK_GP1]	= REGISTER_PER_CLK(
-+		.name = "gp1",
-+		.ctl_reg = CM_GP1CTL,
-+		.div_reg = CM_GP1DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+	[BCM2835_CLOCK_GP2]	= REGISTER_PER_CLK(
-+		.name = "gp2",
-+		.ctl_reg = CM_GP2CTL,
-+		.div_reg = CM_GP2DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+
- 	/* HDMI state machine */
- 	[BCM2835_CLOCK_HSM]	= REGISTER_PER_CLK(
- 		.name = "hsm",
-@@ -1785,12 +1842,26 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.int_bits = 12,
- 		.frac_bits = 12,
- 		.is_mash_clock = true),
-+	[BCM2835_CLOCK_SLIM]	= REGISTER_PER_CLK(
-+		.name = "slim",
-+		.ctl_reg = CM_SLIMCTL,
-+		.div_reg = CM_SLIMDIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+	[BCM2835_CLOCK_SMI]	= REGISTER_PER_CLK(
-+		.name = "smi",
-+		.ctl_reg = CM_SMICTL,
-+		.div_reg = CM_SMIDIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
- 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
- 		.name = "uart",
- 		.ctl_reg = CM_UARTCTL,
- 		.div_reg = CM_UARTDIV,
- 		.int_bits = 10,
- 		.frac_bits = 12),
-+
- 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
- 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
- 		.name = "vec",
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 9689812..f2e72e7 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -53,3 +53,13 @@
- #define BCM2835_PLLB_SP2		36
- #define BCM2835_PLLD_DSI0		37
- #define BCM2835_PLLD_DSI1		38
-+
-+#define BCM2835_CLOCK_AVEO		39
-+#define BCM2835_CLOCK_DFT		40
-+#define BCM2835_CLOCK_GP0		41
-+#define BCM2835_CLOCK_GP1		42
-+#define BCM2835_CLOCK_GP2		43
-+#define BCM2835_CLOCK_PULSE		44
-+#define BCM2835_CLOCK_SLIM		45
-+#define BCM2835_CLOCK_SMI		46
-+#define BCM2835_CLOCK_TEC		47
 -- 
 1.7.10.4
