@@ -1,149 +1,180 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:51170 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752108AbcBKM3z (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2016 07:29:55 -0500
-Subject: Re: breaking DT compatibility
-To: Mark Rutland <mark.rutland@arm.com>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com> <56BB2D79.6090402@arm.com>
- <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
- <20160210143755.GE31506@lukather> <20160210163001.GG2632@leverpostej>
- <20160211100048.GK31506@lukather> <20160211114410.GA32535@leverpostej>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <rob.herring@linaro.org>,
-	Grant Likely <grant.likely@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56BC7EBA.9030101@arm.com>
-Date: Thu, 11 Feb 2016 12:29:46 +0000
-MIME-Version: 1.0
-In-Reply-To: <20160211114410.GA32535@leverpostej>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 15/20] clk: bcm2835: add additional clocks
+Date: Sun, 28 Feb 2016 15:37:06 +0000
+Message-Id: <1456673831-2408-16-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Martin Sperl <kernel@martin.sperl.org>
 
-On 11/02/16 11:44, Mark Rutland wrote:
-> On Thu, Feb 11, 2016 at 11:00:48AM +0100, Maxime Ripard wrote:
->> On Wed, Feb 10, 2016 at 04:30:01PM +0000, Mark Rutland wrote:
->>> On Wed, Feb 10, 2016 at 03:37:55PM +0100, Maxime Ripard wrote:
->>>> Hi Rob,
->>>>
->>>> On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
->>>>> On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.com> wrote:
->>>>>> Hi,
->>>>>>
->>>>>> just a ping:
->>>>>>
->>>>>> Are we really OK with breaking existing DTs in 4.6? (per the code in
->>>>>> -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patch).
->>>>>
->>>>> I only warn and make sure people are aware of the issue. I leave that
->>>>> up to platform maintainers to decide. It depends on the maturity of
->>>>> the platform and users.
->>>>
->>>> The impacted SoCs support is really partial. For the most supported
->>>> one, big things like display or sound are totally missing, and we
->>>> still update them on a regular basis to add support for new
->>>> devices. As such, users are very likely to upgrade the DT from one
->>>> version to another just because there's new devices available to
->>>> them. And the newest SoC impacted just got introduced in 4.5, and only
->>>> has the UART and MMC devices available.
->>>>
->>>>> If people complain about it then it's their mess. For platforms
->>>>> supported in distros such as debian or fedora, I would strongly
->>>>> recommend against breaking compatibility.
->>>>
->>>> None of them are officially supported:
->>>> https://www.debian.org/releases/stable/armhf/ch02s01.html.en
->>>> https://fedoraproject.org/wiki/Architectures/ARM#Fedora_23
->>>>
->>>> Only the older one are, and they are not affected by this patch.
->>>>
->>>>> They do ship dtbs, but it's a chicken and egg problem. If dtbs were
->>>>> stable and provided by firmware, then they wouldn't have to provide
->>>>> them. If dtbs are unstable, then they have no choice.
->>>>
->>>> And while it might work great on platforms that have all the needed
->>>> documentation, or a perfect one, which is our case. Almost each
->>>> release, we discover that something is not working as it was
->>>> documented, when it was documented in the first place.
->>>>
->>>> It also seems that even on well documented platforms, supported by the
->>>> vendors, the stable ABI dream is not going to happen:
->>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/arm/Atmel/README#n105
->>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/arm/marvell,berlin.txt#n4
->>>
->>> To be quite frank, I completely disagree with that stance.
->>>
->>> It seems like the only reason DT bindings aren't remaining stable is
->>> because people are deliberately ignoring the requirement and reasoning
->>> for doing so.
->>
->> And for DT maintainers saying on multiple occasions that it's bad but
->> ok to break it and / or that they never actually said that it was a
->> stable ABI...
-> 
-> Evidently there is a communication failure. Generally, the statement has
-> been that old DTBs should continue to work. That's even documented, as
-> Andre pointed out:
-> 
-> Documentation/devicetree/bindings/ABI.txt
-> 
-> There are obviously shades of grey, and _rarely_ it might be necessary
-> to deliberately break a binding. However, that should be the rare
-> last-resort case, rather than a crutch for development.
-> 
-> Saying "bad but ok" underplays the "bad" and overplays the "ok".
-> 
->> I'm guessing it could be a stable ABI if there was bindings
->> reviews. Rob actually started to review a significant amount of
->> bindings lately, and that's really appreciated, but if you don't
->> review all the bindings, then we're going to make mistakes.
-> 
-> I agree that it is unfortunate that we cannot provide the level of
-> review that we want to.
-> 
-> Mistakes will happen even with review; that doesn't necessitate removing
-> support for a binding.
-> 
->>> I agree that it can be painful, and that we cannot predict the future.
->>> There will always be bugs.
->>
->> In our case, we can't even predict the present.
->>
->>> Having code in mainline comes with responsibilities. One of those is to
->>> keep said code working for existing users. Otherwise, why bother having
->>> it in mainline at all?
->>
->> None of our existing users ever complained.
-> 
-> I believe that in this case, Andre was complaining about this particular
-> breakage, unless I have misunderstood.
-> 
-> To be clear, I'm arguing for the strategy going forward. If no-one has
-> complained about the stuff broken up to this point, let's not waste time
-> restoring that.
-> 
-> Going forward we need to keep old DTBs supported.
+Add definitions for the following clocks:
+* AVE0
+* DFT
+* GP0
+* GP1
+* GP2
+* PULSE
+* SLIM
+* SMI
+* TEC
 
-FWIW: I had a chat with Maxime and we exchanged ideas on how to go on
-from here, by reworking this commit to be both compatible and fixing the
-issue we are having with the current PLL6 binding. I will look at
-generating patches for this shortly.
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   71 +++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |   10 +++++
+ 2 files changed, 81 insertions(+)
 
-So I guess we can move the discussion more to a code level from here on.
-
-Cheers,
-Andre.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index ff02871..5c62672 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -118,6 +118,8 @@
+ #define CM_SDCCTL		0x1a8
+ #define CM_SDCDIV		0x1ac
+ #define CM_ARMCTL		0x1b0
++#define CM_AVEOCTL		0x1b8
++#define CM_AVEODIV		0x1bc
+ #define CM_EMMCCTL		0x1c0
+ #define CM_EMMCDIV		0x1c4
+ 
+@@ -1711,6 +1713,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_TSENSDIV,
+ 		.int_bits = 5,
+ 		.frac_bits = 0),
++	[BCM2835_CLOCK_PULSE]	= REGISTER_OSC_CLK(
++		.name = "pulse",
++		.ctl_reg = CM_PULSECTL,
++		.div_reg = CM_PULSEDIV,
++		.int_bits = 12,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_TEC]	= REGISTER_OSC_CLK(
++		.name = "tec",
++		.ctl_reg = CM_TECCTL,
++		.div_reg = CM_TECDIV,
++		.int_bits = 6,
++		.frac_bits = 0),
+ 
+ 	/* clocks with vpu parent mux */
+ 	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
+@@ -1725,6 +1739,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_ISPDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++
+ 	/*
+ 	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
+ 	 * in the SDRAM controller can't be used.
+@@ -1756,6 +1771,24 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.is_vpu_clock = true),
+ 
+ 	/* clocks with per parent mux */
++	[BCM2835_CLOCK_AVEO]	= REGISTER_PER_CLK(
++		.name = "aveo",
++		.ctl_reg = CM_AVEOCTL,
++		.div_reg = CM_AVEODIV,
++		.int_bits = 4,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
++		.name = "dft",
++		.ctl_reg = CM_DFTCTL,
++		.div_reg = CM_DFTDIV,
++		.int_bits = 5,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
++		.name = "dpi",
++		.ctl_reg = CM_DPICTL,
++		.div_reg = CM_DPIDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
+ 
+ 	/* Arasan EMMC clock */
+ 	[BCM2835_CLOCK_EMMC]	= REGISTER_PER_CLK(
+@@ -1764,6 +1797,30 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_EMMCDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++
++	/* General purpose (GPIO) clocks */
++	[BCM2835_CLOCK_GP0]	= REGISTER_PER_CLK(
++		.name = "gp0",
++		.ctl_reg = CM_GP0CTL,
++		.div_reg = CM_GP0DIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_GP1]	= REGISTER_PER_CLK(
++		.name = "gp1",
++		.ctl_reg = CM_GP1CTL,
++		.div_reg = CM_GP1DIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_GP2]	= REGISTER_PER_CLK(
++		.name = "gp2",
++		.ctl_reg = CM_GP2CTL,
++		.div_reg = CM_GP2DIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++
+ 	/* HDMI state machine */
+ 	[BCM2835_CLOCK_HSM]	= REGISTER_PER_CLK(
+ 		.name = "hsm",
+@@ -1785,12 +1842,26 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+ 		.is_mash_clock = true),
++	[BCM2835_CLOCK_SLIM]	= REGISTER_PER_CLK(
++		.name = "slim",
++		.ctl_reg = CM_SLIMCTL,
++		.div_reg = CM_SLIMDIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_SMI]	= REGISTER_PER_CLK(
++		.name = "smi",
++		.ctl_reg = CM_SMICTL,
++		.div_reg = CM_SMIDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
+ 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
+ 		.name = "uart",
+ 		.ctl_reg = CM_UARTCTL,
+ 		.div_reg = CM_UARTDIV,
+ 		.int_bits = 10,
+ 		.frac_bits = 12),
++
+ 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+ 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
+ 		.name = "vec",
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 9689812..f2e72e7 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -53,3 +53,13 @@
+ #define BCM2835_PLLB_SP2		36
+ #define BCM2835_PLLD_DSI0		37
+ #define BCM2835_PLLD_DSI1		38
++
++#define BCM2835_CLOCK_AVEO		39
++#define BCM2835_CLOCK_DFT		40
++#define BCM2835_CLOCK_GP0		41
++#define BCM2835_CLOCK_GP1		42
++#define BCM2835_CLOCK_GP2		43
++#define BCM2835_CLOCK_PULSE		44
++#define BCM2835_CLOCK_SLIM		45
++#define BCM2835_CLOCK_SMI		46
++#define BCM2835_CLOCK_TEC		47
+-- 
+1.7.10.4
