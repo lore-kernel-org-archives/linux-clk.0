@@ -1,63 +1,110 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <cover.1454427223.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 2 Feb 2016 16:33:43 +0100
-Subject: [PATCH v3 0/2] Add a DRM display driver to the Allwinner H3
-To: Dave Airlie <airlied@linux.ie>,
-    Chen-Yu Tsai <wens@csie.org>,
-    Emilio Lopez <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-    dri-devel@lists.freedesktop.org,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 06/13] ARM: dts: sun8i-a83t: Add mmc controller nodes
+Date: Sun, 28 Feb 2016 23:18:51 +0800
+Message-Id: <1456672738-4993-7-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The proposed DRM driver works on a Orange PI 2 with a kernel 4.5.0-rc1
-and some H3 patches found in Hans de Goede's GIT repository.
+A83T mmc is compatible with earliers sunxi socs.
+This adds mmc0, mmc1, and mmc2 controller nodes for A83T.
 
-As there is no documentation about the HDMI of the H3,
-the associated encoder/connector driver has not been included
-in this patch series.
-For test purpose, it may be built as a out-of-tree driver
-from the tarball:
-	http://moinejf.free.fr/opi2/h3-hdmi.tar.gz
-and the DT files:
-	http://moinejf.free.fr/opi2/sun8i-h3.dtsi
-	http://moinejf.free.fr/opi2/sun8i-h3-orangepi-plus.dts
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 57 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-Jean-Francois Moine (2):
-  clk: sunxi: Add sun6i/8i video support
-  drm: sunxi: Add a basic DRM driver for Allwinner DE2
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
- .../devicetree/bindings/display/sunxi.txt          |  81 ++++
- drivers/clk/sunxi/clk-sun6i-display.c              | 106 +++++
- drivers/clk/sunxi/clk-sun6i-pll3.c                 | 174 +++++++
- drivers/gpu/drm/Kconfig                            |   2 +
- drivers/gpu/drm/Makefile                           |   1 +
- drivers/gpu/drm/sunxi/Kconfig                      |  20 +
- drivers/gpu/drm/sunxi/Makefile                     |   7 +
- drivers/gpu/drm/sunxi/de2_crtc.c                   | 421 +++++++++++++++++
- drivers/gpu/drm/sunxi/de2_crtc.h                   |  61 +++
- drivers/gpu/drm/sunxi/de2_de.c                     | 505 +++++++++++++++++++++
- drivers/gpu/drm/sunxi/de2_drm.h                    |  40 ++
- drivers/gpu/drm/sunxi/de2_drv.c                    | 377 +++++++++++++++
- drivers/gpu/drm/sunxi/de2_plane.c                  |  91 ++++
- 14 files changed, 1888 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
- create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
- create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
- create mode 100644 drivers/gpu/drm/sunxi/Kconfig
- create mode 100644 drivers/gpu/drm/sunxi/Makefile
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index d2a9435..dfb510e 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -275,6 +275,63 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		mmc0: mmc@01c0f000 {
++			compatible = "allwinner,sun5i-a13-mmc";
++			reg = <0x01c0f000 0x1000>;
++			clocks = <&bus_gates 8>,
++				 <&mmc0_clk 0>,
++				 <&mmc0_clk 1>,
++				 <&mmc0_clk 2>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ahb_reset 8>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@01c10000 {
++			compatible = "allwinner,sun5i-a13-mmc";
++			reg = <0x01c10000 0x1000>;
++			clocks = <&bus_gates 9>,
++				 <&mmc1_clk 0>,
++				 <&mmc1_clk 1>,
++				 <&mmc1_clk 2>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ahb_reset 9>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc2: mmc@01c11000 {
++			compatible = "allwinner,sun5i-a13-mmc";
++			reg = <0x01c11000 0x1000>;
++			clocks = <&bus_gates 10>,
++				 <&mmc2_clk 0>,
++				 <&mmc2_clk 1>,
++				 <&mmc2_clk 2>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ahb_reset 10>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		pio: pinctrl@01c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.7.0
+1.9.1
