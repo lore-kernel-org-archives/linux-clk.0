@@ -1,44 +1,111 @@
-Return-Path: <robh@kernel.org>
-Date: Sun, 21 Feb 2016 20:54:01 -0600
-From: Rob Herring <robh@kernel.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:45127 "EHLO
+	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758505AbcB1Phr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 28 Feb 2016 10:37:47 -0500
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] clk: mvebu: add AP806 ring clock driver
-Message-ID: <20160222025401.GF15973@rob-hp-laptop>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1455521698-7905-4-git-send-email-thomas.petazzoni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455521698-7905-4-git-send-email-thomas.petazzoni@free-electrons.com>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 18/20] clk: bcm2835: add arm clock
+Date: Sun, 28 Feb 2016 15:37:09 +0000
+Message-Id: <1456673831-2408-19-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 08:34:58AM +0100, Thomas Petazzoni wrote:
-> This commit adds a new driver to handle the ring clocks found in the
-> AP806 HW block, which is the core block of all Armada 7K and 8K
-> Marvell 64-bits processors. Those ring clocks are derived from the
-> core ring clock handled by the AP806 core clock driver. The ring
-> clocks are used by various peripherals inside the AP806.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  .../clock/mvebu-armada-ap806-ring-clock.txt        | 32 +++++++++++
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Combine this with the other patch. Similar comments as the other one.
+Add the missing "ARM" clock to the clock framework.
+This clock is essentially a gate clock but with a
+16 channel mux.
 
->  drivers/clk/mvebu/Kconfig                          |  3 +
->  drivers/clk/mvebu/Makefile                         |  1 +
->  drivers/clk/mvebu/ap806-ring.c                     | 65 ++++++++++++++++++++++
->  4 files changed, 101 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
->  create mode 100644 drivers/clk/mvebu/ap806-ring.c
+We assume this is a mux that uses PLLB_ARM, so a dedicated
+mux for arm was created.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   34 +++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/bcm2835.h |    1 +
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index a5c108a..4f002b7 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -118,6 +118,7 @@
+ #define CM_SDCCTL		0x1a8
+ #define CM_SDCDIV		0x1ac
+ #define CM_ARMCTL		0x1b0
++#define CM_ARMDIV		0x1b4
+ #define CM_AVEOCTL		0x1b8
+ #define CM_AVEODIV		0x1bc
+ #define CM_EMMCCTL		0x1c0
+@@ -1515,11 +1516,33 @@ static const char * const bcm2835_clock_dsi1_parents[] = {
+ 	.parents = bcm2835_clock_dsi1_parents,				\
+ 	__VA_ARGS__)
+ 
++/* arm parent mux */
++static const char * const bcm2835_clock_arm_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	/*
++	 * see comments for dsi0 for possible candidates
++	 * should contain "pllb_arm" at one position
++	 *   plla_core/per
++	 *   pllb_arm or pllb_core/per
++	 *   pllc_core/per
++	 *   plld_core/per
++	 *   pllh_aux/pix
++	 * up to 16 different parents
++	 */
++};
++
++#define REGISTER_ARM_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_arm_parents),	\
++	.parents = bcm2835_clock_arm_parents,				\
++	__VA_ARGS__)
++
+ /*
+  * the real definition of all the pll, pll_dividers and clocks
+  * these make use of the above REGISTER_* macros
+  */
+-
+ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	/* the PLL + PLL dividers */
+ 
+@@ -2011,6 +2034,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 1,
+ 		.frac_bits = 0),
+ 
++	/* arm clocks */
++	[BCM2835_CLOCK_DSI1_IMAGE] = REGISTER_ARM_CLK(
++		/* this is in principle a gate with a 4 bit mux */
++		.name = "arm",
++		.ctl_reg = CM_ARMCTL,
++		.div_reg = CM_ARMDIV,
++		.int_bits = 1,
++		.frac_bits = 0),
++
+ 	/* the gates */
+ 
+ 	/*
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 9254c78..109086e 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -70,3 +70,4 @@
+ #define BCM2835_CLOCK_DSI0_IMAGE	52
+ #define BCM2835_CLOCK_DSI1E		53
+ #define BCM2835_CLOCK_DSI1_IMAGE	54
++#define BCM2835_CLOCK_ARM		55
+-- 
+1.7.10.4
+
