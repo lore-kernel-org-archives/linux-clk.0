@@ -1,102 +1,159 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 11 Feb 2016 16:12:46 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?utf-8?B?UGF3ZcWC?= Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
-Message-ID: <20160211151246.GO31506@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
- <CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
- <20160211123648.GN31506@lukather>
- <CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+YNiMqYexvphW3UE"
-In-Reply-To: <CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 13/20] clk: bcm2835: expose current divider, parent and mash via debugfs
+Date: Sun, 28 Feb 2016 15:37:04 +0000
+Message-Id: <1456673831-2408-14-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Martin Sperl <kernel@martin.sperl.org>
 
---+YNiMqYexvphW3UE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For each clock expose the following values via debugfs:
+* current_parent - the currently selected parent
+* current_divi - the integer portion of the currently set divider
+* current_divf - the fractional portion of the currently set divider
+* current_frac - the current frac/mash settings for the divider
 
-Hi Linus,
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |  101 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-On Thu, Feb 11, 2016 at 02:47:57PM +0100, Linus Walleij wrote:
-> On Thu, Feb 11, 2016 at 1:36 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Thu, Feb 11, 2016 at 12:59:47PM +0100, Linus Walleij wrote:
-> >> On Sun, Jan 31, 2016 at 2:20 AM, Vishnu Patekar
-> >> <vishnupatekar0510@gmail.com> wrote:
-> >>
-> >> > The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> >> > interrupt bit is 6th and A83T has one extra pin PL12.
-> >> >
-> >> > Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> >>
-> >> Maxime, can you look at this patch?
-> >
-> > Chen-Yu had one minor comment on it,
->=20
-> OK waiting for a new version.
->=20
-> > and he's also the Allwinner
-> > maintainer now, so you can trust his Acked-by just like you would
-> > trust mine ;)
->=20
-> Can you guys supply a MAINTAINERS entry for the sunxi
-> stuff?
-
-We have one, and Chen-Yu is listed as co-maintainer:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/MAINTA=
-INERS#n911
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---+YNiMqYexvphW3UE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWvKTuAAoJEBx+YmzsjxAgI0oQAIqHjXick2u1KTOB6PP8ozIJ
-ZvmbTi6IOs0gARACE1vWvjQb/O7MOJhtac0SuexaT7UmhnhNoz/7/OryQVpR/fDj
-C4+xjMIKF1lgssJToZIu2gLGMpP/Hv3HLjLAPs+XYl2doSEI5IqKrQ7KIobeQZYH
-ZMOsReY3lYrHPO+7FGga6PGfEbCSEBM7HguSZOdFJ1uZTr4LBACA1KEICUN2w3eG
-6b5xOTLnm6QfWJFz8EvHdd74NTpf5AAlnp7htWwGVwXGRDtPHz2xPitQQuDybNZ6
-zmwUs5iC2CriCLjgsEE9K8aJvYLBI0mLQblUhrKaoUxa/B6KX73fflJO2uQ3PKsc
-L2JWxbN1eB0EOO+BznNNg5QdVN4LCnT51F8+QCGbCnP4gnw+EYOidYXN2JbLKGkr
-BvIs2HCvNN0UDmTzOYYT8YkMqF0rjQP8O8hIXpE9oapzmPkVH4dRlr1B20N7TZiK
-Zx5fYYJxNfa16I7oKoVSMM9gesMUptsYLJL7Dee61PR29s34mpTL9XUqgcIdx9PR
-tLCZgBIIvtuXdUDj1SC4laseUq0JbN1dtjaQXRVvLmZ0lIE6w7oIfMF8XfqwnTwS
-zDOToDejT5QU7EdxFQzgyW2PzHB3lB+ea/a5/X8jWvG/DCyAgNwvNn/91k02WkK1
-oeixhHgt1Fv8YVX9E1Ty
-=kvZl
------END PGP SIGNATURE-----
-
---+YNiMqYexvphW3UE--
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 366f975..b67147b 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -129,6 +129,10 @@
+ # define CM_BUSY			BIT(7)
+ # define CM_BUSYD			BIT(8)
+ # define CM_FRAC			BIT(9)
++# define CM_MASH0			BIT(9)
++# define CM_MASH1			BIT(10)
++# define CM_MASH_MASK			(CM_MASH0 | CM_MASH1)
++# define CM_MASH_SHIFT			9
+ # define CM_SRC_SHIFT			0
+ # define CM_SRC_BITS			4
+ # define CM_SRC_MASK			0xf
+@@ -1045,6 +1049,90 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
+ 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
+ }
+ 
++static const char *bcm2835_clock_get_parent_name(struct clk_hw *hw)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	const struct bcm2835_clock_data *data = clock->data;
++	u8 id = bcm2835_clock_get_parent(hw);
++
++	return (id < data->num_mux_parents) ?
++		data->parents[id] : "unknown";
++}
++
++static int bcm2835_clock_debug_current_parent_open(struct inode *inode,
++						   struct file *file)
++{
++	const char *parent = bcm2835_clock_get_parent_name(inode->i_private);
++
++	file->private_data = kstrdup(parent, GFP_KERNEL);
++	return 0;
++}
++
++static ssize_t bcm2835_clock_debug_current_parent_read(struct file *file,
++						       char __user *buf,
++						       size_t len,
++						       loff_t *ppos)
++{
++	const char *parent = file->private_data;
++	size_t size = strlen(parent);
++
++	return simple_read_from_buffer(buf, len, ppos, parent, size);
++}
++
++static const struct file_operations bcm2835_clock_debug_current_parent_fops = {
++	.owner   = THIS_MODULE,
++	.open    = bcm2835_clock_debug_current_parent_open,
++	.release = simple_attr_release,
++	.read    = bcm2835_clock_debug_current_parent_read,
++	.llseek  = generic_file_llseek,
++};
++
++static int bcm2835_clock_debug_current_divi_get(void *hw, u64 *val)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 div = cprman_read(cprman, data->div_reg);
++
++	*val = div >> CM_DIV_FRAC_BITS;
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_divi_fops,
++			bcm2835_clock_debug_current_divi_get,
++			NULL, "%llu\n");
++
++static int bcm2835_clock_debug_current_divf_get(void *hw, u64 *val)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 div = cprman_read(cprman, data->div_reg);
++
++	*val = div & CM_DIV_FRAC_MASK;
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_divf_fops,
++			bcm2835_clock_debug_current_divf_get,
++			NULL, "%llu\n");
++
++static int bcm2835_clock_debug_current_frac_get(void *hw, u64 *val)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 ctl = cprman_read(cprman, data->ctl_reg);
++
++	if (data->is_mash_clock)
++		*val = (ctl & CM_MASH_MASK) >> CM_MASH_SHIFT;
++	else
++		*val = ctl & CM_FRAC ? 1 : 0;
++
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_frac_fops,
++			bcm2835_clock_debug_current_frac_get,
++			NULL, "%llu\n");
++
+ static struct debugfs_reg32 bcm2835_debugfs_clock_reg32[] = {
+ 	{
+ 		.name = "ctl",
+@@ -1063,6 +1151,19 @@ static int bcm2835_clock_debug_init(struct clk_hw *hw,
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 
++	/* expose the current parrent */
++	debugfs_create_file("current_parent", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_parent_fops);
++
++	/* expose the current divider components */
++	debugfs_create_file("current_divi", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_divi_fops);
++	debugfs_create_file("current_divf", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_divf_fops);
++	debugfs_create_file("current_frac", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_frac_fops);
++
++	/* add the regset */
+ 	return bcm2835_debugfs_regset(
+ 		cprman, data->ctl_reg,
+ 		bcm2835_debugfs_clock_reg32,
+-- 
+1.7.10.4
