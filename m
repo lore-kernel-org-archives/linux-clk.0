@@ -1,94 +1,115 @@
-Return-Path: <lars.persson@axis.com>
-Message-ID: <56C44B7A.7030600@axis.com>
-Date: Wed, 17 Feb 2016 11:29:14 +0100
-From: Lars Persson <lars.persson@axis.com>
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Lars Persson
-	<larper@axis.com>, Rob Herring <robh@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] clk: add device tree binding for artpec-6 pll1 clock
-References: <cover.1455206007.git.larper@axis.com> <2686b3bbb9ec1c86828b365645bd7f997a9780b4.1455206007.git.larper@axis.com> <20160212163916.GA7677@rob-hp-laptop> <56C034BA.7070806@axis.com> <20160216235927.2278.40353@quark.deferred.io>
-In-Reply-To: <20160216235927.2278.40353@quark.deferred.io>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 00/13]  Add A83T clk, r_pio, mmc rsb support
+Date: Sun, 28 Feb 2016 23:18:45 +0800
+Message-Id: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
+This is v2 of series which adds further support for A83T, mainly adds clock support.
+Also adds R_PIO, PRCM related clocks, mmc, rsb support.
 
+A83T difference in short:
+R_PIO is slightly different from A23 r_pio. AHB1 has different parents as
+compared to a31-ahb1, APB1 has different dividers.Bus gates are similar to H3,
+apb0 gates are different.mmc and rsb are compatible with earlier sunxi socs.
 
-On 02/17/2016 12:59 AM, Michael Turquette wrote:
-> Quoting Lars Persson (2016-02-14 00:03:06)
->>
->> On 02/12/2016 05:39 PM, Rob Herring wrote:
->>> On Thu, Feb 11, 2016 at 05:01:03PM +0100, Lars Persson wrote:
->>>> Add device tree documentation for the main PLL in the Artpec-6 SoC.
->>> Roughly how many clocks does this SoC have?
->> It will have 17 clocks declared in the device tree and three
->> SoC-specific clock drivers.
-> Are all of those clks going to individual DT nodes with clock-cells = 0?
->
-> If so, I wonder if you should be targeting a clock-controller style
-> binding description, with a node that represents the clock-controller IP
-> block, with clock-cells >= 1. It really comes down to whether or not
-> these clock controls exist in the same IP block.
+These patches are based on Maxime's sunxi/for-next branch.
+https://git.kernel.org/cgit/linux/kernel/git/mripard/linux.git/
 
-Indeed most clocks come from the same clock controller IP. However there 
-was nothing to control there because this clock tree is completely 
-static. This is why we chose to describe it in the device tree using the 
-standard clock components.
+v1->v2 Changes:
+1. Patches for apb0 gates clock, bus gates, low speed oscillators are already
+   merged, so, not included again in this series.
+1. sorted the R_PIO Kconfig options.
+2. removed un-necessary a83t apb1 div table.
+3. combined the three ahb reset registers into one reset node.
+4. Changed the bus gates names to bus_spidf and bus_usb_otg.
+5. removed un-necessary #address-cells and #size-cells from R_PIO node.
+6. splited rsb pins and rsb controller nodes in different patches.
+7. used PF6 as mmc0 CD reference design pin.
+8. corrected the style related errors.
 
-The two audio related clock drivers that we will submit for a later 
-merge window will have control knobs. There will be one mux belonging to 
-the common clock controller and fractional dividers as separate IPs.
+Patch 1: adds support for r_pio pin controller.
 
-I guess we could create a clock controller that outputs the pll1 clock 
-and in the future also the muxed audio clock. Then describe the rest of 
-the clock tree with standard components in the DT.
+patch 2: adds ahb1 clock support, 0b1x is pll6 parent otherwise it's same as a31
+ahb1.
 
->
-> You mentioned three distinct clock drivers. So possibly three clock
-> controller nodes in DT then?
-We still prefer to fully describe the static parts of the the clock tree 
-in the DT. Will you accept this ?
->
-> Is there a reference manual/register map available for this SoC?
-No.
->>>> Signed-off-by: Lars Persson <larper@axis.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/clock/artpec6.txt | 16 ++++++++++++++++
->>>>    1 file changed, 16 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
->>>> new file mode 100644
->>>> index 0000000..521fec8
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/artpec6.txt
->>>> @@ -0,0 +1,16 @@
->>>> +* Clock bindings for Axis ARTPEC-6 chip
-> Please specify that this is based on the clock provider binding in
-> Documentation/devicetree/bindings/clock/clock-bindings.txt
-Will be fixed in v2.
->
-> Regards,
-> Mike
->
->>>> +
->>>> +Required properties:
->>>> +- #clock-cells: Should be <0>
->>>> +- compatible: Should be "axis,artpec6-pll1-clock"
->>>> +- reg: Address and length of the DEVSTAT register.
->>>> +- clocks: The PLL's input clock.
->>>> +
->>>> +Examples:
->>>> +
->>>> +pll1_clk: pll1_clk {
->>>> +    #clock-cells = <0>;
->>>> +    compatible = "axis,artpec6-pll1-clock";
->>>> +    reg = <0xf8000000 4>;
->>>> +    clocks = <&ext_clk>;
->>>> +};
->>>> -- 
->>>> 2.1.4
->>>>
+patch 3: adds apb1 clock support, apb1 has different dividers compared to a10 
+apb0 clock.
+
+patch 4: adds basics clocks nodes to dtsi, pll6, ahb1, ahb2, apb1, apb2,
+bus gates, and resets.
+
+patch 5-6: adds mmc and it's clock nodes.
+
+patch 7: adds A83T PRCM related clocks, clock resets.
+
+patch 8: adds r_pio pin controller nodes to dtsi
+
+patch 9: adds RSB controller nodes to dtsi
+
+patch 10: adds common MMC CD detect pin as reference design pin 
+
+patch 11: enables mmc0 support for h8homlet board, tested by LABBE Corentin.
+
+patch 12: This patch adds support for Sinovoip BPI-M3 A83T based board, it has 
+2GB LPDDR3, u-boot support is added recently for this board.
+
+patch 13: Introduce MACH_SUN8I_A83T config option.
+
+Vishnu Patekar (13):
+  pinctrl: sunxi: Add A83T R_PIO controller support
+  clk: sunxi: add ahb1 clock for A83T
+  clk: sunxi: Add APB1 clock for A83T
+  ARM: dts: sun8i-a83t: Add basic clocks and resets
+  ARM: dts: sun8i-a83t: add mmc clock nodes
+  ARM: dts: sun8i-a83t: Add mmc controller nodes
+  ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
+  ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
+  ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
+  ARM: dts: sun8i-a83t: add mmc0 CD pin
+  ARM: dts: sun8i: enable mmc for H8Homlet Board.
+  ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
+  ARM: sunxi: Introduce MACH_SUN8I_A83T option
+
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  11 +
+ ...omlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} |  21 +-
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 285 ++++++++++++++++++++-
+ arch/arm/mach-sunxi/Kconfig                        |   5 +
+ drivers/clk/sunxi/Makefile                         |   3 +
+ drivers/clk/sunxi/clk-sunxi.c                      |  89 +++++++
+ drivers/pinctrl/sunxi/Kconfig                      |   5 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++
+ 12 files changed, 538 insertions(+), 5 deletions(-)
+ copy arch/arm/boot/dts/{sun8i-a83t-allwinner-h8homlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} (83%)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+
+-- 
+1.9.1
