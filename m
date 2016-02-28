@@ -1,285 +1,46 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH v2 4/8] arm: dts: add Artpec-6 SoC dtsi file
-Date: Thu, 11 Feb 2016 15:04:38 +0100
-Message-Id: <e95951f1aef4e6526a231c9011009005aadc46ba.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
- Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org, galak@codeaurora.org
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 28 Feb 2016 10:51:07 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>,
+	Anson Huang <b20788@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
+	Bai Ping <b51503@freescale.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jaroslav Kysela <perex@perex.cz>, Kumar Gala <galak@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>, Takashi Iwai <tiwai@suse.com>,
+	Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
+	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 0/2] clk: imx6: add kpp clock for i.MX6UL
+Message-ID: <20160228025107.GC22051@tiger>
+References: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
+ <20160225235655.GN28849@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20160225235655.GN28849@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Initial device tree for the Artpec-6 SoC.
+On Thu, Feb 25, 2016 at 03:56:55PM -0800, Stephen Boyd wrote:
+> On 01/12, Lothar Waßmann wrote:
+> > This patchset adds the clock which is necessary to operate the KPP
+> > unit on i.MX6UL.
+> > The first patch removes bogus whitespace before TABs in indentation.
+> > The second patch adds the clock definition.
+> > 
+> 
+> Both look fine. Shawn?
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- arch/arm/boot/dts/artpec6.dtsi | 236 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 236 insertions(+)
- create mode 100644 arch/arm/boot/dts/artpec6.dtsi
+Oops, the patches were overlooked.  Applied now.  Thanks for reminding.
 
-diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
-new file mode 100644
-index 0000000..8b28f72
---- /dev/null
-+++ b/arch/arm/boot/dts/artpec6.dtsi
-@@ -0,0 +1,236 @@
-+/*
-+ * Device Tree Source for the Axis ARTPEC-6 SoC
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include "skeleton.dtsi"
-+
-+/ {
-+	compatible = "axis,artpec6";
-+	interrupt-parent = <&intc>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+			next-level-cache = <&pl310>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <1>;
-+			next-level-cache = <&pl310>;
-+		};
-+	};
-+
-+	dmacfg {
-+		compatible = "axis,artpec6-dmacfg";
-+		reg = <0xf8000010 4>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2", "arm,psci";
-+		method = "smc";
-+		psci_version = <0x84000000>;
-+		cpu_on = <0x84000003>;
-+		system_reset = <0x84000009>;
-+	};
-+
-+	scu@faf00000 {
-+		compatible = "arm,cortex-a9-scu";
-+		reg = <0xfaf00000 0x58>;
-+	};
-+
-+	/* Main external clock driving CPU and peripherals */
-+	ext_clk: ext_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <50000000>;
-+	};
-+
-+	/* PLL1 is used by CPU and some peripherals */
-+	pll1_clk: pll1_clk@f8000000 {
-+		#clock-cells = <0>;
-+		compatible = "axis,artpec6-pll1-clock";
-+		reg = <0xf8000000 4>;
-+		clocks = <&ext_clk>;
-+	};
-+
-+	cpu_clk: cpu_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <1>;
-+		clock-mult = <1>;
-+		clocks = <&pll1_clk>;
-+		clock-output-names = "cpu_clk";
-+	};
-+
-+	cpu_clkdiv2: cpu_clkdiv2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <2>;
-+		clock-mult = <1>;
-+		clocks = <&cpu_clk>;
-+	};
-+
-+	cpu_clkdiv4: cpu_clkdiv4 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <4>;
-+		clock-mult = <1>;
-+		clocks = <&cpu_clk>;
-+	};
-+
-+	apb_pclk: apb_pclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <8>;
-+		clock-mult = <1>;
-+		clocks = <&cpu_clk>;
-+		clock-output-names = "apb_pclk";
-+	};
-+
-+	/* PLL2 is used by a number of peripherals, including UDL */
-+	pll2: pll2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <1>;
-+		clock-mult = <24>;
-+		clocks = <&ext_clk>;
-+	};
-+
-+	/* PLL2DIV2 is used by the Fractional Clock Divider, for i2s */
-+	pll2div2: pll2div2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <2>;
-+		clock-mult = <1>;
-+		clocks = <&pll2>;
-+	};
-+
-+	pll2div12: pll2div12 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <12>;
-+		clock-mult = <1>;
-+		clocks = <&pll2>;
-+	};
-+
-+	pll2div24: pll2div24 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clock-div = <24>;
-+		clock-mult = <1>;
-+		clocks = <&pll2>;
-+		clock-output-names = "uart_clk";
-+	};
-+
-+
-+	gtimer@faf00200 {
-+		compatible = "arm,cortex-a9-global-timer";
-+		reg = <0xfaf00200 0x20>;
-+		interrupts = <GIC_PPI 11 0xf01>;
-+		clocks = <&cpu_clkdiv2>;
-+	};
-+
-+	timer@faf00600 {
-+		compatible = "arm,cortex-a9-twd-timer";
-+		reg = <0xfaf00600 0x20>;
-+		interrupts = <GIC_PPI 13 0xf04>;
-+		clocks = <&cpu_clkdiv2>;
-+		status = "disabled";
-+	};
-+
-+	intc: interrupt-controller@faf01000 {
-+		interrupt-controller;
-+		compatible = "arm,cortex-a9-gic";
-+		#interrupt-cells = <3>;
-+		reg = < 0xfaf01000 0x1000 >, < 0xfaf00100 0x0100 >;
-+	};
-+
-+	pl310: cache-controller@faf10000 {
-+		compatible = "arm,pl310-cache";
-+		cache-unified;
-+		cache-level = <2>;
-+		reg = <0xfaf10000 0x1000>;
-+		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+		arm,data-latency = <1 1 1>;
-+		arm,tag-latency = <1 1 1>;
-+		arm,filter-ranges = <0x0 0x80000000>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-parent = <&intc>;
-+	};
-+
-+	amba@0 {
-+		compatible = "simple-bus";
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+		interrupt-parent = <&intc>;
-+		ranges;
-+		dma-ranges = <0x80000000 0x00000000 0x40000000>;
-+		dma-coherent;
-+
-+		ethernet: ethernet@f8010000 {
-+			clock-names = "phy_ref_clk", "apb_pclk";
-+			clocks = <&ext_clk>, <&apb_pclk>;
-+			compatible = "snps,dwc-qos-ethernet-4.10";
-+			interrupt-parent = <&intc>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0xf8010000 0x4000>;
-+
-+			snps,write-requests = <2>;
-+			snps,read-requests = <16>;
-+			snps,txpbl = <8>;
-+			snps,rxpbl = <2>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart0: serial@f8036000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8036000 0x1000>;
-+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+		uart1: serial@f8037000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8037000 0x1000>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+		uart2: serial@f8038000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8038000 0x1000>;
-+			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+		uart3: serial@f8039000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0xf8039000 0x1000>;
-+			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pll2div24>, <&apb_pclk>;
-+			clock-names = "uart_clk", "apb_pclk";
-+			status = "disabled";
-+		};
-+	};
-+};
--- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Shawn
