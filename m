@@ -1,88 +1,95 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [RFC PATCH 2/4] clk: sunxi: re-add old sun6i_a31_pll6 clock
-Date: Fri, 12 Feb 2016 17:59:58 +0000
-Message-Id: <1455300000-18723-3-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH v5 10/20] clk: bcm2835: implement correct clamping for mash clocks
+Date: Sun, 28 Feb 2016 15:37:01 +0000
+Message-Id: <1456673831-2408-11-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The older version of the A31 PLL6 clock driver was used by many DTs
-which we want to stay compatible with.
-As an intermediate step bring back the code for the old driver, but
-don't instantiate it yet.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+The bcm2835-soc has 2 kindes of clocks:
+* normal clocks
+* mash-enabled clocks that can spread frequency noise better
+  into non-audiable frequency ranges
+
+The mash clocks have distinct clock-divider requirements
+and if the requested divider is not in range, then there will
+no clock output.
+
+This patch implements the clamping limits for first order
+fractual mash dividers.
+
+Only dividers that are impacted by this patch are: pcm and pwm
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/clk/bcm/clk-bcm2835.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index b4ab84b..12131ba 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -248,6 +248,21 @@ static void sun6i_a31_get_pll_factors(struct factors_request *req)
- 	req->n = DIV_ROUND_UP(div, (req->k + 1)) - 1;
- }
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 3df17a5..2fb9923 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -407,6 +407,7 @@ struct bcm2835_clock_data {
+ 	/* Number of fractional bits in the divider */
+ 	u32 frac_bits;
  
-+static void sun6i_a31_get_pll6_factors(struct factors_request *req)
-+{
-+	u8 div;
-+
-+	/* Normalize value to a parent_rate multiple (24M) */
-+	div = req->rate / req->parent_rate;
-+	req->rate = req->parent_rate * div;
-+
-+	req->k = div / 32;
-+	if (req->k > 3)
-+		req->k = 3;
-+
-+	req->n = DIV_ROUND_UP(div, (req->k + 1)) - 1;
-+}
-+
- static void sun6i_a31_pll6_recalc(struct factors_request *req)
- {
- 	req->rate = req->parent_rate;
-@@ -549,6 +564,13 @@ static const struct factors_data sun6i_a31_pll_data __initconst = {
- 	.recalc = sun6i_a31_pll6_recalc,
++	bool is_mash_clock;
+ 	bool is_vpu_clock;
  };
  
-+static const struct factors_data sun6i_a31_pll6_data __initconst = {
-+	.enable = 31,
-+	.table = &sun6i_a31_pll6_config,
-+	.getter = sun6i_a31_get_pll6_factors,
-+	.name	= "pll6x2",
-+};
-+
- static const struct factors_data sun5i_a13_ahb_data __initconst = {
- 	.mux = 6,
- 	.muxmask = BIT(1) | BIT(0),
-@@ -954,6 +976,15 @@ static const struct divs_data pll6_divs_data __initconst = {
- 	}
- };
+@@ -780,10 +781,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 		div += unused_frac_mask + 1;
+ 	div &= ~unused_frac_mask;
  
-+static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
-+	.factors = &sun6i_a31_pll6_data,
-+	.ndivs = 2,
-+	.div = {
-+		{ .fixed = 2 }, /* normal output */
-+		{ .self = 1 }, /* base factor clock, 2x */
+-	/* Clamp to the limits. */
+-	div = max(div, unused_frac_mask + 1);
+-	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
+-				      CM_DIV_FRAC_BITS - data->frac_bits));
++	/* Clamp to the limits for the clock type */
++	if (data->is_mash_clock) {
++		/* clamp to min divider 2 */
++		div = max_t(u32, div, 2 << CM_DIV_FRAC_BITS);
++		/* clamp to max int divider */
++		div = min_t(u32, div,
++			    (BIT(data->int_bits) - 1) << CM_DIV_FRAC_BITS);
++	} else {
++		div = max(div, unused_frac_mask + 1);
++		div = min_t(u32, div,
++			    GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
++				    CM_DIV_FRAC_BITS - data->frac_bits));
 +	}
-+};
-+
- /**
-  * sunxi_divs_clk_setup() - Setup function for leaf divisors on clocks
-  *
+ 
+ 	return div;
+ }
+@@ -1512,13 +1522,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_PCMCTL,
+ 		.div_reg = CM_PCMDIV,
+ 		.int_bits = 12,
+-		.frac_bits = 12),
++		.frac_bits = 12,
++		.is_mash_clock = true),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
+ 		.ctl_reg = CM_PWMCTL,
+ 		.div_reg = CM_PWMDIV,
+ 		.int_bits = 12,
+-		.frac_bits = 12),
++		.frac_bits = 12,
++		.is_mash_clock = true),
+ 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
+ 		.name = "uart",
+ 		.ctl_reg = CM_UARTCTL,
 -- 
-2.6.4
+1.7.10.4
