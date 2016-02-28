@@ -1,33 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:56709 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750953AbcBJOoE (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 09:44:04 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Lars Persson <lars.persson@axis.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, mark.rutland@arm.com,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, galak@codeaurora.org
-Subject: Re: [PATCH 0/8] arm: Add Artpec-6 SoC
-Date: Wed, 10 Feb 2016 15:43:27 +0100
-Message-ID: <3600743.1EoOBI7uCq@wuerfel>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 11/13] ARM: dts: sun8i: enable mmc for H8Homlet Board.
+Date: Sun, 28 Feb 2016 23:18:56 +0800
+Message-Id: <1456672738-4993-12-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 10 February 2016 13:41:49 Lars Persson wrote:
-> Basic support for the Axis Artpec-6 ARM SoC. Timers, interrupts, UARTs and
-> ethernet are wired up.
-> 
+This enables mmc0.
 
-Hi Lars,
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Tested-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Looks nice overall, I just have a few small comments on some of the patches.
-Please also add a patch do add yourself in the MAINTAINERS file.
-
-	Arnd
+diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+index 342e1d3..3269f39 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+@@ -43,6 +43,7 @@
+ 
+ /dts-v1/;
+ #include "sun8i-a83t.dtsi"
++#include "sunxi-common-regulators.dtsi"
+ 
+ / {
+ 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
+@@ -57,6 +58,16 @@
+ 	};
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_reference_design>;
++	vmmc-supply = <&reg_vcc3v0>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	bus-width = <4>;
++	cd-inverted;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_b>;
+-- 
+1.9.1
