@@ -1,299 +1,165 @@
-Return-Path: <akinobu.mita@gmail.com>
-Return-Path: <akinobu.mita@gmail.com>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Akinobu Mita <akinobu.mita@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2] clk: add userspace clock consumer
-Date: Mon, 22 Feb 2016 20:48:39 +0900
-Message-Id: <1456141719-2543-1-git-send-email-akinobu.mita@gmail.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1456672738-4993-3-git-send-email-vishnupatekar0510@gmail.com>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com> <1456672738-4993-3-git-send-email-vishnupatekar0510@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 28 Feb 2016 20:09:48 -0800
+Message-ID: <CAGb2v66P5zKkbriUOnvg9ms-HSpmYDQ7RtQ5MG9fLopo3pwPoQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/13] clk: sunxi: add ahb1 clock for A83T
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds userspace consumer for common clock.
+Hi,
 
-This driver is inspired from Userspace regulator consumer
-(REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
-some classes of devices that are controlled entirely from user space.
+On Sun, Feb 28, 2016 at 7:18 AM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
+> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+> clock index 0b1x is PLL6.
+>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
+>  2 files changed, 77 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index c09f59b..2ee7841 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -29,6 +29,7 @@ Required properties:
+>         "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
+>         "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
+>         "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
+> +       "allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
+>         "allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+>         "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+>         "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 99f60ef..0ae1f09 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
+>         req->rate >>= req->p;
+>  }
+>
+> +#define SUN8I_A83T_AHB1_PARENT_PLL6    2
+> +/**
+> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
+> + * AHB rate is calculated as follows
+> + * rate = parent_rate >> p
+> + *
+> + * if parent is pll6, then
+> + * parent_rate = pll6 rate / (m + 1)
+> + */
+> +
+> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
+> +{
+> +       u8 div, calcp, calcm = 1;
+> +
+> +       /*
+> +        * clock can only divide, so we will never be able to achieve
+> +        * frequencies higher than the parent frequency
+> +        */
+> +       if (req->parent_rate && req->rate > req->parent_rate)
+> +               req->rate = req->parent_rate;
+> +
+> +       div = DIV_ROUND_UP(req->parent_rate, req->rate);
+> +
+> +       /* calculate pre-divider if parent is pll6 */
+> +       if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
+> +               if (div < 4)
+> +                       calcp = 0;
+> +               else if (div / 2 < 4)
+> +                       calcp = 1;
+> +               else if (div / 4 < 4)
+> +                       calcp = 2;
+> +               else
+> +                       calcp = 3;
+> +
+> +               calcm = DIV_ROUND_UP(div, 1 << calcp);
+> +       } else {
+> +               calcp = __roundup_pow_of_two(div);
+> +               calcp = calcp > 3 ? 3 : calcp;
+> +}
 
-Example binding and usages:
+Indent here.
 
-clksqw_userspace_consumer {
-	compatible = "linux,clock-userspace-consumer";
-	clocks = <&clksqw>;
-};
+> +
+> +       req->rate = (req->parent_rate / calcm) >> calcp;
+> +       req->p = calcp;
+> +       req->m = calcm - 1;
+> +}
+> +
+> +/**
+> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
+> +*                       parent index
 
-	# cd /sys/devices/platform/clksqw_userspace_consumer
-	# echo 8192 > rate
-	# echo 1 > enable
+Whitespace here.
 
-This also create new COMMON_CLK_DEBUG option and this userspace clock
-consumer depends on it.
+> +*/
+> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
+> +{
+> +       req->rate = req->parent_rate;
+> +
+> +/* apply pre-divider first if parent is pll6 */
 
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
----
-* v2
-- change compatible property to "linux,clock-userspace-consumer"
-- rename sysfs file from 'state' to 'enable'
-- create new COMMON_CLK_DEBUG option
+Indent here.
 
- .../bindings/clock/clk-userspace-consumer.txt      |  17 +++
- drivers/clk/Kconfig                                |   9 ++
- drivers/clk/Kconfig.debug                          |   9 ++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-userspace-consumer.c               | 169 +++++++++++++++++++++
- 5 files changed, 205 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt
- create mode 100644 drivers/clk/Kconfig.debug
- create mode 100644 drivers/clk/clk-userspace-consumer.c
+ChenYu
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt b/Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt
-new file mode 100644
-index 0000000..f513a40
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/clk-userspace-consumer.txt
-@@ -0,0 +1,17 @@
-+* Userspace consumer for common clock
-+
-+Required properties:
-+- compatible: Should be "linux,clock-userspace-consumer"
-+- clocks: clock phandle to control from userspace
-+
-+Examples:
-+
-+clk32k_userspace_consumer {
-+	compatible = "linux,clock-userspace-consumer";
-+	clocks = <&clk32k>;
-+};
-+
-+sqw_userspace_consumer {
-+	compatible = "linux,clock-userspace-consumer";
-+	clocks = <&sqw>;
-+};
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e01..d4b5184 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -25,6 +25,15 @@ config COMMON_CLK
- menu "Common Clock Framework"
- 	depends on COMMON_CLK
- 
-+config COMMON_CLK_DEBUG
-+	bool "Clock driver debugging support"
-+	depends on DEBUG_KERNEL
-+	---help---
-+	  Say Y here if you are developing clock drivers or trying to
-+	  debug and identify the problems.
-+
-+source "drivers/clk/Kconfig.debug"
-+
- config COMMON_CLK_WM831X
- 	tristate "Clock driver for WM831x/2x PMICs"
- 	depends on MFD_WM831X
-diff --git a/drivers/clk/Kconfig.debug b/drivers/clk/Kconfig.debug
-new file mode 100644
-index 0000000..01a7ed4
---- /dev/null
-+++ b/drivers/clk/Kconfig.debug
-@@ -0,0 +1,9 @@
-+config COMMON_CLK_USERSPACE_CONSUMER
-+	tristate "Userspace clock consumer support"
-+	depends on COMMON_CLK_DEBUG
-+	help
-+	  There are some classes of devices that are controlled entirely
-+	  from user space. Userspace consumer driver provides ability to
-+	  control clock for such devices.
-+
-+	  If unsure, say no.
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b038e36..f3b51f1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
- endif
-+obj-$(CONFIG_COMMON_CLK_USERSPACE_CONSUMER)	+= clk-userspace-consumer.o
- 
- # hardware specific clock types
- # please keep this section sorted lexicographically by file/directory path name
-diff --git a/drivers/clk/clk-userspace-consumer.c b/drivers/clk/clk-userspace-consumer.c
-new file mode 100644
-index 0000000..846665a
---- /dev/null
-+++ b/drivers/clk/clk-userspace-consumer.c
-@@ -0,0 +1,169 @@
-+/*
-+ * Copyright (c) 2016 Akinobu Mita <akinobu.mita@gmail.com>
-+ *
-+ * This file is subject to the terms and conditions of version 2 of
-+ * the GNU General Public License.  See the file COPYING in the main
-+ * directory of this archive for more details.
-+ *
-+ * Inspired from reg-userspace-consumer
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/mutex.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+
-+struct clk_userspace_consumer {
-+	struct mutex lock;
-+	bool enabled;
-+	struct clk *clk;
-+};
-+
-+static ssize_t clk_show_enable(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", consumer->enabled);
-+}
-+
-+static ssize_t clk_store_enable(struct device *dev,
-+				struct device_attribute *attr, const char *buf,
-+				size_t count)
-+{
-+	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
-+	bool enabled;
-+	int ret;
-+
-+	ret = strtobool(buf, &enabled);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&consumer->lock);
-+
-+	if (enabled != consumer->enabled) {
-+		int ret = 0;
-+
-+		if (enabled) {
-+			ret = clk_prepare_enable(consumer->clk);
-+			if (ret) {
-+				dev_err(dev, "Failed to configure state: %d\n",
-+					ret);
-+			}
-+		} else {
-+			clk_disable_unprepare(consumer->clk);
-+		}
-+
-+		if (!ret)
-+			consumer->enabled = enabled;
-+	}
-+
-+	mutex_unlock(&consumer->lock);
-+
-+	return count;
-+}
-+static DEVICE_ATTR(enable, 0644, clk_show_enable, clk_store_enable);
-+
-+static ssize_t clk_show_rate(struct device *dev, struct device_attribute *attr,
-+			char *buf)
-+{
-+	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%ld\n", clk_get_rate(consumer->clk));
-+}
-+
-+static ssize_t clk_store_rate(struct device *dev, struct device_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	struct clk_userspace_consumer *consumer = dev_get_drvdata(dev);
-+	unsigned long rate;
-+	int err;
-+
-+	err = kstrtoul(buf, 0, &rate);
-+	if (err)
-+		return err;
-+
-+	err = clk_set_rate(consumer->clk, rate);
-+	if (err)
-+		return err;
-+
-+	return count;
-+}
-+static DEVICE_ATTR(rate, 0644, clk_show_rate, clk_store_rate);
-+
-+static struct attribute *attributes[] = {
-+	&dev_attr_enable.attr,
-+	&dev_attr_rate.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group attr_group = {
-+	.attrs	= attributes,
-+};
-+
-+static int clk_userspace_consumer_probe(struct platform_device *pdev)
-+{
-+	struct clk_userspace_consumer *consumer;
-+	int ret;
-+
-+	consumer = devm_kzalloc(&pdev->dev, sizeof(*consumer), GFP_KERNEL);
-+	if (!consumer)
-+		return -ENOMEM;
-+
-+	mutex_init(&consumer->lock);
-+
-+	consumer->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(consumer->clk)) {
-+		ret = PTR_ERR(consumer->clk);
-+		dev_err(&pdev->dev, "Failed to get clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, consumer);
-+
-+	ret = sysfs_create_group(&pdev->dev.kobj, &attr_group);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int clk_userspace_consumer_remove(struct platform_device *pdev)
-+{
-+	struct clk_userspace_consumer *consumer = platform_get_drvdata(pdev);
-+
-+	sysfs_remove_group(&pdev->dev.kobj, &attr_group);
-+
-+	mutex_lock(&consumer->lock);
-+	if (consumer->enabled)
-+		clk_disable_unprepare(consumer->clk);
-+	mutex_unlock(&consumer->lock);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+
-+static const struct of_device_id userspace_consumer_id[] = {
-+	{ .compatible = "linux,clock-userspace-consumer" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, userspace_consumer_id);
-+
-+#endif
-+
-+static struct platform_driver clk_userspace_consumer_driver = {
-+	.probe = clk_userspace_consumer_probe,
-+	.remove = clk_userspace_consumer_remove,
-+	.driver = {
-+		.name = "clk-userspace-consumer",
-+		.of_match_table = of_match_ptr(userspace_consumer_id),
-+	},
-+};
-+module_platform_driver(clk_userspace_consumer_driver);
-+
-+MODULE_AUTHOR("Akinobu Mita <akinobu.mita@gmail.com>");
-+MODULE_DESCRIPTION("Userspace consumer for common clock");
-+MODULE_LICENSE("GPL");
--- 
-2.5.0
+> +       if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
+> +               req->rate /= req->m + 1;
+> +
+> +       /* clk divider */
+> +       req->rate >>= req->p;
+> +}
+> +
+>  /**
+>   * sun4i_get_apb1_factors() - calculates m, p factors for APB1
+>   * APB1 rate is calculated as follows
+> @@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
+>         .recalc = sun6i_ahb1_recalc,
+>  };
+>
+> +static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
+> +       .mux = 12,
+> +       .muxmask = BIT(1) | BIT(0),
+> +       .table = &sun6i_ahb1_config,
+> +       .getter = sun8i_a83t_get_ahb1_factors,
+> +       .recalc = sun8i_a83t_ahb1_recalc,
+> +};
+> +
+>  static const struct factors_data sun4i_apb1_data __initconst = {
+>         .mux = 24,
+>         .muxmask = BIT(1) | BIT(0),
+> @@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+>  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
+>                sun6i_ahb1_clk_setup);
+>
+> +static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
+> +{
+> +       sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
+> +}
+> +CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
+> +              sun8i_a83t_ahb1_clk_setup);
+> +
+>  static void __init sun4i_apb1_clk_setup(struct device_node *node)
+>  {
+>         sunxi_factors_clk_setup(node, &sun4i_apb1_data);
+> --
+> 1.9.1
+>
