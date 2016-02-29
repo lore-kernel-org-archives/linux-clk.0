@@ -1,70 +1,77 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>, James
- Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v6 6/7] reset: mediatek: Add MT2701 reset driver
-Date: Fri, 5 Feb 2016 17:37:29 +0800
-Message-ID: <1454665050-37776-7-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 29 Feb 2016 15:23:48 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
+Message-ID: <20160229232348.GV13417@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-4-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456439796-28546-4-git-send-email-fcooper@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+* Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+> From: Vignesh R <vigneshr@ti.com>
+> 
+> tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
+> clock to control ehrpwm tbclk.
+> The TRM says, tbclk is derived from SYSCLKOUT. SYSCLKOUT is nothing but
+> ehrpwm functional clock derived from the gateable interface and
+> functional clock of PWMSS(l4_root_clk_div).
+> Refer AM57x TRM SPRUHZ6[1], October 2014, Table 29-4 and Section 29.2.2.1,
+> Table 29-19 and the NOTE at the end of the table.
+> 
+> [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
 
-In infrasys and perifsys, there are many reset
-control bits for kinds of modules. These bits are
-used as actual reset controllers to be registered
-into kernel's generic reset controller framework.
+Applying this into omap-for-v4.6/dt thanks.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/mediatek/clk-mt2701.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Note for Tero, let's plan on getting rid of the duplicate
+reg entries by using the standard clock output offset within
+the clock register. I think we should easily be able to add
+a binding for this and then deprecate the overlapping reg
+entries.
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 0ac45fc..01722e0 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -665,6 +665,8 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x30);
- }
- CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
- 
-@@ -782,6 +784,8 @@ static void __init mtk_pericfg_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x0);
- }
- CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
- 
-@@ -997,6 +1001,8 @@ static void __init mtk_hifsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 1, 0x34);
- }
- CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
- 
--- 
-1.9.1
+Regards,
+
+Tony
+
+> --- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
+> +++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+> @@ -2146,4 +2146,28 @@
+>  		ti,bit-shift = <0>;
+>  		reg = <0x558>;
+>  	};
+> +
+> +       ehrpwm0_tbclk: ehrpwm0_tbclk {
+> +		#clock-cells = <0>;
+> +		compatible = "ti,gate-clock";
+> +		clocks = <&l4_root_clk_div>;
+> +		ti,bit-shift = <20>;
+> +		reg = <0x0558>;
+> +	};
+> +
+> +	ehrpwm1_tbclk: ehrpwm1_tbclk {
+> +		#clock-cells = <0>;
+> +		compatible = "ti,gate-clock";
+> +		clocks = <&l4_root_clk_div>;
+> +		ti,bit-shift = <21>;
+> +		reg = <0x0558>;
+> +	};
+> +
+> +	ehrpwm2_tbclk: ehrpwm2_tbclk {
+> +		#clock-cells = <0>;
+> +		compatible = "ti,gate-clock";
+> +		clocks = <&l4_root_clk_div>;
+> +		ti,bit-shift = <22>;
+> +		reg = <0x0558>;
+> +	};
+>  };
+> -- 
+> 2.7.0
+> 
