@@ -1,154 +1,77 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 08/14] clk: mux: Add hw based registration APIs
-Date: Mon,  8 Feb 2016 17:45:35 -0800
-Message-Id: <1454982341-22715-9-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Tony Lindgren <tony@atomide.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Tero Kristo" <t-kristo@ti.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1456508703-17390-1-git-send-email-tony@atomide.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1456508703-17390-1-git-send-email-tony@atomide.com>
+Message-ID: <20160229222027.3140.90691@quark.deferred.io>
+Subject: Re: [PATCH] clk: ti: Allow COMPILE_TEST to build selected drivers
+Date: Mon, 29 Feb 2016 14:20:27 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk mux code to return struct clk_hw
-pointers instead of struct clk pointers. This way we hide the
-struct clk pointer from providers unless they need to use
-consumer facing APIs.
+Quoting Tony Lindgren (2016-02-26 09:45:03)
+> The arch independent drivers can be build testeed with
+> COMPILE_TEST. Let's allow that for drivers/clk/ti.
+> =
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-mux.c        | 57 +++++++++++++++++++++++++++++++++++++++-----
- include/linux/clk-provider.h | 11 +++++++++
- 2 files changed, 62 insertions(+), 6 deletions(-)
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 5ed03c8a8df9..6b0fcd3a4629 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -115,16 +115,17 @@ const struct clk_ops clk_mux_ro_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
- 
--struct clk *clk_register_mux_table(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
- {
- 	struct clk_mux *mux;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init;
- 	u8 width = 0;
-+	int ret;
- 
- 	if (clk_mux_flags & CLK_MUX_HIWORD_MASK) {
- 		width = fls(mask) - ffs(mask) + 1;
-@@ -159,12 +160,31 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 	mux->table = table;
- 	mux->hw.init = &init;
- 
--	clk = clk_register(dev, &mux->hw);
--
--	if (IS_ERR(clk))
-+	hw = &mux->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
- 		kfree(mux);
-+		hw = ERR_PTR(ret);
-+	}
- 
--	return clk;
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_mux_table);
-+
-+struct clk *clk_register_mux_table(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags,
-+		void __iomem *reg, u8 shift, u32 mask,
-+		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_mux_table(dev, name, parent_names, num_parents,
-+				       flags, reg, shift, mask, clk_mux_flags,
-+				       table, lock);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
- }
- EXPORT_SYMBOL_GPL(clk_register_mux_table);
- 
-@@ -182,6 +202,20 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
- }
- EXPORT_SYMBOL_GPL(clk_register_mux);
- 
-+struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width,
-+		u8 clk_mux_flags, spinlock_t *lock)
-+{
-+	u32 mask = BIT(width) - 1;
-+
-+	return clk_hw_register_mux_table(dev, name, parent_names, num_parents,
-+				      flags, reg, shift, mask, clk_mux_flags,
-+				      NULL, lock);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_mux);
-+
- void clk_unregister_mux(struct clk *clk)
- {
- 	struct clk_mux *mux;
-@@ -197,3 +231,14 @@ void clk_unregister_mux(struct clk *clk)
- 	kfree(mux);
- }
- EXPORT_SYMBOL_GPL(clk_unregister_mux);
-+
-+void clk_hw_unregister_mux(struct clk_hw *hw)
-+{
-+	struct clk_mux *mux;
-+
-+	mux = to_clk_mux(hw);
-+
-+	clk_hw_unregister(hw);
-+	kfree(mux);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_unregister_mux);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index b9a83216255b..df6353a086b9 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -469,14 +469,25 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock);
-+struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width,
-+		u8 clk_mux_flags, spinlock_t *lock);
- 
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
-+struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags,
-+		void __iomem *reg, u8 shift, u32 mask,
-+		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- 
- void clk_unregister_mux(struct clk *clk);
-+void clk_hw_unregister_mux(struct clk_hw *hw);
- 
- void of_fixed_factor_clk_setup(struct device_node *node);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Applied.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/Makefile    | 2 +-
+>  drivers/clk/ti/Makefile | 4 ++++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> =
+
+> ---
+> =
+
+> This allows the appll driver to be built with COMPILE_TEST,
+> and this is not currently needed without the adpll driver.
+> =
+
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index b038e36..45939a1 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -78,7 +78,7 @@ obj-$(CONFIG_PLAT_SPEAR)              +=3D spear/
+>  obj-$(CONFIG_ARCH_STI)                 +=3D st/
+>  obj-$(CONFIG_ARCH_SUNXI)               +=3D sunxi/
+>  obj-$(CONFIG_ARCH_TEGRA)               +=3D tegra/
+> -obj-$(CONFIG_ARCH_OMAP2PLUS)           +=3D ti/
+> +obj-y                                  +=3D ti/
+>  obj-$(CONFIG_ARCH_U8500)               +=3D ux500/
+>  obj-$(CONFIG_COMMON_CLK_VERSATILE)     +=3D versatile/
+>  obj-$(CONFIG_X86)                      +=3D x86/
+> diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
+> index dfe91d7..0deac98 100644
+> --- a/drivers/clk/ti/Makefile
+> +++ b/drivers/clk/ti/Makefile
+> @@ -1,3 +1,5 @@
+> +ifeq ($(CONFIG_ARCH_OMAP2PLUS), y)
+> +
+>  obj-y                                  +=3D clk.o autoidle.o clockdomain=
+.o
+>  clk-common                             =3D dpll.o composite.o divider.o =
+gate.o \
+>                                           fixed-factor.o mux.o apll.o \
+> @@ -19,4 +21,6 @@ ifdef CONFIG_ATAGS
+>  obj-$(CONFIG_ARCH_OMAP3)                +=3D clk-3xxx-legacy.o
+>  endif
+>  =
+
+> +endif  # CONFIG_ARCH_OMAP2PLUS
+> +
+>  obj-$(CONFIG_COMMON_CLK_TI_ADPLL)      +=3D adpll.o
+> -- =
+
+> 2.7.0
+>=20
