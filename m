@@ -1,172 +1,101 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 12/14] clk: gpio: Add hw based registration APIs
-Date: Mon,  8 Feb 2016 17:45:39 -0800
-Message-Id: <1454982341-22715-13-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47634 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750837AbcB2XUP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 29 Feb 2016 18:20:15 -0500
+Date: Mon, 29 Feb 2016 15:20:12 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
+ gating
+Message-ID: <20160229232011.GU13417@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-2-git-send-email-fcooper@ti.com>
+ <20160229220444.GQ13417@atomide.com>
+ <56D4C69D.1090100@ti.com>
+ <20160229225536.GR13417@atomide.com>
+ <56D4D032.7040801@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56D4D032.7040801@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk gpio code to return struct
-clk_hw pointers instead of struct clk pointers. This way we hide
-the struct clk pointer from providers unless they need to use
-consumer facing APIs.
+* Franklin S Cooper Jr. <fcooper@ti.com> [160229 15:12]:
+> 
+> 
+> On 02/29/2016 04:55 PM, Tony Lindgren wrote:
+> > * Franklin S Cooper Jr. <fcooper@ti.com> [160229 14:31]:
+> >> On 02/29/2016 04:04 PM, Tony Lindgren wrote:
+> >>> Hmm but why are you also removing the pm_runtime calls? Those
+> >>> actually do take care of gating the clocks via the interconnect
+> >>> level code that is hwmod in this case.
+> >> I removed all PM runtime calls that revolved around
+> >> pwmss_submodule_state_change. Originally the driver would do
+> >> a pm_runtime_get_sync then call pwmss_submodule_state_change
+> >> and then immediately call pm_runtime_put_sync. Without
+> >> pwmss_submodule_state_change those calls would be
+> >> meaningless.  I also removed pm_runtime calls in error paths
+> >> that no longer existed.
+> > Typically the interconnect level code can gate the clkctrl bit
+> > for the module with PM runtime even with no other driver specific
+> > registers. If you remove the pm_runtime calls, that does not
+> > happen.
+> 
+> So the clocks should be unlocked when ever the IP registers are
+> being read/written or if the peripheral is being used for
+> example
+> the pwm signal is being generated. All these cases are already
+> being handled.
+> 
+> Using ecap driver as an example.
+> 
+> Pm_runtime_get_sync is called within ecap_pwm_enable when
+> the pwm signal is to be generated. Pm_runtime_put_sync is called
+> when the pwm signal is to be stopped.
+> 
+> When either the pwm signal polarity is set or pwm
+> configuration is made
+> then a pm_runtime_get_sync and pm_runtime_put_sync are
+> called within
+> the same function surrounding calls to the IP's registers.
+> 
+> Probe is calling pm_runtime_enable while remove is calling
+> pm_runtime_disable.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-gpio.c       | 52 ++++++++++++++++++++++++++++++++++----------
- include/linux/clk-provider.h |  8 +++++++
- 2 files changed, 49 insertions(+), 11 deletions(-)
+OK good to hear you have considered this. The above answers
+my questions then thanks.
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 19fed65587e8..807a94486324 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -94,13 +94,13 @@ const struct clk_ops clk_gpio_mux_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
- 
--static struct clk *clk_register_gpio(struct device *dev, const char *name,
-+static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags,
- 		const struct clk_ops *clk_gpio_ops)
- {
- 	struct clk_gpio *clk_gpio;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init = {};
- 	unsigned long gpio_flags;
- 	int err;
-@@ -141,24 +141,26 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
- 	clk_gpio->gpiod = gpio_to_desc(gpio);
- 	clk_gpio->hw.init = &init;
- 
-+	hw = &clk_gpio->hw;
- 	if (dev)
--		clk = devm_clk_register(dev, &clk_gpio->hw);
-+		err = devm_clk_hw_register(dev, hw);
- 	else
--		clk = clk_register(NULL, &clk_gpio->hw);
-+		err = clk_hw_register(NULL, hw);
- 
--	if (!IS_ERR(clk))
--		return clk;
-+	if (!err)
-+		return hw;
- 
- 	if (!dev) {
- 		gpiod_put(clk_gpio->gpiod);
- 		kfree(clk_gpio);
- 	}
- 
--	return clk;
-+	return ERR_PTR(err);
- }
- 
- /**
-- * clk_register_gpio_gate - register a gpio clock gate with the clock framework
-+ * clk_hw_register_gpio_gate - register a gpio clock gate with the clock
-+ * framework
-  * @dev: device that is registering this clock
-  * @name: name of this clock
-  * @parent_name: name of this clock's parent
-@@ -166,7 +168,7 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
-  * @active_low: true if gpio should be set to 0 to enable clock
-  * @flags: clock flags
-  */
--struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags)
- {
-@@ -175,10 +177,24 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 			(parent_name ? 1 : 0), gpio, active_low, flags,
- 			&clk_gpio_gate_ops);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
-+
-+struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-+		const char *parent_name, unsigned gpio, bool active_low,
-+		unsigned long flags)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
-+				       flags);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
-+}
- EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
- 
- /**
-- * clk_register_gpio_mux - register a gpio clock mux with the clock framework
-+ * clk_hw_register_gpio_mux - register a gpio clock mux with the clock framework
-  * @dev: device that is registering this clock
-  * @name: name of this clock
-  * @parent_names: names of this clock's parents
-@@ -187,7 +203,7 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
-  * @active_low: true if gpio should be set to 0 to enable clock
-  * @flags: clock flags
-  */
--struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags)
- {
-@@ -199,6 +215,20 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
- 	return clk_register_gpio(dev, name, parent_names, num_parents,
- 			gpio, active_low, flags, &clk_gpio_mux_ops);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
-+
-+struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents, unsigned gpio,
-+		bool active_low, unsigned long flags)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
-+			gpio, active_low, flags);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
-+}
- EXPORT_SYMBOL_GPL(clk_register_gpio_mux);
- 
- #ifdef CONFIG_OF
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 64037ab95a31..148ad0dc2906 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -647,6 +647,10 @@ extern const struct clk_ops clk_gpio_gate_ops;
- struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags);
-+struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
-+		const char *parent_name, unsigned gpio, bool active_low,
-+		unsigned long flags);
-+void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
- 
- void of_gpio_clk_gate_setup(struct device_node *node);
- 
-@@ -664,6 +668,10 @@ extern const struct clk_ops clk_gpio_mux_ops;
- struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags);
-+struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents, unsigned gpio,
-+		bool active_low, unsigned long flags);
-+void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
- 
- void of_gpio_mux_clk_setup(struct device_node *node);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> So the correct pm_runtime calls are being made from what I
+> can see.
+> I'm not sure I understand the concern since removing those
+> calls aren't
+> creating any kind of imbalance.
+
+OK thanks for checking.
+
+> If I'm not addressing your concern please give me an example
+> of where
+> you see a possible issue.
+
+No that's fine. I thought you're ripping out all of the the
+pm_runtime based on just looking at the patch :)
+
+> > Also, how do you know this change does not affect the other
+> > SoC variants using the same driver?
+> 
+> I've tested these changes on AM335x GP and AM437x GP evms.
+> AM335x
+> and AM437x were the only other users of this driver. Sorry 
+> I should of
+> documented this in my cover-letter.
+
+OK good to hear.
+
+Thanks,
+
+Tony
