@@ -1,47 +1,62 @@
-Return-Path: <p.zabel@pengutronix.de>
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Barry Song <baohua@kernel.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 1/7] clk: mediatek: Make reset_control_ops const
-Date: Thu, 25 Feb 2016 10:45:06 +0100
-Message-Id: <1456393512-26602-2-git-send-email-p.zabel@pengutronix.de>
-In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 1/6] clk: bcm2835: pll_off should only set CM_PLL_ANARST
+Date: Mon, 29 Feb 2016 11:39:17 +0000
+Message-Id: <1456745963-2403-2-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The mtk_reset_ops structure is never modified. Make it const.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+bcm2835_pll_off is currently assigning CM_PLL_ANARST
+to the control register.
+
+This patch only sets the CM_PLL_ANARST bit
+not resetting any of the other bits, which allows
+restoring the register to its original value
+via bcm2834_pll_on.
+
+It also now locks during the read/modify/write cycle of
+both registers.
+
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
+audio domain clocks")
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/mediatek/reset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-index 9e9fe4b..309049d 100644
---- a/drivers/clk/mediatek/reset.c
-+++ b/drivers/clk/mediatek/reset.c
-@@ -57,7 +57,7 @@ static int mtk_reset(struct reset_controller_dev *rcdev,
- 	return mtk_reset_deassert(rcdev, id);
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 5747a9d..2b7c6af 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -913,8 +913,14 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+ 	struct bcm2835_cprman *cprman = pll->cprman;
+ 	const struct bcm2835_pll_data *data = pll->data;
+
+-	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+-	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
++	spin_lock(&cprman->regs_lock);
++	cprman_write(cprman, data->cm_ctrl_reg,
++		     cprman_read(cprman, data->cm_ctrl_reg) |
++		     CM_PLL_ANARST);
++	cprman_write(cprman, data->a2w_ctrl_reg,
++		     cprman_read(cprman, data->a2w_ctrl_reg) |
++		     A2W_PLL_CTRL_PWRDN);
++	spin_unlock(&cprman->regs_lock);
  }
- 
--static struct reset_control_ops mtk_reset_ops = {
-+static const struct reset_control_ops mtk_reset_ops = {
- 	.assert = mtk_reset_assert,
- 	.deassert = mtk_reset_deassert,
- 	.reset = mtk_reset,
--- 
-2.7.0
+
+ static int bcm2835_pll_on(struct clk_hw *hw)
+--
+1.7.10.4
