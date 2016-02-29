@@ -1,171 +1,943 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1455529857.29688.36.camel@mtksdaap41>
-Subject: Re: [PATCH v6 7/7] clk: mediatek: Enable critical clocks for MT2701
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, John Crispin
-	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
-	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-Date: Mon, 15 Feb 2016 17:50:57 +0800
-In-Reply-To: <20160211213542.26445.82983@quark.deferred.io>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1454665050-37776-8-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160211213542.26445.82983@quark.deferred.io>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 2/3] clk: bcm2835: reorganize bcm2835_clock_array assignment
+Date: Mon, 29 Feb 2016 12:51:42 +0000
+Message-Id: <1456750304-2424-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456750304-2424-1-git-send-email-kernel@martin.sperl.org>
+References: <1456750304-2424-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+From: Martin Sperl <kernel@martin.sperl.org>
 
-On Thu, 2016-02-11 at 13:35 -0800, Michael Turquette wrote:
-> Hi James,
-> 
-> Quoting James Liao (2016-02-05 01:37:30)
-> > Some system clocks should be turned on by default on MT2701.
-> > This patch enable these clocks when related clocks have
-> > been registered.
-> > 
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-mt2701.c | 23 +++++++++++++++++++++--
-> >  1 file changed, 21 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-> > index 01722e0..f7b4d52 100644
-> > --- a/drivers/clk/mediatek/clk-mt2701.c
-> > +++ b/drivers/clk/mediatek/clk-mt2701.c
-> > @@ -573,6 +573,21 @@ static const struct mtk_gate top_clks[] __initconst = {
-> >         GATE_TOP_AUD(CLK_TOP_AUD_I2S6_MCLK, "aud_i2s6_mclk", "aud_k6_src_div", 28),
-> >  };
-> >  
-> > +static struct clk_onecell_data *top_clk_data __initdata;
-> > +static struct clk_onecell_data *pll_clk_data __initdata;
-> > +
-> > +static void __init mtk_clk_enable_critical(void)
-> > +{
-> > +       if (!top_clk_data || !pll_clk_data)
-> > +               return;
-> > +
-> > +       clk_prepare_enable(pll_clk_data->clks[CLK_APMIXED_ARMPLL]);
-> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_AXI_SEL]);
-> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_MEM_SEL]);
-> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_DDRPHYCFG_SEL]);
-> > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_RTC_SEL]);
-> > +}
-> 
-> I think we're close to having a better solution. Please see this patch
-> series[0] and let me know if it provides a better way for you to enable
-> these critical clocks instead of the open-coded solution.
-> 
-> [0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@baylibre.com>
-> 
+Reorganize bcm2835_clock_array so that there is no more
+need for separate bcm2835_*_data structures to be defined.
+Instead the required structures are generated inline via
+helper macros.
 
-I took a quick view of this patchset, CLK_ENABLE_HAND_OFF is not
-suitable for these critical clocks. I'm not sure CLK_IS_CRITICAL
-suitable or not. A clock with CLK_IS_CRITICAL will be prepare_enable
-when it is registered. But if its parent is not registered into CCF, it
-will not be enabled even the parent clock register into CCF later.
+To allow this to also work for pll alone it was required that
+the parent_pll was changed from a pointer to bcm2835_pll_data
+to the name of the pll instead.
 
-> > +
-> >  static void __init mtk_topckgen_init(struct device_node *node)
-> >  {
-> >         struct clk_onecell_data *clk_data;
-> > @@ -585,7 +600,7 @@ static void __init mtk_topckgen_init(struct device_node *node)
-> >                 return;
-> >         }
-> >  
-> > -       clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-> > +       top_clk_data = clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-> >  
-> >         mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
-> >                                                                 clk_data);
-> > @@ -606,6 +621,8 @@ static void __init mtk_topckgen_init(struct device_node *node)
-> >         if (r)
-> >                 pr_err("%s(): could not register clock provider: %d\n",
-> >                         __func__, r);
-> > +
-> > +       mtk_clk_enable_critical();
-> 
-> So you call the function here, and ...
-> >  }
-> >  CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
-> >  
-> > @@ -1201,7 +1218,7 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
-> >         struct clk_onecell_data *clk_data;
-> >         int r;
-> >  
-> > -       clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-> > +       pll_clk_data = clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-> >         if (!clk_data)
-> >                 return;
-> >  
-> > @@ -1212,6 +1229,8 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
-> >         if (r)
-> >                 pr_err("%s(): could not register clock provider: %d\n",
-> >                         __func__, r);
-> > +
-> > +       mtk_clk_enable_critical();
-> 
-> ... here as well. So the prepare_count and enable_count will be 2? I'm
-> not sure that this makes sense. If you have different clocks that need
-> to be enabled at different times (due to the split registration scheme
-> that you employ in this driver) then why not pass an array of those
-> clocks into mtk_clk_enable_critical?
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |  852 +++++++++++++++++++----------------------
+ 1 file changed, 393 insertions(+), 459 deletions(-)
 
-No. After topckgen and apmixedsys initialized, critical clocks'
-reference count will be 1.
-
-There is a guard at the beginning of mtk_clk_enable_critical():
-
-	if (!top_clk_data || !pll_clk_data)
-		return;
-
-So this function will be only executed when topckgen and apmixedsys init
-done.
-
-We need to enable critical clocks:
-
-1. As early as possible.
-2. After critical clocks and their parents are registered into CCF.
-
-We need to wait all necessary clock providers because parents of
-critical clocks must be enabled at the same time. For example,
-CLK_TOP_AXI_SEL may have different parent on different platforms. We
-also need to keep new parent clock on if CLK_TOP_AXI_SEL change its
-parent dynamically.
-
-Because we can't ensure the init ordering of clock providers, we can
-only check all necessary providers are registered or not in each init
-function.
-
-> Anyways, like I mentioned above I think we're close to a solution to
-> handle this in the framework.
-> 
-> One question: do you ever want these critical clocks to be gated by a
-> driver, or do you want them always on, forever?
-
-In this patch, these clocks should be always on (in SW view) even if
-there are other drivers controlling them.
-
-If these is a common way to keep critical clocks and their parents on, I
-would like to use the common way. But the solution in your patch series
-[0] looks not handle parent clocks well. What's your suggestion to
-implement critical clocks base on [0]?
-
-
-Best regards,
-
-James
-
-> >  }
-> >  CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
-> >                                                         mtk_apmixedsys_init);
-> > -- 
-> > 1.9.1
-> > 
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index d596f72..f6ac110 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -397,115 +397,10 @@ static const struct bcm2835_pll_ana_bits bcm2835_ana_pllh = {
+ 	.fb_prediv_mask = BIT(11),
+ };
+ 
+-/*
+- * PLLA is the auxiliary PLL, used to drive the CCP2 (Compact Camera
+- * Port 2) transmitter clock.
+- *
+- * It is in the PX LDO power domain, which is on when the AUDIO domain
+- * is on.
+- */
+-static const struct bcm2835_pll_data bcm2835_plla_data = {
+-	.name = "plla",
+-	.cm_ctrl_reg = CM_PLLA,
+-	.a2w_ctrl_reg = A2W_PLLA_CTRL,
+-	.frac_reg = A2W_PLLA_FRAC,
+-	.ana_reg_base = A2W_PLLA_ANA0,
+-	.reference_enable_mask = A2W_XOSC_CTRL_PLLA_ENABLE,
+-	.lock_mask = CM_LOCK_FLOCKA,
+-
+-	.ana = &bcm2835_ana_default,
+-
+-	.min_rate = 600000000u,
+-	.max_rate = 2400000000u,
+-	.max_fb_rate = BCM2835_MAX_FB_RATE,
+-};
+-
+-/* PLLB is used for the ARM's clock. */
+-static const struct bcm2835_pll_data bcm2835_pllb_data = {
+-	.name = "pllb",
+-	.cm_ctrl_reg = CM_PLLB,
+-	.a2w_ctrl_reg = A2W_PLLB_CTRL,
+-	.frac_reg = A2W_PLLB_FRAC,
+-	.ana_reg_base = A2W_PLLB_ANA0,
+-	.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
+-	.lock_mask = CM_LOCK_FLOCKB,
+-
+-	.ana = &bcm2835_ana_default,
+-
+-	.min_rate = 600000000u,
+-	.max_rate = 3000000000u,
+-	.max_fb_rate = BCM2835_MAX_FB_RATE,
+-};
+-
+-/*
+- * PLLC is the core PLL, used to drive the core VPU clock.
+- *
+- * It is in the PX LDO power domain, which is on when the AUDIO domain
+- * is on.
+-*/
+-static const struct bcm2835_pll_data bcm2835_pllc_data = {
+-	.name = "pllc",
+-	.cm_ctrl_reg = CM_PLLC,
+-	.a2w_ctrl_reg = A2W_PLLC_CTRL,
+-	.frac_reg = A2W_PLLC_FRAC,
+-	.ana_reg_base = A2W_PLLC_ANA0,
+-	.reference_enable_mask = A2W_XOSC_CTRL_PLLC_ENABLE,
+-	.lock_mask = CM_LOCK_FLOCKC,
+-
+-	.ana = &bcm2835_ana_default,
+-
+-	.min_rate = 600000000u,
+-	.max_rate = 3000000000u,
+-	.max_fb_rate = BCM2835_MAX_FB_RATE,
+-};
+-
+-/*
+- * PLLD is the display PLL, used to drive DSI display panels.
+- *
+- * It is in the PX LDO power domain, which is on when the AUDIO domain
+- * is on.
+- */
+-static const struct bcm2835_pll_data bcm2835_plld_data = {
+-	.name = "plld",
+-	.cm_ctrl_reg = CM_PLLD,
+-	.a2w_ctrl_reg = A2W_PLLD_CTRL,
+-	.frac_reg = A2W_PLLD_FRAC,
+-	.ana_reg_base = A2W_PLLD_ANA0,
+-	.reference_enable_mask = A2W_XOSC_CTRL_DDR_ENABLE,
+-	.lock_mask = CM_LOCK_FLOCKD,
+-
+-	.ana = &bcm2835_ana_default,
+-
+-	.min_rate = 600000000u,
+-	.max_rate = 2400000000u,
+-	.max_fb_rate = BCM2835_MAX_FB_RATE,
+-};
+-
+-/*
+- * PLLH is used to supply the pixel clock or the AUX clock for the TV
+- * encoder.
+- *
+- * It is in the HDMI power domain.
+- */
+-static const struct bcm2835_pll_data bcm2835_pllh_data = {
+-	"pllh",
+-	.cm_ctrl_reg = CM_PLLH,
+-	.a2w_ctrl_reg = A2W_PLLH_CTRL,
+-	.frac_reg = A2W_PLLH_FRAC,
+-	.ana_reg_base = A2W_PLLH_ANA0,
+-	.reference_enable_mask = A2W_XOSC_CTRL_PLLC_ENABLE,
+-	.lock_mask = CM_LOCK_FLOCKH,
+-
+-	.ana = &bcm2835_ana_pllh,
+-
+-	.min_rate = 600000000u,
+-	.max_rate = 3000000000u,
+-	.max_fb_rate = BCM2835_MAX_FB_RATE,
+-};
+-
+ struct bcm2835_pll_divider_data {
+ 	const char *name;
+-	const struct bcm2835_pll_data *source_pll;
++	const char *source_pll;
++
+ 	u32 cm_reg;
+ 	u32 a2w_reg;
+ 
+@@ -514,124 +409,6 @@ struct bcm2835_pll_divider_data {
+ 	u32 fixed_divider;
+ };
+ 
+-static const struct bcm2835_pll_divider_data bcm2835_plla_core_data = {
+-	.name = "plla_core",
+-	.source_pll = &bcm2835_plla_data,
+-	.cm_reg = CM_PLLA,
+-	.a2w_reg = A2W_PLLA_CORE,
+-	.load_mask = CM_PLLA_LOADCORE,
+-	.hold_mask = CM_PLLA_HOLDCORE,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_plla_per_data = {
+-	.name = "plla_per",
+-	.source_pll = &bcm2835_plla_data,
+-	.cm_reg = CM_PLLA,
+-	.a2w_reg = A2W_PLLA_PER,
+-	.load_mask = CM_PLLA_LOADPER,
+-	.hold_mask = CM_PLLA_HOLDPER,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllb_arm_data = {
+-	.name = "pllb_arm",
+-	.source_pll = &bcm2835_pllb_data,
+-	.cm_reg = CM_PLLB,
+-	.a2w_reg = A2W_PLLB_ARM,
+-	.load_mask = CM_PLLB_LOADARM,
+-	.hold_mask = CM_PLLB_HOLDARM,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllc_core0_data = {
+-	.name = "pllc_core0",
+-	.source_pll = &bcm2835_pllc_data,
+-	.cm_reg = CM_PLLC,
+-	.a2w_reg = A2W_PLLC_CORE0,
+-	.load_mask = CM_PLLC_LOADCORE0,
+-	.hold_mask = CM_PLLC_HOLDCORE0,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllc_core1_data = {
+-	.name = "pllc_core1", .source_pll = &bcm2835_pllc_data,
+-	.cm_reg = CM_PLLC, A2W_PLLC_CORE1,
+-	.load_mask = CM_PLLC_LOADCORE1,
+-	.hold_mask = CM_PLLC_HOLDCORE1,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllc_core2_data = {
+-	.name = "pllc_core2",
+-	.source_pll = &bcm2835_pllc_data,
+-	.cm_reg = CM_PLLC,
+-	.a2w_reg = A2W_PLLC_CORE2,
+-	.load_mask = CM_PLLC_LOADCORE2,
+-	.hold_mask = CM_PLLC_HOLDCORE2,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllc_per_data = {
+-	.name = "pllc_per",
+-	.source_pll = &bcm2835_pllc_data,
+-	.cm_reg = CM_PLLC,
+-	.a2w_reg = A2W_PLLC_PER,
+-	.load_mask = CM_PLLC_LOADPER,
+-	.hold_mask = CM_PLLC_HOLDPER,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_plld_core_data = {
+-	.name = "plld_core",
+-	.source_pll = &bcm2835_plld_data,
+-	.cm_reg = CM_PLLD,
+-	.a2w_reg = A2W_PLLD_CORE,
+-	.load_mask = CM_PLLD_LOADCORE,
+-	.hold_mask = CM_PLLD_HOLDCORE,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_plld_per_data = {
+-	.name = "plld_per",
+-	.source_pll = &bcm2835_plld_data,
+-	.cm_reg = CM_PLLD,
+-	.a2w_reg = A2W_PLLD_PER,
+-	.load_mask = CM_PLLD_LOADPER,
+-	.hold_mask = CM_PLLD_HOLDPER,
+-	.fixed_divider = 1,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllh_rcal_data = {
+-	.name = "pllh_rcal",
+-	.source_pll = &bcm2835_pllh_data,
+-	.cm_reg = CM_PLLH,
+-	.a2w_reg = A2W_PLLH_RCAL,
+-	.load_mask = CM_PLLH_LOADRCAL,
+-	.hold_mask = 0,
+-	.fixed_divider = 10,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllh_aux_data = {
+-	.name = "pllh_aux",
+-	.source_pll = &bcm2835_pllh_data,
+-	.cm_reg = CM_PLLH,
+-	.a2w_reg = A2W_PLLH_AUX,
+-	.load_mask = CM_PLLH_LOADAUX,
+-	.hold_mask = 0,
+-	.fixed_divider = 10,
+-};
+-
+-static const struct bcm2835_pll_divider_data bcm2835_pllh_pix_data = {
+-	.name = "pllh_pix",
+-	.source_pll = &bcm2835_pllh_data,
+-	.cm_reg = CM_PLLH,
+-	.a2w_reg = A2W_PLLH_PIX,
+-	.load_mask = CM_PLLH_LOADPIX,
+-	.hold_mask = 0,
+-	.fixed_divider = 10,
+-};
+-
+ struct bcm2835_clock_data {
+ 	const char *name;
+ 
+@@ -650,188 +427,6 @@ struct bcm2835_clock_data {
+ 	bool is_mash_clock;
+ };
+ 
+-static const char *const bcm2835_clock_per_parents[] = {
+-	"gnd",
+-	"xosc",
+-	"testdebug0",
+-	"testdebug1",
+-	"plla_per",
+-	"pllc_per",
+-	"plld_per",
+-	"pllh_aux",
+-};
+-
+-static const char *const bcm2835_clock_vpu_parents[] = {
+-	"gnd",
+-	"xosc",
+-	"testdebug0",
+-	"testdebug1",
+-	"plla_core",
+-	"pllc_core0",
+-	"plld_core",
+-	"pllh_aux",
+-	"pllc_core1",
+-	"pllc_core2",
+-};
+-
+-static const char *const bcm2835_clock_osc_parents[] = {
+-	"gnd",
+-	"xosc",
+-	"testdebug0",
+-	"testdebug1"
+-};
+-
+-/*
+- * Used for a 1Mhz clock for the system clocksource, and also used by
+- * the watchdog timer and the camera pulse generator.
+- */
+-static const struct bcm2835_clock_data bcm2835_clock_timer_data = {
+-	.name = "timer",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_osc_parents),
+-	.parents = bcm2835_clock_osc_parents,
+-	.ctl_reg = CM_TIMERCTL,
+-	.div_reg = CM_TIMERDIV,
+-	.int_bits = 6,
+-	.frac_bits = 12,
+-};
+-
+-/* One Time Programmable Memory clock.  Maximum 10Mhz. */
+-static const struct bcm2835_clock_data bcm2835_clock_otp_data = {
+-	.name = "otp",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_osc_parents),
+-	.parents = bcm2835_clock_osc_parents,
+-	.ctl_reg = CM_OTPCTL,
+-	.div_reg = CM_OTPDIV,
+-	.int_bits = 4,
+-	.frac_bits = 0,
+-};
+-
+-/*
+- * VPU clock.  This doesn't have an enable bit, since it drives the
+- * bus for everything else, and is special so it doesn't need to be
+- * gated for rate changes.  It is also known as "clk_audio" in various
+- * hardware documentation.
+- */
+-static const struct bcm2835_clock_data bcm2835_clock_vpu_data = {
+-	.name = "vpu",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),
+-	.parents = bcm2835_clock_vpu_parents,
+-	.ctl_reg = CM_VPUCTL,
+-	.div_reg = CM_VPUDIV,
+-	.int_bits = 12,
+-	.frac_bits = 8,
+-	.is_vpu_clock = true,
+-};
+-
+-static const struct bcm2835_clock_data bcm2835_clock_v3d_data = {
+-	.name = "v3d",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),
+-	.parents = bcm2835_clock_vpu_parents,
+-	.ctl_reg = CM_V3DCTL,
+-	.div_reg = CM_V3DDIV,
+-	.int_bits = 4,
+-	.frac_bits = 8,
+-};
+-
+-static const struct bcm2835_clock_data bcm2835_clock_isp_data = {
+-	.name = "isp",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),
+-	.parents = bcm2835_clock_vpu_parents,
+-	.ctl_reg = CM_ISPCTL,
+-	.div_reg = CM_ISPDIV,
+-	.int_bits = 4,
+-	.frac_bits = 8,
+-};
+-
+-static const struct bcm2835_clock_data bcm2835_clock_h264_data = {
+-	.name = "h264",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),
+-	.parents = bcm2835_clock_vpu_parents,
+-	.ctl_reg = CM_H264CTL,
+-	.div_reg = CM_H264DIV,
+-	.int_bits = 4,
+-	.frac_bits = 8,
+-};
+-
+-/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+-static const struct bcm2835_clock_data bcm2835_clock_vec_data = {
+-	.name = "vec",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
+-	.parents = bcm2835_clock_per_parents,
+-	.ctl_reg = CM_VECCTL,
+-	.div_reg = CM_VECDIV,
+-	.int_bits = 4,
+-	.frac_bits = 0,
+-};
+-
+-static const struct bcm2835_clock_data bcm2835_clock_uart_data = {
+-	.name = "uart",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
+-	.parents = bcm2835_clock_per_parents,
+-	.ctl_reg = CM_UARTCTL,
+-	.div_reg = CM_UARTDIV,
+-	.int_bits = 10,
+-	.frac_bits = 12,
+-};
+-
+-/* HDMI state machine */
+-static const struct bcm2835_clock_data bcm2835_clock_hsm_data = {
+-	.name = "hsm",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
+-	.parents = bcm2835_clock_per_parents,
+-	.ctl_reg = CM_HSMCTL,
+-	.div_reg = CM_HSMDIV,
+-	.int_bits = 4,
+-	.frac_bits = 8,
+-};
+-
+-/*
+- * Secondary SDRAM clock.  Used for low-voltage modes when the PLL in
+- * the SDRAM controller can't be used.
+- */
+-static const struct bcm2835_clock_data bcm2835_clock_sdram_data = {
+-	.name = "sdram",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),
+-	.parents = bcm2835_clock_vpu_parents,
+-	.ctl_reg = CM_SDCCTL,
+-	.div_reg = CM_SDCDIV,
+-	.int_bits = 6,
+-	.frac_bits = 0,
+-};
+-
+-/* Clock for the temperature sensor.  Generally run at 2Mhz, max 5Mhz. */
+-static const struct bcm2835_clock_data bcm2835_clock_tsens_data = {
+-	.name = "tsens",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_osc_parents),
+-	.parents = bcm2835_clock_osc_parents,
+-	.ctl_reg = CM_TSENSCTL,
+-	.div_reg = CM_TSENSDIV,
+-	.int_bits = 5,
+-	.frac_bits = 0,
+-};
+-
+-/* Arasan EMMC clock */
+-static const struct bcm2835_clock_data bcm2835_clock_emmc_data = {
+-	.name = "emmc",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
+-	.parents = bcm2835_clock_per_parents,
+-	.ctl_reg = CM_EMMCCTL,
+-	.div_reg = CM_EMMCDIV,
+-	.int_bits = 4,
+-	.frac_bits = 8,
+-};
+-
+-static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
+-	.name = "pwm",
+-	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
+-	.parents = bcm2835_clock_per_parents,
+-	.ctl_reg = CM_PWMCTL,
+-	.div_reg = CM_PWMDIV,
+-	.int_bits = 12,
+-	.frac_bits = 12,
+-	.is_mash_clock = true,
+-};
+-
+ struct bcm2835_gate_data {
+ 	const char *name;
+ 	const char *parent;
+@@ -839,18 +434,6 @@ struct bcm2835_gate_data {
+ 	u32 ctl_reg;
+ };
+ 
+-/*
+- * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
+- * you have the debug bit set in the power manager, which we
+- * don't bother exposing) are individual gates off of the
+- * non-stop vpu clock.
+- */
+-static const struct bcm2835_gate_data bcm2835_clock_peri_image_data = {
+-	.name = "peri_image",
+-	.parent = "vpu",
+-	.ctl_reg = CM_PERIICTL,
+-};
+-
+ struct bcm2835_pll {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+@@ -1481,7 +1064,7 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
+ 
+ 	memset(&init, 0, sizeof(init));
+ 
+-	init.parent_names = &data->source_pll->name;
++	init.parent_names = &data->source_pll;
+ 	init.num_parents = 1;
+ 	init.name = divider_name;
+ 	init.ops = &bcm2835_pll_divider_clk_ops;
+@@ -1592,50 +1175,401 @@ struct bcm2835_clk_desc {
+ 	const void *data;
+ };
+ 
+-#define _REGISTER(f, d) { .clk_register = (bcm2835_clk_register)f, \
+-			  .data = d }
+-#define REGISTER_PLL(d)		_REGISTER(&bcm2835_register_pll, d)
+-#define REGISTER_PLL_DIV(d)	_REGISTER(&bcm2835_register_pll_divider, d)
+-#define REGISTER_CLK(d)		_REGISTER(&bcm2835_register_clock, d)
+-#define REGISTER_GATE(d)	_REGISTER(&bcm2835_register_gate, d)
++/* assignment helper macros for different clock types */
++#define _REGISTER(f, ...) { .clk_register = (bcm2835_clk_register)f, \
++			    .data = __VA_ARGS__ }
++#define REGISTER_PLL(...)	_REGISTER(&bcm2835_register_pll,	\
++					  &(struct bcm2835_pll_data)	\
++					  {__VA_ARGS__})
++#define REGISTER_PLL_DIV(...)	_REGISTER(&bcm2835_register_pll_divider, \
++					  &(struct bcm2835_pll_divider_data) \
++					  {__VA_ARGS__})
++#define REGISTER_CLK(...)	_REGISTER(&bcm2835_register_clock,	\
++					  &(struct bcm2835_clock_data)	\
++					  {__VA_ARGS__})
++#define REGISTER_GATE(...)	_REGISTER(&bcm2835_register_gate,	\
++					  &(struct bcm2835_gate_data)	\
++					  {__VA_ARGS__})
++
++/* parent mux arrays plus helper macros */
++
++/* main oscillator parent mux */
++static const char *const bcm2835_clock_osc_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1"
++};
++
++#define REGISTER_OSC_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_osc_parents),	\
++	.parents = bcm2835_clock_osc_parents,				\
++	__VA_ARGS__)
++
++/* main peripherial parent mux */
++static const char *const bcm2835_clock_per_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	"plla_per",
++	"pllc_per",
++	"plld_per",
++	"pllh_aux",
++};
++
++#define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),	\
++	.parents = bcm2835_clock_per_parents,				\
++	__VA_ARGS__)
+ 
++/* main vpu parent mux */
++static const char *const bcm2835_clock_vpu_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	"plla_core",
++	"pllc_core0",
++	"plld_core",
++	"pllh_aux",
++	"pllc_core1",
++	"pllc_core2",
++};
++
++#define REGISTER_VPU_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),	\
++	.parents = bcm2835_clock_vpu_parents,				\
++	__VA_ARGS__)
++
++/*
++ * the real definition of all the pll, pll_dividers and clocks
++ * these make use of the above REGISTER_* macros
++ */
+ static const struct bcm2835_clk_desc clk_desc_array[] = {
+-	/* register PLL */
+-	[BCM2835_PLLA]		= REGISTER_PLL(&bcm2835_plla_data),
+-	[BCM2835_PLLB]		= REGISTER_PLL(&bcm2835_pllb_data),
+-	[BCM2835_PLLC]		= REGISTER_PLL(&bcm2835_pllc_data),
+-	[BCM2835_PLLD]		= REGISTER_PLL(&bcm2835_plld_data),
+-	[BCM2835_PLLH]		= REGISTER_PLL(&bcm2835_pllh_data),
+-	/* the PLL dividers */
+-	[BCM2835_PLLA_CORE]	= REGISTER_PLL_DIV(&bcm2835_plla_core_data),
+-	[BCM2835_PLLA_PER]	= REGISTER_PLL_DIV(&bcm2835_plla_per_data),
+-	[BCM2835_PLLC_CORE0]	= REGISTER_PLL_DIV(&bcm2835_pllc_core0_data),
+-	[BCM2835_PLLC_CORE1]	= REGISTER_PLL_DIV(&bcm2835_pllc_core1_data),
+-	[BCM2835_PLLC_CORE2]	= REGISTER_PLL_DIV(&bcm2835_pllc_core2_data),
+-	[BCM2835_PLLC_PER]	= REGISTER_PLL_DIV(&bcm2835_pllc_per_data),
+-	[BCM2835_PLLD_CORE]	= REGISTER_PLL_DIV(&bcm2835_plld_core_data),
+-	[BCM2835_PLLD_PER]	= REGISTER_PLL_DIV(&bcm2835_plld_per_data),
+-	[BCM2835_PLLH_RCAL]	= REGISTER_PLL_DIV(&bcm2835_pllh_rcal_data),
+-	[BCM2835_PLLH_AUX]	= REGISTER_PLL_DIV(&bcm2835_pllh_aux_data),
+-	[BCM2835_PLLH_PIX]	= REGISTER_PLL_DIV(&bcm2835_pllh_pix_data),
++	/* the PLL + PLL dividers */
++
++	/*
++	 * PLLA is the auxiliary PLL, used to drive the CCP2
++	 * (Compact Camera Port 2) transmitter clock.
++	 *
++	 * It is in the PX LDO power domain, which is on when the
++	 * AUDIO domain is on.
++	 */
++	[BCM2835_PLLA]		= REGISTER_PLL(
++		.name = "plla",
++		.cm_ctrl_reg = CM_PLLA,
++		.a2w_ctrl_reg = A2W_PLLA_CTRL,
++		.frac_reg = A2W_PLLA_FRAC,
++		.ana_reg_base = A2W_PLLA_ANA0,
++		.reference_enable_mask = A2W_XOSC_CTRL_PLLA_ENABLE,
++		.lock_mask = CM_LOCK_FLOCKA,
++
++		.ana = &bcm2835_ana_default,
++
++		.min_rate = 600000000u,
++		.max_rate = 2400000000u,
++		.max_fb_rate = BCM2835_MAX_FB_RATE),
++	[BCM2835_PLLA_CORE]	= REGISTER_PLL_DIV(
++		.name = "plla_core",
++		.source_pll = "plla",
++		.cm_reg = CM_PLLA,
++		.a2w_reg = A2W_PLLA_CORE,
++		.load_mask = CM_PLLA_LOADCORE,
++		.hold_mask = CM_PLLA_HOLDCORE,
++		.fixed_divider = 1),
++	[BCM2835_PLLA_PER]	= REGISTER_PLL_DIV(
++		.name = "plla_per",
++		.source_pll = "plla",
++		.cm_reg = CM_PLLA,
++		.a2w_reg = A2W_PLLA_PER,
++		.load_mask = CM_PLLA_LOADPER,
++		.hold_mask = CM_PLLA_HOLDPER,
++		.fixed_divider = 1),
++
++	/* PLLB is used for the ARM's clock. */
++	[BCM2835_PLLB]		= REGISTER_PLL(
++		.name = "pllb",
++		.cm_ctrl_reg = CM_PLLB,
++		.a2w_ctrl_reg = A2W_PLLB_CTRL,
++		.frac_reg = A2W_PLLB_FRAC,
++		.ana_reg_base = A2W_PLLB_ANA0,
++		.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
++		.lock_mask = CM_LOCK_FLOCKB,
++
++		.ana = &bcm2835_ana_default,
++
++		.min_rate = 600000000u,
++		.max_rate = 3000000000u,
++		.max_fb_rate = BCM2835_MAX_FB_RATE),
++	[BCM2835_PLLB_ARM]	= REGISTER_PLL_DIV(
++		.name = "pllb_arm",
++		.source_pll = "pllb",
++		.cm_reg = CM_PLLB,
++		.a2w_reg = A2W_PLLB_ARM,
++		.load_mask = CM_PLLB_LOADARM,
++		.hold_mask = CM_PLLB_HOLDARM,
++		.fixed_divider = 1),
++
++	/*
++	 * PLLC is the core PLL, used to drive the core VPU clock.
++	 *
++	 * It is in the PX LDO power domain, which is on when the
++	 * AUDIO domain is on.
++	 */
++	[BCM2835_PLLC]		= REGISTER_PLL(
++		.name = "pllc",
++		.cm_ctrl_reg = CM_PLLC,
++		.a2w_ctrl_reg = A2W_PLLC_CTRL,
++		.frac_reg = A2W_PLLC_FRAC,
++		.ana_reg_base = A2W_PLLC_ANA0,
++		.reference_enable_mask = A2W_XOSC_CTRL_PLLC_ENABLE,
++		.lock_mask = CM_LOCK_FLOCKC,
++
++		.ana = &bcm2835_ana_default,
++
++		.min_rate = 600000000u,
++		.max_rate = 3000000000u,
++		.max_fb_rate = BCM2835_MAX_FB_RATE),
++	[BCM2835_PLLC_CORE0]	= REGISTER_PLL_DIV(
++		.name = "pllc_core0",
++		.source_pll = "pllc",
++		.cm_reg = CM_PLLC,
++		.a2w_reg = A2W_PLLC_CORE0,
++		.load_mask = CM_PLLC_LOADCORE0,
++		.hold_mask = CM_PLLC_HOLDCORE0,
++		.fixed_divider = 1),
++	[BCM2835_PLLC_CORE1]	= REGISTER_PLL_DIV(
++		.name = "pllc_core1",
++		.source_pll = "pllc",
++		.cm_reg = CM_PLLC,
++		.a2w_reg = A2W_PLLC_CORE1,
++		.load_mask = CM_PLLC_LOADCORE1,
++		.hold_mask = CM_PLLC_HOLDCORE1,
++		.fixed_divider = 1),
++	[BCM2835_PLLC_CORE2]	= REGISTER_PLL_DIV(
++		.name = "pllc_core2",
++		.source_pll = "pllc",
++		.cm_reg = CM_PLLC,
++		.a2w_reg = A2W_PLLC_CORE2,
++		.load_mask = CM_PLLC_LOADCORE2,
++		.hold_mask = CM_PLLC_HOLDCORE2,
++		.fixed_divider = 1),
++	[BCM2835_PLLC_PER]	= REGISTER_PLL_DIV(
++		.name = "pllc_per",
++		.source_pll = "pllc",
++		.cm_reg = CM_PLLC,
++		.a2w_reg = A2W_PLLC_PER,
++		.load_mask = CM_PLLC_LOADPER,
++		.hold_mask = CM_PLLC_HOLDPER,
++		.fixed_divider = 1),
++
++	/*
++	 * PLLD is the display PLL, used to drive DSI display panels.
++	 *
++	 * It is in the PX LDO power domain, which is on when the
++	 * AUDIO domain is on.
++	 */
++	[BCM2835_PLLD]		= REGISTER_PLL(
++		.name = "plld",
++		.cm_ctrl_reg = CM_PLLD,
++		.a2w_ctrl_reg = A2W_PLLD_CTRL,
++		.frac_reg = A2W_PLLD_FRAC,
++		.ana_reg_base = A2W_PLLD_ANA0,
++		.reference_enable_mask = A2W_XOSC_CTRL_DDR_ENABLE,
++		.lock_mask = CM_LOCK_FLOCKD,
++
++		.ana = &bcm2835_ana_default,
++
++		.min_rate = 600000000u,
++		.max_rate = 2400000000u,
++		.max_fb_rate = BCM2835_MAX_FB_RATE),
++	[BCM2835_PLLD_CORE]	= REGISTER_PLL_DIV(
++		.name = "plld_core",
++		.source_pll = "plld",
++		.cm_reg = CM_PLLD,
++		.a2w_reg = A2W_PLLD_CORE,
++		.load_mask = CM_PLLD_LOADCORE,
++		.hold_mask = CM_PLLD_HOLDCORE,
++		.fixed_divider = 1),
++	[BCM2835_PLLD_PER]	= REGISTER_PLL_DIV(
++		.name = "plld_per",
++		.source_pll = "plld",
++		.cm_reg = CM_PLLD,
++		.a2w_reg = A2W_PLLD_PER,
++		.load_mask = CM_PLLD_LOADPER,
++		.hold_mask = CM_PLLD_HOLDPER,
++		.fixed_divider = 1),
++
++	/*
++	 * PLLH is used to supply the pixel clock or the AUX clock for the
++	 * TV encoder.
++	 *
++	 * It is in the HDMI power domain.
++	 */
++	[BCM2835_PLLH]		= REGISTER_PLL(
++		"pllh",
++		.cm_ctrl_reg = CM_PLLH,
++		.a2w_ctrl_reg = A2W_PLLH_CTRL,
++		.frac_reg = A2W_PLLH_FRAC,
++		.ana_reg_base = A2W_PLLH_ANA0,
++		.reference_enable_mask = A2W_XOSC_CTRL_PLLC_ENABLE,
++		.lock_mask = CM_LOCK_FLOCKH,
++
++		.ana = &bcm2835_ana_pllh,
++
++		.min_rate = 600000000u,
++		.max_rate = 3000000000u,
++		.max_fb_rate = BCM2835_MAX_FB_RATE),
++	[BCM2835_PLLH_RCAL]	= REGISTER_PLL_DIV(
++		.name = "pllh_rcal",
++		.source_pll = "pllh",
++		.cm_reg = CM_PLLH,
++		.a2w_reg = A2W_PLLH_RCAL,
++		.load_mask = CM_PLLH_LOADRCAL,
++		.hold_mask = 0,
++		.fixed_divider = 10),
++	[BCM2835_PLLH_AUX]	= REGISTER_PLL_DIV(
++		.name = "pllh_aux",
++		.source_pll = "pllh",
++		.cm_reg = CM_PLLH,
++		.a2w_reg = A2W_PLLH_AUX,
++		.load_mask = CM_PLLH_LOADAUX,
++		.hold_mask = 0,
++		.fixed_divider = 10),
++	[BCM2835_PLLH_PIX]	= REGISTER_PLL_DIV(
++		.name = "pllh_pix",
++		.source_pll = "pllh",
++		.cm_reg = CM_PLLH,
++		.a2w_reg = A2W_PLLH_PIX,
++		.load_mask = CM_PLLH_LOADPIX,
++		.hold_mask = 0,
++		.fixed_divider = 10),
++
+ 	/* the clocks */
+-	[BCM2835_CLOCK_TIMER]	= REGISTER_CLK(&bcm2835_clock_timer_data),
+-	[BCM2835_CLOCK_OTP]	= REGISTER_CLK(&bcm2835_clock_otp_data),
+-	[BCM2835_CLOCK_TSENS]	= REGISTER_CLK(&bcm2835_clock_tsens_data),
+-	[BCM2835_CLOCK_VPU]	= REGISTER_CLK(&bcm2835_clock_vpu_data),
+-	[BCM2835_CLOCK_V3D]	= REGISTER_CLK(&bcm2835_clock_v3d_data),
+-	[BCM2835_CLOCK_ISP]	= REGISTER_CLK(&bcm2835_clock_isp_data),
+-	[BCM2835_CLOCK_H264]	= REGISTER_CLK(&bcm2835_clock_h264_data),
+-	[BCM2835_CLOCK_V3D]	= REGISTER_CLK(&bcm2835_clock_v3d_data),
+-	[BCM2835_CLOCK_SDRAM]	= REGISTER_CLK(&bcm2835_clock_sdram_data),
+-	[BCM2835_CLOCK_UART]	= REGISTER_CLK(&bcm2835_clock_uart_data),
+-	[BCM2835_CLOCK_VEC]	= REGISTER_CLK(&bcm2835_clock_vec_data),
+-	[BCM2835_CLOCK_HSM]	= REGISTER_CLK(&bcm2835_clock_hsm_data),
+-	[BCM2835_CLOCK_EMMC]	= REGISTER_CLK(&bcm2835_clock_emmc_data),
+-	[BCM2835_CLOCK_PWM]	= REGISTER_CLK(&bcm2835_clock_pwm_data),
++
++	/* clocks with oscillator parent mux */
++
++	/* One Time Programmable Memory clock.  Maximum 10Mhz. */
++	[BCM2835_CLOCK_OTP]	= REGISTER_OSC_CLK(
++		.name = "otp",
++		.ctl_reg = CM_OTPCTL,
++		.div_reg = CM_OTPDIV,
++		.int_bits = 4,
++		.frac_bits = 0),
++	/*
++	 * Used for a 1Mhz clock for the system clocksource, and also used
++	 * bythe watchdog timer and the camera pulse generator.
++	 */
++	[BCM2835_CLOCK_TIMER]	= REGISTER_OSC_CLK(
++		.name = "timer",
++		.ctl_reg = CM_TIMERCTL,
++		.div_reg = CM_TIMERDIV,
++		.int_bits = 6,
++		.frac_bits = 12),
++	/*
++	 * Clock for the temperature sensor.
++	 * Generally run at 2Mhz, max 5Mhz.
++	 */
++	[BCM2835_CLOCK_TSENS]	= REGISTER_OSC_CLK(
++		.name = "tsens",
++		.ctl_reg = CM_TSENSCTL,
++		.div_reg = CM_TSENSDIV,
++		.int_bits = 5,
++		.frac_bits = 0),
++
++	/* clocks with vpu parent mux */
++	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
++		.name = "h264",
++		.ctl_reg = CM_H264CTL,
++		.div_reg = CM_H264DIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	[BCM2835_CLOCK_ISP]	= REGISTER_VPU_CLK(
++		.name = "isp",
++		.ctl_reg = CM_ISPCTL,
++		.div_reg = CM_ISPDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	/*
++	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
++	 * in the SDRAM controller can't be used.
++	 */
++	[BCM2835_CLOCK_SDRAM]	= REGISTER_VPU_CLK(
++		.name = "sdram",
++		.ctl_reg = CM_SDCCTL,
++		.div_reg = CM_SDCDIV,
++		.int_bits = 6,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_V3D]	= REGISTER_VPU_CLK(
++		.name = "v3d",
++		.ctl_reg = CM_V3DCTL,
++		.div_reg = CM_V3DDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	/*
++	 * VPU clock.  This doesn't have an enable bit, since it drives
++	 * the bus for everything else, and is special so it doesn't need
++	 * to be gated for rate changes.  It is also known as "clk_audio"
++	 * in various hardware documentation.
++	 */
++	[BCM2835_CLOCK_VPU]	= REGISTER_VPU_CLK(
++		.name = "vpu",
++		.ctl_reg = CM_VPUCTL,
++		.div_reg = CM_VPUDIV,
++		.int_bits = 12,
++		.frac_bits = 8,
++		.is_vpu_clock = true),
++
++	/* clocks with per parent mux */
++
++	/* Arasan EMMC clock */
++	[BCM2835_CLOCK_EMMC]	= REGISTER_PER_CLK(
++		.name = "emmc",
++		.ctl_reg = CM_EMMCCTL,
++		.div_reg = CM_EMMCDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	/* HDMI state machine */
++	[BCM2835_CLOCK_HSM]	= REGISTER_PER_CLK(
++		.name = "hsm",
++		.ctl_reg = CM_HSMCTL,
++		.div_reg = CM_HSMDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
++		.name = "pwm",
++		.ctl_reg = CM_PWMCTL,
++		.div_reg = CM_PWMDIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
++		.name = "uart",
++		.ctl_reg = CM_UARTCTL,
++		.div_reg = CM_UARTDIV,
++		.int_bits = 10,
++		.frac_bits = 12),
++	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
++	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
++		.name = "vec",
++		.ctl_reg = CM_VECCTL,
++		.div_reg = CM_VECDIV,
++		.int_bits = 4,
++		.frac_bits = 0),
++
+ 	/* the gates */
++
++	/*
++	 * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
++	 * you have the debug bit set in the power manager, which we
++	 * don't bother exposing) are individual gates off of the
++	 * non-stop vpu clock.
++	 */
+ 	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
+-		&bcm2835_clock_peri_image_data),
++		.name = "peri_image",
++		.parent = "vpu",
++		.ctl_reg = CM_PERIICTL),
+ };
+ 
+ static int bcm2835_clk_probe(struct platform_device *pdev)
+-- 
+1.7.10.4
