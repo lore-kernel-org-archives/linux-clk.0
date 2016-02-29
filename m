@@ -1,91 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 3.14 48/70] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-Date: Tue, 23 Feb 2016 19:33:57 -0800
-Message-Id: <20160224033355.647978508@linuxfoundation.org>
-In-Reply-To: <20160224033354.061464831@linuxfoundation.org>
-References: <20160224033354.061464831@linuxfoundation.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 29 Feb 2016 16:06:07 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de
+Subject: [GIT PULL] i.MX clock driver update for 4.6
+Message-ID: <20160229080607.GT22051@tiger>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-3.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Mike, Stephen,
 
-------------------
+The following are the i.MX clock patches I queued for 4.6.  Please pull
+and keep it stable, as I need to pull it into my DT branch to resolve
+the dependency on those new clock IDs.
 
-From: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
+Shawn
 
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
 
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
+The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
 
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
+  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
 
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
+are available in the git repository at:
 
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.6
 
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
+for you to fetch changes up to f6c3aec2f7a218abec9e5c00353abc02224be49e:
 
-Tested on the ARM Versatile.
+  clk: imx: add kpp clock for i.MX6UL (2016-02-28 10:45:29 +0800)
 
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+----------------------------------------------------------------
+The i.MX clock update for 4.6:
+- Add the clock driver support for the latest i.MX6 family SoCs
+  addition - i.MX6QP.
+- Clean up the whitespace in i.MX6UL clock driver and add the missing
+  KPP clock.
+- Correct pwm7 clock name in i.MX6UL clock driver.
 
----
- arch/arm/common/icst.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+----------------------------------------------------------------
+Anatolij Gustschin (1):
+      clk: imx: correct pwm7 clock name in driver for i.MX6UL
 
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
- 
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
- 
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
- 
- EXPORT_SYMBOL(icst_hz);
+Bai Ping (1):
+      clk: imx: Add clock support for imx6qp
+
+Lothar Waﬂmann (2):
+      clk: imx: whitespace cleanup; no functional change
+      clk: imx: add kpp clock for i.MX6UL
+
+ drivers/clk/imx/clk-imx6q.c               | 132 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------
+ drivers/clk/imx/clk-imx6ul.c              |  65 +++++++++++++++++++++++++++++++++--------------------------------
+ include/dt-bindings/clock/imx6qdl-clock.h |  16 +++++++++++++++-
+ include/dt-bindings/clock/imx6ul-clock.h  | 149 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------------------------------------------------
+ 4 files changed, 228 insertions(+), 134 deletions(-)
