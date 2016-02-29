@@ -1,150 +1,127 @@
-Return-Path: <lenyoez1@gmail.com>
+Return-Path: <LW@karo-electronics.de>
+Date: Mon, 29 Feb 2016 12:21:39 +0100
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
+ Frank Li <Frank.Li@freescale.com>, Fugang Duan <B38611@freescale.com>, Ian
+ Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala
+ <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Michael
+ Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob
+ Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Sascha
+ Hauer <kernel@pengutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 16/16] ARM: dts: imx6ul: add support for Ka-Ro
+ electronics TXUL modules
+Message-ID: <20160229122139.6a560304@ipc1.ka-ro>
+In-Reply-To: <20160228064326.GG22051@tiger>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+	<1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+	<1453284549-16363-17-git-send-email-LW@KARO-electronics.de>
+	<20160228064326.GG22051@tiger>
 MIME-Version: 1.0
-In-Reply-To: <1455591838-22725-1-git-send-email-eric@anholt.net>
-References: <1455591838-22725-1-git-send-email-eric@anholt.net>
-Date: Wed, 17 Feb 2016 09:51:16 -0800
-Message-ID: <CAB=mZpFHz-gvqa0WimT-eCQiHk+ZGbH1t-+HL8oLXtuQcfOBdw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: bcm2835: Fix setting of PLL divider clock rates
-From: Jayson Aguilar <lenyoez1@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-Cc: stable@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: multipart/alternative; boundary=089e0115e8e888db43052bfae5b8
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---089e0115e8e888db43052bfae5b8
-Content-Type: text/plain; charset=UTF-8
+Hi,
 
-Unsubscribe
-On Feb 16, 2016 12:42 AM, "Eric Anholt" <eric@anholt.net> wrote:
+On Sun, 28 Feb 2016 14:43:26 +0800 Shawn Guo wrote:
+> On Wed, Jan 20, 2016 at 11:09:09AM +0100, Lothar Wa=C3=9Fmann wrote:
+[...]
+> > +/dts-v1/;
+> > +#include "imx6ul.dtsi"
+> > +#include "imx6ul-txul.dtsi"
+> > +
+> > +/ {
+> > +	model =3D "Ka-Ro electronics TXUL-0010 Module";
+> > +	compatible =3D "karo,imx6ul-tx6ul", "fsl,imx6ul";
+> > +
+> > +	aliases {
+> > +		mmc0 =3D &usdhc1;
+> > +		/delete-property/ mmc1;
+>=20
+> Why is this deletion of mmc1 needed?
+>=20
+Its not actually necessary, but for convenience of U-Boot users who may
+want to enable/disable the mmc interface dynamically. Since the
+USDHC2 interface is not available on this module, I prefer not to have
+a dangling alias that points to an interface that is not actually
+useable.
 
-> Our dividers weren't being set successfully because CM_PASSWORD wasn't
-> included in the register write.  It looks easier to just compute the
-> divider to write ourselves than to update clk-divider for the ability
-> to OR in some arbitrary bits on write.
->
-> Fixes about half of the video modes on my HDMI monitor (everything
-> except 720x400).
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 015e687..9f4df8f 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct
-> clk_hw *hw,
->         struct bcm2835_pll_divider *divider =
-> bcm2835_pll_divider_from_hw(hw);
->         struct bcm2835_cprman *cprman = divider->cprman;
->         const struct bcm2835_pll_divider_data *data = divider->data;
-> -       u32 cm;
-> -       int ret;
-> +       u32 cm, div, max_div = 1 << A2W_PLL_DIV_BITS;
->
-> -       ret = clk_divider_ops.set_rate(hw, rate, parent_rate);
-> -       if (ret)
-> -               return ret;
-> +       div = DIV_ROUND_UP_ULL(parent_rate, rate);
-> +
-> +       div = min(div, max_div);
-> +       if (div == max_div)
-> +               div = 0;
->
-> +       cprman_write(cprman, data->a2w_reg, div);
->         cm = cprman_read(cprman, data->cm_reg);
->         cprman_write(cprman, data->cm_reg, cm | data->load_mask);
->         cprman_write(cprman, data->cm_reg, cm & ~data->load_mask);
-> --
-> 2.7.0
->
->
-> _______________________________________________
-> linux-rpi-kernel mailing list
-> linux-rpi-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel
->
+> > diff --git a/arch/arm/boot/dts/imx6ul-txul-0011.dts b/arch/arm/boot/dts=
+/imx6ul-txul-0011.dts
+> > new file mode 100644
+> > index 0000000..dd3055b
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/imx6ul-txul-0011.dts
+> > @@ -0,0 +1,85 @@
+> > +/*
+> > + * Copyright 2015 Lothar Wa=C3=9Fmann <LW@KARO-electronics.de>
+> > + *
+> > + * This file is dual-licensed: you can use it either under the terms
+> > + * of the GPL or the X11 license, at your option. Note that this dual
+> > + * licensing only applies to this file, and not this project as a
+> > + * whole.
+> > + *
+> > + *  a) This file is free software; you can redistribute it and/or
+> > + *     modify it under the terms of the GNU General Public License
+> > + *     version 2 as published by the Free Software Foundation.
+> > + *
+> > + *     This file is distributed in the hope that it will be useful,
+> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + *     GNU General Public License for more details.
+> > + *
+> > + * Or, alternatively,
+> > + *
+> > + *  b) Permission is hereby granted, free of charge, to any person
+> > + *     obtaining a copy of this software and associated documentation
+> > + *     files (the "Software"), to deal in the Software without
+> > + *     restriction, including without limitation the rights to use,
+> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> > + *     sell copies of the Software, and to permit persons to whom the
+> > + *     Software is furnished to do so, subject to the following
+> > + *     conditions:
+> > + *
+> > + *     The above copyright notice and this permission notice shall be
+> > + *     included in all copies or substantial portions of the Software.
+> > + *
+> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> > + *     OTHER DEALINGS IN THE SOFTWARE.
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "imx6ul.dtsi"
+> > +#include "imx6ul-txul.dtsi"
+> > +
+> > +/ {
+> > +	model =3D "Ka-Ro electronics TXUL-0011 Module";
+> > +	compatible =3D "karo,imx6ul-tx6ul", "fsl,imx6ul";
+> > +
+> > +	aliases {
+> > +		mmc0 =3D &usdhc2;
+> > +		mmc1 =3D &usdhc1;
+> > +	};
+> > +};
+> > +
+> > +&gpmi {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +&iomuxc {
+> > +	imx6ul-txul {
+>=20
+> Since commit 5fcdf6a7ed95 (pinctrl: imx: Allow parsing DT without
+> function nodes), we can save this container node.
+>=20
+I already reworked the file in the meantime, so that this and your
+remaining comments are addressed.
 
---089e0115e8e888db43052bfae5b8
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-<p dir=3D"ltr">Unsubscribe </p>
-<div class=3D"gmail_quote">On Feb 16, 2016 12:42 AM, &quot;Eric Anholt&quot=
-; &lt;<a href=3D"mailto:eric@anholt.net">eric@anholt.net</a>&gt; wrote:<br =
-type=3D"attribution"><blockquote class=3D"gmail_quote" style=3D"margin:0 0 =
-0 .8ex;border-left:1px #ccc solid;padding-left:1ex">Our dividers weren&#39;=
-t being set successfully because CM_PASSWORD wasn&#39;t<br>
-included in the register write.=C2=A0 It looks easier to just compute the<b=
-r>
-divider to write ourselves than to update clk-divider for the ability<br>
-to OR in some arbitrary bits on write.<br>
-<br>
-Fixes about half of the video modes on my HDMI monitor (everything<br>
-except 720x400).<br>
-<br>
-Cc: <a href=3D"mailto:stable@vger.kernel.org">stable@vger.kernel.org</a><br=
->
-Signed-off-by: Eric Anholt &lt;<a href=3D"mailto:eric@anholt.net">eric@anho=
-lt.net</a>&gt;<br>
----<br>
-=C2=A0drivers/clk/bcm/clk-bcm2835.c | 12 +++++++-----<br>
-=C2=A01 file changed, 7 insertions(+), 5 deletions(-)<br>
-<br>
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c<=
-br>
-index 015e687..9f4df8f 100644<br>
---- a/drivers/clk/bcm/clk-bcm2835.c<br>
-+++ b/drivers/clk/bcm/clk-bcm2835.c<br>
-@@ -1107,13 +1107,15 @@ static int bcm2835_pll_divider_set_rate(struct clk_=
-hw *hw,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct bcm2835_pll_divider *divider =3D bcm2835=
-_pll_divider_from_hw(hw);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct bcm2835_cprman *cprman =3D divider-&gt;c=
-prman;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 const struct bcm2835_pll_divider_data *data =3D=
- divider-&gt;data;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0u32 cm;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0u32 cm, div, max_div =3D 1 &lt;&lt; A2W_PLL_DIV=
-_BITS;<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D clk_divider_ops.set_rate(hw, rate, pare=
-nt_rate);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0div =3D DIV_ROUND_UP_ULL(parent_rate, rate);<br=
->
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0div =3D min(div, max_div);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (div =3D=3D max_div)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0div =3D 0;<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0cprman_write(cprman, data-&gt;a2w_reg, div);<br=
->
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 cm =3D cprman_read(cprman, data-&gt;cm_reg);<br=
->
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 cprman_write(cprman, data-&gt;cm_reg, cm | data=
--&gt;load_mask);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 cprman_write(cprman, data-&gt;cm_reg, cm &amp; =
-~data-&gt;load_mask);<br>
---<br>
-2.7.0<br>
-<br>
-<br>
-_______________________________________________<br>
-linux-rpi-kernel mailing list<br>
-<a href=3D"mailto:linux-rpi-kernel@lists.infradead.org">linux-rpi-kernel@li=
-sts.infradead.org</a><br>
-<a href=3D"http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel" re=
-l=3D"noreferrer" target=3D"_blank">http://lists.infradead.org/mailman/listi=
-nfo/linux-rpi-kernel</a><br>
-</blockquote></div>
-
---089e0115e8e888db43052bfae5b8--
+Lothar Wa=C3=9Fmann
