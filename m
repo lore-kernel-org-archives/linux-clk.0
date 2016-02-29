@@ -1,62 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:47585 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753206AbcBVDF7 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 21 Feb 2016 22:05:59 -0500
-From: "Yang, Wenyou" <Wenyou.Yang@atmel.com>
-To: Rob Herring <robh@kernel.org>
-CC: "Ferre, Nicolas" <Nicolas.FERRE@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v3 4/4] Documentation: atmel-pmc: add DT bindings for
- fast startup
-Date: Mon, 22 Feb 2016 03:03:53 +0000
-Message-ID: <B256D81BAE5131468A838E5D7A243641D642649E@penmbx01>
-References: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
- <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
- <20160222025417.GH15973@rob-hp-laptop>
-In-Reply-To: <20160222025417.GH15973@rob-hp-laptop>
-Content-Type: text/plain; charset="gb2312"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	jay.xu@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 4/5] clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
+Date: Mon, 29 Feb 2016 19:26:00 +0800
+Message-Id: <1456745161-12954-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1456745161-12954-1-git-send-email-zhengxing@rock-chips.com>
+References: <1456745161-12954-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSb2IgSGVycmluZyBbbWFpbHRv
-OnJvYmhAa2VybmVsLm9yZ10NCj4gU2VudDogMjAxNsTqMtTCMjLI1SAxMDo1NA0KPiBUbzogWWFu
-ZywgV2VueW91IDxXZW55b3UuWWFuZ0BhdG1lbC5jb20+DQo+IENjOiBGZXJyZSwgTmljb2xhcyA8
-Tmljb2xhcy5GRVJSRUBhdG1lbC5jb20+OyBBbGV4YW5kcmUgQmVsbG9uaQ0KPiA8YWxleGFuZHJl
-LmJlbGxvbmlAZnJlZS1lbGVjdHJvbnMuY29tPjsgSmVhbi1DaHJpc3RvcGhlIFBsYWduaW9sLVZp
-bGxhcmQNCj4gPHBsYWduaW9qQGpjcm9zb2Z0LmNvbT47IFJ1c3NlbGwgS2luZyA8bGludXhAYXJt
-LmxpbnV4Lm9yZy51az47IGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnOyBQYXdlbCBNb2xs
-IDxwYXdlbC5tb2xsQGFybS5jb20+OyBNYXJrIEJyb3duDQo+IDxicm9vbmllQGtlcm5lbC5vcmc+
-OyBJYW4gQ2FtcGJlbGwgPGlqYytkZXZpY2V0cmVlQGhlbGxpb24ub3JnLnVrPjsgS3VtYXINCj4g
-R2FsYSA8Z2FsYWtAY29kZWF1cm9yYS5vcmc+OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
-ZGVhZC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZn
-ZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDQvNF0gRG9jdW1lbnRhdGlv
-bjogYXRtZWwtcG1jOiBhZGQgRFQgYmluZGluZ3MgZm9yIGZhc3QNCj4gc3RhcnR1cA0KPiANCj4g
-T24gTW9uLCBGZWIgMTUsIDIwMTYgYXQgMTE6NDA6MzBBTSArMDgwMCwgV2VueW91IFlhbmcgd3Jv
-dGU6DQo+ID4gQWRkIERUIGJpbmRpbmdzIHRvIGNvbmZpZ3VyYXRlIHRoZSBQTUNfRlNNUiBhbmQg
-UE1DX0ZTUFIgcmVnaXN0ZXJzIHRvDQo+ID4gdHJpZ2dlciBhIGZhc3QgcmVzdGFydCBzaWduYWwg
-dG8gUE1DLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogV2VueW91IFlhbmcgPHdlbnlvdS55YW5n
-QGF0bWVsLmNvbT4NCj4gPiBEb2N1bWVudDogYmluZGluZw0KPiA+DQo+ID4gLS0tDQo+ID4NCj4g
-PiBDaGFuZ2VzIGluIHYzOg0KPiA+ICAtIHVwZGF0ZSB0aGUgcHJvcGVydHkgZGVzY3JpcHRpb24u
-DQo+IA0KPiBUaGlzIGlzIG5vdCBoZWxwZnVsLiBBc3N1bWUgSSBkb24ndCByZW1lbWJlciB3aGF0
-IEkgdG9sZCB5b3UgYW5kIHlvdSBuZWVkIHRvIGpvZw0KPiBteSBtZW1vcnkgd2hhdCBleGFjdGx5
-IGNoYW5nZWQgc28gSSBkb24ndCBoYXZlIHRvIGdvIGxvb2sgaXQgdXAuDQoNClRoYW5rIHlvdSBm
-b3IgeW91ciBpbnN0cnVjdGlvbiwgSSB3aWxsIGtlZXAgaXQgaW4gbWluZC4NCg0KPiANCj4gPg0K
-PiA+IENoYW5nZXMgaW4gdjI6DQo+ID4gIC0gY2hhbmdlIHRoZSBwcm9wZXJ0eSBuYW1lIGFuZCBw
-cm9wZXJ0eSBkZXNjcmlwdGlvbi4NCj4gPg0KPiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9h
-cm0vYXRtZWwtcG1jLnR4dCAgICAgICAgICB8ICAgNjMNCj4gKysrKysrKysrKysrKysrKysrKysN
-Cj4gPiAgMSBmaWxlIGNoYW5nZWQsIDYzIGluc2VydGlvbnMoKykNCj4gDQo+IEFja2VkLWJ5OiBS
-b2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KDQpUaGFuayB5b3UgZm9yIHlvdXIgQWNrZWQu
-DQoNCg0KQmVzdCBSZWdhcmRzLA0KV2VueW91IFlhbmcNCg==
+Because there are some frac clock mux nodes don't need gate node on
+the RK3399.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
+
+ drivers/clk/rockchip/clk.h |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 36b4938..bfafd67 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -463,6 +463,22 @@ struct rockchip_clk_branch {
+ 		.child		= ch,				\
+ 	}
+ 
++#define COMPOSITE_FRACMUX_NOGATE(_id, cname, pname, f, mo, df, ch) \
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_fraction_divider,	\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.div_shift	= 16,				\
++		.div_width	= 16,				\
++		.div_flags	= df,				\
++		.gate_offset	= -1,				\
++		.child		= ch,				\
++	}
++
+ #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
+ 	{							\
+ 		.id		= _id,				\
+-- 
+1.7.9.5
