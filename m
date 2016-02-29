@@ -1,59 +1,93 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Joshua Henderson <joshua.henderson@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-mips@linux-mips.org>, <ralf@linux-mips.org>,
-	Joshua Henderson <joshua.henderson@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	Purna Chandra Mandal <purna.mandal@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Sandeep Sheriker <sandeepsheriker.mallikarjun@microchip.com>
-Subject: [PATCH v8 0/3] PIC32MZDA Clock Driver
-Date: Wed, 24 Feb 2016 09:07:14 -0700
-Message-ID: <1456330090-27226-1-git-send-email-joshua.henderson@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 6/6] clk: bcm2835: clean up coding style issues
+Date: Mon, 29 Feb 2016 11:39:22 +0000
+Message-Id: <1456745963-2403-7-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock bindings got acked and then essentially unacked, while the clock
-driver never made it upstream. In the meantime, the initial DTS file
-made it upstream. This latest patch series includes a patch to go back
-and correct the DTS files to reflect the new clock bindings in this
-patch series.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-This series still uses the CLK_OF_DECLARE approach despite not being
-regarded as the best approach. On MIPS/PIC32 the first call of clk_get()
-happens from "start_kernel -> time_init() -> plat_time_init()" which is
-very early in boot sequence even before execution of early_initcall().
-In short, by platform_driver way I was not able to register clock(s)
-before the first clock user becomes ready. With CLK_OF_DECLARE() I can
-explicitly call of_clk_init() in plat_time_init() just before calling
-clk_get().
+Fix all the checkpatch complaints for clk-bcm2835.c
 
-Purna Chandra Mandal (3):
-  dt/bindings: Add PIC32 clock binding documentation
-  clk: clk-pic32: Add PIC32 clock driver
-  MIPS: dts: pic32: Update dts to reflect new PIC32MZDA clk binding
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |   14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
- .../devicetree/bindings/clock/microchip,pic32.txt  |   39 +
- arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi        |  236 -----
- arch/mips/boot/dts/pic32/pic32mzda.dtsi            |   63 +-
- arch/mips/boot/dts/pic32/pic32mzda_sk.dts          |    5 +-
- drivers/clk/Kconfig                                |    3 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/microchip/Makefile                     |    2 +
- drivers/clk/microchip/clk-core.c                   |  954 ++++++++++++++++++++
- drivers/clk/microchip/clk-core.h                   |   78 ++
- drivers/clk/microchip/clk-pic32mzda.c              |  214 +++++
- include/dt-bindings/clock/microchip,pic32-clock.h  |   42 +
- 11 files changed, 1378 insertions(+), 259 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
- delete mode 100644 arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi
- create mode 100644 drivers/clk/microchip/Makefile
- create mode 100644 drivers/clk/microchip/clk-core.c
- create mode 100644 drivers/clk/microchip/clk-core.h
- create mode 100644 drivers/clk/microchip/clk-pic32mzda.c
- create mode 100644 include/dt-bindings/clock/microchip,pic32-clock.h
-
---
-1.7.9.5
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index da77069..105a42f 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -12,9 +12,6 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+ /**
+@@ -300,7 +297,7 @@
+ struct bcm2835_cprman {
+ 	struct device *dev;
+ 	void __iomem *regs;
+-	spinlock_t regs_lock;
++	spinlock_t regs_lock; /* spinlock for all clocks */
+ 	const char *osc_name;
+ 
+ 	struct clk_onecell_data onecell;
+@@ -328,12 +325,12 @@ void __init bcm2835_init_clocks(void)
+ 	int ret;
+ 
+ 	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
+-					126000000);
++				      126000000);
+ 	if (IS_ERR(clk))
+ 		pr_err("apb_pclk not registered\n");
+ 
+ 	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
+-					3000000);
++				      3000000);
+ 	if (IS_ERR(clk))
+ 		pr_err("uart0_pclk not registered\n");
+ 	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
+@@ -341,7 +338,7 @@ void __init bcm2835_init_clocks(void)
+ 		pr_err("uart0_pclk alias not registered\n");
+ 
+ 	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
+-					125000000);
++				      125000000);
+ 	if (IS_ERR(clk))
+ 		pr_err("uart1_pclk not registered\n");
+ 	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
+@@ -1332,7 +1329,7 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ }
+ 
+ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+-		struct clk_rate_request *req)
++					struct clk_rate_request *req)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct clk_hw *parent, *best_parent = NULL;
+@@ -1390,7 +1387,6 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
+ 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
+ }
+ 
+-
+ static const struct clk_ops bcm2835_clock_clk_ops = {
+ 	.is_prepared = bcm2835_clock_is_on,
+ 	.prepare = bcm2835_clock_on,
+-- 
+1.7.10.4
