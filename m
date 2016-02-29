@@ -1,305 +1,46 @@
-Return-Path: <Joshua.Henderson@microchip.com>
-From: Joshua Henderson <joshua.henderson@microchip.com>
-To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Purna Chandra Mandal <purna.mandal@microchip.com>, Joshua Henderson
-	<joshua.henderson@microchip.com>, Ralf Baechle <ralf@linux-mips.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob
- Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
-	<mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar
- Gala <galak@codeaurora.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v6 1/2] dt/bindings: Add PIC32 clock binding documentation
-Date: Mon, 8 Feb 2016 14:28:16 -0700
-Message-ID: <1454966902-15228-1-git-send-email-joshua.henderson@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: joshua.henderson@microchip.com
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 0/3] reorganize clock initialization and add PCM clock
+Date: Mon, 29 Feb 2016 12:51:40 +0000
+Message-Id: <1456750304-2424-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Purna Chandra Mandal <purna.mandal@microchip.com>
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Document the devicetree bindings for the clock driver found on Microchip
-PIC32 class devices.
+As changing entries in the dt-bindings header files is frowned upon
+and as we would need to change BCM2835_CLOCK_COUNT for every new
+clock added, this patchset moves away from the use of
+BCM2835_CLOCK_COUNT and removes it from the dt-bindings alltogether.
 
-Signed-off-by: Purna Chandra Mandal <purna.mandal@microchip.com>
-Signed-off-by: Joshua Henderson <joshua.henderson@microchip.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
----
-Changes since v5: None
-Changes since v4: None
-Changes since v3: None
-Changes since v2:
-	- Force lowercase in PIC32 clock binding documentation
-Changes since v1: None
----
- .../devicetree/bindings/clock/microchip,pic32.txt  |  257 ++++++++++++++++++++
- 1 file changed, 257 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
+Instead - as recommended by Michael Turquette, Geert Uytterhoeven
+and Remi Pommarel - patch 1 introduces a new initialization
+process in probe that simply uses ARRAY_SIZE on a (sparse) array.
 
-diff --git a/Documentation/devicetree/bindings/clock/microchip,pic32.txt b/Documentation/devicetree/bindings/clock/microchip,pic32.txt
-new file mode 100644
-index 0000000..06540e4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/microchip,pic32.txt
-@@ -0,0 +1,257 @@
-+Binding for a Clock hardware block found on
-+certain Microchip PIC32 MCU devices.
-+
-+Microchip SoC clocks-node consists of few oscillators, PLL, multiplexer
-+and few divider nodes.
-+
-+We will find only the base address of the clock tree, this base
-+address is common for some of the subnodes, not all. If no address is
-+specified for any of subnode base address of the clock tree will be
-+treated as its base. Each of subnodes follow the same common clock
-+binding with some additional optional properties.
-+
-+	clocks_node {
-+		reg = <>;
-+
-+		spll_node {
-+			...
-+		};
-+
-+		frcdiv_node {
-+			...
-+		};
-+
-+		sysclk_mux_node {
-+			...
-+		};
-+
-+		pbdiv_node {
-+			...
-+		};
-+
-+		refoclk_node {
-+			...
-+		};
-+		...
-+	};
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible : should be one of "microchip,pic32mzda-clk",
-+    "microchip,pic32mzda-sosc", "microchip,pic32mzda-frcdivclk",
-+    "microchip,pic32mzda-syspll", "microchip,pic32mzda-sysclk-v2",
-+    "microchip,pic32mzda-pbclk", "microchip,pic32mzda-refoclk".
-+- reg : A Base address and length of the register set.
-+- interrupts : source of interrupt.
-+
-+Optional properties (for subnodes):
-+- #clock-cells: From common clock binding, should be 0.
-+- microchip,clock-indices: in multiplexer node clock sources always aren't linear
-+    and contiguous. This property helps define clock-sources with respect to
-+    the mux clock node.
-+- microchip,ignore-unused : ignore gate request even if the gated clock is unused.
-+- microchip,status-bit-mask: bitmask for status check. This will be used to confirm
-+    particular operation by clock sub-node is completed. It is dependent sub-node.
-+- microchip,bit-mask: enable mask, similar to microchip,status-bit-mask.
-+- microchip,slew-step: enable frequency slewing(stepping) during rate change;
-+    applicable only to sys-clock subnode.
-+
-+Example:
-+
-+/* PIC32 specific clks */
-+pic32_clktree {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	reg = <0x1f801200 0x200>;
-+	compatible = "microchip,pic32mzda-clk";
-+	ranges = <0 0x1f801200 0x200>;
-+
-+	/* secondary oscillator; external input on SOSCI pin */
-+	SOSC:sosc_clk@0 {
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-sosc";
-+		clock-frequency = <32768>;
-+		reg = <0x000 0x10>, /* enable reg */
-+		      <0x1d0 0x10>; /* status reg */
-+		microchip,bit-mask = <0x02>; /* enable mask */
-+		microchip,status-bit-mask = <0x10>; /* status-mask*/
-+	};
-+
-+	FRCDIV:frcdiv_clk {
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-frcdivclk";
-+		clocks = <&FRC>;
-+		clock-output-names = "frcdiv_clk";
-+	};
-+
-+	/* System PLL clock */
-+	SYSPLL:spll_clk@20 {
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-syspll";
-+		reg = <0x020 0x10>, /* SPLL register */
-+		      <0x1d0 0x10>; /* CLKSTAT register */
-+		clocks = <&POSC>, <&FRC>;
-+		clock-output-names = "sys_pll";
-+		microchip,status-bit-mask = <0x80>; /* SPLLRDY */
-+	};
-+
-+	/* system clock; mux with postdiv & slew */
-+	SYSCLK:sys_clk@1c0 {
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-sysclk-v2";
-+		reg = <0x1c0 0x04>; /* SLEWCON */
-+		clocks = <&FRCDIV>, <&SYSPLL>, <&POSC>, <&SOSC>,
-+			 <&LPRC>, <&FRCDIV>;
-+		microchip,clock-indices = <0>, <1>, <2>, <4>,
-+					  <5>, <7>;
-+		clock-output-names = "sys_clk";
-+	};
-+
-+	/* UPLL is integral part of USB PHY; UTMI clk for USBCORE */
-+	UPLL:usb_phy_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clocks";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "usbphy_clk";
-+	};
-+
-+	/* Peripheral bus1 clock */
-+	PBCLK1:pb1_clk@140 {
-+		reg = <0x140 0x10>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		clocks = <&SYSCLK>;
-+		clock-output-names = "pb1_clk";
-+		/* used by system modules, not gateable */
-+		microchip,ignore-unused;
-+	};
-+
-+	/* Peripheral bus2 clock */
-+	PBCLK2:pb2_clk@150 {
-+		reg = <0x150 0x10>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		clocks = <&SYSCLK>;
-+		clock-output-names = "pb2_clk";
-+		/* avoid gating even if unused */
-+		microchip,ignore-unused;
-+	};
-+
-+	/* Peripheral bus3 clock */
-+	PBCLK3:pb3_clk@160 {
-+		reg = <0x160 0x10>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		clocks = <&SYSCLK>;
-+		clock-output-names = "pb3_clk";
-+	};
-+
-+	/* Peripheral bus4 clock(I/O ports, GPIO) */
-+	PBCLK4:pb4_clk@170 {
-+		reg = <0x170 0x10>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		clocks = <&SYSCLK>;
-+		clock-output-names = "pb4_clk";
-+	};
-+
-+	/* Peripheral bus clock */
-+	PBCLK5:pb5_clk@180 {
-+		reg = <0x180 0x10>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		clocks = <&SYSCLK>;
-+		clock-output-names = "pb5_clk";
-+	};
-+
-+	/* Peripheral Bus6 clock; */
-+	PBCLK6:pb6_clk@190 {
-+		reg = <0x190 0x10>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		clocks = <&SYSCLK>;
-+		#clock-cells = <0>;
-+	};
-+
-+	/* Peripheral bus7 clock */
-+	PBCLK7:pb7_clk@1a0 {
-+		reg = <0x1a0 0x10>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-pbclk";
-+		/* CPU is driven by this clock; so named */
-+		clock-output-names = "cpu_clk";
-+		clocks = <&SYSCLK>;
-+	};
-+
-+	/* Reference Oscillator clock for SPI/I2S */
-+	REFCLKO1:refo1_clk@80 {
-+		reg = <0x080 0x20>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-refoclk";
-+		clocks = <&SYSCLK>, <&PBCLK1>, <&POSC>, <&FRC>, <&LPRC>,
-+			<&SOSC>, <&SYSPLL>, <&REFIx>, <&BFRC>;
-+		microchip,clock-indices = <0>, <1>, <2>, <3>, <4>,
-+					  <5>, <7>, <8>, <9>;
-+		clock-output-names = "refo1_clk";
-+	};
-+
-+	/* Reference Oscillator clock for SQI */
-+	REFCLKO2:refo2_clk@a0 {
-+		reg = <0x0a0 0x20>;
-+		#clock-cells = <0>;
-+		compatible = "microchip,pic32mzda-refoclk";
-+		clocks = <&SYSCLK>, <&PBCLK1>, <&POSC>, <&FRC>, <&LPRC>,
-+			 <&SOSC>, <&SYSPLL>, <&REFIx>, <&BFRC>;
-+		microchip,clock-indices = <0>, <1>, <2>, <3>, <4>,
-+					  <5>, <7>, <8>, <9>;
-+		clock-output-names = "refo2_clk";
-+	};
-+
-+	/* Reference Oscillator clock, ADC */
-+	REFCLKO3:refo3_clk@c0 {
-+		reg = <0x0c0 0x20>;
-+		compatible = "microchip,pic32mzda-refoclk";
-+		clocks = <&SYSCLK>, <&PBCLK1>, <&POSC>, <&FRC>, <&LPRC>,
-+			 <&SOSC>, <&SYSPLL>, <&REFIx>, <&BFRC>;
-+		microchip,clock-indices = <0>, <1>, <2>, <3>, <4>,
-+					  <5>, <7>, <8>, <9>;
-+		#clock-cells = <0>;
-+		clock-output-names = "refo3_clk";
-+	};
-+
-+	/* Reference Oscillator clock */
-+	REFCLKO4:refo4_clk@e0 {
-+		reg = <0x0e0 0x20>;
-+		compatible = "microchip,pic32mzda-refoclk";
-+		clocks = <&SYSCLK>, <&PBCLK1>, <&POSC>, <&FRC>, <&LPRC>,
-+			 <&SOSC>, <&SYSPLL>, <&REFIx>, <&BFRC>;
-+		microchip,clock-indices = <0>,<1>,<2>,<3>,<4>,
-+					  <5>,<7>,<8>,<9>;
-+		#clock-cells = <0>;
-+		clock-output-names = "refo4_clk";
-+	};
-+
-+	/* Reference Oscillator clock, LCD */
-+	REFCLKO5:refo5_clk@100 {
-+		reg = <0x100 0x20>;
-+		compatible = "microchip,pic32mzda-refoclk";
-+		clocks = <&SYSCLK>,<&PBCLK1>,<&POSC>,<&FRC>,<&LPRC>,
-+			 <&SOSC>,<&SYSPLL>,<&REFIx>,<&BFRC>;
-+		microchip,clock-indices = <0>, <1>, <2>, <3>, <4>,
-+					  <5>, <7>, <8>,<9>;
-+		#clock-cells = <0>;
-+		clock-output-names = "refo5_clk";
-+	};
-+};
-+
-+The clock consumer should specify the desired clock by having the clocks in its
-+"clock" phandle cell. For example for UART:
-+
-+uart2: serial@<> {
-+	compatible = "microchip,pic32mzda-uart";
-+	reg = <>;
-+	interrupts = <>;
-+	clocks = <&PBCLK2>;
-+}
--- 
-1.7.9.5
+With patch 2 the initialization of the array is simplified and
+better grouped together.
+
+Patch 3 introduces the pcm clock of the bcm2835 soc and already
+shows the simplification at work - the main reason for this patchset.
+
+Martin Sperl (3):
+  clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
+  clk: bcm2835: reorganize bcm2835_clock_array assignment
+  clk: bcm2835: enable management of PCM clock
+
+ drivers/clk/bcm/clk-bcm2835.c       |  918 +++++++++++++++++------------------
+ include/dt-bindings/clock/bcm2835.h |    3 +-
+ 2 files changed, 441 insertions(+), 480 deletions(-)
+
+--
+1.7.10.4
