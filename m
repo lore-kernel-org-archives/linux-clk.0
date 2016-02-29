@@ -1,101 +1,76 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	heiko@sntech.de,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 1/5] clk: sunxi: Make clocks setup functions return their clock
-Date: Tue,  2 Feb 2016 09:47:10 +0100
-Message-Id: <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:60495 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751942AbcB2BPS (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 28 Feb 2016 20:15:18 -0500
+Subject: Re: [PATCH v2] clk: check the actual phase if get_phase is provided
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1455759499-9622-1-git-send-email-shawn.lin@rock-chips.com>
+ <20160225231458.GH28849@codeaurora.org> <56CFA8B4.7070600@rock-chips.com>
+ <20160227001042.GC28849@codeaurora.org>
+Cc: shawn.lin@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <56D39B8C.9030008@rock-chips.com>
+Date: Mon, 29 Feb 2016 09:14:52 +0800
+MIME-Version: 1.0
+In-Reply-To: <20160227001042.GC28849@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks registration code in clk-sunxi was most of the time not
-returning the struct clk (or struct clk array) that was registered,
-preventing the users of such functions to manipulate it, for example to
-protect it.
+On 2016/2/27 8:10, Stephen Boyd wrote:
+> On 02/26, Shawn Lin wrote:
+>> On 2016/2/26 7:14, Stephen Boyd wrote:
+>>> On 02/18, Shawn Lin wrote:
+>>>> set_phase does sanity checking of degree and ask sub-driver
+>>
+>> [...]
+>>
+>>>> already there.
+>>>>
+>>>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>>>>
+>>>> ---
+>>>
+>>> Knee jerk reaction is why does the provider code set a phase that
+>>> isn't requested? Do we need some sort of clk_round_phase() API
+>>> that parallels clk_round_rate() so that drivers know what phase
+>>> they're going to get? Or do drivers not care what phase they get
+>>> when they call clk_set_phase()?
+>>
+>> Hi Stephen,
+>>
+>> drivers should care what phase they get when calling clk_set_phase(i.e
+>> the drivers setting phase to do tuning work should know what the actual
+>> degrees is, which is important for them to decide the sample window
+>> algorithm).
+>>
+>> By looking into the two drivers who use set_phase/get_phase pair
+>> currently, they actually both don'e care what the actual degrees when
+>> they call clk_set_phase. I think that is because the drivers are used
+>> for specific platform which support 0~360 implicitly. But the situation
+>> is NOT always right for cross-platform drivers. So add some sort of
+>> round_phase API is probably sane ?
+>>
+>
+> Do you have such a platform or driver though? I'd rather not do
+> anything unless we actually need to.
 
-Make them return it so that we can start using it.
+Currently no, but we going to have one soon in this year which supports
+10°, 20°, 30°,... 360°(each 10° a step, totally 36 steps). So I look
+into phase stuff in advance and send a RFC patch to discuss the
+practicability before I actually writing driver code.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+I have no idea whether we need it. Or maybe we can just do some tricks
+inside current ->set_phase/get_phase call back to meet the requirment.
+Otherwise， I'd rather not add New API either.
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index e460a6b0068c..67ef94948544 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -615,8 +615,8 @@ static const struct mux_data sun8i_h3_ahb2_mux_data __initconst = {
- 	.shift = 0,
- };
- 
--static void __init sunxi_mux_clk_setup(struct device_node *node,
--				       struct mux_data *data)
-+static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
-+					       struct mux_data *data)
- {
- 	struct clk *clk;
- 	const char *clk_name = node->name;
-@@ -638,6 +638,8 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 		clk_register_clkdev(clk, clk_name, NULL);
- 	}
-+
-+	return clk;
- }
- 
- 
-@@ -722,7 +724,6 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
- }
- 
- 
--
- /**
-  * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
-  */
-@@ -808,8 +809,8 @@ static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
-  *           |________________________|
-  */
- 
--static void __init sunxi_divs_clk_setup(struct device_node *node,
--					struct divs_data *data)
-+static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
-+						 struct divs_data *data)
- {
- 	struct clk_onecell_data *clk_data;
- 	const char *parent;
-@@ -836,7 +837,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
- 
- 	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
- 	if (!clk_data)
--		return;
-+		return NULL;
- 
- 	clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
-@@ -922,7 +923,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
- 
- 	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 
--	return;
-+	return clks;
- 
- free_gate:
- 	kfree(gate);
-@@ -930,6 +931,7 @@ free_clks:
- 	kfree(clks);
- free_clkdata:
- 	kfree(clk_data);
-+	return NULL;
- }
- 
- 
+>
+
+
 -- 
-2.6.4
+Best Regards
+Shawn Lin
+
