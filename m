@@ -1,65 +1,63 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH 3/6] clk: bcm2835: enable clocks that have been enabled by firmware
+In-Reply-To: <1456745963-2403-4-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org> <1456745963-2403-4-git-send-email-kernel@martin.sperl.org>
+Date: Mon, 29 Feb 2016 12:09:54 -0800
+Message-ID: <87vb575ld9.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
-References: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
-Date: Tue, 23 Feb 2016 09:19:27 +0100
-Message-ID: <CAMuHMdVDneo95F3JyFuvGZ_Bk4dL=ve41XONHj4b8DC4X7NMcQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: Remove ARCH_SHMOBILE_MULTI
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-CC The New Mike ;-)
+--=-=-=
+Content-Type: text/plain
 
-On Tue, Feb 23, 2016 at 1:57 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> As of 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") all platforms
-> that use Renesas clock drivers now select ARCH_RENESAS. As it is present in
-> drivers/clk/Makefile ARCH_SHMOBILE_MULTI may now be removed.
+kernel@martin.sperl.org writes:
+
+> From: Martin Sperl <kernel@martin.sperl.org>
 >
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> If a clock that has been enabled by the firmware gets disabled
+> by a driver this may right now result in a crash of the system
+> as then also the corresponding PLL_dividers as well as PLLs
+> get disabled (if not used) - some of which are used by the
+> VideoCore GPU (which also runs the firmware)
 >
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> ---
->  drivers/clk/Makefile | 1 -
->  1 file changed, 1 deletion(-)
+> This patch prepares/enables those clocks that have been
+> configured by the firmware.
 >
->  Based on clk-next
+> Whenever the clock framework implements either
+> CLK_IS_CRITICAL or HAND_OFF this can get changed to use this
+> new mechanism.
 >
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index bae4be6501df..b19af449d2f3 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -70,7 +70,6 @@ obj-$(CONFIG_COMMON_CLK_PXA)          += pxa/
->  obj-$(CONFIG_COMMON_CLK_QCOM)          += qcom/
->  obj-$(CONFIG_ARCH_ROCKCHIP)            += rockchip/
->  obj-$(CONFIG_COMMON_CLK_SAMSUNG)       += samsung/
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += shmobile/
+> For this to be completely successful (i.e not missing a clock
+> and subsequently a pll) it is recommended to add all the known
+> clocks of the soc so that this can get applied to all clocks.
 
-Should we rename clk/shmobile/ to clk/renesas/?
-Or is that too much of a hassle?
+I think this makes sense to have, for now at least.
 
->  obj-$(CONFIG_ARCH_RENESAS)             += shmobile/
->  obj-$(CONFIG_ARCH_SIRF)                        += sirf/
->  obj-$(CONFIG_ARCH_SOCFPGA)             += socfpga/
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
-Gr{oetje,eeting}s,
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIcBAEBCgAGBQJW1KWSAAoJELXWKTbR/J7oYV4QAJsOI+uEEPAuPETbpTFoOfuP
+Fwc4lQlEVLY4m0m1hEObeML9JaChfW115nBIwvrgirA2a1ZKR+UrDK8ua43I7pih
+oCpdFvluDZr69ZJLPuc1jTibN8VFitVaJkJLf27sL1eGVTTQkgRobgLyZW/UdLT5
+E75AHO3iS83FO+ecqqnwOQtks3n5EzzZq46LuHuepFJuS7hxmfAOrZptEXRF4q8f
+9OC35baCyArjdXo2tf0GzMW4rAldiCafC5u1HX/EDe6gHWCOQPX6GMX9aksrfJiA
+xq9/7ZziBWZgWdFNrfNhgwArs/446oshhyKYaaV/Q3qnvLcgO9heJqiX9ybVrHMh
+WQODhJxcGmVd0VDyNR6oCq15dv7RNRJR14IV5SFTLe8yEjoGR4EWy0h/M9tK2JpI
+QXLXMKjF88w7xdOMeNz3S1ttlvXJLpBDdsBKQYID3yJXwR3EMeJVN6LhnwZaWq9S
+agOCI6bjr8oVlUJbLfALigng4e6Z66aRoNVYJ+HwMoG2khEe5Ra+qZ6prHPHP3hJ
+HCbSHACkX5kktYge+uXdUbr8pN3Fdu4TXs1OrJbemzd/edOtPQwuHbKMvAWRCslm
+av12CQsiUjX2xvHB8RqRC9b+kEibBYtX58zcCUZxF44O3CJdro+zzIsh9ec/QQ/x
+UiNusdm9UArJDIC8zZFg
+=3q7P
+-----END PGP SIGNATURE-----
+--=-=-=--
