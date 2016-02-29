@@ -1,82 +1,60 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Rob Herring <robh+dt@kernel.org>,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/3] clk: sunxi: improve divider_clk error handling and reporting
-Date: Fri, 12 Feb 2016 15:11:52 +0000
-Message-Id: <1455289913-29514-3-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
-References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 3/3] clk: bcm2835: enable management of PCM clock
+Date: Mon, 29 Feb 2016 12:51:43 +0000
+Message-Id: <1456750304-2424-4-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456750304-2424-1-git-send-email-kernel@martin.sperl.org>
+References: <1456750304-2424-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We now report a failing ioremap, failing output names parsing,
-failures in table registration and in the final step.
-Also there was a bug where clk_register_divider_table() would return
-an ERR_PTR value instead of NULL, which we were checking for.
-We now implement proper rollback in case of an error.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Enable the PCM clock in the SOC, which is used by the
+bcm2835-i2s driver.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c       |    7 +++++++
+ include/dt-bindings/clock/bcm2835.h |    1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 361f396..1ac6c9e0 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -819,17 +819,44 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
- 	void __iomem *reg;
- 
- 	reg = of_iomap(node, 0);
-+	if (!reg) {
-+		pr_err("Could not map registers for mux-clk: %s\n", node->name);
-+		return;
-+	}
- 
- 	clk_parent = of_clk_get_parent_name(node, 0);
- 
--	of_property_read_string(node, "clock-output-names", &clk_name);
-+	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-+		pr_err("%s: could not read clock-output-names for \"%s\"\n",
-+		       __func__, clk_name);
-+		goto out_unmap;
-+	}
- 
- 	clk = clk_register_divider_table(NULL, clk_name, clk_parent, 0,
- 					 reg, data->shift, data->width,
- 					 data->pow ? CLK_DIVIDER_POWER_OF_TWO : 0,
- 					 data->table, &clk_lock);
--	if (clk)
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register divider clock %s: %ld\n",
-+		       __func__, clk_name, PTR_ERR(clk));
-+		goto out_unmap;
-+	}
-+
-+	if (of_clk_add_provider(node, of_clk_src_simple_get, clk)) {
-+		pr_err("%s: failed to add clock provider for %s\n",
-+		       __func__, clk_name);
-+		goto out_unregister;
-+	}
-+
-+	if (!clk_register_clkdev(clk, clk_name, NULL))
-+		return;
-+
-+	of_clk_del_provider(node);
-+out_unregister:
-+	clk_unregister_divider(clk);
-+
-+out_unmap:
-+	iounmap(reg);
- }
- 
- static void __init sun4i_ahb_clk_setup(struct device_node *node)
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index f6ac110..0b2fd9d 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1537,6 +1537,13 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_HSMDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
++		.name = "pcm",
++		.ctl_reg = CM_PCMCTL,
++		.div_reg = CM_PCMDIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
+ 		.ctl_reg = CM_PWMCTL,
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 87235ac..9a7b4a5 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -44,3 +44,4 @@
+ #define BCM2835_CLOCK_EMMC		28
+ #define BCM2835_CLOCK_PERI_IMAGE	29
+ #define BCM2835_CLOCK_PWM		30
++#define BCM2835_CLOCK_PCM		31
 -- 
-2.6.4
+1.7.10.4
