@@ -1,109 +1,164 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
-Subject: [PATCH v2 5/8] arm: dts: add Artpec-6 development board dts
-Date: Thu, 11 Feb 2016 15:04:39 +0100
-Message-Id: <7cb2fe1c0e188ae9eb478a8ec6ee6aa226491bc6.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Jonathan Corbet <corbet@lwn.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 5/8] clk: bcm2835: add the dsi clocks
+Date: Mon, 29 Feb 2016 15:43:59 +0000
+Message-Id: <1456760642-2412-6-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- arch/arm/boot/dts/Makefile             |  2 ++
- arch/arm/boot/dts/artpec6-devboard.dts | 64 ++++++++++++++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
- create mode 100644 arch/arm/boot/dts/artpec6-devboard.dts
+From: Martin Sperl <kernel@martin.sperl.org>
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index a4a6d70..2ebe99c 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -2,6 +2,8 @@ ifeq ($(CONFIG_OF),y)
+Add the missing dsi clocks using the currently "best known"
+parent-mux available for these clocks.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   88 +++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |    4 ++
+ 2 files changed, 92 insertions(+)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index aec9b22..91a6086 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -199,6 +199,8 @@
+ # define CM_LOCK_FLOCKA			BIT(8)
  
- dtb-$(CONFIG_ARCH_ALPINE) += \
- 	alpine-db.dtb
-+dtb-$(CONFIG_MACH_ARTPEC6) += \
-+	artpec6-devboard.dtb
- dtb-$(CONFIG_MACH_ASM9260) += \
- 	alphascale-asm9260-devkit.dtb
- # Keep at91 dtb files sorted alphabetically for each SoC
-diff --git a/arch/arm/boot/dts/artpec6-devboard.dts b/arch/arm/boot/dts/artpec6-devboard.dts
-new file mode 100644
-index 0000000..f823ed3
---- /dev/null
-+++ b/arch/arm/boot/dts/artpec6-devboard.dts
-@@ -0,0 +1,64 @@
-+/*
-+ * Axis ARTPEC-6 development board.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "artpec6.dtsi"
-+
-+/ {
-+	model = "ARTPEC-6 development board";
-+	compatible = "axis,artpec6-dev-board", "axis,artpec6";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial3:115200n8";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x10000000>;
-+	};
+ #define CM_EVENT		0x118
++#define CM_DSI0HSCK		0x120
++# define CM_DSI0HSCK_SELPLLD		BIT(0)
+ #define CM_DSI1ECTL		0x158
+ #define CM_DSI1EDIV		0x15c
+ #define CM_DSI1PCTL		0x160
+@@ -1483,10 +1485,68 @@ static const char * const bcm2835_clock_ccp2_parents[] = {
+ 	.parents = bcm2835_clock_ccp2_parents,				\
+ 	__VA_ARGS__)
+ 
++/* dsi0 parent mux */
++static const char * const bcm2835_clock_dsi0_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	/*
++	 * more parent clocks, but unknown at this time
++	 * the current definition follows the "common" pattern
++	 * that already applies to all the other parent mux
++	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
++	 * as the first 3 entries.
++	 * The mux should contain "plla_dsi0/plld_dsi0" at one position.
++	 *   the selection which pll is used depends on CM_DSI0HSCK_SELPLLD
++	 * here some possible candidates for the next parents in the list.
++	 *   plla_core/per or plla_dsi0/plld_dsi0
++	 *   pllc_core/per
++	 *   plld_core/per
++	 *   pllh_aux/pix
++	 *   maybe plla_dsi0/plld_dsi0 (depends on CM_DSI0HSCK_SELPLLD)
++	 * up to 16 different parents
++	 */
 +};
 +
-+&uart0 {
-+	status = "okay";
++#define REGISTER_DSI0_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi0_parents),	\
++	.parents = bcm2835_clock_dsi0_parents,				\
++	__VA_ARGS__)
++
++/* dsi1 parent mux */
++static const char * const bcm2835_clock_dsi1_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	/*
++	 * more parent clocks, but unknown at this time
++	 * the current definition follows the "common" pattern
++	 * that already applies to all the other parent mux
++	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
++	 * as the first 3 entries.
++	 * The mux should contain "plld_dsi1" at one position.
++	 * here some possible candidates for the next parents in the list.
++	 *   plla_core/per
++	 *   pllc_core/per
++	 *   plld_core/per or plld_dsi1
++	 *   pllh_aux/pix
++	 *   maybe plld_dsi1
++	 * up to 16 different parents
++	 */
 +};
 +
-+&uart1 {
-+	status = "okay";
-+};
++#define REGISTER_DSI1_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi1_parents),	\
++	.parents = bcm2835_clock_dsi1_parents,				\
++	__VA_ARGS__)
 +
-+&uart2 {
-+	status = "okay";
-+};
+ /*
+  * the real definition of all the pll, pll_dividers and clocks
+  * these make use of the above REGISTER_* macros
+  */
 +
-+&uart3 {
-+	status = "okay";
-+};
+ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	/* the PLL + PLL dividers */
+ 
+@@ -1950,6 +2010,34 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 1,
+ 		.frac_bits = 0),
+ 
++	/* dsi clocks */
++	[BCM2835_CLOCK_DSI0E]	= REGISTER_DSI0_CLK(
++		.name = "dsi0e",
++		.ctl_reg = CM_DSI0ECTL,
++		.div_reg = CM_DSI0EDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	[BCM2835_CLOCK_DSI0_IMAGE] = REGISTER_DSI0_CLK(
++		/* this is in principle a gate with a 4 bit mux */
++		.name = "dsi0_image",
++		.ctl_reg = CM_DSI0PCTL,
++		.div_reg = CM_DSI0PDIV,
++		.int_bits = 1,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DSI1E]	= REGISTER_DSI1_CLK(
++		.name = "dsi1e",
++		.ctl_reg = CM_DSI1ECTL,
++		.div_reg = CM_DSI1EDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
++	[BCM2835_CLOCK_DSI1_IMAGE] = REGISTER_DSI1_CLK(
++		/* this is in principle a gate with a 4 bit mux */
++		.name = "dsi1_image",
++		.ctl_reg = CM_DSI1PCTL,
++		.div_reg = CM_DSI1PDIV,
++		.int_bits = 1,
++		.frac_bits = 0),
 +
-+&ethernet {
-+	status = "okay";
-+
-+	phy-handle = <&phy1>;
-+	phy-mode = "gmii";
-+
-+	mdio {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+		phy1: phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			device_type = "ethernet-phy";
-+			reg = <0x0>;
-+		};
-+	};
-+};
+ 	/* the gates */
+ 
+ 	/*
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 1d70088..9254c78 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -66,3 +66,7 @@
+ #define BCM2835_CLOCK_CAM0		48
+ #define BCM2835_CLOCK_CAM1		49
+ #define BCM2835_CLOCK_CCP2		50
++#define BCM2835_CLOCK_DSI0E		51
++#define BCM2835_CLOCK_DSI0_IMAGE	52
++#define BCM2835_CLOCK_DSI1E		53
++#define BCM2835_CLOCK_DSI1_IMAGE	54
 -- 
-2.1.4
+1.7.10.4
