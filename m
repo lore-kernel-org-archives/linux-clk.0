@@ -1,51 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:43588 "EHLO
-	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751929AbcBLL4F convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2016 06:56:05 -0500
-Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in console
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Content-Type: text/plain; charset=us-ascii
-From: Martin Sperl <martin@sperl.org>
-In-Reply-To: <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de>
-Date: Fri, 12 Feb 2016 12:56:09 +0100
-Cc: Eric Anholt <eric@anholt.net>,
-	linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
-Message-Id: <662D2FB2-B088-4CFC-8416-A4F35BBAD7DD@sperl.org>
-References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org> <56BC895E.2010108@sperl.org> <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH 4/6] clk: bcm2835: divider value has to be 1 or more
+In-Reply-To: <1456745963-2403-5-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org> <1456745963-2403-5-git-send-email-kernel@martin.sperl.org>
+Date: Mon, 29 Feb 2016 12:11:28 -0800
+Message-ID: <87si0b5lan.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
+--=-=-=
+Content-Type: text/plain
 
-> On 11.02.2016, at 18:55, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> I think the reason for this behavior can be found in the uart-pl011 driver which
-> plays with the clocks.
-> 
-I will look into the why and share what I find...
+kernel@martin.sperl.org writes:
 
-> According to the clock tree "plld" seems to be critical and shouldn't be
-> disabled?
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> Current clamping of a normal divider allows a value < 1 to be valid.
+>
+> A divider of < 1 would actually only be possible if we had a PLL...
+>
+> So this patch clamps the divider to 1.
+>
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
+> audio domain clocks")
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 
-Then we may need to avoid this - but as far as I can tell
-the amba-pl011 driver only disables the clock in error cases
-(or when shutting down).
-Maybe we just need to disable the shutdown of the plld?
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
->> Is this maybe related to the uart0_pclk, uart1_pclk, apb_pclk
->> clocks created and registered in bcm2835_init_clocks?
-> 
-> Related or not i think we should get the rid off them.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-A quick test shows that an empty bcm2835_init_clocks
-does not change the basic kernel-boot behavior and everything
-seems to work.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-So we probably should remove it in:
-* arch/arm/mach-bcm/board_bcm2835.c (call)
-* drivers/clk/bcm/clk-bcm2835.c (function definition)
-
-Martin
-
+iQIcBAEBCgAGBQJW1KXwAAoJELXWKTbR/J7o4EoQAIFgNjMti3HJxsSp2Zu8Bl1T
+jdF3etIrNF0AG+Kebt5sjCprtbGNJXKoIOxCGiNq69O09CnivtnTX2G1ntT5JxWs
+UPGr2vlAPoZYMCW6psIcVgJpuf0qV3Ly1gY0ieXW4dqDpZhzH91iDOj0NoILLw7z
+IRDzVBqzKGzZxTT22FUSb2k6i3J7H8RZAnaPUqn7Bo0gMkMzb2XPlvoes7A4h+AD
+yTxWAHJecrhgjLlYOZgYBPHtpYcJplZLxYvWlU85Ta1u3tSnVKtdxy4RckZwgtiL
+Y8Uc45itmaqhq7l6RPGddxM5uAHOTAYwQPBHYHq+o/S8z8YaOHbpOIMV140VD25r
+wdtkocZXg+GiImKH+EXt520zSUpoZuzzgyiPl+wnpfBL6cOMRA2oZ/+gVQZlvO1r
+av8PF5aZbCVcHtdMaWRMLc0aMmU7bubC4r2HGnYbhdUlZISL/6tvWgNyRKZbSiI8
+sVpLnkHhpf8kAWxdms/7/G9lQ4A50QODTVC9TgxXUhRpkc22OS9NAR504RhYfxYz
+1adIaMNmPv0c0LWH/zVruEQ6t03zQog9cw8SXVp+EWgO2dBV8QR6zX4yJfJCKjc6
+PMTo7HszwfWs0AKFvqANlaHwHOiiuOIX+9uJBHEmFaHXh1DgHSoAfuJadY8ZIrvU
+CBytSiKmzSrcl4jBIkPG
+=m40E
+-----END PGP SIGNATURE-----
+--=-=-=--
