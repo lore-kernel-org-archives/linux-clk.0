@@ -1,32 +1,52 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] cleanup and add missing input_sel settings to imx6ul-pinfunc.h
-Date: Fri, 26 Feb 2016 15:52:57 +0100
-Message-Id: <1456498379-6109-1-git-send-email-LW@KARO-electronics.de>
-References: <20160226124413.71cef89a@ipc1.ka-ro>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 4/6] clk: bcm2835: divider value has to be 1 or more
+Date: Mon, 29 Feb 2016 11:39:20 +0000
+Message-Id: <1456745963-2403-5-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds missing input_sel settings to imx6ul-pinfunc.h.
-The first patch is a cleanup patch with no functional changes
-intended.
+From: Martin Sperl <kernel@martin.sperl.org>
+
+Current clamping of a normal divider allows a value < 1 to be valid.
+
+A divider of < 1 would actually only be possible if we had a PLL...
+
+So this patch clamps the divider to 1.
+
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
+audio domain clocks")
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 1fbb55d..edb1f74 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1194,8 +1194,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 		div += unused_frac_mask + 1;
+ 	div &= ~unused_frac_mask;
+
+-	/* Clamp to the limits. */
+-	div = max(div, unused_frac_mask + 1);
++	/* clamp to min divider of 1 */
++	div = max_t(u32, div, 1 << CM_DIV_FRAC_BITS);
++	/* clamp to the highest possible fractional divider */
+ 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
+ 				      CM_DIV_FRAC_BITS - data->frac_bits));
+
+--
+1.7.10.4
