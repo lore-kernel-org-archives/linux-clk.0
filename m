@@ -1,111 +1,40 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <dev@lynxeye.de>
+From: Lucas Stach <dev@lynxeye.de>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 6/8] clk: bcm2835: add arm clock
-Date: Mon, 29 Feb 2016 15:44:00 +0000
-Message-Id: <1456760642-2412-7-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 1/2] clk: tegra30: init PLL_C to sane rate
+Date: Mon, 29 Feb 2016 21:46:06 +0100
+Message-Id: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+If the bootloader does not touch PLL_C it will stay in its reset
+state, failing to lock when enabled. This leads to consumers of
+this clock to fail probing. Fix this by always programming the
+PLL with a sane rate, which allows it to lock, at startup.
 
-Add the missing "ARM" clock to the clock framework.
-This clock is essentially a gate clock but with a
-16 channel mux.
-
-We assume this is a mux that uses PLLB_ARM, so a dedicated
-mux for arm was created.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
 ---
- drivers/clk/bcm/clk-bcm2835.c       |   34 +++++++++++++++++++++++++++++++++-
- include/dt-bindings/clock/bcm2835.h |    1 +
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra30.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 91a6086..12ce209 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -118,6 +118,7 @@
- #define CM_SDCCTL		0x1a8
- #define CM_SDCDIV		0x1ac
- #define CM_ARMCTL		0x1b0
-+#define CM_ARMDIV		0x1b4
- #define CM_AVEOCTL		0x1b8
- #define CM_AVEODIV		0x1bc
- #define CM_EMMCCTL		0x1c0
-@@ -1542,11 +1543,33 @@ static const char * const bcm2835_clock_dsi1_parents[] = {
- 	.parents = bcm2835_clock_dsi1_parents,				\
- 	__VA_ARGS__)
- 
-+/* arm parent mux */
-+static const char * const bcm2835_clock_arm_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	/*
-+	 * see comments for dsi0 for possible candidates
-+	 * should contain "pllb_arm" at one position
-+	 *   plla_core/per
-+	 *   pllb_arm or pllb_core/per
-+	 *   pllc_core/per
-+	 *   plld_core/per
-+	 *   pllh_aux/pix
-+	 * up to 16 different parents
-+	 */
-+};
-+
-+#define REGISTER_ARM_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_arm_parents),	\
-+	.parents = bcm2835_clock_arm_parents,				\
-+	__VA_ARGS__)
-+
- /*
-  * the real definition of all the pll, pll_dividers and clocks
-  * these make use of the above REGISTER_* macros
-  */
--
- static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	/* the PLL + PLL dividers */
- 
-@@ -2038,6 +2061,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.int_bits = 1,
- 		.frac_bits = 0),
- 
-+	/* arm clocks */
-+	[BCM2835_CLOCK_DSI1_IMAGE] = REGISTER_ARM_CLK(
-+		/* this is in principle a gate with a 4 bit mux */
-+		.name = "arm",
-+		.ctl_reg = CM_ARMCTL,
-+		.div_reg = CM_ARMDIV,
-+		.int_bits = 1,
-+		.frac_bits = 0),
-+
- 	/* the gates */
- 
- 	/*
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 9254c78..109086e 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -70,3 +70,4 @@
- #define BCM2835_CLOCK_DSI0_IMAGE	52
- #define BCM2835_CLOCK_DSI1E		53
- #define BCM2835_CLOCK_DSI1_IMAGE	54
-+#define BCM2835_CLOCK_ARM		55
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 0478565..236e2db 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1372,6 +1372,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SBC4, TEGRA30_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA30_CLK_SBC5, TEGRA30_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
++	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
+ 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
+ 	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
 -- 
-1.7.10.4
+2.5.0
