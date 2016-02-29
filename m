@@ -1,101 +1,184 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47634 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750837AbcB2XUP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 29 Feb 2016 18:20:15 -0500
-Date: Mon, 29 Feb 2016 15:20:12 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
- gating
-Message-ID: <20160229232011.GU13417@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-2-git-send-email-fcooper@ti.com>
- <20160229220444.GQ13417@atomide.com>
- <56D4C69D.1090100@ti.com>
- <20160229225536.GR13417@atomide.com>
- <56D4D032.7040801@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56D4D032.7040801@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Jonathan Corbet <corbet@lwn.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 3/8] clk: bcm2835: add missing osc and per clocks
+Date: Mon, 29 Feb 2016 15:43:57 +0000
+Message-Id: <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Franklin S Cooper Jr. <fcooper@ti.com> [160229 15:12]:
-> 
-> 
-> On 02/29/2016 04:55 PM, Tony Lindgren wrote:
-> > * Franklin S Cooper Jr. <fcooper@ti.com> [160229 14:31]:
-> >> On 02/29/2016 04:04 PM, Tony Lindgren wrote:
-> >>> Hmm but why are you also removing the pm_runtime calls? Those
-> >>> actually do take care of gating the clocks via the interconnect
-> >>> level code that is hwmod in this case.
-> >> I removed all PM runtime calls that revolved around
-> >> pwmss_submodule_state_change. Originally the driver would do
-> >> a pm_runtime_get_sync then call pwmss_submodule_state_change
-> >> and then immediately call pm_runtime_put_sync. Without
-> >> pwmss_submodule_state_change those calls would be
-> >> meaningless.  I also removed pm_runtime calls in error paths
-> >> that no longer existed.
-> > Typically the interconnect level code can gate the clkctrl bit
-> > for the module with PM runtime even with no other driver specific
-> > registers. If you remove the pm_runtime calls, that does not
-> > happen.
-> 
-> So the clocks should be unlocked when ever the IP registers are
-> being read/written or if the peripheral is being used for
-> example
-> the pwm signal is being generated. All these cases are already
-> being handled.
-> 
-> Using ecap driver as an example.
-> 
-> Pm_runtime_get_sync is called within ecap_pwm_enable when
-> the pwm signal is to be generated. Pm_runtime_put_sync is called
-> when the pwm signal is to be stopped.
-> 
-> When either the pwm signal polarity is set or pwm
-> configuration is made
-> then a pm_runtime_get_sync and pm_runtime_put_sync are
-> called within
-> the same function surrounding calls to the IP's registers.
-> 
-> Probe is calling pm_runtime_enable while remove is calling
-> pm_runtime_disable.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-OK good to hear you have considered this. The above answers
-my questions then thanks.
+Add definitions for the following clocks:
+* AVE0
+* DFT
+* GP0
+* GP1
+* GP2
+* PULSE
+* SLIM
+* SMI
+* TEC
 
-> So the correct pm_runtime calls are being made from what I
-> can see.
-> I'm not sure I understand the concern since removing those
-> calls aren't
-> creating any kind of imbalance.
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   71 +++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |   10 +++++
+ 2 files changed, 81 insertions(+)
 
-OK thanks for checking.
-
-> If I'm not addressing your concern please give me an example
-> of where
-> you see a possible issue.
-
-No that's fine. I thought you're ripping out all of the the
-pm_runtime based on just looking at the patch :)
-
-> > Also, how do you know this change does not affect the other
-> > SoC variants using the same driver?
-> 
-> I've tested these changes on AM335x GP and AM437x GP evms.
-> AM335x
-> and AM437x were the only other users of this driver. Sorry 
-> I should of
-> documented this in my cover-letter.
-
-OK good to hear.
-
-Thanks,
-
-Tony
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 710cf15..f43e1ca 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -118,6 +118,8 @@
+ #define CM_SDCCTL		0x1a8
+ #define CM_SDCDIV		0x1ac
+ #define CM_ARMCTL		0x1b0
++#define CM_AVEOCTL		0x1b8
++#define CM_AVEODIV		0x1bc
+ #define CM_EMMCCTL		0x1c0
+ #define CM_EMMCDIV		0x1c4
+ 
+@@ -1738,6 +1740,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_TSENSDIV,
+ 		.int_bits = 5,
+ 		.frac_bits = 0),
++	[BCM2835_CLOCK_PULSE]	= REGISTER_OSC_CLK(
++		.name = "pulse",
++		.ctl_reg = CM_PULSECTL,
++		.div_reg = CM_PULSEDIV,
++		.int_bits = 12,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_TEC]	= REGISTER_OSC_CLK(
++		.name = "tec",
++		.ctl_reg = CM_TECCTL,
++		.div_reg = CM_TECDIV,
++		.int_bits = 6,
++		.frac_bits = 0),
+ 
+ 	/* clocks with vpu parent mux */
+ 	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
+@@ -1752,6 +1766,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_ISPDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++
+ 	/*
+ 	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
+ 	 * in the SDRAM controller can't be used.
+@@ -1783,6 +1798,24 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.is_vpu_clock = true),
+ 
+ 	/* clocks with per parent mux */
++	[BCM2835_CLOCK_AVEO]	= REGISTER_PER_CLK(
++		.name = "aveo",
++		.ctl_reg = CM_AVEOCTL,
++		.div_reg = CM_AVEODIV,
++		.int_bits = 4,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
++		.name = "dft",
++		.ctl_reg = CM_DFTCTL,
++		.div_reg = CM_DFTDIV,
++		.int_bits = 5,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
++		.name = "dpi",
++		.ctl_reg = CM_DPICTL,
++		.div_reg = CM_DPIDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
+ 
+ 	/* Arasan EMMC clock */
+ 	[BCM2835_CLOCK_EMMC]	= REGISTER_PER_CLK(
+@@ -1791,6 +1824,30 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_EMMCDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++
++	/* General purpose (GPIO) clocks */
++	[BCM2835_CLOCK_GP0]	= REGISTER_PER_CLK(
++		.name = "gp0",
++		.ctl_reg = CM_GP0CTL,
++		.div_reg = CM_GP0DIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_GP1]	= REGISTER_PER_CLK(
++		.name = "gp1",
++		.ctl_reg = CM_GP1CTL,
++		.div_reg = CM_GP1DIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_GP2]	= REGISTER_PER_CLK(
++		.name = "gp2",
++		.ctl_reg = CM_GP2CTL,
++		.div_reg = CM_GP2DIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++
+ 	/* HDMI state machine */
+ 	[BCM2835_CLOCK_HSM]	= REGISTER_PER_CLK(
+ 		.name = "hsm",
+@@ -1812,12 +1869,26 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+ 		.is_mash_clock = true),
++	[BCM2835_CLOCK_SLIM]	= REGISTER_PER_CLK(
++		.name = "slim",
++		.ctl_reg = CM_SLIMCTL,
++		.div_reg = CM_SLIMDIV,
++		.int_bits = 12,
++		.frac_bits = 12,
++		.is_mash_clock = true),
++	[BCM2835_CLOCK_SMI]	= REGISTER_PER_CLK(
++		.name = "smi",
++		.ctl_reg = CM_SMICTL,
++		.div_reg = CM_SMIDIV,
++		.int_bits = 4,
++		.frac_bits = 8),
+ 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
+ 		.name = "uart",
+ 		.ctl_reg = CM_UARTCTL,
+ 		.div_reg = CM_UARTDIV,
+ 		.int_bits = 10,
+ 		.frac_bits = 12),
++
+ 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+ 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
+ 		.name = "vec",
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 9689812..f2e72e7 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -53,3 +53,13 @@
+ #define BCM2835_PLLB_SP2		36
+ #define BCM2835_PLLD_DSI0		37
+ #define BCM2835_PLLD_DSI1		38
++
++#define BCM2835_CLOCK_AVEO		39
++#define BCM2835_CLOCK_DFT		40
++#define BCM2835_CLOCK_GP0		41
++#define BCM2835_CLOCK_GP1		42
++#define BCM2835_CLOCK_GP2		43
++#define BCM2835_CLOCK_PULSE		44
++#define BCM2835_CLOCK_SLIM		45
++#define BCM2835_CLOCK_SMI		46
++#define BCM2835_CLOCK_TEC		47
+-- 
+1.7.10.4
