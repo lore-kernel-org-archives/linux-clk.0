@@ -1,44 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50364 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968AbcBYWdT (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2016 17:33:19 -0500
-Date: Thu, 25 Feb 2016 14:33:16 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Matthew McClintock <mmcclint@qca.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	qca-upstream.external@qca.qualcomm.com,
-	Pradeep Banavathi <pradeepb@codeaurora.org>,
-	Senthilkumar N L <snlakshm@codeaurora.org>,
-	Matthew McClintock <mmcclint@codeaurora.org>,
-	Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH v3 2/6] clk: qcom: Add IPQ4019 Global Clock Controller
- support
-Message-ID: <20160225223316.GN4847@codeaurora.org>
-References: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
- <1447975173-29485-3-git-send-email-mmcclint@qca.qualcomm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447975173-29485-3-git-send-email-mmcclint@qca.qualcomm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Jonathan Corbet <corbet@lwn.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 8/8] clk: bcm2835: add the testdebug clock generators
+Date: Mon, 29 Feb 2016 15:44:02 +0000
+Message-Id: <1456760642-2412-9-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/19, Matthew McClintock wrote:
-> From: Varadarajan Narayanan <varada@codeaurora.org>
-> 
-> This patch adds support for the global clock controller found on
-> the IPQ4019 based devices. This includes UART, I2C, SPI etc.
-> 
-> Signed-off-by: Pradeep Banavathi <pradeepb@codeaurora.org>
-> Signed-off-by: Senthilkumar N L <snlakshm@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
-> ---
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Applied to clk-ipq4019 and merged into clk-next.
+Add the testdebug0/1 clock generators using the osc parent mux.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+These may also require PM_DEBUG to work propperly.
+Also the parents are - for now - unclear, so we assume osc parents.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   19 +++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |    2 ++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2ddff8f..926fdf5 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1865,6 +1865,25 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_TECDIV,
+ 		.int_bits = 6,
+ 		.frac_bits = 0),
++	/*
++	 * testdebug clocks
++	 * these may possibly require PM_DEBUG to be set as well
++	 * for now we assume these are using the osc parent mux
++	 * (note that testdebugX is in this mux as well,
++	 * so it may produce issues)
++	 */
++	[BCM2835_CLOCK_TESTDEBUG0] = REGISTER_OSC_CLK(
++		.name = "testdebug0",
++		.ctl_reg = CM_TD0CTL,
++		.div_reg = CM_TD0DIV,
++		.int_bits = 12,
++		.frac_bits = 12),
++	[BCM2835_CLOCK_TESTDEBUG0] = REGISTER_OSC_CLK(
++		.name = "testdebug1",
++		.ctl_reg = CM_TD1CTL,
++		.div_reg = CM_TD1DIV,
++		.int_bits = 12,
++		.frac_bits = 12),
+
+ 	/* clocks with vpu parent mux */
+ 	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 7bc03cd..c752392 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -73,3 +73,5 @@
+ #define BCM2835_CLOCK_ARM		55
+ #define BCM2835_CLOCK_PERA		56
+ #define BCM2835_CLOCK_SYS		57
++#define BCM2835_CLOCK_TESTDEBUG0	58
++#define BCM2835_CLOCK_TESTDEBUG1	59
+--
+1.7.10.4
