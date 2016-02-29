@@ -1,37 +1,83 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1454317018.3447.3.camel@pengutronix.de>
-Subject: Re: [PATCH v5 5/6] reset: mediatek: Add MT2701 reset controller
- dt-binding file
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
- <robh@kernel.org>, John Crispin <blogic@openwrt.org>, Sascha Hauer
- <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
- srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, Shunli Wang
- <shunli.wang@mediatek.com>
-Date: Mon, 01 Feb 2016 09:56:58 +0100
-In-Reply-To: <1453879264-37915-6-git-send-email-jamesjj.liao@mediatek.com>
-References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1453879264-37915-6-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:35501 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752206AbcB2WbZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 29 Feb 2016 17:31:25 -0500
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+To: Tony Lindgren <tony@atomide.com>
+CC: <paul@pwsan.com>, <t-kristo@ti.com>, <vigneshr@ti.com>,
+	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
+ gating
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-2-git-send-email-fcooper@ti.com>
+ <20160229220444.GQ13417@atomide.com>
+Message-ID: <56D4C69D.1090100@ti.com>
+Date: Mon, 29 Feb 2016 16:30:53 -0600
+MIME-Version: 1.0
+In-Reply-To: <20160229220444.GQ13417@atomide.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, den 27.01.2016, 15:21 +0800 schrieb James Liao:
-> From: Shunli Wang <shunli.wang@mediatek.com>
-> 
-> Dt-binding file about reset controller is used to provide
-> kinds of definition, which is referenced by dts file and
-> IC-specified reset controller driver code.
-> 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> Tested-by: John Crispin <blogic@openwrt.org>
+Hi Tony,
 
-In case you missed my Acked-by for patches 5 and 6, it still stands.
+On 02/29/2016 04:04 PM, Tony Lindgren wrote:
+> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+>> The PWMSS local clock gating registers have no real purpose on OMAP ARM
+>> devices. These registers were left over registers from DSP IP where the
+>> PRCM doesn't exist. There is a silicon bug where gating and ungating clocks
+>> don't function properly. TRMs will be update to indicate that these
+>> registers shouldn't be touched.
+>>
+>> Therefore, all code that accesses the PWMSS_CLKCONFIG or PWMSS_CLKSTATUS
+>> will be removed by this patch with zero loss of functionality by the ECAP
+>> and EPWM drivers.
+>> @@ -243,40 +240,15 @@ static int ecap_pwm_probe(struct platform_device *pdev)
+>>  	}
+>>  
+>>  	pm_runtime_enable(&pdev->dev);
+>> -	pm_runtime_get_sync(&pdev->dev);
+>> -
+>> -	status = pwmss_submodule_state_change(pdev->dev.parent,
+>> -			PWMSS_ECAPCLK_EN);
+>> -	if (!(status & PWMSS_ECAPCLK_EN_ACK)) {
+>> -		dev_err(&pdev->dev, "PWMSS config space clock enable failed\n");
+>> -		ret = -EINVAL;
+>> -		goto pwmss_clk_failure;
+>> -	}
+>> -
+>> -	pm_runtime_put_sync(&pdev->dev);
+>>  
+>>  	platform_set_drvdata(pdev, pc);
+>>  	return 0;
+>> -
+>> -pwmss_clk_failure:
+>> -	pm_runtime_put_sync(&pdev->dev);
+>> -	pm_runtime_disable(&pdev->dev);
+>> -	pwmchip_remove(&pc->chip);
+>> -	return ret;
+>>  }
+> Hmm but why are you also removing the pm_runtime calls? Those
+> actually do take care of gating the clocks via the interconnect
+> level code that is hwmod in this case.
+I removed all PM runtime calls that revolved around
+pwmss_submodule_state_change. Originally the driver would do
+a pm_runtime_get_sync then call pwmss_submodule_state_change
+and then immediately call pm_runtime_put_sync. Without
+pwmss_submodule_state_change those calls would be
+meaningless.  I also removed pm_runtime calls in error paths
+that no longer existed.
 
-regards
-Philipp
+Within ecap and epwm driver pm_runtime_get is done when
+pwm_enable is called  and pm_runtime_sync calls are done
+when pwm_disable is called. Similar pm_runtime_get and
+pm_runtime_sync calls are done in functions that ended up
+touching register's within the IP.
+>
+> Regards,
+>
+> Tony
+
