@@ -1,49 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Feb 2016 12:43:37 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to
- __clk_core_init()
-Message-ID: <20160202204337.GO4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
- <20160202005051.GO4848@codeaurora.org>
- <CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
- <20160202023922.GL4848@codeaurora.org>
- <CAK7LNAQb-y-j46O1v6iFRHUR9Dqjzi53-nAYsYAEKmPs_PFO0w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNAQb-y-j46O1v6iFRHUR9Dqjzi53-nAYsYAEKmPs_PFO0w@mail.gmail.com>
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 2/6] clk: bcm2835: add locking to pll*_on/off methods
+Date: Mon, 29 Feb 2016 11:39:18 +0000
+Message-Id: <1456745963-2403-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/02, Masahiro Yamada wrote:
-> 2016-02-02 11:39 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> >
-> > Right, this patch moves the check to __clk_core_init(), and it
-> > will print an error and then keep going (because we lost the goto
-> > out part). Once we keep going in __clk_core_init() we'll call
-> > __clk_init_parent() and NULL pointer deref.
-> >
-> 
-> Ah, I missed that.
-> 
-> We need
-> 
->    ret = -EINVAL;
->    goto out;
-> 
-> here, I think.
-> 
-> Shall I send the v3 for 08/16?
-> 
-> Or, if it is too late, shall I send a fix-up patch?
-> 
+From: Martin Sperl <kernel@martin.sperl.org>
 
-I'll split the patch out again and squash in those two lines.
-Nothing more to do. Thanks.
+Add missing locking to:
+* bcm2835_pll_divider_on
+* bcm2835_pll_divider_off
+to protect the read modify write cycle for the
+register access protecting both cm_ctl and a2w_ctl
+registers.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
+audio domain clocks")
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2b7c6af..30d6486 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1088,10 +1088,12 @@ static void bcm2835_pll_divider_off(struct clk_hw *hw)
+ 	struct bcm2835_cprman *cprman = divider->cprman;
+ 	const struct bcm2835_pll_divider_data *data = divider->data;
+
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, data->cm_reg,
+ 		     (cprman_read(cprman, data->cm_reg) &
+ 		      ~data->load_mask) | data->hold_mask);
+ 	cprman_write(cprman, data->a2w_reg, A2W_PLL_CHANNEL_DISABLE);
++	spin_unlock(&cprman->regs_lock);
+ }
+
+ static int bcm2835_pll_divider_on(struct clk_hw *hw)
+@@ -1100,12 +1102,14 @@ static int bcm2835_pll_divider_on(struct clk_hw *hw)
+ 	struct bcm2835_cprman *cprman = divider->cprman;
+ 	const struct bcm2835_pll_divider_data *data = divider->data;
+
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, data->a2w_reg,
+ 		     cprman_read(cprman, data->a2w_reg) &
+ 		     ~A2W_PLL_CHANNEL_DISABLE);
+
+ 	cprman_write(cprman, data->cm_reg,
+ 		     cprman_read(cprman, data->cm_reg) & ~data->hold_mask);
++	spin_unlock(&cprman->regs_lock);
+
+ 	return 0;
+ }
+--
+1.7.10.4
