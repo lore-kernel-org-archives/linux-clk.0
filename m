@@ -1,79 +1,125 @@
 Return-Path: <kernel@martin.sperl.org>
 From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+To: Jonathan Corbet <corbet@lwn.net>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Lee Jones <lee@kernel.org>,
 	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-doc@vger.kernel.org,
 	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
 Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 03/20] clk: bcm2835: add locking to pll*_on/off methods
-Date: Sun, 28 Feb 2016 15:36:54 +0000
-Message-Id: <1456673831-2408-4-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Subject: [PATCH 2/8] clk: bcm2835: add missing PLL clock divider
+Date: Mon, 29 Feb 2016 15:43:56 +0000
+Message-Id: <1456760642-2412-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Martin Sperl <kernel@martin.sperl.org>
 
-Add missing locking to:
-* bcm2835_pll_on
-* bcm2835_pll_off
-* bcm2835_pll_divider_on
+Add the missing pll clock divider definitions.
 
 Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/bcm/clk-bcm2835.c       |   50 +++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |    8 ++++++
+ 2 files changed, 58 insertions(+)
 
 diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 3aa3e7a..d999a13 100644
+index 01a48cb..710cf15 100644
 --- a/drivers/clk/bcm/clk-bcm2835.c
 +++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -910,12 +910,14 @@ static void bcm2835_pll_off(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = pll->cprman;
- 	const struct bcm2835_pll_data *data = pll->data;
+@@ -1497,6 +1497,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.load_mask = CM_PLLA_LOADPER,
+ 		.hold_mask = CM_PLLA_HOLDPER,
+ 		.fixed_divider = 1),
++	[BCM2835_PLLA_DSI0]	= REGISTER_PLL_DIV(
++		.name = "plla_dsi0",
++		.source_pll = "plla",
++		.cm_reg = CM_PLLA,
++		.a2w_reg = A2W_PLLA_DSI0,
++		.load_mask = CM_PLLA_LOADDSI0,
++		.hold_mask = CM_PLLA_HOLDDSI0,
++		.fixed_divider = 1),
++	[BCM2835_PLLA_CCP2]	= REGISTER_PLL_DIV(
++		.name = "plla_ccp2",
++		.source_pll = "plla",
++		.cm_reg = CM_PLLA,
++		.a2w_reg = A2W_PLLA_DSI0,
++		.load_mask = CM_PLLA_LOADCCP2,
++		.hold_mask = CM_PLLA_HOLDCCP2,
++		.fixed_divider = 1),
 
-+	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, data->cm_ctrl_reg,
- 		     cprman_read(cprman, data->cm_ctrl_reg) |
- 		     CM_PLL_ANARST);
- 	cprman_write(cprman, data->a2w_ctrl_reg,
- 		     cprman_read(cprman, data->a2w_ctrl_reg) |
- 		     A2W_PLL_CTRL_PWRDN);
-+	spin_unlock(&cprman->regs_lock);
- }
+ 	/* PLLB is used for the ARM's clock. */
+ 	[BCM2835_PLLB]		= REGISTER_PLL(
+@@ -1521,6 +1537,24 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.load_mask = CM_PLLB_LOADARM,
+ 		.hold_mask = CM_PLLB_HOLDARM,
+ 		.fixed_divider = 1),
++	[BCM2835_PLLB_SP0]	= REGISTER_PLL_DIV(
++		.name = "pllb_sp0",
++		.source_pll = "pllb",
++		.cm_reg = CM_PLLB,
++		.a2w_reg = A2W_PLLB_SP0,
++		.fixed_divider = 1),
++	[BCM2835_PLLB_SP1]	= REGISTER_PLL_DIV(
++		.name = "pllb_sp1",
++		.source_pll = "pllb",
++		.cm_reg = CM_PLLB,
++		.a2w_reg = A2W_PLLB_SP1,
++		.fixed_divider = 1),
++	[BCM2835_PLLB_SP2]	= REGISTER_PLL_DIV(
++		.name = "pllb_sp2",
++		.source_pll = "pllb",
++		.cm_reg = CM_PLLB,
++		.a2w_reg = A2W_PLLB_SP2,
++		.fixed_divider = 1),
 
- static int bcm2835_pll_on(struct clk_hw *hw)
-@@ -1083,10 +1085,12 @@ static void bcm2835_pll_divider_off(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = divider->cprman;
- 	const struct bcm2835_pll_divider_data *data = divider->data;
+ 	/*
+ 	 * PLLC is the core PLL, used to drive the core VPU clock.
+@@ -1611,6 +1645,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.load_mask = CM_PLLD_LOADPER,
+ 		.hold_mask = CM_PLLD_HOLDPER,
+ 		.fixed_divider = 1),
++	[BCM2835_PLLD_DSI0]	= REGISTER_PLL_DIV(
++		.name = "plld_dsi0",
++		.source_pll = "plld",
++		.cm_reg = CM_PLLD,
++		.a2w_reg = A2W_PLLD_DSI0,
++		.load_mask = CM_PLLD_LOADDSI0,
++		.hold_mask = CM_PLLD_HOLDDSI0,
++		.fixed_divider = 1),
++	[BCM2835_PLLD_DSI1]	= REGISTER_PLL_DIV(
++		.name = "plld_dsi1",
++		.source_pll = "plld",
++		.cm_reg = CM_PLLD,
++		.a2w_reg = A2W_PLLD_DSI1,
++		.load_mask = CM_PLLD_LOADDSI1,
++		.hold_mask = CM_PLLD_HOLDDSI1,
++		.fixed_divider = 1),
 
-+	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, data->cm_reg,
- 		     (cprman_read(cprman, data->cm_reg) &
- 		      ~data->load_mask) | data->hold_mask);
- 	cprman_write(cprman, data->a2w_reg, A2W_PLL_CHANNEL_DISABLE);
-+	spin_unlock(&cprman->regs_lock);
- }
-
- static int bcm2835_pll_divider_on(struct clk_hw *hw)
-@@ -1095,12 +1099,14 @@ static int bcm2835_pll_divider_on(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = divider->cprman;
- 	const struct bcm2835_pll_divider_data *data = divider->data;
-
-+	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, data->a2w_reg,
- 		     cprman_read(cprman, data->a2w_reg) &
- 		     ~A2W_PLL_CHANNEL_DISABLE);
-
- 	cprman_write(cprman, data->cm_reg,
- 		     cprman_read(cprman, data->cm_reg) & ~data->hold_mask);
-+	spin_unlock(&cprman->regs_lock);
-
- 	return 0;
- }
+ 	/*
+ 	 * PLLH is used to supply the pixel clock or the AUX clock for the
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 9a7b4a5..9689812 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -45,3 +45,11 @@
+ #define BCM2835_CLOCK_PERI_IMAGE	29
+ #define BCM2835_CLOCK_PWM		30
+ #define BCM2835_CLOCK_PCM		31
++
++#define BCM2835_PLLA_DSI0		32
++#define BCM2835_PLLA_CCP2		33
++#define BCM2835_PLLB_SP0		34
++#define BCM2835_PLLB_SP1		35
++#define BCM2835_PLLB_SP2		36
++#define BCM2835_PLLD_DSI0		37
++#define BCM2835_PLLD_DSI1		38
 --
 1.7.10.4
