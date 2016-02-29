@@ -1,46 +1,111 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Jonathan Corbet <corbet@lwn.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Jyri Sarha <jsarha@ti.com>
-Subject: [PATCH] clk: provider: Remove of_gpio_{gate,mux}_clk_setup() prototypes
-Date: Sat,  6 Feb 2016 23:42:06 -0800
-Message-Id: <1454830926-10434-1-git-send-email-sboyd@codeaurora.org>
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 6/8] clk: bcm2835: add arm clock
+Date: Mon, 29 Feb 2016 15:44:00 +0000
+Message-Id: <1456760642-2412-7-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-These functions either never existed or were only used in
-OF_CLK_DECLARE() macros. Remove the dead prototypes.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Cc: Jyri Sarha <jsarha@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Add the missing "ARM" clock to the clock framework.
+This clock is essentially a gate clock but with a
+16 channel mux.
+
+We assume this is a mux that uses PLLB_ARM, so a dedicated
+mux for arm was created.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- include/linux/clk-provider.h | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c       |   34 +++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/bcm2835.h |    1 +
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 9c3a18c1a984..fce7f027f8a7 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -626,8 +626,6 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags);
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 91a6086..12ce209 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -118,6 +118,7 @@
+ #define CM_SDCCTL		0x1a8
+ #define CM_SDCDIV		0x1ac
+ #define CM_ARMCTL		0x1b0
++#define CM_ARMDIV		0x1b4
+ #define CM_AVEOCTL		0x1b8
+ #define CM_AVEODIV		0x1bc
+ #define CM_EMMCCTL		0x1c0
+@@ -1542,11 +1543,33 @@ static const char * const bcm2835_clock_dsi1_parents[] = {
+ 	.parents = bcm2835_clock_dsi1_parents,				\
+ 	__VA_ARGS__)
  
--void of_gpio_clk_gate_setup(struct device_node *node);
++/* arm parent mux */
++static const char * const bcm2835_clock_arm_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	/*
++	 * see comments for dsi0 for possible candidates
++	 * should contain "pllb_arm" at one position
++	 *   plla_core/per
++	 *   pllb_arm or pllb_core/per
++	 *   pllc_core/per
++	 *   plld_core/per
++	 *   pllh_aux/pix
++	 * up to 16 different parents
++	 */
++};
++
++#define REGISTER_ARM_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_arm_parents),	\
++	.parents = bcm2835_clock_arm_parents,				\
++	__VA_ARGS__)
++
+ /*
+  * the real definition of all the pll, pll_dividers and clocks
+  * these make use of the above REGISTER_* macros
+  */
 -
- /**
-  * struct clk_gpio_mux - gpio controlled clock multiplexer
-  *
-@@ -643,8 +641,6 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags);
+ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	/* the PLL + PLL dividers */
  
--void of_gpio_mux_clk_setup(struct device_node *node);
--
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
-  * @dev: device that is registering this clock
+@@ -2038,6 +2061,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 1,
+ 		.frac_bits = 0),
+ 
++	/* arm clocks */
++	[BCM2835_CLOCK_DSI1_IMAGE] = REGISTER_ARM_CLK(
++		/* this is in principle a gate with a 4 bit mux */
++		.name = "arm",
++		.ctl_reg = CM_ARMCTL,
++		.div_reg = CM_ARMDIV,
++		.int_bits = 1,
++		.frac_bits = 0),
++
+ 	/* the gates */
+ 
+ 	/*
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 9254c78..109086e 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -70,3 +70,4 @@
+ #define BCM2835_CLOCK_DSI0_IMAGE	52
+ #define BCM2835_CLOCK_DSI1E		53
+ #define BCM2835_CLOCK_DSI1_IMAGE	54
++#define BCM2835_CLOCK_ARM		55
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.10.4
