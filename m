@@ -1,48 +1,49 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 11/20] clk: bcm2835: divider value has to be 1 or more
-Date: Sun, 28 Feb 2016 15:37:02 +0000
-Message-Id: <1456673831-2408-12-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47605 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750821AbcB2Wzj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 29 Feb 2016 17:55:39 -0500
+Date: Mon, 29 Feb 2016 14:55:36 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
+ gating
+Message-ID: <20160229225536.GR13417@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-2-git-send-email-fcooper@ti.com>
+ <20160229220444.GQ13417@atomide.com>
+ <56D4C69D.1090100@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56D4C69D.1090100@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+* Franklin S Cooper Jr. <fcooper@ti.com> [160229 14:31]:
+> On 02/29/2016 04:04 PM, Tony Lindgren wrote:
+> > Hmm but why are you also removing the pm_runtime calls? Those
+> > actually do take care of gating the clocks via the interconnect
+> > level code that is hwmod in this case.
+> I removed all PM runtime calls that revolved around
+> pwmss_submodule_state_change. Originally the driver would do
+> a pm_runtime_get_sync then call pwmss_submodule_state_change
+> and then immediately call pm_runtime_put_sync. Without
+> pwmss_submodule_state_change those calls would be
+> meaningless.  I also removed pm_runtime calls in error paths
+> that no longer existed.
 
-Current clamping of a normal divider allows a value < 1 to be valid.
+Typically the interconnect level code can gate the clkctrl bit
+for the module with PM runtime even with no other driver specific
+registers. If you remove the pm_runtime calls, that does not
+happen.
 
-A divider of < 1 would actually only be possible if we had a PLL...
+Also, how do you know this change does not affect the other
+SoC variants using the same driver?
 
-So this patch clamps the divider for non-mash clocks to 1.
+Regards,
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 2fb9923..211d231 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -789,7 +789,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 		div = min_t(u32, div,
- 			    (BIT(data->int_bits) - 1) << CM_DIV_FRAC_BITS);
- 	} else {
--		div = max(div, unused_frac_mask + 1);
-+		/* clamp to min divider of 1 */
-+		div = max_t(u32, div, 1 << CM_DIV_FRAC_BITS);
-+		/* clamp to the highest possible fractional divider */
- 		div = min_t(u32, div,
- 			    GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
- 				    CM_DIV_FRAC_BITS - data->frac_bits));
--- 
-1.7.10.4
+Tony
