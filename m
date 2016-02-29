@@ -1,57 +1,58 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
-Date: Fri, 12 Feb 2016 17:28:22 +0100
-In-Reply-To: <1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
-	(Kevin Smith's message of "Thu, 11 Feb 2016 16:53:52 +0000")
-Message-ID: <87vb5tx595.fsf@free-electrons.com>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH 2/2] clk: bcm2835: expose current divider, parent and mash via debugfs
+In-Reply-To: <1456755616-2472-3-git-send-email-kernel@martin.sperl.org>
+References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org> <1456755616-2472-3-git-send-email-kernel@martin.sperl.org>
+Date: Mon, 29 Feb 2016 12:43:36 -0800
+Message-ID: <87h9gr5jt3.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kevin,
-=20
- On jeu., f=C3=A9vr. 11 2016, Kevin Smith <kevin.smith@elecsyscorp.com> wro=
-te:
+--=-=-=
+Content-Type: text/plain
 
-> There is no corediv clock on Armada XP, so this is unnecessary.
+kernel@martin.sperl.org writes:
+
+> From: Martin Sperl <kernel@martin.sperl.org>
 >
-> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> For each clock expose the following values via debugfs:
+> * current_parent - the currently selected parent
+> * current_divi - the integer portion of the currently set divider
+> * current_divf - the fractional portion of the currently set divider
+> * current_frac - the current frac/mash settings for the divider
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+current_parent can already be found through /debug/clk/clk_summary quite
+nicely I think.  If we wanted a per-clock parent file, that seems like
+something the core ought to be doing.
 
-Thanks,
+current_frac is looking at a bit that doesn't exist for non-MASH clocks.
 
-Gregory
-> ---
->  drivers/clk/mvebu/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-> index 2769625..e1bc567 100644
-> --- a/drivers/clk/mvebu/Kconfig
-> +++ b/drivers/clk/mvebu/Kconfig
-> @@ -29,7 +29,6 @@ config ARMADA_XP_CLK
->  	bool
->  	select MVEBU_CLK_COMMON
->  	select MVEBU_CLK_CPU
-> -	select MVEBU_CLK_COREDIV
->=20=20
->  config DOVE_CLK
->  	bool
-> --=20
-> 2.4.6
+divi/divf are OK, I guess, but don't seem particularly useful given the
+raw register output already.  A cooked floating point point divider
+debugfs entry would be nice, but I don't know if we can do that.
 
---=20
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJW1K14AAoJELXWKTbR/J7oFQsP/0yI+rjonVK+qcVe4/LyTtVp
+6WaSycOu8W6OkK838aGQXfEo55YWKN7ntp5kY9S9S1rIkTXHbSf70bpwlYe9b5k+
+m930MsQkKb3oiXYiI0Aj9n1QZvgFY36GLhGi0vvOZtjKvjEqVvKLEab6SjcBbCs9
+CYKeFePw/wW5kSWGuztx4aHsXWlQCdbn725JnsLCa8tPnBuyXcFtG4OAnhk5ccbB
+yoTW91RoyFnTH/JvRG71PlFpKhRkLrn1+mFRT5jrJRUAKow+i3b34ll/ASVnHVH2
+5Tf19VdxSBOMoRLuHv3OwbQi/0EdgkOH5a0tO53kWIG31dLR0oXvMMj4QGfNVqi0
+EeGLoK3O2Un2cA7YC0OhMqqJOX/HuWVZE3jArMrDzZivLOCDXnlK3DAYvSXpfmH/
+DrLqjSAuECEYVxQ3WOndNuDIVQsZE22OP2PyZX/CI4zdMlGvHHgZsaQkmmIZ8DO/
+K1xPOy4bORxiQ1DTO66A/d4SgFHfu6psZCWiOmPNleaaaedjhLR3M7AnqZkr4pHm
+wDwR0hWAKvcqylt5yunqUyNKM8AYzbm/JKMOiq3pUPdSrAqBozFU8vIntM4oKsk/
+ou7C4STcYjxtJbHsyAK0W0oGkOzEA3q9GYmutrcVBK25i7XdJEvl1gS2U9vCAl6p
+PoMZT+tU9UrQoD0s8CZP
+=zc4n
+-----END PGP SIGNATURE-----
+--=-=-=--
