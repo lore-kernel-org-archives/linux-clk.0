@@ -1,146 +1,84 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 11 Feb 2016 11:00:48 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <rob.herring@linaro.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi:
- Refactor A31 PLL6 so that it can be reused)
-Message-ID: <20160211100048.GK31506@lukather>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com>
- <56BB2D79.6090402@arm.com>
- <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
- <20160210143755.GE31506@lukather>
- <20160210163001.GG2632@leverpostej>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TBDBusIORirWKjWQ"
-In-Reply-To: <20160210163001.GG2632@leverpostej>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 3/6] clk: bcm2835: enable clocks that have been enabled by firmware
+Date: Mon, 29 Feb 2016 11:39:19 +0000
+Message-Id: <1456745963-2403-4-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Martin Sperl <kernel@martin.sperl.org>
 
---TBDBusIORirWKjWQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If a clock that has been enabled by the firmware gets disabled
+by a driver this may right now result in a crash of the system
+as then also the corresponding PLL_dividers as well as PLLs
+get disabled (if not used) - some of which are used by the
+VideoCore GPU (which also runs the firmware)
 
-On Wed, Feb 10, 2016 at 04:30:01PM +0000, Mark Rutland wrote:
-> On Wed, Feb 10, 2016 at 03:37:55PM +0100, Maxime Ripard wrote:
-> > Hi Rob,
-> >=20
-> > On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
-> > > On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.c=
-om> wrote:
-> > > > Hi,
-> > > >
-> > > > just a ping:
-> > > >
-> > > > Are we really OK with breaking existing DTs in 4.6? (per the code in
-> > > > -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patc=
-h).
-> > >=20
-> > > I only warn and make sure people are aware of the issue. I leave that
-> > > up to platform maintainers to decide. It depends on the maturity of
-> > > the platform and users.
-> >=20
-> > The impacted SoCs support is really partial. For the most supported
-> > one, big things like display or sound are totally missing, and we
-> > still update them on a regular basis to add support for new
-> > devices. As such, users are very likely to upgrade the DT from one
-> > version to another just because there's new devices available to
-> > them. And the newest SoC impacted just got introduced in 4.5, and only
-> > has the UART and MMC devices available.
-> >=20
-> > > If people complain about it then it's their mess. For platforms
-> > > supported in distros such as debian or fedora, I would strongly
-> > > recommend against breaking compatibility.
-> >=20
-> > None of them are officially supported:
-> > https://www.debian.org/releases/stable/armhf/ch02s01.html.en
-> > https://fedoraproject.org/wiki/Architectures/ARM#Fedora_23
-> >=20
-> > Only the older one are, and they are not affected by this patch.
-> >=20
-> > > They do ship dtbs, but it's a chicken and egg problem. If dtbs were
-> > > stable and provided by firmware, then they wouldn't have to provide
-> > > them. If dtbs are unstable, then they have no choice.
-> >=20
-> > And while it might work great on platforms that have all the needed
-> > documentation, or a perfect one, which is our case. Almost each
-> > release, we discover that something is not working as it was
-> > documented, when it was documented in the first place.
-> >=20
-> > It also seems that even on well documented platforms, supported by the
-> > vendors, the stable ABI dream is not going to happen:
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/arm/Atmel/README#n105
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/devicetree/bindings/arm/marvell,berlin.txt#n4
->=20
-> To be quite frank, I completely disagree with that stance.
->=20
-> It seems like the only reason DT bindings aren't remaining stable is
-> because people are deliberately ignoring the requirement and reasoning
-> for doing so.
+This patch prepares/enables those clocks that have been
+configured by the firmware.
 
-And for DT maintainers saying on multiple occasions that it's bad but
-ok to break it and / or that they never actually said that it was a
-stable ABI...
+Whenever the clock framework implements either
+CLK_IS_CRITICAL or HAND_OFF this can get changed to use this
+new mechanism.
 
-I'm guessing it could be a stable ABI if there was bindings
-reviews. Rob actually started to review a significant amount of
-bindings lately, and that's really appreciated, but if you don't
-review all the bindings, then we're going to make mistakes.
+For this to be completely successful (i.e not missing a clock
+and subsequently a pll) it is recommended to add all the known
+clocks of the soc so that this can get applied to all clocks.
 
-> I agree that it can be painful, and that we cannot predict the future.
-> There will always be bugs.
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-In our case, we can't even predict the present.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 30d6486..1fbb55d 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -37,6 +37,7 @@
+  * generator).
+  */
 
-> Having code in mainline comes with responsibilities. One of those is to
-> keep said code working for existing users. Otherwise, why bother having
-> it in mainline at all?
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk/bcm2835.h>
+@@ -1478,6 +1479,7 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	struct clk_init_data init;
+ 	const char *parents[1 << CM_SRC_BITS];
+ 	size_t i;
++	struct clk *clk;
 
-None of our existing users ever complained.
+ 	/*
+ 	 * Replace our "xosc" references with the oscillator's
+@@ -1511,7 +1513,18 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	clock->data = data;
+ 	clock->hw.init = &init;
 
-Maxime
+-	return devm_clk_register(cprman->dev, &clock->hw);
++	clk = devm_clk_register(cprman->dev, &clock->hw);
++	if (IS_ERR_OR_NULL(clk))
++		return clk;
++
++	/* enable/prepare if the clock is enabled by the firmware */
++	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
++		dev_info(cprman->dev,
++			 "found firmware enabled clock %pC\n", clk);
++		clk_prepare_enable(clk);
++	}
++
++	return clk;
+ }
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---TBDBusIORirWKjWQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWvFvQAAoJEBx+YmzsjxAg4jEP/0/RlbX3ytS/+WtORVHtIfYg
-SYYEc3i9hNySrpqJPHJSCpLbfe0irBp/DdikN+WYZR/1XyIw4UaGAubF6yn6BfoR
-8BuyAsUFcq9cN5+1w6eP8G758XUHa2Q9wRFokjgqQi2SEbEIceXww8D9Ipw9g/uf
-HKIqzWtDu5Eb9r3mMXlVJbQncf9145Q/Md7CGTNHNOj820vfD2mVAWuKHKIrvNhK
-vCHGbpUh8xGcjFQJEGSlormDtFMwdk6GiuNbh1f42TrSwcoq8E0YuZljTzuHGU0N
-eVxdyyPtgRSH4i+RlZ3i3Uts739LpoxRCMdU+wf0NeZ0CMTXKeJsfV11iyQ1G1WT
-3B/ltriC0yn7kPfZwetuozqXfDctushrwK5b6AJ+UkTdOvKetjEb331RUsrIMx5C
-Q1y1HVXR3LE8tx2CuJOjvKp9EeGMFF5bDWjk/Ohi4otFRBLfzl7hzOPeN0PG2xQP
-Oh2MTcPS5prB2mtFF/Enzu2QdzIJbVS8CLaBt1G4QTdS1uV2q9rdcISQ2lZTSgps
-c05qXErfx4yFZbSK+9WUiv5bb+dll0KTXbPyyPJ9R0KZwDaozSvjRnwJoaoDkeR5
-urjCjw1p5j+knjNEGeKbtvtCNAOPACsr53it5leFXllzuP9Lo0g5cK2M4OhckPTM
-LPeNVnpkfLTFJqdFBYDe
-=cHIs
------END PGP SIGNATURE-----
-
---TBDBusIORirWKjWQ--
+ static int bcm2835_clk_probe(struct platform_device *pdev)
+--
+1.7.10.4
