@@ -1,85 +1,168 @@
-Return-Path: <manabian@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20150818002604.31346.18322@quantum>
-References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
-	<1436651307-24098-2-git-send-email-manabian@gmail.com>
-	<20150811204127.31346.16729@quantum>
-	<CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
-	<20150818002604.31346.18322@quantum>
-Date: Sat, 13 Feb 2016 15:38:45 +0100
-Message-ID: <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 2/2] clk: bcm2835: expose current divider, parent and mash via debugfs
+Date: Mon, 29 Feb 2016 14:20:16 +0000
+Message-Id: <1456755616-2472-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org>
+References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Seems your reply got lost in my mailbox and I didn't notice it before
-Stephen replied on the cover letter. Sorry about that.
+For each clock expose the following values via debugfs:
+* current_parent - the currently selected parent
+* current_divi - the integer portion of the currently set divider
+* current_divf - the fractional portion of the currently set divider
+* current_frac - the current frac/mash settings for the divider
 
-On 18 August 2015 at 02:26, Michael Turquette <mturquette@baylibre.com> wrote:
-> Quoting Joachim Eastwood (2015-08-13 13:43:11)
->> On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.com> wrote:
->> > Hi Joachim,
->> >
->> > Quoting Joachim Eastwood (2015-07-11 14:48:26)
->> >> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
->> >> +{
->> >> +       const char *clk_32khz_parent;
->> >> +       struct regmap *syscon;
->> >> +
->> >> +       syscon = syscon_node_to_regmap(np->parent);
->> >> +       if (IS_ERR(syscon)) {
->> >> +               pr_err("%s: syscon lookup failed\n", __func__);
->> >> +               return;
->> >> +       }
->> >> +
->> >> +       clk_32khz_parent = of_clk_get_parent_name(np, 0);
->> >> +
->> >> +       clk_creg[CREG_CLK_32KHZ] =
->> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
->> >> +                                     &clk_32khz_parent, syscon);
->> >> +
->> >> +       clk_creg[CREG_CLK_1KHZ] =
->> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
->> >> +                                     &clk_creg_clocks[CREG_CLK_32KHZ].name,
->> >> +                                     syscon);
->> >> +
->> >> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
->> >> +}
->> >> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
->> >
->> > I'll ask the same question that Stephen asked in your CCU/CGU driver
->> > series: is it necessary to use CLK_OF_DECLARE here or can you use the
->> > platform device model?
->>
->> The 32 kHz clock from the CREG block is a clock parent to the CGU
->> block so it's possible that it will required early. This is all
->> depends on how the boot loader initially configures the CGU.
->>
->> Currently in the DTS for lpc18xx cgu it has:
->> clocks = <&xtal>, <&xtal32>, <...>;
->> xtal32 is just a temporary placeholder until the CREG clock is in place.
->
-> Well that seems wrong. Is it just a matter of probe order where you try
-> to probe the cgu driver before the creg driver?
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |  110 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
 
-The ideal probe order for the clk drivers on the lpc18xx platform
-would be; creg-clk, cgu and ccu.
-If the 32k clk is used by any of timers we need creg-clk to enable the
-32k clock and determine the rate.
-
-Note that the cgu and ccu driver is using CLK_OF_DECLARE now.
-
-
-I have tired to create an overview of the lpc18xx clock system here:
-https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
-
-
-regards,
-Joachim Eastwood
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 89de3d6..01a48cb 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -129,6 +129,10 @@
+ # define CM_BUSY			BIT(7)
+ # define CM_BUSYD			BIT(8)
+ # define CM_FRAC			BIT(9)
++# define CM_MASH0			BIT(9)
++# define CM_MASH1			BIT(10)
++# define CM_MASH_MASK			(CM_MASH0 | CM_MASH1)
++# define CM_MASH_SHIFT			9
+ # define CM_SRC_SHIFT			0
+ # define CM_SRC_BITS			4
+ # define CM_SRC_MASK			0xf
+@@ -1063,6 +1067,99 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
+ 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
+ }
+ 
++static const char *bcm2835_clock_get_parent_name(struct clk_hw *hw)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	const struct bcm2835_clock_data *data = clock->data;
++	u8 id = bcm2835_clock_get_parent(hw);
++
++	return (id < data->num_mux_parents) ?
++		data->parents[id] : "unknown";
++}
++
++static int bcm2835_clock_debug_current_parent_open(struct inode *inode,
++						   struct file *file)
++{
++	const char *parent = bcm2835_clock_get_parent_name(inode->i_private);
++	size_t len = strlen(parent);
++	char *buf;
++
++	/* create string with trailing newline */
++	buf = kmalloc(len + 2, GFP_KERNEL);
++	memcpy(buf, parent, len);
++	buf[len] = '\n';
++	buf[len + 1] = 0;
++
++	file->private_data = buf;
++
++	return 0;
++}
++
++static ssize_t bcm2835_clock_debug_current_parent_read(struct file *file,
++						       char __user *buf,
++						       size_t len,
++						       loff_t *ppos)
++{
++	const char *parent = file->private_data;
++	size_t size = strlen(parent);
++
++	return simple_read_from_buffer(buf, len, ppos, parent, size);
++}
++
++static const struct file_operations bcm2835_clock_debug_current_parent_fops = {
++	.owner   = THIS_MODULE,
++	.open    = bcm2835_clock_debug_current_parent_open,
++	.release = simple_attr_release,
++	.read    = bcm2835_clock_debug_current_parent_read,
++	.llseek  = generic_file_llseek,
++};
++
++static int bcm2835_clock_debug_current_divi_get(void *hw, u64 *val)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 div = cprman_read(cprman, data->div_reg);
++
++	*val = div >> CM_DIV_FRAC_BITS;
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_divi_fops,
++			bcm2835_clock_debug_current_divi_get,
++			NULL, "%llu\n");
++
++static int bcm2835_clock_debug_current_divf_get(void *hw, u64 *val)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 div = cprman_read(cprman, data->div_reg);
++
++	*val = div & CM_DIV_FRAC_MASK;
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_divf_fops,
++			bcm2835_clock_debug_current_divf_get,
++			NULL, "%llu\n");
++
++static int bcm2835_clock_debug_current_frac_get(void *hw, u64 *val)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 ctl = cprman_read(cprman, data->ctl_reg);
++
++	if (data->is_mash_clock)
++		*val = (ctl & CM_MASH_MASK) >> CM_MASH_SHIFT;
++	else
++		*val = ctl & CM_FRAC ? 1 : 0;
++
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_frac_fops,
++			bcm2835_clock_debug_current_frac_get,
++			NULL, "%llu\n");
++
+ static struct debugfs_reg32 bcm2835_debugfs_clock_reg32[] = {
+ 	{
+ 		.name = "ctl",
+@@ -1081,6 +1178,19 @@ static int bcm2835_clock_debug_init(struct clk_hw *hw,
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 
++	/* expose the current parrent */
++	debugfs_create_file("current_parent", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_parent_fops);
++
++	/* expose the current divider components */
++	debugfs_create_file("current_divi", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_divi_fops);
++	debugfs_create_file("current_divf", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_divf_fops);
++	debugfs_create_file("current_frac", S_IRUGO, dentry, hw,
++			    &bcm2835_clock_debug_current_frac_fops);
++
++	/* add the regset */
+ 	return bcm2835_debugfs_regset(
+ 		cprman, data->ctl_reg,
+ 		bcm2835_debugfs_clock_reg32,
+-- 
+1.7.10.4
