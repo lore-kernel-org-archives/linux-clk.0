@@ -1,74 +1,49 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Akinobu Mita <akinobu.mita@gmail.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
-Cc: linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>
-References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
- <20160215230252.2278.43532@quark.deferred.io>
- <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
-Message-ID: <20160217212415.2278.61232@quark.deferred.io>
-Subject: Re: [PATCH] clk: add userspace clock consumer
-Date: Wed, 17 Feb 2016 13:24:15 -0800
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	jay.xu@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/5] Add more clock compatible features and support the RK3399 clock
+Date: Mon, 29 Feb 2016 19:25:56 +0800
+Message-Id: <1456745161-12954-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Akinobu Mita (2016-02-17 05:18:41)
-> 2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
-> > Hello Akinobu Mita,
-> >
-> > Quoting Akinobu Mita (2016-02-15 06:40:51)
-> >> This adds userspace consumer for common clock.
-> >>
-> >> This driver is inspired from Userspace regulator consumer
-> >> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
-> >> some classes of devices that are controlled entirely from user space.
-> >
-> > Thanks for submitting the patch. Your implementation looks OK, but I
-> > generally do not like to expose clock hardware controls to userspace
-> > (and have a NAK'd a lot of patches trying to do this in the past). It
-> > can be quite dangerous for the system to allow userspace to control
-> > clocks.
-> =
 
-> I understand your concern.  I'll happily add the features and
-> documentation for this module to avoid misuses and abuses.
-> =
+Hi,
+  The patch series add support more mux parameters and multiple
+clock providers for the rockchip features of the clock framework,
+and support the clock controller for the RK3399.
 
-> > Can you explain your use case more? If your main concern is testing,
-> =
 
-> I can use this for my own electrical circuit.  But mainly it's
-> useful for testing.  When I tried to add clock provider for DS3231
-> clkout, I wrote very ad hoc kernel code for testing it.  I think
-> other people also have been trying something similar.
-> =
 
-> > should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_FS?
-> =
+Xing Zheng (5):
+  clk: rockchip: add more mux parameters for new pll sources
+  clk: rockchip: Add support for multiple clock providers
+  clk: rockchip: add new pll-type for rk3399 and similar socs
+  clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
+  clk: rockchip: add clock controller for the RK3399
 
-> But this driver does not use debugfs.  Instead of that, I have no
-> problem moving this driver to lib/ and add config option to
-> lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
+ drivers/clk/rockchip/Makefile     |    1 +
+ drivers/clk/rockchip/clk-cpu.c    |   14 +-
+ drivers/clk/rockchip/clk-pll.c    |  309 +++++++-
+ drivers/clk/rockchip/clk-rk3036.c |   20 +-
+ drivers/clk/rockchip/clk-rk3188.c |   54 +-
+ drivers/clk/rockchip/clk-rk3228.c |   20 +-
+ drivers/clk/rockchip/clk-rk3288.c |   22 +-
+ drivers/clk/rockchip/clk-rk3368.c |   27 +-
+ drivers/clk/rockchip/clk-rk3399.c | 1547 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c        |  148 ++--
+ drivers/clk/rockchip/clk.h        |   98 ++-
+ 11 files changed, 2136 insertions(+), 124 deletions(-)
+ create mode 100644 drivers/clk/rockchip/clk-rk3399.c
 
-Hiding it behind some sort of debug option sounds good to me. Taking a
-quick look through lib/Kconfig.debug, it seems that there are no other
-examples of debug options from drivers/* in there.
-
-I'm wondering what is the best way to do it? Just create a
-CONFIG_COMMON_CLK_DEBUG symbol and source drivers/clk/Kconfig.debug
-conditionally?
-
-Regards,
-Mike
-
-> =
-
-> > Have you looked at the per-provider DEBUGFS hooks? See commit
-> > fb2b3c9f6857, "clk: define and export clk_debugs_add_file".
-> =
-
-> I think it is useful for providing device specific debug features.
-> But this userspace consumer only provides generic feature for most
-> clock provider and allows controlling the devices specified in
-> the device tree.
+-- 
+1.7.9.5
