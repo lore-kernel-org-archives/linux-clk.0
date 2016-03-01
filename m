@@ -1,65 +1,28 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from nasmtp01.atmel.com ([192.199.1.245]:32795 "EHLO
-	DVREDG01.corp.atmel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932145AbcCHBvD (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:51:03 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v4 5/5] ARM: at91/dt: sama5d2_xplained: add fast_restart node
-Date: Tue, 8 Mar 2016 09:42:02 +0800
-Message-ID: <1457401322-29120-6-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
-References: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <ukl@pengutronix.de>
+Date: Tue, 1 Mar 2016 20:26:51 +0100
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 26/41] clk: efm32gg: Remove CLK_IS_ROOT
+Message-ID: <20160301192651.GE2613@pengutronix.de>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add fast_restart node as a pmc's child node to support fast startup
-signal configuration.
+On Tue, Mar 01, 2016 at 11:00:11AM -0800, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+I believe you, but still it would be nice to point out at least in the
+cover letter (that I didn't receive) the commit that made CLK_IS_ROOT a
+no-op.
 
-Changes in v4:
- - add fast_restart node to the DT file.
+Best regards
+Uwe
 
-Changes in v3: None
-Changes in v2: None
-
- arch/arm/boot/dts/at91-sama5d2_xplained.dts |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index 21c780f..45a78a7 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -110,6 +110,14 @@
- 		};
- 
- 		apb {
-+			pmc: pmc@f0014000 {
-+				pmc_fast_restart {
-+					compatible = "atmel,sama5d2-pmc-fast-startup";
-+					atmel,wkup-trigger;
-+					atmel,rtc-alarm-trigger;
-+				};
-+			};
-+
- 			spi0: spi@f8000000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_spi0_default>;
 -- 
-1.7.9.5
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
