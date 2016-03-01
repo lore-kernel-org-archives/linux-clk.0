@@ -1,41 +1,52 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Tue, 16 Feb 2016 01:42:21 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: rtc-linux@googlegroups.com, linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Alessandro Zummo <a.zummo@towertech.it>,
+Return-Path: <edubezval@gmail.com>
+Return-Path: <edubezval@gmail.com>
+Date: Mon, 29 Feb 2016 20:39:53 -0800
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Caesar Wang <wxt@rock-chips.com>, huangtao@rock-chips.com,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] rtc: rtc-ds1307: add clock provider support for DS3231
-Message-ID: <20160216004221.GA3310@piout.net>
-References: <1454249410-21449-1-git-send-email-akinobu.mita@gmail.com>
+	linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	zhangqing@rock-chips.com, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
+Message-ID: <20160301043951.GA9884@localhost.localdomain>
+References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+ <3650760.H1YezDtoUE@phil>
+ <3480898.qXLEaXSdDG@phil>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454249410-21449-1-git-send-email-akinobu.mita@gmail.com>
+In-Reply-To: <3480898.qXLEaXSdDG@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31/01/2016 at 23:10:10 +0900, Akinobu Mita wrote :
-> DS3231 has programmable square-wave output signal.
-> This enables to use this feature as a clock provider of
-> common clock framework.
+On Fri, Feb 26, 2016 at 02:16:58AM +0100, Heiko Stuebner wrote:
+> Am Dienstag, 16. Februar 2016, 00:25:39 schrieb Heiko Stuebner:
+> > Am Montag, 15. Februar 2016, 15:33:25 schrieb Caesar Wang:
+> > > 1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+> > > 8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+> > > bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
+> > > 22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
+> > 
+> > clk and devicetree patches look good and I'll pick those up once Eduardo
+> > is
+> > ok with (and has taken) the thermal-specific changes:
+> > > bd2720c thermal: rockchip: fix a impossible condition caused by the
+> > > warning df9c1bd thermal: rockchip: fix calculation error for
+> > > code_to_temp
+> > > fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
+> > > b907b75 thermal: rockchip: fix the tsadc sequence output on
+> > > rk3228/rk3399
 > 
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  .../devicetree/bindings/rtc/maxim,ds3231.txt       |  37 +++
->  drivers/rtc/rtc-ds1307.c                           | 296 ++++++++++++++++++++-
->  2 files changed, 332 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/rtc/maxim,ds3231.txt
+> @Eduardo: any opinion on the patches related to the thermal driver itself?
+
+
+Not really, adding them to my fixes branches. Thanks.
+
 > 
-
-Applied, thanks.
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> 
+> Thanks
+> Heiko
+> 
