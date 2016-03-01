@@ -1,28 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 4 Mar 2016 12:53:30 -0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49851 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753569AbcCATAp (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2016 14:00:45 -0500
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] doc: dt: add documentation for lpc1850-creg-clk
- driver
-Message-ID: <20160304205330.GC25972@codeaurora.org>
-References: <1457041625-21163-1-git-send-email-manabian@gmail.com>
- <1457041625-21163-3-git-send-email-manabian@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457041625-21163-3-git-send-email-manabian@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH 37/41] clk: scpi: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:22 -0800
+Message-Id: <1456858826-28541-38-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Joachim Eastwood wrote:
-> Add DT binding documentation for lpc1850-creg-clk driver.
-> 
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+This flag is a no-op now. Remove usage of the flag.
 
-Applied to clk-next
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-scpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+index 89e9ca78bb94..6962ee5d1e9a 100644
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -155,7 +155,7 @@ scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
+ 	unsigned long min = 0, max = 0;
+ 
+ 	init.name = name;
+-	init.flags = CLK_IS_ROOT;
++	init.flags = 0;
+ 	init.num_parents = 0;
+ 	init.ops = match->data;
+ 	sclk->hw.init = &init;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
