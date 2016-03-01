@@ -1,126 +1,99 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 44/46] video: ssd1307fb: switch to the atomic PWM API
-Date: Wed, 30 Mar 2016 22:04:07 +0200
-Message-Id: <1459368249-13241-45-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	Pawel Moll <pawel.moll@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 20/41] clk: versatile: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:05 -0800
+Message-Id: <1456858826-28541-21-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_config/enable/disable() have been deprecated and should be replaced
-by pwm_apply_state().
+This flag is a no-op now. Remove usage of the flag.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/video/fbdev/ssd1307fb.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/clk/versatile/clk-icst.c         | 2 +-
+ drivers/clk/versatile/clk-impd1.c        | 3 +--
+ drivers/clk/versatile/clk-realview.c     | 8 +++-----
+ drivers/clk/versatile/clk-vexpress-osc.c | 2 +-
+ 4 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
-index df9c63a..ed9a115 100644
---- a/drivers/video/fbdev/ssd1307fb.c
-+++ b/drivers/video/fbdev/ssd1307fb.c
-@@ -289,6 +289,8 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
- 	struct pwm_args pargs = { };
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 3bca438ecd19..5e9b65278e4c 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -170,7 +170,7 @@ static struct clk *icst_clk_setup(struct device *dev,
  
- 	if (par->device_info->need_pwm) {
-+		struct pwm_state pstate;
-+
- 		par->pwm = pwm_get(&par->client->dev, NULL);
- 		if (IS_ERR(par->pwm)) {
- 			dev_err(&par->client->dev, "Could not get PWM from device tree!\n");
-@@ -296,10 +298,14 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
- 		}
+ 	init.name = name;
+ 	init.ops = &icst_ops;
+-	init.flags = CLK_IS_ROOT;
++	init.flags = 0;
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 	icst->map = map;
+diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
+index 65c842a21c62..74c3216dbb00 100644
+--- a/drivers/clk/versatile/clk-impd1.c
++++ b/drivers/clk/versatile/clk-impd1.c
+@@ -98,8 +98,7 @@ void integrator_impd1_clk_init(void __iomem *base, unsigned int id)
  
- 		pwm_get_args(par->pwm, &pargs);
-+		pwm_get_state(par->pwm, &pstate);
- 		par->pwm_period = pargs.period;
-+
- 		/* Enable the PWM */
--		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period);
--		pwm_enable(par->pwm);
-+		pstate.period = pargs.period;
-+		pstate.duty_cycle = pstate.period / 2;
-+		pstate.enabled = true;
-+		pwm_apply_state(par->pwm, &pstate);
+ 	/* Register the fixed rate PCLK */
+ 	imc->pclkname = kasprintf(GFP_KERNEL, "lm%x-pclk", id);
+-	pclk = clk_register_fixed_rate(NULL, imc->pclkname, NULL,
+-				      CLK_IS_ROOT, 0);
++	pclk = clk_register_fixed_rate(NULL, imc->pclkname, NULL, 0, 0);
+ 	imc->pclk = pclk;
  
- 		dev_dbg(&par->client->dev, "Using PWM%d with a %dns period.\n",
- 			par->pwm->pwm, par->pwm_period);
-@@ -685,8 +691,12 @@ static int ssd1307fb_probe(struct i2c_client *client,
- bl_init_error:
- 	unregister_framebuffer(info);
- panel_init_error:
--	if (par->device_info->need_pwm) {
--		pwm_disable(par->pwm);
-+	if (par->device_info->need_pwm && par->pwm) {
-+		struct pwm_state pstate;
-+
-+		pwm_get_state(par->pwm, &pstate);
-+		pstate.enabled = false;
-+		pwm_apply_state(par->pwm, &pstate);
- 		pwm_put(par->pwm);
- 	};
- reset_oled_error:
-@@ -707,7 +717,11 @@ static int ssd1307fb_remove(struct i2c_client *client)
+ 	imc->vco1name = kasprintf(GFP_KERNEL, "lm%x-vco1", id);
+diff --git a/drivers/clk/versatile/clk-realview.c b/drivers/clk/versatile/clk-realview.c
+index bd4dd2463e23..c56efc70ac16 100644
+--- a/drivers/clk/versatile/clk-realview.c
++++ b/drivers/clk/versatile/clk-realview.c
+@@ -56,12 +56,11 @@ void __init realview_clk_init(void __iomem *sysbase, bool is_pb1176)
+ 	struct clk *clk;
  
- 	unregister_framebuffer(info);
- 	if (par->device_info->need_pwm) {
--		pwm_disable(par->pwm);
-+		struct pwm_state pstate;
-+
-+		pwm_get_state(par->pwm, &pstate);
-+		pstate.enabled = false;
-+		pwm_apply_state(par->pwm, &pstate);
- 		pwm_put(par->pwm);
- 	};
- 	fb_deferred_io_cleanup(info);
+ 	/* APB clock dummy */
+-	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT, 0);
++	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 0);
+ 	clk_register_clkdev(clk, "apb_pclk", NULL);
+ 
+ 	/* 24 MHz clock */
+-	clk = clk_register_fixed_rate(NULL, "clk24mhz", NULL, CLK_IS_ROOT,
+-				24000000);
++	clk = clk_register_fixed_rate(NULL, "clk24mhz", NULL, 0, 24000000);
+ 	clk_register_clkdev(clk, NULL, "dev:uart0");
+ 	clk_register_clkdev(clk, NULL, "dev:uart1");
+ 	clk_register_clkdev(clk, NULL, "dev:uart2");
+@@ -81,8 +80,7 @@ void __init realview_clk_init(void __iomem *sysbase, bool is_pb1176)
+ 
+ 
+ 	/* 1 MHz clock */
+-	clk = clk_register_fixed_rate(NULL, "clk1mhz", NULL, CLK_IS_ROOT,
+-				      1000000);
++	clk = clk_register_fixed_rate(NULL, "clk1mhz", NULL, 0, 1000000);
+ 	clk_register_clkdev(clk, NULL, "sp804");
+ 
+ 	/* ICST VCO clock */
+diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+index 89c0609e180b..7e5add7d7752 100644
+--- a/drivers/clk/versatile/clk-vexpress-osc.c
++++ b/drivers/clk/versatile/clk-vexpress-osc.c
+@@ -94,7 +94,7 @@ static int vexpress_osc_probe(struct platform_device *pdev)
+ 		init.name = dev_name(&pdev->dev);
+ 
+ 	init.ops = &vexpress_osc_ops;
+-	init.flags = CLK_IS_ROOT;
++	init.flags = 0;
+ 	init.num_parents = 0;
+ 
+ 	osc->hw.init = &init;
 -- 
-2.5.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
