@@ -1,36 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 29 Mar 2016 16:29:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>, Barry Song <baohua@kernel.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH 2/7] clk: mmp: Make reset_control_ops const
-Message-ID: <20160329232936.GJ18567@codeaurora.org>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
- <1456393512-26602-3-git-send-email-p.zabel@pengutronix.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 1 Mar 2016 13:00:58 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
+Message-ID: <20160301210057.GC4469@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-6-git-send-email-fcooper@ti.com>
+ <20160229232443.GW13417@atomide.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456393512-26602-3-git-send-email-p.zabel@pengutronix.de>
+In-Reply-To: <20160229232443.GW13417@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/25, Philipp Zabel wrote:
-> The mmp_clk_reset_ops structure is never modified. Make it const.
+* Tony Lindgren <tony@atomide.com> [160229 15:25]:
+> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+> > From: Vignesh R <vigneshr@ti.com>
+> > 
+> > Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+> > for dt bindings.
 > 
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
+> Seems to be all standard so applying this one into omap-for-v4.6/dt
+> thanks.
 
-Applied to clk-fixes
+Except this may still need to change depending on the hwmod
+related patch as pointed out by Paul. So I've reverted this
+in omap-for-v4.6/dt.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+
+Tony
