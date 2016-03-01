@@ -1,91 +1,197 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	jay.xu@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 11/41] clk: pxa: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 10:59:56 -0800
-Message-Id: <1456858826-28541-12-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] clk: rockchip: add more mux parameters for new pll sources
+Date: Tue,  1 Mar 2016 18:07:37 +0800
+Message-Id: <1456826861-7612-2-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1456826861-7612-1-git-send-email-zhengxing@rock-chips.com>
+References: <1456826861-7612-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+Thers are only two parent PLLs that APLL and GPLL for core on the
+previous SoCs (RK3066/RK3188/RK3288/RK3368). Hence, we set fixed
+GPLL as alternate parent when core is switching freq.
 
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Since RK3399 big.LITTLE architecture, we need to select and adapt
+more PLLs (ALPLL/ABPLL/DPLL/GPLL) sources.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/pxa/clk-pxa25x.c | 8 +++-----
- drivers/clk/pxa/clk-pxa27x.c | 6 +++---
- drivers/clk/pxa/clk-pxa3xx.c | 8 ++++----
- 3 files changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index b7747229db9a..48b8b64fd28f 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -200,12 +200,10 @@ static void __init pxa25x_register_core(void)
- static void __init pxa25x_register_plls(void)
- {
- 	clk_register_fixed_rate(NULL, "osc_3_6864mhz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
--				3686400);
-+				CLK_GET_RATE_NOCACHE, 3686400);
- 	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
--				32768);
--	clk_register_fixed_rate(NULL, "clk_dummy", NULL, CLK_IS_ROOT, 0);
-+				CLK_GET_RATE_NOCACHE, 32768);
-+	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
- 	clk_register_fixed_factor(NULL, "ppll_95_85mhz", "osc_3_6864mhz",
- 				  0, 26, 1);
- 	clk_register_fixed_factor(NULL, "ppll_147_46mhz", "osc_3_6864mhz",
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 5b82d30baf9f..e86cd5fa2eb4 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -208,12 +208,12 @@ MUX_RO_RATE_RO_OPS(clk_pxa27x_lcd_base, "lcd_base");
- static void __init pxa27x_register_plls(void)
- {
- 	clk_register_fixed_rate(NULL, "osc_13mhz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
-+				CLK_GET_RATE_NOCACHE,
- 				13 * MHz);
- 	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
-+				CLK_GET_RATE_NOCACHE,
- 				32768 * KHz);
--	clk_register_fixed_rate(NULL, "clk_dummy", NULL, CLK_IS_ROOT, 0);
-+	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
- 	clk_register_fixed_factor(NULL, "ppll_312mhz", "osc_13mhz", 0, 24, 1);
- }
+ drivers/clk/rockchip/clk-cpu.c    |   14 ++++++++++----
+ drivers/clk/rockchip/clk-rk3036.c |    3 +++
+ drivers/clk/rockchip/clk-rk3188.c |    6 ++++++
+ drivers/clk/rockchip/clk-rk3228.c |    3 +++
+ drivers/clk/rockchip/clk-rk3288.c |    3 +++
+ drivers/clk/rockchip/clk-rk3368.c |    6 ++++++
+ drivers/clk/rockchip/clk.h        |    6 ++++++
+ 7 files changed, 37 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 4e73ed5..5556849 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -158,12 +158,16 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
  
-diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
-index 4af4eed5f89f..9238d5f5a7fd 100644
---- a/drivers/clk/pxa/clk-pxa3xx.c
-+++ b/drivers/clk/pxa/clk-pxa3xx.c
-@@ -284,15 +284,15 @@ static void __init pxa3xx_register_core(void)
- static void __init pxa3xx_register_plls(void)
- {
- 	clk_register_fixed_rate(NULL, "osc_13mhz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
-+				CLK_GET_RATE_NOCACHE,
- 				13 * MHz);
- 	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
-+				CLK_GET_RATE_NOCACHE,
- 				32768);
- 	clk_register_fixed_rate(NULL, "ring_osc_120mhz", NULL,
--				CLK_GET_RATE_NOCACHE | CLK_IS_ROOT,
-+				CLK_GET_RATE_NOCACHE,
- 				120 * MHz);
--	clk_register_fixed_rate(NULL, "clk_dummy", NULL, CLK_IS_ROOT, 0);
-+	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
- 	clk_register_fixed_factor(NULL, "spll_624mhz", "osc_13mhz", 0, 48, 1);
- 	clk_register_fixed_factor(NULL, "ring_osc_60mhz", "ring_osc_120mhz",
- 				  0, 1, 2);
+ 		writel(HIWORD_UPDATE(alt_div, reg_data->div_core_mask,
+ 					      reg_data->div_core_shift) |
+-		       HIWORD_UPDATE(1, 1, reg_data->mux_core_shift),
++		       HIWORD_UPDATE(reg_data->mux_core_alt,
++				     reg_data->mux_core_mask,
++				     reg_data->mux_core_shift),
+ 		       cpuclk->reg_base + reg_data->core_reg);
+ 	} else {
+ 		/* select alternate parent */
+-		writel(HIWORD_UPDATE(1, 1, reg_data->mux_core_shift),
+-			cpuclk->reg_base + reg_data->core_reg);
++		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
++				     reg_data->mux_core_mask,
++				     reg_data->mux_core_shift),
++		       cpuclk->reg_base + reg_data->core_reg);
+ 	}
+ 
+ 	spin_unlock_irqrestore(cpuclk->lock, flags);
+@@ -198,7 +202,9 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
+ 
+ 	writel(HIWORD_UPDATE(0, reg_data->div_core_mask,
+ 				reg_data->div_core_shift) |
+-	       HIWORD_UPDATE(0, 1, reg_data->mux_core_shift),
++	       HIWORD_UPDATE(reg_data->mux_core_main,
++				reg_data->mux_core_mask,
++				reg_data->mux_core_shift),
+ 	       cpuclk->reg_base + reg_data->core_reg);
+ 
+ 	if (ndata->old_rate > ndata->new_rate)
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 5759d75..1dae248 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -113,7 +113,10 @@ static const struct rockchip_cpuclk_reg_data rk3036_cpuclk_data = {
+ 	.core_reg = RK2928_CLKSEL_CON(0),
+ 	.div_core_shift = 0,
+ 	.div_core_mask = 0x1f,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.mux_core_shift = 7,
++	.mux_core_mask = 0x1,
+ };
+ 
+ PNAME(mux_pll_p)		= { "xin24m", "xin24m" };
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 40bab39..e832403 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -155,7 +155,10 @@ static const struct rockchip_cpuclk_reg_data rk3066_cpuclk_data = {
+ 	.core_reg = RK2928_CLKSEL_CON(0),
+ 	.div_core_shift = 0,
+ 	.div_core_mask = 0x1f,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.mux_core_shift = 8,
++	.mux_core_mask = 0x1,
+ };
+ 
+ #define RK3188_DIV_ACLK_CORE_MASK	0x7
+@@ -191,7 +194,10 @@ static const struct rockchip_cpuclk_reg_data rk3188_cpuclk_data = {
+ 	.core_reg = RK2928_CLKSEL_CON(0),
+ 	.div_core_shift = 9,
+ 	.div_core_mask = 0x1f,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.mux_core_shift = 8,
++	.mux_core_mask = 0x1,
+ };
+ 
+ PNAME(mux_pll_p)		= { "xin24m", "xin32k" };
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index c515915..55628b5 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -111,7 +111,10 @@ static const struct rockchip_cpuclk_reg_data rk3228_cpuclk_data = {
+ 	.core_reg = RK2928_CLKSEL_CON(0),
+ 	.div_core_shift = 0,
+ 	.div_core_mask = 0x1f,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.mux_core_shift = 6,
++	.mux_core_mask = 0x1,
+ };
+ 
+ PNAME(mux_pll_p)		= { "clk_24m", "xin24m" };
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 3cb7216..00faf3f 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -165,7 +165,10 @@ static const struct rockchip_cpuclk_reg_data rk3288_cpuclk_data = {
+ 	.core_reg = RK3288_CLKSEL_CON(0),
+ 	.div_core_shift = 8,
+ 	.div_core_mask = 0x1f,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.mux_core_shift = 15,
++	.mux_core_mask = 0x1,
+ };
+ 
+ PNAME(mux_pll_p)		= { "xin24m", "xin32k" };
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 31facd8..aaff724 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -165,14 +165,20 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkb_data = {
+ 	.core_reg = RK3368_CLKSEL_CON(0),
+ 	.div_core_shift = 0,
+ 	.div_core_mask = 0x1f,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.mux_core_shift = 7,
++	.mux_core_mask = 0x1,
+ };
+ 
+ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
+ 	.core_reg = RK3368_CLKSEL_CON(2),
+ 	.div_core_shift = 0,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
+ 	.div_core_mask = 0x1f,
+ 	.mux_core_shift = 7,
++	.mux_core_mask = 0x1,
+ };
+ 
+ #define RK3368_DIV_ACLKM_MASK		0x1f
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 39c198b..7aafe18 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -217,14 +217,20 @@ struct rockchip_cpuclk_rate_table {
+  * @core_reg:		register offset of the core settings register
+  * @div_core_shift:	core divider offset used to divide the pll value
+  * @div_core_mask:	core divider mask
++ * @mux_core_alt:	mux value to select alternate parent
++ * @mux_core_main:	mux value to select main parent of core
+  * @mux_core_shift:	offset of the core multiplexer
++ * @mux_core_mask:	core multiplexer mask
+  */
+ struct rockchip_cpuclk_reg_data {
+ 	int		core_reg;
+ 	u8		div_core_shift;
+ 	u32		div_core_mask;
+ 	int		mux_core_reg;
++	u8		mux_core_alt;
++	u8		mux_core_main;
+ 	u8		mux_core_shift;
++	u32		mux_core_mask;
+ };
+ 
+ struct clk *rockchip_clk_register_cpuclk(const char *name,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
