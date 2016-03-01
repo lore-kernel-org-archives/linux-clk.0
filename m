@@ -1,91 +1,108 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 29 Feb 2016 23:12:53 -0800
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar,
+	jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 13/13] ARM: sunxi: Introduce MACH_SUN8I_A83T option
+Message-ID: <20160301071253.GI8418@lukather>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1456672738-4993-14-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <56B9BB41.3080001@kernel.org>
-References: <56B9507B.9000201@kernel.org>
-	<CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
-	<56B9BB41.3080001@kernel.org>
-Date: Tue, 9 Feb 2016 20:21:01 +0900
-Message-ID: <CAK7LNASt2GodpoH7qHu6yU4RxWbi42Qy=TSW=Cr5P0NgSrBdrQ@mail.gmail.com>
-Subject: Re: commit 5146e0b05963 is causing a kernel crash on SoCFPGA
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Vladimir Zapolskiy <vz@mleia.com>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nEsDIrWrg+hrB7l1"
+In-Reply-To: <1456672738-4993-14-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-02-09 19:11 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
-> Hi Masahiro,
->
-> On 02/08/2016 10:00 PM, Masahiro Yamada wrote:
->> Hi Dinh,
->>
->> Thanks for your report.
->>
->>
->> 2016-02-09 11:35 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
->>> Hi Stephen,
->>>
->>> It appears that commit 5146e0b05966 "clk: simplify __clk_init_parent()"
->>> that is currently in linux-next is causing the following kernel crash on
->>> SoCFGPA[1].
->>>
->>> I have bisected to this commit and doing a revert of the commit fixes
->>> the issue.
->>
->>
->> Could you check if the following simple patch fixes your problem?
->>
->>
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1662,7 +1662,7 @@ static struct clk_core *__clk_init_parent(struct
->> clk_core *core)
->>  {
->>         u8 index = 0;
->>
->> -       if (core->ops->get_parent)
->> +       if (core->num_parents > 1 && core->ops->get_parent)
->>                 index = core->ops->get_parent(core->hw);
->>
->>         return clk_core_get_parent_by_index(core, index);
->>
->>
->
-> Yes, the above patch fixes the problem and the SoCFPGA board is able to
-> boot.
 
-Thanks for your testing!
+--nEsDIrWrg+hrB7l1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've sent a patch with your Reported-by.
+Hi,
 
+On Sun, Feb 28, 2016 at 11:18:58PM +0800, Vishnu Patekar wrote:
+> A83T has CPUS clock similar to A80's. currently, a80 cpus clock only
+> compiled for A80. So, Introduce MACH_SUN8I_A83T to compile it for
+> A83T as well.
+>=20
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  arch/arm/mach-sunxi/Kconfig | 5 +++++
+>  drivers/clk/sunxi/Makefile  | 3 +++
+>  2 files changed, 8 insertions(+)
+>=20
+> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> index c124d65..424b76d 100644
+> --- a/arch/arm/mach-sunxi/Kconfig
+> +++ b/arch/arm/mach-sunxi/Kconfig
+> @@ -41,6 +41,11 @@ config MACH_SUN8I
+>  	select ARM_GIC
+>  	select MFD_SUN6I_PRCM
+> =20
+> +config MACH_SUN8I_A83T
+> +	bool "Allwinner A83T (sun8i) SoCs support"
+> +	default ARCH_SUNXI
+> +	select ARM_GIC
+> +
+>  config MACH_SUN9I
+>  	bool "Allwinner (sun9i) SoCs support"
+>  	default ARCH_SUNXI
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index 3fd7901..2aabfc4 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -20,6 +20,9 @@ obj-y +=3D clk-usb.o
+>  obj-$(CONFIG_MACH_SUN9I) +=3D clk-sun8i-apb0.o
+>  obj-$(CONFIG_MACH_SUN9I) +=3D clk-sun9i-cpus.o
+> =20
+> +obj-$(CONFIG_MACH_SUN8I_A83T) +=3D clk-sun8i-apb0.o
+> +obj-$(CONFIG_MACH_SUN8I_A83T) +=3D clk-sun9i-cpus.o
+> +
 
->>
->>
->> Let me ask one more question.
->>
->> Do SoCFPGA clocks define .get_parent callback even if num_parents <= 1 ?
->>
->>
->> I just skimmed over driver/clk/socfpga/clk-gate.c
->> and found it defines .get_parent().
->>
->> I think a gating clock is usually single-parent (so not need to have
->> .get_parent),
->> but I am not sure if this is the case.
->>
->
-> Yes, .get_parent call back is define when num_parents = 1. If you take a
-> look at socfpga.dtsi, the main_pll of type "altr,socfpga-pll-clk" only
-> has 1 parent, osc1. But the periph_pll and sdram_pll, also of type
-> "altr,socfpga-pll-clk" has > 1 parents.
+This is not how it should be done. You should rather create a Kconfig
+option for these clocks, and use def_bool CONFIG_MACH_SUN8I || CONFIG_MACH_=
+SUN9I
 
+Switching to Kconfig for the clocks has been on my todo-list for quite
+some time, I guess these two clocks would be a good start.
 
-OK. Then, I understood the cause of the problem.
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
+--nEsDIrWrg+hrB7l1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-Best Regards
-Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW1UD1AAoJEBx+YmzsjxAgaHoP/iLw7krEC7c8HoO5pzPmW0hm
+JTaXdpnfTImZR9btm66y5XeVU7vqTOMO1KFbI5zjwj9y/OaC5svUgVsFzl8dEhM3
+tfDon/YS0i9kplDwJa748jNKvwGGaGt1ccXrlkk6B6vGYrNkNDJrAdWMqk0AK+yK
+fS31eWYWEiKXDDTpAMcFcOPUxXLnhTZNpjcC6O0caCe4+wy6bicyW4O+tmxZCd8B
+OU42+eEoGXpIFJlajMNJVlZ+Urw+K+K2G4cVG7xKbyebvSQa54uMmJw5O3gMcDay
+VTt5nSmVBrmdWSyskc4v3eARaJhbmi/CyBYtr3cmX22xNNHqgJiOrG+eOOivPZDg
+HcSJTFGdyw02Mieh0MjfNXGC5xrmyJO+AW38FmA/KB3Z8chOj6oXiyf6U6QPfGl7
+n5vje5wiPbFYJ4xJSSASS5vukAnTvSMS1U6TlAMZGQ0SVvpO4BtkzucQuf6u5Q7a
+iD/dF5em563QaDWy4Nw2D1yIr3NlgqJb0fDbV7lP0qW4MyHWN2j7Bb/ZVU/LoZ16
+8gzzVDsg9ctryGUulT8eoN2Nba6MRykyThHDAb+VdlUbvZ+mG3MnY+YCad/rIiu7
+p7sa9Lj0osFMQaYV0+lLLTmqTmC21ISFz5O+pkWgQemcqebaW1RJRN1oMscbuYUQ
+qNrBA4TfJvQmH7czpLg/
+=O1Ae
+-----END PGP SIGNATURE-----
+
+--nEsDIrWrg+hrB7l1--
