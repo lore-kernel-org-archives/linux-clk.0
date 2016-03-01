@@ -1,63 +1,63 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	keescook@google.com,
-	leozwang@google.com,
-	sergei.shtylyov@cogentembedded.com,
-	netdev@vger.kernel.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/9] clk: rockchip: associate the rk3036 HCLK_EMAC clock-id
-Date: Mon, 14 Mar 2016 16:01:57 +0800
-Message-Id: <1457942520-12859-7-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
-References: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 1 Mar 2016 23:15:44 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/41] clk: at91: Remove CLK_IS_ROOT
+Message-ID: <20160301231544.55c502f1@bbrezillon>
+In-Reply-To: <1456858826-28541-2-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	<1456858826-28541-2-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Xing Zheng <zhengxing@rock-chips.com>
+On Tue,  1 Mar 2016 10:59:46 -0800
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Associate the new clock id the clock.
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-Cc: Xing Zheng <zhengxing@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
----
+> ---
+>  drivers/clk/at91/clk-main.c | 2 +-
+>  drivers/clk/at91/clk-slow.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+> index b85f43529396..b9bdfd8e4e6f 100644
+> --- a/drivers/clk/at91/clk-main.c
+> +++ b/drivers/clk/at91/clk-main.c
+> @@ -315,7 +315,7 @@ at91_clk_register_main_rc_osc(struct at91_pmc *pmc,
+>  	init.ops = &main_rc_osc_ops;
+>  	init.parent_names = NULL;
+>  	init.num_parents = 0;
+> -	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
+> +	init.flags = CLK_IGNORE_UNUSED;
+>  
+>  	osc->hw.init = &init;
+>  	osc->pmc = pmc;
+> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+> index 67b304726d06..402b45d38d25 100644
+> --- a/drivers/clk/at91/clk-slow.c
+> +++ b/drivers/clk/at91/clk-slow.c
+> @@ -251,7 +251,7 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
+>  	init.ops = &slow_rc_osc_ops;
+>  	init.parent_names = NULL;
+>  	init.num_parents = 0;
+> -	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
+> +	init.flags = CLK_IGNORE_UNUSED;
+>  
+>  	osc->hw.init = &init;
+>  	osc->sckcr = sckcr;
 
-Changes in v3:
-- Add the Cc people.
 
-Changes in v2: None
 
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 0703c8f..cc66e5f 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -408,7 +408,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
- 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
- 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
--	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
-+	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
- 
- 	/* pclk_peri gates */
- 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
 -- 
-1.9.1
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
