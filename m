@@ -1,78 +1,76 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
- <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com> <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Sat, 12 Mar 2016 12:48:02 +0800
-Message-ID: <CAEzqOZta65UBJPBrp_4xr=SzHU98dWDucwzVb80eKE9ChJ8jpQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 08/41] clk: mvebu: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 10:59:53 -0800
+Message-Id: <1456858826-28541-9-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Linus,
+This flag is a no-op now. Remove usage of the flag.
 
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/mvebu/common.c       | 11 +++++------
+ drivers/clk/mvebu/dove-divider.c |  3 +--
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
-On Wed, Mar 9, 2016 at 10:55 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
->
->> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
->> interrupt bit is 6th and A83T has one extra pin PL12.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> Acked-by: Chen-Yu Tsai <wens@csie.org>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> As partly noted by others:
->
->> +config PINCTRL_SUN8I_A83T_R
->> +       def_bool MACH_SUN8I
->
-> bool
->
->> +       depends on RESET_CONTROLLER
->
-> Should it rather select RESET_CONTROLLER?
-I used depends on and def_bool as it is used for other sunxi pinctrl drivers.
-Using bool and select will not harm anything.
-Should I change it to bool and select ?  or keep it to be uniform with
-earlier options?
->
->> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
->> +       { .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
->> +       {}
->> +};
->> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
->
-> Module talk in bool driver.
-I'll remove it.
->
->> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
->> +       .probe  = sun8i_a83t_r_pinctrl_probe,
->> +       .driver = {
->> +               .name           = "sun8i-a83t-r-pinctrl",
->> +               .of_match_table = sun8i_a83t_r_pinctrl_match,
->> +       },
->> +};
->> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
->
-> Should be builtin?
-Yes, It should be. I missed Maxime's earlier commets.
->
-> Yours,
-> Linus Walleij
+diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+index daa6ebdac131..66be2e0c82b4 100644
+--- a/drivers/clk/mvebu/common.c
++++ b/drivers/clk/mvebu/common.c
+@@ -137,8 +137,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+ 	of_property_read_string_index(np, "clock-output-names", 0,
+ 				      &tclk_name);
+ 	rate = desc->get_tclk_freq(base);
+-	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL,
+-						   CLK_IS_ROOT, rate);
++	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL, 0,
++						   rate);
+ 	WARN_ON(IS_ERR(clk_data.clks[0]));
+ 
+ 	/* Register CPU clock */
+@@ -150,8 +150,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+ 		&& desc->is_sscg_enabled(base))
+ 		rate = desc->fix_sscg_deviation(rate);
+ 
+-	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL,
+-						   CLK_IS_ROOT, rate);
++	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL, 0,
++						   rate);
+ 	WARN_ON(IS_ERR(clk_data.clks[1]));
+ 
+ 	/* Register fixed-factor clocks derived from CPU clock */
+@@ -174,8 +174,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+ 					      2 + desc->num_ratios, &name);
+ 		rate = desc->get_refclk_freq(base);
+ 		clk_data.clks[2 + desc->num_ratios] =
+-			clk_register_fixed_rate(NULL, name, NULL,
+-						CLK_IS_ROOT, rate);
++			clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ 		WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
+ 	}
+ 
+diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
+index 3e0b52daa35f..4091f3cfee19 100644
+--- a/drivers/clk/mvebu/dove-divider.c
++++ b/drivers/clk/mvebu/dove-divider.c
+@@ -225,8 +225,7 @@ static int dove_divider_init(struct device *dev, void __iomem *base,
+ 	 * Create the core PLL clock.  We treat this as a fixed rate
+ 	 * clock as we don't know any better, and documentation is sparse.
+ 	 */
+-	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
+-				      2000000000UL);
++	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, 0, 2000000000UL);
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
