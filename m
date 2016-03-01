@@ -1,209 +1,378 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56752 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757087AbcCDCZe (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2016 21:25:34 -0500
-Date: Thu, 3 Mar 2016 18:25:32 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/17] clk: Add PLX Technology OXNAS Standard Clocks
-Message-ID: <20160304022532.GE24999@codeaurora.org>
-References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
- <1457005210-18485-9-git-send-email-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457005210-18485-9-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	jay.xu@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/5] clk: rockchip: add new pll-type for rk3399 and similar socs
+Date: Tue,  1 Mar 2016 18:07:39 +0800
+Message-Id: <1456826861-7612-4-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1456826861-7612-1-git-send-email-zhengxing@rock-chips.com>
+References: <1456826861-7612-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Neil Armstrong wrote:
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index eca8e01..b75ef5c 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -192,6 +192,12 @@ config COMMON_CLK_PXA
->  	---help---
->  	  Sypport for the Marvell PXA SoC.
->  
-> +config COMMON_CLK_OXNAS
-> +	def_bool COMMON_CLK
-> +	select MFD_SYSCON
+The rk3399's pll and clock are similar with rk3036's, it different
+with base on the rk3066(rk3188, rk3288, rk3368 use it), there are
+different adjust foctors and control registers, so these should be
+independent and separate from the series of rk3066s.
 
-So this is always built if I have the common clk framework
-enabled? Not good.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-> +	---help---
-> +	  Sypport for the OXNAS SoC Family clocks.
-> +
->  config COMMON_CLK_CDCE706
->  	tristate "Clock driver for TI CDCE706 clock synthesizer"
->  	depends on I2C
-> diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
-> new file mode 100644
-> index 0000000..c4b903f
-> --- /dev/null
-> +++ b/drivers/clk/clk-oxnas.c
-> @@ -0,0 +1,159 @@
-> +/*
-> + * Copyright (C) 2010 Broadcom
-> + * Copyright (C) 2012 Stephen Warren
-> + * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
+ drivers/clk/rockchip/clk-pll.c |  279 +++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/rockchip/clk.h     |   15 ++-
+ 2 files changed, 292 insertions(+), 2 deletions(-)
 
-Are either of these includes used?
-
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/delay.h>
-
-Is this include used?
-
-> +#include <linux/stringify.h>
-> +#include <linux/reset.h>
-
-Is this include used?
-
-> +#include <linux/io.h>
-
-Is this include used?
-
-> +#include <linux/regmap.h>
-> +#include <linux/mfd/syscon.h>
-
-#include <linux/kernel.h> for container_of?
-
-> +
-> +/* Standard regmap gate clocks */
-> +struct clk_std {
-> +	struct clk_hw hw;
-> +	signed char bit;
-> +	struct regmap *regmap;
-> +};
-> +
-> +/* Regmap offsets */
-> +#define CLK_STAT_REGOFFSET	0x24
-> +#define CLK_SET_REGOFFSET	0x2c
-> +#define CLK_CLR_REGOFFSET	0x30
-> +
-> +#define NUM_STD_CLKS 10
-> +#define to_stdclk(_hw) container_of(_hw, struct clk_std, hw)
-> +
-> +static int std_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_std *std = to_stdclk(hw);
-> +	int ret;
-> +	unsigned int val;
-> +
-> +	ret = regmap_read(std->regmap, CLK_STAT_REGOFFSET, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return val & BIT(std->bit);
-> +}
-> +
-> +static int std_clk_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_std *std = to_stdclk(hw);
-> +
-> +	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
-
-I hope the regmap is fast_io? Otherwise this is scheduling while
-atomic.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static void std_clk_disable(struct clk_hw *hw)
-> +{
-> +	struct clk_std *std = to_stdclk(hw);
-> +
-> +	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
-> +}
-> +
-> +static struct clk_ops std_clk_ops = {
-
-const?
-
-> +	.enable = std_clk_enable,
-> +	.disable = std_clk_disable,
-> +	.is_enabled = std_clk_is_enabled,
-> +};
-> +
-[..]
-> +
-> +static struct clk_hw *std_clk_hw_tbl[] = {
-
-const?
-
-> +	&clk_leon.hw,
-> +	&clk_dma_sgdma.hw,
-> +	&clk_cipher.hw,
-> +	&clk_sata.hw,
-> +	&clk_audio.hw,
-> +	&clk_usbmph.hw,
-> +	&clk_etha.hw,
-> +	&clk_pciea.hw,
-> +	&clk_nand.hw,
-> +};
-> +
-> +static struct clk *std_clk_tbl[ARRAY_SIZE(std_clk_hw_tbl)];
-> +
-> +static struct clk_onecell_data std_clk_data;
-
-These are pretty generic. Perhaps oxnas_clk_data and
-oxnas_clk_hw_tbl?
-
-> +
-> +static void __init oxnas_init_stdclk(struct device_node *np)
-> +{
-> +	int i;
-> +	struct regmap *regmap = syscon_node_to_regmap(of_get_parent(np));
-> +
-> +	if (!regmap)
-> +		panic("failed to have parent regmap\n");
-> +
-> +	for (i = 0; i < ARRAY_SIZE(std_clk_hw_tbl); i++) {
-> +		struct clk_std *std = container_of(std_clk_hw_tbl[i],
-> +						   struct clk_std, hw);
-> +
-> +		if (WARN_ON(!std))
-> +			return;
-> +		std->regmap = regmap;
-> +
-> +		std_clk_tbl[i] = clk_register(NULL, std_clk_hw_tbl[i]);
-> +		if (WARN_ON(IS_ERR(std_clk_tbl[i])))
-> +			return;
-> +	}
-> +
-> +	std_clk_data.clks = std_clk_tbl;
-> +	std_clk_data.clk_num = ARRAY_SIZE(std_clk_tbl);
-> +
-> +	of_clk_add_provider(np, of_clk_src_onecell_get, &std_clk_data);
-> +}
-> +CLK_OF_DECLARE(oxnas_pllstd, "plxtech,ox810se-stdclk", oxnas_init_stdclk);
-
-Can this be a platform driver instead?
-
-Is there a binding for this compatible?
-
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 27be66a..c6996be 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -593,6 +593,275 @@ static const struct clk_ops rockchip_rk3066_pll_clk_ops = {
+ 	.init = rockchip_rk3066_pll_init,
+ };
+ 
++/**
++ * PLL used in RK3399
++ */
++
++#define RK3399_PLLCON(i)			(i * 0x4)
++#define RK3399_PLLCON0_FBDIV_MASK		0xfff
++#define RK3399_PLLCON0_FBDIV_SHIFT		0
++#define RK3399_PLLCON1_REFDIV_MASK		0x3f
++#define RK3399_PLLCON1_REFDIV_SHIFT		0
++#define RK3399_PLLCON1_POSTDIV1_MASK		0x7
++#define RK3399_PLLCON1_POSTDIV1_SHIFT		8
++#define RK3399_PLLCON1_POSTDIV2_MASK		0x7
++#define RK3399_PLLCON1_POSTDIV2_SHIFT		12
++#define RK3399_PLLCON2_FRAC_MASK		0xffffff
++#define RK3399_PLLCON2_FRAC_SHIFT		0
++#define RK3399_PLLCON3_DSMPD_MASK		0x1
++#define RK3399_PLLCON3_DSMPD_SHIFT		12
++
++#define RK3399_PLLCON2_LOCK_STATUS		(31 << 0)
++#define RK3399_PLLCON3_PWRDOWN			(1 << 0)
++
++static int rockchip_rk3399_pll_wait_lock(struct rockchip_clk_pll *pll)
++{
++	u32 pllcon;
++	int delay = 24000000;
++
++	/* poll check the lock status in rk3399 xPLLCON2 */
++	while (delay > 0) {
++		pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
++		if (pllcon & RK3399_PLLCON2_LOCK_STATUS)
++			return 0;
++
++		delay--;
++	}
++
++	pr_err("%s: timeout waiting for pll to lock\n", __func__);
++	return -ETIMEDOUT;
++}
++
++static void rockchip_rk3399_pll_get_params(struct rockchip_clk_pll *pll,
++					struct rockchip_pll_rate_table *rate)
++{
++	u32 pllcon;
++
++	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(0));
++	rate->fbdiv = ((pllcon >> RK3399_PLLCON0_FBDIV_SHIFT)
++				& RK3399_PLLCON0_FBDIV_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(1));
++	rate->refdiv = ((pllcon >> RK3399_PLLCON1_REFDIV_SHIFT)
++				& RK3399_PLLCON1_REFDIV_MASK);
++	rate->postdiv1 = ((pllcon >> RK3399_PLLCON1_POSTDIV1_SHIFT)
++				& RK3399_PLLCON1_POSTDIV1_MASK);
++	rate->postdiv2 = ((pllcon >> RK3399_PLLCON1_POSTDIV2_SHIFT)
++				& RK3399_PLLCON1_POSTDIV2_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
++	rate->frac = ((pllcon >> RK3399_PLLCON2_FRAC_SHIFT)
++				& RK3399_PLLCON2_FRAC_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(3));
++	rate->dsmpd = ((pllcon >> RK3399_PLLCON3_DSMPD_SHIFT)
++				& RK3399_PLLCON3_DSMPD_MASK);
++}
++
++static unsigned long rockchip_rk3399_pll_recalc_rate(struct clk_hw *hw,
++						     unsigned long prate)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	struct rockchip_pll_rate_table cur;
++	u64 rate64 = prate;
++
++	rockchip_rk3399_pll_get_params(pll, &cur);
++
++	rate64 *= cur.fbdiv;
++	do_div(rate64, cur.refdiv);
++
++	if (cur.dsmpd == 0) {
++		/* fractional mode */
++		u64 frac_rate64 = prate * cur.frac;
++
++		do_div(frac_rate64, cur.refdiv);
++		rate64 += frac_rate64 >> 24;
++	}
++
++	do_div(rate64, cur.postdiv1);
++	do_div(rate64, cur.postdiv2);
++
++	return (unsigned long)rate64;
++}
++
++static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
++				const struct rockchip_pll_rate_table *rate)
++{
++	const struct clk_ops *pll_mux_ops = pll->pll_mux_ops;
++	struct clk_mux *pll_mux = &pll->pll_mux;
++	struct rockchip_pll_rate_table cur;
++	u32 pllcon;
++	int rate_change_remuxed = 0;
++	int cur_parent;
++	int ret;
++
++	pr_debug("%s: rate settings for %lu fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
++		__func__, rate->rate, rate->fbdiv, rate->postdiv1, rate->refdiv,
++		rate->postdiv2, rate->dsmpd, rate->frac);
++
++	rockchip_rk3399_pll_get_params(pll, &cur);
++	cur.rate = 0;
++
++	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
++	if (cur_parent == PLL_MODE_NORM) {
++		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
++		rate_change_remuxed = 1;
++	}
++
++	/* update pll values */
++	writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3399_PLLCON0_FBDIV_MASK,
++					  RK3399_PLLCON0_FBDIV_SHIFT),
++		       pll->reg_base + RK3399_PLLCON(0));
++
++	writel_relaxed(HIWORD_UPDATE(rate->refdiv, RK3399_PLLCON1_REFDIV_MASK,
++						   RK3399_PLLCON1_REFDIV_SHIFT) |
++		       HIWORD_UPDATE(rate->postdiv1, RK3399_PLLCON1_POSTDIV1_MASK,
++					     RK3399_PLLCON1_POSTDIV1_SHIFT) |
++		       HIWORD_UPDATE(rate->postdiv2, RK3399_PLLCON1_POSTDIV2_MASK,
++						     RK3399_PLLCON1_POSTDIV2_SHIFT),
++		       pll->reg_base + RK3399_PLLCON(1));
++
++	/* GPLL CON2 is not HIWORD_MASK */
++	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
++	pllcon &= ~(RK3399_PLLCON2_FRAC_MASK << RK3399_PLLCON2_FRAC_SHIFT);
++	pllcon |= rate->frac << RK3399_PLLCON2_FRAC_SHIFT;
++	writel_relaxed(pllcon, pll->reg_base + RK3399_PLLCON(2));
++
++	writel_relaxed(HIWORD_UPDATE(rate->dsmpd, RK3399_PLLCON3_DSMPD_MASK,
++					    RK3399_PLLCON3_DSMPD_SHIFT),
++		       pll->reg_base + RK3399_PLLCON(3));
++
++	/* wait for the pll to lock */
++	ret = rockchip_rk3399_pll_wait_lock(pll);
++	if (ret) {
++		pr_warn("%s: pll update unsucessful, trying to restore old params\n",
++			__func__);
++		rockchip_rk3399_pll_set_params(pll, &cur);
++	}
++
++	if (rate_change_remuxed)
++		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_NORM);
++
++	return ret;
++}
++
++static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	const struct rockchip_pll_rate_table *rate;
++	unsigned long old_rate = rockchip_rk3399_pll_recalc_rate(hw, prate);
++	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
++
++	if (IS_ERR(grf)) {
++		pr_debug("%s: grf regmap not available, aborting rate change\n",
++			 __func__);
++		return PTR_ERR(grf);
++	}
++
++	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
++		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
++
++	/* Get required rate settings from table */
++	rate = rockchip_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	return rockchip_rk3399_pll_set_params(pll, rate);
++}
++
++static int rockchip_rk3399_pll_enable(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	writel(HIWORD_UPDATE(0, RK3399_PLLCON3_PWRDOWN, 0),
++	       pll->reg_base + RK3399_PLLCON(3));
++
++	return 0;
++}
++
++static void rockchip_rk3399_pll_disable(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	writel(HIWORD_UPDATE(RK3399_PLLCON3_PWRDOWN,
++			     RK3399_PLLCON3_PWRDOWN, 0),
++	       pll->reg_base + RK3399_PLLCON(3));
++}
++
++static int rockchip_rk3399_pll_is_enabled(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	u32 pllcon = readl(pll->reg_base + RK3399_PLLCON(3));
++
++	return !(pllcon & RK3399_PLLCON3_PWRDOWN);
++}
++
++static void rockchip_rk3399_pll_init(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	const struct rockchip_pll_rate_table *rate;
++	struct rockchip_pll_rate_table cur;
++	unsigned long drate;
++
++	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
++		return;
++
++	drate = clk_hw_get_rate(hw);
++	rate = rockchip_get_pll_settings(pll, drate);
++
++	/* when no rate setting for the current rate, rely on clk_set_rate */
++	if (!rate)
++		return;
++
++	rockchip_rk3399_pll_get_params(pll, &cur);
++
++	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
++		 drate);
++	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
++		 cur.fbdiv, cur.postdiv1, cur.refdiv, cur.postdiv2,
++		 cur.dsmpd, cur.frac);
++	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
++		 rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2,
++		 rate->dsmpd, rate->frac);
++
++	if (rate->fbdiv != cur.fbdiv || rate->postdiv1 != cur.postdiv1 ||
++		rate->refdiv != cur.refdiv || rate->postdiv2 != cur.postdiv2 ||
++		rate->dsmpd != cur.dsmpd || rate->frac != cur.frac) {
++		struct clk *parent = clk_get_parent(hw->clk);
++
++		if (!parent) {
++			pr_warn("%s: parent of %s not available\n",
++				__func__, __clk_get_name(hw->clk));
++			return;
++		}
++
++		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
++			 __func__, __clk_get_name(hw->clk));
++		rockchip_rk3399_pll_set_params(pll, rate);
++	}
++}
++
++static const struct clk_ops rockchip_rk3399_pll_clk_norate_ops = {
++	.recalc_rate = rockchip_rk3399_pll_recalc_rate,
++	.enable = rockchip_rk3399_pll_enable,
++	.disable = rockchip_rk3399_pll_disable,
++	.is_enabled = rockchip_rk3399_pll_is_enabled,
++};
++
++static const struct clk_ops rockchip_rk3399_pll_clk_ops = {
++	.recalc_rate = rockchip_rk3399_pll_recalc_rate,
++	.round_rate = rockchip_pll_round_rate,
++	.set_rate = rockchip_rk3399_pll_set_rate,
++	.enable = rockchip_rk3399_pll_enable,
++	.disable = rockchip_rk3399_pll_disable,
++	.is_enabled = rockchip_rk3399_pll_is_enabled,
++	.init = rockchip_rk3399_pll_init,
++};
++
+ /*
+  * Common registering of pll clocks
+  */
+@@ -634,7 +903,9 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	pll_mux->lock = &ctx->lock;
+ 	pll_mux->hw.init = &init;
+ 
+-	if (pll_type == pll_rk3036 || pll_type == pll_rk3066)
++	if (pll_type == pll_rk3036 ||
++	    pll_type == pll_rk3066 ||
++	    pll_type == pll_rk3399)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+ 	/* the actual muxing is xin24m, pll-output, xin32k */
+@@ -691,6 +962,12 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		else
+ 			init.ops = &rockchip_rk3066_pll_clk_ops;
+ 		break;
++	case pll_rk3399:
++		if (!pll->rate_table)
++			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
++		else
++			init.ops = &rockchip_rk3399_pll_clk_ops;
++		break;
+ 	default:
+ 		pr_warn("%s: Unknown pll type for pll clk %s\n",
+ 			__func__, name);
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index b7affb6..36b4938 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -96,6 +96,7 @@ struct clk;
+ enum rockchip_pll_type {
+ 	pll_rk3036,
+ 	pll_rk3066,
++	pll_rk3399,
+ };
+ 
+ #define RK3036_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,	\
+@@ -128,6 +129,18 @@ enum rockchip_pll_type {
+ 	.nb = _nb,						\
+ }
+ 
++#define RK3399_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,	\
++			_postdiv2, _dsmpd, _frac)		\
++{								\
++	.rate	= _rate##U,					\
++	.fbdiv = _fbdiv,					\
++	.postdiv1 = _postdiv1,					\
++	.refdiv = _refdiv,					\
++	.postdiv2 = _postdiv2,					\
++	.dsmpd = _dsmpd,					\
++	.frac = _frac,						\
++}
++
+ /**
+  * struct rockchip_clk_provider: information about clock provider
+  * @reg_base: virtual address for the register base.
+@@ -148,7 +161,7 @@ struct rockchip_pll_rate_table {
+ 	unsigned int nf;
+ 	unsigned int no;
+ 	unsigned int nb;
+-	/* for RK3036 */
++	/* for RK3036/RK3399 */
+ 	unsigned int fbdiv;
+ 	unsigned int postdiv1;
+ 	unsigned int refdiv;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
