@@ -1,51 +1,61 @@
-Return-Path: <horms@verge.net.au>
-Date: Fri, 4 Mar 2016 14:10:43 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: move drivers to renesas directory
-Message-ID: <20160304051042.GB27942@verge.net.au>
-References: <1456971486-13761-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdXfkV05AwaRtLqwA8Ko=BQaQ5y87AYgsU7O-Rd45JiNKA@mail.gmail.com>
- <20160303192617.GY24999@codeaurora.org>
- <20160303193050.GA24999@codeaurora.org>
- <CAMuHMdXsR1s8qT+VKG2+EA5wV0Vr6xjTkW1d9E=7NHju+4GpJw@mail.gmail.com>
+Return-Path: <kernel@martin.sperl.org>
+Subject: Re: [PATCH 1/2] clk: bcm2835: expose raw clock-registers via debugfs
+To: Eric Anholt <eric@anholt.net>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org>
+ <1456755616-2472-2-git-send-email-kernel@martin.sperl.org>
+ <87k2ln5k09.fsf@eliezer.anholt.net>
+From: Martin Sperl <kernel@martin.sperl.org>
+Message-ID: <56D59998.8060301@martin.sperl.org>
+Date: Tue, 1 Mar 2016 14:31:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXsR1s8qT+VKG2+EA5wV0Vr6xjTkW1d9E=7NHju+4GpJw@mail.gmail.com>
+In-Reply-To: <87k2ln5k09.fsf@eliezer.anholt.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 03, 2016 at 08:55:33PM +0100, Geert Uytterhoeven wrote:
-> Hi Stephen,
-> 
-> On Thu, Mar 3, 2016 at 8:30 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 03/03, Stephen Boyd wrote:
-> >> On 03/03, Geert Uytterhoeven wrote:
-> >> > On Thu, Mar 3, 2016 at 3:18 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> >> > > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> >> > > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> >> > > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
-> >> > >
-> >> > > Along with the above mentioned Kconfig changes it seems appropriate
-> >> > > to also rename directories that only hold drivers for such SoCs.
-> >> > >
-> >> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> >> >
-> >> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> >
-> >>
-> >> Applied to clk-next.
-> >
-> > Also, did you want to rename the clk/shmobile.h header file?
-> 
-> That would indeed make sense, but does require changes in both
-> arch/arm/mach-shmobile/ and drivers/clk/shmobile/.
 
-If there are no issues with conflicts, which I expect to be the case,
-I'd be happy for the arch/arm/mach-shmobile/ changes to go through the
-clk tree with an Ack or Sob from me. Geert, do you think that would fly?
+
+On 29.02.2016 21:39, Eric Anholt wrote:
+> kernel@martin.sperl.org writes:
+>
+>> From: Martin Sperl <kernel@martin.sperl.org>
+>>
+>> For debugging purposes under some circumstance
+>> it helps to be able to see the actual clock registers.
+>>
+>> E.g: when looking at the clock divider it is helpful to
+>> see what the actual clock divider is.
+>>
+>> This patch exposes all the clock registers specific to each
+>> clock/pll/pll-divider via debugfs.
+>>
+>> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+>
+> This one definitely seems useful to me.  I think the debugfs bits need
+> to be under #ifdef CONFIG_DEBUG_FS though.
+>
+> With that fixed,
+>
+> Acked-by: Eric Anholt <eric@anholt.net>
+>
+Note that include/linux/debugfs.h contains such ifdef and generates
+dummy code like this:
+static inline struct dentry *debugfs_create_regset32(const char *name,
+                                    umode_t mode, struct dentry *parent,
+                                    struct debugfs_regset32 *regset)
+{
+         return ERR_PTR(-ENODEV);
+}
+(see also Documentation/filesystem/debugfs.txt )
+
+On the other hand the clock framework calls debug_init only
+if debugfs is enabled.
+
+So all the code is essentially "dead" when debugfs is disabled.
+
+I assume I will not ifdef this just in case.
+
+Thanks, Martin
