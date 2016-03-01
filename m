@@ -1,50 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47865 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753236AbcCBST6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 2 Mar 2016 13:19:58 -0500
-Date: Wed, 2 Mar 2016 10:19:54 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: clk: ti: Add support for dm814x ADPLL
-Message-ID: <20160302181954.GE4469@atomide.com>
-References: <20160302111130.GA10965@mwanda>
- <20160302170502.GS21163@atomide.com>
- <20160302180912.GT5273@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160302180912.GT5273@mwanda>
-Sender: linux-clk-owner@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH 14/41] clk: sirf: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 10:59:59 -0800
+Message-Id: <1456858826-28541-15-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Dan Carpenter <dan.carpenter@oracle.com> [160302 10:09]:
-> On Wed, Mar 02, 2016 at 09:05:03AM -0800, Tony Lindgren wrote:
-> > >    910          err = ti_adpll_init_registers(d);
-> > >    911          if (err)
-> > >    912                  return err;
-> > >    913  
-> > >    914          err = ti_adpll_init_inputs(d);
-> > >    915          if (err)
-> > >    916                  return err;
-> > >                         ^^^^^^^^^^
-> > > This is the last direct return in the function, meaning that
-> > > ti_adpll_init_inputs() must allocate something but I can't see what.
-> > > It should match clkdev_drop() and ac->unregister()?  I don't understand.
-> > 
-> > Hmm I don't get this one. How did you get a warning here, is this a
-> > warning from sparse also?
-> 
-> There isn't a warning here.  I'm just saying that when I'm reading this
-> code I assume that ti_adpll_free_resources() is supposed to undo
-> ti_adpll_init_inputs().
->
-> I looked at Steven's patch and now I see what's going on here.  The
-> error handling is fine when that's applied.  Thanks.
+This flag is a no-op now. Remove usage of the flag.
 
-OK thanks for checking.
+Cc: Guo Zeng <Guo.Zeng@csr.com>
+Cc: Barry Song <Baohua.Song@csr.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/sirf/clk-atlas6.c | 7 +++----
+ drivers/clk/sirf/clk-prima2.c | 7 +++----
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
-Regards,
-
-Tony
+diff --git a/drivers/clk/sirf/clk-atlas6.c b/drivers/clk/sirf/clk-atlas6.c
+index c5eaa9d16247..665fa681b2e1 100644
+--- a/drivers/clk/sirf/clk-atlas6.c
++++ b/drivers/clk/sirf/clk-atlas6.c
+@@ -130,10 +130,9 @@ static void __init atlas6_clk_init(struct device_node *np)
+ 		panic("unable to map clkc registers\n");
+ 
+ 	/* These are always available (RTC and 26MHz OSC)*/
+-	atlas6_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL,
+-		CLK_IS_ROOT, 32768);
+-	atlas6_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL,
+-		CLK_IS_ROOT, 26000000);
++	atlas6_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL, 0, 32768);
++	atlas6_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL, 0,
++						   26000000);
+ 
+ 	for (i = pll1; i < maxclk; i++) {
+ 		atlas6_clks[i] = clk_register(NULL, atlas6_clk_hw_array[i]);
+diff --git a/drivers/clk/sirf/clk-prima2.c b/drivers/clk/sirf/clk-prima2.c
+index f92c40264342..aac1c8ec151a 100644
+--- a/drivers/clk/sirf/clk-prima2.c
++++ b/drivers/clk/sirf/clk-prima2.c
+@@ -129,10 +129,9 @@ static void __init prima2_clk_init(struct device_node *np)
+ 		panic("unable to map clkc registers\n");
+ 
+ 	/* These are always available (RTC and 26MHz OSC)*/
+-	prima2_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL,
+-		CLK_IS_ROOT, 32768);
+-	prima2_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL,
+-		CLK_IS_ROOT, 26000000);
++	prima2_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL, 0, 32768);
++	prima2_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL, 0,
++						   26000000);
+ 
+ 	for (i = pll1; i < maxclk; i++) {
+ 		prima2_clks[i] = clk_register(NULL, prima2_clk_hw_array[i]);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
