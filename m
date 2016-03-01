@@ -1,276 +1,93 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:28576 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751748AbcCPHEh (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2016 03:04:37 -0400
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v5 2/5] ARM: at91: pm: add ULP1 mode support
-Date: Wed, 16 Mar 2016 14:58:06 +0800
-Message-ID: <1458111489-23774-3-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
-References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:38771 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750895AbcCAMyr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 1 Mar 2016 07:54:47 -0500
+Subject: Re: [PATCH v3 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
+To: Tony Lindgren <tony@atomide.com>,
+	Franklin S Cooper Jr <fcooper@ti.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-4-git-send-email-fcooper@ti.com>
+ <20160229232348.GV13417@atomide.com>
+CC: <paul@pwsan.com>, <vigneshr@ti.com>, <linux-pwm@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-omap@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <56D59100.3060803@ti.com>
+Date: Tue, 1 Mar 2016 14:54:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160229232348.GV13417@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
+On 03/01/2016 01:23 AM, Tony Lindgren wrote:
+> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+>> From: Vignesh R <vigneshr@ti.com>
+>>
+>> tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
+>> clock to control ehrpwm tbclk.
+>> The TRM says, tbclk is derived from SYSCLKOUT. SYSCLKOUT is nothing but
+>> ehrpwm functional clock derived from the gateable interface and
+>> functional clock of PWMSS(l4_root_clk_div).
+>> Refer AM57x TRM SPRUHZ6[1], October 2014, Table 29-4 and Section 29.2.2.1,
+>> Table 29-19 and the NOTE at the end of the table.
+>>
+>> [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
+>
+> Applying this into omap-for-v4.6/dt thanks.
+>
+> Note for Tero, let's plan on getting rid of the duplicate
+> reg entries by using the standard clock output offset within
+> the clock register. I think we should easily be able to add
+> a binding for this and then deprecate the overlapping reg
+> entries.
 
-In the ULP1 mode, all the clocks are shut off, inclusive the embedded
-12MHz RC oscillator, so as to achieve the lowest power consumption
-with the system in retention mode and able to resume on the wake up
-events. As soon as the wake up event is asserted, the embedded 12MHz
-RC oscillator restarts automatically.
+Yeah, we have been discussing this offline a bit, but haven't had time 
+to look at this. I believe the hwmod clock conversion is of higher 
+priority still.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+-Tero
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2:
- - fix label pm_exit to ulp_exit.
 
- arch/arm/mach-at91/pm.c         |   16 ++++++-
- arch/arm/mach-at91/pm.h         |    7 +++
- arch/arm/mach-at91/pm_suspend.S |   97 +++++++++++++++++++++++++++++++++++++++
- include/linux/clk/at91_pmc.h    |    4 ++
- 4 files changed, 122 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index f062701..5c2db34 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -36,6 +36,11 @@
- #include "generic.h"
- #include "pm.h"
- 
-+#define ULP0_MODE	0x00
-+#define ULP1_MODE	0x11
-+
-+#define SAMA5D2_PMC_VERSION	0x20540
-+
- static void __iomem *pmc;
- 
- /*
-@@ -52,6 +57,7 @@ extern void at91_pinctrl_gpio_resume(void);
- static struct {
- 	unsigned long uhp_udp_mask;
- 	int memctrl;
-+	u32 ulp_mode;
- } at91_pm_data;
- 
- void __iomem *at91_ramc_base[2];
-@@ -141,8 +147,11 @@ static void at91_pm_suspend(suspend_state_t state)
- {
- 	unsigned int pm_data = at91_pm_data.memctrl;
- 
--	pm_data |= (state == PM_SUSPEND_MEM) ?
--				AT91_PM_MODE(AT91_PM_SLOW_CLOCK) : 0;
-+	if (state == PM_SUSPEND_MEM) {
-+		pm_data |= AT91_PM_MODE(AT91_PM_SLOW_CLOCK);
-+		if (at91_pm_data.ulp_mode == ULP1_MODE)
-+			pm_data |= AT91_PM_ULP(AT91_PM_ULP1_MODE);
-+	}
- 
- 	flush_cache_all();
- 	outer_disable();
-@@ -497,4 +506,7 @@ void __init sama5_pm_init(void)
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
- 	at91_pm_init(NULL);
-+
-+	if (readl(pmc + AT91_PMC_VERSION) >= SAMA5D2_PMC_VERSION)
-+		at91_pm_data.ulp_mode = ULP1_MODE;
- }
-diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
-index 3fcf881..2e76745 100644
---- a/arch/arm/mach-at91/pm.h
-+++ b/arch/arm/mach-at91/pm.h
-@@ -39,4 +39,11 @@ extern void __iomem *at91_ramc_base[];
- 
- #define	AT91_PM_SLOW_CLOCK	0x01
- 
-+#define AT91_PM_ULP_OFFSET	5
-+#define AT91_PM_ULP_MASK	0x03
-+#define AT91_PM_ULP(x)		(((x) & AT91_PM_ULP_MASK) << AT91_PM_ULP_OFFSET)
-+
-+#define AT91_PM_ULP0_MODE	0x00
-+#define AT91_PM_ULP1_MODE	0x01
-+
- #endif
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index 5fcffdc..f2a5c4b 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -41,6 +41,15 @@ tmp2	.req	r5
- 	.endm
- 
- /*
-+ * Wait for main oscillator selection is done
-+ */
-+	.macro wait_moscsels
-+1:	ldr	tmp1, [pmc, #AT91_PMC_SR]
-+	tst	tmp1, #AT91_PMC_MOSCSELS
-+	beq	1b
-+	.endm
-+
-+/*
-  * Wait until PLLA has locked.
-  */
- 	.macro wait_pllalock
-@@ -101,6 +110,10 @@ ENTRY(at91_pm_suspend_in_sram)
- 	and	r0, r0, #AT91_PM_MODE_MASK
- 	str	r0, .pm_mode
- 
-+	lsr	r0, r3, #AT91_PM_ULP_OFFSET
-+	and	r0, r0, #AT91_PM_ULP_MASK
-+	str	r0, .ulp_mode
-+
- 	/* Active the self-refresh mode */
- 	mov	r0, #SRAMC_SELF_FRESH_ACTIVE
- 	bl	at91_sramc_self_refresh
-@@ -131,6 +144,13 @@ ENTRY(at91_pm_suspend_in_sram)
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 
-+	ldr	r0, .ulp_mode
-+	tst	r0, #AT91_PM_ULP1_MODE
-+	beq	ulp0_mode
-+
-+	bl	at91_pm_ulp1_mode
-+	b	ulp_exit
-+
- ulp0_mode:
- 	bl	at91_pm_ulp0_mode
- 	b	ulp_exit
-@@ -326,6 +346,81 @@ ENTRY(at91_pm_ulp0_mode)
- 	mov	pc, lr
- ENDPROC(at91_pm_ulp0_mode)
- 
-+/*
-+ * void at91_pm_ulp1_mode(void)
-+ */
-+ENTRY(at91_pm_ulp1_mode)
-+	ldr	pmc, .pmc_base
-+
-+	/* Switch the main clock source to 12-MHz RC oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCSEL
-+	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscsels
-+
-+	/* Disable the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	/* Switch the master clock source to main clock */
-+	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
-+	bic	tmp1, tmp1, #AT91_PMC_CSS
-+	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
-+	str	tmp1, [pmc, #AT91_PMC_MCKR]
-+
-+	wait_mckrdy
-+
-+	/* Enter the ULP1 mode by set WAITMODE bit in CKGR_MOR */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_WAITMODE
-+	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_mckrdy
-+
-+	/* Enable the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscrdy
-+
-+	/* Switch the master clock source to slow clock */
-+	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
-+	bic	tmp1, tmp1, #AT91_PMC_CSS
-+	str	tmp1, [pmc, #AT91_PMC_MCKR]
-+
-+	wait_mckrdy
-+
-+	/* Switch main clock source to crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCSEL
-+	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscsels
-+
-+	/* Switch the master clock source to main clock */
-+	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
-+	bic	tmp1, tmp1, #AT91_PMC_CSS
-+	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
-+	str	tmp1, [pmc, #AT91_PMC_MCKR]
-+
-+	wait_mckrdy
-+
-+	mov	pc, lr
-+ENDPROC(at91_pm_ulp1_mode)
-+
- .pmc_base:
- 	.word 0
- .sramc_base:
-@@ -336,6 +431,8 @@ ENDPROC(at91_pm_ulp0_mode)
- 	.word 0
- .pm_mode:
- 	.word 0
-+.ulp_mode:
-+	.word 0
- .saved_mckr:
- 	.word 0
- .saved_pllar:
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 17f413b..4afd891 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -47,8 +47,10 @@
- #define	AT91_CKGR_MOR		0x20			/* Main Oscillator Register [not on SAM9RL] */
- #define		AT91_PMC_MOSCEN		(1    <<  0)		/* Main Oscillator Enable */
- #define		AT91_PMC_OSCBYPASS	(1    <<  1)		/* Oscillator Bypass */
-+#define		AT91_PMC_WAITMODE	(1    <<  2)		/* Wait Mode Command */
- #define		AT91_PMC_MOSCRCEN	(1    <<  3)		/* Main On-Chip RC Oscillator Enable [some SAM9] */
- #define		AT91_PMC_OSCOUNT	(0xff <<  8)		/* Main Oscillator Start-up Time */
-+#define		AT91_PMC_KEY_MASK	(0xff << 16)
- #define		AT91_PMC_KEY		(0x37 << 16)		/* MOR Writing Key */
- #define		AT91_PMC_MOSCSEL	(1    << 24)		/* Main Oscillator Selection [some SAM9] */
- #define		AT91_PMC_CFDEN		(1    << 25)		/* Clock Failure Detector Enable [some SAM9] */
-@@ -166,6 +168,8 @@
- #define		AT91_PMC_WPVS		(0x1  <<  0)		/* Write Protect Violation Status */
- #define		AT91_PMC_WPVSRC		(0xffff  <<  8)		/* Write Protect Violation Source */
- 
-+#define AT91_PMC_VERSION	0xfc
-+
- #define AT91_PMC_PCER1		0x100			/* Peripheral Clock Enable Register 1 [SAMA5 only]*/
- #define AT91_PMC_PCDR1		0x104			/* Peripheral Clock Enable Register 1 */
- #define AT91_PMC_PCSR1		0x108			/* Peripheral Clock Enable Register 1 */
--- 
-1.7.9.5
+>
+> Regards,
+>
+> Tony
+>
+>> --- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
+>> +++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+>> @@ -2146,4 +2146,28 @@
+>>   		ti,bit-shift = <0>;
+>>   		reg = <0x558>;
+>>   	};
+>> +
+>> +       ehrpwm0_tbclk: ehrpwm0_tbclk {
+>> +		#clock-cells = <0>;
+>> +		compatible = "ti,gate-clock";
+>> +		clocks = <&l4_root_clk_div>;
+>> +		ti,bit-shift = <20>;
+>> +		reg = <0x0558>;
+>> +	};
+>> +
+>> +	ehrpwm1_tbclk: ehrpwm1_tbclk {
+>> +		#clock-cells = <0>;
+>> +		compatible = "ti,gate-clock";
+>> +		clocks = <&l4_root_clk_div>;
+>> +		ti,bit-shift = <21>;
+>> +		reg = <0x0558>;
+>> +	};
+>> +
+>> +	ehrpwm2_tbclk: ehrpwm2_tbclk {
+>> +		#clock-cells = <0>;
+>> +		compatible = "ti,gate-clock";
+>> +		clocks = <&l4_root_clk_div>;
+>> +		ti,bit-shift = <22>;
+>> +		reg = <0x0558>;
+>> +	};
+>>   };
+>> --
+>> 2.7.0
+>>
 
