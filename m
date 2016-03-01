@@ -1,43 +1,52 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49961 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753670AbcCATAu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2016 14:00:50 -0500
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Loc Ho <lho@apm.com>
-Subject: [PATCH 41/41] clk: xgene: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:26 -0800
-Message-Id: <1456858826-28541-42-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Received: from muru.com ([72.249.23.125]:47733 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751992AbcCAUut (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 1 Mar 2016 15:50:49 -0500
+Date: Tue, 1 Mar 2016 12:50:44 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Paul Walmsley <paul@pwsan.com>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>, t-kristo@ti.com,
+	vigneshr@ti.com, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+Message-ID: <20160301205043.GA4469@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-3-git-send-email-fcooper@ti.com>
+ <20160301181109.GB13417@atomide.com>
+ <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+* Paul Walmsley <paul@pwsan.com> [160301 10:59]:
+> On Tue, 1 Mar 2016, Tony Lindgren wrote:
+> 
+> > * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+> > > From: Vignesh R <vigneshr@ti.com>
+> > > 
+> > > Add hwmod entries for the PWMSS on DRA7.
+> > > 
+> > > Set l4_root_clk_div as the main_clk of PWMSS. It is fixed-factored clock
+> > > equal to L4PER2_L3_GICLK/2(l3_iclk_div/2).
+> > > As per AM57x TRM SPRUHZ6[1], October 2014, Section 29.1.3 Table 29-4,
+> > > clock source to PWMSS is L4PER2_L3_GICLK. But it is actually
+> > > L4PER2_L3_GICLK/2. The TRM does not show the division by 2.
+> > > 
+> > > [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
+> > 
+> > Looks OK to me, assuming Paul will pick this one or ack it.
+> 
+> Well I've already sent comments on it, it doesn't look quite ready for me 
+> yet.  I would hold off on the whole series because the hwmod comments also 
+> impact the DT files.
 
-Cc: Loc Ho <lho@apm.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-xgene.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK will drop the dt related patches then.
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index bd7156baa08b..ce4cac7c6583 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -198,7 +198,7 @@ static void xgene_pllclk_init(struct device_node *np, enum xgene_pll_type pll_ty
- 	of_property_read_string(np, "clock-output-names", &clk_name);
- 	clk = xgene_register_clk_pll(NULL,
- 			clk_name, of_clk_get_parent_name(np, 0),
--			CLK_IS_ROOT, reg, 0, pll_type, &clk_lock,
-+			0, reg, 0, pll_type, &clk_lock,
- 			version);
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(np, of_clk_src_simple_get, clk);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
 
+Tony
