@@ -1,128 +1,127 @@
-Return-Path: <fcooper@ti.com>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-To: Rob Herring <robh@kernel.org>
-CC: Thierry Reding <thierry.reding@gmail.com>,
-        Pawel Moll
-	<pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King - ARM Linux <linux@arm.linux.org.uk>,
-        Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap
-	<linux-omap@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
- generic node name
-References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
- <1457380318-15452-6-git-send-email-fcooper@ti.com>
- <20160317150305.GA27356@rob-hp-laptop> <56EAE014.8070606@ti.com>
- <CAL_Jsq+3vRMezgrA53jPgMZUYR+DAA_886K1Q6YfxV1bPinoQQ@mail.gmail.com>
- <56EAF562.9060408@ti.com>
- <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
-Message-ID: <56EB04C1.3010709@ti.com>
-Date: Thu, 17 Mar 2016 14:25:53 -0500
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 17/41] clk: tegra: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:02 -0800
+Message-Id: <1456858826-28541-18-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-+Sekhar
+This flag is a no-op now. Remove usage of the flag.
 
-On 03/17/2016 01:56 PM, Rob Herring wrote:
-> On Thu, Mar 17, 2016 at 1:20 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
->>
->> On 03/17/2016 01:00 PM, Rob Herring wrote:
->>> On Thu, Mar 17, 2016 at 11:49 AM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
->>>> On 03/17/2016 10:03 AM, Rob Herring wrote:
->>>>> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
->>>>>> Now that the node name has been changed from ehrpwm to pwm the document
->>>>>> should show this proper usage. Also change the unit address in the example
->>>>>> from 0 to the proper physical address value that should be used.
->>>>>>
->>>>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
->>>>>> ---
->>>>>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
->>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>>> index 9c100b2..20211ed 100644
->>>>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>>> @@ -15,14 +15,14 @@ Optional properties:
->>>>>>
->>>>>>  Example:
->>>>>>
->>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
->>>>>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
->>>>>>      compatible = "ti,am33xx-ehrpwm";
->>>>>>      #pwm-cells = <3>;
->>>>>>      reg = <0x48300200 0x100>;
->>>>>>      ti,hwmods = "ehrpwm0";
->>>>>>  };
->>>>>>
->>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
->>>>>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
->>>>> No leading 0s, but more importantly the address is wrong.
->>>> I will remove the leading 0. However, this value was taken
->>>> from the .dtsi and I just double checked and I see the same
->>>> value in the datasheet. I believe DA850,OMAP-L138 and AM18x
->>>> all have the same memory mapping. I'm looking at
->>>> http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
->>>> addresses match up what is seen here and in the .dtsi.
->>>>
->>>> Can you point me to which document your looking at that
->>>> shows a different value?
->>> Ummm, ...
->>>
->>>>>>      compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->>>>>>      #pwm-cells = <3>;
->>>>>>      reg = <0x300000 0x2000>;
->>> right here.
->> So I don't know the history but the SOC node specifies a
->> ranges value of ranges = <0x0 0x01c00000 0x400000>;. It
->> seems that all child nodes of SOC have a reg property then
->> is based on an offset of 0x01c00000. So this is true for
->> UART, rtc, i2c, wdt, mmc, spi etc... So using a base offset
->> of 0x01c00000 + 0x300000 (reg value of the pwm) equals the
->> physical address of the ehrpwm0 register 0x1f00000.
->>
->> For the child nodes within the SOC node, the unit-address is
->> always based on the physical address not based on the offset
->> address.
-> They are all wrong and should be fixed. Unit address should match the
-> reg property unless the bus has defined something different (e.g.
-> PCI).
+Cc: Rhyland Klein <rklein@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/tegra/clk-audio-sync.c  |  2 +-
+ drivers/clk/tegra/clk-dfll.c        |  1 -
+ drivers/clk/tegra/clk-tegra-fixed.c |  6 ++----
+ drivers/clk/tegra/clk-tegra114.c    |  3 +--
+ drivers/clk/tegra/clk-tegra20.c     | 10 ++++------
+ 5 files changed, 8 insertions(+), 14 deletions(-)
 
-I added Sekhar to hopefully comment if it would be better to
-try to get the reg properties to use their physical
-addresses or change the unit address to use the offset values.
-
-I don't mind shooting a patch that makes this massive switch
-for all the various peripherals and documentation. However,
-this is a bit beyond this series.  In this series I am not
-setting the unit address or reg address I am simply
-documenting what is currently being used. This patch set is
-a dependency for another patchset to get PWM support for DRA7.
-
-Are you ok with me doing the below?
-I submit a v2 that removes the leading 0 in this patch. This
-way this patchset and my PWMSS support for DRA7 patchset can
-get merged. I can then follow up with another separate
-patchset that insures both the unit address and the value in
-the reg property are aligned.
->
-> Rob
+diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
+index c0f7843e80e6..92d04ce2dee6 100644
+--- a/drivers/clk/tegra/clk-audio-sync.c
++++ b/drivers/clk/tegra/clk-audio-sync.c
+@@ -72,7 +72,7 @@ struct clk *tegra_clk_register_sync_source(const char *name,
+ 
+ 	init.ops = &tegra_clk_sync_source_ops;
+ 	init.name = name;
+-	init.flags = CLK_IS_ROOT;
++	init.flags = 0;
+ 	init.parent_names = NULL;
+ 	init.num_parents = 0;
+ 
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 86a307b17eb0..19bfa07e24b1 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -995,7 +995,6 @@ static const struct clk_ops dfll_clk_ops = {
+ };
+ 
+ static struct clk_init_data dfll_clk_init_data = {
+-	.flags		= CLK_IS_ROOT,
+ 	.ops		= &dfll_clk_ops,
+ 	.num_parents	= 0,
+ };
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index da0b5941c89f..d64ec7a1b976 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -52,8 +52,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 		return -EINVAL;
+ 	}
+ 
+-	osc = clk_register_fixed_rate(NULL, "osc", NULL, CLK_IS_ROOT,
+-				      *osc_freq);
++	osc = clk_register_fixed_rate(NULL, "osc", NULL, 0, *osc_freq);
+ 
+ 	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_m, clks);
+ 	if (!dt_clk)
+@@ -88,8 +87,7 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 	/* clk_32k */
+ 	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_32k, tegra_clks);
+ 	if (dt_clk) {
+-		clk = clk_register_fixed_rate(NULL, "clk_32k", NULL,
+-					CLK_IS_ROOT, 32768);
++		clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, 0, 32768);
+ 		*dt_clk = clk;
+ 	}
+ 
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 4a24aa4bbdea..df47ec3169c3 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -972,8 +972,7 @@ static void __init tegra114_fixed_clk_init(void __iomem *clk_base)
+ 	struct clk *clk;
+ 
+ 	/* clk_32k */
+-	clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, CLK_IS_ROOT,
+-				      32768);
++	clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, 0, 32768);
+ 	clks[TEGRA114_CLK_CLK_32K] = clk;
+ 
+ 	/* clk_m_div2 */
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 7a48e986c4c9..7ad63837694f 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -837,15 +837,13 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_PEX] = clk;
+ 
+ 	/* cdev1 */
+-	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, CLK_IS_ROOT,
+-				      26000000);
++	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
+ 				    clk_base, 0, 94, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV1] = clk;
+ 
+ 	/* cdev2 */
+-	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, CLK_IS_ROOT,
+-				      26000000);
++	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
+ 				    clk_base, 0, 93, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV2] = clk;
+@@ -879,8 +877,8 @@ static void __init tegra20_osc_clk_init(void)
+ 	input_freq = tegra20_clk_measure_input_freq();
+ 
+ 	/* clk_m */
+-	clk = clk_register_fixed_rate(NULL, "clk_m", NULL, CLK_IS_ROOT |
+-				      CLK_IGNORE_UNUSED, input_freq);
++	clk = clk_register_fixed_rate(NULL, "clk_m", NULL, CLK_IGNORE_UNUSED,
++				      input_freq);
+ 	clks[TEGRA20_CLK_CLK_M] = clk;
+ 
+ 	/* pll_ref */
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
