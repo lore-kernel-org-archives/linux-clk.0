@@ -1,67 +1,154 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] bcm2835 clk changes for 4.6 maybe
-In-Reply-To: <20160329233923.GR18567@codeaurora.org>
-References: <1458265130-30734-1-git-send-email-eric@anholt.net> <20160329233923.GR18567@codeaurora.org>
-Date: Tue, 29 Mar 2016 22:12:46 -0700
-Message-ID: <877fgk5z1t.fsf@eliezer.anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 00/41] Remove CLK_IS_ROOT from drivers/clk
+Date: Tue,  1 Mar 2016 10:59:45 -0800
+Message-Id: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+There are still some CLK_IS_ROOT users outside of the clk directory,
+but this series removes all the CLK_IS_ROOT users in clk-next
+as of commit 811a498e5e9a (clk: qcom: Fix pre-divider usage for pixel
+RCG, 2016-02-28).
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+Stephen Boyd (41):
+  clk: at91: Remove CLK_IS_ROOT
+  clk: bcm: Remove CLK_IS_ROOT
+  clk: hisilicon: Remove CLK_IS_ROOT
+  clk: imx: Remove CLK_IS_ROOT
+  clk: mediatek: Remove CLK_IS_ROOT
+  clk: meson: Remove CLK_IS_ROOT
+  clk: mmp: Remove CLK_IS_ROOT
+  clk: mvebu: Remove CLK_IS_ROOT
+  clk: mxs: Remove CLK_IS_ROOT
+  clk: nxp: Remove CLK_IS_ROOT
+  clk: pxa: Remove CLK_IS_ROOT
+  clk: qcom: Remove CLK_IS_ROOT
+  clk: samsung: Remove CLK_IS_ROOT
+  clk: sirf: Remove CLK_IS_ROOT
+  clk: spear: Remove CLK_IS_ROOT
+  clk: sunxi: Remove CLK_IS_ROOT
+  clk: tegra: Remove CLK_IS_ROOT
+  clk: ti: Remove CLK_IS_ROOT
+  clk: ux500: Remove CLK_IS_ROOT
+  clk: versatile: Remove CLK_IS_ROOT
+  clk: x86: Remove CLK_IS_ROOT
+  clk: x86: Remove clkdev.h and clk.h includes
+  clk: zte: Remove CLK_IS_ROOT
+  clk: zynq: Remove CLK_IS_ROOT
+  clk: clps711x: Remove CLK_IS_ROOT
+  clk: efm32gg: Remove CLK_IS_ROOT
+  clk: fixed-rate: Remove CLK_IS_ROOT
+  clk: ls1x: Remove CLK_IS_ROOT
+  clk: max77{686,802}: Remove CLK_IS_ROOT
+  clk: mb86s7x: Remove CLK_IS_ROOT
+  clk: nspire: Remove CLK_IS_ROOT
+  clk: palmas: Remove CLK_IS_ROOT
+  clk: pwm: Remove CLK_IS_ROOT
+  clk: qoriq: Remove CLK_IS_ROOT
+  clk: rk808: Remove CLK_IS_ROOT
+  clk: s2mps11: Remove CLK_IS_ROOT
+  clk: scpi: Remove CLK_IS_ROOT
+  clk: si5{14,351,70}: Remove CLK_IS_ROOT
+  clk: twl6040: Remove CLK_IS_ROOT
+  clk: wm831x: Remove CLK_IS_ROOT
+  clk: xgene: Remove CLK_IS_ROOT
 
-> On 03/17, Eric Anholt wrote:
->> This is late, so feel free to drop it, but I figured I'd send it to
->> you in case you were still open to merges.  I've pounded on it a bit
->> today (modesets to all sorts of resolutions on HDMI, used it for
->> testing the DPI panel support that I'm hoping to have for 4.7, and did
->> a whole lot of browsing of clk_summary as I debugged DPI), and kbuild
->> test robot came back clean, so I'm pretty happy with it.
->>=20
->> The following changes since commit 4d3ac6662452060721599a3392bc2f524af98=
-4cb:
->>=20
->>   clk: bcm2835: fix check of error code returned by devm_ioremap_resourc=
-e() (2016-03-15 18:14:11 -0700)
->>=20
->> are available in the git repository at:
->>=20
->>   git@github.com:anholt/linux.git tags/bcm2835-clk-next-2016-03-17
->
-> Please make sure to use a proper URL here. I don't have access to
-> git@github.com, but I can fetch this from
-> git://github.com/anholt/linux.git. The tag and the contents match
-> so I'm fairly confident all is well.
+ drivers/clk/at91/clk-main.c              |  2 +-
+ drivers/clk/at91/clk-slow.c              |  2 +-
+ drivers/clk/bcm/clk-bcm2835.c            |  9 ++--
+ drivers/clk/clk-clps711x.c               | 19 ++++----
+ drivers/clk/clk-efm32gg.c                |  2 +-
+ drivers/clk/clk-fixed-rate.c             |  3 +-
+ drivers/clk/clk-ls1x.c                   |  3 +-
+ drivers/clk/clk-max77686.c               |  3 --
+ drivers/clk/clk-max77802.c               |  2 -
+ drivers/clk/clk-mb86s7x.c                |  4 +-
+ drivers/clk/clk-nspire.c                 |  3 +-
+ drivers/clk/clk-palmas.c                 |  4 +-
+ drivers/clk/clk-pwm.c                    |  2 +-
+ drivers/clk/clk-qoriq.c                  |  2 +-
+ drivers/clk/clk-rk808.c                  |  1 -
+ drivers/clk/clk-s2mps11.c                |  3 --
+ drivers/clk/clk-scpi.c                   |  2 +-
+ drivers/clk/clk-si514.c                  |  2 +-
+ drivers/clk/clk-si5351.c                 |  2 +-
+ drivers/clk/clk-si570.c                  |  2 +-
+ drivers/clk/clk-twl6040.c                |  1 -
+ drivers/clk/clk-wm831x.c                 |  1 -
+ drivers/clk/clk-xgene.c                  |  2 +-
+ drivers/clk/hisilicon/clk-hi3620.c       | 18 +++----
+ drivers/clk/hisilicon/clk-hi6220-stub.c  |  2 +-
+ drivers/clk/hisilicon/clk-hi6220.c       | 26 +++++------
+ drivers/clk/hisilicon/clk-hip04.c        |  6 +--
+ drivers/clk/hisilicon/clk-hix5hd2.c      | 60 ++++++++++++------------
+ drivers/clk/imx/clk.h                    |  2 +-
+ drivers/clk/mediatek/clk-mtk.c           |  4 +-
+ drivers/clk/meson/meson8b-clkc.c         |  6 +--
+ drivers/clk/mmp/clk-mmp2.c               | 14 ++----
+ drivers/clk/mmp/clk-of-mmp2.c            | 10 ++--
+ drivers/clk/mmp/clk-of-pxa168.c          |  8 ++--
+ drivers/clk/mmp/clk-of-pxa1928.c         | 12 ++---
+ drivers/clk/mmp/clk-of-pxa910.c          |  8 ++--
+ drivers/clk/mmp/clk-pxa168.c             |  8 ++--
+ drivers/clk/mmp/clk-pxa910.c             |  8 ++--
+ drivers/clk/mvebu/common.c               | 11 ++---
+ drivers/clk/mvebu/dove-divider.c         |  3 +-
+ drivers/clk/mxs/clk.h                    |  2 +-
+ drivers/clk/nxp/clk-lpc18xx-cgu.c        |  2 +-
+ drivers/clk/pxa/clk-pxa25x.c             |  8 ++--
+ drivers/clk/pxa/clk-pxa27x.c             |  6 +--
+ drivers/clk/pxa/clk-pxa3xx.c             |  8 ++--
+ drivers/clk/qcom/common.c                |  1 -
+ drivers/clk/qcom/gcc-ipq806x.c           | 37 ---------------
+ drivers/clk/qcom/gcc-msm8660.c           | 32 -------------
+ drivers/clk/qcom/gcc-msm8960.c           | 42 -----------------
+ drivers/clk/qcom/gcc-msm8974.c           |  1 -
+ drivers/clk/qcom/gcc-msm8996.c           |  6 +--
+ drivers/clk/qcom/mmcc-msm8960.c          | 35 --------------
+ drivers/clk/samsung/clk-exynos4.c        | 12 ++---
+ drivers/clk/samsung/clk-exynos4415.c     |  2 +-
+ drivers/clk/samsung/clk-exynos5250.c     | 10 ++--
+ drivers/clk/samsung/clk-exynos5260.c     | 36 +++++++-------
+ drivers/clk/samsung/clk-exynos5420.c     | 12 ++---
+ drivers/clk/samsung/clk-exynos5433.c     | 74 ++++++++++++++---------------
+ drivers/clk/samsung/clk-exynos5440.c     | 12 ++---
+ drivers/clk/samsung/clk-exynos7.c        | 12 ++---
+ drivers/clk/samsung/clk-s3c2410.c        |  2 +-
+ drivers/clk/samsung/clk-s3c2412.c        |  4 +-
+ drivers/clk/samsung/clk-s3c2443.c        |  8 ++--
+ drivers/clk/samsung/clk-s3c64xx.c        |  8 ++--
+ drivers/clk/samsung/clk-s5pv210.c        | 10 ++--
+ drivers/clk/sirf/clk-atlas6.c            |  7 ++-
+ drivers/clk/sirf/clk-prima2.c            |  7 ++-
+ drivers/clk/spear/spear1310_clock.c      | 21 ++++-----
+ drivers/clk/spear/spear1340_clock.c      | 16 +++----
+ drivers/clk/spear/spear3xx_clock.c       |  8 ++--
+ drivers/clk/spear/spear6xx_clock.c       |  6 +--
+ drivers/clk/sunxi/clk-a10-hosc.c         |  3 +-
+ drivers/clk/tegra/clk-audio-sync.c       |  2 +-
+ drivers/clk/tegra/clk-dfll.c             |  1 -
+ drivers/clk/tegra/clk-tegra-fixed.c      |  6 +--
+ drivers/clk/tegra/clk-tegra114.c         |  3 +-
+ drivers/clk/tegra/clk-tegra20.c          | 10 ++--
+ drivers/clk/ti/clk.c                     |  4 +-
+ drivers/clk/ux500/abx500-clk.c           |  5 +-
+ drivers/clk/ux500/u8500_of_clk.c         | 74 ++++++++++++++---------------
+ drivers/clk/ux500/u8540_clk.c            | 80 +++++++++++++++-----------------
+ drivers/clk/versatile/clk-icst.c         |  2 +-
+ drivers/clk/versatile/clk-impd1.c        |  3 +-
+ drivers/clk/versatile/clk-realview.c     |  8 ++--
+ drivers/clk/versatile/clk-vexpress-osc.c |  2 +-
+ drivers/clk/x86/clk-lpt.c                |  4 +-
+ drivers/clk/zte/clk-zx296702.c           |  3 +-
+ drivers/clk/zynq/clkc.c                  |  3 +-
+ 88 files changed, 355 insertions(+), 587 deletions(-)
 
-Yeah, it should have been https://github.com/anholt/linux -- sorry about
-that!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJW+2BOAAoJELXWKTbR/J7onNEQAIeWOf1lCfzfOlNcmhpaKPLL
-S2k9hfRK6y1gff+q/GnVr0odazI5vH8lsd4nXI/YfzZKHMZe3VpFPXARYh1ayDAl
-C+74+5eUevQymVKZmRqH4vob34MdNVIob4b1Fvoxqs0jICnD60er8iVdZYV2AG4R
-DbIOQwP/XrIOCBz51/nyDo+qFciACe6UZ44JzVbq0oR5jOEN+1VUguS/GCFwBECZ
-Dr3tP8eCn2go1NRHuR9IwGoBrOytJsi2G6QdkLMri4KCNYrTiTE9m2XeNAiZThU6
-C7GToP/6vHR/IQqZE6T1fCDO3Pz0K+DZ3QPpc0Yr0cC2OdQ9I1LfYom+o449BsQR
-ZTr1uM3PvxZCrihTjSGjQWBSOhexaodSEQQwDZkE2yGTUwtlnquSKMTenwIxPziF
-uKvWaOPOmYxwcibA+HGFbIN1IjbAYP6oZMOk91oDR2KYLYZ2z9035uCSmUtoYQid
-8s2TXyiWxlJHIfD62gDpJmM+kqep4QW/UoAXa+R2JGrspDZJDTEkLxRAHooE5ntd
-uAsVyQaY+SoyC38yUzNtfd27d8m8t9cbnKAiFdf4lnUyL3N6YHHwP0pzs6pQXGzG
-APQ3drL6WyQDee2T2j19QEmMdgXdm/ibye6Rqx9H1bDxEu1A5LAnMYBsfeKg0OD3
-OuSNYkgegpbFQHDQ0KAS
-=GrD2
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
