@@ -1,110 +1,40 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 06/13] ARM: dts: sun8i-a83t: Add mmc controller nodes
-Date: Thu, 17 Mar 2016 00:04:29 +0800
-Message-Id: <1458144276-31108-7-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH 05/41] clk: mediatek: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 10:59:50 -0800
+Message-Id: <1456858826-28541-6-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-A83T mmc is compatible with earliers sunxi socs.
-This adds mmc0, mmc1, and mmc2 controller nodes for A83T.
+This flag is a no-op now. Remove usage of the flag.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 57 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/clk/mediatek/clk-mtk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 943d8a8..a44d4dc 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -275,6 +275,63 @@
- 		#size-cells = <1>;
- 		ranges;
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 352830369e0e..5ada644e6200 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -58,8 +58,8 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+ 	for (i = 0; i < num; i++) {
+ 		const struct mtk_fixed_clk *rc = &clks[i];
  
-+		mmc0: mmc@01c0f000 {
-+			compatible = "allwinner,sun5i-a13-mmc";
-+			reg = <0x01c0f000 0x1000>;
-+			clocks = <&bus_gates 8>,
-+				 <&mmc0_clk 0>,
-+				 <&mmc0_clk 1>,
-+				 <&mmc0_clk 2>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ahb_reset 8>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc1: mmc@01c10000 {
-+			compatible = "allwinner,sun5i-a13-mmc";
-+			reg = <0x01c10000 0x1000>;
-+			clocks = <&bus_gates 9>,
-+				 <&mmc1_clk 0>,
-+				 <&mmc1_clk 1>,
-+				 <&mmc1_clk 2>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ahb_reset 9>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc2: mmc@01c11000 {
-+			compatible = "allwinner,sun5i-a13-mmc";
-+			reg = <0x01c11000 0x1000>;
-+			clocks = <&bus_gates 10>,
-+				 <&mmc2_clk 0>,
-+				 <&mmc2_clk 1>,
-+				 <&mmc2_clk 2>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ahb_reset 10>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		pio: pinctrl@01c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+-		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent,
+-				rc->parent ? 0 : CLK_IS_ROOT, rc->rate);
++		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent, 0,
++					      rc->rate);
+ 
+ 		if (IS_ERR(clk)) {
+ 			pr_err("Failed to register clk %s: %ld\n",
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
