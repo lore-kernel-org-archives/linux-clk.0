@@ -1,45 +1,52 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
- <1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com> <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Thu, 17 Mar 2016 23:34:18 +0800
-Message-ID: <CAEzqOZugVOGarjy9NjDOhwJeU6P26Ch2aX13Tec2N0z2Gb9g7A@mail.gmail.com>
-Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 01/41] clk: at91: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 10:59:46 -0800
+Message-Id: <1456858826-28541-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Linus,
+This flag is a no-op now. Remove usage of the flag.
 
-On Thu, Mar 17, 2016 at 10:51 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Mar 16, 2016 at 5:04 PM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
->
->> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
->> interrupt bit is 6th and A83T has one extra pin PL12.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> Acked-by: Chen-Yu Tsai <wens@csie.org>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> I think I already merged this?
-AFAIK, this one is not yet merged. At least, you did not say it's merged. :)
->
-> Yours,
-> Linus Walleij
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/at91/clk-main.c | 2 +-
+ drivers/clk/at91/clk-slow.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index b85f43529396..b9bdfd8e4e6f 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -315,7 +315,7 @@ at91_clk_register_main_rc_osc(struct at91_pmc *pmc,
+ 	init.ops = &main_rc_osc_ops;
+ 	init.parent_names = NULL;
+ 	init.num_parents = 0;
+-	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
++	init.flags = CLK_IGNORE_UNUSED;
+ 
+ 	osc->hw.init = &init;
+ 	osc->pmc = pmc;
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 67b304726d06..402b45d38d25 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -251,7 +251,7 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
+ 	init.ops = &slow_rc_osc_ops;
+ 	init.parent_names = NULL;
+ 	init.num_parents = 0;
+-	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
++	init.flags = CLK_IGNORE_UNUSED;
+ 
+ 	osc->hw.init = &init;
+ 	osc->sckcr = sckcr;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
