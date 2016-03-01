@@ -1,44 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49941 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753622AbcCATAs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2016 14:00:48 -0500
+Return-Path: <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@codeaurora.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Tang <dt.tangr@gmail.com>
-Subject: [PATCH 31/41] clk: nspire: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:16 -0800
-Message-Id: <1456858826-28541-32-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tero Kristo <t-kristo@ti.com>,
+	Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] clk: ti: Fix some errors found by static checkers
+Date: Tue,  1 Mar 2016 10:54:59 -0800
+Message-Id: <1456858499-28035-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+drivers/clk/ti/clk-814x.c:34:12: warning: symbol 'dm814x_adpll_early_init' was not declared. Should it be static?
+drivers/clk/ti/clk-814x.c:58:12: warning: symbol 'dm814x_adpll_enable_init_clocks' was not declared. Should it be static?
+drivers/clk/ti/adpll.c:465 ti_adpll_recalc_rate() warn: should '__readw(d->regs + 20) << 18' be a 64 bit type?
+drivers/clk/ti/adpll.c:945 ti_adpll_probe() error: we previously assumed 'd->clocks' could be null (see line 921)
 
-Cc: Daniel Tang <dt.tangr@gmail.com>
+The last one looks like a real bug because we don't return an
+error on allocation failure.
+
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk-nspire.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/ti/adpll.c    | 4 ++--
+ drivers/clk/ti/clk-814x.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-nspire.c b/drivers/clk/clk-nspire.c
-index a378db7b2382..64f196a90816 100644
---- a/drivers/clk/clk-nspire.c
-+++ b/drivers/clk/clk-nspire.c
-@@ -125,8 +125,7 @@ static void __init nspire_clk_setup(struct device_node *node,
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index f741d79e5afd..255cafb18336 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -462,7 +462,7 @@ static unsigned long ti_adpll_recalc_rate(struct clk_hw *hw,
+ 	spin_lock_irqsave(&d->lock, flags);
+ 	frac_m = readl_relaxed(d->regs + ADPLL_FRACDIV_OFFSET);
+ 	frac_m &= ADPLL_FRACDIV_FRACTIONALM_MASK;
+-	rate = readw_relaxed(d->regs + ADPLL_MN2DIV_OFFSET) << 18;
++	rate = (u64)readw_relaxed(d->regs + ADPLL_MN2DIV_OFFSET) << 18;
+ 	rate += frac_m;
+ 	rate *= parent_rate;
+ 	divider = (readw_relaxed(d->regs + ADPLL_M2NDIV_OFFSET) + 1) << 18;
+@@ -919,7 +919,7 @@ static int ti_adpll_probe(struct platform_device *pdev)
+ 				 TI_ADPLL_NR_CLOCKS,
+ 				 GFP_KERNEL);
+ 	if (!d->clocks)
+-		goto free;
++		return -ENOMEM;
  
- 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 	err = ti_adpll_init_dco(d);
+ 	if (err) {
+diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
+index 2323643fb731..52c6efc53731 100644
+--- a/drivers/clk/ti/clk-814x.c
++++ b/drivers/clk/ti/clk-814x.c
+@@ -31,7 +31,7 @@ static struct ti_dt_clk dm814_clks[] = {
  
--	clk = clk_register_fixed_rate(NULL, clk_name, NULL, CLK_IS_ROOT,
--			info.base_clock);
-+	clk = clk_register_fixed_rate(NULL, clk_name, NULL, 0, info.base_clock);
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 	else
+ static bool timer_clocks_initialized;
+ 
+-int __init dm814x_adpll_early_init(void)
++static int __init dm814x_adpll_early_init(void)
+ {
+ 	struct device_node *np;
+ 
+@@ -55,7 +55,7 @@ static const char * const init_clocks[] = {
+ 	"pll290clkout",		/* DDR 481c5290.adpll.clkout */
+ };
+ 
+-int __init dm814x_adpll_enable_init_clocks(void)
++static int __init dm814x_adpll_enable_init_clocks(void)
+ {
+ 	int i, err;
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
