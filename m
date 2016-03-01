@@ -1,52 +1,54 @@
-Return-Path: <edubezval@gmail.com>
-Return-Path: <edubezval@gmail.com>
-Date: Mon, 29 Feb 2016 20:39:53 -0800
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Caesar Wang <wxt@rock-chips.com>, huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
-Message-ID: <20160301043951.GA9884@localhost.localdomain>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
- <3650760.H1YezDtoUE@phil>
- <3480898.qXLEaXSdDG@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3480898.qXLEaXSdDG@phil>
+Return-Path: <kernel@martin.sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 5/6] clk: bcm2835: correctly enable fractional clock support
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <87lh63jd4f.fsf@eliezer.anholt.net>
+Date: Tue, 1 Mar 2016 06:52:46 +0100
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>,
+ linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <79C68128-C4B6-4AE2-9177-6A961573F90B@martin.sperl.org>
+References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org> <1456745963-2403-6-git-send-email-kernel@martin.sperl.org> <87mvqj5k9r.fsf@eliezer.anholt.net> <0ED2FB7F-B112-487B-B222-08E5FAEE27F9@martin.sperl.org> <87lh63jd4f.fsf@eliezer.anholt.net>
+To: Eric Anholt <eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 26, 2016 at 02:16:58AM +0100, Heiko Stuebner wrote:
-> Am Dienstag, 16. Februar 2016, 00:25:39 schrieb Heiko Stuebner:
-> > Am Montag, 15. Februar 2016, 15:33:25 schrieb Caesar Wang:
-> > > 1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
-> > > 8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
-> > > bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
-> > > 22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
-> > 
-> > clk and devicetree patches look good and I'll pick those up once Eduardo
-> > is
-> > ok with (and has taken) the thermal-specific changes:
-> > > bd2720c thermal: rockchip: fix a impossible condition caused by the
-> > > warning df9c1bd thermal: rockchip: fix calculation error for
-> > > code_to_temp
-> > > fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
-> > > b907b75 thermal: rockchip: fix the tsadc sequence output on
-> > > rk3228/rk3399
-> 
-> @Eduardo: any opinion on the patches related to the thermal driver itself?
 
+> On 01.03.2016, at 00:44, Eric Anholt <eric@anholt.net> wrote:
+>=20
+> Once again, trusting the docs turns out to be a bad idea.  You're =
+right,
+> the non-MASH clocks *do* have a bit 9 to enable fractional mode.  =
+Sigh.
+>=20
+> So, this patch is:
+>=20
+> Reviewed-by: Eric Anholt <eric@anholt.net>
 
-Not really, adding them to my fixes branches. Thanks.
+The only really reliable =E2=80=9Cdocs=E2=80=9D on registers I have =
+found outside
+of probably signing a NDA are those header files for the VC4 provided
+by broadcom.=20
 
-> 
-> 
-> Thanks
-> Heiko
-> 
+That is why I have taken the effort to translate those into something
+much more easily readable/searchable (i.e html pages on the web).
+
+And that is where I have =E2=80=9Cguessed=E2=80=9D all the information =
+on the clock
+tree structure.
+
+The main thing that is sometimes missing from those documents is
+some extra context like: what is that pllt clock with a mux of
+8 parent clocks (not 4 or 16 as typical) and what do those
+corresponding 4 counter really do?
+
+See:
+=
+https://github.com/msperl/rpi-registers/blob/master/md/Region_CM.md#cm_pll=
+tctl
+
+Martin=
