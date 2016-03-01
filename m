@@ -1,75 +1,43 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.139]:46872 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751007AbcCIChs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 21:37:48 -0500
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de, huangtao@rock-chips.com, jay.xu@rock-chips.com,
-	elaine.zhang@rock-chips.com, dianders@chromium.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/7] Add more clock compatible features and support the RK3399 clock
-Date: Wed,  9 Mar 2016 10:37:00 +0800
-Message-Id: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
+Received: from muru.com ([72.249.23.125]:47715 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751084AbcCASLN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 1 Mar 2016 13:11:13 -0500
+Date: Tue, 1 Mar 2016 10:11:10 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+Message-ID: <20160301181109.GB13417@atomide.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-3-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456439796-28546-3-git-send-email-fcooper@ti.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+* Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
+> From: Vignesh R <vigneshr@ti.com>
+> 
+> Add hwmod entries for the PWMSS on DRA7.
+> 
+> Set l4_root_clk_div as the main_clk of PWMSS. It is fixed-factored clock
+> equal to L4PER2_L3_GICLK/2(l3_iclk_div/2).
+> As per AM57x TRM SPRUHZ6[1], October 2014, Section 29.1.3 Table 29-4,
+> clock source to PWMSS is L4PER2_L3_GICLK. But it is actually
+> L4PER2_L3_GICLK/2. The TRM does not show the division by 2.
+> 
+> [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
 
-Hi,
-  The patch series add support more mux parameters and multiple
-clock providers for the rockchip features of the clock framework,
-and support the clock controller for the RK3399.
+Looks OK to me, assuming Paul will pick this one or ack it.
 
+FYI, the URL above is outdated, looks like there's spruhz7a.pdf
+available. Not sure if that's been corrected for the divider?
 
-Changes in v3:
-- rename pclkin_cif to pclkin_cifmux, add diagram and comment for
-  pclkin_cifmux
-- add the clk_test node
-- modify the cif_testout path
-- include two new patches that dt-bindings and header file from
-  Jianqun's patch series
+Regards,
 
-Changes in v2:
-- rename the aplll/apllb to lpll/bpll
-- add drv/sample clock nodes for sdmmc/sdio
-
-Xing Zheng (7):
-  dt-bindings: add bindings for rk3399 clock controller
-  clk: rockchip: add dt-binding header for rk3399
-  clk: rockchip: add more mux parameters for new pll sources
-  clk: rockchip: Add support for multiple clock providers
-  clk: rockchip: add new pll-type for rk3399 and similar socs
-  clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
-  clk: rockchip: add clock controller for the RK3399
-
- .../bindings/clock/rockchip,rk3399-cru.txt         |   82 +
- drivers/clk/rockchip/Makefile                      |    1 +
- drivers/clk/rockchip/clk-cpu.c                     |   14 +-
- drivers/clk/rockchip/clk-pll.c                     |  309 +++-
- drivers/clk/rockchip/clk-rk3036.c                  |   20 +-
- drivers/clk/rockchip/clk-rk3188.c                  |   54 +-
- drivers/clk/rockchip/clk-rk3228.c                  |   20 +-
- drivers/clk/rockchip/clk-rk3288.c                  |   22 +-
- drivers/clk/rockchip/clk-rk3368.c                  |   27 +-
- drivers/clk/rockchip/clk-rk3399.c                  | 1567 ++++++++++++++++++++
- drivers/clk/rockchip/clk.c                         |  148 +-
- drivers/clk/rockchip/clk.h                         |   98 +-
- include/dt-bindings/clock/rk3399-cru.h             |  720 +++++++++
- 13 files changed, 2957 insertions(+), 125 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-rk3399.c
- create mode 100644 include/dt-bindings/clock/rk3399-cru.h
-
--- 
-1.7.9.5
-
-
+Tony
