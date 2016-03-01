@@ -1,44 +1,42 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54140 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757364AbcCXNBx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 24 Mar 2016 09:01:53 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-clk@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] clk: shmobile: r8a7795: add stop for R clk
-Date: Thu, 24 Mar 2016 14:00:41 +0100
-Message-Id: <1458824442-20279-5-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
-References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49950 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753634AbcCATAt (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2016 14:00:49 -0500
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 40/41] clk: wm831x: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:25 -0800
+Message-Id: <1456858826-28541-41-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This flag is a no-op now. Remove usage of the flag.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+ drivers/clk/clk-wm831x.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Since RFC, rebased and added ack.
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index c260da5e70e116..22ba841d7f88b8 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -148,6 +148,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
- 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
- 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
-+	DEF_MOD("rwdt0",		 402,	R8A7795_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_CP),
- 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
- 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
+diff --git a/drivers/clk/clk-wm831x.c b/drivers/clk/clk-wm831x.c
+index 43f9d15255f4..88def4b2761c 100644
+--- a/drivers/clk/clk-wm831x.c
++++ b/drivers/clk/clk-wm831x.c
+@@ -58,7 +58,6 @@ static const struct clk_ops wm831x_xtal_ops = {
+ static struct clk_init_data wm831x_xtal_init = {
+ 	.name = "xtal",
+ 	.ops = &wm831x_xtal_ops,
+-	.flags = CLK_IS_ROOT,
+ };
+ 
+ static const unsigned long wm831x_fll_auto_rates[] = {
 -- 
-2.7.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
