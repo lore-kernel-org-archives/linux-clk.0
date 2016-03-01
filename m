@@ -1,144 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:17641 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932069AbcCHBq7 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:46:59 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v4 1/5] ARM: at91: pm: create a separate procedure for the ULP0 mode
-Date: Tue, 8 Mar 2016 09:41:58 +0800
-Message-ID: <1457401322-29120-2-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
-References: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH 25/41] clk: clps711x: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:10 -0800
+Message-Id: <1456858826-28541-26-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-To make the code more legible and prepare to add the ULP1 mode
-support in the future, create a separate procedure for the ULP0 mode.
+This flag is a no-op now. Remove usage of the flag.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+ drivers/clk/clk-clps711x.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-
- arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
-
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index a25defd..5fcffdc 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
+diff --git a/drivers/clk/clk-clps711x.c b/drivers/clk/clk-clps711x.c
+index ff4ef4f1df62..1f60b02416a7 100644
+--- a/drivers/clk/clk-clps711x.c
++++ b/drivers/clk/clk-clps711x.c
+@@ -107,16 +107,15 @@ static struct clps711x_clk * __init _clps711x_clk_init(void __iomem *base,
+ 	writel(tmp, base + CLPS711X_SYSCON1);
  
- 	ldr	r0, .pm_mode
- 	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_disable_main_clock
-+	beq	standby_mode
- 
- 	ldr	pmc, .pmc_base
- 
-@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 
--	/* Turn off the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
+ 	clps711x_clk->clks[CLPS711X_CLK_DUMMY] =
+-		clk_register_fixed_rate(NULL, "dummy", NULL, CLK_IS_ROOT, 0);
++		clk_register_fixed_rate(NULL, "dummy", NULL, 0, 0);
+ 	clps711x_clk->clks[CLPS711X_CLK_CPU] =
+-		clk_register_fixed_rate(NULL, "cpu", NULL, CLK_IS_ROOT, f_cpu);
++		clk_register_fixed_rate(NULL, "cpu", NULL, 0, f_cpu);
+ 	clps711x_clk->clks[CLPS711X_CLK_BUS] =
+-		clk_register_fixed_rate(NULL, "bus", NULL, CLK_IS_ROOT, f_bus);
++		clk_register_fixed_rate(NULL, "bus", NULL, 0, f_bus);
+ 	clps711x_clk->clks[CLPS711X_CLK_PLL] =
+-		clk_register_fixed_rate(NULL, "pll", NULL, CLK_IS_ROOT, f_pll);
++		clk_register_fixed_rate(NULL, "pll", NULL, 0, f_pll);
+ 	clps711x_clk->clks[CLPS711X_CLK_TIMERREF] =
+-		clk_register_fixed_rate(NULL, "timer_ref", NULL, CLK_IS_ROOT,
+-					f_tim);
++		clk_register_fixed_rate(NULL, "timer_ref", NULL, 0, f_tim);
+ 	clps711x_clk->clks[CLPS711X_CLK_TIMER1] =
+ 		clk_register_divider_table(NULL, "timer1", "timer_ref", 0,
+ 					   base + CLPS711X_SYSCON1, 5, 1, 0,
+@@ -126,10 +125,9 @@ static struct clps711x_clk * __init _clps711x_clk_init(void __iomem *base,
+ 					   base + CLPS711X_SYSCON1, 7, 1, 0,
+ 					   timer_div_table, &clps711x_clk->lock);
+ 	clps711x_clk->clks[CLPS711X_CLK_PWM] =
+-		clk_register_fixed_rate(NULL, "pwm", NULL, CLK_IS_ROOT, f_pwm);
++		clk_register_fixed_rate(NULL, "pwm", NULL, 0, f_pwm);
+ 	clps711x_clk->clks[CLPS711X_CLK_SPIREF] =
+-		clk_register_fixed_rate(NULL, "spi_ref", NULL, CLK_IS_ROOT,
+-					f_spi);
++		clk_register_fixed_rate(NULL, "spi_ref", NULL, 0, f_spi);
+ 	clps711x_clk->clks[CLPS711X_CLK_SPI] =
+ 		clk_register_divider_table(NULL, "spi", "spi_ref", 0,
+ 					   base + CLPS711X_SYSCON1, 16, 2, 0,
+@@ -137,8 +135,7 @@ static struct clps711x_clk * __init _clps711x_clk_init(void __iomem *base,
+ 	clps711x_clk->clks[CLPS711X_CLK_UART] =
+ 		clk_register_fixed_factor(NULL, "uart", "bus", 0, 1, 10);
+ 	clps711x_clk->clks[CLPS711X_CLK_TICK] =
+-		clk_register_fixed_rate(NULL, "tick", NULL, CLK_IS_ROOT, 64);
 -
--skip_disable_main_clock:
--	ldr	pmc, .pmc_base
--
--	/* Wait for interrupt */
--	at91_cpu_idle
--
--	ldr	r0, .pm_mode
--	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_enable_main_clock
-+ulp0_mode:
-+	bl	at91_pm_ulp0_mode
-+	b	ulp_exit
- 
-+ulp_exit:
- 	ldr	pmc, .pmc_base
- 
--	/* Turn on the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--	wait_moscrdy
--
- 	/* Restore PLLA setting */
- 	ldr	tmp1, .saved_pllar
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-@@ -177,7 +158,15 @@ skip_disable_main_clock:
- 
- 	wait_mckrdy
- 
--skip_enable_main_clock:
-+	b	pm_exit
-+
-+standby_mode:
-+	ldr	pmc, .pmc_base
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+pm_exit:
- 	/* Exit the self-refresh mode */
- 	mov	r0, #SRAMC_SELF_FRESH_EXIT
- 	bl	at91_sramc_self_refresh
-@@ -311,6 +300,32 @@ exit_sramc_sf:
- 	mov	pc, lr
- ENDPROC(at91_sramc_self_refresh)
- 
-+/*
-+ * void at91_pm_ulp0_mode(void)
-+ */
-+ENTRY(at91_pm_ulp0_mode)
-+	ldr	pmc, .pmc_base
-+
-+	/* Turn off the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+	/* Turn on the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscrdy
-+
-+	mov	pc, lr
-+ENDPROC(at91_pm_ulp0_mode)
-+
- .pmc_base:
- 	.word 0
- .sramc_base:
++		clk_register_fixed_rate(NULL, "tick", NULL, 0, 64);
+ 	for (i = 0; i < CLPS711X_CLK_MAX; i++)
+ 		if (IS_ERR(clps711x_clk->clks[i]))
+ 			pr_err("clk %i: register failed with %ld\n",
 -- 
-1.7.9.5
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
