@@ -1,63 +1,37 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	keescook@google.com,
-	leozwang@google.com,
-	sergei.shtylyov@cogentembedded.com,
-	netdev@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Caesar Wang <wxt@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 8/9] clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on rk3036
-Date: Mon, 14 Mar 2016 16:01:59 +0800
-Message-Id: <1457942520-12859-9-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
-References: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 27/41] clk: fixed-rate: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:12 -0800
+Message-Id: <1456858826-28541-28-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Heiko Stuebner <heiko@sntech.de>
+This flag is a no-op now. Remove usage of the flag.
 
-The emac needs constant and very specific rate but the possible PLL-sources
-are very limited, so we expect the PLL source to be set manually on per
-board and don't want it to get changed in an automatic way later.
-So add the necessary clock-id and disable reparenting on set_rate calls.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+ drivers/clk/clk-fixed-rate.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Changes in v3:
-- Add the Cc people.
-
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index cc66e5f..7cdb2d6 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -348,7 +348,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 6858bfc548a9..cd9dc925b3f8 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -136,8 +136,7 @@ void of_fixed_clk_setup(struct device_node *node)
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
  
--	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-+	COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", mux_pll_src_3plls_p, CLK_SET_RATE_NO_REPARENT,
- 			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
- 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+ 	clk = clk_register_fixed_rate_with_accuracy(NULL, clk_name, NULL,
+-						    CLK_IS_ROOT, rate,
+-						    accuracy);
++						    0, rate, accuracy);
+ 	if (!IS_ERR(clk))
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ }
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
