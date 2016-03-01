@@ -4,38 +4,37 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 16/41] clk: sunxi: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:01 -0800
-Message-Id: <1456858826-28541-17-git-send-email-sboyd@codeaurora.org>
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 26/41] clk: efm32gg: Remove CLK_IS_ROOT
+Date: Tue,  1 Mar 2016 11:00:11 -0800
+Message-Id: <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
 In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
 References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
 This flag is a no-op now. Remove usage of the flag.
 
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/sunxi/clk-a10-hosc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/clk-efm32gg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi/clk-a10-hosc.c b/drivers/clk/sunxi/clk-a10-hosc.c
-index 0481d5d673d6..3bb4f6295474 100644
---- a/drivers/clk/sunxi/clk-a10-hosc.c
-+++ b/drivers/clk/sunxi/clk-a10-hosc.c
-@@ -54,8 +54,7 @@ static void __init sun4i_osc_clk_setup(struct device_node *node)
- 			NULL, 0,
- 			NULL, NULL,
- 			&fixed->hw, &clk_fixed_rate_ops,
--			&gate->hw, &clk_gate_ops,
--			CLK_IS_ROOT);
-+			&gate->hw, &clk_gate_ops, 0);
+diff --git a/drivers/clk/clk-efm32gg.c b/drivers/clk/clk-efm32gg.c
+index bac4553f04b8..22e4c659704e 100644
+--- a/drivers/clk/clk-efm32gg.c
++++ b/drivers/clk/clk-efm32gg.c
+@@ -36,7 +36,7 @@ static void __init efm32gg_cmu_init(struct device_node *np)
+ 	}
  
- 	if (IS_ERR(clk))
- 		goto err_free_gate;
+ 	clk[clk_HFXO] = clk_register_fixed_rate(NULL, "HFXO", NULL,
+-			CLK_IS_ROOT, 48000000);
++			0, 48000000);
+ 
+ 	clk[clk_HFPERCLKUSART0] = clk_register_gate(NULL, "HFPERCLK.USART0",
+ 			"HFXO", 0, base + CMU_HFPERCLKEN0, 0, 0, NULL);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
