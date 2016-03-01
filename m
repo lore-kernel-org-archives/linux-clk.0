@@ -1,40 +1,25 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEzqOZugVOGarjy9NjDOhwJeU6P26Ch2aX13Tec2N0z2Gb9g7A@mail.gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
-	<CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
-	<CAEzqOZugVOGarjy9NjDOhwJeU6P26Ch2aX13Tec2N0z2Gb9g7A@mail.gmail.com>
-Date: Tue, 22 Mar 2016 14:12:26 +0100
-Message-ID: <CACRpkda1gYciHz79ZaFsQmZdq8PwxtoR2LwCO3LteCGbNQE=gA@mail.gmail.com>
-Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
+In-Reply-To: <1456858826-28541-11-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	<1456858826-28541-11-git-send-email-sboyd@codeaurora.org>
+Date: Tue, 1 Mar 2016 21:06:43 +0100
+Message-ID: <CAGhQ9Vx1m8Th_m4ZDCmRkiLn2ymHqocssHjYuhcodm=yhXp0tw@mail.gmail.com>
+Subject: Re: [PATCH 10/41] clk: nxp: Remove CLK_IS_ROOT
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 17, 2016 at 4:34 PM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> On Thu, Mar 17, 2016 at 10:51 PM, Linus Walleij
+Hi Stephen,
 
->> I think I already merged this?
+On 1 March 2016 at 19:59, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> This flag is a no-op now. Remove usage of the flag.
 >
-> AFAIK, this one is not yet merged. At least, you did not say it's merged. :)
+> Cc: Joachim Eastwood <manabian@gmail.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Sorry, confused it with the plain A83T controller...
-
-Yours,
-Linus Walleij
+Acked-by: Joachim Eastwood <manabian@gmail.com>
