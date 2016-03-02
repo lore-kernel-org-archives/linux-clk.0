@@ -1,48 +1,113 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 16 Mar 2016 14:16:45 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org,
- Yehuda Yitschak <yehuday@marvell.com>, Neta Zur Hershkovits
- <neta@marvell.com>, devicetree@vger.kernel.org, Rob Herring
- <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel
- Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala
- <galak@codeaurora.org>
-Subject: Re: [PATCH v3 0/3] clk: clock driver for the Marvell Armada AP806
-Message-ID: <20160316141645.458f6f30@free-electrons.com>
-In-Reply-To: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Subject: Re: [PATCH v2] clk: lpc32xx: add HCLK PLL output configuration
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, robh+dt@kernel.org,
+ stigge@antcom.de, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <56D685F6.5060400@mleia.com>
+References: <1455130352-25860-1-git-send-email-slemieux.tyco@gmail.com>
+	 <56D685F6.5060400@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 02 Mar 2016 09:28:40 -0500
+Message-ID: <1456928920.8721.12.camel@localhost>
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Michael, Stephen,
+Hi Vladimir,
 
-On Fri,  4 Mar 2016 13:57:52 +0100, Thomas Petazzoni wrote:
-> Michael, Stephen,
+On Wed, 2016-03-02 at 08:19 +0200, Vladimir Zapolskiy wrote:
+> Hi Sylvain,
 > 
-> Here is a new version of the clock driver and its DT binding for the
-> Marvell Armada AP806. As you will see, there is no longer any
-> reference to the DFX Server and changes in the clock tree compared to
-> the v2. This is due to the fact that the HW has changed from this
-> point of view between the test chips and the final revision, and this
-> new version aims at supporting only the final revision.
+> On 10.02.2016 20:52, slemieux.tyco@gmail.com wrote:
+> > From: Sylvain Lemieux <slemieux@tycoint.com>
+> > 
+> > This patch add the support to setup the HCLK PLL output
+> > using the "assigned-clock-rates" parameter in the device tree.
+> > 
+> > If the option is not use, the clock setup by the kickstart
+> > and/or bootloader remain unchanged.
+> > 
+> > The previous kernel version did not change the clock frequency
+> > output setup by the kickstart and/or bootloader;
+> > this version always setup the clock frequency output to 208MHz.
+> > 
+> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> 
+> I've found enough time to test the change and it looks good, so
+> 
+> 
+> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> 
+> 
+> 
+> Do you have any objections, if 208MHz clock is set by default
+> in the shared DTSI file i.e.
+> 
+I do not have any objection;
+you can add my Acked-by when you submit the patch.
 
-This third version of the patch series has received the ACK from Rob as
-the DT binding maintainer, and from Gregory as the mvebu platform
-maintainer.
-
-Do you have any other concern about this series, or can it be applied
-soon?
-
-Thanks,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
+> index c58d8da..ecbace8 100644
+> --- a/arch/arm/boot/dts/lpc32xx.dtsi
+> +++ b/arch/arm/boot/dts/lpc32xx.dtsi
+> @@ -294,6 +294,9 @@
+>  
+>  					clocks = <&xtal_32k>, <&xtal>;
+>  					clock-names = "xtal_32k", "xtal";
+> +
+> +					assigned-clocks = <&clk LPC32XX_CLK_HCLK_PLL>;
+> +					assigned-clock-rates = <208000000>;
+>  				};
+>  			};
+>  
+> ?
+> 
+> In particular board files the value can be overwritten, however I think
+> it is important to have some well defined clock value here to mitigate
+> a risk of possible clock rate change done by a bootloader, for example
+> the rate may be set to a lower value by a bootloader.
+> 
+> > ---
+> > Changes from v1 to v2:
+> > - Rename patch title;
+> >   was "clk: lpc32xx: add clock frequency output configuration"
+> > - Update the patch as per the feedback received from:
+> >   Stephen: http://permalink.gmane.org/gmane.linux.kernel.clk/3913
+> >   Vladimir: http://permalink.gmane.org/gmane.linux.kernel.clk/3921 
+> > 
+> > Note:
+> > - There is currently an issue in the current driver;
+> >   if the HCLK PLL output, configured by the kickstart and/or
+> >   bootloader, is change by the kernel (ex. 266.5MHz to 208MHz),
+> >   the serial console is no longer outputing properly.
+> 
+> yep, I'm aware of this issue too, however it is not obvious that
+> the rootcause is in the clock driver, so we can discuss this topic
+> somewhere else, but let me present a short intro about what I
+> see on my end.
+> 
+> In case if PCLK is 266 MHz / 16 ~ 16520833 Hz, UART pre-divider is
+> bypassed (X = 1, Y = 1), baudrate is 115200, then I observe corrupted
+> I/O but correctly set divisor latch registers (DLM = 0, DLL = 9):
+> 
+>   16520833 / 16 / 9 ~ 114728
+> 
+> But if I change DLL to 7 as I should do in assumption
+> that PCLK is 13 MHz, then UART I/O is *not* corrupted.
+> 
+> The same happens if I modify UART pre-divider, for example UART
+> clock rate is 16520833, baudrate is 115200, X = 27, Y = 242,
+> DLM = 0, DLL = 1:
+> 
+>   16520833 / 16 * 27 / 242 ~ 115202 -- but I/O is corrupted
+> 
+> And if I change to X = 19, Y = 134 as I should do in case of 
+> PCLK = 13 MHz, then console UART is working fine.
+> 
+> It looks like UART clock is always pinned to 13 MHz (how is it
+> possible technically?), but this contradicts to the datasheet IMHO.
+> 
+> --
+> With best wishes,
+> Vladimir
