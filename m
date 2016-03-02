@@ -1,56 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 4 Mar 2016 10:55:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>, Barry Song <baohua@kernel.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH 0/7] clk: Make reset_control_ops const
-Message-ID: <20160304185539.GB16665@codeaurora.org>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
- <20160225210439.GI4847@codeaurora.org>
- <1456475057.3383.9.camel@pengutronix.de>
+Return-Path: <treding@nvidia.com>
+Date: Wed, 2 Mar 2016 15:55:51 +0100
+From: Thierry Reding <treding@nvidia.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Rhyland Klein
+	<rklein@nvidia.com>
+Subject: Re: [PATCH 17/41] clk: tegra: Remove CLK_IS_ROOT
+Message-ID: <20160302145550.GC2316@ulmo.nvidia.com>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-18-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456475057.3383.9.camel@pengutronix.de>
+In-Reply-To: <1456858826-28541-18-git-send-email-sboyd@codeaurora.org>
+Return-Path: treding@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/26, Philipp Zabel wrote:
-> Am Donnerstag, den 25.02.2016, 13:04 -0800 schrieb Stephen Boyd:
-> > On 02/25, Philipp Zabel wrote:
-> > > Since commit 203d4f347d86 ("reset: Make reset_control_ops const") marked
-> > > the ops pointer in struct reset_controller_dev as const, these structs
-> > > can be made const, too. The commit is currently sitting in the
-> > > arm-soc/for-next branch.
-> > > 
-> > 
-> > All these patches look fine. I take it we have to wait for a
-> > cycle to merge them though because the commit you mention is only
-> > in the arm-soc tree?
-> 
-> Or you could merge commit 203d4f347d86 before applying them, which would
-> just pull in another minor reset patch on top of v4.5-rc1. Since this is
-> already merged as part of the reset-for-4.6 tag, these commits are
-> stable.
-> 
-> >  Or did you want to take them through arm-soc?
-> 
-> Not unless that was your preferred option.
-> 
+--TiqCXmo5T1hvSQQg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok I think we'll apply these after v4.6-rc1 is released. They're
-so minor that we can send them in with the first batch of
-clk-fixes before -rc2 is released.
+On Tue, Mar 01, 2016 at 11:00:02AM -0800, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+>=20
+> Cc: Rhyland Klein <rklein@nvidia.com>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/tegra/clk-audio-sync.c  |  2 +-
+>  drivers/clk/tegra/clk-dfll.c        |  1 -
+>  drivers/clk/tegra/clk-tegra-fixed.c |  6 ++----
+>  drivers/clk/tegra/clk-tegra114.c    |  3 +--
+>  drivers/clk/tegra/clk-tegra20.c     | 10 ++++------
+>  5 files changed, 8 insertions(+), 14 deletions(-)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--TiqCXmo5T1hvSQQg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJW1v72AAoJEN0jrNd/PrOhxugP/iF7bHG4zgLp6s5sumjhEkbX
+DYcnucqSI5L1nV838Xj6zfDlvAakaklHaQLpAy9H26KrEfHzf2eErVC3MZStTR56
+I6JeNlceHYfDzS6TalGUaL+9ir/erhkKGCzt8ngHiP+JfYx3uPJm/ET2GESk8rJm
+pPpfAS2dGupprZfYgkJWHZ1RpfddHoV+C/a90nxFQw2swjxT5opo1jIJDym/SNBs
+KmKqMUtzoc6Nr9iZBJxx9qrpzu6rOD7Vwn4Fdky4AagUMFmJFflQD5eDRxXAr+XL
+PedCBuiyAlqVaobcL4E8P0ewxRlrctzMBcCZSb7855lRKOBArGh8U7aM0CFukN5t
+ac3uGUNMZpHEkmk0433CovhHGqPto76D1fD8+rjVAc6Gx3JxcMsi/gXuE/hLyeun
+bmAIs8H5SJC4a4XGTOrOiu60xEg+PJp21F42VjmN+0LVxv5DeHYd5+WuCEdNmAJI
+cQW94OSAwTxbC/P0W1Nb4Vk0X8266gmVjfrwQS7bs1zxZCFHmg4iPI9eNtaemV4j
+XGmEjv4ao2GdtHTnk8MLQ/75m/lLzjL9TVmr4TtEk4rqQ5GqEiKqqtqDIa/FbQKH
+/xnLwWq2l+GvbQHKvOSaAa94/eSXY9F+LhpK6tpgxmSPMnq+9/61Bis9BjsrwB0C
+zz9XtUKyPwPqFe90oKGh
+=gVtQ
+-----END PGP SIGNATURE-----
+
+--TiqCXmo5T1hvSQQg--
