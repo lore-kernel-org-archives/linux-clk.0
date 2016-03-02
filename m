@@ -1,40 +1,98 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35932 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755246AbcCXOGy (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 10:06:54 -0400
-MIME-Version: 1.0
-In-Reply-To: <1458824442-20279-6-git-send-email-wsa@the-dreams.de>
-References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
-	<1458824442-20279-6-git-send-email-wsa@the-dreams.de>
-Date: Thu, 24 Mar 2016 15:06:52 +0100
-Message-ID: <CAMuHMdWui+G0-Z+OLyAbDryRsKm8ORkD5zZrGd+8QUY3VCOPZg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: salvator-x: populate EXTALR
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Received: from aserp1040.oracle.com ([141.146.126.69]:31500 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756636AbcCBU2j (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Mar 2016 15:28:39 -0500
+From: Sasha Levin <sasha.levin@oracle.com>
+To: stable@vger.kernel.org, stable-commits@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Sasha Levin <sasha.levin@oracle.com>
+Subject: [added to the 3.18 stable tree] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+Date: Wed,  2 Mar 2016 15:27:23 -0500
+Message-Id: <1456950474-1149-40-git-send-email-sasha.levin@oracle.com>
+In-Reply-To: <1456950474-1149-1-git-send-email-sasha.levin@oracle.com>
+References: <1456950474-1149-1-git-send-email-sasha.levin@oracle.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 24, 2016 at 2:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> It can be used for the watchdog.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch has been added to the 3.18 stable tree. If you have any
+objections, please let us know.
 
-Gr{oetje,eeting}s,
+===============
 
-                        Geert
+[ Upstream commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 ]
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
+
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: stable@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
+index 2dc6da70..d3c0e69 100644
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+ 
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+ 
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+ 
+ EXPORT_SYMBOL(icst_hz);
+-- 
+2.5.0
+
