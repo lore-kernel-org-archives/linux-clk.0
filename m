@@ -1,68 +1,93 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 17/18] Documentation: dt: add Vybrid DDR memory controller bindings
-Date: Wed,  9 Mar 2016 18:16:58 -0800
-Message-Id: <1457576219-7971-18-git-send-email-stefan@agner.ch>
-In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+Return-Path: <vishnupatekar0510@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160301071253.GI8418@lukather>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1456672738-4993-14-git-send-email-vishnupatekar0510@gmail.com> <20160301071253.GI8418@lukather>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Date: Thu, 3 Mar 2016 00:04:22 +0800
+Message-ID: <CAEzqOZt2khVambkoCcBNwvQU2pQiWzbEs5cKZJBaAqD0p3T++g@mail.gmail.com>
+Subject: Re: [PATCH v2 13/13] ARM: sunxi: Introduce MACH_SUN8I_A83T option
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device-tree bindings of Vybrids LPDDR2/DDR3 SDRAM Memory
-Controller. Access to the device is required to put the memory
-into self-refresh mode.
+Hello Maxime,
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- .../bindings/arm/freescale/fsl,vf610-ddrmc.txt     | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+On Tue, Mar 1, 2016 at 3:12 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Sun, Feb 28, 2016 at 11:18:58PM +0800, Vishnu Patekar wrote:
+>> A83T has CPUS clock similar to A80's. currently, a80 cpus clock only
+>> compiled for A80. So, Introduce MACH_SUN8I_A83T to compile it for
+>> A83T as well.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> ---
+>>  arch/arm/mach-sunxi/Kconfig | 5 +++++
+>>  drivers/clk/sunxi/Makefile  | 3 +++
+>>  2 files changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+>> index c124d65..424b76d 100644
+>> --- a/arch/arm/mach-sunxi/Kconfig
+>> +++ b/arch/arm/mach-sunxi/Kconfig
+>> @@ -41,6 +41,11 @@ config MACH_SUN8I
+>>       select ARM_GIC
+>>       select MFD_SUN6I_PRCM
+>>
+>> +config MACH_SUN8I_A83T
+>> +     bool "Allwinner A83T (sun8i) SoCs support"
+>> +     default ARCH_SUNXI
+>> +     select ARM_GIC
+>> +
+>>  config MACH_SUN9I
+>>       bool "Allwinner (sun9i) SoCs support"
+>>       default ARCH_SUNXI
+>> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+>> index 3fd7901..2aabfc4 100644
+>> --- a/drivers/clk/sunxi/Makefile
+>> +++ b/drivers/clk/sunxi/Makefile
+>> @@ -20,6 +20,9 @@ obj-y += clk-usb.o
+>>  obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
+>>  obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
+>>
+>> +obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun8i-apb0.o
+>> +obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun9i-cpus.o
+>> +
+>
+> This is not how it should be done. You should rather create a Kconfig
+> option for these clocks, and use def_bool CONFIG_MACH_SUN8I || CONFIG_MACH_SUN9I
+>
+> Switching to Kconfig for the clocks has been on my todo-list for quite
+> some time, I guess these two clocks would be a good start.
+Okie, I'll create Kconfig in clk/sunxi as below:
+config CLK_SUN8I_APB0
+def_bool MACH_SUN9I || MACH_SUN8I_A83T
 
-diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
-new file mode 100644
-index 0000000..56a71d6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
-@@ -0,0 +1,23 @@
-+Freescale Vybrid LPDDR2/DDR3 SDRAM Memory Controller
-+
-+The memory controller supports high performance applications for 16-bit or
-+8-bit DDR2, or LPDDR SDRAM memories.
-+
-+Required properties:
-+- compatible:	"fsl,vf610-ddrmc"
-+- reg:		the register range of the DDRMC registers
-+- clocks:	DDRMC main clock to clock memory and access registers.
-+- clock-names:	Must contain "ddrc", matching entry in the clocks property.
-+- fsl,has-cke-reset-pulls:
-+		States whether pull-down/up are populated on DDR CKE/RESET
-+		signals to allow using DDR self-refresh modes (see Vybrid
-+		Hardware Development Guide for details).
-+
-+Example:
-+	ddrmc: ddrmc@400ae000 {
-+		compatible = "fsl,vf610-ddrmc";
-+		reg = <0x400ae000 0x1000>;
-+		clocks = <&clks VF610_CLK_DDRMC>;
-+		clock-names = "ddrc";
-+		fsl,has-cke-reset-pulls;
-+	}
--- 
-2.7.2
+config CLK_SUN9I_CPUS
+def_bool MACH_SUN9I || MACH_SUN8I_A83T
+
+We still need to have MACH_SUN8I_A83T to differentiate between
+MFD_SUN6I_PRCM which is used by other sun8i platforms.
+
+>
+> Thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
