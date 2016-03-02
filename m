@@ -1,40 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 22/41] clk: x86: Remove clkdev.h and clk.h includes
-Date: Tue,  1 Mar 2016 11:00:07 -0800
-Message-Id: <1456858826-28541-23-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <andi.shyti@samsung.com>
+Date: Wed, 02 Mar 2016 11:25:09 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 36/41] clk: s2mps11: Remove CLK_IS_ROOT
+Message-id: <20160302022509.GG31199@samsunx.samsung>
 References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-37-git-send-email-sboyd@codeaurora.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <1456858826-28541-37-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver is a clk provider and not a clk consumer, so remove
-the clk.h include. Also, drop clkdev.h because there's not clkdev
-usage here either.
+Hi Stephen,
 
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/x86/clk-lpt.c | 2 --
- 1 file changed, 2 deletions(-)
+On Tue, Mar 01, 2016 at 11:00:21AM -0800, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Andi Shyti <andi.shyti@samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/drivers/clk/x86/clk-lpt.c b/drivers/clk/x86/clk-lpt.c
-index 54e0cf9d8edd..6b40eb89ae19 100644
---- a/drivers/clk/x86/clk-lpt.c
-+++ b/drivers/clk/x86/clk-lpt.c
-@@ -10,8 +10,6 @@
-  * published by the Free Software Foundation.
-  */
- 
--#include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/module.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Andi Shyti <andi.shyti@samsung.com>
+
+Thanks,
+Andi
+
+> ---
+>  drivers/clk/clk-s2mps11.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index 371150aabd15..f8c83977c7fa 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -99,17 +99,14 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>  	[S2MPS11_CLK_AP] = {
+>  		.name = "s2mps11_ap",
+>  		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+>  	},
+>  	[S2MPS11_CLK_CP] = {
+>  		.name = "s2mps11_cp",
+>  		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+>  	},
+>  	[S2MPS11_CLK_BT] = {
+>  		.name = "s2mps11_bt",
+>  		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+>  	},
+>  };
+>  
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
