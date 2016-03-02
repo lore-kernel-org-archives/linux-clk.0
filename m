@@ -1,102 +1,98 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:47460 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751039AbcC2Ji3 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2016 05:38:29 -0400
-Date: Tue, 29 Mar 2016 11:38:27 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: Accept a greater rate when setting a parent
- clock
-Message-ID: <20160329093827.GH30977@lukather>
-References: <20160310081658.B749246B@mail.free-electrons.com>
- <20160321072546.GT30977@lukather>
- <20160321092549.4e6245e4f02839e29aeb86a9@free.fr>
+Return-Path: <robh@kernel.org>
+Date: Wed, 2 Mar 2016 11:31:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] doc: dt: add documentation for lpc1850-creg-clk
+ driver
+Message-ID: <20160302173107.GA1227@rob-hp-laptop>
+References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
+ <1456351460-15483-3-git-send-email-manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4AhSc/rXZRY65wXU"
-In-Reply-To: <20160321092549.4e6245e4f02839e29aeb86a9@free.fr>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456351460-15483-3-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Feb 24, 2016 at 11:04:20PM +0100, Joachim Eastwood wrote:
+> Add DT binding documentation for lpc1850-creg-clk driver.
+> 
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
 
---4AhSc/rXZRY65wXU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+One typo, otherwise:
 
-Hi,
+Acked-by: Rob Herring <robh@kernel.org>
 
-On Mon, Mar 21, 2016 at 09:25:49AM +0100, Jean-Francois Moine wrote:
-> On Mon, 21 Mar 2016 08:25:46 +0100
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > > -	/* find the parent that can help provide the fastest rate <=3D rate=
- */
-> > > +	/* find the parent that can help provide the fastest rate */
-> > >  	num_parents =3D clk_hw_get_num_parents(hw);
-> > >  	for (i =3D 0; i < num_parents; i++) {
-> > >  		parent =3D clk_hw_get_parent_by_index(hw, i);
-> > > @@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_=
-hw *hw,
-> > >  		child_rate =3D clk_factors_round_rate(hw, req->rate,
-> > >  						    &parent_rate);
-> > > =20
-> > > -		if (child_rate <=3D req->rate && child_rate > best_child_rate) {
-> > > +		if (child_rate > best_child_rate) {
-> >=20
-> > I'm not sure this would work, since you'll end up picking the fastest
-> > rate without considering whether it is the closest or not.
-> >=20
-> > I guess what you want here is using the absolute difference between
-> > the requested rate and the rate you're evaluating.
-> >=20
-> > That being said, we had a similar discussion for SPI around a month
-> > ago where we wanted a rate strictly lower than the requested one. I
-> > guess it's time to add a flag to tell how you want to round.
->=20
-> You are right, I just removed half of the constraint, but I still wonder
-> why does this sequence introduced by the commit 862b728387aef3a37
-> (clk: sunxi: factors: automatic reparenting support) do
-> 	"provide the fastest rate <=3D rate"
-> instead of
-> 	"provide the closest rate" ?
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+> new file mode 100644
+> index 000000000000..4e13586d083c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+> @@ -0,0 +1,52 @@
+> +* NXP LPC1850 CREG clocks
+> +
+> +The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
+> +control registers for two low speed clocks. One of the clocks is a
+> +32 kHz oscillator driver with power up/down and clock gating. Next
+> +is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
+> +
+> +These clocks are used by the RTC and the Event Router peripherials.
+> +The 32 kHz can also be routed to other peripherials to enable low
+> +power modes.
+> +
+> +This binding uses the common clock binding:
+> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible:
+> +	Should be "nxp,lpc1850-creg-clk"
+> +- #clock-cells:
+> +	Shall have value <1>.
+> +- clocks:
+> +	Shall contain a phandle to the fixed 32 kHz crystall.
 
-I guess it's a confusing wording, in this case where you try to have
-the closest rate but below the requested rate, what you want is
-actually the fastest rate that doesn't trip above the requested rate,
-hence the comment I guess.
+s/crystall/crystal/
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---4AhSc/rXZRY65wXU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJW+k0TAAoJEBx+YmzsjxAgYrMP/i3AvohignjA3Coy431KHGWM
-FJ8YifXs6BBQ6n8NyIeMSimv1zadW61aBlmtqP8cZ1TQL5qmSwjxliXeNPZ7ao7D
-wxLleImb53zKpsJTyFZUDkyJRMJ7Mumy9MiWdozVTyZioZdp4G3sugkMKDVtRKYQ
-CzvxDMAb4KHFGZ8cvGa4lD+EIwtKEKfwvDTVhYNy5Mxz2HvmETpsQjo0wseHhlPR
-sVzLN7BGIPo0+96XacTKQza7gGGaQ8P+6YBKihEVyroF90scDmCWMiN5rQEsUJbw
-OkNugCJI4yyMt2LHyfLEd2qM3FEL/kR9yrioDNVfE5obccBzCh/LcWB5AGpF02xD
-eozQmdwj8n12SaZ3KSflucjj3eI54zI/cmMr48j2zGgsMxqyNU3ns8O7gKSDed8U
-wxU62WQGhr0x2WPzy3BDq43VyOU7CHtGACtTqXtvJ4ClR+FOwWvtZMJnkkKdg+0c
-TPV3QFuAXKR84E0RbcADXh034pxQbgmhahwZ2i23fRG6g0ASSi1DAiSrGGvVOg1K
-y1RReR0fbSSktHnnZoAj9M0mMhuW6toyNB7jhSYA0k06kOWamj1CuPrPGUPx7JPD
-7gyLEvGSXeeT4tJF3zYV7SieNv9lgIzTywZRf6C8JmdcBkQ24zHQ6AE5oBuIFGUD
-E2iodzGL8k5y9xyL9Lcz
-=XDWy
------END PGP SIGNATURE-----
-
---4AhSc/rXZRY65wXU--
+> +
+> +The creg-clk node must be a child of the creg syscon node.
+> +
+> +The following clocks are available from the clock node.
+> +
+> +Clock ID	Name
+> +   0		 1 kHz clock
+> +   1		32 kHz Oscillator
+> +
+> +Example:
+> +soc {
+> +	creg: syscon@40043000 {
+> +		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
+> +		reg = <0x40043000 0x1000>;
+> +
+> +		creg_clk: clock-controller {
+> +			compatible = "nxp,lpc1850-creg-clk";
+> +			clocks = <&xtal32>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		...
+> +	};
+> +
+> +	rtc: rtc@40046000 {
+> +		...
+> +		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
+> +		clock-names = "rtc", "reg";
+> +		...
+> +	};
+> +};
+> -- 
+> 1.8.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
