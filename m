@@ -1,65 +1,98 @@
-Return-Path: <manabian@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160304174201.GH24999@codeaurora.org>
-References: <1457041625-21163-1-git-send-email-manabian@gmail.com>
-	<1457041625-21163-2-git-send-email-manabian@gmail.com>
-	<20160304174201.GH24999@codeaurora.org>
-Date: Fri, 4 Mar 2016 21:48:08 +0100
-Message-ID: <CAGhQ9VxYBRUbj+afsHUa21cwNFT4bdYRDNwxagdUwBXg4-x_3w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: add lpc18xx creg clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:23746 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755114AbcCBUPj (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Mar 2016 15:15:39 -0500
+From: Sasha Levin <sasha.levin@oracle.com>
+To: stable@vger.kernel.org, stable-commits@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Sasha Levin <sasha.levin@oracle.com>
+Subject: [added to the 4.1 stable tree] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+Date: Wed,  2 Mar 2016 15:13:54 -0500
+Message-Id: <1456949673-25036-47-git-send-email-sasha.levin@oracle.com>
+In-Reply-To: <1456949673-25036-1-git-send-email-sasha.levin@oracle.com>
+References: <1456949673-25036-1-git-send-email-sasha.levin@oracle.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 4 March 2016 at 18:42, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 03/03, Joachim Eastwood wrote:
->> diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
->> new file mode 100644
->> index 000000000000..d44b61afa2dc
->> --- /dev/null
->> +++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
->> @@ -0,0 +1,226 @@
->> +
->> +static int clk_creg_32k_is_prepared(struct clk_hw *hw)
->> +{
->> +     struct clk_creg_data *creg = to_clk_creg(hw);
->> +     u32 reg;
->> +
->> +     regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
->> +
->> +     return !(reg & LPC18XX_CREG_CREG0_PD32KHZ) &&
->> +            !(reg & LPC18XX_CREG_CREG0_RESET32KHZ);
->> +}
->> +
->> +static unsigned long clk_creg_1k_recalc_rate(struct clk_hw *hw,
->> +                                          unsigned long parent_rate)
->> +{
->> +     return parent_rate / 32;
->> +}
->> +
->> +static int clk_creg_enable(struct clk_hw *hw)
->> +{
->> +     struct clk_creg_data *creg = to_clk_creg(hw);
->> +
->> +     return regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
->> +                               creg->en_mask, creg->en_mask);
->
-> Have you tested this with CONFIG_DEBUG_ATOMIC_SLEEP=y? I seem to
-> recall that syscon uses a regmap with regmap_config::fast_io set
-> to false, so all regmap operations take a mutex lock.
-> clk_ops::enable is called with a spinlock held, so that isn't
-> going to work well.
+From: Linus Walleij <linus.walleij@linaro.org>
 
-The MMIO bus config sets fast io to true and __regmap_init() uses
-spinlocks if either bus or regmap config is set to true.
+This patch has been added to the 4.1 stable tree. If you have any
+objections, please let us know.
 
-http://lxr.free-electrons.com/source/drivers/base/regmap/regmap-mmio.c#L209
-http://lxr.free-electrons.com/source/drivers/base/regmap/regmap.c#L548
+===============
 
-or am I missing something?
+[ Upstream commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 ]
 
-regards,
-Joachim Eastwood
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
+
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
+
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: stable@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
+index 2dc6da70..d3c0e69 100644
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+ 
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+ 
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+ 
+ EXPORT_SYMBOL(icst_hz);
+-- 
+2.5.0
+
