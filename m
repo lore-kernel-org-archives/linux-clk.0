@@ -1,75 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54108 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751625AbcCXNAX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 24 Mar 2016 09:00:23 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-clk@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: shmobile: r8a7795: make SD clk definition specific for GEN3
-Date: Thu, 24 Mar 2016 13:50:41 +0100
-Message-Id: <1458823841-19899-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Lee Jones <lee@kernel.org>
+Subject: Re: [PATCH 02/41] clk: bcm: Remove CLK_IS_ROOT
+In-Reply-To: <1456858826-28541-3-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org> <1456858826-28541-3-git-send-email-sboyd@codeaurora.org>
+Date: Wed, 02 Mar 2016 13:59:30 -0800
+Message-ID: <871t7szgl9.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+--=-=-=
+Content-Type: text/plain
 
-About SD clocks: The clock type is Gen3 specific, the callbacks are all
-Gen3 specific; I think the clock definition should also be Gen3 specific
-and not in the general header file.
+Stephen Boyd <sboyd@codeaurora.org> writes:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 11 +++++++----
- drivers/clk/renesas/renesas-cpg-mssr.h |  3 ---
- 2 files changed, 7 insertions(+), 7 deletions(-)
+> This flag is a no-op now. Remove usage of the flag.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index b2198aef5ed429..a9f933055663cb 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -65,6 +65,9 @@ enum r8a7795_clk_types {
- 	CLK_TYPE_GEN3_SD,
- };
- 
-+#define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
-+
- static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",  CLK_EXTAL),
-@@ -102,10 +105,10 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
- 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
- 
--	DEF_SD("sd0",           R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
--	DEF_SD("sd1",           R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
--	DEF_SD("sd2",           R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
--	DEF_SD("sd3",           R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
-+	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
-+	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
-+	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
-+	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
- 
- 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 952b6957233b46..cad3c7d1b0c6f0 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -53,9 +53,6 @@ enum clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_FF, _parent, .div = _div, .mult = _mult)
- #define DEF_DIV6P1(_name, _id, _parent, _offset)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
--#define DEF_SD(_name, _id, _parent, _offset)	\
--	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
--
- 
-     /*
-      * Definitions of Module Clocks
--- 
-2.7.0
+I like that this flag is going away.  It's a nice cleanup.
 
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJW12JCAAoJELXWKTbR/J7o2xwQALU9iSfrLVxDYIIVg8APqbNm
+G+Hy7ZMcUbvfKcxxdkZCAFsrEsJ9mtCrYFVofloNcKUuk4hfgIOIFZoW1EoJ2mpi
+015ubVDpniuUVmO6NNT40cj6G8e/0kJcADCX8m1dp/91ylgxUM+r2OCeYB3lJDHH
+YI2Jb7fXR2krTLJOSrBZXQORym6Yh7LNMD/jGcm7orYyrdbiqQIr9BQ02Ye92tBF
+b1jEwHXDxHfJc1nqyS8Kxgwdr8rRAn3NDFcClyu/Exv5GbaSi6oVMU9prhilTpbD
+DnN5ub6pIMShvsc2yiCQpaNIoCNLh5TqepQfFe6X0FIJcm8nP0vWiaZXN3pXAihD
+3dPfqtFseakD0kHt8+DXTO9/wzpPYjhlzjdSUrCdzRZYMhouAYtvHo+5p8YInI+r
+NJ8iLQBdpeiGjLY8Uv/mWcUUcR7Ys37eQkdP90/jLXb0gCHCjdXn3mJPIXOeamts
+HNIOahHpWXleR5BI7npd+9N7s6dNPOF5nON08BwbqPVa65p697eJ1J1dgrUyOToM
+5/Rw0cZ0eitpWAa/kTvu08jBmX9IXIx8bmV5MsWtOT76LNpEVJ+/VWf4rDVBnHNU
+NDExAqJ6g7ImyFeiC+ItMQSvzQaBhzVGxZlLtk7B/NkfnWmnMYWcFlBnxvG1dokf
+I07A/B0KON7bjQ6lxqpq
+=mfPV
+-----END PGP SIGNATURE-----
+--=-=-=--
