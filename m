@@ -1,46 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 3 Mar 2016 12:13:45 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] clk: add lpc18xx creg clk driver
-Message-ID: <20160303201345.GD24999@codeaurora.org>
-References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
- <1456351460-15483-2-git-send-email-manabian@gmail.com>
- <20160302230159.12762.59247@quark.deferred.io>
- <CAGhQ9VzmTrDmKF+_8CRFgioyrXUOR9uOk-KADw2seEa16OP78A@mail.gmail.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1456883885.24036.1.camel@mtksdaap41>
+Subject: Re: [PATCH 05/41] clk: mediatek: Remove CLK_IS_ROOT
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Date: Wed, 2 Mar 2016 09:58:05 +0800
+In-Reply-To: <1456858826-28541-6-git-send-email-sboyd@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	 <1456858826-28541-6-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGhQ9VzmTrDmKF+_8CRFgioyrXUOR9uOk-KADw2seEa16OP78A@mail.gmail.com>
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Joachim Eastwood wrote:
-> On 3 March 2016 at 00:01, Michael Turquette <mturquette@baylibre.com> wrote:
-> >
-> > This should be devm_clk_register with your struct device *dev passed
-> > into it.
+On Tue, 2016-03-01 at 10:59 -0800, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
 > 
-> Since clk_register_creg_clk() is used both from early init and probe
-> I'll need to change the function a bit.
-> 
-> I'll pass dev in as a parameter and either do clk_register() or
-> devm_clk_register() depending on dev being NULL or not.
-> Doesn't look like devm_clk_register() would like to be passed NULL for dev.
-> 
-> 
-> I send out a new version tomorrow.
-> 
-> btw, this driver is a builtin_platform_driver. So is there a point in
-> using devm_clk_register?
-> 
+> Cc: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Builtin drivers can still probe defer or fail for other reasons,
-so just in case that happens it's better to use
-devm_clk_register() to make sure we cleanup on the error path. It
-may never actually happen in practice, but it's better to write
-safe drivers.
+Acked-by: James Liao <jamesjj.liao@mediatek.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Best regards,
+
+James
+
+> ---
+>  drivers/clk/mediatek/clk-mtk.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+> index 352830369e0e..5ada644e6200 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -58,8 +58,8 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+>  	for (i = 0; i < num; i++) {
+>  		const struct mtk_fixed_clk *rc = &clks[i];
+>  
+> -		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent,
+> -				rc->parent ? 0 : CLK_IS_ROOT, rc->rate);
+> +		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent, 0,
+> +					      rc->rate);
+>  
+>  		if (IS_ERR(clk)) {
+>  			pr_err("Failed to register clk %s: %ld\n",
