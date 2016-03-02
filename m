@@ -1,25 +1,41 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] clk: rockchip: remove redundant checking of device_node
-Date: Mon, 14 Mar 2016 01:26:33 +0100
-Message-ID: <2962531.qNIN5DvN6o@phil>
-In-Reply-To: <1457799953-3267-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799953-3267-1-git-send-email-shawn.lin@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] clk: qcom: msm8960: Fix ce3_src register offset
+Date: Tue,  1 Mar 2016 17:30:03 -0800
+Message-Id: <1456882203-31932-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Sonntag, 13. M=E4rz 2016, 00:25:53 schrieb Shawn Lin:
-> rockchip_clk_of_add_provider is used by sub-clk driver which
-> already call of_iomap before calling it. If device_node does
-> not exist, of_iomap returns NULL which will fail to init the
-> sub-clk driver. So really it's redundant.
->=20
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+The offset seems to have been copied from the sata clk. Fix it so
+that enabling the crypto engine source clk works.
 
-applied for v4.7
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: 5f775498bdc4 ("clk: qcom: Fully support apq8064 global clock control")
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8960.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
-Heiko
+diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
+index 63ecd97f3793..0a0c1f533249 100644
+--- a/drivers/clk/qcom/gcc-msm8960.c
++++ b/drivers/clk/qcom/gcc-msm8960.c
+@@ -2753,7 +2753,7 @@ static struct clk_rcg ce3_src = {
+ 	},
+ 	.freq_tbl = clk_tbl_ce3,
+ 	.clkr = {
+-		.enable_reg = 0x2c08,
++		.enable_reg = 0x36c0,
+ 		.enable_mask = BIT(7),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "ce3_src",
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
