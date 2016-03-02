@@ -1,84 +1,120 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 17 Mar 2016 11:41:24 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar,
-	jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 03/13] clk: sunxi: Add APB1 clock for A83T
-Message-ID: <20160317104124.GL30977@lukather>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
- <1458144276-31108-4-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <robh@kernel.org>
+Date: Wed, 2 Mar 2016 11:09:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm/marvell: add DT bindings for
+ AP806 DFX Server
+Message-ID: <20160302170935.GA11407@rob-hp-laptop>
+References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1456326866-30854-2-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20160225233710.GJ28849@codeaurora.org>
+ <20160226093227.5d4dc1a7@free-electrons.com>
+ <20160226235549.GB28849@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GDLQamdgIxhPcIwq"
-In-Reply-To: <1458144276-31108-4-git-send-email-vishnupatekar0510@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160226235549.GB28849@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Feb 26, 2016 at 03:55:49PM -0800, Stephen Boyd wrote:
+> On 02/26, Thomas Petazzoni wrote:
+> > I would entirely agree with you if this DFX Server was some sort of
+> > "system control" IP block that provided clocks, resets, and all sort of
+> > other features.
+> > 
+> > But this DFX server thing is just a bunch of registers with absolutely
+> > no relation to clocks. Due to this, it would be completely awkward to
+> > have clock references like:
+> > 
+> > 	serial {
+> > 		clocks = <&dfxserver 42>;
+> > 	};
+> > 
+> > One will wonder "why the heck this UART controller is using a clock
+> > from this really odd dfxserver thing" ? Currently we have:
+> > 
+> > 	serial {
+> > 		clocks = <&coreclk 4>;
+> > 	};
+> > 
+> > which makes a *lot* more sense.
 
---GDLQamdgIxhPcIwq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Really, this is your argument?
 
-On Thu, Mar 17, 2016 at 12:04:26AM +0800, Vishnu Patekar wrote:
-> APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
->=20
-> This adds support for apb1 on A83T.
->=20
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 13 +++++++++++++
->  2 files changed, 14 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index cba9fe55..291d366 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -51,6 +51,7 @@ Required properties:
->  	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
->  	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
->  	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
-> ++	"allwinner,sun8i-a83t-apb1-clk" - for the APB1 clock on A83T
+> Sorry I don't see the difference and I don't agree with this
+> argument. dfxserver is just a phandle and possibly a poorly named
+> one at that. So is coreclk. The second example doesn't make a
+> *lot* more sense or really any more sense than the first example.
+> Maybe some #define should be used to make things readable:
+> &dfxserver CORE_CLK_X or something. Why someone would care what
+> the name of the phandle is for where the clk is coming from makes
+> no sense to me.
+> 
+> The miscellaneous register dumping ground, i.e. dfxserver, is a
+> total mess in hardware, agreed, but it doesn't mean we need to
+> pick it apart and describe the bits and pieces of it so that our
+> DT can be read as &coreclk 4 instead of &dfxserver 42.
+> 
+> Somebody delivered this dfxserver hardware block into the SoC.
+> They decided to put random clk control in there. In terms of
+> hardware blocks, I would guess that dfxserver has a couple clk
+> wires coming out and some SoC integration engineer had to wire
+> those up to the places like the uart that actually use them.
+> Embrace these hardware design decisions. Represent the hardware
+> in DT as it is represented in hardware by making one node for the
+> dfxserver because dfxserver is a hardware block.
 
-There's one '+' too many
+Agreed.
 
-Maxime
+> > Also, your idea of just hiding everything behind a MFD bothers me quite
+> > a bit. If I push this idea further, then why shouldn't I replace my
+> > entire DT with a single node, that covers the entire register space of
+> > my SoC, and then handle *everything* as a huge MFD. In a way, it would
+> > be quite useful for me, as it would resolve the on-going dispute over
+> > DT binding stability with Rob and Mark.
+> 
+> That's a straw man fallacy. Nobody is asking for this. DT is
+> about describing relations between hardware blocks and the
+> resources they use. It is *not* about describing register level
+> details of hardware blocks and providing some data heavy format
+> so that drivers are nothing besides DT data driven husks of code.
+> Nor is it about grouping clk subtypes into different DT subnodes
+> to make writing drivers easier. That's what gets us into the mess
+> of DT backward compatibility when the data that should have been
+> in the driver has been put into DT.
+> 
+> > 
+> > For sure, I wouldn't have any DT backward compatibility issue, because
+> > everything is hidden in my big MFD. But in terms of the DT as a
+> > representation of the different HW blocks and the relations between
+> > then, such a choice would be quite a failure.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+What other functions do you have? You previously said the block was DFT 
+registers which I would not expect s/w to ever touch.
 
---GDLQamdgIxhPcIwq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> I don't see any failure. The dfxserver is a hardware block and
+> that happens to be a clk provider, plain and simple. Consumers of
+> those clks are related to the dfxserver and we've properly
+> expressed the relations between them.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+And you could have other types of consumers. Nothing requires nodes and 
+providers to be 1-1.
 
-iQIcBAEBAgAGBQJW6onUAAoJEBx+YmzsjxAg2EwP/0xt7aSDsenIcLIibB9u5qn6
-f1UG1xsLX9v4HQxUu7B8x1NmdgoM0htl6cLgntX0d3nV4jjadjRf/K0eUw/1V2XT
-WpWRD+WbTmrPaSzuibSzAenuIOQSOYMj9IJqbZpswjH3oBhyi9/hGwga6FDPXeAK
-duF5bo3Z10WfWi7P6/1/mnJ1aMRwwUskfg1ryZihH8AL91B+nLMGRvK7nR+aBZwv
-7wMuTeQmER1ymWaf3iVt4hPAHHPoohOhAvHDFz4hy8XsOZuC4ti2sMuvQcV90IS/
-fWWeEYTmMJYBF37l/2Z1Y//6Q1NhGIVRUNUmat01F3uYKRpMCSGM+JwVejLoyuZQ
-oFtp/RHuQpP6AGwzlJY/2YYeuJJPeXoEST+k6wgH4snDRiTIVYi4JCKnX3RtRgtk
-5DM5UoBJ5cyIIKQmas76HXVIdhuRjxNqPfKAKSTBDQ5FeT7tpBOhAF5mCJHzoGqn
-WkkVeGIaPZAQcXV80GRi2cczpSjnR1v+5CKlmJafWaBdBWZ/KTa8tx7P1Ow0iYxP
-8xCePI2G6HM4S7Z+Ns3YxFnxjg5D1KH5MvN4ZIVypbADL2p+Gtm+3pafexlI2iZW
-fvtOEc1k6/g+CYNE+HLq+DOy9A2xtaXn3VJSUnL7CpgTIjIhkRDrCjdzPpP8DfGy
-Bbj0oSU9tyHG6u8XWfWZ
-=nXWR
------END PGP SIGNATURE-----
+You're being told to do it this way by multiple maintainers both because 
+it is the preferred way to describe clocks and it gives a better chance 
+for stable bindings. 
 
---GDLQamdgIxhPcIwq--
+Rob
