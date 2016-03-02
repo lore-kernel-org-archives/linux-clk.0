@@ -1,115 +1,68 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:40046 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934377AbcCIXKp (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2016 18:10:45 -0500
-From: Kamal Mostafa <kamal@canonical.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Kamal Mostafa <kamal@canonical.com>,
-	kernel-team@lists.ubuntu.com
-Subject: [3.13.y-ckt stable] Patch "ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()" has been added to the 3.13.y-ckt tree
-Date: Wed,  9 Mar 2016 15:10:37 -0800
-Message-Id: <1457565037-11368-1-git-send-email-kamal@canonical.com>
+Received: from mail.kernel.org ([198.145.29.136]:47873 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756465AbcCBS0j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 2 Mar 2016 13:26:39 -0500
+Date: Wed, 2 Mar 2016 12:26:34 -0600
+From: Rob Herring <robh@kernel.org>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
+Message-ID: <20160302182634.GA26055@rob-hp-laptop>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-6-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456439796-28546-6-git-send-email-fcooper@ti.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a note to let you know that I have just added a patch titled
+On Thu, Feb 25, 2016 at 04:36:36PM -0600, Franklin S Cooper Jr wrote:
+> From: Vignesh R <vigneshr@ti.com>
+> 
+> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+> for dt bindings.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+> Version 3 changes:
+> None
+> 
+>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
+>  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
+>  arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
+>  3 files changed, 88 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+> index 9c100b2..25d91ae 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+> @@ -4,6 +4,7 @@ Required properties:
+>  - compatible: Must be "ti,<soc>-ehrpwm".
+>    for am33xx - compatible = "ti,am33xx-ehrpwm";
+>    for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+> +  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
 
-    ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+We're starting to push back on wildcards in compatible strings. I guess 
+this is okay...
 
-to the linux-3.13.y-queue branch of the 3.13.y-ckt extended stable tree 
-which can be found at:
+>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+>    the cells format. The only third cell flag supported by this binding is
+>    PWM_POLARITY_INVERTED.
+> @@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+>  	#pwm-cells = <3>;
+>  	reg = <0x300000 0x2000>;
+>  };
+> +
+> +ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
 
-    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-3.13.y-queue
+Should be pwm@48440200
 
-This patch is scheduled to be released in version 3.13.11-ckt36.
-
-If you, or anyone else, feels it should not be added to this tree, please 
-reply to this email.
-
-For more information about the 3.13.y-ckt tree, see
-https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
-
-Thanks.
--Kamal
-
----8<------------------------------------------------------------
-
->From 9de90ea8cf7eb216ad1fcf3d5233cba659ddbcd5 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 8 Feb 2016 09:14:37 +0100
-Subject: ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
-
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
-
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
-
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
-
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
-
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
-
-Tested on the ARM Versatile.
-
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kamal Mostafa <kamal@canonical.com>
----
- arch/arm/common/icst.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
-index 2dc6da70..d3c0e69 100644
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
-
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
-
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
-
- EXPORT_SYMBOL(icst_hz);
---
-2.7.0
-
+> +	compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
+> +	#pwm-cells = <3>;
+> +	reg = <0x48440200 0x80>;
+> +	ti,hwmods = "ehrpwm0";
+> +};
