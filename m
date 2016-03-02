@@ -1,56 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:58435 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932195AbcCMW10 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2016 18:27:26 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Yangbo Lu <yangbo.lu@nxp.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-	linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, scott.wood@nxp.com,
-	Rob Herring <robh+dt@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Sun, 13 Mar 2016 23:26:28 +0100
-Message-ID: <4947024.WeMycs2fID@wuerfel>
-In-Reply-To: <1457518131-11339-6-git-send-email-yangbo.lu@nxp.com>
-References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com> <1457518131-11339-6-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 Mar 2016 10:42:00 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/41] clk: imx: Remove CLK_IS_ROOT
+Message-ID: <20160302024200.GX22051@tiger>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-5-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456858826-28541-5-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 09 March 2016 18:08:51 Yangbo Lu wrote:
-> @@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
->         struct sdhci_pltfm_host *pltfm_host;
->         struct sdhci_esdhc *esdhc;
->         u16 host_ver;
-> +       u32 svr;
->  
->         pltfm_host = sdhci_priv(host);
->         esdhc = sdhci_pltfm_priv(pltfm_host);
->  
-> +       fsl_guts_init();
-> +       svr = fsl_guts_get_svr();
-> +       if (svr) {
-> +               esdhc->soc_ver = SVR_SOC_VER(svr);
-> +               esdhc->soc_rev = SVR_REV(svr);
-> +       } else {
-> +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
-> +       }
-> +
+On Tue, Mar 01, 2016 at 10:59:49AM -0800, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-This makes the driver non-portable. Better identify the specific workarounds
-based on the compatible string for this device, or add a boolean DT property
-for the quirk.
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-	Arnd
+> ---
+>  drivers/clk/imx/clk.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index c94ac5c26226..d942f5748d08 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -87,7 +87,7 @@ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+>  
+>  static inline struct clk *imx_clk_fixed(const char *name, int rate)
+>  {
+> -	return clk_register_fixed_rate(NULL, name, NULL, CLK_IS_ROOT, rate);
+> +	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+>  }
+>  
+>  static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
+> 
