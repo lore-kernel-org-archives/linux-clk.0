@@ -1,62 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:43635 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752953AbcC3O7J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 30 Mar 2016 10:59:09 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-clk@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/5] clk: renesas: r8a7795: add OSC and RINT clocks
-Date: Wed, 30 Mar 2016 16:58:19 +0200
-Message-Id: <1459349902-13243-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
-References: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH] clk: qcom: msm8960: Fix ce3_src register offset
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <1456882203-31932-1-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <56D6B3FC.4040709@linaro.org>
+Date: Wed, 2 Mar 2016 09:35:56 +0000
+MIME-Version: 1.0
+In-Reply-To: <1456882203-31932-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
 
-Since V1:  * don't export RINT to DT bindings, keep it internal.
-	   * also, introduce RCKCR already here to not hardcode address
+On 02/03/16 01:30, Stephen Boyd wrote:
+> The offset seems to have been copied from the sata clk. Fix it so
+> that enabling the crypto engine source clk works.
+>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Fixes: 5f775498bdc4 ("clk: qcom: Fully support apq8064 global clock control")
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Good find :-)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 9dc2b735ead85d..08715ca2ebb49d 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -26,6 +26,7 @@
- 
- #include "renesas-cpg-mssr.h"
- 
-+#define CPG_RCKCR	0x240
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
-@@ -50,6 +51,7 @@ enum clk_ids {
- 	CLK_S3,
- 	CLK_SDSRC,
- 	CLK_SSPSRC,
-+	CLK_RINT,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE
-@@ -116,6 +118,9 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
- 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
-+
-+	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR, 8),
-+	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
- };
- 
- static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
--- 
-2.7.0
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
+>   drivers/clk/qcom/gcc-msm8960.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
+> index 63ecd97f3793..0a0c1f533249 100644
+> --- a/drivers/clk/qcom/gcc-msm8960.c
+> +++ b/drivers/clk/qcom/gcc-msm8960.c
+> @@ -2753,7 +2753,7 @@ static struct clk_rcg ce3_src = {
+>   	},
+>   	.freq_tbl = clk_tbl_ce3,
+>   	.clkr = {
+> -		.enable_reg = 0x2c08,
+> +		.enable_reg = 0x36c0,
+>   		.enable_mask = BIT(7),
+>   		.hw.init = &(struct clk_init_data){
+>   			.name = "ce3_src",
+>
