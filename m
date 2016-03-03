@@ -1,80 +1,69 @@
-Return-Path: <fcooperwork@gmail.com>
-Return-Path: <fcooperwork@gmail.com>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	bcousson@baylibre.com,
-	tony@atomide.com,
-	linux@arm.linux.org.uk,
-	t-kristo@ti.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH 3/5] ARM: DTS: am33xx: Set pwmss ranges property to an empty value
-Date: Mon,  7 Mar 2016 13:51:56 -0600
-Message-Id: <1457380318-15452-4-git-send-email-fcooper@ti.com>
-In-Reply-To: <1457380318-15452-1-git-send-email-fcooper@ti.com>
-References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v5 0/2] CREG clk driver for NXP LPC18xx family
+Date: Thu,  3 Mar 2016 22:47:03 +0100
+Message-Id: <1457041625-21163-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The eCAP and ePWM are in the same address space as the PWMSS. Therefore,
-no address translation is needed which means the ranges property should be
-empty.
+This patch set adds a clk driver for the low power clocks found in
+the CREG block on lpc18xx. CREG is a collection of miscellaneous
+configuration registers that can be accessed through a syscon
+regmap interface. The clk driver makes it possible to setup and
+enabled these two clocks.
 
-This mimics how the PWMSS nodes look in the AM4372.dtsi which is similar
-to AM335x.
+This need to support peripherals like the internal RTC on the
+lpc18xx platform.
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
----
- arch/arm/boot/dts/am33xx.dtsi | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+The driver has one early init using CLK_OF_DECLARE and a standard
+platform driver. The early init is used to register the 32KHZ clk
+which may be needed early on. The other clock (1KHZ) is registered
+when the platform driver probe runs.
 
-diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
-index 4016254..82c0976 100644
---- a/arch/arm/boot/dts/am33xx.dtsi
-+++ b/arch/arm/boot/dts/am33xx.dtsi
-@@ -674,9 +674,7 @@
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			status = "disabled";
--			ranges = <0x48300100 0x48300100 0x80   /* ECAP */
--				  0x48300180 0x48300180 0x80   /* EQEP */
--				  0x48300200 0x48300200 0x80>; /* EHRPWM */
-+			ranges;
- 
- 			ecap0: ecap@48300100 {
- 				compatible = "ti,am33xx-ecap";
-@@ -704,9 +702,7 @@
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			status = "disabled";
--			ranges = <0x48302100 0x48302100 0x80   /* ECAP */
--				  0x48302180 0x48302180 0x80   /* EQEP */
--				  0x48302200 0x48302200 0x80>; /* EHRPWM */
-+			ranges;
- 
- 			ecap1: ecap@48302100 {
- 				compatible = "ti,am33xx-ecap";
-@@ -734,9 +730,7 @@
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			status = "disabled";
--			ranges = <0x48304100 0x48304100 0x80   /* ECAP */
--				  0x48304180 0x48304180 0x80   /* EQEP */
--				  0x48304200 0x48304200 0x80>; /* EHRPWM */
-+			ranges;
- 
- 			ecap2: ecap@48304100 {
- 				compatible = "ti,am33xx-ecap";
+This version splits clk array into clk_creg_early and clk_creg. I
+think this will work as long as clk_creg_early is _not_ used after
+the clk_creg is registered.
+
+This seems to work, but I currently don't have a setup that requires
+the 32khz clock early so that part isn't really tested.
+
+The probe deferral seems to work for the RTC:
+[    3.386861] lpc24xx-rtc 40046000.rtc: error getting rtc clock
+[    6.737615] lpc24xx-rtc 40046000.rtc: rtc core: registered lpc24xx-rtc as rtc0
+
+Changes since v4:
+ - Use devm_clk_register in platform probe
+ - Fix typo in dt doc
+ - Add ack from Rob Herring on dt doc
+
+Changes since v3:
+ - Add .is_enabled function to both creg clks.
+ - Remove unit address from bindings as requested by Rob Herring.
+
+Changes since v2:
+ - Use two clk arrays for registration.
+ - Couple of minor cleanups.
+
+Changes since v1:
+ - Split driver with one early init and one platform driver
+   probe.
+ - Rebase on v4.5-rc1.
+
+Joachim Eastwood (2):
+  clk: add lpc18xx creg clk driver
+  doc: dt: add documentation for lpc1850-creg-clk driver
+
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 +++++
+ drivers/clk/nxp/Makefile                           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c                 | 226 +++++++++++++++++++++
+ 3 files changed, 279 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
+
 -- 
-2.7.0
+1.8.0
