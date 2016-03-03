@@ -1,84 +1,37 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 3 Mar 2016 11:43:23 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: mturquette@baylibre.com, stigge@antcom.de, vz@mleia.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v4 05/13] ARM: dts: sun8i-a83t: add mmc clock nodes
-Date: Thu, 17 Mar 2016 00:04:28 +0800
-Message-Id: <1458144276-31108-6-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH v2] clk: lpc32xx: fix compilation warning
+Message-ID: <20160303194322.GC24999@codeaurora.org>
+References: <1456257369-22342-1-git-send-email-slemieux.tyco@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456257369-22342-1-git-send-email-slemieux.tyco@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc clocks are compatible with that of earlier sun8i socs.
-This adds mmc0, mmc1, and mmc2 clock nodes for A83T.
+On 02/23, Sylvain Lemieux wrote:
+> From: Sylvain Lemieux <slemieux@tycoint.com>
+> 
+> Remove the following false positives compilation warning:
+> - drivers/clk/nxp/clk-lpc32xx.c: In function 'lpc32xx_clk_register':
+>   warning: 'hw' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> - drivers/clk/nxp/clk-lpc32xx.c: In function 'clk_hclk_pll_round_rate':
+>   warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   warning: 'n' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> 
+> Tested using gcc version 4.7.3.
+> 
+> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> ---
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Applied to clk-next but I dropped the assignment of hw to NULL
+part because the return takes care of it and is less likely to
+lead to use of an uninitialized variable.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 2689af4..943d8a8 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -237,6 +237,36 @@
- 					     "bus_uart2", "bus_uart3",
- 					     "bus_uart4";
- 		};
-+
-+		mmc0_clk: clk@01c20088 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c20088 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc0",
-+					     "mmc0_output",
-+					     "mmc0_sample";
-+		};
-+
-+		mmc1_clk: clk@01c2008c {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c2008c 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc1",
-+					     "mmc1_output",
-+					     "mmc1_sample";
-+		};
-+
-+		mmc2_clk: clk@01c20090 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c20090 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc2",
-+					     "mmc2_output",
-+					     "mmc2_sample";
-+		};
- 	};
- 
- 	soc {
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
