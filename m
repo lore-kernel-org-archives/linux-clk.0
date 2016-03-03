@@ -1,53 +1,27 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-To: Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-3-git-send-email-fcooper@ti.com>
- <20160301181109.GB13417@atomide.com>
- <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com>
- <20160301205043.GA4469@atomide.com>
-CC: <t-kristo@ti.com>, <vigneshr@ti.com>, <linux-pwm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-Message-ID: <56D71331.5020702@ti.com>
-Date: Wed, 2 Mar 2016 10:22:09 -0600
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Mar 2016 17:47:04 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 15/41] clk: spear: Remove CLK_IS_ROOT
+Message-ID: <20160303014704.GN24999@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-16-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20160301205043.GA4469@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456858826-28541-16-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-On 03/01/2016 02:50 PM, Tony Lindgren wrote:
-> * Paul Walmsley <paul@pwsan.com> [160301 10:59]:
->> On Tue, 1 Mar 2016, Tony Lindgren wrote:
->>
->>> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
->>>> From: Vignesh R <vigneshr@ti.com>
->>>>
->>>> Add hwmod entries for the PWMSS on DRA7.
->>>>
->>>> Set l4_root_clk_div as the main_clk of PWMSS. It is fixed-factored clock
->>>> equal to L4PER2_L3_GICLK/2(l3_iclk_div/2).
->>>> As per AM57x TRM SPRUHZ6[1], October 2014, Section 29.1.3 Table 29-4,
->>>> clock source to PWMSS is L4PER2_L3_GICLK. But it is actually
->>>> L4PER2_L3_GICLK/2. The TRM does not show the division by 2.
->>>>
->>>> [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
->>> Looks OK to me, assuming Paul will pick this one or ack it.
->> Well I've already sent comments on it, it doesn't look quite ready for me 
->> yet.  I would hold off on the whole series because the hwmod comments also 
->> impact the DT files.
-> OK will drop the dt related patches then.
+Applied to clk-next
 
-Sorry you previously asked this question about why hwmod is
-used for eCap, ePWM and eQEP before and it wasn't addressed.
-I'll take a look at this and I will get back to you.
-
->
-> Regards,
->
-> Tony
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
