@@ -1,77 +1,27 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43623 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S936695AbcCQR6N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 17 Mar 2016 13:58:13 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Mar 2016 17:48:36 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH 24/41] clk: zynq: Remove CLK_IS_ROOT
+Message-ID: <20160303014836.GR24999@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-25-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <4107975.rId64mooHz@wuerfel>
-References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
- <1457518131-11339-4-git-send-email-yangbo.lu@nxp.com> <20160317170640.GB21009@rob-hp-laptop>
- <4107975.rId64mooHz@wuerfel>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 17 Mar 2016 12:57:49 -0500
-Message-ID: <CAL_JsqL8NkEQx2NoVHSUGYhtNsybCo-yfBCde+_OuMmfwbhYEw@mail.gmail.com>
-Subject: Re: [v6, 3/5] dt: move guts devicetree doc out of powerpc directory
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Yangbo Lu <yangbo.lu@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Linux IOMMU <iommu@lists.linux-foundation.org>,
-	netdev <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	scott.wood@nxp.com, Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1456858826-28541-25-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 17, 2016 at 12:11 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 17 March 2016 12:06:40 Rob Herring wrote:
->> > diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
->> > similarity index 91%
->> > rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
->> > rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
->> > index b71b203..07adca9 100644
->> > --- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
->> > +++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
->> > @@ -25,6 +25,9 @@ Recommended properties:
->> >   - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
->> >     registers, for those SOCs that have a PAMU device.
->> >
->> > + - little-endian : Indicates that the global utilities block is little
->> > +   endian. The default is big endian.
->>
->> The default is "the native endianness of the system".
->
-> This may be what is currently documented, but not what we are doing
-> in practice, as there is no "native endianess" for either PowerPC or
-> ARM -- both allow running big-endian or little-endian kernels and the
-> device registers are fixed.
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Notice I said system, not architecture. The way the device registers
-are fixed is what I mean by native endianness.
+Applied to clk-next
 
-If the purpose of adding this property now is to support GUTS on the
-ARM SoCs, then I'd argue using this property is probably wrong. If the
-PPC systems are designed with BE device registers and ARM systems with
-LE, then this property is not needed.
-
-> I think the property here is fine.
-
-Unless you have studied the FSL ARM based SoCs, then there is not
-enough information here to tell.
-
-Rob
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
