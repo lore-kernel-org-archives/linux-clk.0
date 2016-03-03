@@ -1,34 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 29 Mar 2016 16:31:13 -0700
+Date: Wed, 2 Mar 2016 17:48:13 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Matthew McClintock <mmcclint@codeaurora.org>
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-	qca-upstream.external@qca.qualcomm.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Senthilkumar N L <snlakshm@codeaurora.org>,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	Pradeep Banavathi <pradeepb@codeaurora.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/17] clk: qcom: ipq4019: switch remaining defines to
- enums
-Message-ID: <20160329233113.GP18567@codeaurora.org>
-References: <1458770712-10880-1-git-send-email-mmcclint@codeaurora.org>
- <1458770712-10880-5-git-send-email-mmcclint@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 19/41] clk: ux500: Remove CLK_IS_ROOT
+Message-ID: <20160303014813.GQ24999@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-20-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458770712-10880-5-git-send-email-mmcclint@codeaurora.org>
+In-Reply-To: <1456858826-28541-20-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/23, Matthew McClintock wrote:
-> When this was added not all the remaining defines were switched over to
-> use enums, so let's complete that process here
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
 > 
-> Reported-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
