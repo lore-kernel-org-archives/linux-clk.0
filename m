@@ -1,185 +1,95 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 11/18] pinctrl: pinctrl-imx: implement suspend/resume
-Date: Wed,  9 Mar 2016 18:16:52 -0800
-Message-Id: <1457576219-7971-12-git-send-email-stefan@agner.ch>
-In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/41] clk: mvebu: Remove CLK_IS_ROOT
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	<1456858826-28541-9-git-send-email-sboyd@codeaurora.org>
+Date: Thu, 03 Mar 2016 11:27:38 +0100
+In-Reply-To: <1456858826-28541-9-git-send-email-sboyd@codeaurora.org> (Stephen
+	Boyd's message of "Tue, 1 Mar 2016 10:59:53 -0800")
+Message-ID: <87wppjluud.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-In some SoC's using the IMX pin controller, the IP looses its state
-when entering lowest power modes. Enhance the driver with suspend/
-resume functions restoring the pin states.
+Hi Stephen,
+ 
+ On mar., mars 01 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/pinctrl/freescale/pinctrl-imx.c   | 63 +++++++++++++++++++++++++++++++
- drivers/pinctrl/freescale/pinctrl-imx.h   |  3 ++
- drivers/pinctrl/freescale/pinctrl-vf610.c |  6 +++
- 3 files changed, 72 insertions(+)
+> This flag is a no-op now. Remove usage of the flag.
+>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index a5bb939..42fc9a9 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -24,6 +24,7 @@
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/slab.h>
-+#include <linux/syscore_ops.h>
- 
- #include "../core.h"
- #include "pinctrl-imx.h"
-@@ -42,6 +43,8 @@ struct imx_pinctrl {
- 	void __iomem *base;
- 	void __iomem *input_sel_base;
- 	const struct imx_pinctrl_soc_info *info;
-+	u32 *mux_regs;
-+	u32 *input_regs;
- };
- 
- static const inline struct imx_pin_group *imx_pinctrl_find_group_by_name(
-@@ -689,6 +692,54 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
-+{
-+	struct imx_pinctrl *ipctl = dev_get_drvdata(dev);
-+	const struct imx_pinctrl_soc_info *info = ipctl->info;
-+	int i;
-+
-+	for (i = 0; i < info->npins; i++) {
-+		const struct imx_pin_reg *pin_reg = &info->pin_regs[i];
-+
-+		if (pin_reg->mux_reg == -1)
-+			continue;
-+
-+		ipctl->mux_regs[i] = readl(ipctl->base + pin_reg->mux_reg);
-+	}
-+
-+	for (i = 0; i < info->ninput_regs; i++)
-+		ipctl->input_regs[i] = readl(ipctl->base +
-+				info->input_regs_offset + i * sizeof(u32 *));
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused imx_pinctrl_resume(struct device *dev)
-+{
-+	struct imx_pinctrl *ipctl = dev_get_drvdata(dev);
-+	const struct imx_pinctrl_soc_info *info = ipctl->info;
-+	const struct imx_pin_reg *pin_reg;
-+	int i;
-+
-+	for (i = 0; i < info->npins; i++) {
-+		pin_reg = &info->pin_regs[i];
-+		if (pin_reg->mux_reg == -1)
-+			continue;
-+
-+		writel(ipctl->mux_regs[i], ipctl->base + pin_reg->mux_reg);
-+	}
-+
-+	for (i = 0; i < info->ninput_regs; i++)
-+		writel(ipctl->input_regs[i], ipctl->base +
-+				info->input_regs_offset + i * sizeof(u32 *));
-+
-+	return 0;
-+}
-+
-+const struct dev_pm_ops imx_pinctrl_dev_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend, imx_pinctrl_resume)
-+};
-+
- int imx_pinctrl_probe(struct platform_device *pdev,
- 		      struct imx_pinctrl_soc_info *info)
- {
-@@ -719,6 +770,18 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 		info->pin_regs[i].conf_reg = -1;
- 	}
- 
-+#ifdef CONFIG_PM_SLEEP
-+	ipctl->mux_regs = devm_kzalloc(&pdev->dev, sizeof(u32 *) *
-+				       info->npins, GFP_KERNEL);
-+	if (!ipctl->mux_regs)
-+		return -ENOMEM;
-+
-+	ipctl->input_regs = devm_kzalloc(&pdev->dev, sizeof(u32 *) *
-+					 info->ninput_regs, GFP_KERNEL);
-+	if (!ipctl->input_regs)
-+		return -ENOMEM;
-+#endif
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ipctl->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(ipctl->base))
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
-index 2a592f6..56851a6 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.h
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-@@ -81,6 +81,8 @@ struct imx_pinctrl_soc_info {
- 	unsigned int group_index;
- 	struct imx_pmx_func *functions;
- 	unsigned int nfunctions;
-+	unsigned int input_regs_offset;
-+	unsigned int ninput_regs;
- 	unsigned int flags;
- };
- 
-@@ -99,4 +101,5 @@ struct imx_pinctrl_soc_info {
- int imx_pinctrl_probe(struct platform_device *pdev,
- 			struct imx_pinctrl_soc_info *info);
- int imx_pinctrl_remove(struct platform_device *pdev);
-+extern const struct dev_pm_ops imx_pinctrl_dev_pm_ops;
- #endif /* __DRIVERS_PINCTRL_IMX_H */
-diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c b/drivers/pinctrl/freescale/pinctrl-vf610.c
-index 587d1ff..b6280a8 100644
---- a/drivers/pinctrl/freescale/pinctrl-vf610.c
-+++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
-@@ -19,6 +19,9 @@
- 
- #include "pinctrl-imx.h"
- 
-+#define VF610_INPUT_REG_CNT		49
-+#define VF610_INPUT_REG_BASE		0x2ec
-+
- enum vf610_pads {
- 	VF610_PAD_PTA6 = 0,
- 	VF610_PAD_PTA8 = 1,
-@@ -299,6 +302,8 @@ static const struct pinctrl_pin_desc vf610_pinctrl_pads[] = {
- static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
- 	.pins = vf610_pinctrl_pads,
- 	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
-+	.input_regs_offset = VF610_INPUT_REG_BASE,
-+	.ninput_regs = VF610_INPUT_REG_CNT,
- 	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
- };
- 
-@@ -316,6 +321,7 @@ static struct platform_driver vf610_pinctrl_driver = {
- 	.driver = {
- 		.name = "vf610-pinctrl",
- 		.of_match_table = vf610_pinctrl_of_match,
-+		.pm = &imx_pinctrl_dev_pm_ops,
- 	},
- 	.probe = vf610_pinctrl_probe,
- 	.remove = imx_pinctrl_remove,
+Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+
+Thanks,
+
+Gregory
+
+> ---
+>  drivers/clk/mvebu/common.c       | 11 +++++------
+>  drivers/clk/mvebu/dove-divider.c |  3 +--
+>  2 files changed, 6 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+> index daa6ebdac131..66be2e0c82b4 100644
+> --- a/drivers/clk/mvebu/common.c
+> +++ b/drivers/clk/mvebu/common.c
+> @@ -137,8 +137,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>  	of_property_read_string_index(np, "clock-output-names", 0,
+>  				      &tclk_name);
+>  	rate = desc->get_tclk_freq(base);
+> -	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL,
+> -						   CLK_IS_ROOT, rate);
+> +	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL, 0,
+> +						   rate);
+>  	WARN_ON(IS_ERR(clk_data.clks[0]));
+>  
+>  	/* Register CPU clock */
+> @@ -150,8 +150,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>  		&& desc->is_sscg_enabled(base))
+>  		rate = desc->fix_sscg_deviation(rate);
+>  
+> -	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL,
+> -						   CLK_IS_ROOT, rate);
+> +	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL, 0,
+> +						   rate);
+>  	WARN_ON(IS_ERR(clk_data.clks[1]));
+>  
+>  	/* Register fixed-factor clocks derived from CPU clock */
+> @@ -174,8 +174,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>  					      2 + desc->num_ratios, &name);
+>  		rate = desc->get_refclk_freq(base);
+>  		clk_data.clks[2 + desc->num_ratios] =
+> -			clk_register_fixed_rate(NULL, name, NULL,
+> -						CLK_IS_ROOT, rate);
+> +			clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+>  		WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
+>  	}
+>  
+> diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
+> index 3e0b52daa35f..4091f3cfee19 100644
+> --- a/drivers/clk/mvebu/dove-divider.c
+> +++ b/drivers/clk/mvebu/dove-divider.c
+> @@ -225,8 +225,7 @@ static int dove_divider_init(struct device *dev, void __iomem *base,
+>  	 * Create the core PLL clock.  We treat this as a fixed rate
+>  	 * clock as we don't know any better, and documentation is sparse.
+>  	 */
+> -	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
+> -				      2000000000UL);
+> +	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, 0, 2000000000UL);
+>  	if (IS_ERR(clk))
+>  		return PTR_ERR(clk);
+>  
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
+
 -- 
-2.7.2
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
