@@ -1,28 +1,68 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Tue, 1 Mar 2016 20:52:45 +0100
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Return-Path: <horms@verge.net.au>
+Date: Thu, 3 Mar 2016 14:02:12 +0900
+From: Simon Horman <horms@verge.net.au>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 26/41] clk: efm32gg: Remove CLK_IS_ROOT
-Message-ID: <20160301195245.GF2613@pengutronix.de>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: shmobile: Remove ARCH_SHMOBILE_MULTI
+Message-ID: <20160303050210.GB26062@verge.net.au>
+References: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdVDneo95F3JyFuvGZ_Bk4dL=ve41XONHj4b8DC4X7NMcQ@mail.gmail.com>
+ <20160223091000.GA18694@verge.net.au>
+ <20160225234434.GM28849@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160225234434.GM28849@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 01, 2016 at 11:00:11AM -0800, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
+On Thu, Feb 25, 2016 at 03:44:34PM -0800, Stephen Boyd wrote:
+> On 02/23, Simon Horman wrote:
+> > On Tue, Feb 23, 2016 at 09:19:27AM +0100, Geert Uytterhoeven wrote:
+> > > CC The New Mike ;-)
+> > > 
+> > > On Tue, Feb 23, 2016 at 1:57 AM, Simon Horman
+> > > <horms+renesas@verge.net.au> wrote:
+> > > > As of 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") all platforms
+> > > > that use Renesas clock drivers now select ARCH_RENESAS. As it is present in
+> > > > drivers/clk/Makefile ARCH_SHMOBILE_MULTI may now be removed.
+> > > >
+> > > > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+> > > > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+> > > > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> > > >
+> > > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > > 
+> > > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > 
 > 
-> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Applied to clk-next
+> 
+> > > >  drivers/clk/Makefile | 1 -
+> > > >  1 file changed, 1 deletion(-)
+> > > >
+> > > >  Based on clk-next
+> > > >
+> > > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > > index bae4be6501df..b19af449d2f3 100644
+> > > > --- a/drivers/clk/Makefile
+> > > > +++ b/drivers/clk/Makefile
+> > > > @@ -70,7 +70,6 @@ obj-$(CONFIG_COMMON_CLK_PXA)          += pxa/
+> > > >  obj-$(CONFIG_COMMON_CLK_QCOM)          += qcom/
+> > > >  obj-$(CONFIG_ARCH_ROCKCHIP)            += rockchip/
+> > > >  obj-$(CONFIG_COMMON_CLK_SAMSUNG)       += samsung/
+> > > > -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += shmobile/
+> > > 
+> > > Should we rename clk/shmobile/ to clk/renesas/?
+> > > Or is that too much of a hassle?
+> > 
+> > I think it is a good idea.  And I suspect it shouldn't be too difficult if
+> > we coordinate things with Mike to handle any in-flight patches for that
+> > directory.
+> 
+> Feel free to send the patch.
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Done :)
