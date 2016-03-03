@@ -1,30 +1,23 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 15 Mar 2016 18:12:45 -0700
+Date: Wed, 2 Mar 2016 17:47:53 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] clk: renesas: Rename header file renesas.h
-Message-ID: <20160316011245.GM25972@codeaurora.org>
-References: <1457397727-11060-1-git-send-email-horms+renesas@verge.net.au>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH 18/41] clk: ti: Remove CLK_IS_ROOT
+Message-ID: <20160303014753.GP24999@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-19-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457397727-11060-1-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1456858826-28541-19-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/08, Simon Horman wrote:
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
 > 
-> Along with the above mentioned Kconfig changes it seems appropriate
-> to also rename files.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
 
 Applied to clk-next
