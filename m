@@ -1,41 +1,45 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 3 Mar 2016 11:22:22 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] clk: qcom: msm8960: Fix ce3_src register offset
-Date: Tue,  1 Mar 2016 17:30:03 -0800
-Message-Id: <1456882203-31932-1-git-send-email-sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: shmobile: Updates for v4.6 (take two)
+Message-ID: <20160303192222.GX24999@codeaurora.org>
+References: <1456502304-24631-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456502304-24631-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The offset seems to have been copied from the sata clk. Fix it so
-that enabling the crypto engine source clk works.
+On 02/26, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit f099aa075749c6fadb79554ce175fbdc31c45d7a:
+> 
+>   clk: shmobile: r8a7795: Add INTC-EX clock (2016-02-18 09:01:46 +0100)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-shmobile-for-v4.6
+> 
+> for you to fetch changes up to a080c8c346d650c84adfd5ff16ac2160b646d73e:
+> 
+>   clk: shmobile: r8a7795: Add CAN FD peripheral clock (2016-02-26 12:04:30 +0100)
+> 
+> Summary:
+>   - Fix a bug in the div6 clock driver that was exposed by CAN support
+>     on R-Car H3,
+>   - Add more module clocks for R-Car H3.
+> 
+> Thanks for pulling!
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Fixes: 5f775498bdc4 ("clk: qcom: Fully support apq8064 global clock control")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/gcc-msm8960.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks. Pulled. Please consider using a signed tag next time
+though.
 
-diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
-index 63ecd97f3793..0a0c1f533249 100644
---- a/drivers/clk/qcom/gcc-msm8960.c
-+++ b/drivers/clk/qcom/gcc-msm8960.c
-@@ -2753,7 +2753,7 @@ static struct clk_rcg ce3_src = {
- 	},
- 	.freq_tbl = clk_tbl_ce3,
- 	.clkr = {
--		.enable_reg = 0x2c08,
-+		.enable_reg = 0x36c0,
- 		.enable_mask = BIT(7),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "ce3_src",
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
