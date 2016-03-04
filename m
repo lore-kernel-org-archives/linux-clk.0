@@ -1,59 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:16425 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753139AbcCUIZ7 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2016 04:25:59 -0400
-Date: Mon, 21 Mar 2016 09:25:49 +0100
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: Accept a greater rate when setting a parent
- clock
-Message-Id: <20160321092549.4e6245e4f02839e29aeb86a9@free.fr>
-In-Reply-To: <20160321072546.GT30977@lukather>
-References: <20160310081658.B749246B@mail.free-electrons.com>
-	<20160321072546.GT30977@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 4 Mar 2016 09:38:00 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] some more rockchip clock changes for 4.6
+Message-ID: <20160304173800.GG24999@codeaurora.org>
+References: <1510327.LAx2hyWq2l@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1510327.LAx2hyWq2l@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 21 Mar 2016 08:25:46 +0100
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
-
-> > -	/* find the parent that can help provide the fastest rate <= rate */
-> > +	/* find the parent that can help provide the fastest rate */
-> >  	num_parents = clk_hw_get_num_parents(hw);
-> >  	for (i = 0; i < num_parents; i++) {
-> >  		parent = clk_hw_get_parent_by_index(hw, i);
-> > @@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
-> >  		child_rate = clk_factors_round_rate(hw, req->rate,
-> >  						    &parent_rate);
-> >  
-> > -		if (child_rate <= req->rate && child_rate > best_child_rate) {
-> > +		if (child_rate > best_child_rate) {
+On 03/04, Heiko Stuebner wrote:
+> Hi Mike, Stephen,
 > 
-> I'm not sure this would work, since you'll end up picking the fastest
-> rate without considering whether it is the closest or not.
+> this pull request is based on the last tag 4.6 and I think the signed
+> tag below should explain that just right :-) .
+> So if nothing stands out, please pull.
 > 
-> I guess what you want here is using the absolute difference between
-> the requested rate and the rate you're evaluating.
 > 
-> That being said, we had a similar discussion for SPI around a month
-> ago where we wanted a rate strictly lower than the requested one. I
-> guess it's time to add a flag to tell how you want to round.
+> Thanks
+> Heiko
+> 
+> The following changes since commit 36714529f8bbd4f8eaf93b50f4a64c52a24879aa:
+> 
+>   clk: rockchip: convert manually created factor clocks to the new type (2016-02-04 15:54:20 +0100)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.6-rockchip-clk2
+> 
+> for you to fetch changes up to 7af8a26ce7055dd74853ea7c2b9752961e3491da:
+> 
+>   clk: rockchip: include downstream muxes into fractional dividers on rk3368 (2016-02-26 02:08:45 +0100)
+> 
 
-You are right, I just removed half of the constraint, but I still wonder
-why does this sequence introduced by the commit 862b728387aef3a37
-(clk: sunxi: factors: automatic reparenting support) do
-	"provide the fastest rate <= rate"
-instead of
-	"provide the closest rate" ?
-
-Emilio?
+Thanks, pulled.
 
 -- 
-Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
