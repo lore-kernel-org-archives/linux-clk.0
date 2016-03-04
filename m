@@ -1,102 +1,56 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 4 Mar 2016 10:55:39 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>, Barry Song <baohua@kernel.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 41/46] backlight: lp855x: switch to the atomic PWM API
-Date: Wed, 30 Mar 2016 22:04:04 +0200
-Message-Id: <1459368249-13241-42-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH 0/7] clk: Make reset_control_ops const
+Message-ID: <20160304185539.GB16665@codeaurora.org>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+ <20160225210439.GI4847@codeaurora.org>
+ <1456475057.3383.9.camel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456475057.3383.9.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_config/enable/disable() have been deprecated and should be replaced
-by pwm_apply_state().
+On 02/26, Philipp Zabel wrote:
+> Am Donnerstag, den 25.02.2016, 13:04 -0800 schrieb Stephen Boyd:
+> > On 02/25, Philipp Zabel wrote:
+> > > Since commit 203d4f347d86 ("reset: Make reset_control_ops const") marked
+> > > the ops pointer in struct reset_controller_dev as const, these structs
+> > > can be made const, too. The commit is currently sitting in the
+> > > arm-soc/for-next branch.
+> > > 
+> > 
+> > All these patches look fine. I take it we have to wait for a
+> > cycle to merge them though because the commit you mention is only
+> > in the arm-soc tree?
+> 
+> Or you could merge commit 203d4f347d86 before applying them, which would
+> just pull in another minor reset patch on top of v4.5-rc1. Since this is
+> already merged as part of the reset-for-4.6 tag, these commits are
+> stable.
+> 
+> >  Or did you want to take them through arm-soc?
+> 
+> Not unless that was your preferred option.
+> 
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/video/backlight/lp855x_bl.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Ok I think we'll apply these after v4.6-rc1 is released. They're
+so minor that we can send them in with the first batch of
+clk-fixes before -rc2 is released.
 
-diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
-index daca9e6..5468e7a 100644
---- a/drivers/video/backlight/lp855x_bl.c
-+++ b/drivers/video/backlight/lp855x_bl.c
-@@ -235,8 +235,7 @@ err:
- 
- static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
- {
--	unsigned int period = lp->pdata->period_ns;
--	unsigned int duty = br * period / max_br;
-+	struct pwm_state pstate;
- 	struct pwm_device *pwm;
- 
- 	/* request pwm device with the consumer name */
-@@ -248,11 +247,15 @@ static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
- 		lp->pwm = pwm;
- 	}
- 
--	pwm_config(lp->pwm, duty, period);
--	if (duty)
--		pwm_enable(lp->pwm);
-+	pwm_get_state(lp->pwm, &pstate);
-+	pstate.period = lp->pdata->period_ns;
-+	pstate.duty_cycle = br * pstate.period / max_br;
-+	if (pstate.duty_cycle)
-+		pstate.enabled = true;
- 	else
--		pwm_disable(lp->pwm);
-+		pstate.enabled = false;
-+
-+	pwm_apply_state(lp->pwm, &pstate);
- }
- 
- static int lp855x_bl_update_status(struct backlight_device *bl)
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
