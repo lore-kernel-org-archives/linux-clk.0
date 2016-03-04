@@ -1,77 +1,51 @@
-Return-Path: <wens@csie.org>
+Return-Path: <horms@verge.net.au>
+Date: Fri, 4 Mar 2016 14:10:43 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: move drivers to renesas directory
+Message-ID: <20160304051042.GB27942@verge.net.au>
+References: <1456971486-13761-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXfkV05AwaRtLqwA8Ko=BQaQ5y87AYgsU7O-Rd45JiNKA@mail.gmail.com>
+ <20160303192617.GY24999@codeaurora.org>
+ <20160303193050.GA24999@codeaurora.org>
+ <CAMuHMdXsR1s8qT+VKG2+EA5wV0Vr6xjTkW1d9E=7NHju+4GpJw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
-References: <20160226194830.GA21652@lukather> <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 3 Mar 2016 10:07:07 -0800
-Message-ID: <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdXsR1s8qT+VKG2+EA5wV0Vr6xjTkW1d9E=7NHju+4GpJw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 1, 2016 at 4:20 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Using an array allocated on the stack may lead to stack overflows
-> and other problems. Furthermore, VLAIS doesn't work well with
-> LLVM compilers, so move the allocation to the heap and avoid the
-> use of VLAIS here.
->
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/sunxi/clk-sun8i-mbus.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/sunxi/clk-sun8i-mbus.c b/drivers/clk/sunxi/clk-sun8i-mbus.c
-> index 3aaa9cbef791..8e7128e69823 100644
-> --- a/drivers/clk/sunxi/clk-sun8i-mbus.c
-> +++ b/drivers/clk/sunxi/clk-sun8i-mbus.c
-> @@ -33,7 +33,7 @@ static DEFINE_SPINLOCK(sun8i_a23_mbus_lock);
->  static void __init sun8i_a23_mbus_setup(struct device_node *node)
->  {
->         int num_parents = of_clk_get_parent_count(node);
-> -       const char *parents[num_parents];
-> +       const char **parents;
->         const char *clk_name = node->name;
->         struct resource res;
->         struct clk_divider *div;
-> @@ -43,10 +43,14 @@ static void __init sun8i_a23_mbus_setup(struct device_node *node)
->         void __iomem *reg;
->         int err;
->
-> +       parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
-> +       if (!parents)
-> +               return;
-> +
->         reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->         if (!reg) {
->                 pr_err("Could not get registers for sun8i-mbus-clk\n");
-> -               return;
-> +               goto err_free_parents;
->         }
->
->         div = kzalloc(sizeof(*div), GFP_KERNEL);
-> @@ -107,6 +111,8 @@ err_free_div:
->         kfree(div);
->  err_unmap:
->         iounmap(reg);
-> +err_free_parents:
-> +       kfree(parents);
+On Thu, Mar 03, 2016 at 08:55:33PM +0100, Geert Uytterhoeven wrote:
+> Hi Stephen,
+> 
+> On Thu, Mar 3, 2016 at 8:30 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 03/03, Stephen Boyd wrote:
+> >> On 03/03, Geert Uytterhoeven wrote:
+> >> > On Thu, Mar 3, 2016 at 3:18 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> >> > > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+> >> > > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+> >> > > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> >> > >
+> >> > > Along with the above mentioned Kconfig changes it seems appropriate
+> >> > > to also rename directories that only hold drivers for such SoCs.
+> >> > >
+> >> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >> >
+> >> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >
+> >>
+> >> Applied to clk-next.
+> >
+> > Also, did you want to rename the clk/shmobile.h header file?
+> 
+> That would indeed make sense, but does require changes in both
+> arch/arm/mach-shmobile/ and drivers/clk/shmobile/.
 
-AFAIK the CCF makes a deep copy of parents, so you should
-always free it? I specifically checked it before using
-VLAIS here.
-
-ChenYu
-
->         of_address_to_resource(node, 0, &res);
->         release_mem_region(res.start, resource_size(&res));
->  }
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+If there are no issues with conflicts, which I expect to be the case,
+I'd be happy for the arch/arm/mach-shmobile/ changes to go through the
+clk tree with an Ack or Sob from me. Geert, do you think that would fly?
