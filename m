@@ -1,49 +1,44 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Jonathan Corbet <corbet@lwn.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH 5/8] clk: bcm2835: add the dsi clocks
-In-Reply-To: <1456760642-2412-6-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org> <1456760642-2412-6-git-send-email-kernel@martin.sperl.org>
-Date: Thu, 17 Mar 2016 10:27:41 -0700
-Message-ID: <87oaadj9pu.fsf@eliezer.anholt.net>
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: ARM: dts: imx6ul: add more functionality to i.MX6UL
+Date: Fri,  4 Mar 2016 13:37:21 +0100
+Message-Id: <1457095043-14115-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>, <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+[PATCHv3 1/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL modules
+[PATCHv3 2/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL mainboard
 
-kernel@martin.sperl.org writes:
+This patchset adds more functionality to the i.MX6UL machines.
 
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> Add the missing dsi clocks using the currently "best known"
-> parent-mux available for these clocks.
+Changes vs. v1:
+- added patch to implement KPP clock for i.MX6UL to prevent conflicts
+  when this patch would go via a different tree.
+- added board support for Ka-Ro electronics TX6UL module for the same
+  reason
+- added imx6ul specific compatibles as requested by Lucas Stach
 
-Having been working on DSI support, there is definitely no point in DSI0
-and DSI1 pixel clocks without their proper parents and this patch would
-just get in the way.  The esc clocks look fine, though.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJW6ukNAAoJELXWKTbR/J7o+oMP/1/IiQ5co+GYh+nVeveNWYEE
-ZiN507TD+2P5B8+OqL8HEwSezLox18bnZA72kB0IlDx0y76FHNhRwcfaNsrJ/X55
-As1UWZb/iPtRCQ4wjHzW+PZGAmlLzmaMTMEs6VNcx1q9RYzr5w8/fU0GYViMr/HP
-bgIRuWjv1SuZhri8WPvhUUaJAeB/Vj66z2Rwt+bflQX6YkdzwOUib0xhzIBMoXs8
-g+zUeRq/5jYnigvSbdV7dGw4SArkCeUkWp958EUV1jvfg2grqqrSKL/MLlYmyLda
-ujGNQMvgUS3fkDfRwjBgHYHvxvKVb+wWILsw+vO6ZQtVlqIBQDZbEyNdvX2fpCrs
-OpmMC3ovAWE2HKDP3dLO63BwboZoS4Nv0ohpxsK0Itw8rHhJG5NuzkEk8/fpTy+z
-7z/FqhYq7A36HSiLV8MxIVhcrhxKWbCz6Un1+jdz5WOHU/L6AwMNBwCTZV3DXK+q
-A2P4N5W+92e37jkeATYxO5rAXXItZLar1GvzRocTQISdRHmhHsOP4J0Lvbz/phrX
-Rx8rlL2rLuoB0mL6wSU64PHyfUhs7xNKpdn/xCesDre2swvmj2519Y0li1DRa6hl
-I/qIcdlcJT1KXob9LcLRUnLQcaN1/jbodrSG3FqX+Eq93aEuqK2IR2UMpqQiqDI1
-aEWTcStzzsfdUegL0Px6
-=HgTZ
------END PGP SIGNATURE-----
---=-=-=--
+Changes vs. v2:
+- dropped patches which have already been applied in the meantime
+- addressed comments by Shawn Guo
