@@ -1,155 +1,81 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 31 Mar 2016 20:57:18 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
- <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
- linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 36/46] input: misc: max77693: switch to the atomic
- API
-Message-ID: <20160331205718.057a6f38@bbrezillon>
-In-Reply-To: <20160331174801.GC39098@dtor-ws>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-37-git-send-email-boris.brezillon@free-electrons.com>
-	<20160331174801.GC39098@dtor-ws>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <56D8E74A.6090601@ti.com>
+References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
+ <1456439796-28546-6-git-send-email-fcooper@ti.com> <20160302182634.GA26055@rob-hp-laptop>
+ <56D8E74A.6090601@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 4 Mar 2016 08:52:09 -0600
+Message-ID: <CAL_JsqLYLwJ7fWGcG4h-obix8Pn9+rQ_5sD9B=mCeO1+-d+ijw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+Cc: "paul@pwsan.com" <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+	Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-omap <linux-omap@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 31 Mar 2016 10:48:01 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+On Thu, Mar 3, 2016 at 7:39 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+> Hi Rob,
+>
+> On 03/02/2016 12:26 PM, Rob Herring wrote:
+>> On Thu, Feb 25, 2016 at 04:36:36PM -0600, Franklin S Cooper Jr wrote:
+>>> From: Vignesh R <vigneshr@ti.com>
+>>>
+>>> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+>>> for dt bindings.
+>>>
+>>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>>> ---
+>>> Version 3 changes:
+>>> None
+>>>
+>>>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
+>>>  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
+>>>  arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
+>>>  3 files changed, 88 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> index 9c100b2..25d91ae 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> @@ -4,6 +4,7 @@ Required properties:
+>>>  - compatible: Must be "ti,<soc>-ehrpwm".
+>>>    for am33xx - compatible = "ti,am33xx-ehrpwm";
+>>>    for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>> +  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
+>> We're starting to push back on wildcards in compatible strings. I guess
+>> this is okay...
+>>
+>>>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+>>>    the cells format. The only third cell flag supported by this binding is
+>>>    PWM_POLARITY_INVERTED.
+>>> @@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+>>>      #pwm-cells = <3>;
+>>>      reg = <0x300000 0x2000>;
+>>>  };
+>>> +
+>>> +ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
+>> Should be pwm@48440200
+>
+> So the AM335x, AM437x  and DA850 all use ehrpwm0:
+> ehrpwm@<address>. Also the address of 0 simply follows the
+> pattern used in the other binding examples in that doc. I
+> can replace the 0 address in this patch and make another
+> patch that fixes it for the other examples in that file. But
+> in terms of switching from ehrpwm0:ehrpwm@<address> to
+> ehrpwm0:pwm@<address> that would also require making changes
+> to the various dtsis also. So is it worth making that
+> change? If so I have no problem doing it.
 
-> Hi Boris,
-> 
-> On Wed, Mar 30, 2016 at 10:03:59PM +0200, Boris Brezillon wrote:
-> > pwm_config/enable/disable() have been deprecated and should be replaced
-> > by pwm_apply_state().
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> >  drivers/input/misc/max77693-haptic.c | 23 +++++++++++++++++------
-> >  1 file changed, 17 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-> > index cf6aac0..aef7dc4 100644
-> > --- a/drivers/input/misc/max77693-haptic.c
-> > +++ b/drivers/input/misc/max77693-haptic.c
-> > @@ -70,13 +70,16 @@ struct max77693_haptic {
-> >  
-> >  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
-> >  {
-> > +	struct pwm_state pstate;
-> >  	struct pwm_args pargs = { };
-> > -	int delta;
-> >  	int error;
-> >  
-> >  	pwm_get_args(haptic->pwm_dev, &pargs);
-> > -	delta = (pargs.period + haptic->pwm_duty) / 2;
-> > -	error = pwm_config(haptic->pwm_dev, delta, pargs.period);
-> > +	pwm_get_state(haptic->pwm_dev, &pstate);
-> > +
-> > +	pstate.period = pargs.period;
-> > +	pstate.duty_cycle = (pargs.period + haptic->pwm_duty) / 2;
-> > +	error = pwm_apply_state(haptic->pwm_dev, &pstate);
-> 
-> This does not make sense with regard to the atomic API. If you look in
-> max77693_haptic_play_work(), right after calling
-> max77693_haptic_set_duty_cycle() we either try to enable or disable the
-> pwm. When switching to this new API we should combine both actions.
+Follow-up patches to fix are fine. Unit-address and reg mismatches are
+going to start warning in dtc soon.
 
-True. I'll address that, unless Thierry is fine keeping the non-atomic
-API, in which case I'll just drop patches 32 to 46.
-
-> 
-> >  	if (error) {
-> >  		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
-> >  		return error;
-> > @@ -161,12 +164,16 @@ static int max77693_haptic_lowsys(struct max77693_haptic *haptic, bool enable)
-> >  
-> >  static void max77693_haptic_enable(struct max77693_haptic *haptic)
-> >  {
-> > +	struct pwm_state pstate;
-> >  	int error;
-> >  
-> >  	if (haptic->enabled)
-> >  		return;
-> >  
-> > -	error = pwm_enable(haptic->pwm_dev);
-> > +	pwm_get_state(haptic->pwm_dev, &pstate);
-> > +	pstate.enabled = true;
-> > +
-> > +	error = pwm_apply_state(haptic->pwm_dev, &pstate);
-> 
-> As I mentioned I'd rather we did not deprecate pwm_enable() and
-> pwm_disable() (and maybe others), as it forces us to add unnecessary
-> boilerplate code to the drivers.
->  
-> >  	if (error) {
-> >  		dev_err(haptic->dev,
-> >  			"failed to enable haptic pwm device: %d\n", error);
-> > @@ -188,11 +195,13 @@ static void max77693_haptic_enable(struct max77693_haptic *haptic)
-> >  err_enable_config:
-> >  	max77693_haptic_lowsys(haptic, false);
-> >  err_enable_lowsys:
-> > -	pwm_disable(haptic->pwm_dev);
-> > +	pstate.enabled = false;
-> > +	pwm_apply_state(haptic->pwm_dev, &pstate);
-> >  }
-> >  
-> >  static void max77693_haptic_disable(struct max77693_haptic *haptic)
-> >  {
-> > +	struct pwm_state pstate;
-> >  	int error;
-> >  
-> >  	if (!haptic->enabled)
-> > @@ -206,7 +215,9 @@ static void max77693_haptic_disable(struct max77693_haptic *haptic)
-> >  	if (error)
-> >  		goto err_disable_lowsys;
-> >  
-> > -	pwm_disable(haptic->pwm_dev);
-> > +	pwm_get_state(haptic->pwm_dev, &pstate);
-> > +	pstate.enabled = false;
-> > +	pwm_apply_state(haptic->pwm_dev, &pstate);
-> 
-> Same here.
-> 
-> >  	haptic->enabled = false;
-> >  
-> >  	return;
-> > -- 
-> > 2.5.0
-> > 
-> 
-> Thanks.
-> 
-
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Rob
