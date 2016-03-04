@@ -1,38 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 21 Mar 2016 11:43:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: thierry.reding@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, bcousson@baylibre.com, tony@atomide.com,
-	linux@arm.linux.org.uk, t-kristo@ti.com, mturquette@baylibre.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: ti: am335x/am4372: Add tbclk to pwm node
-Message-ID: <20160321184318.GS25972@codeaurora.org>
-References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
- <1458263723-25770-2-git-send-email-fcooper@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458263723-25770-2-git-send-email-fcooper@ti.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 1/3] dt-bindings: arm: add DT binding for Marvell AP806 system controller
+Date: Fri,  4 Mar 2016 13:57:53 +0100
+Message-Id: <1457096275-7581-2-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/17, Franklin S Cooper Jr wrote:
-> Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
-> to the time-based clk.
-> 
-> Do not remove similar entries for ehrpwm node. Later patches will switch
-> from using ehrpwm node name to pwm. But to maintain ABI compatibility we
-> shouldn't remove the old entries.
-> 
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> ---
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ .../arm/marvell/ap806-system-controller.txt        | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Are there any plans to get off these DT_CLK entries entirely?
-
+diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+new file mode 100644
+index 0000000..5086b89
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+@@ -0,0 +1,34 @@
++Marvell Armada AP806 System Controller
++======================================
++
++The AP806 is one of the two core HW blocks of the Marvell Armada 7K/8K
++SoCs. It contains a system controller, which provides a number
++registers giving access to numerous features: clocks, pin-muxing and
++many other SoC configuration items. This DT binding allows to describe
++this system controller.
++
++The Device Tree node representing the AP806 system controller provides
++a number of clocks:
++
++ - 0: clock of CPU cluster 0
++ - 1: clock of CPU cluster 1
++ - 2: fixed PLL at 1200 Mhz
++ - 3: MSS clock, derived from the fixed PLL
++
++Required properties:
++
++ - compatible: must be:
++     "marvell,ap806-system-controller", "syscon"
++ - reg: register area of the AP806 system controller
++ - #clock-cells: must be set to 1
++ - clock-output-names: must be defined to:
++    "cpu-cluster-0", "cpu-cluster-1", "fixed", "mss"
++
++Example:
++
++	syscon: system-controller@6f4000 {
++		compatible = "marvell,ap806-system-controller", "syscon";
++		#clock-cells = <1>;
++		clock-output-names = "cpu-cluster-0", "cpu-cluster-1", "fixed", "mss";
++		reg = <0x6f4000 0x1000>;
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.4
