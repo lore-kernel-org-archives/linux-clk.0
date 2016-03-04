@@ -1,270 +1,330 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 14/18] gpio: vf610: add support for WKPU unit
-Date: Wed,  9 Mar 2016 18:16:55 -0800
-Message-Id: <1457576219-7971-15-git-send-email-stefan@agner.ch>
-In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv3 2/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL mainboard
+Date: Fri,  4 Mar 2016 13:37:23 +0100
+Message-Id: <1457095043-14115-3-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1457095043-14115-1-git-send-email-LW@KARO-electronics.de>
+References: <1457095043-14115-1-git-send-email-LW@KARO-electronics.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-WKPU unit support within the VF610 GPIO driver. The WKPU unit allows
-some GPIO to be the wakeup source from lowest power modes LPSTOPx.
-The relationship between the GPIO banks and the WKPU GPIO numbering
-can be derived from the device tree property fsl,gpio-wakeup.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
 ---
- .../devicetree/bindings/gpio/gpio-vf610.txt        |   6 +
- drivers/gpio/gpio-vf610.c                          | 151 +++++++++++++++++++++
- 2 files changed, 157 insertions(+)
+ arch/arm/boot/dts/Makefile                   |   3 +-
+ arch/arm/boot/dts/imx6ul-tx6ul-mainboard.dts | 271 +++++++++++++++++++++++++++
+ 2 files changed, 273 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6ul-tx6ul-mainboard.dts
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.txt b/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
-index 436cc99..985ddfd 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
-@@ -22,6 +22,12 @@ Required properties for GPIO node:
-       4 = active high level-sensitive.
-       8 = active low level-sensitive.
- 
-+Option properties:
-+- fsl,gpio-wakeup : map GPIOs to WKPU unit, 3 argument cells per phandle
-+      cell 1: First GPIO (relative to the GPIO block)
-+      cell 2: First GPIO of the WKPU unit
-+      cell 3: Number of consecutive GPIO's
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index a5e21ae..9f6af0f 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -376,7 +376,8 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
+ dtb-$(CONFIG_SOC_IMX6UL) += \
+ 	imx6ul-14x14-evk.dtb \
+ 	imx6ul-tx6ul-0010.dtb \
+-	imx6ul-tx6ul-0011.dtb
++	imx6ul-tx6ul-0011.dtb \
++	imx6ul-tx6ul-mainboard.dtb
+ dtb-$(CONFIG_SOC_IMX7D) += \
+ 	imx7d-cl-som-imx7.dtb \
+ 	imx7d-sbc-imx7.dtb \
+diff --git a/arch/arm/boot/dts/imx6ul-tx6ul-mainboard.dts b/arch/arm/boot/dts/imx6ul-tx6ul-mainboard.dts
+new file mode 100644
+index 0000000..d25899b
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-tx6ul-mainboard.dts
+@@ -0,0 +1,271 @@
++/*
++ * Copyright 2015 Lothar Waßmann <LW@KARO-electronics.de>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License
++ *     version 2 as published by the Free Software Foundation.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
 +
- Note: Each GPIO port should have an alias correctly numbered in "aliases"
- node.
- 
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 1a022be..650a41a 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -36,6 +36,8 @@ struct vf610_gpio_port {
- 	void __iomem *base;
- 	void __iomem *gpio_base;
- 	u8 irqc[VF610_GPIO_PER_PORT];
-+	struct platform_device *pdev_wkpu;
-+	s8 fsl_wakeup[VF610_GPIO_PER_PORT];
- 	int irq;
- 	u32 state;
- };
-@@ -61,6 +63,14 @@ struct vf610_gpio_port {
- #define PORT_INT_EITHER_EDGE	0xb
- #define PORT_INT_LOGIC_ONE	0xc
- 
-+#define WKPU_WISR		0x14
-+#define WKPU_IRER		0x18
-+#define WKPU_WRER		0x1c
-+#define WKPU_WIREER		0x28
-+#define WKPU_WIFEER		0x2c
-+#define WKPU_WIFER		0x30
-+#define WKPU_WIPUER		0x34
++/dts-v1/;
++#include "imx6ul.dtsi"
++#include "imx6ul-tx6ul.dtsi"
 +
- static struct irq_chip vf610_gpio_irq_chip;
- 
- static const struct of_device_id vf610_gpio_dt_ids[] = {
-@@ -68,6 +78,11 @@ static const struct of_device_id vf610_gpio_dt_ids[] = {
- 	{ /* sentinel */ }
- };
- 
-+static const struct of_device_id vf610_wkpu_dt_ids[] = {
-+	{ .compatible = "fsl,vf610-wkpu" },
-+	{ /* sentinel */ }
++/ {
++	model = "Ka-Ro electronics TXUL-0010 Module on TXUL Mainboard";
++	compatible = "karo,imx6ul-tx6ul", "fsl,imx6ul";
++
++	aliases {
++		lcdif_24bit_pins_a = &pinctrl_disp0_3;
++		mmc0 = &usdhc1;
++		/delete-property/ mmc1;
++		serial2 = &uart3;
++		serial4 = &uart5;
++	};
++	/delete-node/ sound;
 +};
 +
- static inline void vf610_gpio_writel(u32 val, void __iomem *reg)
- {
- 	writel_relaxed(val, reg);
-@@ -143,8 +158,26 @@ static int vf610_gpio_irq_set_type(struct irq_data *d, u32 type)
- {
- 	struct vf610_gpio_port *port =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(d));
-+	s8 wkpu_gpio = port->fsl_wakeup[d->hwirq];
- 	u8 irqc;
- 
-+	if (wkpu_gpio >= 0) {
-+		void __iomem *base = platform_get_drvdata(port->pdev_wkpu);
-+		u32 wireer, wifeer;
-+		u32 mask = 1 << wkpu_gpio;
-+
-+		wireer = vf610_gpio_readl(base + WKPU_WIREER) & ~mask;
-+		wifeer = vf610_gpio_readl(base + WKPU_WIFEER) & ~mask;
-+
-+		if (type & IRQ_TYPE_EDGE_RISING)
-+			wireer |= mask;
-+		if (type & IRQ_TYPE_EDGE_FALLING)
-+			wifeer |= mask;
-+
-+		vf610_gpio_writel(wireer, base + WKPU_WIREER);
-+		vf610_gpio_writel(wifeer, base + WKPU_WIFEER);
-+	}
-+
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
- 		irqc = PORT_INT_RISING_EDGE;
-@@ -198,6 +231,29 @@ static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
- {
- 	struct vf610_gpio_port *port =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(d));
-+	s8 wkpu_gpio = port->fsl_wakeup[d->hwirq];
-+
-+	if (wkpu_gpio >= 0) {
-+		void __iomem *base = NULL;
-+		u32 wrer, irer;
-+
-+		base = platform_get_drvdata(port->pdev_wkpu);
-+
-+		/* WKPU wakeup flag for LPSTOPx modes...  */
-+		wrer = vf610_gpio_readl(base + WKPU_WRER);
-+		irer = vf610_gpio_readl(base + WKPU_IRER);
-+
-+		if (enable) {
-+			wrer |= 1 << wkpu_gpio;
-+			irer |= 1 << wkpu_gpio;
-+		} else {
-+			wrer &= ~(1 << wkpu_gpio);
-+			irer &= ~(1 << wkpu_gpio);
-+		}
-+
-+		vf610_gpio_writel(wrer, base + WKPU_WRER);
-+		vf610_gpio_writel(irer, base + WKPU_IRER);
-+	}
- 
- 	if (enable)
- 		enable_irq_wake(port->irq);
-@@ -250,6 +306,43 @@ static const struct dev_pm_ops vf610_gpio_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(vf610_gpio_suspend, vf610_gpio_resume)
- };
- 
-+static int vf610_gpio_wkpu(struct device_node *np, struct vf610_gpio_port *port)
-+{
-+	struct platform_device *pdev = NULL;
-+	struct of_phandle_args arg;
-+	int i, ret;
-+
-+	for (i = 0; i < VF610_GPIO_PER_PORT; i++)
-+		port->fsl_wakeup[i] = -1;
-+
-+	for (i = 0;; i++) {
-+		int gpioid, wakeupid, cnt;
-+
-+		ret = of_parse_phandle_with_fixed_args(np, "fsl,gpio-wakeup",
-+							3, i, &arg);
-+
-+		if (ret == -ENOENT)
-+			break;
-+
-+		if (!pdev)
-+			pdev = of_find_device_by_node(arg.np);
-+		of_node_put(arg.np);
-+		if (!pdev)
-+			return -EPROBE_DEFER;
-+
-+		gpioid = arg.args[0];
-+		wakeupid = arg.args[1];
-+		cnt = arg.args[2];
-+
-+		while (cnt-- && gpioid < VF610_GPIO_PER_PORT)
-+			port->fsl_wakeup[gpioid++] = wakeupid++;
-+	}
-+
-+	port->pdev_wkpu = pdev;
-+
-+	return 0;
-+}
-+
- static int vf610_gpio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -277,6 +370,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	if (port->irq < 0)
- 		return port->irq;
- 
-+	ret = vf610_gpio_wkpu(np, port);
-+	if (ret < 0)
-+		return ret;
-+
- 	gc = &port->gc;
- 	gc->of_node = np;
- 	gc->parent = dev;
-@@ -327,6 +424,60 @@ static int __init gpio_vf610_init(void)
- }
- device_initcall(gpio_vf610_init);
- 
-+static irqreturn_t vf610_wkpu_irq(int irq, void *data)
-+{
-+	void __iomem *base = data;
-+	u32 wisr;
-+
-+	wisr = vf610_gpio_readl(base + WKPU_WISR);
-+	vf610_gpio_writel(wisr, base + WKPU_WISR);
-+	pr_debug("%s, WKPU interrupt received, flags %08x\n", __func__, wisr);
-+
-+	return 0;
-+}
-+
-+static int vf610_wkpu_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct resource *iores;
-+	void __iomem *base;
-+	int irq, err;
-+
-+	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, iores);
-+
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	err = devm_request_irq(dev, irq, vf610_wkpu_irq, 0, "wkpu-vf610", base);
-+	if (err) {
-+		dev_err(dev, "Error requesting IRQ!\n");
-+		return err;
-+	}
-+
-+	platform_set_drvdata(pdev, base);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver vf610_wkpu_driver = {
-+	.driver		= {
-+		.name	= "wkpu-vf610",
-+		.of_match_table = vf610_wkpu_dt_ids,
-+	},
-+	.probe		= vf610_wkpu_probe,
++&can1 {
++	xceiver-supply = <&reg_3v3>;
 +};
 +
-+static int __init vf610_wkpu_init(void)
-+{
-+	return platform_driver_register(&vf610_wkpu_driver);
-+}
-+device_initcall(vf610_wkpu_init);
++&can2 {
++	xceiver-supply = <&reg_3v3>;
++};
 +
- MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
- MODULE_DESCRIPTION("Freescale VF610 GPIO");
- MODULE_LICENSE("GPL v2");
++&ds1339 {
++	status = "disabled";
++};
++
++&fec1 {
++	pinctrl-0 = <&pinctrl_enet1 &pinctrl_etnphy0_rst>;
++	/delete-node/ mdio;
++};
++
++&fec2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet2 &pinctrl_enet2_mdio &pinctrl_etnphy1_rst>;
++	phy-mode = "rmii";
++	phy-reset-gpios = <&gpio4 28 GPIO_ACTIVE_HIGH>;
++	phy-supply = <&reg_3v3_etn>;
++	phy-handle = <&etnphy1>;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		etnphy0: ethernet-phy@0 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_etnphy0_int>;
++			interrupt-parent = <&gpio5>;
++			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++			interrupts-extended = <&gpio5 5 IRQ_TYPE_EDGE_FALLING>;
++			status = "okay";
++		};
++
++		etnphy1: ethernet-phy@2 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <2>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_etnphy1_int>;
++			interrupt-parent = <&gpio4>;
++			interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
++			interrupts-extended = <&gpio4 27 IRQ_TYPE_EDGE_FALLING>;
++			status = "okay";
++		};
++	};
++};
++
++&i2c_gpio {
++	status = "disabled";
++};
++
++&i2c2 {
++	/delete-node/ codec@0a;
++	/delete-node/ touchscreen@48;
++
++	rtc: mcp7940x@6f {
++		compatible = "microchip,mcp7940x";
++		reg = <0x6f>;
++	};
++};
++
++&kpp {
++	status = "disabled";
++};
++
++&lcdif {
++	pinctrl-0 = <&pinctrl_disp0_3>;
++};
++
++&reg_usbotg_vbus{
++	status = "disabled";
++};
++
++&usdhc1 {
++	pinctrl-0 = <&pinctrl_usdhc1>;
++	non-removable;
++	/delete-property/ cd-gpios;
++	cap-sdio-irq;
++};
++
++&uart1 {
++	pinctrl-0 = <&pinctrl_uart1>;
++	/delete-property/ fsl,uart-has-rtscts;
++};
++
++&uart2 {
++	pinctrl-0 = <&pinctrl_uart2>;
++	/delete-property/ fsl,uart-has-rtscts;
++	status = "okay";
++};
++
++&uart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart3>;
++	status = "okay";
++};
++
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart4>;
++	status = "okay";
++};
++
++&uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart5>;
++	status = "okay";
++};
++
++&uart6 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart6>;
++	status = "okay";
++};
++
++&uart7 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart7>;
++	status = "okay";
++};
++
++&uart8 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart8>;
++	status = "disabled"; /* conflicts with LCDIF */
++};
++
++&iomuxc {
++	hoggrp {
++		fsl,pins = <
++			MX6UL_PAD_CSI_DATA01__GPIO4_IO22	0x0b0b0 /* WLAN_RESET */
++		>;
++	};
++
++	pinctrl_disp0_3: disp0grp-3 {
++		fsl,pins = <
++			MX6UL_PAD_LCD_CLK__LCDIF_CLK		0x10 /* LSCLK */
++			MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE	0x10 /* OE_ACD */
++			MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC	0x10 /* HSYNC */
++			MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC	0x10 /* VSYNC */
++			MX6UL_PAD_LCD_DATA02__LCDIF_DATA02	0x10
++			MX6UL_PAD_LCD_DATA03__LCDIF_DATA03	0x10
++			MX6UL_PAD_LCD_DATA04__LCDIF_DATA04	0x10
++			MX6UL_PAD_LCD_DATA05__LCDIF_DATA05	0x10
++			MX6UL_PAD_LCD_DATA06__LCDIF_DATA06	0x10
++			MX6UL_PAD_LCD_DATA07__LCDIF_DATA07	0x10
++			/* LCD_DATA08..09 not wired */
++			MX6UL_PAD_LCD_DATA10__LCDIF_DATA10	0x10
++			MX6UL_PAD_LCD_DATA11__LCDIF_DATA11	0x10
++			MX6UL_PAD_LCD_DATA12__LCDIF_DATA12	0x10
++			MX6UL_PAD_LCD_DATA13__LCDIF_DATA13	0x10
++			MX6UL_PAD_LCD_DATA14__LCDIF_DATA14	0x10
++			MX6UL_PAD_LCD_DATA15__LCDIF_DATA15	0x10
++			/* LCD_DATA16..17 not wired */
++			MX6UL_PAD_LCD_DATA18__LCDIF_DATA18	0x10
++			MX6UL_PAD_LCD_DATA19__LCDIF_DATA19	0x10
++			MX6UL_PAD_LCD_DATA20__LCDIF_DATA20	0x10
++			MX6UL_PAD_LCD_DATA21__LCDIF_DATA21	0x10
++			MX6UL_PAD_LCD_DATA22__LCDIF_DATA22	0x10
++			MX6UL_PAD_LCD_DATA23__LCDIF_DATA23	0x10
++		>;
++	};
++
++	pinctrl_enet2_mdio: enet2-mdiogrp {
++		fsl,pins = <
++			MX6UL_PAD_GPIO1_IO07__ENET2_MDC		0x0b0b0
++			MX6UL_PAD_GPIO1_IO06__ENET2_MDIO	0x1b0b0
++		>;
++	};
++
++	pinctrl_uart3: uart3grp {
++		fsl,pins = <
++			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x0b0b0
++			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x0b0b0
++		>;
++	};
++
++	pinctrl_uart4: uart4grp {
++		fsl,pins = <
++			MX6UL_PAD_UART4_TX_DATA__UART4_DCE_TX	0x0b0b0
++			MX6UL_PAD_UART4_RX_DATA__UART4_DCE_RX	0x0b0b0
++		>;
++	};
++
++	pinctrl_uart6: uart6grp {
++		fsl,pins = <
++			MX6UL_PAD_CSI_MCLK__UART6_DCE_TX	0x0b0b0
++			MX6UL_PAD_CSI_PIXCLK__UART6_DCE_RX	0x0b0b0
++		>;
++	};
++
++	pinctrl_uart7: uart7grp {
++		fsl,pins = <
++			MX6UL_PAD_LCD_DATA16__UART7_DCE_TX	0x0b0b0
++			MX6UL_PAD_LCD_DATA17__UART7_DCE_RX	0x0b0b0
++		>;
++	};
++
++	pinctrl_uart8: uart8grp {
++		fsl,pins = <
++			MX6UL_PAD_LCD_DATA20__UART8_DCE_TX	0x0b0b0
++			MX6UL_PAD_LCD_DATA21__UART8_DCE_RX	0x0b0b0
++		>;
++	};
++};
 -- 
-2.7.2
+2.1.4
