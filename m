@@ -1,168 +1,64 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Jonathan Corbet <corbet@lwn.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH 3/8] clk: bcm2835: add missing osc and per clocks
-In-Reply-To: <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org> <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
-Date: Thu, 17 Mar 2016 10:10:19 -0700
-Message-ID: <87egb99gjo.fsf@eliezer.anholt.net>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160304051042.GB27942@verge.net.au>
+References: <1456971486-13761-1-git-send-email-horms+renesas@verge.net.au>
+	<CAMuHMdXfkV05AwaRtLqwA8Ko=BQaQ5y87AYgsU7O-Rd45JiNKA@mail.gmail.com>
+	<20160303192617.GY24999@codeaurora.org>
+	<20160303193050.GA24999@codeaurora.org>
+	<CAMuHMdXsR1s8qT+VKG2+EA5wV0Vr6xjTkW1d9E=7NHju+4GpJw@mail.gmail.com>
+	<20160304051042.GB27942@verge.net.au>
+Date: Fri, 4 Mar 2016 13:55:45 +0100
+Message-ID: <CAMuHMdWd=fg7Lw3FNn6BMVsXt8gTsZvCPteyd4nsbmk=KbPyaw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: move drivers to renesas directory
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Simon,
 
-kernel@martin.sperl.org writes:
-
-> From: Martin Sperl <kernel@martin.sperl.org>
+On Fri, Mar 4, 2016 at 6:10 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Mar 03, 2016 at 08:55:33PM +0100, Geert Uytterhoeven wrote:
+>> On Thu, Mar 3, 2016 at 8:30 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 03/03, Stephen Boyd wrote:
+>> >> On 03/03, Geert Uytterhoeven wrote:
+>> >> > On Thu, Mar 3, 2016 at 3:18 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
+>> >> > > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+>> >> > > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+>> >> > > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+>> >> > >
+>> >> > > Along with the above mentioned Kconfig changes it seems appropriate
+>> >> > > to also rename directories that only hold drivers for such SoCs.
+>> >> > >
+>> >> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>> >> >
+>> >> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >> >
+>> >>
+>> >> Applied to clk-next.
+>> >
+>> > Also, did you want to rename the clk/shmobile.h header file?
+>>
+>> That would indeed make sense, but does require changes in both
+>> arch/arm/mach-shmobile/ and drivers/clk/shmobile/.
 >
-> Add definitions for the following clocks:
-> * AVE0
-> * DFT
-> * GP0
-> * GP1
-> * GP2
-> * PULSE
-> * SLIM
-> * SMI
-> * TEC
->
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-> ---
->  drivers/clk/bcm/clk-bcm2835.c       |   71 +++++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/bcm2835.h |   10 +++++
->  2 files changed, 81 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 710cf15..f43e1ca 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -118,6 +118,8 @@
->  #define CM_SDCCTL		0x1a8
->  #define CM_SDCDIV		0x1ac
->  #define CM_ARMCTL		0x1b0
-> +#define CM_AVEOCTL		0x1b8
-> +#define CM_AVEODIV		0x1bc
->  #define CM_EMMCCTL		0x1c0
->  #define CM_EMMCDIV		0x1c4
->=20=20
-> @@ -1738,6 +1740,18 @@ static const struct bcm2835_clk_desc clk_desc_arra=
-y[] =3D {
->  		.div_reg =3D CM_TSENSDIV,
->  		.int_bits =3D 5,
->  		.frac_bits =3D 0),
-> +	[BCM2835_CLOCK_PULSE]	=3D REGISTER_OSC_CLK(
-> +		.name =3D "pulse",
-> +		.ctl_reg =3D CM_PULSECTL,
-> +		.div_reg =3D CM_PULSEDIV,
-> +		.int_bits =3D 12,
-> +		.frac_bits =3D 0),
+> If there are no issues with conflicts, which I expect to be the case,
+> I'd be happy for the arch/arm/mach-shmobile/ changes to go through the
+> clk tree with an Ack or Sob from me. Geert, do you think that would fly?
 
-As I noted in previous review, PULSE has another divider on it that you
-haven't accounted for, so it would be broken if we exposed it.  I've
-dropped it from the patch.
+Sure, no problem.
 
-> +	[BCM2835_CLOCK_TEC]	=3D REGISTER_OSC_CLK(
-> +		.name =3D "tec",
-> +		.ctl_reg =3D CM_TECCTL,
-> +		.div_reg =3D CM_TECDIV,
-> +		.int_bits =3D 6,
-> +		.frac_bits =3D 0),
->=20=20
->  	/* clocks with vpu parent mux */
->  	[BCM2835_CLOCK_H264]	=3D REGISTER_VPU_CLK(
-> @@ -1752,6 +1766,7 @@ static const struct bcm2835_clk_desc clk_desc_array=
-[] =3D {
->  		.div_reg =3D CM_ISPDIV,
->  		.int_bits =3D 4,
->  		.frac_bits =3D 8),
-> +
->  	/*
->  	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
->  	 * in the SDRAM controller can't be used.
-> @@ -1783,6 +1798,24 @@ static const struct bcm2835_clk_desc clk_desc_arra=
-y[] =3D {
->  		.is_vpu_clock =3D true),
->=20=20
->  	/* clocks with per parent mux */
-> +	[BCM2835_CLOCK_AVEO]	=3D REGISTER_PER_CLK(
-> +		.name =3D "aveo",
-> +		.ctl_reg =3D CM_AVEOCTL,
-> +		.div_reg =3D CM_AVEODIV,
-> +		.int_bits =3D 4,
-> +		.frac_bits =3D 0),
-> +	[BCM2835_CLOCK_DFT]	=3D REGISTER_PER_CLK(
-> +		.name =3D "dft",
-> +		.ctl_reg =3D CM_DFTCTL,
-> +		.div_reg =3D CM_DFTDIV,
-> +		.int_bits =3D 5,
-> +		.frac_bits =3D 0),
-> +	[BCM2835_CLOCK_DFT]	=3D REGISTER_PER_CLK(
-> +		.name =3D "dpi",
-> +		.ctl_reg =3D CM_DPICTL,
-> +		.div_reg =3D CM_DPIDIV,
-> +		.int_bits =3D 4,
-> +		.frac_bits =3D 8),
->=20=20
->  	/* Arasan EMMC clock */
->  	[BCM2835_CLOCK_EMMC]	=3D REGISTER_PER_CLK(
-> @@ -1791,6 +1824,30 @@ static const struct bcm2835_clk_desc clk_desc_arra=
-y[] =3D {
->  		.div_reg =3D CM_EMMCDIV,
->  		.int_bits =3D 4,
->  		.frac_bits =3D 8),
-> +
-> +	/* General purpose (GPIO) clocks */
-> +	[BCM2835_CLOCK_GP0]	=3D REGISTER_PER_CLK(
-> +		.name =3D "gp0",
-> +		.ctl_reg =3D CM_GP0CTL,
-> +		.div_reg =3D CM_GP0DIV,
-> +		.int_bits =3D 12,
-> +		.frac_bits =3D 12,
-> +		.is_mash_clock =3D true),
-> +	[BCM2835_CLOCK_GP1]	=3D REGISTER_PER_CLK(
-> +		.name =3D "gp1",
-> +		.ctl_reg =3D CM_GP1CTL,
-> +		.div_reg =3D CM_GP1DIV,
-> +		.int_bits =3D 12,
-> +		.frac_bits =3D 12,
-> +		.is_mash_clock =3D true),
-> +	[BCM2835_CLOCK_GP2]	=3D REGISTER_PER_CLK(
-> +		.name =3D "gp2",
-> +		.ctl_reg =3D CM_GP2CTL,
-> +		.div_reg =3D CM_GP2DIV,
-> +		.int_bits =3D 12,
-> +		.frac_bits =3D 12,
-> +		.is_mash_clock =3D true),
+Gr{oetje,eeting}s,
 
-As I've noted previously, gp2 is not a mash clock.  I've dropped that
-line.
+                        Geert
 
-Other than these two issues, this patch looks fine.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJW6uT7AAoJELXWKTbR/J7oGd0QAInFPo8JD/gVc9ry9WE5xfk0
-sgxTXD7MDbRaAyrxD7FqfXUrm/xCR0FzMxPxtsusK4l4ENnzG3jvrPMnJRvFIUdD
-tRhCXr/TmVzHcqgosOZFklbbVgIp04NgHnRyXjGFremzhWNPTJWj0MlZB05UMJJu
-amWZtKJAM9IMJD9DVEq2QB50ToVZoniq2NH3nind051QWZ2hjoo8K21kuCqr4KzL
-1QyEOgMdZrCXPzAsyFcEgnfpPaOjTm+UNSGNsyT5wExfwGSpjGuShNqzY/yPnkVw
-SFXZ9JuFMwKO/oiwgk9MmtoRNysoLS7/DJxW/uwX3hy2ts2bJ3UadtOg6+9pAcWR
-Xt61Vj7+RHVF4ouyz7jF6sKERhMXzxWYh/LGpysuo/5aTqi+ViaMTMQEUAWIwOMg
-Of2S+xzSLjyGDfNSYHYIRDwtKx4LcjGGklJqZAphLqXlmwSeAHGq2dht7wxjVUe1
-eowde2Km8G4a8hTIL0gxry/xe2RtXV50jEpUMQC6ovKGamKkSfj9Umg/tPonKFmF
-mQdfB/rFE2EYFtmgE+BrDMxAWCposGG/ae63TxlL2Sqq4sVwaqm4MtrtNFgqPvMd
-6OW67UVTpKJd6PXETEwQkFAc7AdRlV9EAmRDfn71J9lNFhyxg8PhI3w336qBe+5i
-iUGybJcep2tUhtlrxU7M
-=aFPv
------END PGP SIGNATURE-----
---=-=-=--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
