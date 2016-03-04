@@ -1,44 +1,56 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH] clk: ti: dra7-atl-clock: Fix of_node reference counting
-Date: Fri, 11 Mar 2016 16:13:32 +0200
-Message-ID: <1457705612-7684-1-git-send-email-peter.ujfalusi@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 4 Mar 2016 09:42:01 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] clk: add lpc18xx creg clk driver
+Message-ID: <20160304174201.GH24999@codeaurora.org>
+References: <1457041625-21163-1-git-send-email-manabian@gmail.com>
+ <1457041625-21163-2-git-send-email-manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457041625-21163-2-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-of_find_node_by_name() will call of_node_put() on the node so we need to
-get it first to avoid warnings.
-The cfg_node needs to be put after we have finished processing the
-properties.
+On 03/03, Joachim Eastwood wrote:
+> diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
+> new file mode 100644
+> index 000000000000..d44b61afa2dc
+> --- /dev/null
+> +++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
+> @@ -0,0 +1,226 @@
+> +
+> +static int clk_creg_32k_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct clk_creg_data *creg = to_clk_creg(hw);
+> +	u32 reg;
+> +
+> +	regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
+> +
+> +	return !(reg & LPC18XX_CREG_CREG0_PD32KHZ) &&
+> +	       !(reg & LPC18XX_CREG_CREG0_RESET32KHZ);
+> +}
+> +
+> +static unsigned long clk_creg_1k_recalc_rate(struct clk_hw *hw,
+> +					     unsigned long parent_rate)
+> +{
+> +	return parent_rate / 32;
+> +}
+> +
+> +static int clk_creg_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_creg_data *creg = to_clk_creg(hw);
+> +
+> +	return regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
+> +				  creg->en_mask, creg->en_mask);
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/clk/ti/clk-dra7-atl.c | 2 ++
- 1 file changed, 2 insertions(+)
+Have you tested this with CONFIG_DEBUG_ATOMIC_SLEEP=y? I seem to
+recall that syscon uses a regmap with regmap_config::fast_io set
+to false, so all regmap operations take a mutex lock.
+clk_ops::enable is called with a spinlock held, so that isn't
+going to work well.
 
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index 2e14dfb588f4..c77333230bdf 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -265,6 +265,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
- 
- 		/* Get configuration for the ATL instances */
- 		snprintf(prop, sizeof(prop), "atl%u", i);
-+		of_node_get(node);
- 		cfg_node = of_find_node_by_name(node, prop);
- 		if (cfg_node) {
- 			ret = of_property_read_u32(cfg_node, "bws",
-@@ -278,6 +279,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
- 				atl_write(cinfo, DRA7_ATL_AWSMUX_REG(i),
- 					  cdesc->aws);
- 			}
-+			of_node_put(cfg_node);
- 		}
- 
- 		cdesc->probed = true;
 -- 
-2.7.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
