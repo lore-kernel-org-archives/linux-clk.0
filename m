@@ -1,92 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kamal Mostafa <kamal@canonical.com>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	kernel-team@lists.ubuntu.com
-Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Kamal Mostafa <kamal@canonical.com>
-Subject: [PATCH 3.19.y-ckt 084/196] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-Date: Tue,  8 Mar 2016 16:29:02 -0800
-Message-Id: <1457483454-30115-85-git-send-email-kamal@canonical.com>
-In-Reply-To: <1457483454-30115-1-git-send-email-kamal@canonical.com>
-References: <1457483454-30115-1-git-send-email-kamal@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] some more rockchip clock changes for 4.6
+Date: Fri, 04 Mar 2016 02:37:34 +0100
+Message-ID: <1510327.LAx2hyWq2l@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-3.19.8-ckt16 -stable review patch.  If anyone has any objections, please let me know.
+Hi Mike, Stephen,
 
----8<------------------------------------------------------------
+this pull request is based on the last tag 4.6 and I think the signed
+tag below should explain that just right :-) .
+So if nothing stands out, please pull.
 
-From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
+Thanks
+Heiko
 
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
+The following changes since commit 36714529f8bbd4f8eaf93b50f4a64c52a24879aa:
 
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
+  clk: rockchip: convert manually created factor clocks to the new type (2016-02-04 15:54:20 +0100)
 
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
+are available in the git repository at:
 
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.6-rockchip-clk2
 
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
+for you to fetch changes up to 7af8a26ce7055dd74853ea7c2b9752961e3491da:
 
-Tested on the ARM Versatile.
+  clk: rockchip: include downstream muxes into fractional dividers on rk3368 (2016-02-26 02:08:45 +0100)
 
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kamal Mostafa <kamal@canonical.com>
----
- arch/arm/common/icst.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+----------------------------------------------------------------
+Inclusion of the rk3368 fractional dividers into our handling scheme,
+fixes for missing error-handling in mmc-phase, inverters and cpu-clocks
+and some more clock-ids.
 
-diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
-index 2dc6da70..d3c0e69 100644
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
- 
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
- 
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
- 
- EXPORT_SYMBOL(icst_hz);
--- 
-2.7.0
+----------------------------------------------------------------
+Caesar Wang (2):
+      clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+      clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+
+Elaine Zhang (1):
+      clk: rockchip: include downstream muxes into fractional dividers on rk3368
+
+Heiko Stuebner (1):
+      Merge branch 'v4.6-shared/clkids' into v4.6-clk/next
+
+Shawn Lin (5):
+      clk: rockchip: disable alt_parent clk in err cases when registering cpuclk
+      clk: rockchip: check grf when waiting pll lock
+      clk: rockchip: don't return NULL when registering inverter fails
+      clk: rockchip: don't return NULL when registering mmc branch fails
+      clk: rockchip: fix coding style for clk-cpu.c
+
+Yakir Yang (4):
+      clk: rockchip: add the new clock ids for RK3228 VOP
+      clk: rockchip: add the new clock ids for RK3228 HDMI
+      clk: rockchip: set the clock ids for RK3228 VOP
+      clk: rockchip: set the clock ids for RK3228 HDMI
+
+ drivers/clk/rockchip/clk-cpu.c         |  8 +--
+ drivers/clk/rockchip/clk-inverter.c    |  8 +--
+ drivers/clk/rockchip/clk-mmc-phase.c   |  8 +--
+ drivers/clk/rockchip/clk-pll.c         |  5 ++
+ drivers/clk/rockchip/clk-rk3228.c      | 18 +++----
+ drivers/clk/rockchip/clk-rk3368.c      | 97 +++++++++++++++++++++-------------
+ include/dt-bindings/clock/rk3228-cru.h | 12 +++++
+ 7 files changed, 95 insertions(+), 61 deletions(-)
