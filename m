@@ -1,209 +1,158 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-Subject: Re: [PATCH 5/6] clk: rockchip: rk3036: fix and add node id for emac
- clock
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
- <1457693731-6966-6-git-send-email-wxt@rock-chips.com>
- <2005499.uduk6By3kM@diego>
-Cc: Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>,
- devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
- zhengxing <zhengxing@rock-chips.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
- linux-arm-kernel@lists.infradead.org, keescook@google.com,
- "David S. Miller" <davem@davemloft.net>, leozwang@google.com
-From: Caesar Wang <caesar.upstream@gmail.com>
-Message-ID: <56E2B386.7060107@gmail.com>
-Date: Fri, 11 Mar 2016 20:01:10 +0800
-MIME-Version: 1.0
-In-Reply-To: <2005499.uduk6By3kM@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 02/13] clk: sunxi: add ahb1 clock for A83T
+Date: Sat,  5 Mar 2016 23:42:55 +0800
+Message-Id: <1457192586-25596-3-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+clock index 0b1x is PLL6.
 
-The link [0] need a bit changes if we want the emac to be happy work.
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
+ 2 files changed, 77 insertions(+)
 
--RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
-
-+RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-
-
-I will need resend the series patches with your change in link[0], OK?
-
-Since the Mr.rebot just notice the build error, I will check and resend 
-with your emac changing.
-
-
-
-
-在 2016年03月11日 19:15, Heiko Stübner 写道:
-> Hi Caesar,
->
-> Am Freitag, 11. März 2016, 18:55:30 schrieb Caesar Wang:
->> From: zhengxing <zhengxing@rock-chips.com>
->>
->> In the emac driver, we need to refer HCLK_MAC since there are
->> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clocks are under the
->> GPLL, and it is unable to provide the accurate rate for mac_ref which
->> need to 50MHz probability, we should let it under the DPLL and are
->> able to set the freq which integer multiples of 50MHz, so we add these
->> emac node for reference.
->>
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> I think I mentioned it somewhere before, but I'd like to do this
-> differently, like in [0].
->
-> That should work in a similar way and at least in my tests the reported
-> clock rate seems to be correct. As I said as well I haven't been able to
-> make the emac detect a link on my kylin boards, so it would be cool
-> if you could test if this different approach works in practice as well.
-
-I fetch your branch patches, it doesn't work for me.
-c467a5f clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on 
-rk3036
-ae7ed09 clk: rockchip: add clock-id for rk3036 emac pll source clock
-f876a7e clk: rockchip: associate the rk3036 HCLK_EMAC clock-id
-5093371 clk: rockchip: add node-id for rk3036 emac hclk
-
-f44eeee Revert "clk: rockchip: rk3036: fix and add node id for emac clock"
-..
-
-It works if the patch
-c467a5f clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on 
-rk3036 to change as following
-
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -348,8 +348,8 @@ static struct rockchip_clk_branch 
-rk3036_clk_branches[] __initdata = {
-                         RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
-                         RK2928_CLKGATE_CON(10), 5, GFLAGS),
-
--       COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
--                       RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-+       COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", 
-mux_pll_src_3plls_p, CLK_SET_RATE_NO_REPARENT,
-+                       RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-
-
->
->
-> Thanks
-> Heiko
->
-> ------ 8< ---------
->  From e83a8b19dbf95c40d2c908727c342fbc6b167ea1 Mon Sep 17 00:00:00 2001
-> From: Heiko Stuebner <heiko@sntech.de>
-> Date: Fri, 19 Feb 2016 21:31:43 +0100
-> Subject: [PATCH] clk: rockchip: associate SCLK_MAC_PLL and disable reparenting
->   on rk3036
->
-> The emac needs constant and very specific rate but the possible PLL-sources
-> are very limited, so we expect the PLL source to be set manually on per
-> board and don't want it to get changed in an automatic way later.
-> So add the necessary clock-id and disable reparenting on set_rate calls.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->   drivers/clk/rockchip/clk-rk3036.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-> index 3c742bf..0084c57 100644
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -348,7 +348,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
->   			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
->   			RK2928_CLKGATE_CON(10), 5, GFLAGS),
->   
-> -	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-> +	COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", mux_pll_src_3plls_p, CLK_SET_RATE_NO_REPARENT,
->   			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
-
--RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
-
-+RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-
-
-
->   	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
->   			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
->
-> ------ 8< ---------
->
->
-> [0] https://github.com/mmind/linux-rockchip/commit/e83a8b19dbf95c40d2c908727c342fbc6b167ea1
->
->
->> ---
->>
->>   drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
->>   include/dt-bindings/clock/rk3036-cru.h | 2 ++
->>   2 files changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3036.c
->> b/drivers/clk/rockchip/clk-rk3036.c index 0703c8f..27c35fa 100644
->> --- a/drivers/clk/rockchip/clk-rk3036.c
->> +++ b/drivers/clk/rockchip/clk-rk3036.c
->> @@ -348,8 +348,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[]
->> __initdata = { RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
->>   			RK2928_CLKGATE_CON(10), 5, GFLAGS),
->>
->> -	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
->> -			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
->> +	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
->> +			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
->> +	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
->> +			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
->> +
->>   	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
->>   			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
->>
->> @@ -408,7 +411,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[]
->> __initdata = { GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED,
->> RK2928_CLKGATE_CON(7), 3, GFLAGS), GATE(HCLK_I2S, "hclk_i2s", "hclk_peri",
->> 0, RK2928_CLKGATE_CON(7), 2, GFLAGS), GATE(0, "hclk_sfc", "hclk_peri",
->> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS), -	GATE(0,
->> "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15,
->> GFLAGS), +	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0,
->> RK2928_CLKGATE_CON(3), 5, GFLAGS),
->>
->>   	/* pclk_peri gates */
->>   	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED,
->> RK2928_CLKGATE_CON(4), 1, GFLAGS), diff --git
->> a/include/dt-bindings/clock/rk3036-cru.h
->> b/include/dt-bindings/clock/rk3036-cru.h index ebc7a7b..de44109 100644
->> --- a/include/dt-bindings/clock/rk3036-cru.h
->> +++ b/include/dt-bindings/clock/rk3036-cru.h
->> @@ -54,6 +54,7 @@
->>   #define SCLK_PVTM_VIDEO		125
->>   #define SCLK_MAC		151
->>   #define SCLK_MACREF		152
->> +#define SCLK_MACPLL		153
->>   #define SCLK_SFC		160
->>
->>   /* aclk gates */
->> @@ -92,6 +93,7 @@
->>   #define HCLK_SDMMC		456
->>   #define HCLK_SDIO		457
->>   #define HCLK_EMMC		459
->> +#define HCLK_MAC		460
->>   #define HCLK_I2S		462
->>   #define HCLK_LCDC		465
->>   #define HCLK_ROM		467
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
-
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index c09f59b..2ee7841 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -29,6 +29,7 @@ Required properties:
+ 	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
+ 	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
+ 	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
++	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
+ 	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+ 	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+ 	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 99f60ef..0ae1f09 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
+ 	req->rate >>= req->p;
+ }
+ 
++#define SUN8I_A83T_AHB1_PARENT_PLL6	2
++/**
++ * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
++ * AHB rate is calculated as follows
++ * rate = parent_rate >> p
++ *
++ * if parent is pll6, then
++ * parent_rate = pll6 rate / (m + 1)
++ */
++
++static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
++{
++	u8 div, calcp, calcm = 1;
++
++	/*
++	 * clock can only divide, so we will never be able to achieve
++	 * frequencies higher than the parent frequency
++	 */
++	if (req->parent_rate && req->rate > req->parent_rate)
++		req->rate = req->parent_rate;
++
++	div = DIV_ROUND_UP(req->parent_rate, req->rate);
++
++	/* calculate pre-divider if parent is pll6 */
++	if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
++		if (div < 4)
++			calcp = 0;
++		else if (div / 2 < 4)
++			calcp = 1;
++		else if (div / 4 < 4)
++			calcp = 2;
++		else
++			calcp = 3;
++
++		calcm = DIV_ROUND_UP(div, 1 << calcp);
++	} else {
++		calcp = __roundup_pow_of_two(div);
++		calcp = calcp > 3 ? 3 : calcp;
++}
++
++	req->rate = (req->parent_rate / calcm) >> calcp;
++	req->p = calcp;
++	req->m = calcm - 1;
++}
++
++/**
++* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
++*			 parent index
++*/
++static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
++{
++	req->rate = req->parent_rate;
++
++/* apply pre-divider first if parent is pll6 */
++	if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
++		req->rate /= req->m + 1;
++
++	/* clk divider */
++	req->rate >>= req->p;
++}
++
+ /**
+  * sun4i_get_apb1_factors() - calculates m, p factors for APB1
+  * APB1 rate is calculated as follows
+@@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
+ 	.recalc = sun6i_ahb1_recalc,
+ };
+ 
++static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
++	.mux = 12,
++	.muxmask = BIT(1) | BIT(0),
++	.table = &sun6i_ahb1_config,
++	.getter = sun8i_a83t_get_ahb1_factors,
++	.recalc = sun8i_a83t_ahb1_recalc,
++};
++
+ static const struct factors_data sun4i_apb1_data __initconst = {
+ 	.mux = 24,
+ 	.muxmask = BIT(1) | BIT(0),
+@@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
+ 	       sun6i_ahb1_clk_setup);
+ 
++static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
++}
++CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
++	       sun8i_a83t_ahb1_clk_setup);
++
+ static void __init sun4i_apb1_clk_setup(struct device_node *node)
+ {
+ 	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
 -- 
-Thanks,
-Caesar
+1.9.1
