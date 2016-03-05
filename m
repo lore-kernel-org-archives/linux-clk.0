@@ -1,270 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:38804 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757151AbcCXQut (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 12:50:49 -0400
-Received: by mail-wm0-f51.google.com with SMTP id l68so74919926wml.1
-        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2016 09:50:48 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v3 09/18] clk: Add PLX Technology OXNAS Standard Clocks
-Date: Thu, 24 Mar 2016 17:50:06 +0100
-Message-Id: <1458838215-23314-10-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
-References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 08/13] ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
+Date: Sat,  5 Mar 2016 23:43:01 +0800
+Message-Id: <1457192586-25596-9-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add PLX Technology OXNAS SoC Family Standard Clocks support.
+Now that we have a driver for the R_PIO controller,
+add the corresponding device node to the dtsi.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- drivers/clk/Kconfig     |   6 ++
- drivers/clk/Makefile    |   1 +
- drivers/clk/clk-oxnas.c | 202 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 209 insertions(+)
- create mode 100644 drivers/clk/clk-oxnas.c
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..2efdbab 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -197,6 +197,12 @@ config COMMON_CLK_PXA
- 	---help---
- 	  Support for the Marvell PXA SoC.
- 
-+config COMMON_CLK_OXNAS
-+	bool
-+	select MFD_SYSCON
-+	---help---
-+	  Support for the OXNAS SoC Family clocks.
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 691bbf1..5d240b9 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -465,5 +465,17 @@
+ 			compatible = "allwinner,sun6i-a31-clock-reset";
+ 			#reset-cells = <1>;
+ 		};
 +
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 46869d6..627da26 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
-+obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
-new file mode 100644
-index 0000000..5f02cfa
---- /dev/null
-+++ b/drivers/clk/clk-oxnas.c
-@@ -0,0 +1,202 @@
-+/*
-+ * Copyright (C) 2010 Broadcom
-+ * Copyright (C) 2012 Stephen Warren
-+ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/stringify.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+
-+/* Standard regmap gate clocks */
-+struct clk_oxnas {
-+	struct clk_hw hw;
-+	signed char bit;
-+	struct regmap *regmap;
-+};
-+
-+/* Regmap offsets */
-+#define CLK_STAT_REGOFFSET	0x24
-+#define CLK_SET_REGOFFSET	0x2c
-+#define CLK_CLR_REGOFFSET	0x30
-+
-+static inline struct clk_oxnas *to_clk_oxnas(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct clk_oxnas, hw);
-+}
-+
-+static int oxnas_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_read(std->regmap, CLK_STAT_REGOFFSET, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return val & BIT(std->bit);
-+}
-+
-+static int oxnas_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
-+
-+	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
-+
-+	return 0;
-+}
-+
-+static void oxnas_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
-+
-+	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
-+}
-+
-+static const struct clk_ops oxnas_clk_ops = {
-+	.enable = oxnas_clk_enable,
-+	.disable = oxnas_clk_disable,
-+	.is_enabled = oxnas_clk_is_enabled,
-+};
-+
-+static const char *const oxnas_clk_parents[] = {
-+	"oscillator",
-+};
-+
-+static const char *const eth_parents[] = {
-+	"gmacclk",
-+};
-+
-+#define DECLARE_STD_CLKP(__clk, __parent)			\
-+static const struct clk_init_data clk_##__clk##_init = {	\
-+	.name = __stringify(__clk),				\
-+	.ops = &oxnas_clk_ops,					\
-+	.parent_names = __parent,				\
-+	.num_parents = ARRAY_SIZE(__parent),			\
-+}
-+
-+#define DECLARE_STD_CLK(__clk) DECLARE_STD_CLKP(__clk, oxnas_clk_parents)
-+
-+/* Clk init data declaration */
-+DECLARE_STD_CLK(leon);
-+DECLARE_STD_CLK(dma_sgdma);
-+DECLARE_STD_CLK(cipher);
-+DECLARE_STD_CLK(sata);
-+DECLARE_STD_CLK(audio);
-+DECLARE_STD_CLK(usbmph);
-+DECLARE_STD_CLKP(etha, eth_parents);
-+DECLARE_STD_CLK(pciea);
-+DECLARE_STD_CLK(nand);
-+
-+/* Bit - Name association */
-+static const struct clk_init_data *clk_oxnas_init[] = {
-+	[0] = &clk_leon_init,
-+	[1] = &clk_dma_sgdma_init,
-+	[2] = &clk_cipher_init,
-+	[3] = NULL,		/* Do not touch to DDR clock */
-+	[4] = &clk_sata_init,
-+	[5] = &clk_audio_init,
-+	[6] = &clk_usbmph_init,
-+	[7] = &clk_etha_init,
-+	[8] = &clk_pciea_init,
-+	[9] = &clk_nand_init,
-+};
-+
-+static int oxnas_stdclk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *regmap;
-+	struct clk_oxnas *clk_oxnas;
-+	struct clk_onecell_data *onecell_data;
-+	struct clk **clks;
-+	unsigned int clks_count = 0;
-+	int i;
-+
-+	clk_oxnas = devm_kzalloc(&pdev->dev,
-+				 sizeof(*clk_oxnas)*ARRAY_SIZE(clk_oxnas_init),
-+				 GFP_KERNEL);
-+	if (!clk_oxnas)
-+		return -ENOMEM;
-+
-+	clks = devm_kzalloc(&pdev->dev,
-+			    sizeof(*clks)*ARRAY_SIZE(clk_oxnas_init),
-+			    GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	onecell_data = devm_kzalloc(&pdev->dev, sizeof(*onecell_data),
-+				     GFP_KERNEL);
-+	if (!onecell_data)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (!regmap) {
-+		dev_err(&pdev->dev, "failed to have parent regmap\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
-+		struct clk_oxnas *_clk;
-+
-+		if (!clk_oxnas_init[i])
-+			continue;
-+
-+		_clk = &clk_oxnas[i];
-+		_clk->bit = i;
-+		_clk->hw.init = clk_oxnas_init[i];
-+		_clk->regmap = regmap;
-+
-+		clks[clks_count] = devm_clk_register(&pdev->dev, &_clk->hw);
-+		if (WARN_ON(IS_ERR(clks[clks_count])))
-+			return PTR_ERR(clks[clks_count]);
-+
-+		++clks_count;
-+	}
-+
-+	onecell_data->clks = clks;
-+	onecell_data->clk_num = clks_count;
-+
-+	return of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
-+}
-+
-+static int oxnas_stdclk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id oxnas_stdclk_dt_ids[] = {
-+	{ .compatible = "oxsemi,ox810se-stdclk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
-+
-+static struct platform_driver oxnas_stdclk_driver = {
-+	.probe = oxnas_stdclk_probe,
-+	.remove = oxnas_stdclk_remove,
-+	.driver	= {
-+		.name = "oxnas-stdclk",
-+		.of_match_table = of_match_ptr(oxnas_stdclk_dt_ids),
-+	},
-+};
-+
-+module_platform_driver(oxnas_stdclk_driver);
++		r_pio: pinctrl@01f02c00 {
++			compatible = "allwinner,sun8i-a83t-r-pinctrl";
++			reg = <0x01f02c00 0x400>;
++			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&apb0_gates 0>;
++			resets = <&apb0_reset 0>;
++			gpio-controller;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			#gpio-cells = <3>;
++		};
+ 	};
+ };
 -- 
 1.9.1
-
