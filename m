@@ -1,41 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:38298 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751789AbcCXOBZ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 10:01:25 -0400
-MIME-Version: 1.0
-In-Reply-To: <1458823841-19899-1-git-send-email-wsa@the-dreams.de>
-References: <1458823841-19899-1-git-send-email-wsa@the-dreams.de>
-Date: Thu, 24 Mar 2016 15:01:23 +0100
-Message-ID: <CAMuHMdXcztj9+icsPVR4mxcCLz8J3YsDAKgaMuSEe7r3dY8vTA@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: r8a7795: make SD clk definition specific
- for GEN3
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 13/13] ARM: sunxi: Add Kconfig for sunxi clocks
+Date: Sat,  5 Mar 2016 23:43:06 +0800
+Message-Id: <1457192586-25596-14-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 24, 2016 at 1:50 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> About SD clocks: The clock type is Gen3 specific, the callbacks are all
-> Gen3 specific; I think the clock definition should also be Gen3 specific
-> and not in the general header file.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds Kconfig for sunxi clocks.
+Currently, only sun8i-apb0 and sun9i-cpus clocks are added.
+It'll help to use common clocks across different SOCs.
+We can switch to kconfig for other clocks in future.
 
-Thanks, will queue for clk-renesas-for-v4.7 and next renesas-drivers.
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ drivers/clk/Kconfig        | 1 +
+ drivers/clk/sunxi/Kconfig  | 5 +++++
+ drivers/clk/sunxi/Makefile | 4 ++--
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/sunxi/Kconfig
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index eca8e01..f9f42e6 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -210,3 +210,4 @@ source "drivers/clk/mvebu/Kconfig"
+ 
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
++source "drivers/clk/sunxi/Kconfig"
+diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
+new file mode 100644
+index 0000000..afc55c9
+--- /dev/null
++++ b/drivers/clk/sunxi/Kconfig
+@@ -0,0 +1,5 @@
++config CLK_SUN8I_APB0
++	def_bool MACH_SUN9I || MACH_SUN8I_A83T
++
++config CLK_SUN9I_CPUS
++	def_bool MACH_SUN9I || MACH_SUN8I_A83T
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 3fd7901..38dfca8 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -17,8 +17,8 @@ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+ obj-y += clk-usb.o
+ 
+-obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
+-obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
++obj-$(CONFIG_CLK_SUN8I_APB0) += clk-sun8i-apb0.o
++obj-$(CONFIG_CLK_SUN9I_CPUS) += clk-sun9i-cpus.o
+ 
+ obj-$(CONFIG_MFD_SUN6I_PRCM) += \
+ 	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+-- 
+1.9.1
