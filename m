@@ -1,82 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:50363 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753967AbcCDBjx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 3 Mar 2016 20:39:53 -0500
-Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
-To: Rob Herring <robh@kernel.org>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-6-git-send-email-fcooper@ti.com>
- <20160302182634.GA26055@rob-hp-laptop>
-CC: <paul@pwsan.com>, <t-kristo@ti.com>, <tony@atomide.com>,
-	<vigneshr@ti.com>, <linux-pwm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-Message-ID: <56D8E74A.6090601@ti.com>
-Date: Thu, 3 Mar 2016 19:39:22 -0600
-MIME-Version: 1.0
-In-Reply-To: <20160302182634.GA26055@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 10/13] ARM: dts: sun8i-a83t: add mmc0 CD pin
+Date: Sat,  5 Mar 2016 23:43:03 +0800
+Message-Id: <1457192586-25596-11-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+A83T Boards BPI-m3 and Allwinner H8Homletv2 boards use PF6 as
+Card Detect pin., so use PF6 as reference design CD pin in dtsi.
 
-On 03/02/2016 12:26 PM, Rob Herring wrote:
-> On Thu, Feb 25, 2016 at 04:36:36PM -0600, Franklin S Cooper Jr wrote:
->> From: Vignesh R <vigneshr@ti.com>
->>
->> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
->> for dt bindings.
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->> Version 3 changes:
->> None
->>
->>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
->>  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
->>  arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
->>  3 files changed, 88 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->> index 9c100b2..25d91ae 100644
->> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->> @@ -4,6 +4,7 @@ Required properties:
->>  - compatible: Must be "ti,<soc>-ehrpwm".
->>    for am33xx - compatible = "ti,am33xx-ehrpwm";
->>    for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->> +  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
-> We're starting to push back on wildcards in compatible strings. I guess 
-> this is okay...
->
->>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->>    the cells format. The only third cell flag supported by this binding is
->>    PWM_POLARITY_INVERTED.
->> @@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
->>  	#pwm-cells = <3>;
->>  	reg = <0x300000 0x2000>;
->>  };
->> +
->> +ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
-> Should be pwm@48440200
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-So the AM335x, AM437x  and DA850 all use ehrpwm0:
-ehrpwm@<address>. Also the address of 0 simply follows the
-pattern used in the other binding examples in that doc. I
-can replace the 0 address in this patch and make another
-patch that fixes it for the other examples in that file. But
-in terms of switching from ehrpwm0:ehrpwm@<address> to
-ehrpwm0:pwm@<address> that would also require making changes
-to the various dtsis also. So is it worth making that
-change? If so I have no problem doing it.
->
->> +	compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
->> +	#pwm-cells = <3>;
->> +	reg = <0x48440200 0x80>;
->> +	ti,hwmods = "ehrpwm0";
->> +};
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 7b02d85..c64d8d6 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -390,6 +390,13 @@
+ 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+ 			};
+ 
++			mmc0_cd_pin_reference_design: mmc0_cd_pin@0 {
++				allwinner,pins = "PF6";
++				allwinner,function = "gpio_in";
++				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				allwinner,pins = "PF2", "PF4";
+ 				allwinner,function = "uart0";
+-- 
+1.9.1
