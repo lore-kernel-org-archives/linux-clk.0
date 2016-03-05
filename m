@@ -1,261 +1,213 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 19/46] pwm: switch to the atomic API
-Date: Wed, 30 Mar 2016 22:03:42 +0200
-Message-Id: <1459368249-13241-20-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
+Date: Sat,  5 Mar 2016 23:42:54 +0800
+Message-Id: <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace legacy pwm_get/set_xxx() and pwm_config/enable/disable() calls
-by pwm_get/apply_state().
+The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+interrupt bit is 6th and A83T has one extra pin PL12.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pwm/core.c  |  5 ++++-
- drivers/pwm/sysfs.c | 61 +++++++++++++++++++++++++++++++----------------------
- 2 files changed, 40 insertions(+), 26 deletions(-)
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ drivers/pinctrl/sunxi/Kconfig                      |   5 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
+ 4 files changed, 126 insertions(+)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 62e6b3c..c2b1569 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -882,13 +882,16 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+index 9213b27..f9ff10b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+@@ -20,6 +20,7 @@ Required properties:
+   "allwinner,sun9i-a80-pinctrl"
+   "allwinner,sun9i-a80-r-pinctrl"
+   "allwinner,sun8i-a83t-pinctrl"
++  "allwinner,sun8i-a83t-r-pinctrl"
+   "allwinner,sun8i-h3-pinctrl"
  
- 	for (i = 0; i < chip->npwm; i++) {
- 		struct pwm_device *pwm = &chip->pwms[i];
-+		struct pwm_state pstate;
+ - reg: Should contain the register physical address and length for the
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index f8dbc8b..eeab50b 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -51,6 +51,11 @@ config PINCTRL_SUN8I_A23_R
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI_COMMON
+ 
++config PINCTRL_SUN8I_A83T_R
++	def_bool MACH_SUN8I
++	depends on RESET_CONTROLLER
++	select PINCTRL_SUNXI_COMMON
 +
-+		pwm_get_state(pwm, &pstate);
- 
- 		seq_printf(s, " pwm-%-3d (%-20.20s):", i, pwm->label);
- 
- 		if (test_bit(PWMF_REQUESTED, &pwm->flags))
- 			seq_puts(s, " requested");
- 
--		if (pwm_is_enabled(pwm))
-+		if (pstate.enabled)
- 			seq_puts(s, " enabled");
- 
- 		seq_puts(s, "\n");
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index ab28c89..7ec1747 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -47,13 +47,13 @@ static ssize_t period_show(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
--	unsigned int period;
-+	struct pwm_state pstate;
- 
- 	mutex_lock(&export->lock);
--	period = pwm_get_period(pwm);
-+	pwm_get_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
--	return sprintf(buf, "%u\n", period);
-+	return sprintf(buf, "%u\n", pstate.period);
- }
- 
- static ssize_t period_store(struct device *child,
-@@ -62,6 +62,7 @@ static ssize_t period_store(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state pstate;
- 	unsigned int val;
- 	int ret;
- 
-@@ -70,7 +71,9 @@ static ssize_t period_store(struct device *child,
- 		return ret;
- 
- 	mutex_lock(&export->lock);
--	ret = pwm_config(pwm, pwm_get_duty_cycle(pwm), val);
-+	pwm_get_state(pwm, &pstate);
-+	pstate.period = val;
-+	ret = pwm_apply_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
-@@ -82,13 +85,13 @@ static ssize_t duty_cycle_show(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
--	unsigned int duty;
-+	struct pwm_state pstate;
- 
- 	mutex_lock(&export->lock);
--	duty = pwm_get_duty_cycle(pwm);
-+	pwm_get_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
--	return sprintf(buf, "%u\n", duty);
-+	return sprintf(buf, "%u\n", pstate.duty_cycle);
- }
- 
- static ssize_t duty_cycle_store(struct device *child,
-@@ -97,6 +100,7 @@ static ssize_t duty_cycle_store(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state pstate;
- 	unsigned int val;
- 	int ret;
- 
-@@ -105,7 +109,9 @@ static ssize_t duty_cycle_store(struct device *child,
- 		return ret;
- 
- 	mutex_lock(&export->lock);
--	ret = pwm_config(pwm, val, pwm_get_period(pwm));
-+	pwm_get_state(pwm, &pstate);
-+	pstate.duty_cycle = val;
-+	ret = pwm_apply_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
-@@ -117,13 +123,13 @@ static ssize_t enable_show(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
--	bool enabled;
-+	struct pwm_state pstate;
- 
- 	mutex_lock(&export->lock);
--	enabled = pwm_is_enabled(pwm);
-+	pwm_get_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
--	return sprintf(buf, "%d\n", enabled);
-+	return sprintf(buf, "%d\n", pstate.enabled);
- }
- 
- static ssize_t enable_store(struct device *child,
-@@ -132,24 +138,20 @@ static ssize_t enable_store(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state pstate;
- 	int val, ret;
- 
- 	ret = kstrtoint(buf, 0, &val);
- 	if (ret)
- 		return ret;
- 
-+	if (val != 0 && val != 1)
-+		return -EINVAL;
+ config PINCTRL_SUN8I_H3
+ 	def_bool MACH_SUN8I
+ 	select PINCTRL_SUNXI_COMMON
+diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+index ef82f22..bfd4fa0 100644
+--- a/drivers/pinctrl/sunxi/Makefile
++++ b/drivers/pinctrl/sunxi/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
++obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+new file mode 100644
+index 0000000..11787894
+--- /dev/null
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+@@ -0,0 +1,119 @@
++/*
++ * Allwinner A83T SoCs special pins pinctrl driver.
++ *
++ * Copyright (C) 2016 Vishnu Patekar
++ * Vishnu Patekar <vishnupatekar0510@gmail.com>
++ *
++ * Based on pinctrl-sun8i-a23.c, which is:
++ * Copyright (C) 2014 Chen-Yu Tsai <wens@csie.org>
++ * Copyright (C) 2014 Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
 +
- 	mutex_lock(&export->lock);
--	switch (val) {
--	case 0:
--		pwm_disable(pwm);
--		break;
--	case 1:
--		ret = pwm_enable(pwm);
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
-+	pwm_get_state(pwm, &pstate);
-+	pstate.enabled = val;
-+	ret = pwm_apply_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
-@@ -162,9 +164,13 @@ static ssize_t polarity_show(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
- 	const char *polarity = "unknown";
-+	struct pwm_state pstate;
- 
- 	mutex_lock(&export->lock);
--	switch (pwm_get_polarity(pwm)) {
-+	pwm_get_state(pwm, &pstate);
-+	mutex_unlock(&export->lock);
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/reset.h>
 +
-+	switch (pstate.polarity) {
- 	case PWM_POLARITY_NORMAL:
- 		polarity = "normal";
- 		break;
-@@ -173,7 +179,6 @@ static ssize_t polarity_show(struct device *child,
- 		polarity = "inversed";
- 		break;
- 	}
--	mutex_unlock(&export->lock);
- 
- 	return sprintf(buf, "%s\n", polarity);
- }
-@@ -185,6 +190,7 @@ static ssize_t polarity_store(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
- 	enum pwm_polarity polarity;
-+	struct pwm_state pstate;
- 	int ret;
- 
- 	if (sysfs_streq(buf, "normal"))
-@@ -195,7 +201,12 @@ static ssize_t polarity_store(struct device *child,
- 		return -EINVAL;
- 
- 	mutex_lock(&export->lock);
--	ret = pwm_set_polarity(pwm, polarity);
-+	pwm_get_state(pwm, &pstate);
-+	pstate.polarity = polarity;
-+	if (pstate.enabled)
-+		ret = -EBUSY;
-+	else
-+		ret = pwm_apply_state(pwm, &pstate);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
++#include "pinctrl-sunxi.h"
++
++static const struct sunxi_desc_pin sun8i_a83t_r_pins[] = {
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
++		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SCK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
++		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SDA */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SCK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SDA */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_pwm"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_cir"),		/* RX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT12 */
++};
++
++static const struct sunxi_pinctrl_desc sun8i_a83t_r_pinctrl_data = {
++	.pins = sun8i_a83t_r_pins,
++	.npins = ARRAY_SIZE(sun8i_a83t_r_pins),
++	.pin_base = PL_BASE,
++	.irq_banks = 1,
++};
++
++static int sun8i_a83t_r_pinctrl_probe(struct platform_device *pdev)
++{
++	return sunxi_pinctrl_init(pdev, &sun8i_a83t_r_pinctrl_data);
++}
++
++static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
++	{ .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
++
++static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
++	.probe	= sun8i_a83t_r_pinctrl_probe,
++	.driver	= {
++		.name		= "sun8i-a83t-r-pinctrl",
++		.of_match_table	= sun8i_a83t_r_pinctrl_match,
++	},
++};
++module_platform_driver(sun8i_a83t_r_pinctrl_driver);
 -- 
-2.5.0
+1.9.1
