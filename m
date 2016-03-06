@@ -1,42 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49953 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753644AbcCATAt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2016 14:00:49 -0500
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 39/41] clk: twl6040: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:24 -0800
-Message-Id: <1456858826-28541-40-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin@sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH v7] clk: bcm2835: Add support for programming the audio domain clocks
+From: Martin Sperl <martin@sperl.org>
+In-Reply-To: <1444354644-31997-1-git-send-email-eric@anholt.net>
+Date: Sun, 6 Mar 2016 12:31:05 +0100
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+ Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <AE3FF4E9-9435-463F-8A05-2ED0CE67BC26@sperl.org>
+References: <1444354644-31997-1-git-send-email-eric@anholt.net>
+To: Eric Anholt <eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+I know it has already been merged, but while doing some=20
+clock investigations of the RPI3 I came accross this code:
 
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-twl6040.c | 1 -
- 1 file changed, 1 deletion(-)
+> On 09.10.2015, at 03:37, Eric Anholt <eric@anholt.net> wrote:
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c =
+b/drivers/clk/bcm/clk-bcm2835.c
+> index dd295e4..8502a4b 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> +static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	struct bcm2835_pll *pll =3D container_of(hw, struct bcm2835_pll, =
+hw);
+> +	struct bcm2835_cprman *cprman =3D pll->cprman;
+> +	const struct bcm2835_pll_data *data =3D pll->data;
+> +	u32 a2wctrl =3D cprman_read(cprman, data->a2w_ctrl_reg);
+> +	u32 ndiv, pdiv, fdiv;
+> +	bool using_prediv;
+> +
+> +	if (parent_rate =3D=3D 0)
+> +		return 0;
+> +
+> +	fdiv =3D cprman_read(cprman, data->frac_reg) & =
+A2W_PLL_FRAC_MASK;
+> +	ndiv =3D (a2wctrl & A2W_PLL_CTRL_NDIV_MASK) >> =
+A2W_PLL_CTRL_NDIV_SHIFT;
+> +	pdiv =3D (a2wctrl & A2W_PLL_CTRL_PDIV_MASK) >> =
+A2W_PLL_CTRL_PDIV_SHIFT;
+> +	using_prediv =3D cprman_read(cprman, data->ana_reg_base + 4) &
+> +		data->ana->fb_prediv_mask;
+> +
+> +	if (using_prediv)
+> +		ndiv *=3D 2;
+Is this really correct?
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 8e5ed649a098..697c66757400 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -74,7 +74,6 @@ static const struct clk_ops twl6040_mcpdm_ops = {
- static struct clk_init_data wm831x_clkout_init = {
- 	.name = "mcpdm_fclk",
- 	.ops = &twl6040_mcpdm_ops,
--	.flags = CLK_IS_ROOT,
- };
- 
- static int twl6040_clk_probe(struct platform_device *pdev)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+As far as I interpret the name =E2=80=9Cfb_predic_mask" it should be =
+either:
+  pdiv * =3D 2; /* there is already a divider of 2 applied */
+or
+  ndiv *=3D 2; /* we need to multiply bot integer and fractional by 2 */
+  fdiv *=3D 2;
 
+As it is a pre-divider, I would assume it is the first,
+but I could be wrong - not knowing a lot about PLLs.
+
+Just want to raise this as a question.
+
+Martin
