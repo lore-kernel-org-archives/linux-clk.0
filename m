@@ -1,143 +1,92 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
- <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
- <iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
- <linux-mmc@vger.kernel.org>
-Subject: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Wed, 9 Mar 2016 18:08:51 +0800
-Message-ID: <1457518131-11339-6-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
-References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
- scott.wood@nxp.com, Rob Herring <robh+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com, xiaobo.xie@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Kamal Mostafa <kamal@canonical.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	kernel-team@lists.ubuntu.com
+Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Kamal Mostafa <kamal@canonical.com>
+Subject: [PATCH 4.2.y-ckt 128/273] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+Date: Mon,  7 Mar 2016 14:48:39 -0800
+Message-Id: <1457391064-6660-129-git-send-email-kamal@canonical.com>
+In-Reply-To: <1457391064-6660-1-git-send-email-kamal@canonical.com>
+References: <1457391064-6660-1-git-send-email-kamal@canonical.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
-Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
-This patch adds the GUTS driver support for eSDHC driver to get SVR(System
-version register). And fix host version to avoid that incorrect version
-numbers break down the ADMA data transfer.
+4.2.8-ckt5 -stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-Changes for v2:
-	- Got SVR through iomap instead of dts
-Changes for v3:
-	- Managed GUTS through syscon instead of iomap in eSDHC driver
-Changes for v4:
-	- Got SVR by GUTS driver instead of SYSCON
-Changes for v5:
-	- Changed to get SVR through API fsl_guts_get_svr()
-	- Combined patch 4, patch 5 and patch 6 into one
-Changes for v6:
-	- Added 'Acked-by: Ulf Hansson'
----
- drivers/mmc/host/Kconfig          |  1 +
- drivers/mmc/host/sdhci-of-esdhc.c | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+---8<------------------------------------------------------------
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 04feea8..5743b05 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -142,6 +142,7 @@ config MMC_SDHCI_OF_ESDHC
- 	depends on MMC_SDHCI_PLTFM
- 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select FSL_GUTS
- 	help
- 	  This selects the Freescale eSDHC controller support.
- 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index 3f34d35..68cc020 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -18,6 +18,8 @@
- #include <linux/of.h>
- #include <linux/delay.h>
+From: Linus Walleij <linus.walleij@linaro.org>
+
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
+
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
+
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
+
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Kamal Mostafa <kamal@canonical.com>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
+index 2dc6da70..d3c0e69 100644
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
  #include <linux/module.h>
-+#include <linux/fsl/svr.h>
-+#include <linux/fsl/guts.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
-@@ -28,6 +30,8 @@
- struct sdhci_esdhc {
- 	u8 vendor_ver;
- 	u8 spec_ver;
-+	u32 soc_ver;
-+	u8 soc_rev;
- };
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
  
- /**
-@@ -73,6 +77,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
- static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 				     int spec_reg, u32 value)
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+ 
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
  {
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
- 	u16 ret;
- 	int shift = (spec_reg & 0x2) * 8;
- 
-@@ -80,6 +86,13 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 		ret = value & 0xffff;
- 	else
- 		ret = (value >> shift) & 0xffff;
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
 +
-+	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
-+	 * vendor version and spec version information.
-+	 */
-+	if ((spec_reg == SDHCI_HOST_VERSION) &&
-+	    (esdhc->soc_ver == SVR_T4240) && (esdhc->soc_rev <= 0x20))
-+		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
- 	return ret;
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
  }
  
-@@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- 	struct sdhci_pltfm_host *pltfm_host;
- 	struct sdhci_esdhc *esdhc;
- 	u16 host_ver;
-+	u32 svr;
- 
- 	pltfm_host = sdhci_priv(host);
- 	esdhc = sdhci_pltfm_priv(pltfm_host);
- 
-+	fsl_guts_init();
-+	svr = fsl_guts_get_svr();
-+	if (svr) {
-+		esdhc->soc_ver = SVR_SOC_VER(svr);
-+		esdhc->soc_rev = SVR_REV(svr);
-+	} else {
-+		dev_err(&pdev->dev, "Failed to get SVR value!\n");
-+	}
-+
- 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
+ EXPORT_SYMBOL(icst_hz);
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.0
