@@ -1,91 +1,75 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	bcousson@baylibre.com,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 20/46] pwm: add information about polarity, duty cycle and period to debugfs
-Date: Wed, 30 Mar 2016 22:03:43 +0200
-Message-Id: <1459368249-13241-21-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH 1/5] clk: ti: am335x/am4372: Add tbclk to pwm node
+Date: Mon,  7 Mar 2016 13:51:54 -0600
+Message-Id: <1457380318-15452-2-git-send-email-fcooper@ti.com>
+In-Reply-To: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Heiko Stübner <heiko@sntech.de>
+Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
+to the time-based clk.
 
-The pwm-states make it possible to also output the polarity, duty cycle
-and period information in the debugfs pwm summary-outout.
-This makes it easier to gather overview information about pwms without
-needing to walk through the sysfs attributes of every pwm.
+Do not remove similar entries for ehrpwm node. Later patches will switch
+from using ehrpwm node name to pwm. But to maintain ABI compatibility we
+shouldn't remove the old entries.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 ---
- drivers/pwm/core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/ti/clk-33xx.c | 3 +++
+ drivers/clk/ti/clk-43xx.c | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index c2b1569..9a83840 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -894,6 +894,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		if (pstate.enabled)
- 			seq_puts(s, " enabled");
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index ef2ec64..0e47d95 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
++	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
+ 	{ .node_name = NULL },
+ };
  
-+		seq_printf(s, " period:%uns", pstate.period);
-+		seq_printf(s, " duty:%uns", pstate.duty_cycle);
-+		seq_printf(s, " polarity:%s",
-+			   pstate.polarity ? "inverse" : "normal");
-+
- 		seq_puts(s, "\n");
- 	}
- }
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 097fc90..7255aa8 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
+ 	DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
+ 	DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
+ 	DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
++	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
++	DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
++	DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
++	DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
+ 	{ .node_name = NULL },
+ };
+ 
 -- 
-2.5.0
+2.7.0
