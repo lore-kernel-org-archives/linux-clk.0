@@ -1,64 +1,42 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 31 Mar 2016 16:21:37 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
-	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
-	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/18] ARM: dts: vf610: add GPC as new interrupt parent
-Message-ID: <20160331082137.GW28207@tiger>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-3-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457576219-7971-3-git-send-email-stefan@agner.ch>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH] clk: at91: fix check of clk_register() returned value
+Date: Tue,  8 Mar 2016 01:41:29 +0200
+Message-Id: <1457394089-15319-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 06:16:43PM -0800, Stefan Agner wrote:
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+The clk_register() function returns a valid pointer to struct clk or
+ERR_PTR() error code, this makes a check for returned NULL value
+useless and may lead to oops on error path.
 
-So this patch cannot be applied before the fsl,vf610-gpc driver gets
-landed on mainline.
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+Alexandre, Boris,
 
-Shawn
+I've seen your recent huge updates to the driver, but I haven't found
+them in clk-next, I hope that this trivial fix against clk-next won't
+cause a big pain on rebase.
 
-> ---
->  arch/arm/boot/dts/vfxxx.dtsi | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
-> index 5e49fbd..909988d 100644
-> --- a/arch/arm/boot/dts/vfxxx.dtsi
-> +++ b/arch/arm/boot/dts/vfxxx.dtsi
-> @@ -88,7 +88,7 @@
->  		#address-cells = <1>;
->  		#size-cells = <1>;
->  		compatible = "simple-bus";
-> -		interrupt-parent = <&mscm_ir>;
-> +		interrupt-parent = <&gpc>;
->  		ranges;
->  
->  		aips0: aips-bus@40000000 {
-> @@ -475,6 +475,14 @@
->  				reg = <0x4006e000 0x1000>;
->  				interrupts = <96 IRQ_TYPE_LEVEL_HIGH>;
->  			};
-> +
-> +			gpc: gpc@4006c000 {
-> +				compatible = "fsl,vf610-gpc";
-> +				reg = <0x4006c000 0x1000>;
-> +				interrupt-controller;
-> +				#interrupt-cells = <2>;
-> +				interrupt-parent = <&mscm_ir>;
-> +			};
->  		};
->  
->  		aips1: aips-bus@40080000 {
-> -- 
-> 2.7.2
-> 
-> 
+ drivers/clk/at91/clk-h32mx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
+index 61566bc..a165230 100644
+--- a/drivers/clk/at91/clk-h32mx.c
++++ b/drivers/clk/at91/clk-h32mx.c
+@@ -116,7 +116,7 @@ void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
+ 	h32mxclk->pmc = pmc;
+ 
+ 	clk = clk_register(NULL, &h32mxclk->hw);
+-	if (!clk) {
++	if (IS_ERR(clk)) {
+ 		kfree(h32mxclk);
+ 		return;
+ 	}
+-- 
+2.1.4
