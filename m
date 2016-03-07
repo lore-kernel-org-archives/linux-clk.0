@@ -1,169 +1,115 @@
-Return-Path: <julian.calaby@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1457192586-25596-3-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com> <1457192586-25596-3-git-send-email-vishnupatekar0510@gmail.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Mon, 7 Mar 2016 13:47:19 +1100
-Message-ID: <CAGRGNgWXSDYf+pKJTWzL4uR-ZFSHby5R7EcTH4jCfrc90kHvCw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v3 02/13] clk: sunxi: add ahb1 clock for A83T
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:37455 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753617AbcCGWd3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 17:33:29 -0500
+From: Kamal Mostafa <kamal@canonical.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Kamal Mostafa <kamal@canonical.com>,
+	kernel-team@lists.ubuntu.com
+Subject: [4.2.y-ckt stable] Patch "ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()" has been added to the 4.2.y-ckt tree
+Date: Mon,  7 Mar 2016 14:33:23 -0800
+Message-Id: <1457390003-30336-1-git-send-email-kamal@canonical.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vishnu,
+This is a note to let you know that I have just added a patch titled
 
-On Sun, Mar 6, 2016 at 2:42 AM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-> clock index 0b1x is PLL6.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
->  2 files changed, 77 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index c09f59b..2ee7841 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -29,6 +29,7 @@ Required properties:
->         "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
->         "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->         "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-> +       "allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
->         "allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
->         "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->         "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 99f60ef..0ae1f09 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
->         req->rate >>= req->p;
->  }
->
-> +#define SUN8I_A83T_AHB1_PARENT_PLL6    2
-> +/**
-> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
-> + * AHB rate is calculated as follows
-> + * rate = parent_rate >> p
-> + *
-> + * if parent is pll6, then
-> + * parent_rate = pll6 rate / (m + 1)
-> + */
-> +
-> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
-> +{
-> +       u8 div, calcp, calcm = 1;
-> +
-> +       /*
-> +        * clock can only divide, so we will never be able to achieve
-> +        * frequencies higher than the parent frequency
-> +        */
-> +       if (req->parent_rate && req->rate > req->parent_rate)
-> +               req->rate = req->parent_rate;
-> +
-> +       div = DIV_ROUND_UP(req->parent_rate, req->rate);
-> +
-> +       /* calculate pre-divider if parent is pll6 */
-> +       if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
-> +               if (div < 4)
-> +                       calcp = 0;
-> +               else if (div / 2 < 4)
-> +                       calcp = 1;
-> +               else if (div / 4 < 4)
-> +                       calcp = 2;
-> +               else
-> +                       calcp = 3;
-> +
-> +               calcm = DIV_ROUND_UP(div, 1 << calcp);
-> +       } else {
-> +               calcp = __roundup_pow_of_two(div);
-> +               calcp = calcp > 3 ? 3 : calcp;
-> +}
+    ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
 
-You could do with a tab here.
+to the linux-4.2.y-queue branch of the 4.2.y-ckt extended stable tree 
+which can be found at:
 
-> +
-> +       req->rate = (req->parent_rate / calcm) >> calcp;
-> +       req->p = calcp;
-> +       req->m = calcm - 1;
-> +}
-> +
-> +/**
-> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
-> +*                       parent index
-> +*/
-> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
-> +{
-> +       req->rate = req->parent_rate;
-> +
-> +/* apply pre-divider first if parent is pll6 */
-> +       if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
-> +               req->rate /= req->m + 1;
-> +
-> +       /* clk divider */
-> +       req->rate >>= req->p;
-> +}
-> +
->  /**
->   * sun4i_get_apb1_factors() - calculates m, p factors for APB1
->   * APB1 rate is calculated as follows
-> @@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
->         .recalc = sun6i_ahb1_recalc,
->  };
->
-> +static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
-> +       .mux = 12,
-> +       .muxmask = BIT(1) | BIT(0),
-> +       .table = &sun6i_ahb1_config,
-> +       .getter = sun8i_a83t_get_ahb1_factors,
-> +       .recalc = sun8i_a83t_ahb1_recalc,
-> +};
-> +
->  static const struct factors_data sun4i_apb1_data __initconst = {
->         .mux = 24,
->         .muxmask = BIT(1) | BIT(0),
-> @@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
->  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
->                sun6i_ahb1_clk_setup);
->
-> +static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
-> +{
-> +       sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
-> +}
-> +CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
-> +              sun8i_a83t_ahb1_clk_setup);
-> +
->  static void __init sun4i_apb1_clk_setup(struct device_node *node)
->  {
->         sunxi_factors_clk_setup(node, &sun4i_apb1_data);
-> --
-> 1.9.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-4.2.y-queue
 
+This patch is scheduled to be released in version 4.2.8-ckt5.
 
+If you, or anyone else, feels it should not be added to this tree, please 
+reply to this email.
 
--- 
-Julian Calaby
+For more information about the 4.2.y-ckt tree, see
+https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Thanks.
+-Kamal
+
+---8<------------------------------------------------------------
+
+>From 45b9f410639bcee4e286b5c3716536be0e3a11fa Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 Feb 2016 09:14:37 +0100
+Subject: ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
+
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
+
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
+
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Kamal Mostafa <kamal@canonical.com>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
+index 2dc6da70..d3c0e69 100644
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+
+ EXPORT_SYMBOL(icst_hz);
+--
+2.7.0
+
