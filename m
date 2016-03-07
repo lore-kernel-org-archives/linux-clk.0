@@ -1,77 +1,42 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 09/13] ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
-Date: Sat,  5 Mar 2016 23:43:02 +0800
-Message-Id: <1457192586-25596-10-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1457315065-28705-1-git-send-email-horms+renesas@verge.net.au>
+References: <1457315065-28705-1-git-send-email-horms+renesas@verge.net.au>
+Date: Mon, 7 Mar 2016 08:59:01 +0100
+Message-ID: <CAMuHMdVo3KQ2TJbYKsuqNMm_H8_tiDw5mWqNXLho_3cjbTE3rw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: Rename header file renesas.h
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a device node for the Reduced Serial Bus (RSB)
-controller and the defacto pinmux setting to the A83T dtsi.
+On Mon, Mar 7, 2016 at 2:44 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+>
+> Along with the above mentioned Kconfig changes it seems appropriate
+> to also rename files.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Since there is only one possible pinmux setting for RSB, just
-set it in the dtsi.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+BTW, the sooner it goes in, the better.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 5d240b9..7b02d85 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -476,6 +476,27 @@
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
-+
-+			r_rsb_pins: r_rsb {
-+				allwinner,pins = "PL0", "PL1";
-+				allwinner,function = "s_rsb";
-+				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+			};
-+		};
-+
-+		r_rsb: i2c@01f03400 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x01f03400 0x400>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 3>;
-+			clock-frequency = <3000000>;
-+			resets = <&apb0_reset 3>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- };
--- 
-1.9.1
+Thank!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
