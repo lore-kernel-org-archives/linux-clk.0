@@ -1,39 +1,54 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 29/41] clk: max77{686,802}: Remove CLK_IS_ROOT
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-30-git-send-email-sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <56DD8629.1040003@osg.samsung.com>
-Date: Mon, 7 Mar 2016 10:46:17 -0300
-MIME-Version: 1.0
-In-Reply-To: <1456858826-28541-30-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	bcousson@baylibre.com,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH 0/5] ARM: am335x/am437x: Correct pwm bindings
+Date: Mon,  7 Mar 2016 13:51:53 -0600
+Message-Id: <1457380318-15452-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Unlike the majority of other SOCs the PWM node uses ehrpwm instead of
+the generic pwm node name. This patch series switches to the pwm node
+name and while at it fix some other minor binding documentation issues.
 
-On 03/01/2016 04:00 PM, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
->
+This patch series also includes a patch to insure ABI compatibility.
 
-Doing some search I found the patch that makes the flag
-to be a no-op: https://lkml.org/lkml/2016/2/2/1037.
+This series was tested on AM335x and AM437x GP evm. I also validated that
+ABI compatibility was maintained.
 
-It would had been nice though to have that information
-somewhere in the patch, probably between the separator
-line and the actual diff so people know that is true :)
+Franklin S Cooper Jr (5):
+  clk: ti: am335x/am4372: Add tbclk to pwm node
+  ARM: DTS: da850/am4372/am33xx: Use generic node name for ehrpwm
+  ARM: DTS: am33xx: Set pwmss ranges property to an empty value
+  pwm: pwm-tipwmss: Update documentation to use empty range property
+  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
 
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt |  4 ++--
+ Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt  | 12 ++++--------
+ arch/arm/boot/dts/am33xx.dtsi                          | 18 ++++++------------
+ arch/arm/boot/dts/am4372.dtsi                          | 12 ++++++------
+ arch/arm/boot/dts/da850.dtsi                           |  4 ++--
+ drivers/clk/ti/clk-33xx.c                              |  3 +++
+ drivers/clk/ti/clk-43xx.c                              |  6 ++++++
+ 7 files changed, 29 insertions(+), 30 deletions(-)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
---
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+-- 
+2.7.0
