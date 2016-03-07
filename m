@@ -1,115 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:54043 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751045AbcCIAYO (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 19:24:14 -0500
-From: Kamal Mostafa <kamal@canonical.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Kamal Mostafa <kamal@canonical.com>,
-	kernel-team@lists.ubuntu.com
-Subject: [3.19.y-ckt stable] Patch "ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()" has been added to the 3.19.y-ckt tree
-Date: Tue,  8 Mar 2016 16:24:07 -0800
-Message-Id: <1457483047-23765-1-git-send-email-kamal@canonical.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Vladimir Zapolskiy <vz@mleia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Lee Jones <lee@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: bcm2835: fix check of error code returned by devm_ioremap_resource()
+In-Reply-To: <1457227295-3093-1-git-send-email-vz@mleia.com>
+References: <1457227295-3093-1-git-send-email-vz@mleia.com>
+Date: Mon, 07 Mar 2016 15:27:47 -0800
+Message-ID: <87d1r5yiks.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a note to let you know that I have just added a patch titled
+--=-=-=
+Content-Type: text/plain
 
-    ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+Vladimir Zapolskiy <vz@mleia.com> writes:
 
-to the linux-3.19.y-queue branch of the 3.19.y-ckt extended stable tree 
-which can be found at:
+> The change fixes potential oops while accessing iomem on invalid
+> address, if devm_ioremap_resource() fails due to some reason.
+>
+> The devm_ioremap_resource() function returns ERR_PTR() and never
+> returns NULL, which makes useless a following check for NULL.
+>
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Fixes: 5e63dcc74b30 ("clk: bcm2835: Add a driver for the auxiliary peripheral clock gates")
 
-    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-3.19.y-queue
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
-This patch is scheduled to be released in version 3.19.8-ckt16.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you, or anyone else, feels it should not be added to this tree, please 
-reply to this email.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-For more information about the 3.19.y-ckt tree, see
-https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
-
-Thanks.
--Kamal
-
----8<------------------------------------------------------------
-
->From 904b9b5d96611a5a67bf79de4735da11aeb29fbc Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 8 Feb 2016 09:14:37 +0100
-Subject: ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
-
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
-
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
-
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
-
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
-
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
-
-Tested on the ARM Versatile.
-
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kamal Mostafa <kamal@canonical.com>
----
- arch/arm/common/icst.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
-index 2dc6da70..d3c0e69 100644
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
-
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
-
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
-
- EXPORT_SYMBOL(icst_hz);
---
-2.7.0
-
+iQIcBAEBCgAGBQJW3g50AAoJELXWKTbR/J7oUvQP/2HuBR7sueIaUn+DyvFabZqg
+zOawCSwpujq/ETmAzTUTAeVEapwg6tmPXNnu1xTlLmDWE/XyPIBKGVGxoXdEyUAb
+3D5JERWec31DidJCO+dfDNhA/dwTtrNHW6XDl4hz1GU1JP9ZxnszMTU09c7I0lhY
+ArWQMzQn0yRPZ5wHAfI+sp2yZetOwIm7o0l9XB2BHihHrGqsnZ7XC9KPQsYhDiey
+6AMoxk+D/e4R+DVWt5gmuz+lAQR5VnZxHCOM8WsSSVXoh+1tlA0Zh0w+87/w3GYd
+9rpA0kAemDX1MJ+6EcvBVZosNb8EZjjqmNsFETBtAlWPyaq40YHkWDK0ivpA736f
+6Mz8sCBiBWgxxttef05Ty8VwjXyrMmVKT6HNRSQh9862f6QecwHYTIb0U+I0cn9J
+CHaTTSkZqitbs5PQebgIPIsvnBGeyL/LFKJeFVsSdtmZvPcY/ltWHMjqpmQ7BdNX
+fRp0ooBHmsIABC1COuMslVBoxzw7wjSb4A1btkaojqYSaHriGUK1bkw4SP1M91li
+VwcCB3J8yyYaDIwjLxoWFwjyD2uTP2vgaQWAosU7T5/5PRxNTS5Kpm0TzrDzm/Z8
+x9ucZpESI8e3v/tC6VM726FQvpwSDbmPpvpBob8QGlDbSYvJJ9zW/jArp0wc1Z5j
+ZO4UXFDxBBlsRqfvbejA
+=CzEA
+-----END PGP SIGNATURE-----
+--=-=-=--
