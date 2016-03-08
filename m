@@ -1,78 +1,144 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 30 Mar 2016 14:23:04 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:17641 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932069AbcCHBq7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:46:59 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Message-ID: <20160330212304.GW2350@sirena.org.uk>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-29-git-send-email-boris.brezillon@free-electrons.com>
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v4 1/5] ARM: at91: pm: create a separate procedure for the ULP0 mode
+Date: Tue, 8 Mar 2016 09:41:58 +0800
+Message-ID: <1457401322-29120-2-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
+References: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="s3puAW9DMBtS2ARW"
-In-Reply-To: <1459368249-13241-29-git-send-email-boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v5 28/46] regulator: pwm: swith to the atomic PWM API
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+To make the code more legible and prepare to add the ULP1 mode
+support in the future, create a separate procedure for the ULP0 mode.
 
---s3puAW9DMBtS2ARW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
 
-On Wed, Mar 30, 2016 at 10:03:51PM +0200, Boris Brezillon wrote:
-> pwm_config/enable/disable() have been deprecated in favor of
-> pwm_apply_state().
-> Replace all those calls with the equivalent pwm_get/apply_state().
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
 
-Acked-by: Mark Brown <broonie@kernel.org>
+ arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 25 deletions(-)
 
---s3puAW9DMBtS2ARW
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index a25defd..5fcffdc 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
+ 
+ 	ldr	r0, .pm_mode
+ 	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_disable_main_clock
++	beq	standby_mode
+ 
+ 	ldr	pmc, .pmc_base
+ 
+@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+ 
+-	/* Turn off the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-skip_disable_main_clock:
+-	ldr	pmc, .pmc_base
+-
+-	/* Wait for interrupt */
+-	at91_cpu_idle
+-
+-	ldr	r0, .pm_mode
+-	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_enable_main_clock
++ulp0_mode:
++	bl	at91_pm_ulp0_mode
++	b	ulp_exit
+ 
++ulp_exit:
+ 	ldr	pmc, .pmc_base
+ 
+-	/* Turn on the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-	wait_moscrdy
+-
+ 	/* Restore PLLA setting */
+ 	ldr	tmp1, .saved_pllar
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+@@ -177,7 +158,15 @@ skip_disable_main_clock:
+ 
+ 	wait_mckrdy
+ 
+-skip_enable_main_clock:
++	b	pm_exit
++
++standby_mode:
++	ldr	pmc, .pmc_base
++
++	/* Wait for interrupt */
++	at91_cpu_idle
++
++pm_exit:
+ 	/* Exit the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_EXIT
+ 	bl	at91_sramc_self_refresh
+@@ -311,6 +300,32 @@ exit_sramc_sf:
+ 	mov	pc, lr
+ ENDPROC(at91_sramc_self_refresh)
+ 
++/*
++ * void at91_pm_ulp0_mode(void)
++ */
++ENTRY(at91_pm_ulp0_mode)
++	ldr	pmc, .pmc_base
++
++	/* Turn off the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	/* Wait for interrupt */
++	at91_cpu_idle
++
++	/* Turn on the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscrdy
++
++	mov	pc, lr
++ENDPROC(at91_pm_ulp0_mode)
++
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
+-- 
+1.7.9.5
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJW/EOzAAoJECTWi3JdVIfQ+k8H/0AJ6dz8O64HpBcKpVdlzTjm
-XadmMu/4rogd7PPyfk9L6YU6L4pdMMxPaO/LURz/OTOb4L3uzeDXmidHCXV10oka
-2lwnEmngQ5LZHQo/+jcNDdljpG1RYYT8RI7Zoy/tLx5wrtHIajyx7nui1snwgvYA
-ggbi93H4s/KC+jTcG6b1RxxApC+Dv56xEyAlNVw1t+YIHuM4KGOA/aoLy3+60Hp/
-d70O6IlMh53v4SvFMDjG4pCLKc5mA/dCninOcrqMbjA7NXcqnNgDJLnHuuJQNOLM
-8MKUHRy64dGTGrE1T/Ybq0oE8RyntPT/ANNlV4Or6Lbv+cLWuT4GAErGrExQxFM=
-=CoDU
------END PGP SIGNATURE-----
-
---s3puAW9DMBtS2ARW--
