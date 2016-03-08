@@ -1,52 +1,65 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
- <20160314160551.GA21898@ulmo.nvidia.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Bill Huang
-	<bilhuang@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <56E6E20C.6020807@nvidia.com>
-Date: Mon, 14 Mar 2016 12:08:44 -0400
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from nasmtp01.atmel.com ([192.199.1.245]:32795 "EHLO
+	DVREDG01.corp.atmel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932145AbcCHBvD (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:51:03 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v4 5/5] ARM: at91/dt: sama5d2_xplained: add fast_restart node
+Date: Tue, 8 Mar 2016 09:42:02 +0800
+Message-ID: <1457401322-29120-6-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
+References: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <20160314160551.GA21898@ulmo.nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 3/14/2016 12:05 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
->> From: Bill Huang <bilhuang@nvidia.com>
->>
->> Add some SLCG (Second Level Clock Gating) override clocks to control
->> gating and un-gating their logics.
->>
->> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-id.h               | 16 ++++++
->>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
->>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
->>  3 files changed, 123 insertions(+), 16 deletions(-)
-> 
-> There's no rationale given here about why we need this. What will these
-> second level clock gates be used for? Why do we need these (seemingly)
-> duplicate clock entries.
-> 
+Add fast_restart node as a pmc's child node to support fast startup
+signal configuration.
 
-These are going to be used in the to-be posted patchset around
-powergating. As of now they are unused, which is why I hadn't added them
-previously. I just wanted to try to get this dependency in before the
-powergate series was posted.
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
 
--rhyland
+Changes in v4:
+ - add fast_restart node to the DT file.
 
+Changes in v3: None
+Changes in v2: None
 
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index 21c780f..45a78a7 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -110,6 +110,14 @@
+ 		};
+ 
+ 		apb {
++			pmc: pmc@f0014000 {
++				pmc_fast_restart {
++					compatible = "atmel,sama5d2-pmc-fast-startup";
++					atmel,wkup-trigger;
++					atmel,rtc-alarm-trigger;
++				};
++			};
++
+ 			spi0: spi@f8000000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_spi0_default>;
 -- 
-nvpublic
+1.7.9.5
+
