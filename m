@@ -1,76 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH] clk: ti: Fix some errors found by static checkers
-Date: Tue,  1 Mar 2016 10:54:59 -0800
-Message-Id: <1456858499-28035-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:17602 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932069AbcCHBqa (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:46:30 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v4 0/5] ARM: at91: pm: add ULP1 mode support
+Date: Tue, 8 Mar 2016 09:41:57 +0800
+Message-ID: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-drivers/clk/ti/clk-814x.c:34:12: warning: symbol 'dm814x_adpll_early_init' was not declared. Should it be static?
-drivers/clk/ti/clk-814x.c:58:12: warning: symbol 'dm814x_adpll_enable_init_clocks' was not declared. Should it be static?
-drivers/clk/ti/adpll.c:465 ti_adpll_recalc_rate() warn: should '__readw(d->regs + 20) << 18' be a 64 bit type?
-drivers/clk/ti/adpll.c:945 ti_adpll_probe() error: we previously assumed 'd->clocks' could be null (see line 921)
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
 
-The last one looks like a real bug because we don't return an
-error on allocation failure.
+In order to achieve the lowest power consumption, in the ULP1 mode,
+all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ti/adpll.c    | 4 ++--
- drivers/clk/ti/clk-814x.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+The fast startup signal is used as a wake up source for ULP1 mode.
+As soon as the wake up event is asserted, the embedded 12MHz RC
+oscillator restarts automatically, which fast startup signal
+to trigger the PMC to wake up the system from the ULP1 mode can be
+configured via DT.
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index f741d79e5afd..255cafb18336 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -462,7 +462,7 @@ static unsigned long ti_adpll_recalc_rate(struct clk_hw *hw,
- 	spin_lock_irqsave(&d->lock, flags);
- 	frac_m = readl_relaxed(d->regs + ADPLL_FRACDIV_OFFSET);
- 	frac_m &= ADPLL_FRACDIV_FRACTIONALM_MASK;
--	rate = readw_relaxed(d->regs + ADPLL_MN2DIV_OFFSET) << 18;
-+	rate = (u64)readw_relaxed(d->regs + ADPLL_MN2DIV_OFFSET) << 18;
- 	rate += frac_m;
- 	rate *= parent_rate;
- 	divider = (readw_relaxed(d->regs + ADPLL_M2NDIV_OFFSET) + 1) << 18;
-@@ -919,7 +919,7 @@ static int ti_adpll_probe(struct platform_device *pdev)
- 				 TI_ADPLL_NR_CLOCKS,
- 				 GFP_KERNEL);
- 	if (!d->clocks)
--		goto free;
-+		return -ENOMEM;
- 
- 	err = ti_adpll_init_dco(d);
- 	if (err) {
-diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
-index 2323643fb731..52c6efc53731 100644
---- a/drivers/clk/ti/clk-814x.c
-+++ b/drivers/clk/ti/clk-814x.c
-@@ -31,7 +31,7 @@ static struct ti_dt_clk dm814_clks[] = {
- 
- static bool timer_clocks_initialized;
- 
--int __init dm814x_adpll_early_init(void)
-+static int __init dm814x_adpll_early_init(void)
- {
- 	struct device_node *np;
- 
-@@ -55,7 +55,7 @@ static const char * const init_clocks[] = {
- 	"pll290clkout",		/* DDR 481c5290.adpll.clkout */
- };
- 
--int __init dm814x_adpll_enable_init_clocks(void)
-+static int __init dm814x_adpll_enable_init_clocks(void)
- {
- 	int i, err;
- 
+Changes in v4:
+ - add Acked-by tag.
+ - add fast_restart node to the DT file.
+
+Changes in v3:
+ - use 0 and 1, not string, to define the trigger active polarity.
+ - update the property description.
+
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
+ - shorten the pmc-fast-startup property's name.
+ - use the value property, instead of bool property for high
+   or low triggered.
+ - change the property name and property description.
+
+Wenyou Yang (5):
+  ARM: at91: pm: create a separate procedure for the ULP0 mode
+  ARM: at91: pm: add ULP1 mode support
+  ARM: at91: pm: configure PMC fast startup signals
+  Documentation: atmel-pmc: add DT bindings for fast startup
+  ARM: at91/dt: sama5d2_xplained: add fast_restart node
+
+ .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |    8 +
+ arch/arm/mach-at91/pm.c                            |  130 +++++++++++++++-
+ arch/arm/mach-at91/pm.h                            |    7 +
+ arch/arm/mach-at91/pm_suspend.S                    |  158 +++++++++++++++++---
+ include/linux/clk/at91_pmc.h                       |   36 +++++
+ 6 files changed, 377 insertions(+), 25 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
+
