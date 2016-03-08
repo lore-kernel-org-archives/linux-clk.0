@@ -1,270 +1,270 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:33773 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753246AbcCIKZA (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2016 05:25:00 -0500
-Received: by mail-wm0-f51.google.com with SMTP id l68so185955296wml.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Mar 2016 02:24:59 -0800 (PST)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 09/18] clk: Add PLX Technology OXNAS Standard Clocks
-Date: Wed,  9 Mar 2016 11:24:11 +0100
-Message-Id: <1457519060-6038-10-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
-References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
- <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v4 2/5] ARM: at91: pm: add ULP1 mode support
+Date: Tue, 8 Mar 2016 09:41:59 +0800
+Message-ID: <1457401322-29120-3-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
+References: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add PLX Technology OXNAS SoC Family Standard Clocks support.
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+In the ULP1 mode, all the clocks are shut off, inclusive the embedded
+12MHz RC oscillator, so as to achieve the lowest power consumption
+with the system in retention mode and able to resume on the wake up
+events. As soon as the wake up event is asserted, the embedded 12MHz
+RC oscillator restarts automatically.
+
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
 ---
- drivers/clk/Kconfig     |   6 ++
- drivers/clk/Makefile    |   1 +
- drivers/clk/clk-oxnas.c | 202 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 209 insertions(+)
- create mode 100644 drivers/clk/clk-oxnas.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e01..16fa822 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -192,6 +192,12 @@ config COMMON_CLK_PXA
- 	---help---
- 	  Sypport for the Marvell PXA SoC.
+Changes in v4: None
+Changes in v3: None
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
+
+ arch/arm/mach-at91/pm.c         |   16 ++++++-
+ arch/arm/mach-at91/pm.h         |    7 +++
+ arch/arm/mach-at91/pm_suspend.S |   97 +++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/at91_pmc.h    |    4 ++
+ 4 files changed, 122 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index f062701..5c2db34 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -36,6 +36,11 @@
+ #include "generic.h"
+ #include "pm.h"
  
-+config COMMON_CLK_OXNAS
-+	bool
-+	select MFD_SYSCON
-+	---help---
-+	  Sypport for the OXNAS SoC Family clocks.
++#define ULP0_MODE	0x00
++#define ULP1_MODE	0x11
 +
- config COMMON_CLK_CDCE706
- 	tristate "Clock driver for TI CDCE706 clock synthesizer"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index bae4be6..a5d45d8 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
-+obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
-new file mode 100644
-index 0000000..58b984b
---- /dev/null
-+++ b/drivers/clk/clk-oxnas.c
-@@ -0,0 +1,202 @@
-+/*
-+ * Copyright (C) 2010 Broadcom
-+ * Copyright (C) 2012 Stephen Warren
-+ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#define SAMA5D2_PMC_VERSION	0x20540
++
+ static void __iomem *pmc;
+ 
+ /*
+@@ -52,6 +57,7 @@ extern void at91_pinctrl_gpio_resume(void);
+ static struct {
+ 	unsigned long uhp_udp_mask;
+ 	int memctrl;
++	u32 ulp_mode;
+ } at91_pm_data;
+ 
+ void __iomem *at91_ramc_base[2];
+@@ -141,8 +147,11 @@ static void at91_pm_suspend(suspend_state_t state)
+ {
+ 	unsigned int pm_data = at91_pm_data.memctrl;
+ 
+-	pm_data |= (state == PM_SUSPEND_MEM) ?
+-				AT91_PM_MODE(AT91_PM_SLOW_CLOCK) : 0;
++	if (state == PM_SUSPEND_MEM) {
++		pm_data |= AT91_PM_MODE(AT91_PM_SLOW_CLOCK);
++		if (at91_pm_data.ulp_mode == ULP1_MODE)
++			pm_data |= AT91_PM_ULP(AT91_PM_ULP1_MODE);
++	}
+ 
+ 	flush_cache_all();
+ 	outer_disable();
+@@ -497,4 +506,7 @@ void __init sama5_pm_init(void)
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+ 	at91_pm_init(NULL);
++
++	if (readl(pmc + AT91_PMC_VERSION) >= SAMA5D2_PMC_VERSION)
++		at91_pm_data.ulp_mode = ULP1_MODE;
+ }
+diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
+index 3fcf881..2e76745 100644
+--- a/arch/arm/mach-at91/pm.h
++++ b/arch/arm/mach-at91/pm.h
+@@ -39,4 +39,11 @@ extern void __iomem *at91_ramc_base[];
+ 
+ #define	AT91_PM_SLOW_CLOCK	0x01
+ 
++#define AT91_PM_ULP_OFFSET	5
++#define AT91_PM_ULP_MASK	0x03
++#define AT91_PM_ULP(x)		(((x) & AT91_PM_ULP_MASK) << AT91_PM_ULP_OFFSET)
++
++#define AT91_PM_ULP0_MODE	0x00
++#define AT91_PM_ULP1_MODE	0x01
++
+ #endif
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index 5fcffdc..f2a5c4b 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -41,6 +41,15 @@ tmp2	.req	r5
+ 	.endm
+ 
+ /*
++ * Wait for main oscillator selection is done
 + */
++	.macro wait_moscsels
++1:	ldr	tmp1, [pmc, #AT91_PMC_SR]
++	tst	tmp1, #AT91_PMC_MOSCSELS
++	beq	1b
++	.endm
 +
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/stringify.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
++/*
+  * Wait until PLLA has locked.
+  */
+ 	.macro wait_pllalock
+@@ -101,6 +110,10 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	and	r0, r0, #AT91_PM_MODE_MASK
+ 	str	r0, .pm_mode
+ 
++	lsr	r0, r3, #AT91_PM_ULP_OFFSET
++	and	r0, r0, #AT91_PM_ULP_MASK
++	str	r0, .ulp_mode
 +
-+/* Standard regmap gate clocks */
-+struct clk_oxnas {
-+	struct clk_hw hw;
-+	signed char bit;
-+	struct regmap *regmap;
-+};
+ 	/* Active the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_ACTIVE
+ 	bl	at91_sramc_self_refresh
+@@ -131,6 +144,13 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+ 
++	ldr	r0, .ulp_mode
++	tst	r0, #AT91_PM_ULP1_MODE
++	beq	ulp0_mode
 +
-+/* Regmap offsets */
-+#define CLK_STAT_REGOFFSET	0x24
-+#define CLK_SET_REGOFFSET	0x2c
-+#define CLK_CLR_REGOFFSET	0x30
++	bl	at91_pm_ulp1_mode
++	b	ulp_exit
 +
-+static inline struct clk_oxnas *to_clk_oxnas(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct clk_oxnas, hw);
-+}
+ ulp0_mode:
+ 	bl	at91_pm_ulp0_mode
+ 	b	ulp_exit
+@@ -326,6 +346,81 @@ ENTRY(at91_pm_ulp0_mode)
+ 	mov	pc, lr
+ ENDPROC(at91_pm_ulp0_mode)
+ 
++/*
++ * void at91_pm_ulp1_mode(void)
++ */
++ENTRY(at91_pm_ulp1_mode)
++	ldr	pmc, .pmc_base
 +
-+static int oxnas_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
-+	int ret;
-+	unsigned int val;
++	/* Switch the main clock source to 12-MHz RC oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCSEL
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+	ret = regmap_read(std->regmap, CLK_STAT_REGOFFSET, &val);
-+	if (ret < 0)
-+		return ret;
++	wait_moscsels
 +
-+	return val & BIT(std->bit);
-+}
++	/* Disable the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+static int oxnas_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
++	/* Switch the master clock source to main clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
 +
-+	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
++	wait_mckrdy
 +
-+	return 0;
-+}
++	/* Enter the ULP1 mode by set WAITMODE bit in CKGR_MOR */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_WAITMODE
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+static void oxnas_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
++	wait_mckrdy
 +
-+	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
-+}
++	/* Enable the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+static const struct clk_ops oxnas_clk_ops = {
-+	.enable = oxnas_clk_enable,
-+	.disable = oxnas_clk_disable,
-+	.is_enabled = oxnas_clk_is_enabled,
-+};
++	wait_moscrdy
 +
-+static const char *const oxnas_clk_parents[] = {
-+	"oscillator",
-+};
++	/* Switch the master clock source to slow clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
 +
-+static const char *const eth_parents[] = {
-+	"gmacclk",
-+};
++	wait_mckrdy
 +
-+#define DECLARE_STD_CLKP(__clk, __parent)			\
-+static const struct clk_init_data clk_##__clk##_init = {	\
-+	.name = __stringify(__clk),				\
-+	.ops = &oxnas_clk_ops,					\
-+	.parent_names = __parent,				\
-+	.num_parents = ARRAY_SIZE(__parent),			\
-+}
++	/* Switch main clock source to crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCSEL
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+#define DECLARE_STD_CLK(__clk) DECLARE_STD_CLKP(__clk, oxnas_clk_parents)
++	wait_moscsels
 +
-+/* Clk init data declaration */
-+DECLARE_STD_CLK(leon);
-+DECLARE_STD_CLK(dma_sgdma);
-+DECLARE_STD_CLK(cipher);
-+DECLARE_STD_CLK(sata);
-+DECLARE_STD_CLK(audio);
-+DECLARE_STD_CLK(usbmph);
-+DECLARE_STD_CLKP(etha, eth_parents);
-+DECLARE_STD_CLK(pciea);
-+DECLARE_STD_CLK(nand);
++	/* Switch the master clock source to main clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
 +
-+/* Bit - Name association */
-+static const struct clk_init_data *clk_oxnas_init[] = {
-+	[0] = &clk_leon_init,
-+	[1] = &clk_dma_sgdma_init,
-+	[2] = &clk_cipher_init,
-+	[3] = NULL,		/* Do not touch to DDR clock */
-+	[4] = &clk_sata_init,
-+	[5] = &clk_audio_init,
-+	[6] = &clk_usbmph_init,
-+	[7] = &clk_etha_init,
-+	[8] = &clk_pciea_init,
-+	[9] = &clk_nand_init,
-+};
++	wait_mckrdy
 +
-+static int oxnas_stdclk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *regmap;
-+	struct clk_oxnas *clk_oxnas;
-+	struct clk_onecell_data *onecell_data;
-+	struct clk **clks;
-+	unsigned int clks_count = 0;
-+	int i;
++	mov	pc, lr
++ENDPROC(at91_pm_ulp1_mode)
 +
-+	clk_oxnas = devm_kzalloc(&pdev->dev,
-+				 sizeof(*clk_oxnas)*ARRAY_SIZE(clk_oxnas_init),
-+				 GFP_KERNEL);
-+	if (!clk_oxnas)
-+		return -ENOMEM;
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
+@@ -336,6 +431,8 @@ ENDPROC(at91_pm_ulp0_mode)
+ 	.word 0
+ .pm_mode:
+ 	.word 0
++.ulp_mode:
++	.word 0
+ .saved_mckr:
+ 	.word 0
+ .saved_pllar:
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 17f413b..4afd891 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -47,8 +47,10 @@
+ #define	AT91_CKGR_MOR		0x20			/* Main Oscillator Register [not on SAM9RL] */
+ #define		AT91_PMC_MOSCEN		(1    <<  0)		/* Main Oscillator Enable */
+ #define		AT91_PMC_OSCBYPASS	(1    <<  1)		/* Oscillator Bypass */
++#define		AT91_PMC_WAITMODE	(1    <<  2)		/* Wait Mode Command */
+ #define		AT91_PMC_MOSCRCEN	(1    <<  3)		/* Main On-Chip RC Oscillator Enable [some SAM9] */
+ #define		AT91_PMC_OSCOUNT	(0xff <<  8)		/* Main Oscillator Start-up Time */
++#define		AT91_PMC_KEY_MASK	(0xff << 16)
+ #define		AT91_PMC_KEY		(0x37 << 16)		/* MOR Writing Key */
+ #define		AT91_PMC_MOSCSEL	(1    << 24)		/* Main Oscillator Selection [some SAM9] */
+ #define		AT91_PMC_CFDEN		(1    << 25)		/* Clock Failure Detector Enable [some SAM9] */
+@@ -166,6 +168,8 @@
+ #define		AT91_PMC_WPVS		(0x1  <<  0)		/* Write Protect Violation Status */
+ #define		AT91_PMC_WPVSRC		(0xffff  <<  8)		/* Write Protect Violation Source */
+ 
++#define AT91_PMC_VERSION	0xfc
 +
-+	clks = devm_kzalloc(&pdev->dev,
-+			    sizeof(*clks)*ARRAY_SIZE(clk_oxnas_init),
-+			    GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	onecell_data = devm_kzalloc(&pdev->dev, sizeof(*onecell_data),
-+				     GFP_KERNEL);
-+	if (!onecell_data)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (!regmap) {
-+		dev_err(&pdev->dev, "failed to have parent regmap\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
-+		struct clk_oxnas *_clk;
-+
-+		if (!clk_oxnas_init[i])
-+			continue;
-+
-+		_clk = &clk_oxnas[i];
-+		_clk->bit = i;
-+		_clk->hw.init = clk_oxnas_init[i];
-+		_clk->regmap = regmap;
-+
-+		clks[clks_count] = devm_clk_register(&pdev->dev, &_clk->hw);
-+		if (WARN_ON(IS_ERR(clks[clks_count])))
-+			return PTR_ERR(clks[clks_count]);
-+
-+		++clks_count;
-+	}
-+
-+	onecell_data->clks = clks;
-+	onecell_data->clk_num = clks_count;
-+
-+	return of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
-+}
-+
-+static int oxnas_stdclk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id oxnas_stdclk_dt_ids[] = {
-+	{ .compatible = "oxsemi,ox810se-stdclk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
-+
-+static struct platform_driver oxnas_stdclk_driver = {
-+	.probe = oxnas_stdclk_probe,
-+	.remove = oxnas_stdclk_remove,
-+	.driver	= {
-+		.name = "oxnas-stdclk",
-+		.of_match_table = of_match_ptr(oxnas_stdclk_dt_ids),
-+	},
-+};
-+
-+module_platform_driver(oxnas_stdclk_driver);
+ #define AT91_PMC_PCER1		0x100			/* Peripheral Clock Enable Register 1 [SAMA5 only]*/
+ #define AT91_PMC_PCDR1		0x104			/* Peripheral Clock Enable Register 1 */
+ #define AT91_PMC_PCSR1		0x108			/* Peripheral Clock Enable Register 1 */
 -- 
-1.9.1
-
+1.7.9.5
