@@ -1,275 +1,499 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Gabor Juhos <juhosg@openwrt.org>,
-	Alban Bedel <albeu@free.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 08/18] MIPS: ath79: update devicetree clock support for AR9132
-Date: Thu, 17 Mar 2016 06:34:15 +0300
-Message-Id: <1458185665-4521-9-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
-References: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:30897 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932346AbcCHCc2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 21:32:28 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v10 2/6] clk: hisilicon: add CRG driver for hi3519 soc
+Date: Tue, 8 Mar 2016 10:20:14 +0800
+Message-ID: <1457403618-18317-3-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
+References: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Current ath79 clock.c code does not read reference clock and
-pll setup from devicetree. E.g. you can set any clock rate value
-in board DTS but it will have no effect on the real clk calculation.
+The CRG(Clock and Reset Generator) block provides clock
+and reset signals for other modules in hi3519 soc.
 
-This patch fixes some AR9132 devicetree clock support defects:
-
-  * clk initialization function ath79_clocks_init_dt_ng()
-    is introduced; it actually gets pll block base register
-    address and reference clock from devicetree;
-  * pll register parsing code is moved to the separate
-    ar724x_clk_init() function; this function
-    can be called from platform code or from devicetree code.
-
-Also mips_hpt_frequency value is set from dt, so the appropriate
-clock parameter is added to the cpu@0 devicetree node.
-
-The same approach can be used for adding AR9331 devicetree support.
-
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Gabor Juhos <juhosg@openwrt.org>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- arch/mips/ath79/clock.c            | 104 ++++++++++++++++++++++++++-----------
- arch/mips/ath79/setup.c            |  36 +++++++++++++
- arch/mips/boot/dts/qca/ar9132.dtsi |   1 +
- 3 files changed, 112 insertions(+), 29 deletions(-)
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ++++++++
+ drivers/clk/hisilicon/Kconfig                      |  15 +++
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 129 +++++++++++++++++++++
+ drivers/clk/hisilicon/reset.c                      | 124 ++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 +++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++++
+ 7 files changed, 388 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
 
-diff --git a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
-index c3a94ea..79fb8b4 100644
---- a/arch/mips/ath79/clock.c
-+++ b/arch/mips/ath79/clock.c
-@@ -18,6 +18,8 @@
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
-+#include <linux/of.h>
+diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+new file mode 100644
+index 0000000..acd1f23
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+@@ -0,0 +1,46 @@
++* Hisilicon Hi3519 Clock and Reset Generator(CRG)
++
++The Hi3519 CRG module provides clock and reset signals to various
++controllers within the SoC.
++
++This binding uses the following bindings:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++    Documentation/devicetree/bindings/reset/reset.txt
++
++Required Properties:
++
++- compatible: should be one of the following.
++  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
++
++- reg: physical base address of the controller and length of memory mapped
++  region.
++
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier and client nodes use this identifier
++to specify the clock which they consume.
++
++All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
++
++- #reset-cells: should be 2.
++
++A reset signal can be controlled by writing a bit register in the CRG module.
++The reset specifier consists of two cells. The first cell represents the
++register offset relative to the base address. The second cell represents the
++bit index in the register.
++
++Example: CRG nodes
++CRG: clock-reset-controller@12010000 {
++	compatible = "hisilicon,hi3519-crg";
++	reg = <0x12010000 0x10000>;
++	#clock-cells = <1>;
++	#reset-cells = <2>;
++};
++
++Example: consumer nodes
++i2c0: i2c@12110000 {
++	compatible = "hisilicon,hi3519-i2c";
++	reg = <0x12110000 0x1000>;
++	clocks = <&CRG HI3519_I2C0_RST>;
++	resets = <&CRG 0xe4 0>;
++};
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index e434854..3f537a0 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -1,3 +1,11 @@
++config COMMON_CLK_HI3519
++	tristate "Hi3519 Clock Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	select RESET_HISI
++	default ARCH_HISI
++	help
++	  Build the clock driver for hi3519.
++
+ config COMMON_CLK_HI6220
+ 	bool "Hi6220 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+@@ -5,6 +13,13 @@ config COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
+ 
++config RESET_HISI
++	bool "HiSilicon Reset Controller Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	select RESET_CONTROLLER
++	help
++	  Build reset controller driver for HiSilicon device chipsets.
++
+ config STUB_CLK_HI6220
+ 	bool "Hi6220 Stub Clock Driver"
+ 	depends on COMMON_CLK_HI6220 && MAILBOX
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 74dba31..e169ec7 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -7,5 +7,7 @@ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
++obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
++obj-$(CONFIG_RESET_HISI)	+= reset.o
+ obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+new file mode 100644
+index 0000000..ee9df82
+--- /dev/null
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -0,0 +1,129 @@
++/*
++ * Hi3519 Clock Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include "clk.h"
++#include "reset.h"
++
++#define HI3519_INNER_CLK_OFFSET	64
++#define HI3519_FIXED_24M	65
++#define HI3519_FIXED_50M	66
++#define HI3519_FIXED_75M	67
++#define HI3519_FIXED_125M	68
++#define HI3519_FIXED_150M	69
++#define HI3519_FIXED_200M	70
++#define HI3519_FIXED_250M	71
++#define HI3519_FIXED_300M	72
++#define HI3519_FIXED_400M	73
++#define HI3519_FMC_MUX		74
++
++#define HI3519_NR_CLKS		128
++
++static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
++	{ HI3519_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
++	{ HI3519_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
++	{ HI3519_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
++	{ HI3519_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
++	{ HI3519_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
++	{ HI3519_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
++	{ HI3519_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
++	{ HI3519_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
++	{ HI3519_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
++};
++
++static const char *const fmc_mux_p[] = {
++		"24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m", };
++static u32 fmc_mux_table[] = {0, 1, 2, 3, 4, 5, 6, 7};
++
++static const struct hisi_mux_clock hi3519_mux_clks[] = {
++	{ HI3519_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
++};
++
++static const struct hisi_gate_clock hi3519_gate_clks[] = {
++	{ HI3519_FMC_CLK, "clk_fmc", "fmc_mux",
++		CLK_SET_RATE_PARENT, 0xc0, 1, 0, },
++	{ HI3519_UART0_CLK, "clk_uart0", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 20, 0, },
++	{ HI3519_UART1_CLK, "clk_uart1", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 21, 0, },
++	{ HI3519_UART2_CLK, "clk_uart2", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 22, 0, },
++	{ HI3519_UART3_CLK, "clk_uart3", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 23, 0, },
++	{ HI3519_UART4_CLK, "clk_uart4", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 24, 0, },
++	{ HI3519_SPI0_CLK, "clk_spi0", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 16, 0, },
++	{ HI3519_SPI1_CLK, "clk_spi1", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 17, 0, },
++	{ HI3519_SPI2_CLK, "clk_spi2", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
++};
++
++static int hi3519_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct hisi_clock_data *clk_data;
++
++	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
++	if (!clk_data)
++		return -ENODEV;
++
++	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
++				     ARRAY_SIZE(hi3519_fixed_rate_clks),
++				     clk_data);
++	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
++					clk_data);
++	hisi_clk_register_gate(hi3519_gate_clks,
++			ARRAY_SIZE(hi3519_gate_clks), clk_data);
++
++	return hisi_reset_init(np);
++}
++
++static const struct of_device_id hi3519_clk_match_table[] = {
++	{ .compatible = "hisilicon,hi3519-crg" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
++
++static struct platform_driver hi3519_clk_driver = {
++	.probe          = hi3519_clk_probe,
++	.driver         = {
++		.name   = "hi3519-clk",
++		.of_match_table = hi3519_clk_match_table,
++	},
++};
++
++static int __init hi3519_clk_init(void)
++{
++	return platform_driver_register(&hi3519_clk_driver);
++}
++core_initcall(hi3519_clk_init);
++
++static void __exit hi3519_clk_exit(void)
++{
++	platform_driver_unregister(&hi3519_clk_driver);
++}
++module_exit(hi3519_clk_exit);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+new file mode 100644
+index 0000000..8035366
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.c
+@@ -0,0 +1,124 @@
++/*
++ * Hisilicon Reset Controller Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/io.h>
 +#include <linux/of_address.h>
- #include <dt-bindings/clock/ath79-clk.h>
- 
- #include <asm/div64.h>
-@@ -25,6 +27,7 @@
- #include <asm/mach-ath79/ath79.h>
- #include <asm/mach-ath79/ar71xx_regs.h>
- #include "common.h"
-+#include "machtypes.h"
- 
- #define AR71XX_BASE_FREQ	40000000
- #define AR724X_BASE_FREQ	40000000
-@@ -87,37 +90,48 @@ static void __init ar71xx_clocks_init(void)
- 	clk_add_alias("uart", NULL, "ahb", NULL);
- }
- 
-+static struct clk * __init ath79_reg_ffclk(const char *name,
-+		const char *parent_name, unsigned int mult, unsigned int div)
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define	HISI_RESET_BIT_MASK	0x1f
++#define	HISI_RESET_OFFSET_SHIFT	8
++#define	HISI_RESET_OFFSET_MASK	0xffff00
++
++struct hisi_reset_controller {
++	spinlock_t	lock;
++	void __iomem	*membase;
++	struct reset_controller_dev	rcdev;
++};
++
++
++#define to_hisi_reset_controller(rcdev)  \
++	container_of(rcdev, struct hisi_reset_controller, rcdev)
++
++static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
++			const struct of_phandle_args *reset_spec)
 +{
-+	struct clk *clk;
++	u32 offset;
++	u8 bit;
 +
-+	clk = clk_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-+	if (!clk)
-+		panic("failed to allocate %s clock structure", name);
++	if (WARN_ON(reset_spec->args_count != rcdev->of_reset_n_cells))
++		return -EINVAL;
 +
-+	return clk;
++	offset = (reset_spec->args[0] << HISI_RESET_OFFSET_SHIFT)
++		& HISI_RESET_OFFSET_MASK;
++	bit = reset_spec->args[1] & HISI_RESET_BIT_MASK;
++	return (offset | bit);
 +}
 +
-+static void __init ar724x_clk_init(struct clk *ref_clk, void __iomem *pll_base)
++static int hisi_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
 +{
-+	u32 pll;
-+	u32 mult, div, ddr_div, ahb_div;
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
 +
-+	pll = __raw_readl(pll_base + AR724X_PLL_REG_CPU_CONFIG);
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
 +
-+	mult = ((pll >> AR724X_PLL_FB_SHIFT) & AR724X_PLL_FB_MASK);
-+	div = ((pll >> AR724X_PLL_REF_DIV_SHIFT) & AR724X_PLL_REF_DIV_MASK) * 2;
++	spin_lock_irqsave(&rstc->lock, flags);
 +
-+	ddr_div = ((pll >> AR724X_DDR_DIV_SHIFT) & AR724X_DDR_DIV_MASK) + 1;
-+	ahb_div = (((pll >> AR724X_AHB_DIV_SHIFT) & AR724X_AHB_DIV_MASK) + 1) * 2;
++	reg = readl(rstc->membase + offset);
++	writel(reg | BIT(bit), rstc->membase + offset);
 +
-+	clks[ATH79_CLK_CPU] = ath79_reg_ffclk("cpu", "ref", mult, div);
-+	clks[ATH79_CLK_DDR] = ath79_reg_ffclk("ddr", "ref", mult, div * ddr_div);
-+	clks[ATH79_CLK_AHB] = ath79_reg_ffclk("ahb", "ref", mult, div * ahb_div);
++	spin_unlock_irqrestore(&rstc->lock, flags);
++
++	return 0;
 +}
 +
- static void __init ar724x_clocks_init(void)
- {
--	unsigned long ref_rate;
--	unsigned long cpu_rate;
--	unsigned long ddr_rate;
--	unsigned long ahb_rate;
--	u32 pll;
--	u32 freq;
--	u32 div;
-+	struct clk *ref_clk;
- 
--	ref_rate = AR724X_BASE_FREQ;
--	pll = ath79_pll_rr(AR724X_PLL_REG_CPU_CONFIG);
-+	ref_clk = ath79_add_sys_clkdev("ref", AR724X_BASE_FREQ);
- 
--	div = ((pll >> AR724X_PLL_FB_SHIFT) & AR724X_PLL_FB_MASK);
--	freq = div * ref_rate;
-+	ar724x_clk_init(ref_clk, ath79_pll_base);
- 
--	div = ((pll >> AR724X_PLL_REF_DIV_SHIFT) & AR724X_PLL_REF_DIV_MASK) * 2;
--	freq /= div;
--
--	cpu_rate = freq;
--
--	div = ((pll >> AR724X_DDR_DIV_SHIFT) & AR724X_DDR_DIV_MASK) + 1;
--	ddr_rate = freq / div;
--
--	div = (((pll >> AR724X_AHB_DIV_SHIFT) & AR724X_AHB_DIV_MASK) + 1) * 2;
--	ahb_rate = cpu_rate / div;
--
--	ath79_add_sys_clkdev("ref", ref_rate);
--	clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
--	clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
--	clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
-+	/* just make happy plat_time_init() from arch/mips/ath79/setup.c */
-+	clk_register_clkdev(clks[ATH79_CLK_CPU], "cpu", NULL);
-+	clk_register_clkdev(clks[ATH79_CLK_DDR], "ddr", NULL);
-+	clk_register_clkdev(clks[ATH79_CLK_AHB], "ahb", NULL);
- 
- 	clk_add_alias("wdt", NULL, "ahb", NULL);
- 	clk_add_alias("uart", NULL, "ahb", NULL);
-@@ -420,8 +434,6 @@ void __init ath79_clocks_init(void)
- 		qca955x_clocks_init();
- 	else
- 		BUG();
--
--	of_clk_init(NULL);
- }
- 
- unsigned long __init
-@@ -448,8 +460,42 @@ static void __init ath79_clocks_init_dt(struct device_node *np)
- 
- CLK_OF_DECLARE(ar7100, "qca,ar7100-pll", ath79_clocks_init_dt);
- CLK_OF_DECLARE(ar7240, "qca,ar7240-pll", ath79_clocks_init_dt);
--CLK_OF_DECLARE(ar9130, "qca,ar9130-pll", ath79_clocks_init_dt);
- CLK_OF_DECLARE(ar9330, "qca,ar9330-pll", ath79_clocks_init_dt);
- CLK_OF_DECLARE(ar9340, "qca,ar9340-pll", ath79_clocks_init_dt);
- CLK_OF_DECLARE(ar9550, "qca,qca9550-pll", ath79_clocks_init_dt);
-+
-+static void __init ath79_clocks_init_dt_ng(struct device_node *np)
++static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
 +{
-+	struct clk *ref_clk;
-+	void __iomem *pll_base;
-+	const char *dnfn = of_node_full_name(np);
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
 +
-+	ref_clk = of_clk_get(np, 0);
-+	if (IS_ERR(ref_clk)) {
-+		pr_err("%s: of_clk_get failed\n", dnfn);
-+		goto err;
-+	}
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
 +
-+	pll_base = of_iomap(np, 0);
-+	if (!pll_base) {
-+		pr_err("%s: can't map pll registers\n", dnfn);
-+		goto err_clk;
-+	}
++	spin_lock_irqsave(&rstc->lock, flags);
 +
-+	ar724x_clk_init(ref_clk, pll_base);
++	reg = readl(rstc->membase + offset);
++	writel(reg & ~BIT(bit), rstc->membase + offset);
 +
-+	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data)) {
-+		pr_err("%s: could not register clk provider\n", dnfn);
-+		goto err_clk;
-+	}
++	spin_unlock_irqrestore(&rstc->lock, flags);
 +
-+	return;
-+
-+err_clk:
-+	clk_put(ref_clk);
-+
-+err:
-+	return;
-+}
-+CLK_OF_DECLARE(ar9130_clk, "qca,ar9130-pll", ath79_clocks_init_dt_ng);
- #endif
-diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
-index 99ab4bb..61e3a59 100644
---- a/arch/mips/ath79/setup.c
-+++ b/arch/mips/ath79/setup.c
-@@ -17,6 +17,7 @@
- #include <linux/bootmem.h>
- #include <linux/err.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/of_platform.h>
- #include <linux/of_fdt.h>
- 
-@@ -221,6 +222,36 @@ void __init plat_mem_setup(void)
- 	pm_power_off = ath79_halt;
- }
- 
-+static void __init ath79_of_plat_time_init(void)
-+{
-+	struct device_node *np;
-+	struct clk *clk;
-+	unsigned long cpu_clk_rate;
-+
-+	of_clk_init(NULL);
-+
-+	np = of_get_cpu_node(0, NULL);
-+	if (!np) {
-+		pr_err("Failed to get CPU node\n");
-+		return;
-+	}
-+
-+	clk = of_clk_get(np, 0);
-+	if (IS_ERR(clk)) {
-+		pr_err("Failed to get CPU clock: %ld\n", PTR_ERR(clk));
-+		return;
-+	}
-+
-+	cpu_clk_rate = clk_get_rate(clk);
-+
-+	pr_info("CPU clock: %lu.%03lu MHz\n",
-+		cpu_clk_rate / 1000000, (cpu_clk_rate / 1000) % 1000);
-+
-+	mips_hpt_frequency = cpu_clk_rate / 2;
-+
-+	clk_put(clk);
++	return 0;
 +}
 +
- void __init plat_time_init(void)
- {
- 	unsigned long cpu_clk_rate;
-@@ -228,6 +259,11 @@ void __init plat_time_init(void)
- 	unsigned long ddr_clk_rate;
- 	unsigned long ref_clk_rate;
- 
-+	if (IS_ENABLED(CONFIG_OF) && mips_machtype == ATH79_MACH_GENERIC_OF) {
-+		ath79_of_plat_time_init();
-+		return;
-+	}
++static struct reset_control_ops hisi_reset_ops = {
++	.assert		= hisi_reset_assert,
++	.deassert	= hisi_reset_deassert,
++};
 +
- 	ath79_clocks_init();
- 
- 	cpu_clk_rate = ath79_get_sys_clk_rate("cpu");
-diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
-index 2f9a3ee..302f0a8 100644
---- a/arch/mips/boot/dts/qca/ar9132.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9132.dtsi
-@@ -13,6 +13,7 @@
- 		cpu@0 {
- 			device_type = "cpu";
- 			compatible = "mips,mips24Kc";
-+			clocks = <&pll ATH79_CLK_CPU>;
- 			reg = <0>;
- 		};
- 	};
++int hisi_reset_init(struct device_node *np)
++{
++	struct hisi_reset_controller *rstc;
++
++	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
++	if (!rstc)
++		return -ENOMEM;
++
++	rstc->membase = of_iomap(np, 0);
++	if (!rstc->membase)
++		return -EINVAL;
++
++	spin_lock_init(&rstc->lock);
++
++	rstc->rcdev.owner = THIS_MODULE;
++	rstc->rcdev.ops = &hisi_reset_ops;
++	rstc->rcdev.of_node = np;
++	rstc->rcdev.of_reset_n_cells = 2;
++	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
++
++	return reset_controller_register(&rstc->rcdev);
++}
++EXPORT_SYMBOL_GPL(hisi_reset_init);
+diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+new file mode 100644
+index 0000000..ffad4d7
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.h
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef	__HISI_RESET_H
++#define	__HISI_RESET_H
++
++struct device_node;
++
++#ifdef CONFIG_RESET_CONTROLLER
++int hisi_reset_init(struct device_node *np);
++#else
++static inline int hisi_reset_init(struct device_node *np)
++{
++	return 0;
++}
++#endif
++
++#endif	/* __HISI_RESET_H */
+diff --git a/include/dt-bindings/clock/hi3519-clock.h b/include/dt-bindings/clock/hi3519-clock.h
+new file mode 100644
+index 0000000..14f4d21
+--- /dev/null
++++ b/include/dt-bindings/clock/hi3519-clock.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __DTS_HI3519_CLOCK_H
++#define __DTS_HI3519_CLOCK_H
++
++#define HI3519_FMC_CLK			1
++#define HI3519_SPI0_CLK			2
++#define HI3519_SPI1_CLK			3
++#define HI3519_SPI2_CLK			4
++#define HI3519_UART0_CLK		5
++#define HI3519_UART1_CLK		6
++#define HI3519_UART2_CLK		7
++#define HI3519_UART3_CLK		8
++#define HI3519_UART4_CLK		9
++#define HI3519_PWM_CLK			10
++#define HI3519_DMA_CLK			11
++#define HI3519_IR_CLK			12
++#define HI3519_ETH_PHY_CLK		13
++#define HI3519_ETH_MAC_CLK		14
++#define HI3519_ETH_MACIF_CLK		15
++#define HI3519_USB2_BUS_CLK		16
++#define HI3519_USB2_PORT_CLK		17
++#define HI3519_USB3_CLK			18
++
++#endif	/* __DTS_HI3519_CLOCK_H */
 -- 
-2.7.0
+1.9.1
+
