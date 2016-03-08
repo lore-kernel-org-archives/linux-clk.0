@@ -1,57 +1,159 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v4 1/5] clk: unconditionally recurse into clk/mvebu/
-Date: Sun, 27 Mar 2016 11:26:13 +0200
-Message-Id: <1459070777-18049-2-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v10 1/6] clk: hisilicon: export some hisilicon APIs to modules
+Date: Tue, 8 Mar 2016 10:20:13 +0800
+Message-ID: <1457403618-18317-2-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
+References: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The drivers/clk/mvebu directory is only being built when
-CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
-platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
-we need to recurse into this directory regardless of the value of
-CONFIG_PLAT_ORION.
+Change some arguments to constant type.
+Export some hisilicon APIs to modules.
 
-Since all files in drivers/clk/mvebu/ are already conditionally
-compiled depending on various Kconfig options, we can recurse
-unconditionally into drivers/clk/mvebu without any other change.
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/hisilicon/clk.c | 23 +++++++++++++++--------
+ drivers/clk/hisilicon/clk.h | 14 +++++++-------
+ 2 files changed, 22 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 46869d69..f9ad66e 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -61,7 +61,7 @@ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
--obj-$(CONFIG_PLAT_ORION)		+= mvebu/
-+obj-y					+= mvebu/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 9f8e766..9b15adb 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -37,7 +37,7 @@
+ 
+ static DEFINE_SPINLOCK(hisi_clk_lock);
+ 
+-struct hisi_clock_data __init *hisi_clk_init(struct device_node *np,
++struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 					     int nr_clks)
+ {
+ 	struct hisi_clock_data *clk_data;
+@@ -71,8 +71,9 @@ err_data:
+ err:
+ 	return NULL;
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_init);
+ 
+-void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *clks,
++void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
+ 					 int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -91,8 +92,9 @@ void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_rate);
+ 
+-void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *clks,
++void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
+ 					   int nums,
+ 					   struct hisi_clock_data *data)
+ {
+@@ -112,8 +114,9 @@ void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_factor);
+ 
+-void __init hisi_clk_register_mux(struct hisi_mux_clock *clks,
++void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+ 				  int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -141,8 +144,9 @@ void __init hisi_clk_register_mux(struct hisi_mux_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
+ 
+-void __init hisi_clk_register_divider(struct hisi_divider_clock *clks,
++void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+ 				      int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -170,8 +174,9 @@ void __init hisi_clk_register_divider(struct hisi_divider_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_register_divider);
+ 
+-void __init hisi_clk_register_gate(struct hisi_gate_clock *clks,
++void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
+ 				       int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -198,8 +203,9 @@ void __init hisi_clk_register_gate(struct hisi_gate_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_register_gate);
+ 
+-void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *clks,
++void hisi_clk_register_gate_sep(const struct hisi_gate_clock *clks,
+ 				       int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -226,8 +232,9 @@ void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hisi_clk_register_gate_sep);
+ 
+-void __init hi6220_clk_register_divider(struct hi6220_divider_clock *clks,
++void __init hi6220_clk_register_divider(const struct hi6220_divider_clock *clks,
+ 					int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index b56fbc1..20d64af 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -111,18 +111,18 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+ 	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
+ 
+ struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+-void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
++void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
++void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_mux(struct hisi_mux_clock *, int,
++void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
+ 				struct hisi_clock_data *);
+-void hisi_clk_register_divider(struct hisi_divider_clock *,
++void hisi_clk_register_divider(const struct hisi_divider_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_gate(struct hisi_gate_clock *,
++void hisi_clk_register_gate(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
++void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hi6220_clk_register_divider(struct hi6220_divider_clock *,
++void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
+ 				int, struct hisi_clock_data *);
+ #endif	/* __HISI_CLK_H */
 -- 
-2.6.4
+1.9.1
