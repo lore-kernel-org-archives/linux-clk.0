@@ -1,64 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.139]:40342 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751279AbcCICoR (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 21:44:17 -0500
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
-	jay.xu@rock-chips.com, elaine.zhang@rock-chips.com,
-	dianders@chromium.org, Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH v3 6/7] clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
-Date: Wed,  9 Mar 2016 10:43:31 +0800
-Message-Id: <1457491411-31114-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
-References: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <horms@verge.net.au>
+Date: Tue, 8 Mar 2016 09:27:15 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: Rename header file renesas.h
+Message-ID: <20160308002715.GE5024@verge.net.au>
+References: <1457315065-28705-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdX_GhW+NJNjN9r3KgUAnrp-v+5hFq9H0+hdPxRRFTP8kw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdX_GhW+NJNjN9r3KgUAnrp-v+5hFq9H0+hdPxRRFTP8kw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Because there are some frac clock mux nodes don't need gate node on
-the RK3399.
+On Mon, Mar 07, 2016 at 02:51:19PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Mon, Mar 7, 2016 at 2:44 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> > --- /dev/null
+> > +++ b/include/linux/clk/renesas.h
+> > @@ -0,0 +1,35 @@
+> > +/*
+> > + * Copyright 2013 Ideas On Board SPRL
+> > + * Copyright 2013, 2014 Horms Solutions Ltd.
+> > + *
+> > + * Contact: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > + * Contact: Simon Horman <horms@verge.net.au>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License as published by
+> > + * the Free Software Foundation; either version 2 of the License, or
+> > + * (at your option) any later version.
+> > + */
+> > +
+> > +#ifndef __LINUX_CLK_SHMOBILE_H_
+> > +#define __LINUX_CLK_SHMOBILE_H_
+> 
+> Ideally these should be changed to __LINUX_CLK_RENESAS_H_
+> 
+> Sorry for not noticing before.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
-
-Changes in v3: None
-Changes in v2: None
-
- drivers/clk/rockchip/clk.h |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 7526f9a..75dc30e 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -451,6 +451,22 @@ struct rockchip_clk_branch {
- 		.child		= ch,				\
- 	}
- 
-+#define COMPOSITE_FRACMUX_NOGATE(_id, cname, pname, f, mo, df, ch) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_fraction_divider,	\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.div_shift	= 16,				\
-+		.div_width	= 16,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= -1,				\
-+		.child		= ch,				\
-+	}
-+
- #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
- 	{							\
- 		.id		= _id,				\
--- 
-1.7.9.5
-
-
+Likewise. I'll re-spin.
