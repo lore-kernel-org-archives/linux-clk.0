@@ -1,41 +1,292 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
-Subject: [PATCH 24/41] clk: zynq: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:09 -0800
-Message-Id: <1456858826-28541-25-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2] clk: renesas: Rename header file renesas.h
+Date: Tue,  8 Mar 2016 09:42:07 +0900
+Message-Id: <1457397727-11060-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
 
-Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Along with the above mentioned Kconfig changes it seems appropriate
+to also rename files.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
- drivers/clk/zynq/clkc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+* Based on clk-next
+* As the co-maintainer of Renesas ARM-based SoCs I am happy
+  with the arch/arm/mach-shmobile/ changes going through the clk tree
+  as I believe the likelyhood of conflicts is low. And yes, I realise
+  that directory could do with a rename too.
 
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index 38a65c3e62fc..88a2cab37f62 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -265,8 +265,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 		pr_warn("ps_clk frequency not specified, using 33 MHz.\n");
- 		tmp = 33333333;
- 	}
--	ps_clk = clk_register_fixed_rate(NULL, "ps_clk", NULL, CLK_IS_ROOT,
--			tmp);
-+	ps_clk = clk_register_fixed_rate(NULL, "ps_clk", NULL, 0, tmp);
+v2
+* s/__LINUX_CLK_SHMOBILE_H_/__LINUX_CLK_RENESAS_H_/
+---
+ arch/arm/mach-shmobile/pm-rmobile.c      |  2 +-
+ arch/arm/mach-shmobile/setup-r8a7778.c   |  2 +-
+ arch/arm/mach-shmobile/setup-r8a7779.c   |  2 +-
+ arch/arm/mach-shmobile/setup-rcar-gen2.c |  2 +-
+ drivers/clk/renesas/clk-mstp.c           |  2 +-
+ drivers/clk/renesas/clk-r8a73a4.c        |  2 +-
+ drivers/clk/renesas/clk-r8a7740.c        |  2 +-
+ drivers/clk/renesas/clk-r8a7778.c        |  2 +-
+ drivers/clk/renesas/clk-r8a7779.c        |  2 +-
+ drivers/clk/renesas/clk-rcar-gen2.c      |  2 +-
+ drivers/clk/renesas/clk-rz.c             |  2 +-
+ drivers/clk/renesas/clk-sh73a0.c         |  2 +-
+ include/linux/clk/renesas.h              | 35 ++++++++++++++++++++++++++++++++
+ include/linux/clk/shmobile.h             | 35 --------------------------------
+ 14 files changed, 47 insertions(+), 47 deletions(-)
+ create mode 100644 include/linux/clk/renesas.h
+ delete mode 100644 include/linux/clk/shmobile.h
+
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index 46d0a1ddce75..c0b05e9e6442 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -12,7 +12,7 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/console.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
+index fab95d1271bc..cf236db686a9 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7778.c
++++ b/arch/arm/mach-shmobile/setup-r8a7778.c
+@@ -15,7 +15,7 @@
+  * GNU General Public License for more details.
+  */
  
- 	/* PLLs */
- 	clk = clk_register_zynq_pll("armpll_int", "ps_clk", SLCR_ARMPLL_CTRL,
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/io.h>
+ #include <linux/irqchip.h>
+ 
+diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
+index 1e572a903f8e..0007ff51d180 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7779.c
++++ b/arch/arm/mach-shmobile/setup-r8a7779.c
+@@ -14,7 +14,7 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/clocksource.h>
+ #include <linux/init.h>
+ #include <linux/irq.h>
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 9eccde3c7b13..949b402c0f19 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -15,7 +15,7 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/clocksource.h>
+ #include <linux/device.h>
+ #include <linux/dma-contiguous.h>
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 3b09716ebda2..3d44e183aedd 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -14,7 +14,7 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+diff --git a/drivers/clk/renesas/clk-r8a73a4.c b/drivers/clk/renesas/clk-r8a73a4.c
+index 9326204bed9d..28d204bb659e 100644
+--- a/drivers/clk/renesas/clk-r8a73a4.c
++++ b/drivers/clk/renesas/clk-r8a73a4.c
+@@ -9,7 +9,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+diff --git a/drivers/clk/renesas/clk-r8a7740.c b/drivers/clk/renesas/clk-r8a7740.c
+index 1e6b1da58065..2f7ce6696b6c 100644
+--- a/drivers/clk/renesas/clk-r8a7740.c
++++ b/drivers/clk/renesas/clk-r8a7740.c
+@@ -9,7 +9,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
+index b1741551fff2..40e3a501a50e 100644
+--- a/drivers/clk/renesas/clk-r8a7778.c
++++ b/drivers/clk/renesas/clk-r8a7778.c
+@@ -9,7 +9,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/clk/renesas/clk-r8a7779.c b/drivers/clk/renesas/clk-r8a7779.c
+index 92275c5f2c60..cf2a37df03b1 100644
+--- a/drivers/clk/renesas/clk-r8a7779.c
++++ b/drivers/clk/renesas/clk-r8a7779.c
+@@ -11,7 +11,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index 841977240305..00e6aba4b9c0 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -11,7 +11,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/math64.h>
+diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+index 9766e3cb595f..f6312c62f16b 100644
+--- a/drivers/clk/renesas/clk-rz.c
++++ b/drivers/clk/renesas/clk-rz.c
+@@ -10,7 +10,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
+index 8966f8bbfd72..eea38f6ea77e 100644
+--- a/drivers/clk/renesas/clk-sh73a0.c
++++ b/drivers/clk/renesas/clk-sh73a0.c
+@@ -9,7 +9,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clk/shmobile.h>
++#include <linux/clk/renesas.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
+new file mode 100644
+index 000000000000..7adfd80fbf55
+--- /dev/null
++++ b/include/linux/clk/renesas.h
+@@ -0,0 +1,35 @@
++/*
++ * Copyright 2013 Ideas On Board SPRL
++ * Copyright 2013, 2014 Horms Solutions Ltd.
++ *
++ * Contact: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ * Contact: Simon Horman <horms@verge.net.au>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __LINUX_CLK_RENESAS_H_
++#define __LINUX_CLK_RENESAS_H_
++
++#include <linux/types.h>
++
++struct device;
++struct device_node;
++struct generic_pm_domain;
++
++void r8a7778_clocks_init(u32 mode);
++void r8a7779_clocks_init(u32 mode);
++void rcar_gen2_clocks_init(u32 mode);
++
++#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
++void cpg_mstp_add_clk_domain(struct device_node *np);
++int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev);
++void cpg_mstp_detach_dev(struct generic_pm_domain *domain, struct device *dev);
++#else
++static inline void cpg_mstp_add_clk_domain(struct device_node *np) {}
++#endif
++
++#endif
+diff --git a/include/linux/clk/shmobile.h b/include/linux/clk/shmobile.h
+deleted file mode 100644
+index cb19cc1865ca..000000000000
+--- a/include/linux/clk/shmobile.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * Copyright 2013 Ideas On Board SPRL
+- * Copyright 2013, 2014 Horms Solutions Ltd.
+- *
+- * Contact: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+- * Contact: Simon Horman <horms@verge.net.au>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef __LINUX_CLK_SHMOBILE_H_
+-#define __LINUX_CLK_SHMOBILE_H_
+-
+-#include <linux/types.h>
+-
+-struct device;
+-struct device_node;
+-struct generic_pm_domain;
+-
+-void r8a7778_clocks_init(u32 mode);
+-void r8a7779_clocks_init(u32 mode);
+-void rcar_gen2_clocks_init(u32 mode);
+-
+-#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+-void cpg_mstp_add_clk_domain(struct device_node *np);
+-int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev);
+-void cpg_mstp_detach_dev(struct generic_pm_domain *domain, struct device *dev);
+-#else
+-static inline void cpg_mstp_add_clk_domain(struct device_node *np) {}
+-#endif
+-
+-#endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
