@@ -1,50 +1,60 @@
-Return-Path: <fcooper@ti.com>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-To: kbuild test robot <lkp@intel.com>
-CC: <kbuild-all@01.org>, <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <bcousson@baylibre.com>, <tony@atomide.com>, <linux@arm.linux.org.uk>,
-        <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] ARM: DTS: da850/am4372/am33xx: Use generic node
- name for ehrpwm
-References: <1458252463-8821-3-git-send-email-fcooper@ti.com>
- <201603180818.rtawXhxL%fengguang.wu@intel.com>
-Message-ID: <56EB531D.7050406@ti.com>
-Date: Thu, 17 Mar 2016 20:00:13 -0500
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-In-Reply-To: <201603180818.rtawXhxL%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Sender: dianders@google.com
+In-Reply-To: <1456827322-8130-1-git-send-email-zhengxing@rock-chips.com>
+References: <1456827275-8035-1-git-send-email-zhengxing@rock-chips.com>
+	<1456827322-8130-1-git-send-email-zhengxing@rock-chips.com>
+Date: Tue, 8 Mar 2016 15:34:44 -0800
+Message-ID: <CAD=FV=VhMY=YO7zVYeP-+LY0gPvQ8yjaAUEGVJrMGLwbGjqVmg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 5/5] clk: rockchip: add clock controller for the RK3399
+From: Doug Anderson <dianders@chromium.org>
+To: Xing Zheng <zhengxing@rock-chips.com>, Xu Jianqun <jay.xu@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Tao Huang <huangtao@rock-chips.com>,
+	elaine.zhang@rock-chips.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Xing Zheng,
+
+On Tue, Mar 1, 2016 at 2:15 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+> +       MMC(SCLK_SDMMC_DRV,     "emmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
+> +       MMC(SCLK_SDMMC_SAMPLE,  "emmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
+
+Can you and Jianqun Xu please coordinate?  Though I don't have a TRM
+for rk3399 and I haven't looked through this whole patch, I know for
+sure there's a problem when I pick the latest patch series from both
+of you it doesn't compile.
+
+I believe this is the latest from each of you in patchwork:
+
+8462411   [v3,1/3] dt-bindings: add bindings for rk3399 clock controller
+8462431   [v3,2/3] clk: rockchip: add dt-binding header for rk3399
+8462441   [v3,3/3] ARM64: dts: rockchip: add core dtsi file for rk3399
+
+8463741   [RESEND,v2,1/5] clk: rockchip: add more mux parameters for
+new pll sources
+8463801   [RESEND,v2,2/5] clk: rockchip: Add support for multiple
+clock providers
+8463771   [RESEND,v2,3/5] clk: rockchip: add new pll-type for rk3399
+and similar socs
+8463781   [RESEND,v2,4/5] clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
+8463831   [RESEND,v2,5/5] clk: rockchip: add clock controller for the RK3399
 
 
-On 03/17/2016 07:27 PM, kbuild test robot wrote:
-> Hi Franklin,
->
-> [auto build test ERROR on pwm/for-next]
-> [also build test ERROR on v4.5 next-20160317]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Franklin-S-Cooper-Jr/clk-ti-am335x-am4372-Add-tbclk-to-pwm-node/20160318-060938
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm for-next
-> config: arm-multi_v7_defconfig (attached as .config)
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm 
->
-> All errors (new ones prefixed by >>):
->
->    ERROR (duplicate_label): Duplicate label 'ehrpwm1' on /ocp/epwmss@48302000/ehrpwm@48302200 and /ocp/epwmss@48302000/pwm@48302200
+Specifically your patch from March 1st refers to SCLK_SDMMC_DRV and
+SCLK_SDMMC_SAMPLE.  Those defines existed in Jianqun Xu's patch back
+on Feb 19th <https://patchwork.kernel.org/patch/8355411/>, but his
+latest patch series from March 1st
+<https://patchwork.kernel.org/patch/8462431/> no longer has those
+#defines.
 
-Ok I see that I missed also updating am335x-shc.dts. I'll
-send a v3
->>> ERROR: Input tree has errors, aborting (use -f to force output)
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Can you two resolve this so I can pick both patch series and see that
+they compile?  ...or let me know where I messed up, of course.
+
+Thanks!
+
+-Doug
