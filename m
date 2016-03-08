@@ -1,55 +1,43 @@
-Return-Path: <manabian@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160302230159.12762.59247@quark.deferred.io>
-References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
-	<1456351460-15483-2-git-send-email-manabian@gmail.com>
-	<20160302230159.12762.59247@quark.deferred.io>
-Date: Thu, 3 Mar 2016 00:27:10 +0100
-Message-ID: <CAGhQ9VzmTrDmKF+_8CRFgioyrXUOR9uOk-KADw2seEa16OP78A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] clk: add lpc18xx creg clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] clk: renesas: div6: use RENESAS for #define
+Date: Tue,  8 Mar 2016 09:48:55 +0900
+Message-Id: <1457398135-12320-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 3 March 2016 at 00:01, Michael Turquette <mturquette@baylibre.com> wrote:
-> Hi Joachim,
->
-> Quoting Joachim Eastwood (2016-02-24 14:04:19)
->> +static struct clk *clk_register_creg_clk(struct clk_creg_data *creg_clk,
->> +                                        const char **parent_name,
->> +                                        struct regmap *syscon)
->> +{
->> +       struct clk_init_data init;
->> +
->> +       init.ops = creg_clk->ops;
->> +       init.name = creg_clk->name;
->> +       init.parent_names = parent_name;
->> +       init.num_parents = 1;
->> +
->> +       creg_clk->reg = syscon;
->> +       creg_clk->hw.init = &init;
->> +
->> +       return clk_register(NULL, &creg_clk->hw);
->
-> This should be devm_clk_register with your struct device *dev passed
-> into it.
+Name the #define guarding compilation of this header
+__RENESAS_CLK_DIV6_H__ rather than __SHMOBILE_CLK_DIV6_H__.
 
-Since clk_register_creg_clk() is used both from early init and probe
-I'll need to change the function a bit.
+This is a follow-up to renaming the directory in which this file lives from
+shmobile to renesas which is in turn part of an ongoing process to migrate
+from ARCH_SHMOBILE to ARCH_RENESAS the motivation for which being that
+RENESAS seems to be a more appropriate name than SHMOBILE for the majority
+of Renesas ARM based SoCs.
 
-I'll pass dev in as a parameter and either do clk_register() or
-devm_clk_register() depending on dev being NULL or not.
-Doesn't look like devm_clk_register() would like to be passed NULL for dev.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/clk/renesas/clk-div6.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-I send out a new version tomorrow.
-
-btw, this driver is a builtin_platform_driver. So is there a point in
-using devm_clk_register?
-
-
-regards,
-Joachim Eastwood
+diff --git a/drivers/clk/renesas/clk-div6.h b/drivers/clk/renesas/clk-div6.h
+index 9a85a95188da..567b31d2bfa5 100644
+--- a/drivers/clk/renesas/clk-div6.h
++++ b/drivers/clk/renesas/clk-div6.h
+@@ -1,5 +1,5 @@
+-#ifndef __SHMOBILE_CLK_DIV6_H__
+-#define __SHMOBILE_CLK_DIV6_H__
++#ifndef __RENESAS_CLK_DIV6_H__
++#define __RENESAS_CLK_DIV6_H__
+ 
+ struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
+ 			      const char **parent_names, void __iomem *reg);
+-- 
+2.1.4
