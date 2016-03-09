@@ -1,60 +1,38 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <jszhang@marvell.com>
+Date: Wed, 9 Mar 2016 15:24:20 +0800
+From: Jisheng Zhang <jszhang@marvell.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>
+Subject: [Query]set clk rate must operate its coordinated clock
+Message-ID: <20160309152420.20de187a@xhacker>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160303192617.GY24999@codeaurora.org>
-References: <1456971486-13761-1-git-send-email-horms+renesas@verge.net.au>
-	<CAMuHMdXfkV05AwaRtLqwA8Ko=BQaQ5y87AYgsU7O-Rd45JiNKA@mail.gmail.com>
-	<20160303192617.GY24999@codeaurora.org>
-Date: Thu, 3 Mar 2016 20:29:35 +0100
-Message-ID: <CAMuHMdWnmZGK0c6fLqYK38NsMzxJ4FSEpFAM5Y2SZ+oPncNUbA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: move drivers to renesas directory
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>, Mike Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Dear Stephen, Michael, Sebastian and all, 
 
-On Thu, Mar 3, 2016 at 8:26 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 03/03, Geert Uytterhoeven wrote:
->> On Thu, Mar 3, 2016 at 3:18 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
->> > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
->> > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
->> > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->> >
->> > Along with the above mentioned Kconfig changes it seems appropriate
->> > to also rename directories that only hold drivers for such SoCs.
->> >
->> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->>
->> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->
-> Applied to clk-next.
->
->> > Patch pruduced using git format-patch -M
->> > This produces a patch without the diff of each renamed file
->> > which results in a ~204K patch. Let me know if you would prefer that
->> > or a pull-request.
->>
->> How will we proceed?
->> Note that I have an outstanding pull request for drivers/clk/shmobile.
->>
->
-> Git took care of it.
+I have the following clk case which I dunno the elegant solution:
 
-Fan-tas-tic!
 
-Gr{oetje,eeting}s,
+cpuclk have two parents: cpupll and refclk. When set the cpuclk freq, we
+have to set its parent's freq, I.E cpupll freq. But before changing the
+cpupll's freq, we should set its refclk as its parent firstly.
 
-                        Geert
+AFAIK, this is a common case, I have seen such requirement in rockchip, samsung
+clk driver. They solve this by notifier, but as pointed out by Michael
+in http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351565.html
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+"This is also a hack and it points towards some missing infrastructure in the
+clock framework."
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I also don't like the notifier solution, I believe the elegant solution could
+be using the coordinated clock infrastructure. So what's the status of
+this infrastructure? I can test, and I can even add some code to make it be
+ready to be merged if you guide me ;)
+
+Thanks in advance,
+Jisheng
