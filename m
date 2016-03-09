@@ -1,150 +1,100 @@
-Return-Path: <dmitry.torokhov@gmail.com>
-Return-Path: <dmitry.torokhov@gmail.com>
-Date: Thu, 31 Mar 2016 10:48:01 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 36/46] input: misc: max77693: switch to the atomic API
-Message-ID: <20160331174801.GC39098@dtor-ws>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-37-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, dianders@chromium.org
+Subject: Re: [PATCH v3 5/7] clk: rockchip: add new pll-type for rk3399 and similar socs
+Date: Wed, 09 Mar 2016 13:29:09 +0100
+Message-ID: <2688473.EyteJL2oqe@diego>
+In-Reply-To: <1457491378-31077-1-git-send-email-zhengxing@rock-chips.com>
+References: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com> <1457491378-31077-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459368249-13241-37-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Boris,
+Hi Xing,
 
-On Wed, Mar 30, 2016 at 10:03:59PM +0200, Boris Brezillon wrote:
-> pwm_config/enable/disable() have been deprecated and should be replaced
-> by pwm_apply_state().
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Am Mittwoch, 9. M=E4rz 2016, 10:42:58 schrieb Xing Zheng:
+> The rk3399's pll and clock are similar with rk3036's, it different
+> with base on the rk3066(rk3188, rk3288, rk3368 use it), there are
+> different adjust foctors and control registers, so these should be
+> independent and separate from the series of rk3066s.
+>=20
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 > ---
->  drivers/input/misc/max77693-haptic.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-> index cf6aac0..aef7dc4 100644
-> --- a/drivers/input/misc/max77693-haptic.c
-> +++ b/drivers/input/misc/max77693-haptic.c
-> @@ -70,13 +70,16 @@ struct max77693_haptic {
->  
->  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
->  {
-> +	struct pwm_state pstate;
->  	struct pwm_args pargs = { };
-> -	int delta;
->  	int error;
->  
->  	pwm_get_args(haptic->pwm_dev, &pargs);
-> -	delta = (pargs.period + haptic->pwm_duty) / 2;
-> -	error = pwm_config(haptic->pwm_dev, delta, pargs.period);
-> +	pwm_get_state(haptic->pwm_dev, &pstate);
+>=20
+> Changes in v3: None
+> Changes in v2: None
+>=20
+>  drivers/clk/rockchip/clk-pll.c |  279
+> +++++++++++++++++++++++++++++++++++++++- drivers/clk/rockchip/clk.h  =
+   | =20
+>  3 +-
+>  2 files changed, 280 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/cl=
+k-pll.c
+> index 27be66a..62d2f0e 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -593,6 +593,275 @@ static const struct clk_ops
+> rockchip_rk3066_pll_clk_ops =3D { .init =3D rockchip_rk3066_pll_init,=
+
+>  };
+>=20
+> +/**
+> + * PLL used in RK3399
+> + */
 > +
-> +	pstate.period = pargs.period;
-> +	pstate.duty_cycle = (pargs.period + haptic->pwm_duty) / 2;
-> +	error = pwm_apply_state(haptic->pwm_dev, &pstate);
+> +#define RK3399_PLLCON(i)=09=09=09(i * 0x4)
+> +#define RK3399_PLLCON0_FBDIV_MASK=09=090xfff
+> +#define RK3399_PLLCON0_FBDIV_SHIFT=09=090
+> +#define RK3399_PLLCON1_REFDIV_MASK=09=090x3f
+> +#define RK3399_PLLCON1_REFDIV_SHIFT=09=090
+> +#define RK3399_PLLCON1_POSTDIV1_MASK=09=090x7
+> +#define RK3399_PLLCON1_POSTDIV1_SHIFT=09=098
+> +#define RK3399_PLLCON1_POSTDIV2_MASK=09=090x7
+> +#define RK3399_PLLCON1_POSTDIV2_SHIFT=09=0912
+> +#define RK3399_PLLCON2_FRAC_MASK=09=090xffffff
+> +#define RK3399_PLLCON2_FRAC_SHIFT=09=090
+please move RK3399_PLLCON2_LOCK_STATUS here
 
-This does not make sense with regard to the atomic API. If you look in
-max77693_haptic_play_work(), right after calling
-max77693_haptic_set_duty_cycle() we either try to enable or disable the
-pwm. When switching to this new API we should combine both actions.
+> +#define RK3399_PLLCON3_DSMPD_MASK=09=090x1
+> +#define RK3399_PLLCON3_DSMPD_SHIFT=09=0912
 
->  	if (error) {
->  		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
->  		return error;
-> @@ -161,12 +164,16 @@ static int max77693_haptic_lowsys(struct max77693_haptic *haptic, bool enable)
->  
->  static void max77693_haptic_enable(struct max77693_haptic *haptic)
->  {
-> +	struct pwm_state pstate;
->  	int error;
->  
->  	if (haptic->enabled)
->  		return;
->  
-> -	error = pwm_enable(haptic->pwm_dev);
-> +	pwm_get_state(haptic->pwm_dev, &pstate);
-> +	pstate.enabled = true;
+DSMPD_SHIFT should be 3, right?
+
 > +
-> +	error = pwm_apply_state(haptic->pwm_dev, &pstate);
+> +#define RK3399_PLLCON2_LOCK_STATUS=09=09(31 << 0)
 
-As I mentioned I'd rather we did not deprecate pwm_enable() and
-pwm_disable() (and maybe others), as it forces us to add unnecessary
-boilerplate code to the drivers.
- 
->  	if (error) {
->  		dev_err(haptic->dev,
->  			"failed to enable haptic pwm device: %d\n", error);
-> @@ -188,11 +195,13 @@ static void max77693_haptic_enable(struct max77693_haptic *haptic)
->  err_enable_config:
->  	max77693_haptic_lowsys(haptic, false);
->  err_enable_lowsys:
-> -	pwm_disable(haptic->pwm_dev);
-> +	pstate.enabled = false;
-> +	pwm_apply_state(haptic->pwm_dev, &pstate);
->  }
->  
->  static void max77693_haptic_disable(struct max77693_haptic *haptic)
->  {
-> +	struct pwm_state pstate;
->  	int error;
->  
->  	if (!haptic->enabled)
-> @@ -206,7 +215,9 @@ static void max77693_haptic_disable(struct max77693_haptic *haptic)
->  	if (error)
->  		goto err_disable_lowsys;
->  
-> -	pwm_disable(haptic->pwm_dev);
-> +	pwm_get_state(haptic->pwm_dev, &pstate);
-> +	pstate.enabled = false;
-> +	pwm_apply_state(haptic->pwm_dev, &pstate);
+that is wrong, you want (1 << 31), or even better BIT(31) here
 
-Same here.
 
->  	haptic->enabled = false;
->  
->  	return;
-> -- 
-> 2.5.0
-> 
+> +#define RK3399_PLLCON3_PWRDOWN=09=09=09(1 << 0)
 
-Thanks.
+dito, BIT(0) please
 
--- 
-Dmitry
+[...]
+
+> +static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned =
+long
+> drate, +=09=09=09=09=09unsigned long prate)
+> +{
+> +=09struct rockchip_clk_pll *pll =3D to_rockchip_clk_pll(hw);
+> +=09const struct rockchip_pll_rate_table *rate;
+> +=09unsigned long old_rate =3D rockchip_rk3399_pll_recalc_rate(hw, pr=
+ate);
+> +=09struct regmap *grf =3D rockchip_clk_get_grf(pll->ctx);
+> +
+> +=09if (IS_ERR(grf)) {
+> +=09=09pr_debug("%s: grf regmap not available, aborting rate change\n=
+",
+> +=09=09=09 __func__);
+> +=09=09return PTR_ERR(grf);
+> +=09}
+
+the pll lock-status moved to the pll registers it seems, so you don't n=
+eed to=20
+get the GRF here at all, as we don't need it for the lock status.
+
+
+Heiko
