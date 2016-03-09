@@ -1,97 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-am1on0066.outbound.protection.outlook.com ([157.56.112.66]:2912
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754889AbcCRS2K convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 18 Mar 2016 14:28:10 -0400
-From: Scott Wood <scott.wood@nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
-CC: Yangbo Lu <yangbo.lu@nxp.com>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for
- T4240-R1.0-R2.0
-Date: Fri, 18 Mar 2016 18:28:05 +0000
-Message-ID: <DB5PR0401MB1928DA88B03970E1EACFB1FF918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
- <DB5PR0401MB19286B2D23D07F5C60DB799D91880@DB5PR0401MB1928.eurprd04.prod.outlook.com>
- <20160317170101.GA21009@rob-hp-laptop> <3706958.XeRFmKM0K5@wuerfel>
-Content-Type: text/plain; charset="Windows-1252"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] clk: renesas: PM Domain Cleanups and Preparation
+Date: Wed,  9 Mar 2016 20:18:30 +0100
+Message-Id: <1457551114-21764-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/17/2016 12:06 PM, Arnd Bergmann wrote:
-> On Thursday 17 March 2016 12:01:01 Rob Herring wrote:
->> On Mon, Mar 14, 2016 at 05:45:43PM +0000, Scott Wood wrote:
-> 
->>>>> This makes the driver non-portable. Better identify the specific
->>>>> workarounds based on the compatible string for this device, or add a
->>>>> boolean DT property for the quirk.
->>>>>
->>>>>    Arnd
->>>>
->>>> [Lu Yangbo-B47093] Hi Arnd, we did have a discussion about using DTS in v1 before.
->>>> https://patchwork.kernel.org/patch/6834221/
->>>>
->>>> We don’t have a separate DTS file for each revision of an SOC and if we did, we'd constantly have people using the wrong one.
->>>> In addition, the device tree is stable ABI and errata are often discovered after device tree are deployed.
->>>> See the link for details.
->>>>
->>>> So we decide to read SVR from the device-config/guts MMIO block other than using DTS.
->>>> Thanks.
->>>
->>> Also note that this driver is already only for fsl-specific hardware,
->>> and it will still work even if fsl_guts doesn't find anything to bind to
->>> -- it just wouldn't be able to detect errata based on SVR in that case.
->>
->> IIRC, it is the same IP block as i.MX and Arnd's point is this won't 
->> even compile on !PPC. It is things like this that prevent sharing the 
->> driver.
+	Hi Mike, Stephen,
 
-The whole point of using the MMIO SVR instead of the PPC SPR is so that
-it will work on ARM...  The guts driver should build on any platform as
-long as OF is enabled, and if it doesn't find a node to bind to it will
-return 0 for SVR, and the eSDHC driver will continue (after printing an
-error that should be removed) without the ability to test for errata
-based on SVR.
+This patch series performs some cleanups related to PM Domains on the
+Renesas clock drivers, and prepares the CPG/MSSR driver for the advent
+of R-Car SYSC PM Domains.
 
-> I think the first four patches take care of building for ARM,
-> but the problem remains if you want to enable COMPILE_TEST as
-> we need for certain automated checking.
+Support for the latter will be introduced in 3 patch series:
+  - "[PATCH v3 0/7] PM / Domains: Add DT bindings for the R-Car System
+    Controller",
+  - "[PATCH v3 00/11] soc: renesas: Add R-Car SYSC PM Domain Support",
+  - "[PATCH v3 0/6] ARM/arm64: dts: rcar: Add SYSC PM domains".
 
-What specific problem is there with COMPILE_TEST?
+This patch series is against clk/clk-next with "[PATCH v2] clk: renesas:
+Rename header file renesas.h" applied.
 
->> Dealing with Si revs is a common problem. We should have a 
->> common solution. There is soc_device for this purpose.
-> 
-> Exactly. The last time this came up, I think we agreed to implement a
-> helper using glob_match() on the soc_device strings. Unfortunately
-> this hasn't happened then, but I'd still prefer that over yet another
-> vendor-specific way of dealing with the generic issue.
+Thanks for your comments!
 
-soc_device would require encoding the SVR as a string and then decoding
-the string, which is more complicated and error prone than having
-platform-specific code test a platform-specific number.  And when would
-it get registered on arm64, which doesn't have platform code?
+Geert Uytterhoeven (4):
+  clk: renesas: mstp: Drop check for CONFIG_PM_GENERIC_DOMAINS_OF
+  clk: renesas: cpg-mssr: Drop check for CONFIG_PM_GENERIC_DOMAINS_OF
+  clk: renesas: mstp: Clarify cpg_mstp_{at,de}tach_dev() domain
+    parameter
+  clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev()
 
--Scott
+ drivers/clk/renesas/clk-mstp.c         |  6 ++----
+ drivers/clk/renesas/renesas-cpg-mssr.c | 27 ++++++++++++---------------
+ include/linux/clk/renesas.h            | 10 ++++------
+ 3 files changed, 18 insertions(+), 25 deletions(-)
 
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
