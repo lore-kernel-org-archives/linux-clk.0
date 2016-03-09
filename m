@@ -1,88 +1,64 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 03/13] clk: sunxi: Add APB1 clock for A83T
-Date: Sat,  5 Mar 2016 23:42:56 +0800
-Message-Id: <1457192586-25596-4-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+	<iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+	<linux-mmc@vger.kernel.org>
+CC: Rob Herring <robh+dt@kernel.org>, <scott.wood@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	<ulf.hansson@linaro.org>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	"Zhao Qiang" <qiang.zhao@freescale.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Santosh Shilimkar" <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
+	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v6, 0/5] Fix eSDHC host version register bug
+Date: Wed, 9 Mar 2016 18:08:46 +0800
+Message-ID: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
+This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
+eSDHC controller. To get the SoC version and revision, it's needed to add the
+GUTS driver to access the global utilities registers.
 
-This adds support for apb1 on A83T.
+So, the first three patches are to add the GUTS driver.
+The following two patches are to enable GUTS driver support to get SVR in eSDHC
+driver and fix host version for T4240.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 13 +++++++++++++
- 2 files changed, 14 insertions(+)
+Yangbo Lu (5):
+  ARM64: dts: ls2080a: add device configuration node
+  soc: fsl: add GUTS driver for QorIQ platforms
+  dt: move guts devicetree doc out of powerpc directory
+  powerpc/fsl: move mpc85xx.h to include/linux/fsl
+  mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 2ee7841..dd24772 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -49,6 +49,7 @@ Required properties:
- 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
- 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
- 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
-+	"allwinner,sun8i-a83t-apb1-clk" - for the APB1 clock on A83T
- 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
- 	"allwinner,sun4i-a10-apb1-gates-clk" - for the APB1 gates on A10
- 	"allwinner,sun5i-a13-apb1-gates-clk" - for the APB1 gates on A13
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 0ae1f09..987a12d 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -863,6 +863,12 @@ static const struct div_data sun4i_apb0_data __initconst = {
- 	.table	= sun4i_apb0_table,
- };
- 
-+static const struct div_data sun8i_a83t_apb1_data __initconst = {
-+	.shift	= 8,
-+	.pow	= 0,
-+	.width	= 2,
-+};
-+
- static void __init sunxi_divider_clk_setup(struct device_node *node,
- 					   const struct div_data *data)
- {
-@@ -899,6 +905,13 @@ static void __init sun4i_apb0_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun4i_apb0, "allwinner,sun4i-a10-apb0-clk",
- 	       sun4i_apb0_clk_setup);
- 
-+static void __init sun8i_a83t_apb1_clk_setup(struct device_node *node)
-+{
-+	sunxi_divider_clk_setup(node, &sun8i_a83t_apb1_data);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_apb1, "allwinner,sun8i-a83t-apb1-clk",
-+	       sun8i_a83t_apb1_clk_setup);
-+
- static void __init sun4i_axi_clk_setup(struct device_node *node)
- {
- 	sunxi_divider_clk_setup(node, &sun4i_axi_data);
+ .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 ++
+ drivers/clk/clk-qoriq.c                            |   3 +-
+ drivers/i2c/busses/i2c-mpc.c                       |   2 +-
+ drivers/iommu/fsl_pamu.c                           |   3 +-
+ drivers/mmc/host/Kconfig                           |   1 +
+ drivers/mmc/host/sdhci-of-esdhc.c                  |  23 ++++
+ drivers/net/ethernet/freescale/gianfar.c           |   2 +-
+ drivers/soc/Kconfig                                |   2 +-
+ drivers/soc/fsl/Kconfig                            |   8 ++
+ drivers/soc/fsl/Makefile                           |   1 +
+ drivers/soc/fsl/guts.c                             | 119 +++++++++++++++++++++
+ include/linux/fsl/guts.h                           | 100 ++++++++---------
+ .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
+ 14 files changed, 220 insertions(+), 57 deletions(-)
+ rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+ create mode 100644 drivers/soc/fsl/Kconfig
+ create mode 100644 drivers/soc/fsl/guts.c
+ rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+
 -- 
-1.9.1
+2.1.0.27.g96db324
