@@ -1,62 +1,70 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 31 Mar 2016 16:07:25 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
-	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
-	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/18] irqchip: vf610-gpc: add Vybrid GPC IRQ controller
-Message-ID: <20160331080725.GU28207@tiger>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-2-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457576219-7971-2-git-send-email-stefan@agner.ch>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:35779 "EHLO
+	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751891AbcCIKZB (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2016 05:25:01 -0500
+Received: by mail-wm0-f51.google.com with SMTP id l68so170979093wml.0
+        for <linux-clk@vger.kernel.org>; Wed, 09 Mar 2016 02:25:01 -0800 (PST)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v2 10/18] dt-bindings: Add PLX Technology OXNAS Standard Clocks bindings
+Date: Wed,  9 Mar 2016 11:24:12 +0100
+Message-Id: <1457519060-6038-11-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
+References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
+ <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 06:16:42PM -0800, Stefan Agner wrote:
-> +static int __init vf610_gpc_of_init(struct device_node *node,
-> +			       struct device_node *parent)
-> +{
-> +	struct irq_domain *domain, *domain_parent;
-> +	int i;
-> +
-> +	domain_parent = irq_find_host(parent);
-> +	if (!domain_parent) {
-> +		pr_err("vf610_gpc: interrupt-parent not found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	gpc_base = of_io_request_and_map(node, 0, "gpc");
-> +	if (WARN_ON(!gpc_base))
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../devicetree/bindings/clock/plxtech,stdclk.txt   | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
 
-of_io_request_and_map() doesn't return NULL for error but an error code
-encoded by ERR_PTR().  That said, you should use IS_ERR(gpc_base) rather
-than !gpc_base for error check.
+diff --git a/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt b/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
+new file mode 100644
+index 0000000..c60b459
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
+@@ -0,0 +1,35 @@
++PLX Technology OXNAS SoC Family Standard Clocks
++================================================
++
++Please also refer to clock-bindings.txt in this directory for common clock
++bindings usage.
++
++Required properties:
++- compatible: Should be "oxsemi,ox810se-stdclk"
++- #clock-cells: 1, see below
++
++Parent node should have the following properties :
++- compatible: Should be "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
++
++For OX810SE, the clock indices are :
++ - 0: LEON
++ - 1: DMA_SGDMA
++ - 2: CIPHER
++ - 3: SATA
++ - 4: AUDIO
++ - 5: USBMPH
++ - 6: ETHA
++ - 7: PCIA
++ - 8: NAND
++
++example:
++
++sys: sys-ctrl@000000 {
++	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
++	reg = <0x000000 0x100000>;
++
++	stdclk: stdclk {
++		compatible = "oxsemi,ox810se-stdclk";
++		#clock-cells = <1>;
++	};
++};
+-- 
+1.9.1
 
-Shawn
-
-> +		return PTR_ERR(gpc_base);
-> +
-> +	domain = irq_domain_add_hierarchy(domain_parent, 0, VF610_GPC_MAX_IRQS,
-> +					  node, &gpc_irq_domain_ops, NULL);
-> +	if (!domain) {
-> +		iounmap(gpc_base);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Initially mask all interrupts for wakeup */
-> +	for (i = 0; i < IMR_NUM; i++)
-> +		writel_relaxed(~0, gpc_base + VF610_GPC_IMR1 + i * 4);
-> +
-> +	return 0;
-> +}
-> +IRQCHIP_DECLARE(vf610_gpc, "fsl,vf610-gpc", vf610_gpc_of_init);
-> -- 
-> 2.7.2
-> 
-> 
