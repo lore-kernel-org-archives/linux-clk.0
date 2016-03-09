@@ -1,300 +1,380 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] clk: rockchip: Add support for multiple clock providers
-Date: Wed, 09 Mar 2016 23:25:42 +0100
-Message-ID: <1978482.7WNnERYOPX@diego>
-In-Reply-To: <1457491027-30936-5-git-send-email-zhengxing@rock-chips.com>
-References: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com> <1457491027-30936-5-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+ <linux-mmc@vger.kernel.org>
+Subject: [v6, 2/5] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Wed, 9 Mar 2016 18:08:48 +0800
+Message-ID: <1457518131-11339-3-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ scott.wood@nxp.com, Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com, xiaobo.xie@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Xing,
+The global utilities block controls power management, I/O device
+enabling, power-onreset(POR) configuration monitoring, alternate
+function selection for multiplexed signals,and clock control.
 
-Am Mittwoch, 9. M=E4rz 2016, 10:37:04 schrieb Xing Zheng:
-> There are need to support Multi-CRUs probability in future, but
-> it is not supported on the current Rockchip Clock Framework.
->=20
-> Therefore, this patch add support a provider as the parameter
-> handler when we call the clock register functions for per CRU.
->=20
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+This patch adds GUTS driver to manage and access global utilities
+block.
 
-I've applied that in a clk branch for 4.7 [0] with some changes detaile=
-d
-below. If you can, please check that I didn't mess anything up :-)
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v2:
+	- None
+Changes for v3:
+	- None
+Changes for v4:
+	- Added this patch
+Changes for v5:
+	- Modified copyright info
+	- Changed MODULE_LICENSE to GPL
+	- Changed EXPORT_SYMBOL_GPL to EXPORT_SYMBOL
+	- Made FSL_GUTS user-invisible
+	- Added a complete compatible list for GUTS
+	- Stored guts info in file-scope variable
+	- Added mfspr() getting SVR
+	- Redefined GUTS APIs
+	- Called fsl_guts_init rather than using platform driver
+	- Removed useless parentheses
+	- Removed useless 'extern' key words
+Changes for v6:
+	- Made guts thread safe in fsl_guts_init
+---
+ drivers/soc/Kconfig      |   2 +-
+ drivers/soc/fsl/Kconfig  |   8 ++++
+ drivers/soc/fsl/Makefile |   1 +
+ drivers/soc/fsl/guts.c   | 119 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fsl/guts.h | 100 ++++++++++++++++++++-------------------
+ 5 files changed, 181 insertions(+), 49 deletions(-)
+ create mode 100644 drivers/soc/fsl/Kconfig
+ create mode 100644 drivers/soc/fsl/guts.c
 
-I've sucessfully booted that on both a rk3036 and rk3288 as well.
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 8826020..c4b6043 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -2,7 +2,7 @@ menu "SOC (System On Chip) specific Drivers"
+ 
+ source "drivers/soc/bcm/Kconfig"
+ source "drivers/soc/brcmstb/Kconfig"
+-source "drivers/soc/fsl/qe/Kconfig"
++source "drivers/soc/fsl/Kconfig"
+ source "drivers/soc/mediatek/Kconfig"
+ source "drivers/soc/qcom/Kconfig"
+ source "drivers/soc/rockchip/Kconfig"
+diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
+new file mode 100644
+index 0000000..b313759
+--- /dev/null
++++ b/drivers/soc/fsl/Kconfig
+@@ -0,0 +1,8 @@
++#
++# Freescale SOC drivers
++#
++
++source "drivers/soc/fsl/qe/Kconfig"
++
++config FSL_GUTS
++	bool
+diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
+index 203307f..02afb7f 100644
+--- a/drivers/soc/fsl/Makefile
++++ b/drivers/soc/fsl/Makefile
+@@ -4,3 +4,4 @@
+ 
+ obj-$(CONFIG_QUICC_ENGINE)		+= qe/
+ obj-$(CONFIG_CPM)			+= qe/
++obj-$(CONFIG_FSL_GUTS)			+= guts.o
+diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+new file mode 100644
+index 0000000..fa155e6
+--- /dev/null
++++ b/drivers/soc/fsl/guts.c
+@@ -0,0 +1,119 @@
++/*
++ * Freescale QorIQ Platforms GUTS Driver
++ *
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/mutex.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/fsl/guts.h>
++
++struct guts {
++	struct ccsr_guts __iomem *regs;
++	bool little_endian;
++};
++
++static struct guts *guts;
++static DEFINE_MUTEX(guts_lock);
++
++u32 fsl_guts_get_svr(void)
++{
++	u32 svr = 0;
++
++	if (!guts || !guts->regs) {
++#ifdef CONFIG_PPC
++		svr =  mfspr(SPRN_SVR);
++#endif
++		return svr;
++	}
++
++	if (guts->little_endian)
++		svr = ioread32(&guts->regs->svr);
++	else
++		svr = ioread32be(&guts->regs->svr);
++
++	return svr;
++}
++EXPORT_SYMBOL(fsl_guts_get_svr);
++
++/*
++ * Table for matching compatible strings, for device tree
++ * guts node, for Freescale QorIQ SOCs.
++ */
++static const struct of_device_id guts_of_match[] = {
++	/* For T4 & B4 Series SOCs */
++	{ .compatible = "fsl,qoriq-device-config-1.0", },
++	/* For P Series SOCs */
++	{ .compatible = "fsl,qoriq-device-config-2.0", },
++	{ .compatible = "fsl,p1010-guts", },
++	{ .compatible = "fsl,p1020-guts", },
++	{ .compatible = "fsl,p1021-guts", },
++	{ .compatible = "fsl,p1022-guts", },
++	{ .compatible = "fsl,p1023-guts", },
++	{ .compatible = "fsl,p2020-guts", },
++	/* For BSC Series SOCs */
++	{ .compatible = "fsl,bsc9131-guts", },
++	{ .compatible = "fsl,bsc9132-guts", },
++	/* For MPC85xx Series SOCs */
++	{ .compatible = "fsl,mpc8536-guts", },
++	{ .compatible = "fsl,mpc8544-guts", },
++	{ .compatible = "fsl,mpc8548-guts", },
++	{ .compatible = "fsl,mpc8568-guts", },
++	{ .compatible = "fsl,mpc8569-guts", },
++	{ .compatible = "fsl,mpc8572-guts", },
++	/* For Layerscape Series SOCs */
++	{ .compatible = "fsl,ls1021a-dcfg", },
++	{ .compatible = "fsl,ls1043a-dcfg", },
++	{ .compatible = "fsl,ls2080a-dcfg", },
++	{}
++};
++
++int fsl_guts_init(void)
++{
++	struct device_node *np;
++	int ret;
++
++	mutex_lock(&guts_lock);
++	/* Initialize guts only once */
++	if (guts) {
++		ret = guts->regs ? 0 : -ENOMEM;
++		goto out;
++	}
++
++	np = of_find_matching_node(NULL, guts_of_match);
++	if (!np) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	guts = kzalloc(sizeof(*guts), GFP_KERNEL);
++	if (!guts) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	guts->little_endian = of_property_read_bool(np, "little-endian");
++
++	guts->regs = of_iomap(np, 0);
++	if (!guts->regs) {
++		ret = -ENOMEM;
++		kfree(guts);
++		goto out;
++	}
++
++	of_node_put(np);
++	ret = 0;
++out:
++	mutex_unlock(&guts_lock);
++	return ret;
++}
++EXPORT_SYMBOL(fsl_guts_init);
+diff --git a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h
+index 84d971f..b4db430 100644
+--- a/include/linux/fsl/guts.h
++++ b/include/linux/fsl/guts.h
+@@ -29,83 +29,87 @@
+  * #ifdefs.
+  */
+ struct ccsr_guts {
+-	__be32	porpllsr;	/* 0x.0000 - POR PLL Ratio Status Register */
+-	__be32	porbmsr;	/* 0x.0004 - POR Boot Mode Status Register */
+-	__be32	porimpscr;	/* 0x.0008 - POR I/O Impedance Status and Control Register */
+-	__be32	pordevsr;	/* 0x.000c - POR I/O Device Status Register */
+-	__be32	pordbgmsr;	/* 0x.0010 - POR Debug Mode Status Register */
+-	__be32	pordevsr2;	/* 0x.0014 - POR device status register 2 */
++	u32	porpllsr;	/* 0x.0000 - POR PLL Ratio Status Register */
++	u32	porbmsr;	/* 0x.0004 - POR Boot Mode Status Register */
++	u32	porimpscr;	/* 0x.0008 - POR I/O Impedance Status and Control Register */
++	u32	pordevsr;	/* 0x.000c - POR I/O Device Status Register */
++	u32	pordbgmsr;	/* 0x.0010 - POR Debug Mode Status Register */
++	u32	pordevsr2;	/* 0x.0014 - POR device status register 2 */
+ 	u8	res018[0x20 - 0x18];
+-	__be32	porcir;		/* 0x.0020 - POR Configuration Information Register */
++	u32	porcir;		/* 0x.0020 - POR Configuration Information Register */
+ 	u8	res024[0x30 - 0x24];
+-	__be32	gpiocr;		/* 0x.0030 - GPIO Control Register */
++	u32	gpiocr;		/* 0x.0030 - GPIO Control Register */
+ 	u8	res034[0x40 - 0x34];
+-	__be32	gpoutdr;	/* 0x.0040 - General-Purpose Output Data Register */
++	u32	gpoutdr;	/* 0x.0040 - General-Purpose Output Data Register */
+ 	u8	res044[0x50 - 0x44];
+-	__be32	gpindr;		/* 0x.0050 - General-Purpose Input Data Register */
++	u32	gpindr;		/* 0x.0050 - General-Purpose Input Data Register */
+ 	u8	res054[0x60 - 0x54];
+-	__be32	pmuxcr;		/* 0x.0060 - Alternate Function Signal Multiplex Control */
+-        __be32  pmuxcr2;	/* 0x.0064 - Alternate function signal multiplex control 2 */
+-        __be32  dmuxcr;		/* 0x.0068 - DMA Mux Control Register */
++	u32	pmuxcr;		/* 0x.0060 - Alternate Function Signal Multiplex Control */
++	u32	pmuxcr2;	/* 0x.0064 - Alternate function signal multiplex control 2 */
++	u32	dmuxcr;		/* 0x.0068 - DMA Mux Control Register */
+         u8	res06c[0x70 - 0x6c];
+-	__be32	devdisr;	/* 0x.0070 - Device Disable Control */
++	u32	devdisr;	/* 0x.0070 - Device Disable Control */
+ #define CCSR_GUTS_DEVDISR_TB1	0x00001000
+ #define CCSR_GUTS_DEVDISR_TB0	0x00004000
+-	__be32	devdisr2;	/* 0x.0074 - Device Disable Control 2 */
++	u32	devdisr2;	/* 0x.0074 - Device Disable Control 2 */
+ 	u8	res078[0x7c - 0x78];
+-	__be32  pmjcr;		/* 0x.007c - 4 Power Management Jog Control Register */
+-	__be32	powmgtcsr;	/* 0x.0080 - Power Management Status and Control Register */
+-	__be32  pmrccr;		/* 0x.0084 - Power Management Reset Counter Configuration Register */
+-	__be32  pmpdccr;	/* 0x.0088 - Power Management Power Down Counter Configuration Register */
+-	__be32  pmcdr;		/* 0x.008c - 4Power management clock disable register */
+-	__be32	mcpsumr;	/* 0x.0090 - Machine Check Summary Register */
+-	__be32	rstrscr;	/* 0x.0094 - Reset Request Status and Control Register */
+-	__be32  ectrstcr;	/* 0x.0098 - Exception reset control register */
+-	__be32  autorstsr;	/* 0x.009c - Automatic reset status register */
+-	__be32	pvr;		/* 0x.00a0 - Processor Version Register */
+-	__be32	svr;		/* 0x.00a4 - System Version Register */
++	u32	pmjcr;		/* 0x.007c - 4 Power Management Jog Control Register */
++	u32	powmgtcsr;	/* 0x.0080 - Power Management Status and Control Register */
++	u32	pmrccr;		/* 0x.0084 - Power Management Reset Counter Configuration Register */
++	u32	pmpdccr;	/* 0x.0088 - Power Management Power Down Counter Configuration Register */
++	u32	pmcdr;		/* 0x.008c - 4Power management clock disable register */
++	u32	mcpsumr;	/* 0x.0090 - Machine Check Summary Register */
++	u32	rstrscr;	/* 0x.0094 - Reset Request Status and Control Register */
++	u32	ectrstcr;	/* 0x.0098 - Exception reset control register */
++	u32	autorstsr;	/* 0x.009c - Automatic reset status register */
++	u32	pvr;		/* 0x.00a0 - Processor Version Register */
++	u32	svr;		/* 0x.00a4 - System Version Register */
+ 	u8	res0a8[0xb0 - 0xa8];
+-	__be32	rstcr;		/* 0x.00b0 - Reset Control Register */
++	u32	rstcr;		/* 0x.00b0 - Reset Control Register */
+ 	u8	res0b4[0xc0 - 0xb4];
+-	__be32  iovselsr;	/* 0x.00c0 - I/O voltage select status register
++	u32	iovselsr;	/* 0x.00c0 - I/O voltage select status register
+ 					     Called 'elbcvselcr' on 86xx SOCs */
+ 	u8	res0c4[0x100 - 0xc4];
+-	__be32	rcwsr[16];	/* 0x.0100 - Reset Control Word Status registers
++	u32	rcwsr[16];	/* 0x.0100 - Reset Control Word Status registers
+ 					     There are 16 registers */
+ 	u8	res140[0x224 - 0x140];
+-	__be32  iodelay1;	/* 0x.0224 - IO delay control register 1 */
+-	__be32  iodelay2;	/* 0x.0228 - IO delay control register 2 */
++	u32	iodelay1;	/* 0x.0224 - IO delay control register 1 */
++	u32	iodelay2;	/* 0x.0228 - IO delay control register 2 */
+ 	u8	res22c[0x604 - 0x22c];
+-	__be32	pamubypenr; 	/* 0x.604 - PAMU bypass enable register */
++	u32	pamubypenr;	/* 0x.604 - PAMU bypass enable register */
+ 	u8	res608[0x800 - 0x608];
+-	__be32	clkdvdr;	/* 0x.0800 - Clock Divide Register */
++	u32	clkdvdr;	/* 0x.0800 - Clock Divide Register */
+ 	u8	res804[0x900 - 0x804];
+-	__be32	ircr;		/* 0x.0900 - Infrared Control Register */
++	u32	ircr;		/* 0x.0900 - Infrared Control Register */
+ 	u8	res904[0x908 - 0x904];
+-	__be32	dmacr;		/* 0x.0908 - DMA Control Register */
++	u32	dmacr;		/* 0x.0908 - DMA Control Register */
+ 	u8	res90c[0x914 - 0x90c];
+-	__be32	elbccr;		/* 0x.0914 - eLBC Control Register */
++	u32	elbccr;		/* 0x.0914 - eLBC Control Register */
+ 	u8	res918[0xb20 - 0x918];
+-	__be32	ddr1clkdr;	/* 0x.0b20 - DDR1 Clock Disable Register */
+-	__be32	ddr2clkdr;	/* 0x.0b24 - DDR2 Clock Disable Register */
+-	__be32	ddrclkdr;	/* 0x.0b28 - DDR Clock Disable Register */
++	u32	ddr1clkdr;	/* 0x.0b20 - DDR1 Clock Disable Register */
++	u32	ddr2clkdr;	/* 0x.0b24 - DDR2 Clock Disable Register */
++	u32	ddrclkdr;	/* 0x.0b28 - DDR Clock Disable Register */
+ 	u8	resb2c[0xe00 - 0xb2c];
+-	__be32	clkocr;		/* 0x.0e00 - Clock Out Select Register */
++	u32	clkocr;		/* 0x.0e00 - Clock Out Select Register */
+ 	u8	rese04[0xe10 - 0xe04];
+-	__be32	ddrdllcr;	/* 0x.0e10 - DDR DLL Control Register */
++	u32	ddrdllcr;	/* 0x.0e10 - DDR DLL Control Register */
+ 	u8	rese14[0xe20 - 0xe14];
+-	__be32	lbcdllcr;	/* 0x.0e20 - LBC DLL Control Register */
+-	__be32  cpfor;		/* 0x.0e24 - L2 charge pump fuse override register */
++	u32	lbcdllcr;	/* 0x.0e20 - LBC DLL Control Register */
++	u32	cpfor;		/* 0x.0e24 - L2 charge pump fuse override register */
+ 	u8	rese28[0xf04 - 0xe28];
+-	__be32	srds1cr0;	/* 0x.0f04 - SerDes1 Control Register 0 */
+-	__be32	srds1cr1;	/* 0x.0f08 - SerDes1 Control Register 0 */
++	u32	srds1cr0;	/* 0x.0f04 - SerDes1 Control Register 0 */
++	u32	srds1cr1;	/* 0x.0f08 - SerDes1 Control Register 0 */
+ 	u8	resf0c[0xf2c - 0xf0c];
+-	__be32  itcr;		/* 0x.0f2c - Internal transaction control register */
++	u32	itcr;		/* 0x.0f2c - Internal transaction control register */
+ 	u8	resf30[0xf40 - 0xf30];
+-	__be32	srds2cr0;	/* 0x.0f40 - SerDes2 Control Register 0 */
+-	__be32	srds2cr1;	/* 0x.0f44 - SerDes2 Control Register 0 */
++	u32	srds2cr0;	/* 0x.0f40 - SerDes2 Control Register 0 */
++	u32	srds2cr1;	/* 0x.0f44 - SerDes2 Control Register 0 */
+ } __attribute__ ((packed));
+ 
++#ifdef CONFIG_FSL_GUTS
++u32 fsl_guts_get_svr(void);
++int fsl_guts_init(void);
++#endif
+ 
+ /* Alternate function signal multiplex control */
+ #define MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
+-- 
+2.1.0.27.g96db324
 
 
-Heiko
-
-[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.g=
-it/commit/?h=3Dv4.7-clk/next&id=3Dd509ddf2e57c99ae760d1a289b85f1e0d729f=
-864
-
-
-> ---
->=20
-> Changes in v3: None
-> Changes in v2: None
->=20
->  drivers/clk/rockchip/clk-pll.c    |   30 ++++----
->  drivers/clk/rockchip/clk-rk3036.c |   17 +++--
->  drivers/clk/rockchip/clk-rk3188.c |   48 ++++++++----
->  drivers/clk/rockchip/clk-rk3228.c |   17 +++--
->  drivers/clk/rockchip/clk-rk3288.c |   19 +++--
->  drivers/clk/rockchip/clk-rk3368.c |   21 ++++--
->  drivers/clk/rockchip/clk.c        |  148
-> +++++++++++++++++++++++-------------- drivers/clk/rockchip/clk.h     =
-   | =20
-> 49 ++++++++----
->  8 files changed, 231 insertions(+), 118 deletions(-)
-
-[...]
-
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c index e832403..7c73c51 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> @@ -759,57 +759,78 @@ static const char *const rk3188_critical_clocks=
-[]
-> __initconst =3D { "hclk_cpubus"
->  };
->=20
-> -static void __init rk3188_common_clk_init(struct device_node *np)
-> +static struct rockchip_clk_provider *__init rk3188_common_clk_init(s=
-truct
-> device_node *np) {
-> +=09struct rockchip_clk_provider *ctx;
->  =09void __iomem *reg_base;
->=20
->  =09reg_base =3D of_iomap(np, 0);
->  =09if (!reg_base) {
->  =09=09pr_err("%s: could not map cru region\n", __func__);
-> -=09=09return;
-> +=09=09return ERR_PTR(-ENOMEM);
->  =09}
->=20
-> -=09rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +=09ctx =3D rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +=09if (IS_ERR(ctx)) {
-> +=09=09pr_err("%s: rockchip clk init failed\n", __func__);
-> +=09=09return ERR_PTR(-ENOMEM);
-> +=09}
->=20
-> -=09rockchip_clk_register_branches(common_clk_branches,
-> +=09rockchip_clk_register_branches(ctx, common_clk_branches,
->  =09=09=09=09  ARRAY_SIZE(common_clk_branches));
->=20
->  =09rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0)=
-,
->  =09=09=09=09  ROCKCHIP_SOFTRST_HIWORD_MASK);
->=20
-> -=09rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
-> +=09rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL=
-);
-> +
-> +=09return ctx;
->  }
->=20
->  static void __init rk3066a_clk_init(struct device_node *np)
->  {
-> -=09rk3188_common_clk_init(np);
-> -=09rockchip_clk_register_plls(rk3066_pll_clks,
-> +=09struct rockchip_clk_provider *ctx;
-> +
-> +=09ctx =3D rk3188_common_clk_init(np);
-> +=09if (IS_ERR(ctx)) {
-> +=09=09pr_err("%s: common clk init failed\n", __func__);
-> +=09=09return;
-> +=09}
-
-I've dropped the pr_err + parentheses, as rk3188_common_clk_init
-will already output a suitable error.
-
-
-> +
-> +=09rockchip_clk_register_plls(ctx, rk3066_pll_clks,
->  =09=09=09=09   ARRAY_SIZE(rk3066_pll_clks),
->  =09=09=09=09   RK3066_GRF_SOC_STATUS);
-> -=09rockchip_clk_register_branches(rk3066a_clk_branches,
-> +=09rockchip_clk_register_branches(ctx, rk3066a_clk_branches,
->  =09=09=09=09  ARRAY_SIZE(rk3066a_clk_branches));
-> -=09rockchip_clk_register_armclk(ARMCLK, "armclk",
-> +=09rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
->  =09=09=09mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
->  =09=09=09&rk3066_cpuclk_data, rk3066_cpuclk_rates,
->  =09=09=09ARRAY_SIZE(rk3066_cpuclk_rates));
->  =09rockchip_clk_protect_critical(rk3188_critical_clocks,
->  =09=09=09=09      ARRAY_SIZE(rk3188_critical_clocks));
-> +=09rockchip_clk_of_add_provider(np, ctx);
->  }
->  CLK_OF_DECLARE(rk3066a_cru, "rockchip,rk3066a-cru", rk3066a_clk_init=
-);
->=20
->  static void __init rk3188a_clk_init(struct device_node *np)
->  {
-> +=09struct rockchip_clk_provider *ctx;
->  =09struct clk *clk1, *clk2;
->  =09unsigned long rate;
->  =09int ret;
->=20
-> -=09rk3188_common_clk_init(np);
-> -=09rockchip_clk_register_plls(rk3188_pll_clks,
-> +=09ctx =3D rk3188_common_clk_init(np);
-> +=09if (IS_ERR(ctx)) {
-> +=09=09pr_err("%s: common clk init failed\n", __func__);
-> +=09=09return;
-> +=09}
-
-same as above
-
-
-> +
-> +=09rockchip_clk_register_plls(ctx, rk3188_pll_clks,
->  =09=09=09=09   ARRAY_SIZE(rk3188_pll_clks),
->  =09=09=09=09   RK3188_GRF_SOC_STATUS);
-> -=09rockchip_clk_register_branches(rk3188_clk_branches,
-> +=09rockchip_clk_register_branches(ctx, rk3188_clk_branches,
->  =09=09=09=09  ARRAY_SIZE(rk3188_clk_branches));
-> -=09rockchip_clk_register_armclk(ARMCLK, "armclk",
-> +=09rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
->  =09=09=09=09  mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
->  =09=09=09=09  &rk3188_cpuclk_data, rk3188_cpuclk_rates,
->  =09=09=09=09  ARRAY_SIZE(rk3188_cpuclk_rates));
-> @@ -833,6 +854,7 @@ static void __init rk3188a_clk_init(struct device=
-_node
-> *np)
->=20
->  =09rockchip_clk_protect_critical(rk3188_critical_clocks,
->  =09=09=09=09      ARRAY_SIZE(rk3188_critical_clocks));
-> +=09rockchip_clk_of_add_provider(np, ctx);
->  }
->  CLK_OF_DECLARE(rk3188a_cru, "rockchip,rk3188a-cru", rk3188a_clk_init=
-);
-
-[...]
-
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index ab50524..54e6b74 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -312,66 +316,94 @@ static struct clk
-> *rockchip_clk_register_factor_branch(const char *name, return clk;
->  }
->=20
-> -static DEFINE_SPINLOCK(clk_lock);
-> -static struct clk **clk_table;
-> -static void __iomem *reg_base;
-> -static struct clk_onecell_data clk_data;
-> -static struct device_node *cru_node;
-> -static struct regmap *grf;
-> -
-> -void __init rockchip_clk_init(struct device_node *np, void __iomem *=
-base,
-> -=09=09=09      unsigned long nr_clks)
-> +struct rockchip_clk_provider *__init rockchip_clk_init(struct device=
-_node
-
-I've added a space between the asterisk and __init flag
-
-
-> *np, +=09=09=09void __iomem *base, unsigned long nr_clks)
->  {
-> -=09reg_base =3D base;
-> -=09cru_node =3D np;
-> -=09grf =3D ERR_PTR(-EPROBE_DEFER);
-> +=09struct rockchip_clk_provider *ctx;
-> +=09struct clk **clk_table;
-> +=09int i;
-> +
-> +=09ctx =3D kzalloc(sizeof(struct rockchip_clk_provider), GFP_KERNEL)=
-;
-> +=09if (!ctx) {
-> +=09=09pr_err("%s: Could not allocate clock provider context\n",
-> +=09=09=09__func__);
-> +=09=09return ERR_PTR(-ENOMEM);
-> +=09}
->=20
->  =09clk_table =3D kcalloc(nr_clks, sizeof(struct clk *), GFP_KERNEL);=
-
-> -=09if (!clk_table)
-> -=09=09pr_err("%s: could not allocate clock lookup table\n", __func__=
-);
-> +=09if (!clk_table) {
-> +=09=09pr_err("%s: Could not allocate clock lookup table\n",
-> +=09=09=09__func__);
-> +=09=09goto err_free;
-> +=09}
-> +
-> +=09for (i =3D 0; i < nr_clks; ++i)
-> +=09=09clk_table[i] =3D ERR_PTR(-ENOENT);
->=20
-> -=09clk_data.clks =3D clk_table;
-> -=09clk_data.clk_num =3D nr_clks;
-> -=09of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +=09ctx->reg_base =3D base;
-> +=09ctx->clk_data.clks =3D clk_table;
-> +=09ctx->clk_data.clk_num =3D nr_clks;
-> +=09ctx->cru_node =3D np;
-> +=09ctx->grf =3D ERR_PTR(-EPROBE_DEFER);
-> +=09spin_lock_init(&ctx->lock);
-> +
-> +=09return ctx;
-> +
-> +err_free:
-> +=09kfree(ctx);
-> +=09return ERR_PTR(-ENOMEM);
-> +}
-> +
-> +void __init rockchip_clk_of_add_provider(struct device_node *np,
-> +=09=09=09=09struct rockchip_clk_provider *ctx)
-> +{
-> +=09if (np) {
-> +=09=09if (of_clk_add_provider(np, of_clk_src_onecell_get,
-> +=09=09=09=09=09&ctx->clk_data))
-> +=09=09=09panic("could not register clk provider\n");
-
-I've changed that to a pr_err, again no need to panic on this, as letti=
-ng
-the kernel run may give the affected developer more hints what may be w=
-rong.
-
-
-> +=09}
->  }
->=20
-
-> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-> index 7aafe18..b7affb6 100644
-> --- a/drivers/clk/rockchip/clk.h
-> +++ b/drivers/clk/rockchip/clk.h
-> @@ -127,6 +128,20 @@ enum rockchip_pll_type {
->  =09.nb =3D _nb,=09=09=09=09=09=09\
->  }
->=20
-> +/**
-> + * struct rockchip_clk_provider: information about clock provider
-> + * @reg_base: virtual address for the register base.
-> + * @clk_data: holds clock related data like clk* and number of clock=
-s.
-> + * @lock: maintains exclusion between callbacks for a given clock-pr=
-ovider.
-
-I've added the missing kerneldoc entries here
-
-
-> + */
-> +struct rockchip_clk_provider {
-> +=09void __iomem *reg_base;
-> +=09struct clk_onecell_data clk_data;
-> +=09struct device_node *cru_node;
-> +=09struct regmap *grf;
-> +=09spinlock_t lock;
-> +};
-> +
->  struct rockchip_pll_rate_table {
->  =09unsigned long rate;
->  =09unsigned int nr;
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
