@@ -1,84 +1,80 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 05/13] ARM: dts: sun8i-a83t: add mmc clock nodes
-Date: Sat,  5 Mar 2016 23:42:58 +0800
-Message-Id: <1457192586-25596-6-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <jay.xu@rock-chips.com>
+Subject: Re: [RESEND PATCH v2 5/5] clk: rockchip: add clock controller for the
+ RK3399
+To: Doug Anderson <dianders@chromium.org>,
+ Xing Zheng <zhengxing@rock-chips.com>
+References: <1456827275-8035-1-git-send-email-zhengxing@rock-chips.com>
+ <1456827322-8130-1-git-send-email-zhengxing@rock-chips.com>
+ <CAD=FV=VhMY=YO7zVYeP-+LY0gPvQ8yjaAUEGVJrMGLwbGjqVmg@mail.gmail.com>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Tao Huang <huangtao@rock-chips.com>, elaine.zhang@rock-chips.com
+From: Jianqun Xu <jay.xu@rock-chips.com>
+Message-ID: <56DF7393.4020600@rock-chips.com>
+Date: Wed, 9 Mar 2016 08:51:31 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=VhMY=YO7zVYeP-+LY0gPvQ8yjaAUEGVJrMGLwbGjqVmg@mail.gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc clocks are compatible with that of earlier sun8i socs.
-This adds mmc0, mmc1, and mmc2 clock nodes for A83T.
+Hi Doug:
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ÔÚ 09/03/2016 07:34, Doug Anderson Ð´µÀ:
+> Xing Zheng,
+>
+> On Tue, Mar 1, 2016 at 2:15 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+>> +       MMC(SCLK_SDMMC_DRV,     "emmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
+>> +       MMC(SCLK_SDMMC_SAMPLE,  "emmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
+>
+> Can you and Jianqun Xu please coordinate?  Though I don't have a TRM
+> for rk3399 and I haven't looked through this whole patch, I know for
+> sure there's a problem when I pick the latest patch series from both
+> of you it doesn't compile.
+>
+> I believe this is the latest from each of you in patchwork:
+>
+> 8462411   [v3,1/3] dt-bindings: add bindings for rk3399 clock controller
+> 8462431   [v3,2/3] clk: rockchip: add dt-binding header for rk3399
+> 8462441   [v3,3/3] ARM64: dts: rockchip: add core dtsi file for rk3399
+>
+> 8463741   [RESEND,v2,1/5] clk: rockchip: add more mux parameters for
+> new pll sources
+> 8463801   [RESEND,v2,2/5] clk: rockchip: Add support for multiple
+> clock providers
+> 8463771   [RESEND,v2,3/5] clk: rockchip: add new pll-type for rk3399
+> and similar socs
+> 8463781   [RESEND,v2,4/5] clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
+> 8463831   [RESEND,v2,5/5] clk: rockchip: add clock controller for the RK3399
+>
+>
+> Specifically your patch from March 1st refers to SCLK_SDMMC_DRV and
+> SCLK_SDMMC_SAMPLE.  Those defines existed in Jianqun Xu's patch back
+> on Feb 19th <https://patchwork.kernel.org/patch/8355411/>, but his
+> latest patch series from March 1st
+> <https://patchwork.kernel.org/patch/8462431/> no longer has those
+> #defines.
+>
+> Can you two resolve this so I can pick both patch series and see that
+> they compile?  ...or let me know where I messed up, of course.
+>
+ok, we will upload dtsi later after the clk-rk3399 driver been applied.
+xing will send the patches for rk3399 together.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 2689af4..943d8a8 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -237,6 +237,36 @@
- 					     "bus_uart2", "bus_uart3",
- 					     "bus_uart4";
- 		};
-+
-+		mmc0_clk: clk@01c20088 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c20088 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc0",
-+					     "mmc0_output",
-+					     "mmc0_sample";
-+		};
-+
-+		mmc1_clk: clk@01c2008c {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c2008c 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc1",
-+					     "mmc1_output",
-+					     "mmc1_sample";
-+		};
-+
-+		mmc2_clk: clk@01c20090 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c20090 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc2",
-+					     "mmc2_output",
-+					     "mmc2_sample";
-+		};
- 	};
- 
- 	soc {
--- 
-1.9.1
+We hope the dtsi could be applied first but depends on clk driver, but 
+it seems
+not a good idea, we will resend dtsi patch after more drivers are applied.
+
+Thanks Doug.
+
+> Thanks!
+>
+> -Doug
+>
+>
+>
