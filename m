@@ -1,98 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:51845 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755674AbcCXLZF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 07:25:05 -0400
-Date: Thu, 24 Mar 2016 12:24:52 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: "Yang, Wenyou" <Wenyou.Yang@atmel.com>
-Cc: "Ferre, Nicolas" <Nicolas.FERRE@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH v5 3/5] ARM: at91: pm: configure PMC fast startup signals
-Message-ID: <20160324112452.GJ2570@piout.net>
-References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
- <1458111489-23774-4-git-send-email-wenyou.yang@atmel.com>
- <20160317171433.GD2831@piout.net>
- <B256D81BAE5131468A838E5D7A243641D643C03F@penmbx01>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+ <linux-mmc@vger.kernel.org>
+Subject: [v6, 1/5] ARM64: dts: ls2080a: add device configuration node
+Date: Wed, 9 Mar 2016 18:08:47 +0800
+Message-ID: <1457518131-11339-2-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <B256D81BAE5131468A838E5D7A243641D643C03F@penmbx01>
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ scott.wood@nxp.com, Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com, xiaobo.xie@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21/03/2016 at 02:24:32 +0000, Yang, Wenyou wrote :
-> Hi Alexandre,
-> 
-> > -----Original Message-----
-> > From: Alexandre Belloni [mailto:alexandre.belloni@free-electrons.com]
-> > Sent: 2016年3月18日 1:15
-> > To: Yang, Wenyou <Wenyou.Yang@atmel.com>
-> > Cc: Ferre, Nicolas <Nicolas.FERRE@atmel.com>; Jean-Christophe Plagniol-
-> > Villard <plagnioj@jcrosoft.com>; Russell King <linux@arm.linux.org.uk>; linux-
-> > kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-clk@vger.kernel.org; Rob Herring
-> > <robh+dt@kernel.org>; Pawel Moll <pawel.moll@arm.com>; Mark Brown
-> > <broonie@kernel.org>; Ian Campbell <ijc+devicetree@hellion.org.uk>; Kumar
-> > Gala <galak@codeaurora.org>
-> > Subject: Re: [PATCH v5 3/5] ARM: at91: pm: configure PMC fast startup signals
-> > 
-> > On 16/03/2016 at 14:58:07 +0800, Wenyou Yang wrote :
-> > > The fast startup signal is used as wake up sources for ULP1 mode.
-> > > As soon as a fast startup signal is asserted, the embedded 12 MHz RC
-> > > oscillator restarts automatically.
-> > >
-> > > This patch is to configure the fast startup signals, which signal is
-> > > enabled to trigger the PMC to wake up the system from ULP1 mode should
-> > > be configured via the DT.
-> > >
-> > > Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-> > 
-> > I would actually avoid doing that from the PMC driver and do that configuration
-> > from the aic5 driver. It has all the information you need, it knows what kind of level
-> > or edge is needed to wake up and what are the wakeup interrupts to enable. This
-> > will allow you to stop introducing a new binding. Also, this will avoid discrepancies
-> > between what is configured in the DT and what the user really wants (for exemple
-> > differences between the edge direction configured for the PIOBu in userspace
-> > versus what is in the device tree or wakeonlan activation/deactivation).
-> 
-> Thank you for your feedback.
-> 
-> But some wake-ups such as WKUP pin, ACC_CE, RXLP_MCE, don't have the corresponding
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
-The WKUP pin can be configured from the shdwc driver, ACC_CE from the
-ACC driver, RXLP_MCE, from the RXLP driver because you will need
-drivers for those at some point anyway.
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v2:
+	- None
+Changes for v3:
+	- None
+Changes for v4:
+	- None
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> interrupt number. Moreover, I think, the ULP1 is very different form the ULP0, it is not woken
-> up by the interrupt. It is fallen sleep and woken up by the some mechanism in the PMC. 
-> 
-
-Well, we don't really care about the mechanism. We only care about how
-the user is able to configure the wakeup sources.
-
-With your patch set, what happens when no ULP1 sources are defined but
-there are ULP0 sources? What happens when there are both ULP1 and ULP0
-sources?
-
-What would be good is to use ULP1 when only ULP1 sources are set up and
-ULP0 in the other cases. This will greatly help the user. Also, what I'm
-suggesting actually allows to change the ULP1 sources at runtime from
-devices that are actually used which is quite better than setting them
-up statically from DT.
-
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index 2b23d03..6ad4710 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -191,6 +191,12 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
