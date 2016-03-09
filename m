@@ -1,30 +1,30 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:31500 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756636AbcCBU2j (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Mar 2016 15:28:39 -0500
-From: Sasha Levin <sasha.levin@oracle.com>
-To: stable@vger.kernel.org, stable-commits@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+Received: from youngberry.canonical.com ([91.189.89.112]:40925 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964886AbcCIXR1 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2016 18:17:27 -0500
+From: Kamal Mostafa <kamal@canonical.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	kernel-team@lists.ubuntu.com
+Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Sasha Levin <sasha.levin@oracle.com>
-Subject: [added to the 3.18 stable tree] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-Date: Wed,  2 Mar 2016 15:27:23 -0500
-Message-Id: <1456950474-1149-40-git-send-email-sasha.levin@oracle.com>
-In-Reply-To: <1456950474-1149-1-git-send-email-sasha.levin@oracle.com>
-References: <1456950474-1149-1-git-send-email-sasha.levin@oracle.com>
+	Kamal Mostafa <kamal@canonical.com>
+Subject: [PATCH 3.13.y-ckt 070/138] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
+Date: Wed,  9 Mar 2016 15:13:17 -0800
+Message-Id: <1457565265-15195-71-git-send-email-kamal@canonical.com>
+In-Reply-To: <1457565265-15195-1-git-send-email-kamal@canonical.com>
+References: <1457565265-15195-1-git-send-email-kamal@canonical.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+3.13.11-ckt36 -stable review patch.  If anyone has any objections, please let me know.
+
+---8<------------------------------------------------------------
+
 From: Linus Walleij <linus.walleij@linaro.org>
 
-This patch has been added to the 3.18 stable tree. If you have any
-objections, please let us know.
-
-===============
-
-[ Upstream commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 ]
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
 
 When trying to set the ICST 307 clock to 25174000 Hz I ran into
 this arithmetic error: the icst_hz_to_vco() correctly figure out
@@ -57,12 +57,11 @@ right frequency gets set.
 
 Tested on the ARM Versatile.
 
-Cc: stable@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Cc: Pawel Moll <pawel.moll@arm.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
+Signed-off-by: Kamal Mostafa <kamal@canonical.com>
 ---
  arch/arm/common/icst.c | 8 ++++++--
  1 file changed, 6 insertions(+), 2 deletions(-)
@@ -94,5 +93,5 @@ index 2dc6da70..d3c0e69 100644
  
  EXPORT_SYMBOL(icst_hz);
 -- 
-2.5.0
+2.7.0
 
