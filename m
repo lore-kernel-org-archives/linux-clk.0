@@ -1,142 +1,75 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1on0070.outbound.protection.outlook.com ([157.56.110.70]:37568
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1758475AbcDADR3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 31 Mar 2016 23:17:29 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-	<iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, <scott.wood@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	<ulf.hansson@linaro.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"Zhao Qiang" <qiang.zhao@freescale.com>,
+Received: from regular1.263xmail.com ([211.150.99.139]:46872 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751007AbcCIChs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 21:37:48 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de, huangtao@rock-chips.com, jay.xu@rock-chips.com,
+	elaine.zhang@rock-chips.com, dianders@chromium.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
 	Kumar Gala <galak@codeaurora.org>,
-	"Santosh Shilimkar" <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v7, 5/5] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Fri, 1 Apr 2016 11:07:31 +0800
-Message-ID: <1459480051-3701-6-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/7] Add more clock compatible features and support the RK3399 clock
+Date: Wed,  9 Mar 2016 10:37:00 +0800
+Message-Id: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
-Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
-This patch adds the GUTS driver support for eSDHC driver to get SVR(System
-version register). And fix host version to avoid that incorrect version
-numbers break down the ADMA data transfer.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-Changes for v2:
-	- Got SVR through iomap instead of dts
-Changes for v3:
-	- Managed GUTS through syscon instead of iomap in eSDHC driver
-Changes for v4:
-	- Got SVR by GUTS driver instead of SYSCON
-Changes for v5:
-	- Changed to get SVR through API fsl_guts_get_svr()
-	- Combined patch 4, patch 5 and patch 6 into one
-Changes for v6:
-	- Added 'Acked-by: Ulf Hansson'
-Changes for v7:
-	- None
----
- drivers/mmc/host/Kconfig          |  1 +
- drivers/mmc/host/sdhci-of-esdhc.c | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+Hi,
+  The patch series add support more mux parameters and multiple
+clock providers for the rockchip features of the clock framework,
+and support the clock controller for the RK3399.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 04feea8..5743b05 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -142,6 +142,7 @@ config MMC_SDHCI_OF_ESDHC
- 	depends on MMC_SDHCI_PLTFM
- 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select FSL_GUTS
- 	help
- 	  This selects the Freescale eSDHC controller support.
- 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index 3f34d35..68cc020 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -18,6 +18,8 @@
- #include <linux/of.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-+#include <linux/fsl/svr.h>
-+#include <linux/fsl/guts.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
-@@ -28,6 +30,8 @@
- struct sdhci_esdhc {
- 	u8 vendor_ver;
- 	u8 spec_ver;
-+	u32 soc_ver;
-+	u8 soc_rev;
- };
- 
- /**
-@@ -73,6 +77,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
- static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 				     int spec_reg, u32 value)
- {
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
- 	u16 ret;
- 	int shift = (spec_reg & 0x2) * 8;
- 
-@@ -80,6 +86,13 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 		ret = value & 0xffff;
- 	else
- 		ret = (value >> shift) & 0xffff;
-+
-+	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
-+	 * vendor version and spec version information.
-+	 */
-+	if ((spec_reg == SDHCI_HOST_VERSION) &&
-+	    (esdhc->soc_ver == SVR_T4240) && (esdhc->soc_rev <= 0x20))
-+		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
- 	return ret;
- }
- 
-@@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- 	struct sdhci_pltfm_host *pltfm_host;
- 	struct sdhci_esdhc *esdhc;
- 	u16 host_ver;
-+	u32 svr;
- 
- 	pltfm_host = sdhci_priv(host);
- 	esdhc = sdhci_pltfm_priv(pltfm_host);
- 
-+	fsl_guts_init();
-+	svr = fsl_guts_get_svr();
-+	if (svr) {
-+		esdhc->soc_ver = SVR_SOC_VER(svr);
-+		esdhc->soc_rev = SVR_REV(svr);
-+	} else {
-+		dev_err(&pdev->dev, "Failed to get SVR value!\n");
-+	}
-+
- 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
+
+Changes in v3:
+- rename pclkin_cif to pclkin_cifmux, add diagram and comment for
+  pclkin_cifmux
+- add the clk_test node
+- modify the cif_testout path
+- include two new patches that dt-bindings and header file from
+  Jianqun's patch series
+
+Changes in v2:
+- rename the aplll/apllb to lpll/bpll
+- add drv/sample clock nodes for sdmmc/sdio
+
+Xing Zheng (7):
+  dt-bindings: add bindings for rk3399 clock controller
+  clk: rockchip: add dt-binding header for rk3399
+  clk: rockchip: add more mux parameters for new pll sources
+  clk: rockchip: Add support for multiple clock providers
+  clk: rockchip: add new pll-type for rk3399 and similar socs
+  clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
+  clk: rockchip: add clock controller for the RK3399
+
+ .../bindings/clock/rockchip,rk3399-cru.txt         |   82 +
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-cpu.c                     |   14 +-
+ drivers/clk/rockchip/clk-pll.c                     |  309 +++-
+ drivers/clk/rockchip/clk-rk3036.c                  |   20 +-
+ drivers/clk/rockchip/clk-rk3188.c                  |   54 +-
+ drivers/clk/rockchip/clk-rk3228.c                  |   20 +-
+ drivers/clk/rockchip/clk-rk3288.c                  |   22 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |   27 +-
+ drivers/clk/rockchip/clk-rk3399.c                  | 1567 ++++++++++++++++++++
+ drivers/clk/rockchip/clk.c                         |  148 +-
+ drivers/clk/rockchip/clk.h                         |   98 +-
+ include/dt-bindings/clock/rk3399-cru.h             |  720 +++++++++
+ 13 files changed, 2957 insertions(+), 125 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk3399.c
+ create mode 100644 include/dt-bindings/clock/rk3399-cru.h
+
 -- 
-2.1.0.27.g96db324
+1.7.9.5
+
 
