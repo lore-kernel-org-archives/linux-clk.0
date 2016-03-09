@@ -1,43 +1,24 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Eric Anholt <eric@anholt.net>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: bcm2835: fix check of error code returned by devm_ioremap_resource()
-Date: Sun,  6 Mar 2016 03:21:35 +0200
-Message-Id: <1457227295-3093-1-git-send-email-vz@mleia.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 1/5] clk: rockchip: add more mux parameters for new pll sources
+Date: Wed, 09 Mar 2016 02:12:31 +0100
+Message-ID: <2242962.kh0Ty0L2C4@phil>
+In-Reply-To: <1456827275-8035-2-git-send-email-zhengxing@rock-chips.com>
+References: <1456827275-8035-1-git-send-email-zhengxing@rock-chips.com> <1456827275-8035-2-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-The change fixes potential oops while accessing iomem on invalid
-address, if devm_ioremap_resource() fails due to some reason.
+Am Dienstag, 1. M=E4rz 2016, 18:14:31 schrieb Xing Zheng:
+> Thers are only two parent PLLs that APLL and GPLL for core on the
+> previous SoCs (RK3066/RK3188/RK3288/RK3368). Hence, we set fixed
+> GPLL as alternate parent when core is switching freq.
+>=20
+> Since RK3399 big.LITTLE architecture, we need to select and adapt
+> more PLLs (ALPLL/ABPLL/DPLL/GPLL) sources.
+>=20
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-The devm_ioremap_resource() function returns ERR_PTR() and never
-returns NULL, which makes useless a following check for NULL.
-
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Fixes: 5e63dcc74b30 ("clk: bcm2835: Add a driver for the auxiliary peripheral clock gates")
----
- drivers/clk/bcm/clk-bcm2835-aux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-index e4f89e2..3a177ad 100644
---- a/drivers/clk/bcm/clk-bcm2835-aux.c
-+++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-@@ -38,8 +38,8 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg = devm_ioremap_resource(dev, res);
--	if (!reg)
--		return -ENODEV;
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
- 
- 	onecell = devm_kmalloc(dev, sizeof(*onecell), GFP_KERNEL);
- 	if (!onecell)
--- 
-2.1.4
+note to self: looks good to go
