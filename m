@@ -1,153 +1,143 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, linux-rockchip@lists.infradead.org, keescook@google.com, leozwang@google.com, zhengxing <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 5/6] clk: rockchip: rk3036: fix and add node id for emac clock
-Date: Fri, 11 Mar 2016 12:15:33 +0100
-Message-ID: <2005499.uduk6By3kM@diego>
-In-Reply-To: <1457693731-6966-6-git-send-email-wxt@rock-chips.com>
-References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com> <1457693731-6966-6-git-send-email-wxt@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+ <linux-mmc@vger.kernel.org>
+Subject: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Date: Wed, 9 Mar 2016 18:08:51 +0800
+Message-ID: <1457518131-11339-6-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ scott.wood@nxp.com, Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com, xiaobo.xie@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Caesar,
+The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
+Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
+This patch adds the GUTS driver support for eSDHC driver to get SVR(System
+version register). And fix host version to avoid that incorrect version
+numbers break down the ADMA data transfer.
 
-Am Freitag, 11. M=E4rz 2016, 18:55:30 schrieb Caesar Wang:
-> From: zhengxing <zhengxing@rock-chips.com>
->=20
-> In the emac driver, we need to refer HCLK_MAC since there are
-> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clocks are under the
-> GPLL, and it is unable to provide the accurate rate for mac_ref which=
-
-> need to 50MHz probability, we should let it under the DPLL and are
-> able to set the freq which integer multiples of 50MHz, so we add thes=
-e
-> emac node for reference.
->=20
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-
-I think I mentioned it somewhere before, but I'd like to do this
-differently, like in [0].
-
-That should work in a similar way and at least in my tests the reported=
-
-clock rate seems to be correct. As I said as well I haven't been able t=
-o
-make the emac detect a link on my kylin boards, so it would be cool
-if you could test if this different approach works in practice as well.=
-
-
-
-Thanks
-Heiko
-
------- 8< ---------
->From e83a8b19dbf95c40d2c908727c342fbc6b167ea1 Mon Sep 17 00:00:00 2001
-From: Heiko Stuebner <heiko@sntech.de>
-Date: Fri, 19 Feb 2016 21:31:43 +0100
-Subject: [PATCH] clk: rockchip: associate SCLK_MAC_PLL and disable repa=
-renting
- on rk3036
-
-The emac needs constant and very specific rate but the possible PLL-sou=
-rces
-are very limited, so we expect the PLL source to be set manually on per=
-
-board and don't want it to get changed in an automatic way later.
-So add the necessary clock-id and disable reparenting on set_rate calls=
-.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes for v2:
+	- Got SVR through iomap instead of dts
+Changes for v3:
+	- Managed GUTS through syscon instead of iomap in eSDHC driver
+Changes for v4:
+	- Got SVR by GUTS driver instead of SYSCON
+Changes for v5:
+	- Changed to get SVR through API fsl_guts_get_svr()
+	- Combined patch 4, patch 5 and patch 6 into one
+Changes for v6:
+	- Added 'Acked-by: Ulf Hansson'
+---
+ drivers/mmc/host/Kconfig          |  1 +
+ drivers/mmc/host/sdhci-of-esdhc.c | 23 +++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/c=
-lk-rk3036.c
-index 3c742bf..0084c57 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -348,7 +348,7 @@ static struct rockchip_clk_branch rk3036_clk_branch=
-es[] __initdata =3D {
- =09=09=09RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
- =09=09=09RK2928_CLKGATE_CON(10), 5, GFLAGS),
-=20
--=09COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-+=09COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", mux_pll_src_3plls_p, C=
-LK_SET_RATE_NO_REPARENT,
- =09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
- =09MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
- =09=09=09RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 04feea8..5743b05 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -142,6 +142,7 @@ config MMC_SDHCI_OF_ESDHC
+ 	depends on MMC_SDHCI_PLTFM
+ 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
+ 	select MMC_SDHCI_IO_ACCESSORS
++	select FSL_GUTS
+ 	help
+ 	  This selects the Freescale eSDHC controller support.
+ 
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 3f34d35..68cc020 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -18,6 +18,8 @@
+ #include <linux/of.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
++#include <linux/fsl/svr.h>
++#include <linux/fsl/guts.h>
+ #include <linux/mmc/host.h>
+ #include "sdhci-pltfm.h"
+ #include "sdhci-esdhc.h"
+@@ -28,6 +30,8 @@
+ struct sdhci_esdhc {
+ 	u8 vendor_ver;
+ 	u8 spec_ver;
++	u32 soc_ver;
++	u8 soc_rev;
+ };
+ 
+ /**
+@@ -73,6 +77,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
+ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 				     int spec_reg, u32 value)
+ {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
+ 	u16 ret;
+ 	int shift = (spec_reg & 0x2) * 8;
+ 
+@@ -80,6 +86,13 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 		ret = value & 0xffff;
+ 	else
+ 		ret = (value >> shift) & 0xffff;
++
++	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
++	 * vendor version and spec version information.
++	 */
++	if ((spec_reg == SDHCI_HOST_VERSION) &&
++	    (esdhc->soc_ver == SVR_T4240) && (esdhc->soc_rev <= 0x20))
++		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
+ 	return ret;
+ }
+ 
+@@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
+ 	struct sdhci_pltfm_host *pltfm_host;
+ 	struct sdhci_esdhc *esdhc;
+ 	u16 host_ver;
++	u32 svr;
+ 
+ 	pltfm_host = sdhci_priv(host);
+ 	esdhc = sdhci_pltfm_priv(pltfm_host);
+ 
++	fsl_guts_init();
++	svr = fsl_guts_get_svr();
++	if (svr) {
++		esdhc->soc_ver = SVR_SOC_VER(svr);
++		esdhc->soc_rev = SVR_REV(svr);
++	} else {
++		dev_err(&pdev->dev, "Failed to get SVR value!\n");
++	}
++
+ 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
+ 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
+ 			     SDHCI_VENDOR_VER_SHIFT;
+-- 
+2.1.0.27.g96db324
 
------- 8< ---------
 
-
-[0] https://github.com/mmind/linux-rockchip/commit/e83a8b19dbf95c40d2c9=
-08727c342fbc6b167ea1
-
-
-> ---
->=20
->  drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
->  include/dt-bindings/clock/rk3036-cru.h | 2 ++
->  2 files changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3036.c
-> b/drivers/clk/rockchip/clk-rk3036.c index 0703c8f..27c35fa 100644
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -348,8 +348,11 @@ static struct rockchip_clk_branch rk3036_clk_bra=
-nches[]
-> __initdata =3D { RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
->  =09=09=09RK2928_CLKGATE_CON(10), 5, GFLAGS),
->=20
-> -=09COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-> -=09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-> +=09MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
-> +=09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
-> +=09DIV(0, "mac_pll_src", "mac_pll_pre", 0,
-> +=09=09=09RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
-> +
->  =09MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
->  =09=09=09RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
->=20
-> @@ -408,7 +411,7 @@ static struct rockchip_clk_branch rk3036_clk_bran=
-ches[]
-> __initdata =3D { GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE=
-_UNUSED,
-> RK2928_CLKGATE_CON(7), 3, GFLAGS), GATE(HCLK_I2S, "hclk_i2s", "hclk_p=
-eri",
-> 0, RK2928_CLKGATE_CON(7), 2, GFLAGS), GATE(0, "hclk_sfc", "hclk_peri"=
-,
-> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS), -=09GATE(0,
-> "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15=
-,
-> GFLAGS), +=09GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0,
-> RK2928_CLKGATE_CON(3), 5, GFLAGS),
->=20
->  =09/* pclk_peri gates */
->  =09GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED,
-> RK2928_CLKGATE_CON(4), 1, GFLAGS), diff --git
-> a/include/dt-bindings/clock/rk3036-cru.h
-> b/include/dt-bindings/clock/rk3036-cru.h index ebc7a7b..de44109 10064=
-4
-> --- a/include/dt-bindings/clock/rk3036-cru.h
-> +++ b/include/dt-bindings/clock/rk3036-cru.h
-> @@ -54,6 +54,7 @@
->  #define SCLK_PVTM_VIDEO=09=09125
->  #define SCLK_MAC=09=09151
->  #define SCLK_MACREF=09=09152
-> +#define SCLK_MACPLL=09=09153
->  #define SCLK_SFC=09=09160
->=20
->  /* aclk gates */
-> @@ -92,6 +93,7 @@
->  #define HCLK_SDMMC=09=09456
->  #define HCLK_SDIO=09=09457
->  #define HCLK_EMMC=09=09459
-> +#define HCLK_MAC=09=09460
->  #define HCLK_I2S=09=09462
->  #define HCLK_LCDC=09=09465
->  #define HCLK_ROM=09=09467
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
