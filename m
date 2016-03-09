@@ -1,123 +1,68 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 00/13] Add A83T clk, r_pio, mmc rsb support
-Date: Sat,  5 Mar 2016 23:42:53 +0800
-Message-Id: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] clk: renesas: mstp: Clarify cpg_mstp_{at,de}tach_dev() domain parameter
+Date: Wed,  9 Mar 2016 20:18:33 +0100
+Message-Id: <1457551114-21764-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1457551114-21764-1-git-send-email-geert+renesas@glider.be>
+References: <1457551114-21764-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-This is v3 of series which adds further support for A83T, mainly adds clock 
-support.Also adds R_PIO, PRCM related clocks, mmc, rsb support.
+Make it clear that the "domain" parameter of the cpg_mstp_attach_dev()
+and cpg_mstp_detach_dev() functions is not used.
 
-A83T difference in short:
-R_PIO is slightly different from A23 r_pio. AHB1 has different parents as
-compared to a31-ahb1, APB1 has different dividers.Bus gates are similar to H3,
-apb0 gates are different.mmc and rsb are compatible with earlier sunxi socs.
+The cpg_mstp_attach_dev() and cpg_mstp_detach_dev() callbacks are not
+only used by the CPG/MSTP Clock Domain driver, but also by the R-Mobile
+SYSC PM Domain driver.
 
-These patches are based on Maxime's sunxi/for-next branch.
-https://git.kernel.org/cgit/linux/kernel/git/mripard/linux.git/
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-mstp.c | 4 ++--
+ include/linux/clk/renesas.h    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-v2->v3 Changes:
-1. Corrected wrong configuration of uart0 and timer in dtsi.
-2. corrected clock gate name of "spdif" in dtsi.
-3. Added kconfig for sunxi clocks, added sun8i-apb0 and sun9i-cpus clocks to it.
-
-v1->v2 Changes:
-1. Patches for apb0 gates clock, bus gates, low speed oscillators are already
-   merged, so, not included again in this series.
-1. sorted the R_PIO Kconfig options.
-2. removed un-necessary a83t apb1 div table.
-3. combined the three ahb reset registers into one reset node.
-4. Changed the bus gates names to bus_spidf and bus_usb_otg.
-5. removed un-necessary #address-cells and #size-cells from R_PIO node.
-6. splited rsb pins and rsb controller nodes in different patches.
-7. used PF6 as mmc0 CD reference design pin.
-8. corrected the style related errors.
-
-Patch 1: adds support for r_pio pin controller.
-
-patch 2: adds ahb1 clock support, 0b1x is pll6 parent otherwise it's same as a31
-ahb1.
-
-patch 3: adds apb1 clock support, apb1 has different dividers compared to a10 
-apb0 clock.
-
-patch 4: adds basics clocks nodes to dtsi, pll6, ahb1, ahb2, apb1, apb2,
-bus gates, and resets.
-
-patch 5-6: adds mmc and it's clock nodes.
-
-patch 7: adds A83T PRCM related clocks, clock resets.
-
-patch 8: adds r_pio pin controller nodes to dtsi
-
-patch 9: adds RSB controller nodes to dtsi
-
-patch 10: adds common MMC CD detect pin as reference design pin 
-
-patch 11: enables mmc0 support for h8homlet board, tested by LABBE Corentin.
-
-patch 12: This patch adds support for Sinovoip BPI-M3 A83T based board, it has 
-2GB LPDDR3, u-boot support is added recently for this board.
-
-patch 13: Adds kconfig for clocks(sun8i-apb0 and sun9i-cpus).
-
-
-Vishnu Patekar (13):
-  pinctrl: sunxi: Add A83T R_PIO controller support
-  clk: sunxi: add ahb1 clock for A83T
-  clk: sunxi: Add APB1 clock for A83T
-  ARM: dts: sun8i-a83t: Add basic clocks and resets
-  ARM: dts: sun8i-a83t: add mmc clock nodes
-  ARM: dts: sun8i-a83t: Add mmc controller nodes
-  ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-  ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
-  ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
-  ARM: dts: sun8i-a83t: add mmc0 CD pin
-  ARM: dts: sun8i: enable mmc for H8Homlet Board.
-  ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-  ARM: sunxi: Add Kconfig for sunxi clocks
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  11 +
- ...omlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} |  21 +-
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 285 ++++++++++++++++++++-
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/sunxi/Kconfig                          |   5 +
- drivers/clk/sunxi/Makefile                         |   4 +-
- drivers/clk/sunxi/clk-sunxi.c                      |  89 +++++++
- drivers/pinctrl/sunxi/Kconfig                      |   5 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++
- 13 files changed, 538 insertions(+), 7 deletions(-)
- copy arch/arm/boot/dts/{sun8i-a83t-allwinner-h8homlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} (83%)
- create mode 100644 drivers/clk/sunxi/Kconfig
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 91eed7ced08d8fe6..0144d54351a6953b 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -244,7 +244,7 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ CLK_OF_DECLARE(cpg_mstp_clks, "renesas,cpg-mstp-clocks", cpg_mstp_clocks_init);
+ 
+ 
+-int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
++int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct of_phandle_args clkspec;
+@@ -296,7 +296,7 @@ fail_put:
+ 	return error;
+ }
+ 
+-void cpg_mstp_detach_dev(struct generic_pm_domain *domain, struct device *dev)
++void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+ 	if (!list_empty(&dev->power.subsys_data->clock_list))
+ 		pm_clk_destroy(dev);
+diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
+index 2a3379cf13304837..095b1681daf46faf 100644
+--- a/include/linux/clk/renesas.h
++++ b/include/linux/clk/renesas.h
+@@ -25,7 +25,7 @@ void r8a7779_clocks_init(u32 mode);
+ void rcar_gen2_clocks_init(u32 mode);
+ 
+ void cpg_mstp_add_clk_domain(struct device_node *np);
+-int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev);
+-void cpg_mstp_detach_dev(struct generic_pm_domain *domain, struct device *dev);
++int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
++void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev);
+ 
+ #endif
 -- 
 1.9.1
