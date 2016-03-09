@@ -1,117 +1,115 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 14 Mar 2016 11:52:08 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?utf-8?B?UGF3ZcWC?= Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller
- support
-Message-ID: <20160314105208.GM8418@lukather>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
- <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
- <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
- <CAEzqOZta65UBJPBrp_4xr=SzHU98dWDucwzVb80eKE9ChJ8jpQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BDCv8JNaL8ltm7rS"
-In-Reply-To: <CAEzqOZta65UBJPBrp_4xr=SzHU98dWDucwzVb80eKE9ChJ8jpQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:54043 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751045AbcCIAYO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 19:24:14 -0500
+From: Kamal Mostafa <kamal@canonical.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Kamal Mostafa <kamal@canonical.com>,
+	kernel-team@lists.ubuntu.com
+Subject: [3.19.y-ckt stable] Patch "ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()" has been added to the 3.19.y-ckt tree
+Date: Tue,  8 Mar 2016 16:24:07 -0800
+Message-Id: <1457483047-23765-1-git-send-email-kamal@canonical.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This is a note to let you know that I have just added a patch titled
 
---BDCv8JNaL8ltm7rS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
 
-Hi,
+to the linux-3.19.y-queue branch of the 3.19.y-ckt extended stable tree 
+which can be found at:
 
-On Sat, Mar 12, 2016 at 12:48:02PM +0800, Vishnu Patekar wrote:
-> Hello Linus,
->=20
->=20
-> On Wed, Mar 9, 2016 at 10:55 AM, Linus Walleij <linus.walleij@linaro.org>=
- wrote:
-> > On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
-> > <vishnupatekar0510@gmail.com> wrote:
-> >
-> >> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> >> interrupt bit is 6th and A83T has one extra pin PL12.
-> >>
-> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> >> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> >> Acked-by: Rob Herring <robh@kernel.org>
-> >
-> > As partly noted by others:
-> >
-> >> +config PINCTRL_SUN8I_A83T_R
-> >> +       def_bool MACH_SUN8I
-> >
-> > bool
-> >
-> >> +       depends on RESET_CONTROLLER
-> >
-> > Should it rather select RESET_CONTROLLER?
-> I used depends on and def_bool as it is used for other sunxi pinctrl driv=
-ers.
-> Using bool and select will not harm anything.
+    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-3.19.y-queue
 
-It will, at least in the case of def_bool, since that symbol will not
-be enabled by default, and you'll have no way to enable it.
+This patch is scheduled to be released in version 3.19.8-ckt16.
 
-And RESET_CONTROLLER is a bit messy, since you can't just select it
-because it also has a dependency on an ARCH_HAS_RESET_CONTROLLER
-symbol.
+If you, or anyone else, feels it should not be added to this tree, please 
+reply to this email.
 
-> Should I change it to bool and select ?  or keep it to be uniform with
-> earlier options?
+For more information about the 3.19.y-ckt tree, see
+https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
 
-Please keep it that way.
+Thanks.
+-Kamal
 
-Thanks,
-Maxime
+---8<------------------------------------------------------------
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+>From 904b9b5d96611a5a67bf79de4735da11aeb29fbc Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 Feb 2016 09:14:37 +0100
+Subject: ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
 
---BDCv8JNaL8ltm7rS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+When trying to set the ICST 307 clock to 25174000 Hz I ran into
+this arithmetic error: the icst_hz_to_vco() correctly figure out
+DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
+25174000 Hz out of the VCO. (I replicated the icst_hz() function
+in a spreadsheet to verify this.)
 
-iQIcBAEBAgAGBQJW5pfYAAoJEBx+YmzsjxAgqpIP/R5fIuDIUf69/qlopNfwl/kp
-uftf9w8N7GnTFMEAoydCbQEKMT5GrfqEaXYg4Ie54kq4WvvFEkZdltP+5vt8yi1G
-UbrENVpQHdQVVwFXbVrooXP2dOvpiGO/DIMfKICT1o0UNtdCTGDhwKeivqOfOLmh
-khuRW7agJjDW4yCz0dWYEJ9d+M98RYMj2BXtoKq0j4/QvEaO5NPSfwuacQd1Aiuk
-WulK7a6cgGK7YxWQLd+yegrAyoCqRBNzaaddS7+hUwWKecoJFHqXyeIZCnqdiTwq
-/n6LtMuZVLuRyLGM1hcKtf+6VuDYybntDvAZgLx8J6lTGOTfs+fQ39xM54stXX5L
-zb2txtMoD28xVDcftw+HznRa33xiJ/x+hpQwImSeH05Yziw41zTdNiNlpeBTQA8E
-68I/l81B5sm0dwBjjAnGv5fla8Uvpc3GSeB3n61zZF3UiJ/yvWm0W67akm4Y6QdL
-ijYkOxCPzpyb9Q1gA97GpUMehUqg9XmEc2gxmLnoM5/ANtUZGknQWssQwSD8t5Tw
-NVEo/f22ft2J3jt+fJGxJ7JcfUAZ6P41vKy8gn1vcow5HUdoZvbKkfaxkmkNeKJ+
-iK3fcyPHOoRPi3H0SGt+wspq3wg3DwMwsQZvNxBN/t5HU+cGgrXN07K6eUydn8vi
-oLlHsl+7IM/rWWPsGmtk
-=jtfl
------END PGP SIGNATURE-----
+However, when I called icst_hz() on these VCO settings it would
+instead return 4122709 Hz. This causes an error in the common
+clock driver for ICST as the common clock framework will call
+.round_rate() on the clock which will utilize icst_hz_to_vco()
+followed by icst_hz() suggesting the erroneous frequency, and
+then the clock gets set to this.
 
---BDCv8JNaL8ltm7rS--
+The error did not manifest in the old clock framework since
+this high frequency was only used by the CLCD, which calls
+clk_set_rate() without first calling clk_round_rate() and since
+the old clock framework would not call clk_round_rate() before
+setting the frequency, the correct values propagated into
+the VCO.
+
+After some experimenting I figured out that it was due to a simple
+arithmetic overflow: the divisor for 24Mhz reference frequency
+as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
+in bit 32 overflows and is lost.
+
+But introducing an explicit 64-by-32 bit do_div() and casting
+the divisor into (u64) we get the right frequency back, and the
+right frequency gets set.
+
+Tested on the ARM Versatile.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Kamal Mostafa <kamal@canonical.com>
+---
+ arch/arm/common/icst.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/icst.c b/arch/arm/common/icst.c
+index 2dc6da70..d3c0e69 100644
+--- a/arch/arm/common/icst.c
++++ b/arch/arm/common/icst.c
+@@ -16,7 +16,7 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-
++#include <asm/div64.h>
+ #include <asm/hardware/icst.h>
+
+ /*
+@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
+
+ unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
+ {
+-	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
++	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
++	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
++
++	do_div(dividend, divisor);
++	return (unsigned long)dividend;
+ }
+
+ EXPORT_SYMBOL(icst_hz);
+--
+2.7.0
+
