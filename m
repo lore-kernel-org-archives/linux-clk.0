@@ -1,133 +1,64 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.139]:40342 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751279AbcCICoR (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 21:44:17 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell CP110 system controller
-Date: Sun, 27 Mar 2016 11:26:16 +0200
-Message-Id: <1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
+	jay.xu@rock-chips.com, elaine.zhang@rock-chips.com,
+	dianders@chromium.org, Xing Zheng <zhengxing@rock-chips.com>
+Subject: [PATCH v3 6/7] clk: rockchip: add a COMPOSITE_FRACMUX_NOGATE type
+Date: Wed,  9 Mar 2016 10:43:31 +0800
+Message-Id: <1457491411-31114-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
+References: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the Marvell CP110
-system controller, which is part of the CP110 HW block, itself used in
-the Marvell Armada 7K and 8K SoCs.
+Because there are some frac clock mux nodes don't need gate node on
+the RK3399.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- .../arm/marvell/cp110-system-controller0.txt       | 88 ++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-new file mode 100644
-index 0000000..e8883da
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -0,0 +1,88 @@
-+Marvell Armada CP110 System Controller 0
-+========================================
+Changes in v3: None
+Changes in v2: None
+
+ drivers/clk/rockchip/clk.h |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 7526f9a..75dc30e 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -451,6 +451,22 @@ struct rockchip_clk_branch {
+ 		.child		= ch,				\
+ 	}
+ 
++#define COMPOSITE_FRACMUX_NOGATE(_id, cname, pname, f, mo, df, ch) \
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_fraction_divider,	\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.div_shift	= 16,				\
++		.div_width	= 16,				\
++		.div_flags	= df,				\
++		.gate_offset	= -1,				\
++		.child		= ch,				\
++	}
 +
-+The CP110 is one of the two core HW blocks of the Marvell Armada 7K/8K
-+SoCs. It contains two sets of system control registers, System
-+Controller 0 and System Controller 1. This Device Tree binding allows
-+to describe the first system controller, which provides registers to
-+configure various aspects of the SoC.
-+
-+The Device Tree node representing this System Controller 0 provides a
-+number of clocks:
-+
-+ - a set of core clocks
-+ - a set of gatable clocks
-+
-+Those clocks can be referenced by other Device Tree nodes using two
-+cells:
-+ - The first cell must be 0 or 1. 0 for the core clocks and 1 for the
-+   gatable clocks.
-+ - The second cell identifies the particular core clock or gatable
-+   clocks.
-+
-+The following clocks are available:
-+ - Core clocks
-+   - 0 0	APLL
-+   - 0 1	PPv2 core
-+   - 0 2	EIP
-+   - 0 3	Core
-+   - 0 4	NAND core
-+ - Gatable clocks
-+   - 1 0	Audio
-+   - 1 1	Comm Unit
-+   - 1 2	NAND
-+   - 1 3	PPv2
-+   - 1 4	SDIO
-+   - 1 5	MG Domain
-+   - 1 6	MG Core
-+   - 1 7	XOR1
-+   - 1 8	XOR0
-+   - 1 9	GOP DP
-+   - 1 11	PCIe x1 0
-+   - 1 12	PCIe x1 1
-+   - 1 13	PCIe x4
-+   - 1 14	PCIe / XOR
-+   - 1 15	SATA
-+   - 1 16	SATA USB
-+   - 1 18	GOP Macro
-+   - 1 22	USB3H0
-+   - 1 23	USB3H1
-+   - 1 24	USB3 Device
-+   - 1 25	EIP150
-+   - 1 26	EIP197
-+
-+Required properties:
-+
-+ - compatible: must be:
-+     "marvell,cp110-system-controller0", "syscon";
-+ - reg: register area of the CP110 system controller 0
-+ - #clock-cells: must be set to 2
-+ - core-clock-output-names must be set to:
-+    "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
-+ - gatable-clock-indices must be set to:
-+	<0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
-+	<9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
-+	<22>, <23>, <24>, <25>, <26>
-+ - gatable-clock-output-names must be set to:
-+	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
-+	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "cpm-pcie_x10",
-+	"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata", "cpm-sata-usb",
-+	"cpm-gop-macro", "cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150",
-+	"cpm-eip197"
-+
-+Example:
-+
-+	cpm_syscon0: system-controller@440000 {
-+		compatible = "marvell,cp110-system-controller0", "syscon";
-+		reg = <0x440000 0x1000>;
-+		#clock-cells = <2>;
-+		core-clock-output-names = "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core";
-+		gate-clock-indices = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
-+			<9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
-+			<22>, <23>, <24>, <25>, <26>;
-+		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
-+			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "cpm-pcie_x10",
-+			"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata", "cpm-sata-usb",
-+			"cpm-gop-macro", "cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150",
-+			"cpm-eip197";
-+	};
+ #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
+ 	{							\
+ 		.id		= _id,				\
 -- 
-2.6.4
+1.7.9.5
+
+
