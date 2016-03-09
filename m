@@ -1,68 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47873 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756465AbcCBS0j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 2 Mar 2016 13:26:39 -0500
-Date: Wed, 2 Mar 2016 12:26:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
-Message-ID: <20160302182634.GA26055@rob-hp-laptop>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-6-git-send-email-fcooper@ti.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456439796-28546-6-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
+Date: Wed, 9 Mar 2016 09:55:44 +0700
+Message-ID: <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
+Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
+	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 04:36:36PM -0600, Franklin S Cooper Jr wrote:
-> From: Vignesh R <vigneshr@ti.com>
-> 
-> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
-> for dt bindings.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
-> Version 3 changes:
-> None
-> 
->  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
->  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
->  arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
->  3 files changed, 88 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-> index 9c100b2..25d91ae 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-> @@ -4,6 +4,7 @@ Required properties:
->  - compatible: Must be "ti,<soc>-ehrpwm".
->    for am33xx - compatible = "ti,am33xx-ehrpwm";
->    for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-> +  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
+On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
 
-We're starting to push back on wildcards in compatible strings. I guess 
-this is okay...
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
+>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
 
->  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->    the cells format. The only third cell flag supported by this binding is
->    PWM_POLARITY_INVERTED.
-> @@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
->  	#pwm-cells = <3>;
->  	reg = <0x300000 0x2000>;
->  };
-> +
-> +ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
+As partly noted by others:
 
-Should be pwm@48440200
+> +config PINCTRL_SUN8I_A83T_R
+> +       def_bool MACH_SUN8I
 
-> +	compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
-> +	#pwm-cells = <3>;
-> +	reg = <0x48440200 0x80>;
-> +	ti,hwmods = "ehrpwm0";
+bool
+
+> +       depends on RESET_CONTROLLER
+
+Should it rather select RESET_CONTROLLER?
+
+> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
+> +       { .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
+> +       {}
 > +};
+> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
+
+Module talk in bool driver.
+
+> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
+> +       .probe  = sun8i_a83t_r_pinctrl_probe,
+> +       .driver = {
+> +               .name           = "sun8i-a83t-r-pinctrl",
+> +               .of_match_table = sun8i_a83t_r_pinctrl_match,
+> +       },
+> +};
+> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
+
+Should be builtin?
+
+Yours,
+Linus Walleij
