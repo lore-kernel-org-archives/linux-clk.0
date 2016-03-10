@@ -1,213 +1,198 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
 	pawel.moll@arm.com,
 	mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk,
 	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
-Date: Sat,  5 Mar 2016 23:42:54 +0800
-Message-Id: <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 01/18] irqchip: vf610-gpc: add Vybrid GPC IRQ controller
+Date: Wed,  9 Mar 2016 18:16:42 -0800
+Message-Id: <1457576219-7971-2-git-send-email-stefan@agner.ch>
+In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-interrupt bit is 6th and A83T has one extra pin PL12.
+This patch introduces a driver for Vybrids GPC (Global Power
+Controller). Vybrids GPC IP is simpler than the one found in
+i.MX 6: There is no power gating control (GPC) and the GPC INTC
+does not need to clear IRQ masks for an interrupt to get routed
+to the GIC (the mask only applys for wake-up control).
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- drivers/pinctrl/sunxi/Kconfig                      |   5 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
- 4 files changed, 126 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+ drivers/irqchip/Makefile        |   1 +
+ drivers/irqchip/irq-vf610-gpc.c | 138 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 139 insertions(+)
+ create mode 100644 drivers/irqchip/irq-vf610-gpc.c
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-index 9213b27..f9ff10b 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-@@ -20,6 +20,7 @@ Required properties:
-   "allwinner,sun9i-a80-pinctrl"
-   "allwinner,sun9i-a80-r-pinctrl"
-   "allwinner,sun8i-a83t-pinctrl"
-+  "allwinner,sun8i-a83t-r-pinctrl"
-   "allwinner,sun8i-h3-pinctrl"
- 
- - reg: Should contain the register physical address and length for the
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index f8dbc8b..eeab50b 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -51,6 +51,11 @@ config PINCTRL_SUN8I_A23_R
- 	depends on RESET_CONTROLLER
- 	select PINCTRL_SUNXI_COMMON
- 
-+config PINCTRL_SUN8I_A83T_R
-+	def_bool MACH_SUN8I
-+	depends on RESET_CONTROLLER
-+	select PINCTRL_SUNXI_COMMON
-+
- config PINCTRL_SUN8I_H3
- 	def_bool MACH_SUN8I
- 	select PINCTRL_SUNXI_COMMON
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index ef82f22..bfd4fa0 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
- obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
- obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
-+obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 18caacb..0a77ac6 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_TS4800_IRQ)		+= irq-ts4800.o
+ obj-$(CONFIG_XTENSA)			+= irq-xtensa-pic.o
+ obj-$(CONFIG_XTENSA_MX)			+= irq-xtensa-mx.o
+ obj-$(CONFIG_IRQ_CROSSBAR)		+= irq-crossbar.o
++obj-$(CONFIG_SOC_VF610)			+= irq-vf610-gpc.o
+ obj-$(CONFIG_SOC_VF610)			+= irq-vf610-mscm-ir.o
+ obj-$(CONFIG_BCM7038_L1_IRQ)		+= irq-bcm7038-l1.o
+ obj-$(CONFIG_BCM7120_L2_IRQ)		+= irq-bcm7120-l2.o
+diff --git a/drivers/irqchip/irq-vf610-gpc.c b/drivers/irqchip/irq-vf610-gpc.c
 new file mode 100644
-index 0000000..11787894
+index 0000000..2c6a043
 --- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-@@ -0,0 +1,119 @@
++++ b/drivers/irqchip/irq-vf610-gpc.c
+@@ -0,0 +1,138 @@
 +/*
-+ * Allwinner A83T SoCs special pins pinctrl driver.
++ * Copyright (C) 2016 Toradex AG
++ * Author: Stefan Agner <stefan@agner.ch>
 + *
-+ * Copyright (C) 2016 Vishnu Patekar
-+ * Vishnu Patekar <vishnupatekar0510@gmail.com>
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + *
-+ * Based on pinctrl-sun8i-a23.c, which is:
-+ * Copyright (C) 2014 Chen-Yu Tsai <wens@csie.org>
-+ * Copyright (C) 2014 Maxime Ripard <maxime.ripard@free-electrons.com>
 + *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
++ * The GPC (General Power Controller) irqchip driver takes care of the
++ * interrupt wakeup functionality.
++ *
++ * o All peripheral interrupts of the Vybrid SoC can be used as wakeup
++ *   source from STOP mode. In LPSTOP mode however, the GPC is unpowered
++ *   too and cannot be used to as a wakeup source. The WKPU (Wakeup Unit)
++ *   is responsible for wakeups from LPSTOP modes.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
++#include <linux/cpu_pm.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqdomain.h>
++#include <linux/mfd/syscon.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/reset.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/regmap.h>
 +
-+#include "pinctrl-sunxi.h"
++#define IMR_NUM			4
++#define VF610_GPC_IMR1		0x044
++#define VF610_GPC_MAX_IRQS	(IMR_NUM * 32)
 +
-+static const struct sunxi_desc_pin sun8i_a83t_r_pins[] = {
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
-+		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
-+		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_pwm"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_cir"),		/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT12 */
-+};
++static void __iomem *gpc_base;
 +
-+static const struct sunxi_pinctrl_desc sun8i_a83t_r_pinctrl_data = {
-+	.pins = sun8i_a83t_r_pins,
-+	.npins = ARRAY_SIZE(sun8i_a83t_r_pins),
-+	.pin_base = PL_BASE,
-+	.irq_banks = 1,
-+};
-+
-+static int sun8i_a83t_r_pinctrl_probe(struct platform_device *pdev)
++static int vf610_gpc_irq_set_wake(struct irq_data *d, unsigned int on)
 +{
-+	return sunxi_pinctrl_init(pdev, &sun8i_a83t_r_pinctrl_data);
++	unsigned int idx = d->hwirq / 32;
++	void __iomem *reg_imr = gpc_base + VF610_GPC_IMR1 + (idx * 4);
++	u32 mask = 1 << d->hwirq % 32;
++
++	if (on)
++		writel_relaxed(readl_relaxed(reg_imr) & ~mask, reg_imr);
++	else
++		writel_relaxed(readl_relaxed(reg_imr) | mask, reg_imr);
++
++	/*
++	 * Do *not* call into the parent, as the GIC doesn't have any
++	 * wake-up facility...
++	 */
++	return 0;
 +}
 +
-+static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
-+	{}
++static struct irq_chip vf610_gpc_chip = {
++	.name			= "vf610-gpc",
++	.irq_mask		= irq_chip_mask_parent,
++	.irq_unmask		= irq_chip_unmask_parent,
++	.irq_enable		= irq_chip_enable_parent,
++	.irq_disable		= irq_chip_disable_parent,
++	.irq_eoi		= irq_chip_eoi_parent,
++	.irq_retrigger		= irq_chip_retrigger_hierarchy,
++	.irq_set_wake		= vf610_gpc_irq_set_wake,
 +};
-+MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
 +
-+static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
-+	.probe	= sun8i_a83t_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun8i-a83t-r-pinctrl",
-+		.of_match_table	= sun8i_a83t_r_pinctrl_match,
-+	},
++static int vf610_gpc_domain_alloc(struct irq_domain *domain, unsigned int virq,
++				  unsigned int nr_irqs, void *arg)
++{
++	int i;
++	irq_hw_number_t hwirq;
++	struct irq_fwspec *fwspec = arg;
++	struct irq_fwspec parent_fwspec;
++
++	if (!irq_domain_get_of_node(domain->parent))
++		return -EINVAL;
++
++	if (fwspec->param_count != 2)
++		return -EINVAL;
++
++	hwirq = fwspec->param[0];
++	for (i = 0; i < nr_irqs; i++)
++		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
++					      &vf610_gpc_chip, NULL);
++
++	parent_fwspec = *fwspec;
++	parent_fwspec.fwnode = domain->parent->fwnode;
++	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
++					    &parent_fwspec);
++}
++
++static int vf610_gpc_domain_translate(struct irq_domain *d,
++					  struct irq_fwspec *fwspec,
++					  unsigned long *hwirq,
++					  unsigned int *type)
++{
++	if (WARN_ON(fwspec->param_count < 2))
++		return -EINVAL;
++	*hwirq = fwspec->param[0];
++	*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
++	return 0;
++}
++
++static const struct irq_domain_ops gpc_irq_domain_ops = {
++	.translate = vf610_gpc_domain_translate,
++	.alloc = vf610_gpc_domain_alloc,
++	.free = irq_domain_free_irqs_common,
 +};
-+module_platform_driver(sun8i_a83t_r_pinctrl_driver);
++
++static int __init vf610_gpc_of_init(struct device_node *node,
++			       struct device_node *parent)
++{
++	struct irq_domain *domain, *domain_parent;
++	int i;
++
++	domain_parent = irq_find_host(parent);
++	if (!domain_parent) {
++		pr_err("vf610_gpc: interrupt-parent not found\n");
++		return -EINVAL;
++	}
++
++	gpc_base = of_io_request_and_map(node, 0, "gpc");
++	if (WARN_ON(!gpc_base))
++		return PTR_ERR(gpc_base);
++
++	domain = irq_domain_add_hierarchy(domain_parent, 0, VF610_GPC_MAX_IRQS,
++					  node, &gpc_irq_domain_ops, NULL);
++	if (!domain) {
++		iounmap(gpc_base);
++		return -ENOMEM;
++	}
++
++	/* Initially mask all interrupts for wakeup */
++	for (i = 0; i < IMR_NUM; i++)
++		writel_relaxed(~0, gpc_base + VF610_GPC_IMR1 + i * 4);
++
++	return 0;
++}
++IRQCHIP_DECLARE(vf610_gpc, "fsl,vf610-gpc", vf610_gpc_of_init);
 -- 
-1.9.1
+2.7.2
