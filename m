@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: renesas: cpg-mssr: Drop check for CONFIG_PM_GENERIC_DOMAINS_OF
+Date: Thu, 10 Mar 2016 04:21:17 +0200
+Message-ID: <2046402.lcuHf8E64j@avalon>
+In-Reply-To: <1457551114-21764-3-git-send-email-geert+renesas@glider.be>
+References: <1457551114-21764-1-git-send-email-geert+renesas@glider.be> <1457551114-21764-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <56D8E74A.6090601@ti.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-6-git-send-email-fcooper@ti.com> <20160302182634.GA26055@rob-hp-laptop>
- <56D8E74A.6090601@ti.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 4 Mar 2016 08:52:09 -0600
-Message-ID: <CAL_JsqLYLwJ7fWGcG4h-obix8Pn9+rQ_5sD9B=mCeO1+-d+ijw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-Cc: "paul@pwsan.com" <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-	Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-omap <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 3, 2016 at 7:39 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
-> Hi Rob,
->
-> On 03/02/2016 12:26 PM, Rob Herring wrote:
->> On Thu, Feb 25, 2016 at 04:36:36PM -0600, Franklin S Cooper Jr wrote:
->>> From: Vignesh R <vigneshr@ti.com>
->>>
->>> Add PWMSS device tree nodes for DRA7 SoC family and add documentation
->>> for dt bindings.
->>>
->>> Signed-off-by: Vignesh R <vigneshr@ti.com>
->>> ---
->>> Version 3 changes:
->>> None
->>>
->>>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
->>>  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
->>>  arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
->>>  3 files changed, 88 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>> index 9c100b2..25d91ae 100644
->>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>> @@ -4,6 +4,7 @@ Required properties:
->>>  - compatible: Must be "ti,<soc>-ehrpwm".
->>>    for am33xx - compatible = "ti,am33xx-ehrpwm";
->>>    for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->>> +  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
->> We're starting to push back on wildcards in compatible strings. I guess
->> this is okay...
->>
->>>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->>>    the cells format. The only third cell flag supported by this binding is
->>>    PWM_POLARITY_INVERTED.
->>> @@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
->>>      #pwm-cells = <3>;
->>>      reg = <0x300000 0x2000>;
->>>  };
->>> +
->>> +ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
->> Should be pwm@48440200
->
-> So the AM335x, AM437x  and DA850 all use ehrpwm0:
-> ehrpwm@<address>. Also the address of 0 simply follows the
-> pattern used in the other binding examples in that doc. I
-> can replace the 0 address in this patch and make another
-> patch that fixes it for the other examples in that file. But
-> in terms of switching from ehrpwm0:ehrpwm@<address> to
-> ehrpwm0:pwm@<address> that would also require making changes
-> to the various dtsis also. So is it worth making that
-> change? If so I have no problem doing it.
+Hi Geert,
 
-Follow-up patches to fix are fine. Unit-address and reg mismatches are
-going to start warning in dtc soon.
+Thank you for the patch.
 
-Rob
+On Wednesday 09 March 2016 20:18:32 Geert Uytterhoeven wrote:
+> As of commit 71d076ceb245f0d9 ("ARM: shmobile: Enable PM and
+> PM_GENERIC_DOMAINS for SoCs with PM Domains"),
+> CONFIG_PM_GENERIC_DOMAINS_OF is always enabled for SoCs with a CPG/MSSR
+> block.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c
+> b/drivers/clk/renesas/renesas-cpg-mssr.c index
+> 58e24b326a48bb81..7482e7f6d37fbe22 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -376,7 +376,6 @@ fail:
+>  }
+> 
+> 
+
+While at it you can remove one of the blank lines here...
+
+> -#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+>  struct cpg_mssr_clk_domain {
+>  	struct generic_pm_domain genpd;
+>  	struct device_node *np;
+> @@ -491,14 +490,6 @@ static int __init cpg_mssr_add_clk_domain(struct device
+> *dev, of_genpd_add_provider_simple(np, genpd);
+>  	return 0;
+>  }
+> -#else
+> -static inline int cpg_mssr_add_clk_domain(struct device *dev,
+> -					  const unsigned int *core_pm_clks,
+> -					  unsigned int num_core_pm_clks)
+> -{
+> -	return 0;
+> -}
+> -#endif /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+> 
+> 
+
+... and here too.
+
+(Same comment applies to patch 1/4)
+
+Apart from that,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+for 1/4 and 2/4.
+
+>  static const struct of_device_id cpg_mssr_match[] = {
+
+-- 
+Regards,
+
+Laurent Pinchart
+-- 
+Regards,
+
+Laurent Pinchart
