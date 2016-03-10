@@ -1,144 +1,103 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
 	pawel.moll@arm.com,
 	mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk,
 	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 12/13] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-Date: Thu, 17 Mar 2016 00:04:35 +0800
-Message-Id: <1458144276-31108-13-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 00/18] ARM: vf610: Suspend/resume with self-refresh mode
+Date: Wed,  9 Mar 2016 18:16:41 -0800
+Message-Id: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for Sinovoip BPI-M3 A83T based board.
+This is a reworked and extended respin of an older patchset posted
+back in 2014:
+http://lkml.iu.edu/hypermail/linux/kernel/1409.2/03734.html
 
-It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
-mic, AP6212 Wifi, etc on it.
-It is paired with AXP813 PMIC which is almost same as AXP818.
+This implementation supports Vybrids STOP (standby) and LPSTOP2
+mode (mem). Only the latter puts the memory in self-refresh mode
+and the SoC in a deep sleep state. However, self-refresh is only
+supported if external pull-ups/downs are populated (which not
+all hardware revisions have in place), therefor this patchset also
+introduces a device tree property to denote whether memory can be
+put into self-refresh mode or not.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 79 ++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+The LPSTOP2 implementation is similar to the i.MX 6 implementation:
+Entering and resuming from self-refresh mode is implemented in
+assembler, and the function is copied to SRAM while entering suspend
+mode.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 309cce5..64ad31f 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -695,6 +695,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-a33-sinlinx-sina33.dtb \
- 	sun8i-a83t-allwinner-h8homlet-v2.dtb \
- 	sun8i-a83t-cubietruck-plus.dtb \
-+	sun8i-a83t-sinovoip-bpi-m3.dtb \
- 	sun8i-h3-orangepi-plus.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-new file mode 100644
-index 0000000..7744b63
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-@@ -0,0 +1,79 @@
-+/*
-+ * Copyright 2016 Vishnu Patekar
-+ * Vishnu Patekar <vishnupatekar0510@gmail.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+/ {
-+	model = "Sinovoip BananaPi M3 v1.2";
-+	compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_reference_design>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&r_rsb {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_b>;
-+	status = "okay";
-+};
+There are several fixes and extensions necessary to make suspend
+actually working, mainly because most blocks loose its state in
+LPSTOP2 mode.
+
+Feedback welcome! Especially the linking between the GPIOs of the 
+WKPU unit (which allows to use some GPIOs as wake-up source) and
+the regular GPIO block seems rather hacky...
+
+The code has been tested on a Colibri VF50 and VF61. Currently
+there is an issue with USB Host not correctly restoring after
+resume which could not yet been resolved.
+
+Stefan Agner (18):
+  irqchip: vf610-gpc: add Vybrid GPC IRQ controller
+  ARM: dts: vf610: add GPC as new interrupt parent
+  ARM: dts: vf610-colibri: GPIO wakeup key
+  ARM: dts: vf610: add on-chip SRAM
+  ARM: dts: vf610: add modules required for PM
+  ARM: imx: clk-gate2: allow custom gate configuration
+  ARM: imx: clk-vf610: leave DDR clock on
+  ARM: clk: add WKPU unit
+  ARM: vf610: clk: add suspend/resume support
+  tty: serial: fsl_lpuart: support suspend/resume
+  pinctrl: pinctrl-imx: implement suspend/resume
+  gpio: vf610: add system PM suspend/resume
+  ARM: dts: vf610: add WKPU connection to GPIO
+  gpio: vf610: add support for WKPU unit
+  ARM: vf610: PM: initial suspend/resume support
+  ARM: vf610: PM: enable Suspend-to-RAM only if hardware fixes are in
+    place
+  Documentation: dt: add Vybrid DDR memory controller bindings
+  ARM: vf610: PM: enable SNVS access
+
+ .../bindings/arm/freescale/fsl,vf610-ddrmc.txt     |  23 +
+ .../devicetree/bindings/gpio/gpio-vf610.txt        |   6 +
+ arch/arm/boot/dts/vf-colibri-eval-v3.dtsi          |  22 +
+ arch/arm/boot/dts/vfxxx.dtsi                       |  74 ++-
+ arch/arm/mach-imx/Makefile                         |   3 +
+ arch/arm/mach-imx/common.h                         |  10 +
+ arch/arm/mach-imx/mach-vf610.c                     |   8 +
+ arch/arm/mach-imx/pm-vf610.c                       | 649 +++++++++++++++++++++
+ arch/arm/mach-imx/suspend-vf610.S                  | 448 ++++++++++++++
+ drivers/clk/imx/clk-gate2.c                        |   7 +-
+ drivers/clk/imx/clk-vf610.c                        |  83 ++-
+ drivers/clk/imx/clk.h                              |  13 +-
+ drivers/gpio/gpio-vf610.c                          | 188 ++++++
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-vf610-gpc.c                    | 138 +++++
+ drivers/pinctrl/freescale/pinctrl-imx.c            |  63 ++
+ drivers/pinctrl/freescale/pinctrl-imx.h            |   3 +
+ drivers/pinctrl/freescale/pinctrl-vf610.c          |   6 +
+ drivers/tty/serial/fsl_lpuart.c                    |  16 +-
+ include/dt-bindings/clock/vf610-clock.h            |   4 +-
+ 20 files changed, 1750 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+ create mode 100644 arch/arm/mach-imx/pm-vf610.c
+ create mode 100644 arch/arm/mach-imx/suspend-vf610.S
+ create mode 100644 drivers/irqchip/irq-vf610-gpc.c
+
 -- 
-1.9.1
+2.7.2
