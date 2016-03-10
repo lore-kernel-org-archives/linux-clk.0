@@ -1,71 +1,68 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 14 Mar 2016 17:05:51 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-Message-ID: <20160314160551.GA21898@ulmo.nvidia.com>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-In-Reply-To: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 08/18] ARM: clk: add WKPU unit
+Date: Wed,  9 Mar 2016 18:16:49 -0800
+Message-Id: <1457576219-7971-9-git-send-email-stefan@agner.ch>
+In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/clk/imx/clk-vf610.c             | 2 ++
+ include/dt-bindings/clock/vf610-clock.h | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
->=20
-> Add some SLCG (Second Level Clock Gating) override clocks to control
-> gating and un-gating their logics.
->=20
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-id.h               | 16 ++++++
->  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
->  3 files changed, 123 insertions(+), 16 deletions(-)
-
-There's no rationale given here about why we need this. What will these
-second level clock gates be used for? Why do we need these (seemingly)
-duplicate clock entries.
-
-Thierry
-
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJW5uFfAAoJEN0jrNd/PrOh1TgP/1h9VPSQRARcsd6LdEVfaXU6
-4hjfIEQf3INCd/1epqthnToW9vEGt9vk84gcZa3F3NoSKb540if3Jpylfm3f44Rg
-2tPNn+/H0KMa6zd+wNT3h+wN7ImhZzSL9dj6NsJlHqQgqL/OaFDZ9ljTfeiiIUvY
-DOMgZwGq85IxWjEOUAJZGD0nQSnMJCtRATHDi1ShmpV0olcs8e4lBjrVBJxA2Tyg
-EK6mGK+YxPkQl1wUEfYu5Y4EKYyRGfXDsMQzZsJop86Nf0iTXfhZNn9+D/w86hfE
-z2pCFmBvKTL1dzwJnBKO/88t9uMZM2IAn2PBkbDul//gGZ1Hai4LNUpfjZzOhHnq
-g6iCc4PwMdAB4UL9D07IiROdeqiSJxriA5vllxOL4zedU+2ThKl4RVs90TNHhJYb
-7BB8QTFNLVlcBAd8yLqe+s3/zcw6FtLJVWyyZdVsOK+TIzxBF4XmIMbg6F7wOkfU
-UxOUE0ol2rrwHhFAAk3zl8wF5xEfMCbQefyeDDH1rwfJmHXK2QaLl864e4DpXoJX
-2wMbeHMbExtpw0Kib8PaLKERt11lrGz/ZRppln02GXgUYc3JhqFckVV77LXnLmFK
-66ZeYJM8DwVyqloFoXpdyfORdB7isfomk/irBsCSH6vy6vBMKc4nxtDAFmCT6kyy
-DWXEd3yTyQ2fFafMa52l
-=ztSB
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index f0ff458..610a724 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -120,6 +120,7 @@ static unsigned int const clks_init_on[] __initconst = {
+ 	VF610_CLK_DDR_SEL,
+ 	VF610_CLK_DAP,
+ 	VF610_CLK_DDRMC,
++	VF610_CLK_WKPU,
+ };
+ 
+ static struct clk * __init vf610_get_fixed_clock(
+@@ -235,6 +236,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	clk[VF610_CLK_PLL6_MAIN_DIV] = imx_clk_divider("pll6_video_div", "pll6_video", CCM_CACRR, 21, 1);
+ 
+ 	clk[VF610_CLK_DDRMC] = imx_clk_gate2_cgr("ddrmc", "ddr_sel", CCM_CCGR6, CCM_CCGRx_CGn(14), 0x2);
++	clk[VF610_CLK_WKPU] = imx_clk_gate2_cgr("wkpu", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(10), 0x2);
+ 
+ 	clk[VF610_CLK_USBPHY0] = imx_clk_gate("usbphy0", "pll3_usb_otg", PLL3_CTRL, 6);
+ 	clk[VF610_CLK_USBPHY1] = imx_clk_gate("usbphy1", "pll7_usb_host", PLL7_CTRL, 6);
+diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
+index cf2c00a..7dc1b84 100644
+--- a/include/dt-bindings/clock/vf610-clock.h
++++ b/include/dt-bindings/clock/vf610-clock.h
+@@ -196,6 +196,7 @@
+ #define VF610_CLK_DAP			183
+ #define VF610_CLK_OCOTP         184
+ #define VF610_CLK_DDRMC			185
+-#define VF610_CLK_END			186
++#define VF610_CLK_WKPU			186
++#define VF610_CLK_END			187
+ 
+ #endif /* __DT_BINDINGS_CLOCK_VF610_H */
+-- 
+2.7.2
