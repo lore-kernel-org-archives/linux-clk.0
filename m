@@ -1,166 +1,81 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 45/46] drm: i915: switch to the atomic PWM API
-Date: Wed, 30 Mar 2016 22:04:08 +0200
-Message-Id: <1459368249-13241-46-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 16/18] ARM: vf610: PM: enable Suspend-to-RAM only if hardware fixes are in place
+Date: Wed,  9 Mar 2016 18:16:57 -0800
+Message-Id: <1457576219-7971-17-git-send-email-stefan@agner.ch>
+In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_config/enable/disable() have been deprecated and should be replaced
-by pwm_apply_state().
+To use self-refresh mode for DDR3 SDRAM memory in LPSTOPx mode, the
+hardware need to have pull-ups/downs populated on RESET/CKE line of
+the DDR memory. Read the device tree property which indicates whether
+a given board has such resistors populated.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/gpu/drm/i915/intel_panel.c | 39 +++++++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ arch/arm/mach-imx/pm-vf610.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_panel.c b/drivers/gpu/drm/i915/intel_panel.c
-index 21ee647..b86bd20 100644
---- a/drivers/gpu/drm/i915/intel_panel.c
-+++ b/drivers/gpu/drm/i915/intel_panel.c
-@@ -538,10 +538,10 @@ static u32 bxt_get_backlight(struct intel_connector *connector)
- static u32 pwm_get_backlight(struct intel_connector *connector)
- {
- 	struct intel_panel *panel = &connector->panel;
--	int duty_ns;
-+	struct pwm_state pstate;
+diff --git a/arch/arm/mach-imx/pm-vf610.c b/arch/arm/mach-imx/pm-vf610.c
+index ecc7c9c..3da93e9 100644
+--- a/arch/arm/mach-imx/pm-vf610.c
++++ b/arch/arm/mach-imx/pm-vf610.c
+@@ -93,6 +93,7 @@
  
--	duty_ns = pwm_get_duty_cycle(panel->backlight.pwm);
--	return DIV_ROUND_UP(duty_ns * 100, CRC_PMIC_PWM_PERIOD_NS);
-+	pwm_get_state(panel->backlight.pwm, &pstate);
-+	return DIV_ROUND_UP(pstate.duty_cycle * 100, CRC_PMIC_PWM_PERIOD_NS);
+ static void __iomem *suspend_ocram_base;
+ static void (*vf610_suspend_in_ocram_fn)(void __iomem *ocram_vbase);
++static bool has_cke_reset_pulls;
+ 
+ #ifdef DEBUG
+ static void __iomem *uart_membase;
+@@ -382,7 +383,8 @@ static int vf610_pm_enter(suspend_state_t state)
+ 
+ static int vf610_pm_valid(suspend_state_t state)
+ {
+-	return (state == PM_SUSPEND_STANDBY || state == PM_SUSPEND_MEM);
++	return (state == PM_SUSPEND_STANDBY ||
++		(state == PM_SUSPEND_MEM && has_cke_reset_pulls));
  }
  
- static u32 intel_panel_get_backlight(struct intel_connector *connector)
-@@ -630,9 +630,12 @@ static void bxt_set_backlight(struct intel_connector *connector, u32 level)
- static void pwm_set_backlight(struct intel_connector *connector, u32 level)
- {
- 	struct intel_panel *panel = &connector->panel;
--	int duty_ns = DIV_ROUND_UP(level * CRC_PMIC_PWM_PERIOD_NS, 100);
-+	struct pwm_state pstate;
+ static const struct platform_suspend_ops vf610_pm_ops = {
+@@ -476,6 +478,19 @@ static int __init vf610_suspend_init(const struct vf610_pm_socdata *socdata)
+ 		return ret;
+ #endif
  
--	pwm_config(panel->backlight.pwm, duty_ns, CRC_PMIC_PWM_PERIOD_NS);
-+	pwm_get_state(panel->backlight.pwm, &pstate);
-+	pstate.duty_cycle = DIV_ROUND_UP(level * CRC_PMIC_PWM_PERIOD_NS, 100);
-+	pstate.period = CRC_PMIC_PWM_PERIOD_NS;
-+	pwm_apply_state(panel->backlight.pwm, &pstate);
- }
++	node = of_find_compatible_node(NULL, NULL, socdata->ddrmc_compat);
++	if (node) {
++		has_cke_reset_pulls =
++			of_property_read_bool(node, "fsl,has-cke-reset-pulls");
++
++		of_node_put(node);
++	}
++
++	if (has_cke_reset_pulls)
++		pr_info("PM: CKE/RESET pulls available, enable Suspend-to-RAM\n");
++	else
++		pr_info("PM: No CKE/RESET pulls, disable Suspend-to-RAM\n");
++
+ 	suspend_set_ops(&vf610_pm_ops);
  
- static void
-@@ -801,11 +804,15 @@ static void bxt_disable_backlight(struct intel_connector *connector)
- static void pwm_disable_backlight(struct intel_connector *connector)
- {
- 	struct intel_panel *panel = &connector->panel;
-+	struct pwm_state pstate;
- 
- 	/* Disable the backlight */
--	pwm_config(panel->backlight.pwm, 0, CRC_PMIC_PWM_PERIOD_NS);
-+	pwm_get_state(panel->backlight.pwm, &pstate);
-+	pstate.duty_cycle = 0;
-+	pwm_apply_state(panel->backlight.pwm, &pstate);
- 	usleep_range(2000, 3000);
--	pwm_disable(panel->backlight.pwm);
-+	pstate.enabled = false;
-+	pwm_apply_state(panel->backlight.pwm, &pstate);
- }
- 
- void intel_panel_disable_backlight(struct intel_connector *connector)
-@@ -1068,8 +1075,11 @@ static void bxt_enable_backlight(struct intel_connector *connector)
- static void pwm_enable_backlight(struct intel_connector *connector)
- {
- 	struct intel_panel *panel = &connector->panel;
-+	struct pwm_state pstate;
- 
--	pwm_enable(panel->backlight.pwm);
-+	pwm_get_state(panel->backlight.pwm, &pstate);
-+	pstate.enabled = true;
-+	pwm_apply_state(panel->backlight.pwm, &pstate);
- 	intel_panel_actually_set_backlight(connector, panel->backlight.level);
- }
- 
-@@ -1630,6 +1640,7 @@ static int pwm_setup_backlight(struct intel_connector *connector,
- {
- 	struct drm_device *dev = connector->base.dev;
- 	struct intel_panel *panel = &connector->panel;
-+	struct pwm_state pstate;
- 	int retval;
- 
- 	/* Get the PWM chip for backlight control */
-@@ -1640,8 +1651,10 @@ static int pwm_setup_backlight(struct intel_connector *connector,
- 		return -ENODEV;
- 	}
- 
--	retval = pwm_config(panel->backlight.pwm, CRC_PMIC_PWM_PERIOD_NS,
--			    CRC_PMIC_PWM_PERIOD_NS);
-+	pwm_get_state(panel->backlight.pwm, &pstate);
-+	pstate.period = CRC_PMIC_PWM_PERIOD_NS;
-+	pstate.duty_cycle = CRC_PMIC_PWM_PERIOD_NS;
-+	retval = pwm_apply_state(panel->backlight.pwm, &pstate);
- 	if (retval < 0) {
- 		DRM_ERROR("Failed to configure the pwm chip\n");
- 		pwm_put(panel->backlight.pwm);
-@@ -1651,9 +1664,9 @@ static int pwm_setup_backlight(struct intel_connector *connector,
- 
- 	panel->backlight.min = 0; /* 0% */
- 	panel->backlight.max = 100; /* 100% */
--	panel->backlight.level = DIV_ROUND_UP(
--				 pwm_get_duty_cycle(panel->backlight.pwm) * 100,
--				 CRC_PMIC_PWM_PERIOD_NS);
-+	pwm_get_state(panel->backlight.pwm, &pstate);
-+	panel->backlight.level = DIV_ROUND_UP(pstate.duty_cycle * 100,
-+					      pstate.period);
- 	panel->backlight.enabled = panel->backlight.level != 0;
- 
- 	return 0;
+ 	node = of_find_compatible_node(NULL, NULL, "mmio-sram");
 -- 
-2.5.0
+2.7.2
