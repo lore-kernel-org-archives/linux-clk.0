@@ -1,49 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Andi Shyti <andi.shyti@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 36/41] clk: s2mps11: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:21 -0800
-Message-Id: <1456858826-28541-37-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 17/18] Documentation: dt: add Vybrid DDR memory controller bindings
+Date: Wed,  9 Mar 2016 18:16:58 -0800
+Message-Id: <1457576219-7971-18-git-send-email-stefan@agner.ch>
+In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+Add device-tree bindings of Vybrids LPDDR2/DDR3 SDRAM Memory
+Controller. Access to the device is required to put the memory
+into self-refresh mode.
 
-Cc: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/clk/clk-s2mps11.c | 3 ---
- 1 file changed, 3 deletions(-)
+ .../bindings/arm/freescale/fsl,vf610-ddrmc.txt     | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 371150aabd15..f8c83977c7fa 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -99,17 +99,14 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
- 	[S2MPS11_CLK_AP] = {
- 		.name = "s2mps11_ap",
- 		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
- 	},
- 	[S2MPS11_CLK_CP] = {
- 		.name = "s2mps11_cp",
- 		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
- 	},
- 	[S2MPS11_CLK_BT] = {
- 		.name = "s2mps11_bt",
- 		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
- 	},
- };
- 
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+new file mode 100644
+index 0000000..56a71d6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+@@ -0,0 +1,23 @@
++Freescale Vybrid LPDDR2/DDR3 SDRAM Memory Controller
++
++The memory controller supports high performance applications for 16-bit or
++8-bit DDR2, or LPDDR SDRAM memories.
++
++Required properties:
++- compatible:	"fsl,vf610-ddrmc"
++- reg:		the register range of the DDRMC registers
++- clocks:	DDRMC main clock to clock memory and access registers.
++- clock-names:	Must contain "ddrc", matching entry in the clocks property.
++- fsl,has-cke-reset-pulls:
++		States whether pull-down/up are populated on DDR CKE/RESET
++		signals to allow using DDR self-refresh modes (see Vybrid
++		Hardware Development Guide for details).
++
++Example:
++	ddrmc: ddrmc@400ae000 {
++		compatible = "fsl,vf610-ddrmc";
++		reg = <0x400ae000 0x1000>;
++		clocks = <&clks VF610_CLK_DDRMC>;
++		clock-names = "ddrc";
++		fsl,has-cke-reset-pulls;
++	}
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.2
