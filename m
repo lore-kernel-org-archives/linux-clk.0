@@ -1,63 +1,77 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>
-Subject: [PATCH 14/41] clk: sirf: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 10:59:59 -0800
-Message-Id: <1456858826-28541-15-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Thu, 10 Mar 2016 08:15:02 +0100
+Subject: [PATCH] clk: sunxi: Accept a greater rate when setting a parent clock
+To: Emilio López <emilio@elopez.com.ar>,
+    Maxime Ripard <maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Message-ID: <E1advmf-0004Nt-5A@bombadil.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+The best rate of a clock may be a bit greater than the requested one.
+In such a case, the rate setting from a child clock was rejected.
 
-Cc: Guo Zeng <Guo.Zeng@csr.com>
-Cc: Barry Song <Baohua.Song@csr.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
 ---
- drivers/clk/sirf/clk-atlas6.c | 7 +++----
- drivers/clk/sirf/clk-prima2.c | 7 +++----
- 2 files changed, 6 insertions(+), 8 deletions(-)
+I don't know exactly why the rate constraint existed nor what can be
+the impact of setting the rate of other clocks.
 
-diff --git a/drivers/clk/sirf/clk-atlas6.c b/drivers/clk/sirf/clk-atlas6.c
-index c5eaa9d16247..665fa681b2e1 100644
---- a/drivers/clk/sirf/clk-atlas6.c
-+++ b/drivers/clk/sirf/clk-atlas6.c
-@@ -130,10 +130,9 @@ static void __init atlas6_clk_init(struct device_node *np)
- 		panic("unable to map clkc registers\n");
+I had the problem when setting the PLL2 clock of the H3 (patch to come).
+It has 4 outputs, so, it is composed of a base clock and 4 children
+clocks pll2, pll2x2, pll2x4 and pll2x8 with a fixed factor (/4, /2, 1
+and *2).
+The pll2 clock rate may be only 24576000 (for the audio family 48000Hz)
+or 22579200 (for the audio family 44100Hz).
+
+Setting 24576000 asks for mul=86 and div=21,4 giving 24571428 as the
+best rate, i.e. a bit slower than requested: good.
+
+Setting 22579200 asks for mul=64 and div=17,4 giving 22588235, i.e.
+a bit greater: then, the rate setting was rejected (no parent clock),
+preventing audio streaming at 44100Hz.
+---
+ drivers/clk/sunxi/clk-factors.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+index 59428db..d0774c2 100644
+--- a/drivers/clk/sunxi/clk-factors.c
++++ b/drivers/clk/sunxi/clk-factors.c
+@@ -86,7 +86,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+ 	int i, num_parents;
+ 	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
  
- 	/* These are always available (RTC and 26MHz OSC)*/
--	atlas6_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL,
--		CLK_IS_ROOT, 32768);
--	atlas6_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL,
--		CLK_IS_ROOT, 26000000);
-+	atlas6_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL, 0, 32768);
-+	atlas6_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL, 0,
-+						   26000000);
+-	/* find the parent that can help provide the fastest rate <= rate */
++	/* find the parent that can help provide the fastest rate */
+ 	num_parents = clk_hw_get_num_parents(hw);
+ 	for (i = 0; i < num_parents; i++) {
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+@@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+ 		child_rate = clk_factors_round_rate(hw, req->rate,
+ 						    &parent_rate);
  
- 	for (i = pll1; i < maxclk; i++) {
- 		atlas6_clks[i] = clk_register(NULL, atlas6_clk_hw_array[i]);
-diff --git a/drivers/clk/sirf/clk-prima2.c b/drivers/clk/sirf/clk-prima2.c
-index f92c40264342..aac1c8ec151a 100644
---- a/drivers/clk/sirf/clk-prima2.c
-+++ b/drivers/clk/sirf/clk-prima2.c
-@@ -129,10 +129,9 @@ static void __init prima2_clk_init(struct device_node *np)
- 		panic("unable to map clkc registers\n");
- 
- 	/* These are always available (RTC and 26MHz OSC)*/
--	prima2_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL,
--		CLK_IS_ROOT, 32768);
--	prima2_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL,
--		CLK_IS_ROOT, 26000000);
-+	prima2_clks[rtc] = clk_register_fixed_rate(NULL, "rtc", NULL, 0, 32768);
-+	prima2_clks[osc] = clk_register_fixed_rate(NULL, "osc", NULL, 0,
-+						   26000000);
- 
- 	for (i = pll1; i < maxclk; i++) {
- 		prima2_clks[i] = clk_register(NULL, prima2_clk_hw_array[i]);
+-		if (child_rate <= req->rate && child_rate > best_child_rate) {
++		if (child_rate > best_child_rate) {
+ 			best_parent = parent;
+ 			best = parent_rate;
+ 			best_child_rate = child_rate;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
