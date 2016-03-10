@@ -1,75 +1,61 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 0/6] arc_emac: fixes the emac issues oand cleanup emac
- drivers
-To: Caesar Wang <wxt@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>
-References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, keescook@google.com,
- leozwang@google.com, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Alexander Kochetkov <al.kochet@gmail.com>,
- Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,
- netdev@vger.kernel.org, Kumar Gala <galak@codeaurora.org>,
- linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- zhengxing <zhengxing@rock-chips.com>, Jiri Kosina <trivial@kernel.org>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56E2CC39.6050907@cogentembedded.com>
-Date: Fri, 11 Mar 2016 16:46:33 +0300
-MIME-Version: 1.0
-In-Reply-To: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 18/18] ARM: vf610: PM: enable SNVS access
+Date: Wed,  9 Mar 2016 18:16:59 -0800
+Message-Id: <1457576219-7971-19-git-send-email-stefan@agner.ch>
+In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+Restore access to SNVS which seems to be done by the boot ROM
+on normal boot. This is required for RTC wakeup not ending up
+in a interrupt storm, since the SNVS RTC driver can not
+acknowledge the wakeup alarm without write access.
 
-On 3/11/2016 1:55 PM, Caesar Wang wrote:
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/mach-imx/suspend-vf610.S | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> This series patches are based on kernel 4.5-rc7+ version.
-> Linux version 4.5.0-rc7-next-20160310+ (wxt@nb) (...) #23 SMP Fri Mar 11 15:55:53
-
-[...]
-
-> 1) This series has 6 patches: (1--->6)
-> net: arc_emac: make the rockchip emac document more compatible
-> net: arc_emac: add phy-reset-* are optional for device tree
-
-    I'm not seeing these patches on netdev...
-
-> net: arc_emac: support the phy reset for emac driver
-> net: arc: trivial: cleanup the emac driver
-> clk: rockchip: rk3036: fix and add node id for emac clock
-> ARM: dts: rockchip: add support emac for RK3036
->
-> 2) This series patches have the following decriptions:
-
-    Descriptions.
-
-> Hi Rob, David:
-> PATCH[1/6-2/6]: ====>
-> net: arc_emac: make the rockchip emac document more compatible
-> net: arc_emac: add phy-reset-* are optional for device tree
->
-> The patches change the rockchip emac document for more compatible and
-> Add the phy-reset-* property for document.
->
-> This patch adds the following property for arc_emac.
->
-> phy-reset-* include the following:
-> 1) phy-reset-gpios:
-> The phy-reset-gpios is an optional property for arc emac device tree boot.
-> Change the binding document to match the driver code.
->
-> 2) phy-reset-duration:
-> Different boards may require different phy reset duration. Add property
-> phy-reset-duration for device tree probe, so that the boards that need
-> a longer reset duration can specify it in their device tree.
->
-> 3) phy-reset-active-high:
-> We need that for a custom hardware that needs the reverse reset sequence.
-
-    Why not infer this from the "phy-reset-gpios" prop?
-
-MBR, Sergei
+diff --git a/arch/arm/mach-imx/suspend-vf610.S b/arch/arm/mach-imx/suspend-vf610.S
+index 09ad246..6df0622 100644
+--- a/arch/arm/mach-imx/suspend-vf610.S
++++ b/arch/arm/mach-imx/suspend-vf610.S
+@@ -429,6 +429,17 @@ ddrmc_initializing:
+ 	ldr	r5, =0x0
+ 	str	r5, [r11, #VF610_GPC_LPMR]
+ 
++	/* Enable SNVS */
++	ldr	r3, [r0, #PM_INFO_VF610_CCM_P_OFFSET]
++	ldr	r4, [r3, #VF610_CCM_CCGR6]
++	orr	r4, r4, #0x0000C000
++	str	r4, [r3, #VF610_CCM_CCGR6]
++
++	/* Enable SNVS access (RTC) */
++	ldr	r11, =0x400a7000
++	ldr	r4, =0x80000100
++	str	r4, [r11, #0x4]
++
+ 	/* get physical resume address from pm_info. */
+ 	ldr	lr, [r0, #PM_INFO_RESUME_ADDR_OFFSET]
+ 
+-- 
+2.7.2
