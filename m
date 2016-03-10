@@ -1,113 +1,130 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: kernel@pengutronix.de,
+	sergeimir@emcraft.com,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 31/46] pwm: update documentation
-Date: Wed, 30 Mar 2016 22:03:54 +0200
-Message-Id: <1459368249-13241-32-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 09/18] ARM: vf610: clk: add suspend/resume support
+Date: Wed,  9 Mar 2016 18:16:50 -0800
+Message-Id: <1457576219-7971-10-git-send-email-stefan@agner.ch>
+In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the PWM subsystem documentation to reflect the atomic PWM changes.
+The clock register are lost when enterying LPSTOPx, hence provide
+suspend/resume functions restoring them. The clock gates get
+restored by the individual driver, hence we do not need to restore
+them here.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- Documentation/pwm.txt | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-vf610.c | 49 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
-index ca895fd..cb25fca 100644
---- a/Documentation/pwm.txt
-+++ b/Documentation/pwm.txt
-@@ -42,9 +42,23 @@ variants of these functions, devm_pwm_get() and devm_pwm_put(), also exist.
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 610a724..e2e2c43 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -10,6 +10,7 @@
  
- After being requested, a PWM has to be configured using:
+ #include <linux/of_address.h>
+ #include <linux/clk.h>
++#include <linux/syscore_ops.h>
+ #include <dt-bindings/clock/vf610-clock.h>
  
--int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns);
-+int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *pstate);
+ #include "clk.h"
+@@ -40,6 +41,7 @@
+ #define CCM_CCGR9		(ccm_base + 0x64)
+ #define CCM_CCGR10		(ccm_base + 0x68)
+ #define CCM_CCGR11		(ccm_base + 0x6c)
++#define CCM_CCGRx(x)		(CCM_CCGR0 + (x) * 4)
+ #define CCM_CMEOR0		(ccm_base + 0x70)
+ #define CCM_CMEOR1		(ccm_base + 0x74)
+ #define CCM_CMEOR2		(ccm_base + 0x78)
+@@ -115,6 +117,13 @@ static struct clk_div_table pll4_audio_div_table[] = {
+ static struct clk *clk[VF610_CLK_END];
+ static struct clk_onecell_data clk_data;
  
--To start/stop toggling the PWM output use pwm_enable()/pwm_disable().
-+This API controls both the PWM period/duty_cycle config and the
-+enable/disable state.
++static u32 cscmr1;
++static u32 cscmr2;
++static u32 cscdr1;
++static u32 cscdr2;
++static u32 cscdr3;
++static u32 ccgr[12];
 +
-+The legacy pwm_config(), pwm_enable() and pwm_disable() are now deprecated,
-+and should be replaced by pwm_apply_state() calls.
-+
-+The PWM user API also allows one to query the PWM state with pwm_get_state().
-+
-+In addition to the PWM state, the PWM API also exposes PWM arguments, which
-+are the reference PWM config one should use on this PWM.
-+PWM arguments are usually platform-specific and allows the PWM user to only
-+care about dutycycle relatively to the full period (like, duty = 50% of the
-+period). struct pwm_args contains 2 fields (period and polarity) and should
-+be used to set the initial PWM config (usually done in the probe function
-+of the PWM user). PWM arguments are retrieved with pwm_get_args().
+ static unsigned int const clks_init_on[] __initconst = {
+ 	VF610_CLK_SYS_BUS,
+ 	VF610_CLK_DDR_SEL,
+@@ -134,6 +143,43 @@ static struct clk * __init vf610_get_fixed_clock(
+ 	return clk;
+ };
  
- Using PWMs with the sysfs interface
- -----------------------------------
-@@ -105,6 +119,15 @@ goes low for the remainder of the period. Conversely, a signal with inversed
- polarity starts low for the duration of the duty cycle and goes high for the
- remainder of the period.
- 
-+Drivers are encouraged to implement ->apply() instead of the legacy
-+->enable(), ->disable() and ->config() methods. Doing that should provide
-+atomicity in the PWM config workflow, which is required when the PWM controls
-+a critical device (like a regulator).
++static int vf610_clk_suspend(void)
++{
++	int i;
 +
-+The implementation of ->get_state() (a method used to retrieve initial PWM
-+state) is also encouraged for the same reason: letting the PWM user know
-+about the current PWM state would allow him to avoid glitches.
++	cscmr1 = readl_relaxed(CCM_CSCMR1);
++	cscmr2 = readl_relaxed(CCM_CSCMR2);
 +
- Locking
- -------
++	cscdr1 = readl_relaxed(CCM_CSCDR1);
++	cscdr2 = readl_relaxed(CCM_CSCDR2);
++	cscdr3 = readl_relaxed(CCM_CSCDR3);
++
++	for (i = 0; i < 12; i++)
++		ccgr[i] = readl_relaxed(CCM_CCGRx(i));
++
++	return 0;
++}
++
++static void vf610_clk_resume(void)
++{
++	int i;
++
++	writel_relaxed(cscmr1, CCM_CSCMR1);
++	writel_relaxed(cscmr2, CCM_CSCMR2);
++
++	writel_relaxed(cscdr1, CCM_CSCDR1);
++	writel_relaxed(cscdr2, CCM_CSCDR2);
++	writel_relaxed(cscdr3, CCM_CSCDR3);
++
++	for (i = 0; i < 12; i++)
++		writel_relaxed(ccgr[i], CCM_CCGRx(i));
++}
++
++static struct syscore_ops vf610_clk_syscore_ops = {
++	.suspend = vf610_clk_suspend,
++	.resume = vf610_clk_resume,
++};
++
+ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -414,9 +460,12 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+ 		clk_prepare_enable(clk[clks_init_on[i]]);
  
++	register_syscore_ops(&vf610_clk_syscore_ops);
++
+ 	/* Add the clocks to provider list */
+ 	clk_data.clks = clk;
+ 	clk_data.clk_num = ARRAY_SIZE(clk);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ }
+ CLK_OF_DECLARE(vf610, "fsl,vf610-ccm", vf610_clocks_init);
++
 -- 
-2.5.0
+2.7.2
