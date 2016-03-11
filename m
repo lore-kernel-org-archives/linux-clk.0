@@ -1,76 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rockchip@lists.infradead.org,
+	keescook@google.com,
+	leozwang@google.com,
+	zhengxing <zhengxing@rock-chips.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH 08/41] clk: mvebu: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 10:59:53 -0800
-Message-Id: <1456858826-28541-9-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 5/6] clk: rockchip: rk3036: fix and add node id for emac clock
+Date: Fri, 11 Mar 2016 18:55:30 +0800
+Message-Id: <1457693731-6966-6-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
+References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+From: zhengxing <zhengxing@rock-chips.com>
 
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+In the emac driver, we need to refer HCLK_MAC since there are
+only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clocks are under the
+GPLL, and it is unable to provide the accurate rate for mac_ref which
+need to 50MHz probability, we should let it under the DPLL and are
+able to set the freq which integer multiples of 50MHz, so we add these
+emac node for reference.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 ---
- drivers/clk/mvebu/common.c       | 11 +++++------
- drivers/clk/mvebu/dove-divider.c |  3 +--
- 2 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-index daa6ebdac131..66be2e0c82b4 100644
---- a/drivers/clk/mvebu/common.c
-+++ b/drivers/clk/mvebu/common.c
-@@ -137,8 +137,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
- 	of_property_read_string_index(np, "clock-output-names", 0,
- 				      &tclk_name);
- 	rate = desc->get_tclk_freq(base);
--	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL,
--						   CLK_IS_ROOT, rate);
-+	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL, 0,
-+						   rate);
- 	WARN_ON(IS_ERR(clk_data.clks[0]));
+ drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
+ include/dt-bindings/clock/rk3036-cru.h | 2 ++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 0703c8f..27c35fa 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -348,8 +348,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
  
- 	/* Register CPU clock */
-@@ -150,8 +150,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
- 		&& desc->is_sscg_enabled(base))
- 		rate = desc->fix_sscg_deviation(rate);
+-	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
+-			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
++	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
++			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
++	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
++			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
++
+ 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
  
--	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL,
--						   CLK_IS_ROOT, rate);
-+	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL, 0,
-+						   rate);
- 	WARN_ON(IS_ERR(clk_data.clks[1]));
+@@ -408,7 +411,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
+ 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
+ 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+-	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
  
- 	/* Register fixed-factor clocks derived from CPU clock */
-@@ -174,8 +174,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
- 					      2 + desc->num_ratios, &name);
- 		rate = desc->get_refclk_freq(base);
- 		clk_data.clks[2 + desc->num_ratios] =
--			clk_register_fixed_rate(NULL, name, NULL,
--						CLK_IS_ROOT, rate);
-+			clk_register_fixed_rate(NULL, name, NULL, 0, rate);
- 		WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
- 	}
+ 	/* pclk_peri gates */
+ 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index ebc7a7b..de44109 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -54,6 +54,7 @@
+ #define SCLK_PVTM_VIDEO		125
+ #define SCLK_MAC		151
+ #define SCLK_MACREF		152
++#define SCLK_MACPLL		153
+ #define SCLK_SFC		160
  
-diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
-index 3e0b52daa35f..4091f3cfee19 100644
---- a/drivers/clk/mvebu/dove-divider.c
-+++ b/drivers/clk/mvebu/dove-divider.c
-@@ -225,8 +225,7 @@ static int dove_divider_init(struct device *dev, void __iomem *base,
- 	 * Create the core PLL clock.  We treat this as a fixed rate
- 	 * clock as we don't know any better, and documentation is sparse.
- 	 */
--	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
--				      2000000000UL);
-+	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, 0, 2000000000UL);
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
+ /* aclk gates */
+@@ -92,6 +93,7 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_MAC		460
+ #define HCLK_I2S		462
+ #define HCLK_LCDC		465
+ #define HCLK_ROM		467
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
