@@ -1,160 +1,75 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 31 Mar 2016 20:54:54 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
- <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
- linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 32/46] pwm: deprecate pwm_config(), pwm_enable() and
- pwm_disable()
-Message-ID: <20160331205454.630734ab@bbrezillon>
-In-Reply-To: <20160331173858.GB39098@dtor-ws>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-33-git-send-email-boris.brezillon@free-electrons.com>
-	<20160331173858.GB39098@dtor-ws>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 0/6] arc_emac: fixes the emac issues oand cleanup emac
+ drivers
+To: Caesar Wang <wxt@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
+ "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>
+References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, keescook@google.com,
+ leozwang@google.com, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Alexander Kochetkov <al.kochet@gmail.com>,
+ Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,
+ netdev@vger.kernel.org, Kumar Gala <galak@codeaurora.org>,
+ linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ zhengxing <zhengxing@rock-chips.com>, Jiri Kosina <trivial@kernel.org>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56E2CC39.6050907@cogentembedded.com>
+Date: Fri, 11 Mar 2016 16:46:33 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dmitry,
+Hello.
 
-On Thu, 31 Mar 2016 10:38:58 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+On 3/11/2016 1:55 PM, Caesar Wang wrote:
 
-> Hi Boris,
-> 
-> On Wed, Mar 30, 2016 at 10:03:55PM +0200, Boris Brezillon wrote:
-> > Prefix those function as deprecated to encourage all existing users to
-> > switch to pwm_apply_state().
-> 
-> Why not keep at least some of them as wrappers where we do not need to
-> chnage several parameters at once? It is much easier to have a driver
-> do:
-> 
-> 	error = pwm_enable(pwm);
-> 	if (error)
-> 		...
-> 
-> rather than declaring the state variable, fectch it, adjust and then
-> apply.
+> This series patches are based on kernel 4.5-rc7+ version.
+> Linux version 4.5.0-rc7-next-20160310+ (wxt@nb) (...) #23 SMP Fri Mar 11 15:55:53
 
-True. Actually deprecating the non-atomic API was not my primary goal.
-Thierry would you mind if we keep both APIs around?
+[...]
 
-> 
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> >  include/linux/pwm.h | 24 ++++++++++++------------
-> >  1 file changed, 12 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> > index 4aad4eb..9bac10f 100644
-> > --- a/include/linux/pwm.h
-> > +++ b/include/linux/pwm.h
-> > @@ -225,8 +225,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
-> >   *
-> >   * Returns: 0 on success or a negative error code on failure.
-> >   */
-> > -static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> > -			     int period_ns)
-> > +static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
-> > +					  int period_ns)
-> >  {
-> >  	struct pwm_state pstate;
-> >  
-> > @@ -252,8 +252,8 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> >   *
-> >   * Returns: 0 on success or a negative error code on failure.
-> >   */
-> > -static inline int pwm_set_polarity(struct pwm_device *pwm,
-> > -				   enum pwm_polarity polarity)
-> > +static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
-> > +						enum pwm_polarity polarity)
-> >  {
-> >  	struct pwm_state pstate;
-> >  
-> > @@ -284,7 +284,7 @@ static inline int pwm_set_polarity(struct pwm_device *pwm,
-> >   *
-> >   * Returns: 0 on success or a negative error code on failure.
-> >   */
-> > -static inline int pwm_enable(struct pwm_device *pwm)
-> > +static inline int __deprecated pwm_enable(struct pwm_device *pwm)
-> >  {
-> >  	struct pwm_state pstate;
-> >  
-> > @@ -303,7 +303,7 @@ static inline int pwm_enable(struct pwm_device *pwm)
-> >   * pwm_disable() - stop a PWM output toggling
-> >   * @pwm: PWM device
-> >   */
-> > -static inline void pwm_disable(struct pwm_device *pwm)
-> > +static inline void __deprecated pwm_disable(struct pwm_device *pwm)
-> >  {
-> >  	struct pwm_state pstate;
-> >  
-> > @@ -360,24 +360,24 @@ static inline int pwm_apply_state(struct pwm_device *pwm,
-> >  	return -ENOTSUPP;
-> >  }
-> >  
-> > -static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> > -			     int period_ns)
-> > +static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
-> > +					  int period_ns)
-> >  {
-> >  	return -EINVAL;
-> >  }
-> >  
-> > -static inline int pwm_set_polarity(struct pwm_device *pwm,
-> > -				   enum pwm_polarity polarity)
-> > +static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
-> > +						enum pwm_polarity polarity)
-> >  {
-> >  	return -ENOTSUPP;
-> >  }
-> >  
-> > -static inline int pwm_enable(struct pwm_device *pwm)
-> > +static inline int __deprecated pwm_enable(struct pwm_device *pwm)
-> >  {
-> >  	return -EINVAL;
-> >  }
-> >  
-> > -static inline void pwm_disable(struct pwm_device *pwm)
-> > +static inline void __deprecated pwm_disable(struct pwm_device *pwm)
-> >  {
-> >  }
-> >  
-> > -- 
-> > 2.5.0
-> > 
-> 
+> 1) This series has 6 patches: (1--->6)
+> net: arc_emac: make the rockchip emac document more compatible
+> net: arc_emac: add phy-reset-* are optional for device tree
 
+    I'm not seeing these patches on netdev...
 
+> net: arc_emac: support the phy reset for emac driver
+> net: arc: trivial: cleanup the emac driver
+> clk: rockchip: rk3036: fix and add node id for emac clock
+> ARM: dts: rockchip: add support emac for RK3036
+>
+> 2) This series patches have the following decriptions:
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+    Descriptions.
+
+> Hi Rob, David:
+> PATCH[1/6-2/6]: ====>
+> net: arc_emac: make the rockchip emac document more compatible
+> net: arc_emac: add phy-reset-* are optional for device tree
+>
+> The patches change the rockchip emac document for more compatible and
+> Add the phy-reset-* property for document.
+>
+> This patch adds the following property for arc_emac.
+>
+> phy-reset-* include the following:
+> 1) phy-reset-gpios:
+> The phy-reset-gpios is an optional property for arc emac device tree boot.
+> Change the binding document to match the driver code.
+>
+> 2) phy-reset-duration:
+> Different boards may require different phy reset duration. Add property
+> phy-reset-duration for device tree probe, so that the boards that need
+> a longer reset duration can specify it in their device tree.
+>
+> 3) phy-reset-active-high:
+> We need that for a custom hardware that needs the reverse reset sequence.
+
+    Why not infer this from the "phy-reset-gpios" prop?
+
+MBR, Sergei
