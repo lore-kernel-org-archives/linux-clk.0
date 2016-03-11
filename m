@@ -1,93 +1,153 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 31 Mar 2016 08:57:35 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Mark
- Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil
- Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 34/46] clk: pwm: switch to the atomic API
-Message-ID: <20160331085735.3574970b@bbrezillon>
-In-Reply-To: <20160330220149.GU18567@codeaurora.org>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-35-git-send-email-boris.brezillon@free-electrons.com>
-	<20160330220149.GU18567@codeaurora.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Caesar Wang <wxt@rock-chips.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, linux-rockchip@lists.infradead.org, keescook@google.com, leozwang@google.com, zhengxing <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 5/6] clk: rockchip: rk3036: fix and add node id for emac clock
+Date: Fri, 11 Mar 2016 12:15:33 +0100
+Message-ID: <2005499.uduk6By3kM@diego>
+In-Reply-To: <1457693731-6966-6-git-send-email-wxt@rock-chips.com>
+References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com> <1457693731-6966-6-git-send-email-wxt@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Caesar,
 
-On Wed, 30 Mar 2016 15:01:49 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+Am Freitag, 11. M=E4rz 2016, 18:55:30 schrieb Caesar Wang:
+> From: zhengxing <zhengxing@rock-chips.com>
+>=20
+> In the emac driver, we need to refer HCLK_MAC since there are
+> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clocks are under the
+> GPLL, and it is unable to provide the accurate rate for mac_ref which=
 
-> On 03/30, Boris Brezillon wrote:
-> > diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-> > index ebcd738..49ec5b1 100644
-> > --- a/drivers/clk/clk-pwm.c
-> > +++ b/drivers/clk/clk-pwm.c
-> > @@ -28,15 +28,29 @@ static inline struct clk_pwm *to_clk_pwm(struct clk_hw *hw)
-> >  static int clk_pwm_prepare(struct clk_hw *hw)
-> >  {
-> >  	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-> > +	struct pwm_state pstate;
-> >  
-> > -	return pwm_enable(clk_pwm->pwm);
-> > +	pwm_get_state(clk_pwm->pwm, &pstate);
-> > +	if (pstate.enabled)
-> > +		return 0;
-> > +
-> > +	pstate.enabled = true;
-> > +
-> > +	return pwm_apply_state(clk_pwm->pwm, &pstate);
-> 
-> This doesn't seem atomic anymore if we're checking the state and
-> then not calling apply_state if it's already enabled. But I
-> assume this doesn't matter because we "own" the pwm here?
+> need to 50MHz probability, we should let it under the DPLL and are
+> able to set the freq which integer multiples of 50MHz, so we add thes=
+e
+> emac node for reference.
+>=20
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 
-Yep. Actually it's not atomic in term of concurrency (maybe the
-'atomic' word is not appropriate here). Atomicity is here referring to
-the fact that we're now providing all the PWM parameters in the same
-request instead of splitting it in pwm_config() + pwm_enable/disable()
-calls.
+I think I mentioned it somewhere before, but I'd like to do this
+differently, like in [0].
 
-Concurrent accesses still have to be controlled by the PWM user (which
-is already the case for this driver, thanks to the locking
-infrastructure in the CCF).
+That should work in a similar way and at least in my tests the reported=
 
-> Otherwise I would think this would be unconditional apply state
-> and duplicates would be ignored in the pwm framework.
-> 
+clock rate seems to be correct. As I said as well I haven't been able t=
+o
+make the emac detect a link on my kylin boards, so it would be cool
+if you could test if this different approach works in practice as well.=
 
-Yep, I'll remove the if (pstate.enabled) branch.
 
-Thanks for your review.
 
-Boris
+Thanks
+Heiko
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+------ 8< ---------
+>From e83a8b19dbf95c40d2c908727c342fbc6b167ea1 Mon Sep 17 00:00:00 2001
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Fri, 19 Feb 2016 21:31:43 +0100
+Subject: [PATCH] clk: rockchip: associate SCLK_MAC_PLL and disable repa=
+renting
+ on rk3036
+
+The emac needs constant and very specific rate but the possible PLL-sou=
+rces
+are very limited, so we expect the PLL source to be set manually on per=
+
+board and don't want it to get changed in an automatic way later.
+So add the necessary clock-id and disable reparenting on set_rate calls=
+.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/c=
+lk-rk3036.c
+index 3c742bf..0084c57 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -348,7 +348,7 @@ static struct rockchip_clk_branch rk3036_clk_branch=
+es[] __initdata =3D {
+ =09=09=09RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ =09=09=09RK2928_CLKGATE_CON(10), 5, GFLAGS),
+=20
+-=09COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
++=09COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", mux_pll_src_3plls_p, C=
+LK_SET_RATE_NO_REPARENT,
+ =09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
+ =09MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ =09=09=09RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+
+------ 8< ---------
+
+
+[0] https://github.com/mmind/linux-rockchip/commit/e83a8b19dbf95c40d2c9=
+08727c342fbc6b167ea1
+
+
+> ---
+>=20
+>  drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
+>  include/dt-bindings/clock/rk3036-cru.h | 2 ++
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/rockchip/clk-rk3036.c
+> b/drivers/clk/rockchip/clk-rk3036.c index 0703c8f..27c35fa 100644
+> --- a/drivers/clk/rockchip/clk-rk3036.c
+> +++ b/drivers/clk/rockchip/clk-rk3036.c
+> @@ -348,8 +348,11 @@ static struct rockchip_clk_branch rk3036_clk_bra=
+nches[]
+> __initdata =3D { RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+>  =09=09=09RK2928_CLKGATE_CON(10), 5, GFLAGS),
+>=20
+> -=09COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
+> -=09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
+> +=09MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
+> +=09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
+> +=09DIV(0, "mac_pll_src", "mac_pll_pre", 0,
+> +=09=09=09RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
+> +
+>  =09MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+>  =09=09=09RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+>=20
+> @@ -408,7 +411,7 @@ static struct rockchip_clk_branch rk3036_clk_bran=
+ches[]
+> __initdata =3D { GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE=
+_UNUSED,
+> RK2928_CLKGATE_CON(7), 3, GFLAGS), GATE(HCLK_I2S, "hclk_i2s", "hclk_p=
+eri",
+> 0, RK2928_CLKGATE_CON(7), 2, GFLAGS), GATE(0, "hclk_sfc", "hclk_peri"=
+,
+> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS), -=09GATE(0,
+> "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15=
+,
+> GFLAGS), +=09GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0,
+> RK2928_CLKGATE_CON(3), 5, GFLAGS),
+>=20
+>  =09/* pclk_peri gates */
+>  =09GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED,
+> RK2928_CLKGATE_CON(4), 1, GFLAGS), diff --git
+> a/include/dt-bindings/clock/rk3036-cru.h
+> b/include/dt-bindings/clock/rk3036-cru.h index ebc7a7b..de44109 10064=
+4
+> --- a/include/dt-bindings/clock/rk3036-cru.h
+> +++ b/include/dt-bindings/clock/rk3036-cru.h
+> @@ -54,6 +54,7 @@
+>  #define SCLK_PVTM_VIDEO=09=09125
+>  #define SCLK_MAC=09=09151
+>  #define SCLK_MACREF=09=09152
+> +#define SCLK_MACPLL=09=09153
+>  #define SCLK_SFC=09=09160
+>=20
+>  /* aclk gates */
+> @@ -92,6 +93,7 @@
+>  #define HCLK_SDMMC=09=09456
+>  #define HCLK_SDIO=09=09457
+>  #define HCLK_EMMC=09=09459
+> +#define HCLK_MAC=09=09460
+>  #define HCLK_I2S=09=09462
+>  #define HCLK_LCDC=09=09465
+>  #define HCLK_ROM=09=09467
