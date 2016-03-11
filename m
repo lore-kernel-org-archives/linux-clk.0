@@ -1,158 +1,216 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 02/13] clk: sunxi: add ahb1 clock for A83T
-Date: Thu, 17 Mar 2016 00:04:25 +0800
-Message-Id: <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <marc.zyngier@arm.com>
+Date: Fri, 11 Mar 2016 03:41:37 +0000
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+ kernel@pengutronix.de, sergeimir@emcraft.com, tglx@linutronix.de,
+ jason@lakedaemon.net, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/18] irqchip: vf610-gpc: add Vybrid GPC IRQ controller
+Message-ID: <20160311034137.169f22ae@arm.com>
+In-Reply-To: <1457576219-7971-2-git-send-email-stefan@agner.ch>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+	<1457576219-7971-2-git-send-email-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-clock index 0b1x is PLL6.
+On Wed,  9 Mar 2016 18:16:42 -0800
+Stefan Agner <stefan@agner.ch> wrote:
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
- 2 files changed, 77 insertions(+)
+Hi Stefan,
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 834436f..cba9fe55 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -30,6 +30,7 @@ Required properties:
- 	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
- 	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
- 	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-+	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
- 	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
- 	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
- 	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 91de0a0..a7aab65 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
- 	req->rate >>= req->p;
- }
- 
-+#define SUN8I_A83T_AHB1_PARENT_PLL6	2
-+/**
-+ * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
-+ * AHB rate is calculated as follows
-+ * rate = parent_rate >> p
-+ *
-+ * if parent is pll6, then
-+ * parent_rate = pll6 rate / (m + 1)
-+ */
-+
-+static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
-+{
-+	u8 div, calcp, calcm = 1;
-+
-+	/*
-+	 * clock can only divide, so we will never be able to achieve
-+	 * frequencies higher than the parent frequency
-+	 */
-+	if (req->parent_rate && req->rate > req->parent_rate)
-+		req->rate = req->parent_rate;
-+
-+	div = DIV_ROUND_UP(req->parent_rate, req->rate);
-+
-+	/* calculate pre-divider if parent is pll6 */
-+	if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
-+		if (div < 4)
-+			calcp = 0;
-+		else if (div / 2 < 4)
-+			calcp = 1;
-+		else if (div / 4 < 4)
-+			calcp = 2;
-+		else
-+			calcp = 3;
-+
-+		calcm = DIV_ROUND_UP(div, 1 << calcp);
-+	} else {
-+		calcp = __roundup_pow_of_two(div);
-+		calcp = calcp > 3 ? 3 : calcp;
-+	}
-+
-+	req->rate = (req->parent_rate / calcm) >> calcp;
-+	req->p = calcp;
-+	req->m = calcm - 1;
-+}
-+
-+/**
-+* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
-+*			 parent index
-+*/
-+static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
-+{
-+	req->rate = req->parent_rate;
-+
-+/* apply pre-divider first if parent is pll6 */
-+	if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
-+		req->rate /= req->m + 1;
-+
-+	/* clk divider */
-+	req->rate >>= req->p;
-+}
-+
- /**
-  * sun4i_get_apb1_factors() - calculates m, p factors for APB1
-  * APB1 rate is calculated as follows
-@@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
- 	.recalc = sun6i_ahb1_recalc,
- };
- 
-+static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
-+	.mux = 12,
-+	.muxmask = BIT(1) | BIT(0),
-+	.table = &sun6i_ahb1_config,
-+	.getter = sun8i_a83t_get_ahb1_factors,
-+	.recalc = sun8i_a83t_ahb1_recalc,
-+};
-+
- static const struct factors_data sun4i_apb1_data __initconst = {
- 	.mux = 24,
- 	.muxmask = BIT(1) | BIT(0),
-@@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
- 	       sun6i_ahb1_clk_setup);
- 
-+static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
-+	       sun8i_a83t_ahb1_clk_setup);
-+
- static void __init sun4i_apb1_clk_setup(struct device_node *node)
- {
- 	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
+> This patch introduces a driver for Vybrids GPC (Global Power
+> Controller). Vybrids GPC IP is simpler than the one found in
+> i.MX 6: There is no power gating control (GPC) and the GPC INTC
+> does not need to clear IRQ masks for an interrupt to get routed
+> to the GIC (the mask only applys for wake-up control).
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/irqchip/Makefile        |   1 +
+>  drivers/irqchip/irq-vf610-gpc.c | 138 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 139 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-vf610-gpc.c
+> 
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index 18caacb..0a77ac6 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -45,6 +45,7 @@ obj-$(CONFIG_TS4800_IRQ)		+= irq-ts4800.o
+>  obj-$(CONFIG_XTENSA)			+= irq-xtensa-pic.o
+>  obj-$(CONFIG_XTENSA_MX)			+= irq-xtensa-mx.o
+>  obj-$(CONFIG_IRQ_CROSSBAR)		+= irq-crossbar.o
+> +obj-$(CONFIG_SOC_VF610)			+= irq-vf610-gpc.o
+>  obj-$(CONFIG_SOC_VF610)			+= irq-vf610-mscm-ir.o
+>  obj-$(CONFIG_BCM7038_L1_IRQ)		+= irq-bcm7038-l1.o
+>  obj-$(CONFIG_BCM7120_L2_IRQ)		+= irq-bcm7120-l2.o
+> diff --git a/drivers/irqchip/irq-vf610-gpc.c b/drivers/irqchip/irq-vf610-gpc.c
+> new file mode 100644
+> index 0000000..2c6a043
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-vf610-gpc.c
+> @@ -0,0 +1,138 @@
+> +/*
+> + * Copyright (C) 2016 Toradex AG
+> + * Author: Stefan Agner <stefan@agner.ch>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + *
+> + * The GPC (General Power Controller) irqchip driver takes care of the
+> + * interrupt wakeup functionality.
+> + *
+> + * o All peripheral interrupts of the Vybrid SoC can be used as wakeup
+> + *   source from STOP mode. In LPSTOP mode however, the GPC is unpowered
+> + *   too and cannot be used to as a wakeup source. The WKPU (Wakeup Unit)
+> + *   is responsible for wakeups from LPSTOP modes.
+> + */
+> +
+> +#include <linux/cpu_pm.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/regmap.h>
+> +
+> +#define IMR_NUM			4
+> +#define VF610_GPC_IMR1		0x044
+> +#define VF610_GPC_MAX_IRQS	(IMR_NUM * 32)
+> +
+> +static void __iomem *gpc_base;
+> +
+> +static int vf610_gpc_irq_set_wake(struct irq_data *d, unsigned int on)
+> +{
+> +	unsigned int idx = d->hwirq / 32;
+> +	void __iomem *reg_imr = gpc_base + VF610_GPC_IMR1 + (idx * 4);
+> +	u32 mask = 1 << d->hwirq % 32;
+> +
+> +	if (on)
+> +		writel_relaxed(readl_relaxed(reg_imr) & ~mask, reg_imr);
+> +	else
+> +		writel_relaxed(readl_relaxed(reg_imr) | mask, reg_imr);
+> +
+> +	/*
+> +	 * Do *not* call into the parent, as the GIC doesn't have any
+> +	 * wake-up facility...
+> +	 */
+> +	return 0;
+> +}
+> +
+> +static struct irq_chip vf610_gpc_chip = {
+> +	.name			= "vf610-gpc",
+> +	.irq_mask		= irq_chip_mask_parent,
+> +	.irq_unmask		= irq_chip_unmask_parent,
+> +	.irq_enable		= irq_chip_enable_parent,
+> +	.irq_disable		= irq_chip_disable_parent,
+
+Any reason why you are providing enable/disable methods? This driver
+seems to be GIC specific (various comments in the code), but the GIC
+doesn't implement those.
+
+> +	.irq_eoi		= irq_chip_eoi_parent,
+> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+> +	.irq_set_wake		= vf610_gpc_irq_set_wake,
+> +};
+> +
+> +static int vf610_gpc_domain_alloc(struct irq_domain *domain, unsigned int virq,
+> +				  unsigned int nr_irqs, void *arg)
+> +{
+> +	int i;
+> +	irq_hw_number_t hwirq;
+> +	struct irq_fwspec *fwspec = arg;
+> +	struct irq_fwspec parent_fwspec;
+> +
+> +	if (!irq_domain_get_of_node(domain->parent))
+> +		return -EINVAL;
+> +
+> +	if (fwspec->param_count != 2)
+> +		return -EINVAL;
+> +
+> +	hwirq = fwspec->param[0];
+> +	for (i = 0; i < nr_irqs; i++)
+> +		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
+> +					      &vf610_gpc_chip, NULL);
+> +
+> +	parent_fwspec = *fwspec;
+
+Now I'm confused. The next irqchip in the hierarchy cannot be the GIC,
+because that's the wrong fwspec format (the GIC expect 3 parameters).
+Glancing at patch #2, I can see that this points to the mscm, so maybe
+it is that the comments are just wrong?
+
+> +	parent_fwspec.fwnode = domain->parent->fwnode;
+> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+> +					    &parent_fwspec);
+> +}
+> +
+> +static int vf610_gpc_domain_translate(struct irq_domain *d,
+> +					  struct irq_fwspec *fwspec,
+> +					  unsigned long *hwirq,
+> +					  unsigned int *type)
+> +{
+> +	if (WARN_ON(fwspec->param_count < 2))
+> +		return -EINVAL;
+> +	*hwirq = fwspec->param[0];
+> +	*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops gpc_irq_domain_ops = {
+> +	.translate = vf610_gpc_domain_translate,
+> +	.alloc = vf610_gpc_domain_alloc,
+> +	.free = irq_domain_free_irqs_common,
+> +};
+> +
+> +static int __init vf610_gpc_of_init(struct device_node *node,
+> +			       struct device_node *parent)
+> +{
+> +	struct irq_domain *domain, *domain_parent;
+> +	int i;
+> +
+> +	domain_parent = irq_find_host(parent);
+> +	if (!domain_parent) {
+> +		pr_err("vf610_gpc: interrupt-parent not found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	gpc_base = of_io_request_and_map(node, 0, "gpc");
+> +	if (WARN_ON(!gpc_base))
+> +		return PTR_ERR(gpc_base);
+
+If gpc_base is NULL, PTR_ERR(NULL) returns 0. Probably not what you
+want here...
+
+> +
+> +	domain = irq_domain_add_hierarchy(domain_parent, 0, VF610_GPC_MAX_IRQS,
+> +					  node, &gpc_irq_domain_ops, NULL);
+> +	if (!domain) {
+> +		iounmap(gpc_base);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	/* Initially mask all interrupts for wakeup */
+> +	for (i = 0; i < IMR_NUM; i++)
+> +		writel_relaxed(~0, gpc_base + VF610_GPC_IMR1 + i * 4);
+> +
+> +	return 0;
+> +}
+> +IRQCHIP_DECLARE(vf610_gpc, "fsl,vf610-gpc", vf610_gpc_of_init);
+
+It would be good to have some binding documentation as well.
+
+Thanks,
+
+	M.
 -- 
-1.9.1
+Jazz is not dead. It just smells funny.
