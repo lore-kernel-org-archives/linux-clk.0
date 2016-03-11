@@ -1,40 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 29 Mar 2016 16:39:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] bcm2835 clk changes for 4.6 maybe
-Message-ID: <20160329233923.GR18567@codeaurora.org>
-References: <1458265130-30734-1-git-send-email-eric@anholt.net>
+Return-Path: <nm@ti.com>
+Subject: Re: [PATCH] clk: ti: dra7-atl-clock: Fix of_node reference counting
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>, <t-kristo@ti.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+References: <1457705612-7684-1-git-send-email-peter.ujfalusi@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <tony@atomide.com>
+From: Nishanth Menon <nm@ti.com>
+Message-ID: <56E3284F.3070801@ti.com>
+Date: Fri, 11 Mar 2016 14:19:27 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458265130-30734-1-git-send-email-eric@anholt.net>
+In-Reply-To: <1457705612-7684-1-git-send-email-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/17, Eric Anholt wrote:
-> This is late, so feel free to drop it, but I figured I'd send it to
-> you in case you were still open to merges.  I've pounded on it a bit
-> today (modesets to all sorts of resolutions on HDMI, used it for
-> testing the DPI panel support that I'm hoping to have for 4.7, and did
-> a whole lot of browsing of clk_summary as I debugged DPI), and kbuild
-> test robot came back clean, so I'm pretty happy with it.
+On 03/11/2016 08:13 AM, Peter Ujfalusi wrote:
+> of_find_node_by_name() will call of_node_put() on the node so we need to
+> get it first to avoid warnings.
+> The cfg_node needs to be put after we have finished processing the
+> properties.
 > 
-> The following changes since commit 4d3ac6662452060721599a3392bc2f524af984cb:
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+>  drivers/clk/ti/clk-dra7-atl.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
->   clk: bcm2835: fix check of error code returned by devm_ioremap_resource() (2016-03-15 18:14:11 -0700)
+> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+> index 2e14dfb588f4..c77333230bdf 100644
+> --- a/drivers/clk/ti/clk-dra7-atl.c
+> +++ b/drivers/clk/ti/clk-dra7-atl.c
+> @@ -265,6 +265,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+>  
+>  		/* Get configuration for the ATL instances */
+>  		snprintf(prop, sizeof(prop), "atl%u", i);
+> +		of_node_get(node);
+>  		cfg_node = of_find_node_by_name(node, prop);
+>  		if (cfg_node) {
+>  			ret = of_property_read_u32(cfg_node, "bws",
+> @@ -278,6 +279,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+>  				atl_write(cinfo, DRA7_ATL_AWSMUX_REG(i),
+>  					  cdesc->aws);
+>  			}
+> +			of_node_put(cfg_node);
+>  		}
+>  
+>  		cdesc->probed = true;
 > 
-> are available in the git repository at:
-> 
->   git@github.com:anholt/linux.git tags/bcm2835-clk-next-2016-03-17
 
-Please make sure to use a proper URL here. I don't have access to
-git@github.com, but I can fetch this from
-git://github.com/anholt/linux.git. The tag and the contents match
-so I'm fairly confident all is well.
+Tested-by: Nishanth Menon <nm@ti.com>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Nishanth Menon
