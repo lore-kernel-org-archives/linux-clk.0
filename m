@@ -1,88 +1,76 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 31 Mar 2016 16:33:25 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
-	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
-	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/18] ARM: dts: vf610: add on-chip SRAM
-Message-ID: <20160331083325.GX28207@tiger>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-5-git-send-email-stefan@agner.ch>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 0/6] arc_emac: fixes the emac issues oand cleanup emac
+ drivers
+To: Caesar Wang <caesar.upstream@gmail.com>
+References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
+ <56E2CC39.6050907@cogentembedded.com> <56E2DAC4.4020105@gmail.com>
+Cc: Caesar Wang <wxt@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
+ "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
+ zhengxing <zhengxing@rock-chips.com>,
+ Alexander Kochetkov <al.kochet@gmail.com>, netdev@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, keescook@google.com,
+ Jiri Kosina <trivial@kernel.org>, linux-clk@vger.kernel.org,
+ leozwang@google.com
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56E3126C.7000100@cogentembedded.com>
+Date: Fri, 11 Mar 2016 21:46:04 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457576219-7971-5-git-send-email-stefan@agner.ch>
+In-Reply-To: <56E2DAC4.4020105@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 06:16:45PM -0800, Stefan Agner wrote:
-> Add Vybrids massive on-chip SRAM areas. Make use of the memory
-> region functionality to denominate the retained SRAM area in
-> LPSTOP2 and LPSTOP3.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Hello.
 
-This one looks fine to me.  I was going to pick it up separately, but it
-doesn't apply.
+On 03/11/2016 05:48 PM, Caesar Wang wrote:
 
-Shawn
+[...]
 
-> ---
->  arch/arm/boot/dts/vfxxx.dtsi | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
-> index 909988d..b038ea4 100644
-> --- a/arch/arm/boot/dts/vfxxx.dtsi
-> +++ b/arch/arm/boot/dts/vfxxx.dtsi
-> @@ -91,6 +91,43 @@
->  		interrupt-parent = <&gpc>;
->  		ranges;
->  
-> +		ocram0: sram@3f000000 {
-> +			compatible = "mmio-sram";
-> +			reg = <0x3f000000 0x40000>;
-> +
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges = <0 0x3f000000 0x40000>;
-> +
-> +			stbyram1@0 {
-> +				reg = <0x0 0x4000>;
-> +				label = "stbyram1";
-> +				pool;
-> +			};
-> +
-> +			stbyram2@4000 {
-> +				reg = <0x4000 0xc000>;
-> +				label = "stbyram2";
-> +				pool;
-> +			};
-> +		};
-> +
-> +		ocram1: sram@3f040000 {
-> +			compatible = "mmio-sram";
-> +			reg = <0x3f040000 0x40000>;
-> +		};
-> +
-> +		gfxram0: sram@3f400000 {
-> +			compatible = "mmio-sram";
-> +			reg = <0x3f400000 0x80000>;
-> +		};
-> +
-> +		/* used by L2 cache */
-> +		gfxram1: sram@3f480000 {
-> +			compatible = "mmio-sram";
-> +			reg = <0x3f480000 0x80000>;
-> +		};
-> +
->  		aips0: aips-bus@40000000 {
->  			compatible = "fsl,aips-bus", "simple-bus";
->  			#address-cells = <1>;
-> -- 
-> 2.7.2
-> 
-> 
+>>> Hi Rob, David:
+>>> PATCH[1/6-2/6]: ====>
+>>> net: arc_emac: make the rockchip emac document more compatible
+>>> net: arc_emac: add phy-reset-* are optional for device tree
+>>>
+>>> The patches change the rockchip emac document for more compatible and
+>>> Add the phy-reset-* property for document.
+>>>
+>>> This patch adds the following property for arc_emac.
+>>>
+>>> phy-reset-* include the following:
+>>> 1) phy-reset-gpios:
+>>> The phy-reset-gpios is an optional property for arc emac device tree boot.
+>>> Change the binding document to match the driver code.
+>>>
+>>> 2) phy-reset-duration:
+>>> Different boards may require different phy reset duration. Add property
+>>> phy-reset-duration for device tree probe, so that the boards that need
+>>> a longer reset duration can specify it in their device tree.
+>>>
+>>> 3) phy-reset-active-high:
+>>> We need that for a custom hardware that needs the reverse reset sequence.
+>>
+>>    Why not infer this from the "phy-reset-gpios" prop?
+>
+> See:
+> https://patchwork.kernel.org/patch/8564511/
+ >
+> phy-reset-active-high : If present then the reset sequence using the GPIO
+>   specified in the "phy-reset-gpios" property is reversed (H=reset state,
+>   L=operation state).
+
+    Referring to your own suggested bindings isn't an answer. If the driver 
+that you're copying from here (fec) had a reason to handle the GPIO sense with 
+the help of an extra prop (legacy code), it doesn't mean your new driver needs 
+to mimic this as well, AFAIU...
+
+> Thanks,
+>
+> Caesar
+
+MBR, Sergei
