@@ -1,67 +1,51 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 0/3] clk: clock driver for the Marvell Armada AP806
-Date: Fri,  4 Mar 2016 13:57:52 +0100
-Message-Id: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.131]:49907 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750887AbcCLQdK (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2016 11:33:10 -0500
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Xing Zheng <zhengxing@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 0/7] Some trivial patches for rockchip clk stuff
+Date: Sun, 13 Mar 2016 00:24:31 +0800
+Message-Id: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Michael, Stephen,
 
-Here is a new version of the clock driver and its DT binding for the
-Marvell Armada AP806. As you will see, there is no longer any
-reference to the DFX Server and changes in the clock tree compared to
-the v2. This is due to the fact that the HW has changed from this
-point of view between the test chips and the final revision, and this
-new version aims at supporting only the final revision.
+Hi Heiko and Xing,
 
-We therefore have a very simple DT binding, with one single node that
-covers the entire "system controller" registers, associated to one
-driver that provides the clocks. This system controller will later be
-used to support other features such as pin-muxing, but for now we only
-support the clocks aspects of it.
+After reviewing some clk patches for rk3399, I found some
+trivial problems. So this is another round of patches to
+slightly improve the code.
 
-Please let me know if this approach works for you.
+Based on v4.7-clk/next branch
+git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
 
-Note that this patch series is based on clk-net, because I wanted to
-avoid introducing a new use of CLK_IS_ROOT. To do this, I needed the
-patches currently in clk-next that remove the need for CLK_IS_ROOT.
 
-Thanks!
 
-Thomas
+Shawn Lin (7):
+  clk: rockchip: remove mux_core_reg from rockchip_cpuclk_reg_data
+  clk: rockchip: fix warning reported by kernel-doc
+  clk: rockchip: release io resource when rk3036_clk_init failed
+  clk: rockchip: release io resource when rk3188_common_clk_init failed
+  clk: rockchip: release io resource when rk3368_clk_init failed
+  clk: rockchip: remove redundant checking of device_node
+  clk: rockchip: fix a typo for rockchip_rk3399_pll_set_params
 
-Thomas Petazzoni (3):
-  dt-bindings: arm: add DT binding for Marvell AP806 system controller
-  clk: unconditionally recurse into clk/mvebu/
-  clk: mvebu: new driver for Armada AP806 system controller
-
- .../arm/marvell/ap806-system-controller.txt        |  34 +++++++
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/mvebu/Kconfig                          |   3 +
- drivers/clk/mvebu/Makefile                         |   1 +
- drivers/clk/mvebu/ap806-system-controller.c        | 106 +++++++++++++++++++++
- 5 files changed, 145 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
- create mode 100644 drivers/clk/mvebu/ap806-system-controller.c
+ drivers/clk/rockchip/clk-pll.c    |  2 +-
+ drivers/clk/rockchip/clk-rk3036.c |  1 +
+ drivers/clk/rockchip/clk-rk3188.c |  1 +
+ drivers/clk/rockchip/clk-rk3368.c |  1 +
+ drivers/clk/rockchip/clk.c        |  8 +++-----
+ drivers/clk/rockchip/clk.h        | 10 +++++-----
+ 6 files changed, 12 insertions(+), 11 deletions(-)
 
 -- 
-2.6.4
+2.3.7
+
+
