@@ -1,42 +1,40 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Mar 2016 17:43:40 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [GIT PULL] i.MX clock driver update for 4.6
-Message-ID: <20160302014340.GE24999@codeaurora.org>
-References: <20160229080607.GT22051@tiger>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160229080607.GT22051@tiger>
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Xing Zheng <zhengxing@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 4/7] clk: rockchip: release io resource when rk3188_common_clk_init failed
+Date: Sun, 13 Mar 2016 00:25:36 +0800
+Message-Id: <1457799936-3183-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/29, Shawn Guo wrote:
-> Hi Mike, Stephen,
-> 
-> The following are the i.MX clock patches I queued for 4.6.  Please pull
-> and keep it stable, as I need to pull it into my DT branch to resolve
-> the dependency on those new clock IDs.
-> 
-> Thanks,
-> Shawn
-> 
-> 
-> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
-> 
->   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.6
-> 
-> for you to fetch changes up to f6c3aec2f7a218abec9e5c00353abc02224be49e:
-> 
->   clk: imx: add kpp clock for i.MX6UL (2016-02-28 10:45:29 +0800)
+We should call iounmap to relase reg_base since it's not going
+to be used any more.
 
-Thanks. Pulled.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
+ drivers/clk/rockchip/clk-rk3188.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 0fcce22..d0e722a 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -773,6 +773,7 @@ static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device
+ 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
++		iounmap(reg_base);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.3.7
