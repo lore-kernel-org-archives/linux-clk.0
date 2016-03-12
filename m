@@ -1,39 +1,76 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:50448 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751685AbcCLPxB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Sat, 12 Mar 2016 10:53:01 -0500
+Date: Sat, 12 Mar 2016 16:52:54 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+	linux-mmc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	scott.wood@nxp.com, Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	ulf.hansson@linaro.org,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Zhao Qiang <qiang.zhao@freescale.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
+	xiaobo.xie@nxp.com
+Subject: Re: [v6, 4/5] powerpc/fsl: move mpc85xx.h to include/linux/fsl
+Message-ID: <20160312155254.GJ1661@katana>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+ <1457518131-11339-5-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
-Date: Thu, 17 Mar 2016 15:51:15 +0100
-Message-ID: <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
-Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AXxEqdD4tcVTjWte"
+In-Reply-To: <1457518131-11339-5-git-send-email-yangbo.lu@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 16, 2016 at 5:04 PM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
 
-> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> interrupt bit is 6th and A83T has one extra pin PL12.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+--AXxEqdD4tcVTjWte
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think I already merged this?
+On Wed, Mar 09, 2016 at 06:08:50PM +0800, Yangbo Lu wrote:
+> Move mpc85xx.h to include/linux/fsl and rename it to svr.h as
+> a common header file. It has been used for mpc85xx and it will
+> be used for ARM-based SoC as well.
+>=20
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 
-Yours,
-Linus Walleij
+=46rom a glimpse, looks like proper refactoring. Thanks!
+
+For the I2C part:
+
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+
+
+--AXxEqdD4tcVTjWte
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW5DtWAAoJEBQN5MwUoCm2N8wP/A+9PzzjAh69NdEWEYwAmYNQ
+O+VKHOPKJS8+cx+LgBtRcfEPQFa1Yjhbc67iLD3iCZmflpMTPkTxJaCXtCpX7spT
+czvjtG2dnaW57mkuuu1M1n6g2Pk8AqFScH7fgJ8/T0PsLo9n/+uZQOqsahYLYBA6
+eHz4NL7vhXW0X8K1v2VnPI8PzEc3jxz72ZsGo4JdKrrSNjs20rHpjXm4/c6L/IxY
+ww6eMTeOY+aXfNEHyWX67bwVX0j+9puiQ0RWdnQEo/3n9XMdketiEwpClO/fzAmb
+YGg7ChK0pVFqt54gk5Kj6eA9hCDiNsOK9LSeVNX5qsqmIcr1enxD9WNOV0zjPTfP
+pF1mR52ygaACR5KU8LQSZVyZBjar9lMq60Fw6KCRunwCMjpnkUxLWHFH8TrH5NAG
+bcVaO158C7FW7Ixk+d0uaZpqIMg2co62nUXXLxUvMSVbDNxuzvo6gCosZt5z3oKr
+9oEVkaqTk7QhX8szHB+BYKjoBVK+oi4UsgvQ3LnTCCt5r9vGGwGGnNEluOKHzB5o
+hEdKZ7/Ubd8yuCAkVzZHW4s0i248RxUY+a45u2adw6Zp5L7Dvw4JWPo0YD6qT4UN
+AMUJnu+dAf/WgL1wn1Nb1AKsbnN3dz8paP0kdGXTtfO51B1FeFrs7x9io1wvUFyn
+4zIuW6V0i4oZlV+/XynJ
+=VEQJ
+-----END PGP SIGNATURE-----
+
+--AXxEqdD4tcVTjWte--
