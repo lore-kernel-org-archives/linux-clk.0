@@ -1,52 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47733 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751992AbcCAUut (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 1 Mar 2016 15:50:49 -0500
-Date: Tue, 1 Mar 2016 12:50:44 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Paul Walmsley <paul@pwsan.com>
-Cc: Franklin S Cooper Jr <fcooper@ti.com>, t-kristo@ti.com,
-	vigneshr@ti.com, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-Message-ID: <20160301205043.GA4469@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-3-git-send-email-fcooper@ti.com>
- <20160301181109.GB13417@atomide.com>
- <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] clk: rockchip: release io resource when rk3036_clk_init failed
+Date: Sat, 12 Mar 2016 17:48:26 +0100
+Message-ID: <8447746.miDbEHA5rR@diego>
+In-Reply-To: <1457799925-3142-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799925-3142-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Paul Walmsley <paul@pwsan.com> [160301 10:59]:
-> On Tue, 1 Mar 2016, Tony Lindgren wrote:
-> 
-> > * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
-> > > From: Vignesh R <vigneshr@ti.com>
-> > > 
-> > > Add hwmod entries for the PWMSS on DRA7.
-> > > 
-> > > Set l4_root_clk_div as the main_clk of PWMSS. It is fixed-factored clock
-> > > equal to L4PER2_L3_GICLK/2(l3_iclk_div/2).
-> > > As per AM57x TRM SPRUHZ6[1], October 2014, Section 29.1.3 Table 29-4,
-> > > clock source to PWMSS is L4PER2_L3_GICLK. But it is actually
-> > > L4PER2_L3_GICLK/2. The TRM does not show the division by 2.
-> > > 
-> > > [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
-> > 
-> > Looks OK to me, assuming Paul will pick this one or ack it.
-> 
-> Well I've already sent comments on it, it doesn't look quite ready for me 
-> yet.  I would hold off on the whole series because the hwmod comments also 
-> impact the DT files.
+Hi Shawn,
 
-OK will drop the dt related patches then.
+Am Sonntag, 13. M=E4rz 2016, 00:25:25 schrieb Shawn Lin:
+> We should call iounmap to relase reg_base since it's not going
+> to be used any more.
+>=20
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Regards,
+I see that change for rk3036, rk3188(+rk3066) and rk3368.
+But it looks like rk3228 and rk3288 should also get that, or am I just=20=
 
-Tony
+overlooking something?
+
+Also, I think we can fold these changes into one patch, as it's the com=
+pletely=20
+same addition for all clock-drivers.
+
+
+Heiko
+
+> ---
+>=20
+>  drivers/clk/rockchip/clk-rk3036.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/rockchip/clk-rk3036.c
+> b/drivers/clk/rockchip/clk-rk3036.c index 8c683cc..284c36f 100644
+> --- a/drivers/clk/rockchip/clk-rk3036.c
+> +++ b/drivers/clk/rockchip/clk-rk3036.c
+> @@ -453,6 +453,7 @@ static void __init rk3036_clk_init(struct device_=
+node
+> *np) ctx =3D rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+>  =09if (IS_ERR(ctx)) {
+>  =09=09pr_err("%s: rockchip clk init failed\n", __func__);
+> +=09=09iounmap(reg_base);
+>  =09=09return;
+>  =09}
