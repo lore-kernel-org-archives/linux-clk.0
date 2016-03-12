@@ -1,42 +1,39 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] clk: rockchip: fix a typo for rockchip_rk3399_pll_set_params
+Date: Sat, 12 Mar 2016 17:45:09 +0100
+Message-ID: <3768709.fnQSsPk3or@diego>
+In-Reply-To: <1457799962-3308-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799962-3308-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1457315065-28705-1-git-send-email-horms+renesas@verge.net.au>
-References: <1457315065-28705-1-git-send-email-horms+renesas@verge.net.au>
-Date: Mon, 7 Mar 2016 08:59:01 +0100
-Message-ID: <CAMuHMdVo3KQ2TJbYKsuqNMm_H8_tiDw5mWqNXLho_3cjbTE3rw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: Rename header file renesas.h
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 7, 2016 at 2:44 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->
-> Along with the above mentioned Kconfig changes it seems appropriate
-> to also rename files.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Hi Shawn,
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Am Sonntag, 13. M=E4rz 2016, 00:26:02 schrieb Shawn Lin:
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -733,7 +733,7 @@ static int rockchip_rk3399_pll_set_params(struct
+> rockchip_clk_pll *pll, /* wait for the pll to lock */
+>  =09ret =3D rockchip_rk3399_pll_wait_lock(pll);
+>  =09if (ret) {
+> -=09=09pr_warn("%s: pll update unsucessful, trying to restore old par=
+ams\n",
+> +=09=09pr_warn("%s: pll update unsuccessful, trying to restore old pa=
+rams\n",
+>  =09=09=09__func__);
+>  =09=09rockchip_rk3399_pll_set_params(pll, &cur);
+>  =09}
 
-BTW, the sooner it goes in, the better.
+I've folded that fix into the original pll addition [0]
 
-Thank!
+Thanks for catching that
+Heiko
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.g=
+it/commit/?h=3Dv4.7-clk/next&id=3D95e0c473a0ac1bdac25f55678dc602eb50dae=
+684
