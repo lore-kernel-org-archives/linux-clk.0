@@ -1,125 +1,82 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Xing Zheng <zhengxing@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
 	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 22/46] pwm: rockchip: avoid glitches on already running PWMs
-Date: Wed, 30 Mar 2016 22:03:45 +0200
-Message-Id: <1459368249-13241-23-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 2/7] clk: rockchip: fix warning reported by kernel-doc
+Date: Sun, 13 Mar 2016 00:25:14 +0800
+Message-Id: <1457799914-3101-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current logic will disable the PWM clk even if the PWM was left
-enabled by the bootloader (because it's controlling a critical device
-like a regulator for example).
-Keep the PWM clk enabled if the PWM is enabled to avoid any glitches.
+./scripts/kernel-doc -man -v drivers/clk/rockchip/clk.h > /dev/null
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+drivers/clk/rockchip/clk.h:133: warning: missing initial short
+description on line:
+ * struct rockchip_clk_provider: information about clock provider
+drivers/clk/rockchip/clk.h:133: info: Scanning doc for struct
+drivers/clk/rockchip/clk.h:164: warning: missing initial short
+description on line:
+ * struct rockchip_pll_clock: information about pll clock
+drivers/clk/rockchip/clk.h:164: info: Scanning doc for struct
+drivers/clk/rockchip/clk.h:194: warning: No description found for
+parameter 'parent_names'
+drivers/clk/rockchip/clk.h:194: warning: No description found for
+parameter 'num_parents'
+drivers/clk/rockchip/clk.h:194: warning: Excess struct/union/enum/typedef
+member 'parent_name' description in 'rockchip_pll_clock'
+drivers/clk/rockchip/clk.h:235: warning: missing initial short
+description on line:
+ * struct rockchip_cpuclk_reg_data: describes register offsets and
+masks of the cpuclock
+
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
- drivers/pwm/pwm-rockchip.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index 6a1087c..5c7e79c 100644
---- a/drivers/pwm/pwm-rockchip.c
-+++ b/drivers/pwm/pwm-rockchip.c
-@@ -302,6 +302,7 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *id;
- 	struct rockchip_pwm_chip *pc;
-+	struct pwm_state pstate;
- 	struct resource *r;
- 	int ret;
- 
-@@ -322,7 +323,7 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
- 	if (IS_ERR(pc->clk))
- 		return PTR_ERR(pc->clk);
- 
--	ret = clk_prepare(pc->clk);
-+	ret = clk_prepare_enable(pc->clk);
- 	if (ret)
- 		return ret;
- 
-@@ -345,12 +346,33 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
- 	}
- 
-+	/* Keep the PWM clk enabled if the PWM appears to be up and running. */
-+	pwm_get_state(pc->chip.pwms, &pstate);
-+	if (!pstate.enabled)
-+		clk_disable(pc->clk);
-+
- 	return ret;
+ drivers/clk/rockchip/clk.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index b298f99..e0f103b 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -130,7 +130,7 @@ enum rockchip_pll_type {
  }
  
- static int rockchip_pwm_remove(struct platform_device *pdev)
- {
- 	struct rockchip_pwm_chip *pc = platform_get_drvdata(pdev);
-+	struct pwm_state pstate;
-+
-+	/*
-+	 * Disable the PWM clk before unpreparing it if the PWM device is still
-+	 * running. This should only happen when the last PWM user left it
-+	 * enabled, or when nobody requested a PWM that was previously enabled
-+	 * by the bootloader.
-+	 *
-+	 * FIXME: Maybe the core should disable all PWM devices in
-+	 * pwmchip_remove(). In this case we'd only have to call
-+	 * clk_unprepare() after pwmchip_remove().
-+	 *
-+	 */
-+	pwm_get_state(pc->chip.pwms, &pstate);
-+	if (pstate.enabled)
-+		clk_disable(pc->clk);
+ /**
+- * struct rockchip_clk_provider: information about clock provider
++ * struct rockchip_clk_provider - information about clock provider
+  * @reg_base: virtual address for the register base.
+  * @clk_data: holds clock related data like clk* and number of clocks.
+  * @cru_node: device-node of the clock-provider
+@@ -161,10 +161,11 @@ struct rockchip_pll_rate_table {
+ };
  
- 	clk_unprepare(pc->clk);
+ /**
+- * struct rockchip_pll_clock: information about pll clock
++ * struct rockchip_pll_clock - information about pll clock
+  * @id: platform specific id of the clock.
+  * @name: name of this pll clock.
+- * @parent_name: name of the parent clock.
++ * @parent_names: name of the parent clock.
++ * @num_parents: number of parents
+  * @flags: optional flags for basic clock.
+  * @con_offset: offset of the register for configuring the PLL.
+  * @mode_offset: offset of the register for configuring the PLL-mode.
+@@ -232,7 +233,7 @@ struct rockchip_cpuclk_rate_table {
+ };
  
+ /**
+- * struct rockchip_cpuclk_reg_data: describes register offsets and masks of the cpuclock
++ * struct rockchip_cpuclk_reg_data - describes register offsets and masks of the cpuclock
+  * @core_reg:		register offset of the core settings register
+  * @div_core_shift:	core divider offset used to divide the pll value
+  * @div_core_mask:	core divider mask
 -- 
-2.5.0
+2.3.7
