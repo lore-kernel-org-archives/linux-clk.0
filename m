@@ -1,70 +1,55 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 18 Mar 2016 11:10:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	kernel@pengutronix.de, sergeimir@emcraft.com, tglx@linutronix.de,
-	jason@lakedaemon.net, marc.zyngier@arm.com, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 17/18] Documentation: dt: add Vybrid DDR memory
- controller bindings
-Message-ID: <20160318161057.GA31181@rob-hp-laptop>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-18-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457576219-7971-18-git-send-email-stefan@agner.ch>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rockchip@lists.infradead.org,
+	keescook@google.com,
+	leozwang@google.com,
+	sergei.shtylyov@cogentembedded.com,
+	netdev@vger.kernel.org,
+	Caesar Wang <wxt@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 8/9] clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on rk3036
+Date: Sun, 13 Mar 2016 17:07:41 +0800
+Message-Id: <1457860062-5514-9-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1457860062-5514-1-git-send-email-wxt@rock-chips.com>
+References: <1457860062-5514-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 06:16:58PM -0800, Stefan Agner wrote:
-> Add device-tree bindings of Vybrids LPDDR2/DDR3 SDRAM Memory
-> Controller. Access to the device is required to put the memory
-> into self-refresh mode.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  .../bindings/arm/freescale/fsl,vf610-ddrmc.txt     | 23 ++++++++++++++++++++++
+From: Heiko Stuebner <heiko@sntech.de>
 
-Move to bindings/memory-controllers/
+The emac needs constant and very specific rate but the possible PLL-sources
+are very limited, so we expect the PLL source to be set manually on per
+board and don't want it to get changed in an automatic way later.
+So add the necessary clock-id and disable reparenting on set_rate calls.
 
->  1 file changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
-> new file mode 100644
-> index 0000000..56a71d6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
-> @@ -0,0 +1,23 @@
-> +Freescale Vybrid LPDDR2/DDR3 SDRAM Memory Controller
-> +
-> +The memory controller supports high performance applications for 16-bit or
-> +8-bit DDR2, or LPDDR SDRAM memories.
-> +
-> +Required properties:
-> +- compatible:	"fsl,vf610-ddrmc"
-> +- reg:		the register range of the DDRMC registers
-> +- clocks:	DDRMC main clock to clock memory and access registers.
-> +- clock-names:	Must contain "ddrc", matching entry in the clocks property.
-> +- fsl,has-cke-reset-pulls:
-> +		States whether pull-down/up are populated on DDR CKE/RESET
-> +		signals to allow using DDR self-refresh modes (see Vybrid
-> +		Hardware Development Guide for details).
-> +
-> +Example:
-> +	ddrmc: ddrmc@400ae000 {
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+---
 
-memory-controller@...
+Changes in v2: None
 
-> +		compatible = "fsl,vf610-ddrmc";
-> +		reg = <0x400ae000 0x1000>;
-> +		clocks = <&clks VF610_CLK_DDRMC>;
-> +		clock-names = "ddrc";
-> +		fsl,has-cke-reset-pulls;
-> +	}
-> -- 
-> 2.7.2
-> 
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index cc66e5f..7cdb2d6 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -348,7 +348,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
+ 
+-	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
++	COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", mux_pll_src_3plls_p, CLK_SET_RATE_NO_REPARENT,
+ 			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
+ 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+-- 
+1.9.1
