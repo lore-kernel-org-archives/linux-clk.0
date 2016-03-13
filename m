@@ -1,64 +1,173 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-	<iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, <scott.wood@nxp.com>,
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rockchip@lists.infradead.org,
+	keescook@google.com,
+	leozwang@google.com,
+	sergei.shtylyov@cogentembedded.com,
+	netdev@vger.kernel.org,
+	Caesar Wang <wxt@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alexander Kochetkov <al.kochet@gmail.com>,
 	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	<ulf.hansson@linaro.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"Zhao Qiang" <qiang.zhao@freescale.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Kumar Gala <galak@codeaurora.org>,
-	"Santosh Shilimkar" <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v6, 0/5] Fix eSDHC host version register bug
-Date: Wed, 9 Mar 2016 18:08:46 +0800
-Message-ID: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jiri Kosina <trivial@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>
+Subject: [PATCH v2 0/9] arc_emac: fixes the emac issues and cleanup emac drivers
+Date: Sun, 13 Mar 2016 17:07:33 +0800
+Message-Id: <1457860062-5514-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
-eSDHC controller. To get the SoC version and revision, it's needed to add the
-GUTS driver to access the global utilities registers.
+Hi all,
+This series patches are based on kernel 4.5-rc7+ version.
+Linux version 4.5.0-rc7-next-20160311+ (wxt@nb) (...) #45 SMP Sun Mar 13 16:17:56
 
-So, the first three patches are to add the GUTS driver.
-The following two patches are to enable GUTS driver support to get SVR in eSDHC
-driver and fix host version for T4240.
+The history patch in here:
+Patch-v1: https://lkml.org/lkml/2016/3/11/209
 
-Yangbo Lu (5):
-  ARM64: dts: ls2080a: add device configuration node
-  soc: fsl: add GUTS driver for QorIQ platforms
-  dt: move guts devicetree doc out of powerpc directory
-  powerpc/fsl: move mpc85xx.h to include/linux/fsl
-  mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Verified on kylin board with my github.
+https://github.com/Caesar-github/rockchip/tree/kylin/next
 
- .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 ++
- drivers/clk/clk-qoriq.c                            |   3 +-
- drivers/i2c/busses/i2c-mpc.c                       |   2 +-
- drivers/iommu/fsl_pamu.c                           |   3 +-
- drivers/mmc/host/Kconfig                           |   1 +
- drivers/mmc/host/sdhci-of-esdhc.c                  |  23 ++++
- drivers/net/ethernet/freescale/gianfar.c           |   2 +-
- drivers/soc/Kconfig                                |   2 +-
- drivers/soc/fsl/Kconfig                            |   8 ++
- drivers/soc/fsl/Makefile                           |   1 +
- drivers/soc/fsl/guts.c                             | 119 +++++++++++++++++++++
- include/linux/fsl/guts.h                           | 100 ++++++++---------
- .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
- 14 files changed, 220 insertions(+), 57 deletions(-)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
- create mode 100644 drivers/soc/fsl/Kconfig
- create mode 100644 drivers/soc/fsl/guts.c
- rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+That's verified on kylin board with ubuntu os.
+
+How to test and verify?
+
+You can refer to the following wiki document.
+http://rockchip.wikidot.com/linux-develop-guide
+
+bootup log:
+   1.268113] rockchip_emac 10200000.ethernet: no regulator found
+   [    1.286682] rockchip_emac 10200000.ethernet: ARC EMAC detected with id: 0x7fd02
+   [    1.294007] rockchip_emac 10200000.ethernet: IRQ is 29
+   [    1.299453] rockchip_emac 10200000.ethernet: MAC address is now 1e:cd:18:78:90:25
+   [    1.726564] rockchip_emac 10200000.ethernet: connected to Generic PHY phy with id 0x1cc816
+   [    8.936862] rockchip_emac 10200000.ethernet eth0: Link is Up - 100Mbps/Full - flow control off
+
+root@localhost:/# busybox ping www.baidu.com
+PING www.baidu.com (14.215.177.38): 56 data bytes
+64 bytes from 14.215.177.38: seq=0 ttl=48 time=35.046 ms
+64 bytes from 14.215.177.38: seq=1 ttl=48 time=35.095 ms
+64 bytes from 14.215.177.38: seq=2 ttl=48 time=34.203 ms
+64 bytes from 14.215.177.38: seq=3 ttl=48 time=38.516 ms
+...
+---
+
+1) This series has 6 patches: (1--->9)
+net: arc_emac: make the rockchip emac document more compatible
+net: arc_emac: add phy reset is optional for device tree
+net: arc_emac: support the phy reset for emac driver
+net: arc: trivial: cleanup the emac driver
+clk: rockchip: add node-id for rk3036 emac hclk
+clk: rockchip: associate the rk3036 HCLK_EMAC clock-id
+clk: rockchip: add clock-id for rk3036 emac pll source clock
+clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on rk3036
+ARM: dts: rockchip: add support emac for RK3036
+
+2) This series patches have the following descriptions:
+
+Hi Rob, David:
+PATCH[1/9-2/9]: ====>
+net: arc_emac: make the rockchip emac document more compatible
+net: arc_emac: add phy reset is optional for device tree
+
+The patches change the rockchip emac document for more compatible and
+Add the phy reset property for document.
+---
+
+Hi David
+PATCH[3/9]: ====>
+net: arc_emac: support the phy reset for emac driver
+
+The emac didn't work on kylin board since in some case the clocks parent changed.
+The kylin hardware connects the phy reset pin, we should use it with real world.
+As the previous patch discuss on https://patchwork.kernel.org/patch/8186801/
+
+And as sergei/Heiko suggestions on
+https://patchwork.kernel.org/patch/8564571/
+---
+
+Hi David
+PATCH[4/9]: ====>
+net: arc: trivial: cleanup the emac driver
+
+The first time to look the emac drivers, I think that have to cleanup the drivers with scripts.
+Although it's the trivial things, in order to be more read.
+---
+
+Hi Heiko,Michael,Stephen:
+PATCH[5/9-8/9]: ====> clk: rockchip: rk3036: fix and add node id for emac clock
+
+Four-part from https://patchwork.kernel.org/patch/8564581/
+clk: rockchip: add node-id for rk3036 emac hclk
+clk: rockchip: associate the rk3036 HCLK_EMAC clock-id
+clk: rockchip: add clock-id for rk3036 emac pll source clock
+clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on rk3036
+
+Add the emac needed clocks for rk3036 SOCs
+---
+
+Hi Heiko:
+PATCH[9/9]: ====>
+ARM: dts: rockchip: add support emac for RK3036
+
+Add the emac needed main info for rk3036 dts.
+---
+
+Thanks your reviewing! :)
+
+
+Changes in v2:
+- change the commit and remove the repeat the name 'rockchip'.
+- As the pervious version, Sergei and Heiko comments on
+  https://patchwork.kernel.org/patch/8564571/.
+- Nevermind, add signed-off since Heiko the original patch,
+  refer the Heiko's test patch on
+  https://github.com/mmind/linux-rockchip/commit/a943c588783438ff1c508dfa8c79f1709aa5775e
+  :)
+- As the robot notice the build error since overflow in implicit
+  constant conversion.
+
+Caesar Wang (4):
+  net: arc_emac: make the rockchip emac document more compatible
+  net: arc_emac: add phy reset is optional for device tree
+  net: arc_emac: support the phy reset for emac driver
+  net: arc: trivial: cleanup the emac driver
+
+Heiko Stuebner (1):
+  clk: rockchip: associate SCLK_MAC_PLL and disable reparenting on
+    rk3036
+
+Xing Zheng (3):
+  clk: rockchip: add node-id for rk3036 emac hclk
+  clk: rockchip: associate the rk3036 HCLK_EMAC clock-id
+  clk: rockchip: add clock-id for rk3036 emac pll source clock
+
+zhengxing (1):
+  ARM: dts: rockchip: add support emac for RK3036
+
+ Documentation/devicetree/bindings/net/arc_emac.txt |  7 +++
+ .../devicetree/bindings/net/emac_rockchip.txt      |  8 +--
+ arch/arm/boot/dts/rk3036-evb.dts                   | 23 +++++++++
+ arch/arm/boot/dts/rk3036-kylin.dts                 | 20 ++++++++
+ arch/arm/boot/dts/rk3036.dtsi                      | 39 ++++++++++++++
+ drivers/clk/rockchip/clk-rk3036.c                  |  4 +-
+ drivers/net/ethernet/arc/emac.h                    | 60 ++++++++++++----------
+ drivers/net/ethernet/arc/emac_main.c               | 35 ++++++-------
+ drivers/net/ethernet/arc/emac_mdio.c               | 38 +++++++++++++-
+ drivers/net/ethernet/arc/emac_rockchip.c           | 41 ++++++++++-----
+ include/dt-bindings/clock/rk3036-cru.h             |  2 +
+ 11 files changed, 215 insertions(+), 62 deletions(-)
 
 -- 
-2.1.0.27.g96db324
+1.9.1
