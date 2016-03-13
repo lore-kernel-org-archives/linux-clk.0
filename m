@@ -1,94 +1,141 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 39/46] leds: pwm: switch to the atomic PWM API
-Date: Wed, 30 Mar 2016 22:04:02 +0200
-Message-Id: <1459368249-13241-40-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+Subject: Re: [PATCH 0/6] arc_emac: fixes the emac issues oand cleanup emac
+ drivers
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
+ <56E2CC39.6050907@cogentembedded.com> <56E2DAC4.4020105@gmail.com>
+ <56E3126C.7000100@cogentembedded.com>
+Cc: Caesar Wang <caesar.upstream@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+ Alexander Kochetkov <al.kochet@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, zhengxing <zhengxing@rock-chips.com>,
+ linux-rockchip@lists.infradead.org, Caesar Wang <wxt@rock-chips.com>,
+ devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Jiri Kosina <trivial@kernel.org>,
+ netdev@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org, keescook@google.com,
+ "David S. Miller" <davem@davemloft.net>, leozwang@google.com
+From: Caesar Wang <caesar.upstream@gmail.com>
+Message-ID: <56E4E6D9.8060103@gmail.com>
+Date: Sun, 13 Mar 2016 12:04:41 +0800
+MIME-Version: 1.0
+In-Reply-To: <56E3126C.7000100@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_config/enable/disable() have been deprecated and should be replaced
-by pwm_apply_state().
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/leds/leds-pwm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index b48231c..f69b222 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -40,13 +40,18 @@ struct led_pwm_priv {
- static void __led_pwm_set(struct led_pwm_data *led_dat)
- {
- 	int new_duty = led_dat->duty;
-+	struct pwm_state pstate;
- 
--	pwm_config(led_dat->pwm, new_duty, led_dat->period);
-+	pwm_get_state(led_dat->pwm, &pstate);
-+	pstate.duty_cycle = new_duty;
-+	pstate.period = led_dat->period;
- 
- 	if (new_duty == 0)
--		pwm_disable(led_dat->pwm);
-+		pstate.enabled = false;
- 	else
--		pwm_enable(led_dat->pwm);
-+		pstate.enabled = true;
-+
-+	pwm_apply_state(led_dat->pwm, &pstate);
- }
- 
- static void led_pwm_set(struct led_classdev *led_cdev,
+在 2016年03月12日 02:46, Sergei Shtylyov 写道:
+> Hello.
+>
+> On 03/11/2016 05:48 PM, Caesar Wang wrote:
+>
+> [...]
+>
+>>>> Hi Rob, David:
+>>>> PATCH[1/6-2/6]: ====>
+>>>> net: arc_emac: make the rockchip emac document more compatible
+>>>> net: arc_emac: add phy-reset-* are optional for device tree
+>>>>
+>>>> The patches change the rockchip emac document for more compatible and
+>>>> Add the phy-reset-* property for document.
+>>>>
+>>>> This patch adds the following property for arc_emac.
+>>>>
+>>>> phy-reset-* include the following:
+>>>> 1) phy-reset-gpios:
+>>>> The phy-reset-gpios is an optional property for arc emac device 
+>>>> tree boot.
+>>>> Change the binding document to match the driver code.
+>>>>
+>>>> 2) phy-reset-duration:
+>>>> Different boards may require different phy reset duration. Add 
+>>>> property
+>>>> phy-reset-duration for device tree probe, so that the boards that need
+>>>> a longer reset duration can specify it in their device tree.
+>>>>
+>>>> 3) phy-reset-active-high:
+>>>> We need that for a custom hardware that needs the reverse reset 
+>>>> sequence.
+>>>
+>>>    Why not infer this from the "phy-reset-gpios" prop?
+>>
+>> See:
+>> https://patchwork.kernel.org/patch/8564511/
+> >
+>> phy-reset-active-high : If present then the reset sequence using the 
+>> GPIO
+>>   specified in the "phy-reset-gpios" property is reversed (H=reset 
+>> state,
+>>   L=operation state).
+>
+>    Referring to your own suggested bindings isn't an answer. If the 
+> driver that you're copying from here (fec) had a reason to handle the 
+> GPIO sense with the help of an extra prop (legacy code), it doesn't 
+> mean your new driver needs to mimic this as well, AFAIU...
+
+I know your suggestion is a fair request.
+
+Oh, that copy from the 'freescale/fec_main.c' ....
+
+So, The exist way was old and unwise in mainline. :(
+
+wxt@nb:~/kernel/drivers/net/ethernet$ ag reset-gpios
+micrel/ks8851.c
+1427:    gpio = of_get_named_gpio_flags(spi->dev.of_node, "reset-gpios",
+
+arc/emac_main.c
+787:    phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
+797:        dev_err(dev, "failed to get phy-reset-gpios: %d\n", err);
+
+arc/emac_main.c~
+784:    phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
+794:        dev_err(dev, "failed to get phy-reset-gpios: %d\n", err);
+
+davicom/dm9000.c
+1451:    reset_gpios = of_get_named_gpio_flags(dev->of_node, 
+"reset-gpios", 0,
+
+freescale/fec_main.c
+3206:    phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
+3216:        dev_err(&pdev->dev, "failed to get phy-reset-gpios: %d\n", 
+err);
+
+cadence/macb.c
+2958:        int gpio = of_get_named_gpio(phy_node, "reset-gpios", 0);
+
+...
+
+
+Anyway, I will update it with your suggestion.
+
+Thanks,
+
+
+Caesar
+
+
+
+
+
+>
+>> Thanks,
+>>
+>> Caesar
+>
+> MBR, Sergei
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+
+
 -- 
-2.5.0
+Thanks,
+Caesar
