@@ -1,45 +1,66 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 2 Mar 2016 10:42:28 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/41] clk: mxs: Remove CLK_IS_ROOT
-Message-ID: <20160302024227.GY22051@tiger>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-10-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-10-git-send-email-sboyd@codeaurora.org>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rockchip@lists.infradead.org,
+	keescook@google.com,
+	leozwang@google.com,
+	sergei.shtylyov@cogentembedded.com,
+	netdev@vger.kernel.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 5/9] clk: rockchip: add node-id for rk3036 emac hclk
+Date: Mon, 14 Mar 2016 16:01:56 +0800
+Message-Id: <1457942520-12859-6-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
+References: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 01, 2016 at 10:59:54AM -0800, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+From: Xing Zheng <zhengxing@rock-chips.com>
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Add the node-id for the emac hclk to the binding header.
 
-> ---
->  drivers/clk/mxs/clk.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mxs/clk.h b/drivers/clk/mxs/clk.h
-> index a4590956d2a2..5a264a486ad9 100644
-> --- a/drivers/clk/mxs/clk.h
-> +++ b/drivers/clk/mxs/clk.h
-> @@ -38,7 +38,7 @@ struct clk *mxs_clk_frac(const char *name, const char *parent_name,
->  
->  static inline struct clk *mxs_clk_fixed(const char *name, int rate)
->  {
-> -	return clk_register_fixed_rate(NULL, name, NULL, CLK_IS_ROOT, rate);
-> +	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
->  }
->  
->  static inline struct clk *mxs_clk_gate(const char *name,
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
-> 
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+
+---
+
+Changes in v3:
+- Add the Cc people.
+
+Changes in v2: None
+
+ include/dt-bindings/clock/rk3036-cru.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index ebc7a7b..3396591 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -92,6 +92,7 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_MAC		460
+ #define HCLK_I2S		462
+ #define HCLK_LCDC		465
+ #define HCLK_ROM		467
+-- 
+1.9.1
