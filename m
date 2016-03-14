@@ -1,45 +1,42 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] clk: rockchip: fix warning reported by kernel-doc
+Date: Mon, 14 Mar 2016 01:25:54 +0100
+Message-ID: <3159306.SvFJfiirsP@phil>
+In-Reply-To: <1457799914-3101-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799914-3101-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkda1gYciHz79ZaFsQmZdq8PwxtoR2LwCO3LteCGbNQE=gA@mail.gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
-	<CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
-	<CAEzqOZugVOGarjy9NjDOhwJeU6P26Ch2aX13Tec2N0z2Gb9g7A@mail.gmail.com>
-	<CACRpkda1gYciHz79ZaFsQmZdq8PwxtoR2LwCO3LteCGbNQE=gA@mail.gmail.com>
-Date: Tue, 22 Mar 2016 14:16:20 +0100
-Message-ID: <CACRpkda-B=dVUguBSifkV_ZxzoJwawn+X-oCPjD=r8k0yWdfSg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 22, 2016 at 2:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Mar 17, 2016 at 4:34 PM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
->> On Thu, Mar 17, 2016 at 10:51 PM, Linus Walleij
->
->>> I think I already merged this?
->>
->> AFAIK, this one is not yet merged. At least, you did not say it's merged. :)
->
-> Sorry, confused it with the plain A83T controller...
+Am Sonntag, 13. M=E4rz 2016, 00:25:14 schrieb Shawn Lin:
+> ./scripts/kernel-doc -man -v drivers/clk/rockchip/clk.h > /dev/null
+>=20
+> drivers/clk/rockchip/clk.h:133: warning: missing initial short
+> description on line:
+>  * struct rockchip_clk_provider: information about clock provider
+> drivers/clk/rockchip/clk.h:133: info: Scanning doc for struct
+> drivers/clk/rockchip/clk.h:164: warning: missing initial short
+> description on line:
+>  * struct rockchip_pll_clock: information about pll clock
+> drivers/clk/rockchip/clk.h:164: info: Scanning doc for struct
+> drivers/clk/rockchip/clk.h:194: warning: No description found for
+> parameter 'parent_names'
+> drivers/clk/rockchip/clk.h:194: warning: No description found for
+> parameter 'num_parents'
+> drivers/clk/rockchip/clk.h:194: warning: Excess struct/union/enum/typ=
+edef
+> member 'parent_name' description in 'rockchip_pll_clock'
+> drivers/clk/rockchip/clk.h:235: warning: missing initial short
+> description on line:
+>  * struct rockchip_cpuclk_reg_data: describes register offsets and
+> masks of the cpuclock
+>=20
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Sadly it does not apply so please rebase and resend this patch
-after v4.6-rc1 is out.
+applied for v4.7
 
-Yours,
-Linus Walleij
+Thanks
+Heiko
