@@ -1,43 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47881 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750963AbcCBWyS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 2 Mar 2016 17:54:18 -0500
-Date: Wed, 2 Mar 2016 14:54:13 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-Cc: paul@pwsan.com, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
- gating
-Message-ID: <20160302225413.GF4469@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-2-git-send-email-fcooper@ti.com>
- <20160229220444.GQ13417@atomide.com>
- <56D4C69D.1090100@ti.com>
- <20160229225536.GR13417@atomide.com>
- <56D4D032.7040801@ti.com>
- <20160229232011.GU13417@atomide.com>
- <56D741E6.3000708@ti.com>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+ <20160314160551.GA21898@ulmo.nvidia.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Bill Huang
+	<bilhuang@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <56E6E20C.6020807@nvidia.com>
+Date: Mon, 14 Mar 2016 12:08:44 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56D741E6.3000708@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160314160551.GA21898@ulmo.nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Franklin S Cooper Jr. <fcooper@ti.com> [160302 11:41]:
-> I know there are some comments regarding other patches in
-> this patchset but this patch is unrelated and can be pulled
-> in separately. Any objections to this or should I just
-> resubmit this patch by itself?
+On 3/14/2016 12:05 PM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
+>> From: Bill Huang <bilhuang@nvidia.com>
+>>
+>> Add some SLCG (Second Level Clock Gating) override clocks to control
+>> gating and un-gating their logics.
+>>
+>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>> ---
+>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
+>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
+>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
+>>  3 files changed, 123 insertions(+), 16 deletions(-)
+> 
+> There's no rationale given here about why we need this. What will these
+> second level clock gates be used for? Why do we need these (seemingly)
+> duplicate clock entries.
+> 
 
-No objections from me at least. If something needs to
-change at the driver level, it sounds like a different
-set of patches then.
+These are going to be used in the to-be posted patchset around
+powergating. As of now they are unused, which is why I hadn't added them
+previously. I just wanted to try to get this dependency in before the
+powergate series was posted.
 
-Regards,
+-rhyland
 
-Tony
+
+-- 
+nvpublic
