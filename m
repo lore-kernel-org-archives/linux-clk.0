@@ -1,69 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ob0-f196.google.com ([209.85.214.196]:33333 "EHLO
-	mail-ob0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933158AbcCQWHr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2016 18:07:47 -0400
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, bcousson@baylibre.com, tony@atomide.com,
-	linux@arm.linux.org.uk, t-kristo@ti.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v2 1/3] clk: ti: am335x/am4372: Add tbclk to pwm node
-Date: Thu, 17 Mar 2016 17:07:41 -0500
-Message-Id: <1458252463-8821-2-git-send-email-fcooper@ti.com>
-In-Reply-To: <1458252463-8821-1-git-send-email-fcooper@ti.com>
-References: <1458252463-8821-1-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 14 Mar 2016 17:05:51 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
+Message-ID: <20160314160551.GA21898@ulmo.nvidia.com>
+References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+In-Reply-To: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
-to the time-based clk.
 
-Do not remove similar entries for ehrpwm node. Later patches will switch
-from using ehrpwm node name to pwm. But to maintain ABI compatibility we
-shouldn't remove the old entries.
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
----
- drivers/clk/ti/clk-33xx.c | 3 +++
- drivers/clk/ti/clk-43xx.c | 6 ++++++
- 2 files changed, 9 insertions(+)
+On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
+> From: Bill Huang <bilhuang@nvidia.com>
+>=20
+> Add some SLCG (Second Level Clock Gating) override clocks to control
+> gating and un-gating their logics.
+>=20
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-id.h               | 16 ++++++
+>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
+>  3 files changed, 123 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index ef2ec64..0e47d95 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
- 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
- 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
- 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
-+	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-+	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-+	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
- 	{ .node_name = NULL },
- };
- 
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-index 097fc90..7255aa8 100644
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
- 	DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
- 	DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
- 	DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
-+	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-+	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-+	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
-+	DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
-+	DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
-+	DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
- 	{ .node_name = NULL },
- };
- 
--- 
-2.7.0
+There's no rationale given here about why we need this. What will these
+second level clock gates be used for? Why do we need these (seemingly)
+duplicate clock entries.
 
+Thierry
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJW5uFfAAoJEN0jrNd/PrOh1TgP/1h9VPSQRARcsd6LdEVfaXU6
+4hjfIEQf3INCd/1epqthnToW9vEGt9vk84gcZa3F3NoSKb540if3Jpylfm3f44Rg
+2tPNn+/H0KMa6zd+wNT3h+wN7ImhZzSL9dj6NsJlHqQgqL/OaFDZ9ljTfeiiIUvY
+DOMgZwGq85IxWjEOUAJZGD0nQSnMJCtRATHDi1ShmpV0olcs8e4lBjrVBJxA2Tyg
+EK6mGK+YxPkQl1wUEfYu5Y4EKYyRGfXDsMQzZsJop86Nf0iTXfhZNn9+D/w86hfE
+z2pCFmBvKTL1dzwJnBKO/88t9uMZM2IAn2PBkbDul//gGZ1Hai4LNUpfjZzOhHnq
+g6iCc4PwMdAB4UL9D07IiROdeqiSJxriA5vllxOL4zedU+2ThKl4RVs90TNHhJYb
+7BB8QTFNLVlcBAd8yLqe+s3/zcw6FtLJVWyyZdVsOK+TIzxBF4XmIMbg6F7wOkfU
+UxOUE0ol2rrwHhFAAk3zl8wF5xEfMCbQefyeDDH1rwfJmHXK2QaLl864e4DpXoJX
+2wMbeHMbExtpw0Kib8PaLKERt11lrGz/ZRppln02GXgUYc3JhqFckVV77LXnLmFK
+66ZeYJM8DwVyqloFoXpdyfORdB7isfomk/irBsCSH6vy6vBMKc4nxtDAFmCT6kyy
+DWXEd3yTyQ2fFafMa52l
+=ztSB
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
