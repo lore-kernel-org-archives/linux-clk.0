@@ -1,60 +1,23 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 10/13] ARM: dts: sun8i-a83t: add mmc0 CD pin
-Date: Sat,  5 Mar 2016 23:43:03 +0800
-Message-Id: <1457192586-25596-11-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: release io resource when failing to init clk
+Date: Mon, 14 Mar 2016 02:01:07 +0100
+Message-ID: <22451730.fGu0L5hvan@phil>
+In-Reply-To: <1457842402-23765-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457842402-23765-1-git-send-email-shawn.lin@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-A83T Boards BPI-m3 and Allwinner H8Homletv2 boards use PF6 as
-Card Detect pin., so use PF6 as reference design CD pin in dtsi.
+Am Sonntag, 13. M=E4rz 2016, 12:13:22 schrieb Shawn Lin:
+> We should call iounmap to relase reg_base since it's not going
+> to be used any more if failing to init clk.
+>=20
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+applied for v4.7
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 7b02d85..c64d8d6 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -390,6 +390,13 @@
- 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
- 			};
- 
-+			mmc0_cd_pin_reference_design: mmc0_cd_pin@0 {
-+				allwinner,pins = "PF6";
-+				allwinner,function = "gpio_in";
-+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+			};
-+
- 			uart0_pins_a: uart0@0 {
- 				allwinner,pins = "PF2", "PF4";
- 				allwinner,function = "uart0";
--- 
-1.9.1
+Thanks
+Heiko
