@@ -1,74 +1,25 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v10 3/6] ARM: hisi: add compatible string for Hi3519 soc
-Date: Thu, 31 Mar 2016 16:10:08 +0800
-Message-ID: <1459411811-12390-4-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] clk: rockchip: remove redundant checking of device_node
+Date: Mon, 14 Mar 2016 01:26:33 +0100
+Message-ID: <2962531.qNIN5DvN6o@phil>
+In-Reply-To: <1457799953-3267-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799953-3267-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jiancheng Xue <xuejiancheng@huawei.com>
+Am Sonntag, 13. M=E4rz 2016, 00:25:53 schrieb Shawn Lin:
+> rockchip_clk_of_add_provider is used by sub-clk driver which
+> already call of_iomap before calling it. If device_node does
+> not exist, of_iomap returns NULL which will fail to init the
+> sub-clk driver. So really it's redundant.
+>=20
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-add compatible string for Hi3519 soc.
+applied for v4.7
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
-
-diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-index 8cc6215..00dae89 100644
---- a/arch/arm/mach-hisi/hisilicon.c
-+++ b/arch/arm/mach-hisi/hisilicon.c
-@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
- 	.dt_compat	= hi3xxx_compat,
- MACHINE_END
- 
--static const char *const hix5hd2_compat[] __initconst = {
-+static const char *const hisilicon_compat[] __initconst = {
- 	"hisilicon,hix5hd2",
--	NULL,
--};
--
--DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
--	.dt_compat	= hix5hd2_compat,
--MACHINE_END
--
--static const char *const hip04_compat[] __initconst = {
- 	"hisilicon,hip04-d01",
--	NULL,
--};
--
--DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
--	.dt_compat	= hip04_compat,
--MACHINE_END
--
--static const char *const hip01_compat[] __initconst = {
- 	"hisilicon,hip01",
- 	"hisilicon,hip01-ca9x2",
-+	"hisilicon,hi3519",
- 	NULL,
- };
- 
--DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
--	.dt_compat      = hip01_compat,
-+DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
-+	.dt_compat	= hisilicon_compat,
- MACHINE_END
--- 
-1.9.1
+Thanks
+Heiko
