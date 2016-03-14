@@ -1,130 +1,22 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 09/18] ARM: vf610: clk: add suspend/resume support
-Date: Wed,  9 Mar 2016 18:16:50 -0800
-Message-Id: <1457576219-7971-10-git-send-email-stefan@agner.ch>
-In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] clk: rockchip: remove mux_core_reg from rockchip_cpuclk_reg_data
+Date: Mon, 14 Mar 2016 01:13:10 +0100
+Message-ID: <8493494.xJRFTlmVnL@phil>
+In-Reply-To: <1457799900-3056-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799900-3056-1-git-send-email-shawn.lin@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock register are lost when enterying LPSTOPx, hence provide
-suspend/resume functions restoring them. The clock gates get
-restored by the individual driver, hence we do not need to restore
-them here.
+Am Sonntag, 13. M=E4rz 2016, 00:25:00 schrieb Shawn Lin:
+> mux_core_reg isn't been used anywhere, let's remove it.
+>=20
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-vf610.c | 49 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+applied for v4.7
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 610a724..e2e2c43 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/of_address.h>
- #include <linux/clk.h>
-+#include <linux/syscore_ops.h>
- #include <dt-bindings/clock/vf610-clock.h>
- 
- #include "clk.h"
-@@ -40,6 +41,7 @@
- #define CCM_CCGR9		(ccm_base + 0x64)
- #define CCM_CCGR10		(ccm_base + 0x68)
- #define CCM_CCGR11		(ccm_base + 0x6c)
-+#define CCM_CCGRx(x)		(CCM_CCGR0 + (x) * 4)
- #define CCM_CMEOR0		(ccm_base + 0x70)
- #define CCM_CMEOR1		(ccm_base + 0x74)
- #define CCM_CMEOR2		(ccm_base + 0x78)
-@@ -115,6 +117,13 @@ static struct clk_div_table pll4_audio_div_table[] = {
- static struct clk *clk[VF610_CLK_END];
- static struct clk_onecell_data clk_data;
- 
-+static u32 cscmr1;
-+static u32 cscmr2;
-+static u32 cscdr1;
-+static u32 cscdr2;
-+static u32 cscdr3;
-+static u32 ccgr[12];
-+
- static unsigned int const clks_init_on[] __initconst = {
- 	VF610_CLK_SYS_BUS,
- 	VF610_CLK_DDR_SEL,
-@@ -134,6 +143,43 @@ static struct clk * __init vf610_get_fixed_clock(
- 	return clk;
- };
- 
-+static int vf610_clk_suspend(void)
-+{
-+	int i;
-+
-+	cscmr1 = readl_relaxed(CCM_CSCMR1);
-+	cscmr2 = readl_relaxed(CCM_CSCMR2);
-+
-+	cscdr1 = readl_relaxed(CCM_CSCDR1);
-+	cscdr2 = readl_relaxed(CCM_CSCDR2);
-+	cscdr3 = readl_relaxed(CCM_CSCDR3);
-+
-+	for (i = 0; i < 12; i++)
-+		ccgr[i] = readl_relaxed(CCM_CCGRx(i));
-+
-+	return 0;
-+}
-+
-+static void vf610_clk_resume(void)
-+{
-+	int i;
-+
-+	writel_relaxed(cscmr1, CCM_CSCMR1);
-+	writel_relaxed(cscmr2, CCM_CSCMR2);
-+
-+	writel_relaxed(cscdr1, CCM_CSCDR1);
-+	writel_relaxed(cscdr2, CCM_CSCDR2);
-+	writel_relaxed(cscdr3, CCM_CSCDR3);
-+
-+	for (i = 0; i < 12; i++)
-+		writel_relaxed(ccgr[i], CCM_CCGRx(i));
-+}
-+
-+static struct syscore_ops vf610_clk_syscore_ops = {
-+	.suspend = vf610_clk_suspend,
-+	.resume = vf610_clk_resume,
-+};
-+
- static void __init vf610_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -414,9 +460,12 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
- 		clk_prepare_enable(clk[clks_init_on[i]]);
- 
-+	register_syscore_ops(&vf610_clk_syscore_ops);
-+
- 	/* Add the clocks to provider list */
- 	clk_data.clks = clk;
- 	clk_data.clk_num = ARRAY_SIZE(clk);
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- }
- CLK_OF_DECLARE(vf610, "fsl,vf610-ccm", vf610_clocks_init);
-+
--- 
-2.7.2
+Thanks
+Heiko
