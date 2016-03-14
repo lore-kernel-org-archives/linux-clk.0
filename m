@@ -1,77 +1,55 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 09/13] ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
-Date: Thu, 17 Mar 2016 00:04:32 +0800
-Message-Id: <1458144276-31108-10-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <jszhang@marvell.com>
+Date: Mon, 14 Mar 2016 16:09:41 +0800
+From: Jisheng Zhang <jszhang@marvell.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        <pi-cheng.chen@linaro.org>
+Subject: Re: [Query]set clk rate must operate its coordinated clock
+Message-ID: <20160314160941.6d558371@xhacker>
+In-Reply-To: <20160311165152.4103.82090@quark.deferred.io>
+References: <20160309152420.20de187a@xhacker>
+	<20160311165152.4103.82090@quark.deferred.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a device node for the Reduced Serial Bus (RSB)
-controller and the defacto pinmux setting to the A83T dtsi.
+Dear Mike,
 
-Since there is only one possible pinmux setting for RSB, just
-set it in the dtsi.
+On Fri, 11 Mar 2016 08:51:52 -0800 Michael Turquette wrote:
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> Jisheng,
+> 
+> Quoting Jisheng Zhang (2016-03-08 23:24:20)
+> > Dear Stephen, Michael, Sebastian and all, 
+> > 
+> > I have the following clk case which I dunno the elegant solution:
+> > 
+> > 
+> > cpuclk have two parents: cpupll and refclk. When set the cpuclk freq, we
+> > have to set its parent's freq, I.E cpupll freq. But before changing the
+> > cpupll's freq, we should set its refclk as its parent firstly.
+> > 
+> > AFAIK, this is a common case, I have seen such requirement in rockchip, samsung
+> > clk driver. They solve this by notifier, but as pointed out by Michael
+> > in http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351565.html
+> > 
+> > "This is also a hack and it points towards some missing infrastructure in the
+> > clock framework."
+> > 
+> > I also don't like the notifier solution, I believe the elegant solution could
+> > be using the coordinated clock infrastructure. So what's the status of
+> > this infrastructure? I can test, and I can even add some code to make it be
+> > ready to be merged if you guide me ;)  
+> 
+> Thanks for the email. I hope to finish that feature before ELC. I have
+> Cc'd Pi-Cheng Chen from Mediatek who is also interested in coordinated
+> clock rates.
+> 
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 5d240b9..7b02d85 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -476,6 +476,27 @@
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
-+
-+			r_rsb_pins: r_rsb {
-+				allwinner,pins = "PL0", "PL1";
-+				allwinner,function = "s_rsb";
-+				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+			};
-+		};
-+
-+		r_rsb: i2c@01f03400 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x01f03400 0x400>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 3>;
-+			clock-frequency = <3000000>;
-+			resets = <&apb0_reset 3>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- };
--- 
-1.9.1
+Glad to hear that. I will test the infrastructure once it's sent out.
+
+Thanks,
+Jisheng
