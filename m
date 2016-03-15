@@ -1,74 +1,60 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Alban Bedel <albeu@free.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 06/18] MIPS: dts: qca: ar9132_tl_wr1043nd_v1.dts: use "ref" for reference clock name
-Date: Thu, 17 Mar 2016 06:34:13 +0300
-Message-Id: <1458185665-4521-7-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
-References: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
+To: Rhyland Klein <rklein@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+ <20160314160551.GA21898@ulmo.nvidia.com> <56E6E20C.6020807@nvidia.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <56E7CA79.7060106@nvidia.com>
+Date: Tue, 15 Mar 2016 08:40:25 +0000
+MIME-Version: 1.0
+In-Reply-To: <56E6E20C.6020807@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Current ath79 clock.c code does not read reference clock and
-pll setup from devicetree. The ar724x_clocks_init() function
-recreates the clocks from scratch so devicetree clock
-information is dropped. After adding the code which picked up
-reference clock from devicetree I have found
-that kernel does not boot anymore. The SPI and UART drivers
-can't get clk; here are the bootlog error messages:
 
-    of_serial: probe of 18020000.uart failed with error -22
-    ath79-spi: probe of 1f000000.spi failed with error -22
+On 14/03/16 16:08, Rhyland Klein wrote:
+> On 3/14/2016 12:05 PM, Thierry Reding wrote:
+>> * PGP Signed by an unknown key
+>>
+>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
+>>> From: Bill Huang <bilhuang@nvidia.com>
+>>>
+>>> Add some SLCG (Second Level Clock Gating) override clocks to control
+>>> gating and un-gating their logics.
+>>>
+>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>>> ---
+>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
+>>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
+>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
+>>>  3 files changed, 123 insertions(+), 16 deletions(-)
+>>
+>> There's no rationale given here about why we need this. What will these
+>> second level clock gates be used for? Why do we need these (seemingly)
+>> duplicate clock entries.
+>>
+> 
+> These are going to be used in the to-be posted patchset around
+> powergating. As of now they are unused, which is why I hadn't added them
+> previously. I just wanted to try to get this dependency in before the
+> powergate series was posted.
 
-The problem is that clock code assumes that reference clock
-name is "ref" but current dts-file uses another name: "oscillator".
+Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
+Rhyland that we upstream them. Eventually we will use them but only
+after the core GenPD changes for Tegra are merged. From my perspective I
+was thinking it is better to reduce the changes between the chromeos
+3.18 kernel and mainline. However, if you wish to wait until we need
+them I guess we can. Otherwise ...
 
-This patch fixes the problem by changing external oscillator
-dt node name to "ref".
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Please note that there is an alternative solution for the problem:
-
-    > --- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-    > +++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-    > @@ -16,6 +16,7 @@
-    >
-    >         extosc: oscillator {
-    >                 compatible = "fixed-clock";
-    > +               clock-output-names = "ref";
-    >                 #clock-cells = <0>;
-    >                 clock-frequency = <40000000>;
-    >         };
-
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
----
- arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-index eb632a2..3c3b7ce 100644
---- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-+++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-@@ -14,7 +14,7 @@
- 		reg = <0x0 0x2000000>;
- 	};
- 
--	extosc: oscillator {
-+	extosc: ref {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <40000000>;
--- 
-2.7.0
+Cheers
+Jon
