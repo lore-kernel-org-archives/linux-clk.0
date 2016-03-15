@@ -1,114 +1,37 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 09/46] misc: max77693-haptic: use pwm_get_args() where appropriate
-Date: Wed, 30 Mar 2016 22:03:32 +0200
-Message-Id: <1459368249-13241-10-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 15 Mar 2016 11:45:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Caesar Wang <wxt@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-rockchip@lists.infradead.org, keescook@google.com,
+	leozwang@google.com, sergei.shtylyov@cogentembedded.com,
+	netdev@vger.kernel.org, Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/9] clk: rockchip: associate the rk3036 HCLK_EMAC
+ clock-id
+Message-ID: <20160315184539.GH25972@codeaurora.org>
+References: <1457860062-5514-1-git-send-email-wxt@rock-chips.com>
+ <1457860062-5514-7-git-send-email-wxt@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457860062-5514-7-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM framework has clarified the concept of reference PWM config
-(the platform dependent config retrieved from the DT or the PWM
-lookup table) and real PWM state.
+On 03/13, Caesar Wang wrote:
+> From: Xing Zheng <zhengxing@rock-chips.com>
+> 
+> Associate the new clock id the clock.
+> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+> ---
 
-Use pwm_get_args() when the PWM user wants to retrieve this reference
-config and not the current state.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-This is part of the rework allowing the PWM framework to support
-hardware readout and expose real PWM state even when the PWM has
-just been requested (before the user calls pwm_config/enable/disable()).
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/input/misc/max77693-haptic.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-index 6d96bff..cf6aac0 100644
---- a/drivers/input/misc/max77693-haptic.c
-+++ b/drivers/input/misc/max77693-haptic.c
-@@ -70,10 +70,13 @@ struct max77693_haptic {
- 
- static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
- {
--	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
-+	struct pwm_args pargs = { };
-+	int delta;
- 	int error;
- 
--	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
-+	pwm_get_args(haptic->pwm_dev, &pargs);
-+	delta = (pargs.period + haptic->pwm_duty) / 2;
-+	error = pwm_config(haptic->pwm_dev, delta, pargs.period);
- 	if (error) {
- 		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
- 		return error;
-@@ -234,6 +237,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
- 				       struct ff_effect *effect)
- {
- 	struct max77693_haptic *haptic = input_get_drvdata(dev);
-+	struct pwm_args pargs = { };
- 	u64 period_mag_multi;
- 
- 	haptic->magnitude = effect->u.rumble.strong_magnitude;
-@@ -245,7 +249,8 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
- 	 * The formula to convert magnitude to pwm_duty as follows:
- 	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
- 	 */
--	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
-+	pwm_get_args(haptic->pwm_dev, &pargs);
-+	period_mag_multi = (u64)pargs.period * haptic->magnitude;
- 	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
- 						MAX_MAGNITUDE_SHIFT);
- 
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
