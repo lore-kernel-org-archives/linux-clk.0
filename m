@@ -1,44 +1,48 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Bai Ping <ping.bai@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 15 Mar 2016 15:16:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-Subject: [PATCH BUGFIX] clk: imx6q: fix typo in CAN clock definition
-Date: Wed, 30 Mar 2016 14:23:03 +0200
-Message-Id: <1459340583-14743-1-git-send-email-LW@KARO-electronics.de>
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
+Message-ID: <20160315221601.GJ25972@codeaurora.org>
+References: <20160226194830.GA21652@lukather>
+ <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
+ <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
+ <20160303191604.GW24999@codeaurora.org>
+ <20160304152711.GR8418@lukather>
+ <20160304171841.GF24999@codeaurora.org>
+ <20160308221320.GI8418@lukather>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160308221320.GI8418@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-commit ee36027427c7 ("clk: imx: Add clock support for imx6qp")
-introduced a regression due to a subtle typo in the 'can_root' clock
-definition. The effect is that trying to configure the bitrate of the
-can interfaces fails with -EDOM or produces a division by zero error
-due to the clock_freq of the can serial clock being reported as '0'.
+On 03/08, Maxime Ripard wrote:
+> On Fri, Mar 04, 2016 at 09:18:41AM -0800, Stephen Boyd wrote:
+> > Oh right. Let's hope third time is the last.
+> > 
+> > ---8<---
+> > From: Stephen Boyd <sboyd@codeaurora.org>
+> > Subject: [PATCH] clk: sunxi: Remove use of variable length array
+> > 
+> > Using an array allocated on the stack may lead to stack overflows
+> > and other problems so let's move the allocation to the heap
+> > instead. This silences the following checker warning as well.
+> > 
+> > drivers/clk/sunxi/clk-sun8i-mbus.c:36:29: warning: Variable length array is used.
+> > 
+> > Cc: Chen-Yu Tsai <wens@csie.org>
+> > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> 
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
----
- drivers/clk/imx/clk-imx6q.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to clk-next.
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 02e1818..2beb396f 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -394,7 +394,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 		clk[IMX6QDL_CLK_LDB_DI1_DIV_3_5] = imx_clk_fixed_factor("ldb_di1_div_3_5", "ldb_di1", 2, 7);
- 	} else {
- 		clk[IMX6QDL_CLK_ECSPI_ROOT] = imx_clk_divider("ecspi_root", "pll3_60m", base + 0x38, 19, 6);
--		clk[IMX6QDL_CLK_CAN_ROOT] = imx_clk_divider("can_root", "pll3_60", base + 0x20, 2, 6);
-+		clk[IMX6QDL_CLK_CAN_ROOT] = imx_clk_divider("can_root", "pll3_60m", base + 0x20, 2, 6);
- 		clk[IMX6QDL_CLK_IPG_PER] = imx_clk_fixup_divider("ipg_per", "ipg", base + 0x1c, 0, 6, imx_cscmr1_fixup);
- 		clk[IMX6QDL_CLK_UART_SERIAL_PODF] = imx_clk_divider("uart_serial_podf", "pll3_80m",          base + 0x24, 0,  6);
- 		clk[IMX6QDL_CLK_LDB_DI0_DIV_3_5] = imx_clk_fixed_factor("ldb_di0_div_3_5", "ldb_di0_sel", 2, 7);
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
