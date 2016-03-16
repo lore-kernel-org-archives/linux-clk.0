@@ -1,78 +1,144 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
 	pawel.moll@arm.com,
 	mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk,
 	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 05/18] ARM: dts: vf610: add modules required for PM
-Date: Wed,  9 Mar 2016 18:16:46 -0800
-Message-Id: <1457576219-7971-6-git-send-email-stefan@agner.ch>
-In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 12/13] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
+Date: Thu, 17 Mar 2016 00:04:35 +0800
+Message-Id: <1458144276-31108-13-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/vfxxx.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+This patch adds support for Sinovoip BPI-M3 A83T based board.
 
-diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
-index b038ea4..335f4e5 100644
---- a/arch/arm/boot/dts/vfxxx.dtsi
-+++ b/arch/arm/boot/dts/vfxxx.dtsi
-@@ -434,6 +434,11 @@
- 				reg = <0x40050000 0x400>;
- 			};
- 
-+			scsc: scsc@40052000 {
-+				compatible = "fsl,vf610-scsc";
-+				reg = <0x40052000 0x1000>;
-+			};
+It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
+mic, AP6212 Wifi, etc on it.
+It is paired with AXP813 PMIC which is almost same as AXP818.
+
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/Makefile                       |  1 +
+ arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 79 ++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 309cce5..64ad31f 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -695,6 +695,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-a33-sinlinx-sina33.dtb \
+ 	sun8i-a83t-allwinner-h8homlet-v2.dtb \
+ 	sun8i-a83t-cubietruck-plus.dtb \
++	sun8i-a83t-sinovoip-bpi-m3.dtb \
+ 	sun8i-h3-orangepi-plus.dtb
+ dtb-$(CONFIG_MACH_SUN9I) += \
+ 	sun9i-a80-optimus.dtb \
+diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+new file mode 100644
+index 0000000..7744b63
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+@@ -0,0 +1,79 @@
++/*
++ * Copyright 2016 Vishnu Patekar
++ * Vishnu Patekar <vishnupatekar0510@gmail.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
 +
- 			usbphy0: usbphy@40050800 {
- 				compatible = "fsl,vf610-usbphy";
- 				reg = <0x40050800 0x400>;
-@@ -480,6 +485,13 @@
- 				status = "disabled";
- 			};
- 
-+			wakeup: wkpu@4006a000 {
-+				compatible = "fsl,vf610-wkpu";
-+				reg = <0x4006a000 0x1000>;
-+				interrupts = <92 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks VF610_CLK_WKPU>;
-+			};
++/dts-v1/;
++#include "sun8i-a83t.dtsi"
++#include "sunxi-common-regulators.dtsi"
 +
- 			clks: ccm@4006b000 {
- 				compatible = "fsl,vf610-ccm";
- 				reg = <0x4006b000 0x1000>;
-@@ -600,6 +612,13 @@
- 				status = "disabled";
- 			};
- 
-+			ddrmc: ddrmc@400ae000 {
-+				compatible = "fsl,vf610-ddrmc";
-+				reg = <0x400ae000 0x400>;
-+				clocks = <&clks VF610_CLK_DDRMC>;
-+				clock-names = "ddrc";
-+			};
++/ {
++	model = "Sinovoip BananaPi M3 v1.2";
++	compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
 +
- 			adc1: adc@400bb000 {
- 				compatible = "fsl,vf610-adc";
- 				reg = <0x400bb000 0x1000>;
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_reference_design>;
++	vmmc-supply = <&reg_vcc3v0>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	bus-width = <4>;
++	cd-inverted;
++	status = "okay";
++};
++
++&r_rsb {
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_b>;
++	status = "okay";
++};
 -- 
-2.7.2
+1.9.1
