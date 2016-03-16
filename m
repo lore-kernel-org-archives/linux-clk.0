@@ -1,70 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:17602 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932069AbcCHBqa (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:46:30 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v4 0/5] ARM: at91: pm: add ULP1 mode support
-Date: Tue, 8 Mar 2016 09:41:57 +0800
-Message-ID: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 09/13] ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
+Date: Thu, 17 Mar 2016 00:04:32 +0800
+Message-Id: <1458144276-31108-10-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
+This patch adds a device node for the Reduced Serial Bus (RSB)
+controller and the defacto pinmux setting to the A83T dtsi.
 
-In order to achieve the lowest power consumption, in the ULP1 mode,
-all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
+Since there is only one possible pinmux setting for RSB, just
+set it in the dtsi.
 
-The fast startup signal is used as a wake up source for ULP1 mode.
-As soon as the wake up event is asserted, the embedded 12MHz RC
-oscillator restarts automatically, which fast startup signal
-to trigger the PMC to wake up the system from the ULP1 mode can be
-configured via DT.
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Changes in v4:
- - add Acked-by tag.
- - add fast_restart node to the DT file.
-
-Changes in v3:
- - use 0 and 1, not string, to define the trigger active polarity.
- - update the property description.
-
-Changes in v2:
- - fix label pm_exit to ulp_exit.
- - shorten the pmc-fast-startup property's name.
- - use the value property, instead of bool property for high
-   or low triggered.
- - change the property name and property description.
-
-Wenyou Yang (5):
-  ARM: at91: pm: create a separate procedure for the ULP0 mode
-  ARM: at91: pm: add ULP1 mode support
-  ARM: at91: pm: configure PMC fast startup signals
-  Documentation: atmel-pmc: add DT bindings for fast startup
-  ARM: at91/dt: sama5d2_xplained: add fast_restart node
-
- .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++
- arch/arm/boot/dts/at91-sama5d2_xplained.dts        |    8 +
- arch/arm/mach-at91/pm.c                            |  130 +++++++++++++++-
- arch/arm/mach-at91/pm.h                            |    7 +
- arch/arm/mach-at91/pm_suspend.S                    |  158 +++++++++++++++++---
- include/linux/clk/at91_pmc.h                       |   36 +++++
- 6 files changed, 377 insertions(+), 25 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 5d240b9..7b02d85 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -476,6 +476,27 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+ 			#gpio-cells = <3>;
++
++			r_rsb_pins: r_rsb {
++				allwinner,pins = "PL0", "PL1";
++				allwinner,function = "s_rsb";
++				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++			};
++		};
++
++		r_rsb: i2c@01f03400 {
++			compatible = "allwinner,sun8i-a23-rsb";
++			reg = <0x01f03400 0x400>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&apb0_gates 3>;
++			clock-frequency = <3000000>;
++			resets = <&apb0_reset 3>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_rsb_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 		};
+ 	};
+ };
 -- 
-1.7.9.5
-
+1.9.1
