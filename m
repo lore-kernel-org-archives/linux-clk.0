@@ -1,50 +1,60 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] clk: rockchip: release io resource when rk3036_clk_init failed
-Date: Sat, 12 Mar 2016 17:48:26 +0100
-Message-ID: <8447746.miDbEHA5rR@diego>
-In-Reply-To: <1457799925-3142-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com> <1457799925-3142-1-git-send-email-shawn.lin@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 10/13] ARM: dts: sun8i-a83t: add mmc0 CD pin
+Date: Thu, 17 Mar 2016 00:04:33 +0800
+Message-Id: <1458144276-31108-11-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+A83T Boards BPI-m3 and Allwinner H8Homletv2 boards use PF6 as
+Card Detect pin., so use PF6 as reference design CD pin in dtsi.
 
-Am Sonntag, 13. M=E4rz 2016, 00:25:25 schrieb Shawn Lin:
-> We should call iounmap to relase reg_base since it's not going
-> to be used any more.
->=20
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I see that change for rk3036, rk3188(+rk3066) and rk3368.
-But it looks like rk3228 and rk3288 should also get that, or am I just=20=
-
-overlooking something?
-
-Also, I think we can fold these changes into one patch, as it's the com=
-pletely=20
-same addition for all clock-drivers.
-
-
-Heiko
-
-> ---
->=20
->  drivers/clk/rockchip/clk-rk3036.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3036.c
-> b/drivers/clk/rockchip/clk-rk3036.c index 8c683cc..284c36f 100644
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -453,6 +453,7 @@ static void __init rk3036_clk_init(struct device_=
-node
-> *np) ctx =3D rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
->  =09if (IS_ERR(ctx)) {
->  =09=09pr_err("%s: rockchip clk init failed\n", __func__);
-> +=09=09iounmap(reg_base);
->  =09=09return;
->  =09}
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 7b02d85..c64d8d6 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -390,6 +390,13 @@
+ 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+ 			};
+ 
++			mmc0_cd_pin_reference_design: mmc0_cd_pin@0 {
++				allwinner,pins = "PF6";
++				allwinner,function = "gpio_in";
++				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				allwinner,pins = "PF2", "PF4";
+ 				allwinner,function = "uart0";
+-- 
+1.9.1
