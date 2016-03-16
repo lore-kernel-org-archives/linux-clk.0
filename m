@@ -1,124 +1,276 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:28576 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751748AbcCPHEh (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2016 03:04:37 -0400
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v5 2/5] ARM: at91: pm: add ULP1 mode support
+Date: Wed, 16 Mar 2016 14:58:06 +0800
+Message-ID: <1458111489-23774-3-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <56EB04C1.3010709@ti.com>
-References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
- <1457380318-15452-6-git-send-email-fcooper@ti.com> <20160317150305.GA27356@rob-hp-laptop>
- <56EAE014.8070606@ti.com> <CAL_Jsq+3vRMezgrA53jPgMZUYR+DAA_886K1Q6YfxV1bPinoQQ@mail.gmail.com>
- <56EAF562.9060408@ti.com> <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
- <56EB04C1.3010709@ti.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 17 Mar 2016 14:48:40 -0500
-Message-ID: <CAL_JsqKLhyOVUa_21bwf4vRNCNFt0tadwW+RUavgsXeJu3p1pQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
- generic node name
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 17, 2016 at 2:25 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
-> +Sekhar
->
-> On 03/17/2016 01:56 PM, Rob Herring wrote:
->> On Thu, Mar 17, 2016 at 1:20 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
->>>
->>> On 03/17/2016 01:00 PM, Rob Herring wrote:
->>>> On Thu, Mar 17, 2016 at 11:49 AM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
->>>>> On 03/17/2016 10:03 AM, Rob Herring wrote:
->>>>>> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
->>>>>>> Now that the node name has been changed from ehrpwm to pwm the document
->>>>>>> should show this proper usage. Also change the unit address in the example
->>>>>>> from 0 to the proper physical address value that should be used.
->>>>>>>
->>>>>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
->>>>>>> ---
->>>>>>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
->>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>>>> index 9c100b2..20211ed 100644
->>>>>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>>>> @@ -15,14 +15,14 @@ Optional properties:
->>>>>>>
->>>>>>>  Example:
->>>>>>>
->>>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
->>>>>>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
->>>>>>>      compatible = "ti,am33xx-ehrpwm";
->>>>>>>      #pwm-cells = <3>;
->>>>>>>      reg = <0x48300200 0x100>;
->>>>>>>      ti,hwmods = "ehrpwm0";
->>>>>>>  };
->>>>>>>
->>>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
->>>>>>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
->>>>>> No leading 0s, but more importantly the address is wrong.
->>>>> I will remove the leading 0. However, this value was taken
->>>>> from the .dtsi and I just double checked and I see the same
->>>>> value in the datasheet. I believe DA850,OMAP-L138 and AM18x
->>>>> all have the same memory mapping. I'm looking at
->>>>> http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
->>>>> addresses match up what is seen here and in the .dtsi.
->>>>>
->>>>> Can you point me to which document your looking at that
->>>>> shows a different value?
->>>> Ummm, ...
->>>>
->>>>>>>      compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->>>>>>>      #pwm-cells = <3>;
->>>>>>>      reg = <0x300000 0x2000>;
->>>> right here.
->>> So I don't know the history but the SOC node specifies a
->>> ranges value of ranges = <0x0 0x01c00000 0x400000>;. It
->>> seems that all child nodes of SOC have a reg property then
->>> is based on an offset of 0x01c00000. So this is true for
->>> UART, rtc, i2c, wdt, mmc, spi etc... So using a base offset
->>> of 0x01c00000 + 0x300000 (reg value of the pwm) equals the
->>> physical address of the ehrpwm0 register 0x1f00000.
->>>
->>> For the child nodes within the SOC node, the unit-address is
->>> always based on the physical address not based on the offset
->>> address.
->> They are all wrong and should be fixed. Unit address should match the
->> reg property unless the bus has defined something different (e.g.
->> PCI).
->
-> I added Sekhar to hopefully comment if it would be better to
-> try to get the reg properties to use their physical
-> addresses or change the unit address to use the offset values.
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
 
-Change the unit addresses (i.e. use ranges). The main reason ranges
-with translation is preferred is it limits the scope of the bus as the
-h/w design typically would.
+In the ULP1 mode, all the clocks are shut off, inclusive the embedded
+12MHz RC oscillator, so as to achieve the lowest power consumption
+with the system in retention mode and able to resume on the wake up
+events. As soon as the wake up event is asserted, the embedded 12MHz
+RC oscillator restarts automatically.
 
-> I don't mind shooting a patch that makes this massive switch
-> for all the various peripherals and documentation. However,
-> this is a bit beyond this series.  In this series I am not
-> setting the unit address or reg address I am simply
-> documenting what is currently being used. This patch set is
-> a dependency for another patchset to get PWM support for DRA7.
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
 
-Agreed. I'm not asking for everything to be fixed.
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
 
-> Are you ok with me doing the below?
-> I submit a v2 that removes the leading 0 in this patch. This
-> way this patchset and my PWMSS support for DRA7 patchset can
-> get merged. I can then follow up with another separate
-> patchset that insures both the unit address and the value in
-> the reg property are aligned.
+ arch/arm/mach-at91/pm.c         |   16 ++++++-
+ arch/arm/mach-at91/pm.h         |    7 +++
+ arch/arm/mach-at91/pm_suspend.S |   97 +++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/at91_pmc.h    |    4 ++
+ 4 files changed, 122 insertions(+), 2 deletions(-)
 
-The example is an example. It doesn't have to match dts files (if it
-always did, then examples would be pointless). So please fix the
-documentation now. The dts files can be updated separately.
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index f062701..5c2db34 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -36,6 +36,11 @@
+ #include "generic.h"
+ #include "pm.h"
+ 
++#define ULP0_MODE	0x00
++#define ULP1_MODE	0x11
++
++#define SAMA5D2_PMC_VERSION	0x20540
++
+ static void __iomem *pmc;
+ 
+ /*
+@@ -52,6 +57,7 @@ extern void at91_pinctrl_gpio_resume(void);
+ static struct {
+ 	unsigned long uhp_udp_mask;
+ 	int memctrl;
++	u32 ulp_mode;
+ } at91_pm_data;
+ 
+ void __iomem *at91_ramc_base[2];
+@@ -141,8 +147,11 @@ static void at91_pm_suspend(suspend_state_t state)
+ {
+ 	unsigned int pm_data = at91_pm_data.memctrl;
+ 
+-	pm_data |= (state == PM_SUSPEND_MEM) ?
+-				AT91_PM_MODE(AT91_PM_SLOW_CLOCK) : 0;
++	if (state == PM_SUSPEND_MEM) {
++		pm_data |= AT91_PM_MODE(AT91_PM_SLOW_CLOCK);
++		if (at91_pm_data.ulp_mode == ULP1_MODE)
++			pm_data |= AT91_PM_ULP(AT91_PM_ULP1_MODE);
++	}
+ 
+ 	flush_cache_all();
+ 	outer_disable();
+@@ -497,4 +506,7 @@ void __init sama5_pm_init(void)
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+ 	at91_pm_init(NULL);
++
++	if (readl(pmc + AT91_PMC_VERSION) >= SAMA5D2_PMC_VERSION)
++		at91_pm_data.ulp_mode = ULP1_MODE;
+ }
+diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
+index 3fcf881..2e76745 100644
+--- a/arch/arm/mach-at91/pm.h
++++ b/arch/arm/mach-at91/pm.h
+@@ -39,4 +39,11 @@ extern void __iomem *at91_ramc_base[];
+ 
+ #define	AT91_PM_SLOW_CLOCK	0x01
+ 
++#define AT91_PM_ULP_OFFSET	5
++#define AT91_PM_ULP_MASK	0x03
++#define AT91_PM_ULP(x)		(((x) & AT91_PM_ULP_MASK) << AT91_PM_ULP_OFFSET)
++
++#define AT91_PM_ULP0_MODE	0x00
++#define AT91_PM_ULP1_MODE	0x01
++
+ #endif
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index 5fcffdc..f2a5c4b 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -41,6 +41,15 @@ tmp2	.req	r5
+ 	.endm
+ 
+ /*
++ * Wait for main oscillator selection is done
++ */
++	.macro wait_moscsels
++1:	ldr	tmp1, [pmc, #AT91_PMC_SR]
++	tst	tmp1, #AT91_PMC_MOSCSELS
++	beq	1b
++	.endm
++
++/*
+  * Wait until PLLA has locked.
+  */
+ 	.macro wait_pllalock
+@@ -101,6 +110,10 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	and	r0, r0, #AT91_PM_MODE_MASK
+ 	str	r0, .pm_mode
+ 
++	lsr	r0, r3, #AT91_PM_ULP_OFFSET
++	and	r0, r0, #AT91_PM_ULP_MASK
++	str	r0, .ulp_mode
++
+ 	/* Active the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_ACTIVE
+ 	bl	at91_sramc_self_refresh
+@@ -131,6 +144,13 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+ 
++	ldr	r0, .ulp_mode
++	tst	r0, #AT91_PM_ULP1_MODE
++	beq	ulp0_mode
++
++	bl	at91_pm_ulp1_mode
++	b	ulp_exit
++
+ ulp0_mode:
+ 	bl	at91_pm_ulp0_mode
+ 	b	ulp_exit
+@@ -326,6 +346,81 @@ ENTRY(at91_pm_ulp0_mode)
+ 	mov	pc, lr
+ ENDPROC(at91_pm_ulp0_mode)
+ 
++/*
++ * void at91_pm_ulp1_mode(void)
++ */
++ENTRY(at91_pm_ulp1_mode)
++	ldr	pmc, .pmc_base
++
++	/* Switch the main clock source to 12-MHz RC oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCSEL
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscsels
++
++	/* Disable the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	/* Switch the master clock source to main clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	/* Enter the ULP1 mode by set WAITMODE bit in CKGR_MOR */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_WAITMODE
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_mckrdy
++
++	/* Enable the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscrdy
++
++	/* Switch the master clock source to slow clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	/* Switch main clock source to crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCSEL
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscsels
++
++	/* Switch the master clock source to main clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	mov	pc, lr
++ENDPROC(at91_pm_ulp1_mode)
++
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
+@@ -336,6 +431,8 @@ ENDPROC(at91_pm_ulp0_mode)
+ 	.word 0
+ .pm_mode:
+ 	.word 0
++.ulp_mode:
++	.word 0
+ .saved_mckr:
+ 	.word 0
+ .saved_pllar:
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 17f413b..4afd891 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -47,8 +47,10 @@
+ #define	AT91_CKGR_MOR		0x20			/* Main Oscillator Register [not on SAM9RL] */
+ #define		AT91_PMC_MOSCEN		(1    <<  0)		/* Main Oscillator Enable */
+ #define		AT91_PMC_OSCBYPASS	(1    <<  1)		/* Oscillator Bypass */
++#define		AT91_PMC_WAITMODE	(1    <<  2)		/* Wait Mode Command */
+ #define		AT91_PMC_MOSCRCEN	(1    <<  3)		/* Main On-Chip RC Oscillator Enable [some SAM9] */
+ #define		AT91_PMC_OSCOUNT	(0xff <<  8)		/* Main Oscillator Start-up Time */
++#define		AT91_PMC_KEY_MASK	(0xff << 16)
+ #define		AT91_PMC_KEY		(0x37 << 16)		/* MOR Writing Key */
+ #define		AT91_PMC_MOSCSEL	(1    << 24)		/* Main Oscillator Selection [some SAM9] */
+ #define		AT91_PMC_CFDEN		(1    << 25)		/* Clock Failure Detector Enable [some SAM9] */
+@@ -166,6 +168,8 @@
+ #define		AT91_PMC_WPVS		(0x1  <<  0)		/* Write Protect Violation Status */
+ #define		AT91_PMC_WPVSRC		(0xffff  <<  8)		/* Write Protect Violation Source */
+ 
++#define AT91_PMC_VERSION	0xfc
++
+ #define AT91_PMC_PCER1		0x100			/* Peripheral Clock Enable Register 1 [SAMA5 only]*/
+ #define AT91_PMC_PCDR1		0x104			/* Peripheral Clock Enable Register 1 */
+ #define AT91_PMC_PCSR1		0x108			/* Peripheral Clock Enable Register 1 */
+-- 
+1.7.9.5
 
-Rob
