@@ -1,63 +1,78 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 1 Mar 2016 23:15:44 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/41] clk: at91: Remove CLK_IS_ROOT
-Message-ID: <20160301231544.55c502f1@bbrezillon>
-In-Reply-To: <1456858826-28541-2-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-	<1456858826-28541-2-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:28315 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754569AbcCPHDc (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2016 03:03:32 -0400
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v5 0/5] ARM: at91: pm: add ULP1 mode support
+Date: Wed, 16 Mar 2016 14:58:04 +0800
+Message-ID: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue,  1 Mar 2016 10:59:46 -0800
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
 
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+In order to achieve the lowest power consumption, in the ULP1 mode,
+all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+The fast startup signal is used as a wake up source for ULP1 mode.
+As soon as the wake up event is asserted, the embedded 12MHz RC
+oscillator restarts automatically, which fast startup signal
+to trigger the PMC to wake up the system from the ULP1 mode can be
+configured via DT.
 
-> ---
->  drivers/clk/at91/clk-main.c | 2 +-
->  drivers/clk/at91/clk-slow.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-> index b85f43529396..b9bdfd8e4e6f 100644
-> --- a/drivers/clk/at91/clk-main.c
-> +++ b/drivers/clk/at91/clk-main.c
-> @@ -315,7 +315,7 @@ at91_clk_register_main_rc_osc(struct at91_pmc *pmc,
->  	init.ops = &main_rc_osc_ops;
->  	init.parent_names = NULL;
->  	init.num_parents = 0;
-> -	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
-> +	init.flags = CLK_IGNORE_UNUSED;
->  
->  	osc->hw.init = &init;
->  	osc->pmc = pmc;
-> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-> index 67b304726d06..402b45d38d25 100644
-> --- a/drivers/clk/at91/clk-slow.c
-> +++ b/drivers/clk/at91/clk-slow.c
-> @@ -251,7 +251,7 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
->  	init.ops = &slow_rc_osc_ops;
->  	init.parent_names = NULL;
->  	init.num_parents = 0;
-> -	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
-> +	init.flags = CLK_IGNORE_UNUSED;
->  
->  	osc->hw.init = &init;
->  	osc->sckcr = sckcr;
+Changes in v5:
+ - to improve the scalability, rework the DT expression part, use
+   the child nodes to describe the wake-up input and its active level.
+ - due to the DT property expression change, update the binding
+   document.
+ - due to the DT property expression change, update the fast restart
+   node's property.
 
+Changes in v4:
+ - add Acked-by tag.
+ - add fast_restart node to the DT file.
 
+Changes in v3:
+ - use 0 and 1, not string, to define the trigger active polarity.
+ - update the property description.
+
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
+ - shorten the pmc-fast-startup property's name.
+ - use the value property, instead of bool property for high
+   or low triggered.
+ - change the property name and property description.
+
+Wenyou Yang (5):
+  ARM: at91: pm: create a separate procedure for the ULP0 mode
+  ARM: at91: pm: add ULP1 mode support
+  ARM: at91: pm: configure PMC fast startup signals
+  Documentation: atmel-pmc: add DT bindings for fast startup
+  ARM: at91/dt: sama5d2_xplained: add fast_restart node
+
+ .../devicetree/bindings/arm/atmel-pmc.txt          |   52 +++++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |   19 +++
+ arch/arm/mach-at91/pm.c                            |   82 +++++++++-
+ arch/arm/mach-at91/pm.h                            |    7 +
+ arch/arm/mach-at91/pm_suspend.S                    |  158 +++++++++++++++++---
+ include/linux/clk/at91_pmc.h                       |   18 +++
+ 6 files changed, 311 insertions(+), 25 deletions(-)
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.7.9.5
+
