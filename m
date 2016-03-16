@@ -1,83 +1,54 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 03/18] ARM: dts: vf610-colibri: GPIO wakeup key
-Date: Wed,  9 Mar 2016 18:16:44 -0800
-Message-Id: <1457576219-7971-4-git-send-email-stefan@agner.ch>
-In-Reply-To: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+Return-Path: <slash.tmp@free.fr>
+Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
+ <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>
+References: <20160226194830.GA21652@lukather>
+ <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
+ <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
+ <20160303191604.GW24999@codeaurora.org> <20160304152711.GR8418@lukather>
+ <20160304171841.GF24999@codeaurora.org> <20160308221320.GI8418@lukather>
+ <20160315221601.GJ25972@codeaurora.org>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <56E91EA4.7030603@free.fr>
+Date: Wed, 16 Mar 2016 09:51:48 +0100
+MIME-Version: 1.0
+In-Reply-To: <20160315221601.GJ25972@codeaurora.org>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable GPIO wakeup key on Vybrid PAD 41 which is routed to the
-Colibri default wakeup pin SO-DIMM 45.
+On 15/03/2016 23:16, Stephen Boyd wrote:
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/vf-colibri-eval-v3.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> On 03/08, Maxime Ripard wrote:
+>
+>> On Fri, Mar 04, 2016 at 09:18:41AM -0800, Stephen Boyd wrote:
+>>
+>>> Oh right. Let's hope third time is the last.
+>>>
+>>> ---8<---
+>>> From: Stephen Boyd <sboyd@codeaurora.org>
+>>> Subject: [PATCH] clk: sunxi: Remove use of variable length array
+>>>
+>>> Using an array allocated on the stack may lead to stack overflows
+>>> and other problems so let's move the allocation to the heap
+>>> instead. This silences the following checker warning as well.
+>>>
+>>> drivers/clk/sunxi/clk-sun8i-mbus.c:36:29: warning: Variable length array is used.
+>>>
+>>> Cc: Chen-Yu Tsai <wens@csie.org>
+>>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>>
+>> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>>
+> 
+> Applied to clk-next.
 
-diff --git a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-index 4d8b7f6..936ece6 100644
---- a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-+++ b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-@@ -39,6 +39,8 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
-+#include <dt-bindings/input/input.h>
-+
- / {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
-@@ -74,6 +76,20 @@
- 		gpio = <&gpio2 19 GPIO_ACTIVE_LOW>; /* USBH_PEN resp. USBH_P_EN */
- 		vin-supply = <&reg_5v0>;
- 	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpiokeys>;
-+
-+		power {
-+			label = "Wake-Up";
-+			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
- };
- 
- &bl {
-@@ -157,5 +173,11 @@
- 				VF610_PAD_PTB21__GPIO_43	0x22ed
- 			>;
- 		};
-+
-+		pinctrl_gpiokeys: gpiokeys {
-+			fsl,pins = <
-+				VF610_PAD_PTB19__GPIO_41	0x218d
-+			>;
-+		};
- 	};
- };
--- 
-2.7.2
+For the record, I will state again that I find it quite sub-optimal
+to resort to dynamic allocation for small temporary pointer arrays.
+
+A fortiori when one considers that getting the patch right required
+several attempts.
+
+Regards.
