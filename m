@@ -1,49 +1,128 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 3 Mar 2016 11:26:17 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: move drivers to renesas directory
-Message-ID: <20160303192617.GY24999@codeaurora.org>
-References: <1456971486-13761-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdXfkV05AwaRtLqwA8Ko=BQaQ5y87AYgsU7O-Rd45JiNKA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXfkV05AwaRtLqwA8Ko=BQaQ5y87AYgsU7O-Rd45JiNKA@mail.gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 00/13] Add A83T clk, r_pio, mmc rsb support
+Date: Thu, 17 Mar 2016 00:04:23 +0800
+Message-Id: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Geert Uytterhoeven wrote:
-> On Thu, Mar 3, 2016 at 3:18 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
-> >
-> > Along with the above mentioned Kconfig changes it seems appropriate
-> > to also rename directories that only hold drivers for such SoCs.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
+Hello,
+This is v4 of series which adds further support for A83T, mainly adds clock 
+support.Also adds R_PIO, PRCM related clocks, mmc, rsb support.
 
-Applied to clk-next.
+A83T difference in short:
+R_PIO is slightly different from A23 r_pio. AHB1 has different parents as
+compared to a31-ahb1, APB1 has different dividers.Bus gates are similar to H3,
+apb0 gates are different.mmc and rsb are compatible with earlier sunxi socs.
 
-> > Patch pruduced using git format-patch -M
-> > This produces a patch without the diff of each renamed file
-> > which results in a ~204K patch. Let me know if you would prefer that
-> > or a pull-request.
-> 
-> How will we proceed?
-> Note that I have an outstanding pull request for drivers/clk/shmobile.
-> 
+These patches are based on Maxime's sunxi/for-next branch.
+https://git.kernel.org/cgit/linux/kernel/git/mripard/linux.git/
 
-Git took care of it.
+v3->v4 Changes:
+1. Removed MODULE_DEVICE_TABLE, module.h and made A83T R_PIO as 
+builtin_platform_driver.
+2. Corrected config to  MACH_SUN8I in clk/sunxi/Kconfig.
+3. Corrected style related errors.
+
+v2->v3 Changes:
+1. Corrected wrong configuration of uart0 and timer in dtsi.
+2. corrected clock gate name of "spdif" in dtsi.
+3. Added kconfig for sunxi clocks, added sun8i-apb0 and sun9i-cpus clocks to it.
+
+v1->v2 Changes:
+1. Patches for apb0 gates clock, bus gates, low speed oscillators are already
+   merged, so, not included again in this series.
+1. sorted the R_PIO Kconfig options.
+2. removed un-necessary a83t apb1 div table.
+3. combined the three ahb reset registers into one reset node.
+4. Changed the bus gates names to bus_spidf and bus_usb_otg.
+5. removed un-necessary #address-cells and #size-cells from R_PIO node.
+6. splited rsb pins and rsb controller nodes in different patches.
+7. used PF6 as mmc0 CD reference design pin.
+8. corrected the style related errors.
+
+Patch 1: adds support for r_pio pin controller.
+
+patch 2: adds ahb1 clock support, 0b1x is pll6 parent otherwise it's same as a31
+ahb1.
+
+patch 3: adds apb1 clock support, apb1 has different dividers compared to a10 
+apb0 clock.
+
+patch 4: adds basics clocks nodes to dtsi, pll6, ahb1, ahb2, apb1, apb2,
+bus gates, and resets.
+
+patch 5-6: adds mmc and it's clock nodes.
+
+patch 7: adds A83T PRCM related clocks, clock resets.
+
+patch 8: adds r_pio pin controller nodes to dtsi
+
+patch 9: adds RSB controller nodes to dtsi
+
+patch 10: adds common MMC CD detect pin as reference design pin 
+
+patch 11: enables mmc0 support for h8homlet board, tested by LABBE Corentin.
+
+patch 12: This patch adds support for Sinovoip BPI-M3 A83T based board, it has 
+2GB LPDDR3, u-boot support is added recently for this board.
+
+patch 13: Adds kconfig for clocks(sun8i-apb0 and sun9i-cpus).
+
+Vishnu Patekar (13):
+  pinctrl: sunxi: Add A83T R_PIO controller
+  clk: sunxi: add ahb1 clock for A83T
+  clk: sunxi: Add APB1 clock for A83T
+  ARM: dts: sun8i-a83t: Add basic clocks and resets
+  ARM: dts: sun8i-a83t: add mmc clock nodes
+  ARM: dts: sun8i-a83t: Add mmc controller nodes
+  ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
+  ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
+  ARM: dts: sun8i-a83t: Add RSB controller device node to dtsi
+  ARM: dts: sun8i-a83t: add mmc0 CD pin
+  ARM: dts: sun8i: enable mmc for H8Homlet Board.
+  ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
+  ARM: sunxi: Add Kconfig for sunxi clocks
+
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  11 +
+ ...omlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} |  21 +-
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 285 ++++++++++++++++++++-
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/sunxi/Kconfig                          |   5 +
+ drivers/clk/sunxi/Makefile                         |   4 +-
+ drivers/clk/sunxi/clk-sunxi.c                      |  89 +++++++
+ drivers/pinctrl/sunxi/Kconfig                      |   5 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 117 +++++++++
+ 13 files changed, 536 insertions(+), 7 deletions(-)
+ copy arch/arm/boot/dts/{sun8i-a83t-allwinner-h8homlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} (83%)
+ create mode 100644 drivers/clk/sunxi/Kconfig
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
