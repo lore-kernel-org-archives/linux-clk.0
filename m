@@ -1,151 +1,24 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 33/46] pwm: replace pwm_disable() by pwm_apply_state()
-Date: Wed, 30 Mar 2016 22:03:56 +0200
-Message-Id: <1459368249-13241-34-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <davem@davemloft.net>
+Date: Wed, 16 Mar 2016 19:28:55 -0400 (EDT)
+Message-Id: <20160316.192855.1870454280323814470.davem@davemloft.net>
+To: wxt@rock-chips.com
+Cc: heiko@sntech.de, robh+dt@kernel.org,
+ linux-rockchip@lists.infradead.org, keescook@google.com,
+ leozwang@google.com, sergei.shtylyov@cogentembedded.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ mturquette@baylibre.com, al.kochet@gmail.com, linux@arm.linux.org.uk,
+ sboyd@codeaurora.org, galak@codeaurora.org, linux-kernel@vger.kernel.org,
+ ijc+devicetree@hellion.org.uk, trivial@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, zhengxing@rock-chips.com
+Subject: Re: [PATCH v3 0/9] arc_emac: fixes the emac issues and cleanup
+ emac drivers
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
+References: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Some PWM drivers are calling the deprecated pwm_disable() function in
-their pwm->free() or pdev->remove() function. Replace those calls by
-the pwm_apply_state().
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/pwm/pwm-lpc18xx-sct.c | 7 +++++--
- drivers/pwm/pwm-lpc32xx.c     | 9 +++++++--
- drivers/pwm/pwm-spear.c       | 9 +++++++--
- drivers/pwm/pwm-sti.c         | 9 +++++++--
- 4 files changed, 26 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-index 19dc64c..c4d7cb1 100644
---- a/drivers/pwm/pwm-lpc18xx-sct.c
-+++ b/drivers/pwm/pwm-lpc18xx-sct.c
-@@ -305,9 +305,12 @@ static void lpc18xx_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- {
- 	struct lpc18xx_pwm_chip *lpc18xx_pwm = to_lpc18xx_pwm_chip(chip);
- 	struct lpc18xx_pwm_data *lpc18xx_data = pwm_get_chip_data(pwm);
-+	struct pwm_state pstate;
- 
--	pwm_disable(pwm);
--	pwm_set_duty_cycle(pwm, 0);
-+	pwm_get_state(pwm, &pstate);
-+	pstate.duty_cycle = 0;
-+	pstate.enabled = false;
-+	pwm_apply_state(pwm, &pstate);
- 	clear_bit(lpc18xx_data->duty_event, &lpc18xx_pwm->event_map);
- }
- 
-diff --git a/drivers/pwm/pwm-lpc32xx.c b/drivers/pwm/pwm-lpc32xx.c
-index 4d470c1..95870e0 100644
---- a/drivers/pwm/pwm-lpc32xx.c
-+++ b/drivers/pwm/pwm-lpc32xx.c
-@@ -138,8 +138,13 @@ static int lpc32xx_pwm_remove(struct platform_device *pdev)
- 	struct lpc32xx_pwm_chip *lpc32xx = platform_get_drvdata(pdev);
- 	unsigned int i;
- 
--	for (i = 0; i < lpc32xx->chip.npwm; i++)
--		pwm_disable(&lpc32xx->chip.pwms[i]);
-+	for (i = 0; i < lpc32xx->chip.npwm; i++) {
-+		struct pwm_state pstate;
-+
-+		pwm_get_state(&lpc32xx->chip.pwms[i], &pstate);
-+		pstate.enabled = false;
-+		pwm_apply_state(&lpc32xx->chip.pwms[i], &pstate);
-+	}
- 
- 	return pwmchip_remove(&lpc32xx->chip);
- }
-diff --git a/drivers/pwm/pwm-spear.c b/drivers/pwm/pwm-spear.c
-index 6c6b44f..2ee4cd5 100644
---- a/drivers/pwm/pwm-spear.c
-+++ b/drivers/pwm/pwm-spear.c
-@@ -233,8 +233,13 @@ static int spear_pwm_remove(struct platform_device *pdev)
- 	struct spear_pwm_chip *pc = platform_get_drvdata(pdev);
- 	int i;
- 
--	for (i = 0; i < NUM_PWM; i++)
--		pwm_disable(&pc->chip.pwms[i]);
-+	for (i = 0; i < NUM_PWM; i++) {
-+		struct pwm_state pstate;
-+
-+		pwm_get_state(&pc->chip.pwms[i], &pstate);
-+		pstate.enabled = false;
-+		pwm_apply_state(&pc->chip.pwms[i], &pstate);
-+	}
- 
- 	/* clk was prepared in probe, hence unprepare it here */
- 	clk_unprepare(pc->clk);
-diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
-index bea1d17..0ec44a8 100644
---- a/drivers/pwm/pwm-sti.c
-+++ b/drivers/pwm/pwm-sti.c
-@@ -435,8 +435,13 @@ static int sti_pwm_remove(struct platform_device *pdev)
- 	struct sti_pwm_chip *pc = platform_get_drvdata(pdev);
- 	unsigned int i;
- 
--	for (i = 0; i < pc->cdata->num_chan; i++)
--		pwm_disable(&pc->chip.pwms[i]);
-+	for (i = 0; i < pc->cdata->num_chan; i++) {
-+		struct pwm_state pstate;
-+
-+		pwm_get_state(&pc->chip.pwms[i], &pstate);
-+		pstate.enabled = false;
-+		pwm_apply_state(&pc->chip.pwms[i], &pstate);
-+	}
- 
- 	clk_unprepare(pc->clk);
- 
--- 
-2.5.0
+Series applied, thanks.
