@@ -1,113 +1,77 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH v2] clk: lpc32xx: add HCLK PLL output configuration
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, robh+dt@kernel.org,
- stigge@antcom.de, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <56D685F6.5060400@mleia.com>
-References: <1455130352-25860-1-git-send-email-slemieux.tyco@gmail.com>
-	 <56D685F6.5060400@mleia.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 02 Mar 2016 09:28:40 -0500
-Message-ID: <1456928920.8721.12.camel@localhost>
-Mime-Version: 1.0
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Wed, 16 Mar 2016 15:30:22 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
+ <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
+ <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Julia Lawall
+ <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/24] pwm: rcar: make use of pwm_is_enabled()
+Message-ID: <20160316153022.164105d1@bbrezillon>
+In-Reply-To: <1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vladimir,
+Hi Thierry,
 
-On Wed, 2016-03-02 at 08:19 +0200, Vladimir Zapolskiy wrote:
-> Hi Sylvain,
-> 
-> On 10.02.2016 20:52, slemieux.tyco@gmail.com wrote:
-> > From: Sylvain Lemieux <slemieux@tycoint.com>
-> > 
-> > This patch add the support to setup the HCLK PLL output
-> > using the "assigned-clock-rates" parameter in the device tree.
-> > 
-> > If the option is not use, the clock setup by the kickstart
-> > and/or bootloader remain unchanged.
-> > 
-> > The previous kernel version did not change the clock frequency
-> > output setup by the kickstart and/or bootloader;
-> > this version always setup the clock frequency output to 208MHz.
-> > 
-> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> 
-> I've found enough time to test the change and it looks good, so
-> 
-> 
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-> 
-> 
-> 
-> Do you have any objections, if 208MHz clock is set by default
-> in the shared DTSI file i.e.
-> 
-I do not have any objection;
-you can add my Acked-by when you submit the patch.
+Can you please apply this patch?
+It's completely independent from the rest of the series.
 
-> diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-> index c58d8da..ecbace8 100644
-> --- a/arch/arm/boot/dts/lpc32xx.dtsi
-> +++ b/arch/arm/boot/dts/lpc32xx.dtsi
-> @@ -294,6 +294,9 @@
+Thanks,
+
+Boris
+
+On Mon, 16 Nov 2015 09:56:24 +0100
+Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+
+> Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced a
+> new function to test whether a PWM device is enabled or not without
+> manipulating PWM internal fields.
+> Hiding this is necessary if we want to smoothly move to the atomic PWM
+> config approach without impacting PWM drivers.
+> Fix this driver to use pwm_is_enabled() instead of directly accessing the
+> ->flags field.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/pwm/pwm-rcar.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index 6e99a63..70899c9 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -157,7 +157,7 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>  		return div;
 >  
->  					clocks = <&xtal_32k>, <&xtal>;
->  					clock-names = "xtal_32k", "xtal";
-> +
-> +					assigned-clocks = <&clk LPC32XX_CLK_HCLK_PLL>;
-> +					assigned-clock-rates = <208000000>;
->  				};
->  			};
+>  	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
+> -	if (!test_bit(PWMF_ENABLED, &pwm->flags) && !duty_ns)
+> +	if (!pwm_is_enabled(pwm) && !duty_ns)
+>  		return 0;
 >  
-> ?
-> 
-> In particular board files the value can be overwritten, however I think
-> it is important to have some well defined clock value here to mitigate
-> a risk of possible clock rate change done by a bootloader, for example
-> the rate may be set to a lower value by a bootloader.
-> 
-> > ---
-> > Changes from v1 to v2:
-> > - Rename patch title;
-> >   was "clk: lpc32xx: add clock frequency output configuration"
-> > - Update the patch as per the feedback received from:
-> >   Stephen: http://permalink.gmane.org/gmane.linux.kernel.clk/3913
-> >   Vladimir: http://permalink.gmane.org/gmane.linux.kernel.clk/3921 
-> > 
-> > Note:
-> > - There is currently an issue in the current driver;
-> >   if the HCLK PLL output, configured by the kickstart and/or
-> >   bootloader, is change by the kernel (ex. 266.5MHz to 208MHz),
-> >   the serial console is no longer outputing properly.
-> 
-> yep, I'm aware of this issue too, however it is not obvious that
-> the rootcause is in the clock driver, so we can discuss this topic
-> somewhere else, but let me present a short intro about what I
-> see on my end.
-> 
-> In case if PCLK is 266 MHz / 16 ~ 16520833 Hz, UART pre-divider is
-> bypassed (X = 1, Y = 1), baudrate is 115200, then I observe corrupted
-> I/O but correctly set divisor latch registers (DLM = 0, DLL = 9):
-> 
->   16520833 / 16 / 9 ~ 114728
-> 
-> But if I change DLL to 7 as I should do in assumption
-> that PCLK is 13 MHz, then UART I/O is *not* corrupted.
-> 
-> The same happens if I modify UART pre-divider, for example UART
-> clock rate is 16520833, baudrate is 115200, X = 27, Y = 242,
-> DLM = 0, DLL = 1:
-> 
->   16520833 / 16 * 27 / 242 ~ 115202 -- but I/O is corrupted
-> 
-> And if I change to X = 19, Y = 134 as I should do in case of 
-> PCLK = 13 MHz, then console UART is working fine.
-> 
-> It looks like UART clock is always pinned to 13 MHz (how is it
-> possible technically?), but this contradicts to the datasheet IMHO.
-> 
-> --
-> With best wishes,
-> Vladimir
+>  	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
