@@ -1,155 +1,158 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 06/46] pwm: use pwm_get/set_xxx() helpers where appropriate
-Date: Wed, 30 Mar 2016 22:03:29 +0200
-Message-Id: <1459368249-13241-7-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 02/13] clk: sunxi: add ahb1 clock for A83T
+Date: Thu, 17 Mar 2016 00:04:25 +0800
+Message-Id: <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use pwm_get/set_xxx() helpers instead of directly accessing the pwm->xxx
-field. Doing that will ease adaptation of the PWM framework to support
-atomic update.
+AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+clock index 0b1x is PLL6.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-Patch generated with the following coccinelle script:
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
+ 2 files changed, 77 insertions(+)
 
---->8---
-virtual patch
-
-@@
-struct pwm_device *p;
-expression e;
-@@
-(
--(p)->polarity = e;
-+pwm_set_polarity(p, e);
-|
--(p)->polarity
-+pwm_get_polarity(p)
-|
--(p)->period = e;
-+pwm_set_period(p, e);
-|
--(p)->period
-+pwm_get_period(p)
-|
--(p)->duty_cycle = e;
-+pwm_set_duty_cycle(p, e);
-|
--(p)->duty_cycle
-+pwm_get_duty_cycle(p)
-)
---->8---
----
- drivers/pwm/pwm-crc.c          | 2 +-
- drivers/pwm/pwm-lpc18xx-sct.c  | 2 +-
- drivers/pwm/pwm-omap-dmtimer.c | 2 +-
- drivers/pwm/pwm-sun4i.c        | 3 ++-
- 4 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pwm/pwm-crc.c b/drivers/pwm/pwm-crc.c
-index 7101c70..bd0ebd0 100644
---- a/drivers/pwm/pwm-crc.c
-+++ b/drivers/pwm/pwm-crc.c
-@@ -75,7 +75,7 @@ static int crc_pwm_config(struct pwm_chip *c, struct pwm_device *pwm,
- 		return -EINVAL;
- 	}
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 834436f..cba9fe55 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -30,6 +30,7 @@ Required properties:
+ 	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
+ 	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
+ 	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
++	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
+ 	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+ 	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+ 	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 91de0a0..a7aab65 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
+ 	req->rate >>= req->p;
+ }
  
--	if (pwm->period != period_ns) {
-+	if (pwm_get_period(pwm) != period_ns) {
- 		int clk_div;
++#define SUN8I_A83T_AHB1_PARENT_PLL6	2
++/**
++ * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
++ * AHB rate is calculated as follows
++ * rate = parent_rate >> p
++ *
++ * if parent is pll6, then
++ * parent_rate = pll6 rate / (m + 1)
++ */
++
++static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
++{
++	u8 div, calcp, calcm = 1;
++
++	/*
++	 * clock can only divide, so we will never be able to achieve
++	 * frequencies higher than the parent frequency
++	 */
++	if (req->parent_rate && req->rate > req->parent_rate)
++		req->rate = req->parent_rate;
++
++	div = DIV_ROUND_UP(req->parent_rate, req->rate);
++
++	/* calculate pre-divider if parent is pll6 */
++	if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
++		if (div < 4)
++			calcp = 0;
++		else if (div / 2 < 4)
++			calcp = 1;
++		else if (div / 4 < 4)
++			calcp = 2;
++		else
++			calcp = 3;
++
++		calcm = DIV_ROUND_UP(div, 1 << calcp);
++	} else {
++		calcp = __roundup_pow_of_two(div);
++		calcp = calcp > 3 ? 3 : calcp;
++	}
++
++	req->rate = (req->parent_rate / calcm) >> calcp;
++	req->p = calcp;
++	req->m = calcm - 1;
++}
++
++/**
++* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
++*			 parent index
++*/
++static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
++{
++	req->rate = req->parent_rate;
++
++/* apply pre-divider first if parent is pll6 */
++	if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
++		req->rate /= req->m + 1;
++
++	/* clk divider */
++	req->rate >>= req->p;
++}
++
+ /**
+  * sun4i_get_apb1_factors() - calculates m, p factors for APB1
+  * APB1 rate is calculated as follows
+@@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
+ 	.recalc = sun6i_ahb1_recalc,
+ };
  
- 		/* changing the clk divisor, need to disable fisrt */
-diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-index 9861fed..19dc64c 100644
---- a/drivers/pwm/pwm-lpc18xx-sct.c
-+++ b/drivers/pwm/pwm-lpc18xx-sct.c
-@@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 			   LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
- 			   LPC18XX_PWM_EVSTATEMSK_ALL);
++static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
++	.mux = 12,
++	.muxmask = BIT(1) | BIT(0),
++	.table = &sun6i_ahb1_config,
++	.getter = sun8i_a83t_get_ahb1_factors,
++	.recalc = sun8i_a83t_ahb1_recalc,
++};
++
+ static const struct factors_data sun4i_apb1_data __initconst = {
+ 	.mux = 24,
+ 	.muxmask = BIT(1) | BIT(0),
+@@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
+ 	       sun6i_ahb1_clk_setup);
  
--	if (pwm->polarity == PWM_POLARITY_NORMAL) {
-+	if (pwm_get_polarity(pwm) == PWM_POLARITY_NORMAL) {
- 		set_event = lpc18xx_pwm->period_event;
- 		clear_event = lpc18xx_data->duty_event;
- 		res_action = LPC18XX_PWM_RES_SET;
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index b7e6ecb..3e95090 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -192,7 +192,7 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
- 		load_value, load_value,	match_value, match_value);
- 
- 	omap->pdata->set_pwm(omap->dm_timer,
--			      pwm->polarity == PWM_POLARITY_INVERSED,
-+			      pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
- 			      true,
- 			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE);
- 
-diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-index 67af9f6..03a99a5 100644
---- a/drivers/pwm/pwm-sun4i.c
-+++ b/drivers/pwm/pwm-sun4i.c
-@@ -354,7 +354,8 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
- 	val = sun4i_pwm_readl(pwm, PWM_CTRL_REG);
- 	for (i = 0; i < pwm->chip.npwm; i++)
- 		if (!(val & BIT_CH(PWM_ACT_STATE, i)))
--			pwm->chip.pwms[i].polarity = PWM_POLARITY_INVERSED;
-+			pwm_set_polarity(&pwm->chip.pwms[i],
-+					 PWM_POLARITY_INVERSED);
- 	clk_disable_unprepare(pwm->clk);
- 
- 	return 0;
++static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
++}
++CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
++	       sun8i_a83t_ahb1_clk_setup);
++
+ static void __init sun4i_apb1_clk_setup(struct device_node *node)
+ {
+ 	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
 -- 
-2.5.0
+1.9.1
