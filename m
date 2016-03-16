@@ -1,81 +1,110 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
 	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v4 2/5] dt-bindings: arm: add DT binding for Marvell AP806 system controller
-Date: Sun, 27 Mar 2016 11:26:14 +0200
-Message-Id: <1459070777-18049-3-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 06/13] ARM: dts: sun8i-a83t: Add mmc controller nodes
+Date: Thu, 17 Mar 2016 00:04:29 +0800
+Message-Id: <1458144276-31108-7-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the Device Tree binding documentation for the system
-controller found in Marvell AP806 HW block, which is one of the core
-HW blocks of the 64-bits Marvell Armada 7K/8K family.
+A83T mmc is compatible with earliers sunxi socs.
+This adds mmc0, mmc1, and mmc2 controller nodes for A83T.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- .../arm/marvell/ap806-system-controller.txt        | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 57 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-new file mode 100644
-index 0000000..8968371
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-@@ -0,0 +1,35 @@
-+Marvell Armada AP806 System Controller
-+======================================
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 943d8a8..a44d4dc 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -275,6 +275,63 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		mmc0: mmc@01c0f000 {
++			compatible = "allwinner,sun5i-a13-mmc";
++			reg = <0x01c0f000 0x1000>;
++			clocks = <&bus_gates 8>,
++				 <&mmc0_clk 0>,
++				 <&mmc0_clk 1>,
++				 <&mmc0_clk 2>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ahb_reset 8>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
 +
-+The AP806 is one of the two core HW blocks of the Marvell Armada 7K/8K
-+SoCs. It contains a system controller, which provides a number
-+registers giving access to numerous features: clocks, pin-muxing and
-+many other SoC configuration items. This DT binding allows to describe
-+this system controller.
++		mmc1: mmc@01c10000 {
++			compatible = "allwinner,sun5i-a13-mmc";
++			reg = <0x01c10000 0x1000>;
++			clocks = <&bus_gates 9>,
++				 <&mmc1_clk 0>,
++				 <&mmc1_clk 1>,
++				 <&mmc1_clk 2>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ahb_reset 9>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
 +
-+The Device Tree node representing the AP806 system controller provides
-+a number of clocks:
++		mmc2: mmc@01c11000 {
++			compatible = "allwinner,sun5i-a13-mmc";
++			reg = <0x01c11000 0x1000>;
++			clocks = <&bus_gates 10>,
++				 <&mmc2_clk 0>,
++				 <&mmc2_clk 1>,
++				 <&mmc2_clk 2>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ahb_reset 10>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
 +
-+ - 0: clock of CPU cluster 0
-+ - 1: clock of CPU cluster 1
-+ - 2: fixed PLL at 1200 Mhz
-+ - 3: MSS clock, derived from the fixed PLL
-+
-+Required properties:
-+
-+ - compatible: must be:
-+     "marvell,ap806-system-controller", "syscon"
-+ - reg: register area of the AP806 system controller
-+ - #clock-cells: must be set to 1
-+ - clock-output-names: must be defined to:
-+    "ap-cpu-cluster-0", "ap-cpu-cluster-1", "ap-fixed", "ap-mss"
-+
-+Example:
-+
-+	syscon: system-controller@6f4000 {
-+		compatible = "marvell,ap806-system-controller", "syscon";
-+		#clock-cells = <1>;
-+		clock-output-names = "ap-cpu-cluster-0", "ap-cpu-cluster-1",
-+				     "ap-fixed", "ap-mss";
-+		reg = <0x6f4000 0x1000>;
-+	};
+ 		pio: pinctrl@01c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.6.4
+1.9.1
