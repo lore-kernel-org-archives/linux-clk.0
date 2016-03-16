@@ -1,61 +1,50 @@
-Return-Path: <kernel@martin.sperl.org>
-Subject: Re: [PATCH 1/2] clk: bcm2835: expose raw clock-registers via debugfs
-To: Eric Anholt <eric@anholt.net>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org>
- <1456755616-2472-2-git-send-email-kernel@martin.sperl.org>
- <87k2ln5k09.fsf@eliezer.anholt.net>
-From: Martin Sperl <kernel@martin.sperl.org>
-Message-ID: <56D59998.8060301@martin.sperl.org>
-Date: Tue, 1 Mar 2016 14:31:04 +0100
+Return-Path: <slash.tmp@free.fr>
+Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>
+References: <20160226194830.GA21652@lukather>
+ <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
+ <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
+ <20160303191604.GW24999@codeaurora.org> <20160304152711.GR8418@lukather>
+ <20160304171841.GF24999@codeaurora.org> <20160308221320.GI8418@lukather>
+ <20160315221601.GJ25972@codeaurora.org> <56E91EA4.7030603@free.fr>
+ <20160316203018.GQ25972@codeaurora.org>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <56E9C5C0.901@free.fr>
+Date: Wed, 16 Mar 2016 21:44:48 +0100
 MIME-Version: 1.0
-In-Reply-To: <87k2ln5k09.fsf@eliezer.anholt.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20160316203018.GQ25972@codeaurora.org>
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 29.02.2016 21:39, Eric Anholt wrote:
-> kernel@martin.sperl.org writes:
->
->> From: Martin Sperl <kernel@martin.sperl.org>
+On 16/03/2016 21:30, Stephen Boyd wrote:
+> On 03/16, Mason wrote:
+>> On 15/03/2016 23:16, Stephen Boyd wrote:
+>>>
+>>> Applied to clk-next.
 >>
->> For debugging purposes under some circumstance
->> it helps to be able to see the actual clock registers.
+>> For the record, I will state again that I find it quite sub-optimal
+>> to resort to dynamic allocation for small temporary pointer arrays.
 >>
->> E.g: when looking at the clock divider it is helpful to
->> see what the actual clock divider is.
->>
->> This patch exposes all the clock registers specific to each
->> clock/pll/pll-divider via debugfs.
->>
->> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
->
-> This one definitely seems useful to me.  I think the debugfs bits need
-> to be under #ifdef CONFIG_DEBUG_FS though.
->
-> With that fixed,
->
-> Acked-by: Eric Anholt <eric@anholt.net>
->
-Note that include/linux/debugfs.h contains such ifdef and generates
-dummy code like this:
-static inline struct dentry *debugfs_create_regset32(const char *name,
-                                    umode_t mode, struct dentry *parent,
-                                    struct debugfs_regset32 *regset)
-{
-         return ERR_PTR(-ENODEV);
-}
-(see also Documentation/filesystem/debugfs.txt )
+>> A fortiori when one considers that getting the patch right required
+>> several attempts.
+> 
+> Feel free to send the patch and then we can discuss and test. For
+> the record, I was waiting for Maxime or Chen-Yu to speak up if
+> they would prefer that approach, but nothing happened. Usually
+> patches spur discussions better than comments.
 
-On the other hand the clock framework calls debug_init only
-if debugfs is enabled.
+While I didn't provide a formal patch, I did outline the two
+lines that needed to be changed (and it is obvious that the
+behavior is strictly equivalent to the VLA solution, as long
+as num_parents < 8).
 
-So all the code is essentially "dead" when debugfs is disabled.
+I do agree with you that, considering the silence from the
+driver's maintainers, they probably don't care which solution
+is adopted.
 
-I assume I will not ifdef this just in case.
+I will remember to post an actual patch next time.
 
-Thanks, Martin
+Regards.
