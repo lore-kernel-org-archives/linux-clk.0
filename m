@@ -1,67 +1,44 @@
-Return-Path: <martin@sperl.org>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: [PATCH v7] clk: bcm2835: Add support for programming the audio domain clocks
-From: Martin Sperl <martin@sperl.org>
-In-Reply-To: <1444354644-31997-1-git-send-email-eric@anholt.net>
-Date: Sun, 6 Mar 2016 12:31:05 +0100
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <AE3FF4E9-9435-463F-8A05-2ED0CE67BC26@sperl.org>
-References: <1444354644-31997-1-git-send-email-eric@anholt.net>
-To: Eric Anholt <eric@anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 16 Mar 2016 13:30:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mason <slash.tmp@free.fr>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
+Message-ID: <20160316203018.GQ25972@codeaurora.org>
+References: <20160226194830.GA21652@lukather>
+ <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
+ <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
+ <20160303191604.GW24999@codeaurora.org>
+ <20160304152711.GR8418@lukather>
+ <20160304171841.GF24999@codeaurora.org>
+ <20160308221320.GI8418@lukather>
+ <20160315221601.GJ25972@codeaurora.org>
+ <56E91EA4.7030603@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56E91EA4.7030603@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-I know it has already been merged, but while doing some=20
-clock investigations of the RPI3 I came accross this code:
+On 03/16, Mason wrote:
+> On 15/03/2016 23:16, Stephen Boyd wrote:
+> > 
+> > Applied to clk-next.
+> 
+> For the record, I will state again that I find it quite sub-optimal
+> to resort to dynamic allocation for small temporary pointer arrays.
+> 
+> A fortiori when one considers that getting the patch right required
+> several attempts.
+> 
 
-> On 09.10.2015, at 03:37, Eric Anholt <eric@anholt.net> wrote:
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c =
-b/drivers/clk/bcm/clk-bcm2835.c
-> index dd295e4..8502a4b 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> +static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	struct bcm2835_pll *pll =3D container_of(hw, struct bcm2835_pll, =
-hw);
-> +	struct bcm2835_cprman *cprman =3D pll->cprman;
-> +	const struct bcm2835_pll_data *data =3D pll->data;
-> +	u32 a2wctrl =3D cprman_read(cprman, data->a2w_ctrl_reg);
-> +	u32 ndiv, pdiv, fdiv;
-> +	bool using_prediv;
-> +
-> +	if (parent_rate =3D=3D 0)
-> +		return 0;
-> +
-> +	fdiv =3D cprman_read(cprman, data->frac_reg) & =
-A2W_PLL_FRAC_MASK;
-> +	ndiv =3D (a2wctrl & A2W_PLL_CTRL_NDIV_MASK) >> =
-A2W_PLL_CTRL_NDIV_SHIFT;
-> +	pdiv =3D (a2wctrl & A2W_PLL_CTRL_PDIV_MASK) >> =
-A2W_PLL_CTRL_PDIV_SHIFT;
-> +	using_prediv =3D cprman_read(cprman, data->ana_reg_base + 4) &
-> +		data->ana->fb_prediv_mask;
-> +
-> +	if (using_prediv)
-> +		ndiv *=3D 2;
-Is this really correct?
+Feel free to send the patch and then we can discuss and test. For
+the record, I was waiting for Maxime or Chen-Yu to speak up if
+they would prefer that approach, but nothing happened. Usually
+patches spur discussions better than comments.
 
-As far as I interpret the name =E2=80=9Cfb_predic_mask" it should be =
-either:
-  pdiv * =3D 2; /* there is already a divider of 2 applied */
-or
-  ndiv *=3D 2; /* we need to multiply bot integer and fractional by 2 */
-  fdiv *=3D 2;
-
-As it is a pre-divider, I would assume it is the first,
-but I could be wrong - not knowing a lot about PLLs.
-
-Just want to raise this as a question.
-
-Martin
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
