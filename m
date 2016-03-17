@@ -1,192 +1,86 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chao Xie <chao.xie@marvell.com>
-Subject: [PATCH 07/41] clk: mmp: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 10:59:52 -0800
-Message-Id: <1456858826-28541-8-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <fcooper@ti.com>
+Subject: Re: [PATCH 4/5] pwm: pwm-tipwmss: Update documentation to use empty
+ range property
+To: Rob Herring <robh@kernel.org>
+References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+ <1457380318-15452-5-git-send-email-fcooper@ti.com>
+ <20160317150140.GA25775@rob-hp-laptop> <56EAE1BD.9040601@ti.com>
+CC: <thierry.reding@gmail.com>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <bcousson@baylibre.com>, <tony@atomide.com>, <linux@arm.linux.org.uk>,
+        <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+Message-ID: <56EB21C3.8000806@ti.com>
+Date: Thu, 17 Mar 2016 16:29:39 -0500
+MIME-Version: 1.0
+In-Reply-To: <56EAE1BD.9040601@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
 
-Cc: Chao Xie <chao.xie@marvell.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/mmp/clk-mmp2.c       | 14 +++++---------
- drivers/clk/mmp/clk-of-mmp2.c    | 10 +++++-----
- drivers/clk/mmp/clk-of-pxa168.c  |  8 ++++----
- drivers/clk/mmp/clk-of-pxa1928.c | 12 ++++++------
- drivers/clk/mmp/clk-of-pxa910.c  |  8 ++++----
- drivers/clk/mmp/clk-pxa168.c     |  8 +++-----
- drivers/clk/mmp/clk-pxa910.c     |  8 +++-----
- 7 files changed, 30 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-index 38931dbd1eff..383f6a4f64f0 100644
---- a/drivers/clk/mmp/clk-mmp2.c
-+++ b/drivers/clk/mmp/clk-mmp2.c
-@@ -99,23 +99,19 @@ void __init mmp2_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 		return;
- 	}
- 
--	clk = clk_register_fixed_rate(NULL, "clk32", NULL, CLK_IS_ROOT, 3200);
-+	clk = clk_register_fixed_rate(NULL, "clk32", NULL, 0, 3200);
- 	clk_register_clkdev(clk, "clk32", NULL);
- 
--	vctcxo = clk_register_fixed_rate(NULL, "vctcxo", NULL, CLK_IS_ROOT,
--				26000000);
-+	vctcxo = clk_register_fixed_rate(NULL, "vctcxo", NULL, 0, 26000000);
- 	clk_register_clkdev(vctcxo, "vctcxo", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "pll1", NULL, CLK_IS_ROOT,
--				800000000);
-+	clk = clk_register_fixed_rate(NULL, "pll1", NULL, 0, 800000000);
- 	clk_register_clkdev(clk, "pll1", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "usb_pll", NULL, CLK_IS_ROOT,
--				480000000);
-+	clk = clk_register_fixed_rate(NULL, "usb_pll", NULL, 0, 480000000);
- 	clk_register_clkdev(clk, "usb_pll", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "pll2", NULL, CLK_IS_ROOT,
--				960000000);
-+	clk = clk_register_fixed_rate(NULL, "pll2", NULL, 0, 960000000);
- 	clk_register_clkdev(clk, "pll2", NULL);
- 
- 	clk = clk_register_fixed_factor(NULL, "pll1_2", "pll1",
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 251533d87c65..3a51fff1b0e7 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -63,11 +63,11 @@ struct mmp2_clk_unit {
- };
- 
- static struct mmp_param_fixed_rate_clk fixed_rate_clks[] = {
--	{MMP2_CLK_CLK32, "clk32", NULL, CLK_IS_ROOT, 32768},
--	{MMP2_CLK_VCTCXO, "vctcxo", NULL, CLK_IS_ROOT, 26000000},
--	{MMP2_CLK_PLL1, "pll1", NULL, CLK_IS_ROOT, 800000000},
--	{MMP2_CLK_PLL2, "pll2", NULL, CLK_IS_ROOT, 960000000},
--	{MMP2_CLK_USB_PLL, "usb_pll", NULL, CLK_IS_ROOT, 480000000},
-+	{MMP2_CLK_CLK32, "clk32", NULL, 0, 32768},
-+	{MMP2_CLK_VCTCXO, "vctcxo", NULL, 0, 26000000},
-+	{MMP2_CLK_PLL1, "pll1", NULL, 0, 800000000},
-+	{MMP2_CLK_PLL2, "pll2", NULL, 0, 960000000},
-+	{MMP2_CLK_USB_PLL, "usb_pll", NULL, 0, 480000000},
- };
- 
- static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
-diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index 64eaf4141c69..87f2317b2a00 100644
---- a/drivers/clk/mmp/clk-of-pxa168.c
-+++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -56,10 +56,10 @@ struct pxa168_clk_unit {
- };
- 
- static struct mmp_param_fixed_rate_clk fixed_rate_clks[] = {
--	{PXA168_CLK_CLK32, "clk32", NULL, CLK_IS_ROOT, 32768},
--	{PXA168_CLK_VCTCXO, "vctcxo", NULL, CLK_IS_ROOT, 26000000},
--	{PXA168_CLK_PLL1, "pll1", NULL, CLK_IS_ROOT, 624000000},
--	{PXA168_CLK_USB_PLL, "usb_pll", NULL, CLK_IS_ROOT, 480000000},
-+	{PXA168_CLK_CLK32, "clk32", NULL, 0, 32768},
-+	{PXA168_CLK_VCTCXO, "vctcxo", NULL, 0, 26000000},
-+	{PXA168_CLK_PLL1, "pll1", NULL, 0, 624000000},
-+	{PXA168_CLK_USB_PLL, "usb_pll", NULL, 0, 480000000},
- };
- 
- static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
-diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
-index 433a5ae1eae0..e478ff44e170 100644
---- a/drivers/clk/mmp/clk-of-pxa1928.c
-+++ b/drivers/clk/mmp/clk-of-pxa1928.c
-@@ -34,12 +34,12 @@ struct pxa1928_clk_unit {
- };
- 
- static struct mmp_param_fixed_rate_clk fixed_rate_clks[] = {
--	{0, "clk32", NULL, CLK_IS_ROOT, 32768},
--	{0, "vctcxo", NULL, CLK_IS_ROOT, 26000000},
--	{0, "pll1_624", NULL, CLK_IS_ROOT, 624000000},
--	{0, "pll5p", NULL, CLK_IS_ROOT, 832000000},
--	{0, "pll5", NULL, CLK_IS_ROOT, 1248000000},
--	{0, "usb_pll", NULL, CLK_IS_ROOT, 480000000},
-+	{0, "clk32", NULL, 0, 32768},
-+	{0, "vctcxo", NULL, 0, 26000000},
-+	{0, "pll1_624", NULL, 0, 624000000},
-+	{0, "pll5p", NULL, 0, 832000000},
-+	{0, "pll5", NULL, 0, 1248000000},
-+	{0, "usb_pll", NULL, 0, 480000000},
- };
- 
- static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
-diff --git a/drivers/clk/mmp/clk-of-pxa910.c b/drivers/clk/mmp/clk-of-pxa910.c
-index 13d6173326a4..e22a67f76d93 100644
---- a/drivers/clk/mmp/clk-of-pxa910.c
-+++ b/drivers/clk/mmp/clk-of-pxa910.c
-@@ -56,10 +56,10 @@ struct pxa910_clk_unit {
- };
- 
- static struct mmp_param_fixed_rate_clk fixed_rate_clks[] = {
--	{PXA910_CLK_CLK32, "clk32", NULL, CLK_IS_ROOT, 32768},
--	{PXA910_CLK_VCTCXO, "vctcxo", NULL, CLK_IS_ROOT, 26000000},
--	{PXA910_CLK_PLL1, "pll1", NULL, CLK_IS_ROOT, 624000000},
--	{PXA910_CLK_USB_PLL, "usb_pll", NULL, CLK_IS_ROOT, 480000000},
-+	{PXA910_CLK_CLK32, "clk32", NULL, 0, 32768},
-+	{PXA910_CLK_VCTCXO, "vctcxo", NULL, 0, 26000000},
-+	{PXA910_CLK_PLL1, "pll1", NULL, 0, 624000000},
-+	{PXA910_CLK_USB_PLL, "usb_pll", NULL, 0, 480000000},
- };
- 
- static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
-diff --git a/drivers/clk/mmp/clk-pxa168.c b/drivers/clk/mmp/clk-pxa168.c
-index 0dd83fb950c9..a9ef9209532a 100644
---- a/drivers/clk/mmp/clk-pxa168.c
-+++ b/drivers/clk/mmp/clk-pxa168.c
-@@ -92,15 +92,13 @@ void __init pxa168_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 		return;
- 	}
- 
--	clk = clk_register_fixed_rate(NULL, "clk32", NULL, CLK_IS_ROOT, 3200);
-+	clk = clk_register_fixed_rate(NULL, "clk32", NULL, 0, 3200);
- 	clk_register_clkdev(clk, "clk32", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "vctcxo", NULL, CLK_IS_ROOT,
--				26000000);
-+	clk = clk_register_fixed_rate(NULL, "vctcxo", NULL, 0, 26000000);
- 	clk_register_clkdev(clk, "vctcxo", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "pll1", NULL, CLK_IS_ROOT,
--				624000000);
-+	clk = clk_register_fixed_rate(NULL, "pll1", NULL, 0, 624000000);
- 	clk_register_clkdev(clk, "pll1", NULL);
- 
- 	clk = clk_register_fixed_factor(NULL, "pll1_2", "pll1",
-diff --git a/drivers/clk/mmp/clk-pxa910.c b/drivers/clk/mmp/clk-pxa910.c
-index e1d2ce22cdf1..a520cf7702a1 100644
---- a/drivers/clk/mmp/clk-pxa910.c
-+++ b/drivers/clk/mmp/clk-pxa910.c
-@@ -97,15 +97,13 @@ void __init pxa910_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 		return;
- 	}
- 
--	clk = clk_register_fixed_rate(NULL, "clk32", NULL, CLK_IS_ROOT, 3200);
-+	clk = clk_register_fixed_rate(NULL, "clk32", NULL, 0, 3200);
- 	clk_register_clkdev(clk, "clk32", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "vctcxo", NULL, CLK_IS_ROOT,
--				26000000);
-+	clk = clk_register_fixed_rate(NULL, "vctcxo", NULL, 0, 26000000);
- 	clk_register_clkdev(clk, "vctcxo", NULL);
- 
--	clk = clk_register_fixed_rate(NULL, "pll1", NULL, CLK_IS_ROOT,
--				624000000);
-+	clk = clk_register_fixed_rate(NULL, "pll1", NULL, 0, 624000000);
- 	clk_register_clkdev(clk, "pll1", NULL);
- 
- 	clk = clk_register_fixed_factor(NULL, "pll1_2", "pll1",
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 03/17/2016 11:56 AM, Franklin S Cooper Jr. wrote:
+>
+> On 03/17/2016 10:01 AM, Rob Herring wrote:
+>> On Mon, Mar 07, 2016 at 01:51:57PM -0600, Franklin S Cooper Jr wrote:
+>>> Since the PWMSS and its subdevices (eCAP and ePWM) use the same address
+>>> space then the range property should be empty. Update the documentation
+>>> to show the correct usage.
+>> Why does it matter? An empty ranges is generally not preferred.
+> Someone pointed out that ranges should probably be empty. I
+> double checked it with what is in the ePAPR doc and based on
+> the definition it should be set to empty. I also checked
+> against the am33xx.dtsi and saw that both USB and ethernet
+> uses an empty value for ranges.
+>
+> Can you elaborate on why this isn't preferable?
+
+I'm going to drop this patch and the previous patch for now
+that messes with the ranges property. I can resubmit them
+separately later on if that is the route we decide to take.
+>
+>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt | 12 ++++--------
+>>>  1 file changed, 4 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+>>> index f7eae77..672fa71 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+>>> @@ -7,11 +7,9 @@ Required properties:
+>>>  		  Should set to 1.
+>>>  - size-cells: specify number of u32 entries needed to specify child nodes size
+>>>  		in reg property. Should set to 1.
+>>> -- ranges: describes the address mapping of a memory-mapped bus. Should set to
+>>> -	   physical address map of child's base address, physical address within
+>>> -	   parent's address  space and length of the address map. For am33xx,
+>>> -	   3 set of child register maps present, ECAP register space, EQEP
+>>> -	   register space, EHRPWM register space.
+>>> +- ranges: describes the address mapping of a memory-mapped bus. Its value
+>>> +	  should be empty since no address translation is needed between the
+>>> +	  parent and the child.
+>>>  
+>>>  Also child nodes should also populated under PWMSS DT node.
+>>>  
+>>> @@ -23,9 +21,7 @@ pwmss0: pwmss@48300000 {
+>>>  	#address-cells = <1>;
+>>>  	#size-cells = <1>;
+>>>  	status = "disabled";
+>>> -	ranges = <0x48300100 0x48300100 0x80   /* ECAP */
+>>> -		  0x48300180 0x48300180 0x80   /* EQEP */
+>>> -		  0x48300200 0x48300200 0x80>; /* EHRPWM */
+>>> +	ranges;
+>>>  
+>>>  	/* child nodes go here */
+>>>  };
+>>> -- 
+>>> 2.7.0
+>>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
