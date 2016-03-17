@@ -1,359 +1,128 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
-	jay.xu@rock-chips.com, elaine.zhang@rock-chips.com,
-	dianders@chromium.org, Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH v3 5/7] clk: rockchip: add new pll-type for rk3399 and similar socs
-Date: Wed,  9 Mar 2016 10:42:58 +0800
-Message-Id: <1457491378-31077-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
-References: <1457491027-30936-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <fcooper@ti.com>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+To: Rob Herring <robh@kernel.org>
+CC: Thierry Reding <thierry.reding@gmail.com>,
+        Pawel Moll
+	<pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King - ARM Linux <linux@arm.linux.org.uk>,
+        Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap
+	<linux-omap@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
+ generic node name
+References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+ <1457380318-15452-6-git-send-email-fcooper@ti.com>
+ <20160317150305.GA27356@rob-hp-laptop> <56EAE014.8070606@ti.com>
+ <CAL_Jsq+3vRMezgrA53jPgMZUYR+DAA_886K1Q6YfxV1bPinoQQ@mail.gmail.com>
+ <56EAF562.9060408@ti.com>
+ <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
+Message-ID: <56EB04C1.3010709@ti.com>
+Date: Thu, 17 Mar 2016 14:25:53 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3399's pll and clock are similar with rk3036's, it different
-with base on the rk3066(rk3188, rk3288, rk3368 use it), there are
-different adjust foctors and control registers, so these should be
-independent and separate from the series of rk3066s.
++Sekhar
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+On 03/17/2016 01:56 PM, Rob Herring wrote:
+> On Thu, Mar 17, 2016 at 1:20 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>>
+>> On 03/17/2016 01:00 PM, Rob Herring wrote:
+>>> On Thu, Mar 17, 2016 at 11:49 AM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>>>> On 03/17/2016 10:03 AM, Rob Herring wrote:
+>>>>> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
+>>>>>> Now that the node name has been changed from ehrpwm to pwm the document
+>>>>>> should show this proper usage. Also change the unit address in the example
+>>>>>> from 0 to the proper physical address value that should be used.
+>>>>>>
+>>>>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>>>>>> ---
+>>>>>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>>>>> index 9c100b2..20211ed 100644
+>>>>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>>>>> @@ -15,14 +15,14 @@ Optional properties:
+>>>>>>
+>>>>>>  Example:
+>>>>>>
+>>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+>>>>>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+>>>>>>      compatible = "ti,am33xx-ehrpwm";
+>>>>>>      #pwm-cells = <3>;
+>>>>>>      reg = <0x48300200 0x100>;
+>>>>>>      ti,hwmods = "ehrpwm0";
+>>>>>>  };
+>>>>>>
+>>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+>>>>>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
+>>>>> No leading 0s, but more importantly the address is wrong.
+>>>> I will remove the leading 0. However, this value was taken
+>>>> from the .dtsi and I just double checked and I see the same
+>>>> value in the datasheet. I believe DA850,OMAP-L138 and AM18x
+>>>> all have the same memory mapping. I'm looking at
+>>>> http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
+>>>> addresses match up what is seen here and in the .dtsi.
+>>>>
+>>>> Can you point me to which document your looking at that
+>>>> shows a different value?
+>>> Ummm, ...
+>>>
+>>>>>>      compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>>>>>      #pwm-cells = <3>;
+>>>>>>      reg = <0x300000 0x2000>;
+>>> right here.
+>> So I don't know the history but the SOC node specifies a
+>> ranges value of ranges = <0x0 0x01c00000 0x400000>;. It
+>> seems that all child nodes of SOC have a reg property then
+>> is based on an offset of 0x01c00000. So this is true for
+>> UART, rtc, i2c, wdt, mmc, spi etc... So using a base offset
+>> of 0x01c00000 + 0x300000 (reg value of the pwm) equals the
+>> physical address of the ehrpwm0 register 0x1f00000.
+>>
+>> For the child nodes within the SOC node, the unit-address is
+>> always based on the physical address not based on the offset
+>> address.
+> They are all wrong and should be fixed. Unit address should match the
+> reg property unless the bus has defined something different (e.g.
+> PCI).
 
-Changes in v3: None
-Changes in v2: None
+I added Sekhar to hopefully comment if it would be better to
+try to get the reg properties to use their physical
+addresses or change the unit address to use the offset values.
 
- drivers/clk/rockchip/clk-pll.c |  279 +++++++++++++++++++++++++++++++++++++++-
- drivers/clk/rockchip/clk.h     |    3 +-
- 2 files changed, 280 insertions(+), 2 deletions(-)
+I don't mind shooting a patch that makes this massive switch
+for all the various peripherals and documentation. However,
+this is a bit beyond this series.  In this series I am not
+setting the unit address or reg address I am simply
+documenting what is currently being used. This patch set is
+a dependency for another patchset to get PWM support for DRA7.
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 27be66a..62d2f0e 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -593,6 +593,275 @@ static const struct clk_ops rockchip_rk3066_pll_clk_ops = {
- 	.init = rockchip_rk3066_pll_init,
- };
- 
-+/**
-+ * PLL used in RK3399
-+ */
-+
-+#define RK3399_PLLCON(i)			(i * 0x4)
-+#define RK3399_PLLCON0_FBDIV_MASK		0xfff
-+#define RK3399_PLLCON0_FBDIV_SHIFT		0
-+#define RK3399_PLLCON1_REFDIV_MASK		0x3f
-+#define RK3399_PLLCON1_REFDIV_SHIFT		0
-+#define RK3399_PLLCON1_POSTDIV1_MASK		0x7
-+#define RK3399_PLLCON1_POSTDIV1_SHIFT		8
-+#define RK3399_PLLCON1_POSTDIV2_MASK		0x7
-+#define RK3399_PLLCON1_POSTDIV2_SHIFT		12
-+#define RK3399_PLLCON2_FRAC_MASK		0xffffff
-+#define RK3399_PLLCON2_FRAC_SHIFT		0
-+#define RK3399_PLLCON3_DSMPD_MASK		0x1
-+#define RK3399_PLLCON3_DSMPD_SHIFT		12
-+
-+#define RK3399_PLLCON2_LOCK_STATUS		(31 << 0)
-+#define RK3399_PLLCON3_PWRDOWN			(1 << 0)
-+
-+static int rockchip_rk3399_pll_wait_lock(struct rockchip_clk_pll *pll)
-+{
-+	u32 pllcon;
-+	int delay = 24000000;
-+
-+	/* poll check the lock status in rk3399 xPLLCON2 */
-+	while (delay > 0) {
-+		pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
-+		if (pllcon & RK3399_PLLCON2_LOCK_STATUS)
-+			return 0;
-+
-+		delay--;
-+	}
-+
-+	pr_err("%s: timeout waiting for pll to lock\n", __func__);
-+	return -ETIMEDOUT;
-+}
-+
-+static void rockchip_rk3399_pll_get_params(struct rockchip_clk_pll *pll,
-+					struct rockchip_pll_rate_table *rate)
-+{
-+	u32 pllcon;
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(0));
-+	rate->fbdiv = ((pllcon >> RK3399_PLLCON0_FBDIV_SHIFT)
-+				& RK3399_PLLCON0_FBDIV_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(1));
-+	rate->refdiv = ((pllcon >> RK3399_PLLCON1_REFDIV_SHIFT)
-+				& RK3399_PLLCON1_REFDIV_MASK);
-+	rate->postdiv1 = ((pllcon >> RK3399_PLLCON1_POSTDIV1_SHIFT)
-+				& RK3399_PLLCON1_POSTDIV1_MASK);
-+	rate->postdiv2 = ((pllcon >> RK3399_PLLCON1_POSTDIV2_SHIFT)
-+				& RK3399_PLLCON1_POSTDIV2_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
-+	rate->frac = ((pllcon >> RK3399_PLLCON2_FRAC_SHIFT)
-+				& RK3399_PLLCON2_FRAC_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(3));
-+	rate->dsmpd = ((pllcon >> RK3399_PLLCON3_DSMPD_SHIFT)
-+				& RK3399_PLLCON3_DSMPD_MASK);
-+}
-+
-+static unsigned long rockchip_rk3399_pll_recalc_rate(struct clk_hw *hw,
-+						     unsigned long prate)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	struct rockchip_pll_rate_table cur;
-+	u64 rate64 = prate;
-+
-+	rockchip_rk3399_pll_get_params(pll, &cur);
-+
-+	rate64 *= cur.fbdiv;
-+	do_div(rate64, cur.refdiv);
-+
-+	if (cur.dsmpd == 0) {
-+		/* fractional mode */
-+		u64 frac_rate64 = prate * cur.frac;
-+
-+		do_div(frac_rate64, cur.refdiv);
-+		rate64 += frac_rate64 >> 24;
-+	}
-+
-+	do_div(rate64, cur.postdiv1);
-+	do_div(rate64, cur.postdiv2);
-+
-+	return (unsigned long)rate64;
-+}
-+
-+static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
-+				const struct rockchip_pll_rate_table *rate)
-+{
-+	const struct clk_ops *pll_mux_ops = pll->pll_mux_ops;
-+	struct clk_mux *pll_mux = &pll->pll_mux;
-+	struct rockchip_pll_rate_table cur;
-+	u32 pllcon;
-+	int rate_change_remuxed = 0;
-+	int cur_parent;
-+	int ret;
-+
-+	pr_debug("%s: rate settings for %lu fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		__func__, rate->rate, rate->fbdiv, rate->postdiv1, rate->refdiv,
-+		rate->postdiv2, rate->dsmpd, rate->frac);
-+
-+	rockchip_rk3399_pll_get_params(pll, &cur);
-+	cur.rate = 0;
-+
-+	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
-+	if (cur_parent == PLL_MODE_NORM) {
-+		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
-+		rate_change_remuxed = 1;
-+	}
-+
-+	/* update pll values */
-+	writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3399_PLLCON0_FBDIV_MASK,
-+						  RK3399_PLLCON0_FBDIV_SHIFT),
-+		       pll->reg_base + RK3399_PLLCON(0));
-+
-+	writel_relaxed(HIWORD_UPDATE(rate->refdiv, RK3399_PLLCON1_REFDIV_MASK,
-+						   RK3399_PLLCON1_REFDIV_SHIFT) |
-+		       HIWORD_UPDATE(rate->postdiv1, RK3399_PLLCON1_POSTDIV1_MASK,
-+						     RK3399_PLLCON1_POSTDIV1_SHIFT) |
-+		       HIWORD_UPDATE(rate->postdiv2, RK3399_PLLCON1_POSTDIV2_MASK,
-+						     RK3399_PLLCON1_POSTDIV2_SHIFT),
-+		       pll->reg_base + RK3399_PLLCON(1));
-+
-+	/* xPLL CON2 is not HIWORD_MASK */
-+	pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
-+	pllcon &= ~(RK3399_PLLCON2_FRAC_MASK << RK3399_PLLCON2_FRAC_SHIFT);
-+	pllcon |= rate->frac << RK3399_PLLCON2_FRAC_SHIFT;
-+	writel_relaxed(pllcon, pll->reg_base + RK3399_PLLCON(2));
-+
-+	writel_relaxed(HIWORD_UPDATE(rate->dsmpd, RK3399_PLLCON3_DSMPD_MASK,
-+					    RK3399_PLLCON3_DSMPD_SHIFT),
-+		       pll->reg_base + RK3399_PLLCON(3));
-+
-+	/* wait for the pll to lock */
-+	ret = rockchip_rk3399_pll_wait_lock(pll);
-+	if (ret) {
-+		pr_warn("%s: pll update unsucessful, trying to restore old params\n",
-+			__func__);
-+		rockchip_rk3399_pll_set_params(pll, &cur);
-+	}
-+
-+	if (rate_change_remuxed)
-+		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_NORM);
-+
-+	return ret;
-+}
-+
-+static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned long drate,
-+					unsigned long prate)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	const struct rockchip_pll_rate_table *rate;
-+	unsigned long old_rate = rockchip_rk3399_pll_recalc_rate(hw, prate);
-+	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
-+
-+	if (IS_ERR(grf)) {
-+		pr_debug("%s: grf regmap not available, aborting rate change\n",
-+			 __func__);
-+		return PTR_ERR(grf);
-+	}
-+
-+	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
-+		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
-+
-+	/* Get required rate settings from table */
-+	rate = rockchip_get_pll_settings(pll, drate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-+			drate, __clk_get_name(hw->clk));
-+		return -EINVAL;
-+	}
-+
-+	return rockchip_rk3399_pll_set_params(pll, rate);
-+}
-+
-+static int rockchip_rk3399_pll_enable(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+
-+	writel(HIWORD_UPDATE(0, RK3399_PLLCON3_PWRDOWN, 0),
-+	       pll->reg_base + RK3399_PLLCON(3));
-+
-+	return 0;
-+}
-+
-+static void rockchip_rk3399_pll_disable(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+
-+	writel(HIWORD_UPDATE(RK3399_PLLCON3_PWRDOWN,
-+			     RK3399_PLLCON3_PWRDOWN, 0),
-+	       pll->reg_base + RK3399_PLLCON(3));
-+}
-+
-+static int rockchip_rk3399_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	u32 pllcon = readl(pll->reg_base + RK3399_PLLCON(3));
-+
-+	return !(pllcon & RK3399_PLLCON3_PWRDOWN);
-+}
-+
-+static void rockchip_rk3399_pll_init(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	const struct rockchip_pll_rate_table *rate;
-+	struct rockchip_pll_rate_table cur;
-+	unsigned long drate;
-+
-+	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
-+		return;
-+
-+	drate = clk_hw_get_rate(hw);
-+	rate = rockchip_get_pll_settings(pll, drate);
-+
-+	/* when no rate setting for the current rate, rely on clk_set_rate */
-+	if (!rate)
-+		return;
-+
-+	rockchip_rk3399_pll_get_params(pll, &cur);
-+
-+	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
-+		 drate);
-+	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		 cur.fbdiv, cur.postdiv1, cur.refdiv, cur.postdiv2,
-+		 cur.dsmpd, cur.frac);
-+	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		 rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2,
-+		 rate->dsmpd, rate->frac);
-+
-+	if (rate->fbdiv != cur.fbdiv || rate->postdiv1 != cur.postdiv1 ||
-+		rate->refdiv != cur.refdiv || rate->postdiv2 != cur.postdiv2 ||
-+		rate->dsmpd != cur.dsmpd || rate->frac != cur.frac) {
-+		struct clk *parent = clk_get_parent(hw->clk);
-+
-+		if (!parent) {
-+			pr_warn("%s: parent of %s not available\n",
-+				__func__, __clk_get_name(hw->clk));
-+			return;
-+		}
-+
-+		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
-+			 __func__, __clk_get_name(hw->clk));
-+		rockchip_rk3399_pll_set_params(pll, rate);
-+	}
-+}
-+
-+static const struct clk_ops rockchip_rk3399_pll_clk_norate_ops = {
-+	.recalc_rate = rockchip_rk3399_pll_recalc_rate,
-+	.enable = rockchip_rk3399_pll_enable,
-+	.disable = rockchip_rk3399_pll_disable,
-+	.is_enabled = rockchip_rk3399_pll_is_enabled,
-+};
-+
-+static const struct clk_ops rockchip_rk3399_pll_clk_ops = {
-+	.recalc_rate = rockchip_rk3399_pll_recalc_rate,
-+	.round_rate = rockchip_pll_round_rate,
-+	.set_rate = rockchip_rk3399_pll_set_rate,
-+	.enable = rockchip_rk3399_pll_enable,
-+	.disable = rockchip_rk3399_pll_disable,
-+	.is_enabled = rockchip_rk3399_pll_is_enabled,
-+	.init = rockchip_rk3399_pll_init,
-+};
-+
- /*
-  * Common registering of pll clocks
-  */
-@@ -634,7 +903,9 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 	pll_mux->lock = &ctx->lock;
- 	pll_mux->hw.init = &init;
- 
--	if (pll_type == pll_rk3036 || pll_type == pll_rk3066)
-+	if (pll_type == pll_rk3036 ||
-+	    pll_type == pll_rk3066 ||
-+	    pll_type == pll_rk3399)
- 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
- 
- 	/* the actual muxing is xin24m, pll-output, xin32k */
-@@ -691,6 +962,12 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 		else
- 			init.ops = &rockchip_rk3066_pll_clk_ops;
- 		break;
-+	case pll_rk3399:
-+		if (!pll->rate_table)
-+			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
-+		else
-+			init.ops = &rockchip_rk3399_pll_clk_ops;
-+		break;
- 	default:
- 		pr_warn("%s: Unknown pll type for pll clk %s\n",
- 			__func__, name);
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index b7affb6..7526f9a 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -96,6 +96,7 @@ struct clk;
- enum rockchip_pll_type {
- 	pll_rk3036,
- 	pll_rk3066,
-+	pll_rk3399,
- };
- 
- #define RK3036_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,	\
-@@ -148,7 +149,7 @@ struct rockchip_pll_rate_table {
- 	unsigned int nf;
- 	unsigned int no;
- 	unsigned int nb;
--	/* for RK3036 */
-+	/* for RK3036/RK3399 */
- 	unsigned int fbdiv;
- 	unsigned int postdiv1;
- 	unsigned int refdiv;
--- 
-1.7.9.5
+Are you ok with me doing the below?
+I submit a v2 that removes the leading 0 in this patch. This
+way this patchset and my PWMSS support for DRA7 patchset can
+get merged. I can then follow up with another separate
+patchset that insures both the unit address and the value in
+the reg property are aligned.
+>
+> Rob
