@@ -1,66 +1,48 @@
-Return-Path: <pi-cheng.chen@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20160311165152.4103.82090@quark.deferred.io>
-References: <20160309152420.20de187a@xhacker>
-	<20160311165152.4103.82090@quark.deferred.io>
-Date: Thu, 31 Mar 2016 10:34:15 +0800
-Message-ID: <CALx668WqPF12eD=f3mfd-=TYwVe4bVk0YVoKtGV_XPM8c+_FeA@mail.gmail.com>
-Subject: Re: [Query]set clk rate must operate its coordinated clock
-From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Jisheng Zhang <jszhang@marvell.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ob0-f195.google.com ([209.85.214.195]:35722 "EHLO
+	mail-ob0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932621AbcCQWHr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2016 18:07:47 -0400
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, bcousson@baylibre.com, tony@atomide.com,
+	linux@arm.linux.org.uk, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v2 0/3] ARM: am335x/am437x: Correct PWM bindings
+Date: Thu, 17 Mar 2016 17:07:40 -0500
+Message-Id: <1458252463-8821-1-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-+linux-mediatek list
+Unlike the majority of other SOCs the PWM node uses ehrpwm instead of
+the generic pwm node name. This patch series switches to the pwm node
+name and while at it fix some other minor binding documentation issues.
 
-On Sat, Mar 12, 2016 at 12:51 AM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Jisheng,
->
-> Quoting Jisheng Zhang (2016-03-08 23:24:20)
->> Dear Stephen, Michael, Sebastian and all,
->>
->> I have the following clk case which I dunno the elegant solution:
->>
->>
->> cpuclk have two parents: cpupll and refclk. When set the cpuclk freq, we
->> have to set its parent's freq, I.E cpupll freq. But before changing the
->> cpupll's freq, we should set its refclk as its parent firstly.
->>
->> AFAIK, this is a common case, I have seen such requirement in rockchip, samsung
->> clk driver. They solve this by notifier, but as pointed out by Michael
->> in http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351565.html
->>
->> "This is also a hack and it points towards some missing infrastructure in the
->> clock framework."
->>
->> I also don't like the notifier solution, I believe the elegant solution could
->> be using the coordinated clock infrastructure. So what's the status of
->> this infrastructure? I can test, and I can even add some code to make it be
->> ready to be merged if you guide me ;)
->
-> Thanks for the email. I hope to finish that feature before ELC. I have
-> Cc'd Pi-Cheng Chen from Mediatek who is also interested in coordinated
-> clock rates.
+This patch series also includes a patch to insure ABI compatibility.
 
-Hi Mike,
+This series was tested on AM335x and AM437x GP evm. I also validated that
+ABI compatibility was maintained.
 
-Sorry for my late response.
-Glad to hear that you're still working on it.
-I am ready to test it on Mediatek platform.
-Looking forwards to the new clk feature.
+V2 changes:
+Dropped patches related to the ranges property.
 
-Thanks,
-Pi-Cheng
+Franklin S Cooper Jr (3):
+  clk: ti: am335x/am4372: Add tbclk to pwm node
+  ARM: DTS: da850/am4372/am33xx: Use generic node name for ehrpwm
+  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
 
->
-> Regards,
-> Mike
->
->>
->> Thanks in advance,
->> Jisheng
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt |  4 ++--
+ arch/arm/boot/dts/am33xx.dtsi                          |  6 +++---
+ arch/arm/boot/dts/am4372.dtsi                          | 12 ++++++------
+ arch/arm/boot/dts/da850.dtsi                           |  4 ++--
+ drivers/clk/ti/clk-33xx.c                              |  3 +++
+ drivers/clk/ti/clk-43xx.c                              |  6 ++++++
+ 6 files changed, 22 insertions(+), 13 deletions(-)
+
+-- 
+2.7.0
+
