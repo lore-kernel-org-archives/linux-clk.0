@@ -1,93 +1,57 @@
-Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 17 Mar 2016 18:14:33 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Wenyou Yang <wenyou.yang@atmel.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH v5 3/5] ARM: at91: pm: configure PMC fast startup signals
+Message-ID: <20160317171433.GD2831@piout.net>
+References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+ <1458111489-23774-4-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <20160301071253.GI8418@lukather>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
- <1456672738-4993-14-git-send-email-vishnupatekar0510@gmail.com> <20160301071253.GI8418@lukather>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Thu, 3 Mar 2016 00:04:22 +0800
-Message-ID: <CAEzqOZt2khVambkoCcBNwvQU2pQiWzbEs5cKZJBaAqD0p3T++g@mail.gmail.com>
-Subject: Re: [PATCH v2 13/13] ARM: sunxi: Introduce MACH_SUN8I_A83T option
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458111489-23774-4-git-send-email-wenyou.yang@atmel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Maxime,
+On 16/03/2016 at 14:58:07 +0800, Wenyou Yang wrote :
+> The fast startup signal is used as wake up sources for ULP1 mode.
+> As soon as a fast startup signal is asserted, the embedded 12 MHz
+> RC oscillator restarts automatically.
+> 
+> This patch is to configure the fast startup signals, which signal
+> is enabled to trigger the PMC to wake up the system from ULP1 mode
+> should be configured via the DT.
+> 
+> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
 
-On Tue, Mar 1, 2016 at 3:12 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Sun, Feb 28, 2016 at 11:18:58PM +0800, Vishnu Patekar wrote:
->> A83T has CPUS clock similar to A80's. currently, a80 cpus clock only
->> compiled for A80. So, Introduce MACH_SUN8I_A83T to compile it for
->> A83T as well.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> ---
->>  arch/arm/mach-sunxi/Kconfig | 5 +++++
->>  drivers/clk/sunxi/Makefile  | 3 +++
->>  2 files changed, 8 insertions(+)
->>
->> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
->> index c124d65..424b76d 100644
->> --- a/arch/arm/mach-sunxi/Kconfig
->> +++ b/arch/arm/mach-sunxi/Kconfig
->> @@ -41,6 +41,11 @@ config MACH_SUN8I
->>       select ARM_GIC
->>       select MFD_SUN6I_PRCM
->>
->> +config MACH_SUN8I_A83T
->> +     bool "Allwinner A83T (sun8i) SoCs support"
->> +     default ARCH_SUNXI
->> +     select ARM_GIC
->> +
->>  config MACH_SUN9I
->>       bool "Allwinner (sun9i) SoCs support"
->>       default ARCH_SUNXI
->> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
->> index 3fd7901..2aabfc4 100644
->> --- a/drivers/clk/sunxi/Makefile
->> +++ b/drivers/clk/sunxi/Makefile
->> @@ -20,6 +20,9 @@ obj-y += clk-usb.o
->>  obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
->>  obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
->>
->> +obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun8i-apb0.o
->> +obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun9i-cpus.o
->> +
->
-> This is not how it should be done. You should rather create a Kconfig
-> option for these clocks, and use def_bool CONFIG_MACH_SUN8I || CONFIG_MACH_SUN9I
->
-> Switching to Kconfig for the clocks has been on my todo-list for quite
-> some time, I guess these two clocks would be a good start.
-Okie, I'll create Kconfig in clk/sunxi as below:
-config CLK_SUN8I_APB0
-def_bool MACH_SUN9I || MACH_SUN8I_A83T
+I would actually avoid doing that from the PMC driver and do that
+configuration from the aic5 driver. It has all the information you need,
+it knows what kind of level or edge is needed to wake up and what are
+the wakeup interrupts to enable. This will allow you to stop introducing
+a new binding. Also, this will avoid discrepancies between what is
+configured in the DT and what the user really wants (for exemple
+differences between the edge direction configured for the PIOBu in
+userspace versus what is in the device tree or wakeonlan
+activation/deactivation).
 
-config CLK_SUN9I_CPUS
-def_bool MACH_SUN9I || MACH_SUN8I_A83T
+You can get the PMC syscon from irq-atmel-aic5.c and then use a table to
+map the hwirq to the offset in PMC_FSMR. Use it in aic5_set_type to set
+the polarity and then in aic5_suspend to enable the wakeup.
 
-We still need to have MACH_SUN8I_A83T to differentiate between
-MFD_SUN6I_PRCM which is used by other sun8i platforms.
+Maybe we could even go further and avoid ulp1 if no ulp1 compatbile
+wakeup sources are defined but there are ulp0 wakeup sources.
 
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
