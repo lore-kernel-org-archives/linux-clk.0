@@ -1,154 +1,154 @@
-Return-Path: <dmitry.torokhov@gmail.com>
-Return-Path: <dmitry.torokhov@gmail.com>
-Date: Thu, 31 Mar 2016 10:38:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:52518 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S933167AbcCQQOI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2016 12:14:08 -0400
+Date: Thu, 17 Mar 2016 17:14:06 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Wenyou Yang <wenyou.yang@atmel.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 32/46] pwm: deprecate pwm_config(), pwm_enable() and
- pwm_disable()
-Message-ID: <20160331173858.GB39098@dtor-ws>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-33-git-send-email-boris.brezillon@free-electrons.com>
+	Russell King <linux@arm.linux.org.uk>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH v5 1/5] ARM: at91: pm: create a separate procedure for
+ the ULP0 mode
+Message-ID: <20160317161406.GB2831@piout.net>
+References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+ <1458111489-23774-2-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459368249-13241-33-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1458111489-23774-2-git-send-email-wenyou.yang@atmel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Boris,
-
-On Wed, Mar 30, 2016 at 10:03:55PM +0200, Boris Brezillon wrote:
-> Prefix those function as deprecated to encourage all existing users to
-> switch to pwm_apply_state().
-
-Why not keep at least some of them as wrappers where we do not need to
-chnage several parameters at once? It is much easier to have a driver
-do:
-
-	error = pwm_enable(pwm);
-	if (error)
-		...
-
-rather than declaring the state variable, fectch it, adjust and then
-apply.
-
+On 16/03/2016 at 14:58:05 +0800, Wenyou Yang wrote :
+> To make the code more legible and prepare to add the ULP1 mode
+> support in the future, create a separate procedure for the ULP0 mode.
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+
 > ---
->  include/linux/pwm.h | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
 > 
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index 4aad4eb..9bac10f 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -225,8 +225,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
->   *
->   * Returns: 0 on success or a negative error code on failure.
->   */
-> -static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> -			     int period_ns)
-> +static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
-> +					  int period_ns)
->  {
->  	struct pwm_state pstate;
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
+>  1 file changed, 40 insertions(+), 25 deletions(-)
+> 
+> diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+> index a25defd..5fcffdc 100644
+> --- a/arch/arm/mach-at91/pm_suspend.S
+> +++ b/arch/arm/mach-at91/pm_suspend.S
+> @@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
 >  
-> @@ -252,8 +252,8 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
->   *
->   * Returns: 0 on success or a negative error code on failure.
->   */
-> -static inline int pwm_set_polarity(struct pwm_device *pwm,
-> -				   enum pwm_polarity polarity)
-> +static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
-> +						enum pwm_polarity polarity)
->  {
->  	struct pwm_state pstate;
+>  	ldr	r0, .pm_mode
+>  	tst	r0, #AT91_PM_SLOW_CLOCK
+> -	beq	skip_disable_main_clock
+> +	beq	standby_mode
 >  
-> @@ -284,7 +284,7 @@ static inline int pwm_set_polarity(struct pwm_device *pwm,
->   *
->   * Returns: 0 on success or a negative error code on failure.
->   */
-> -static inline int pwm_enable(struct pwm_device *pwm)
-> +static inline int __deprecated pwm_enable(struct pwm_device *pwm)
->  {
->  	struct pwm_state pstate;
+>  	ldr	pmc, .pmc_base
 >  
-> @@ -303,7 +303,7 @@ static inline int pwm_enable(struct pwm_device *pwm)
->   * pwm_disable() - stop a PWM output toggling
->   * @pwm: PWM device
->   */
-> -static inline void pwm_disable(struct pwm_device *pwm)
-> +static inline void __deprecated pwm_disable(struct pwm_device *pwm)
->  {
->  	struct pwm_state pstate;
+> @@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
+>  	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+>  	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
 >  
-> @@ -360,24 +360,24 @@ static inline int pwm_apply_state(struct pwm_device *pwm,
->  	return -ENOTSUPP;
->  }
+> -	/* Turn off the main oscillator */
+> -	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+> -	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
+> -	orr	tmp1, tmp1, #AT91_PMC_KEY
+> -	str	tmp1, [pmc, #AT91_CKGR_MOR]
+> -
+> -skip_disable_main_clock:
+> -	ldr	pmc, .pmc_base
+> -
+> -	/* Wait for interrupt */
+> -	at91_cpu_idle
+> -
+> -	ldr	r0, .pm_mode
+> -	tst	r0, #AT91_PM_SLOW_CLOCK
+> -	beq	skip_enable_main_clock
+> +ulp0_mode:
+> +	bl	at91_pm_ulp0_mode
+> +	b	ulp_exit
 >  
-> -static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> -			     int period_ns)
-> +static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
-> +					  int period_ns)
->  {
->  	return -EINVAL;
->  }
+> +ulp_exit:
+>  	ldr	pmc, .pmc_base
 >  
-> -static inline int pwm_set_polarity(struct pwm_device *pwm,
-> -				   enum pwm_polarity polarity)
-> +static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
-> +						enum pwm_polarity polarity)
->  {
->  	return -ENOTSUPP;
->  }
+> -	/* Turn on the main oscillator */
+> -	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+> -	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+> -	orr	tmp1, tmp1, #AT91_PMC_KEY
+> -	str	tmp1, [pmc, #AT91_CKGR_MOR]
+> -
+> -	wait_moscrdy
+> -
+>  	/* Restore PLLA setting */
+>  	ldr	tmp1, .saved_pllar
+>  	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+> @@ -177,7 +158,15 @@ skip_disable_main_clock:
 >  
-> -static inline int pwm_enable(struct pwm_device *pwm)
-> +static inline int __deprecated pwm_enable(struct pwm_device *pwm)
->  {
->  	return -EINVAL;
->  }
+>  	wait_mckrdy
 >  
-> -static inline void pwm_disable(struct pwm_device *pwm)
-> +static inline void __deprecated pwm_disable(struct pwm_device *pwm)
->  {
->  }
+> -skip_enable_main_clock:
+> +	b	pm_exit
+> +
+> +standby_mode:
+> +	ldr	pmc, .pmc_base
+> +
+> +	/* Wait for interrupt */
+> +	at91_cpu_idle
+> +
+> +pm_exit:
+>  	/* Exit the self-refresh mode */
+>  	mov	r0, #SRAMC_SELF_FRESH_EXIT
+>  	bl	at91_sramc_self_refresh
+> @@ -311,6 +300,32 @@ exit_sramc_sf:
+>  	mov	pc, lr
+>  ENDPROC(at91_sramc_self_refresh)
 >  
+> +/*
+> + * void at91_pm_ulp0_mode(void)
+> + */
+> +ENTRY(at91_pm_ulp0_mode)
+> +	ldr	pmc, .pmc_base
+> +
+> +	/* Turn off the crystal oscillator */
+> +	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+> +	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
+> +	orr	tmp1, tmp1, #AT91_PMC_KEY
+> +	str	tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +	/* Wait for interrupt */
+> +	at91_cpu_idle
+> +
+> +	/* Turn on the crystal oscillator */
+> +	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+> +	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+> +	orr	tmp1, tmp1, #AT91_PMC_KEY
+> +	str	tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +	wait_moscrdy
+> +
+> +	mov	pc, lr
+> +ENDPROC(at91_pm_ulp0_mode)
+> +
+>  .pmc_base:
+>  	.word 0
+>  .sramc_base:
 > -- 
-> 2.5.0
+> 1.7.9.5
 > 
 
 -- 
-Dmitry
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
