@@ -1,42 +1,49 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org
-Subject: [PATCH] clk: at91: fix check of clk_register() returned value
-Date: Tue,  8 Mar 2016 01:41:29 +0200
-Message-Id: <1457394089-15319-1-git-send-email-vz@mleia.com>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Jonathan Corbet <corbet@lwn.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH 5/8] clk: bcm2835: add the dsi clocks
+In-Reply-To: <1456760642-2412-6-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org> <1456760642-2412-6-git-send-email-kernel@martin.sperl.org>
+Date: Thu, 17 Mar 2016 10:27:41 -0700
+Message-ID: <87oaadj9pu.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk_register() function returns a valid pointer to struct clk or
-ERR_PTR() error code, this makes a check for returned NULL value
-useless and may lead to oops on error path.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
-Alexandre, Boris,
+kernel@martin.sperl.org writes:
 
-I've seen your recent huge updates to the driver, but I haven't found
-them in clk-next, I hope that this trivial fix against clk-next won't
-cause a big pain on rebase.
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> Add the missing dsi clocks using the currently "best known"
+> parent-mux available for these clocks.
 
- drivers/clk/at91/clk-h32mx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Having been working on DSI support, there is definitely no point in DSI0
+and DSI1 pixel clocks without their proper parents and this patch would
+just get in the way.  The esc clocks look fine, though.
 
-diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
-index 61566bc..a165230 100644
---- a/drivers/clk/at91/clk-h32mx.c
-+++ b/drivers/clk/at91/clk-h32mx.c
-@@ -116,7 +116,7 @@ void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
- 	h32mxclk->pmc = pmc;
- 
- 	clk = clk_register(NULL, &h32mxclk->hw);
--	if (!clk) {
-+	if (IS_ERR(clk)) {
- 		kfree(h32mxclk);
- 		return;
- 	}
--- 
-2.1.4
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJW6ukNAAoJELXWKTbR/J7o+oMP/1/IiQ5co+GYh+nVeveNWYEE
+ZiN507TD+2P5B8+OqL8HEwSezLox18bnZA72kB0IlDx0y76FHNhRwcfaNsrJ/X55
+As1UWZb/iPtRCQ4wjHzW+PZGAmlLzmaMTMEs6VNcx1q9RYzr5w8/fU0GYViMr/HP
+bgIRuWjv1SuZhri8WPvhUUaJAeB/Vj66z2Rwt+bflQX6YkdzwOUib0xhzIBMoXs8
+g+zUeRq/5jYnigvSbdV7dGw4SArkCeUkWp958EUV1jvfg2grqqrSKL/MLlYmyLda
+ujGNQMvgUS3fkDfRwjBgHYHvxvKVb+wWILsw+vO6ZQtVlqIBQDZbEyNdvX2fpCrs
+OpmMC3ovAWE2HKDP3dLO63BwboZoS4Nv0ohpxsK0Itw8rHhJG5NuzkEk8/fpTy+z
+7z/FqhYq7A36HSiLV8MxIVhcrhxKWbCz6Un1+jdz5WOHU/L6AwMNBwCTZV3DXK+q
+A2P4N5W+92e37jkeATYxO5rAXXItZLar1GvzRocTQISdRHmhHsOP4J0Lvbz/phrX
+Rx8rlL2rLuoB0mL6wSU64PHyfUhs7xNKpdn/xCesDre2swvmj2519Y0li1DRa6hl
+I/qIcdlcJT1KXob9LcLRUnLQcaN1/jbodrSG3FqX+Eq93aEuqK2IR2UMpqQiqDI1
+aEWTcStzzsfdUegL0Px6
+=HgTZ
+-----END PGP SIGNATURE-----
+--=-=-=--
