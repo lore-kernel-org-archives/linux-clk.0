@@ -1,51 +1,30 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Vladimir Zapolskiy <vz@mleia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Lee Jones <lee@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: bcm2835: fix check of error code returned by devm_ioremap_resource()
-In-Reply-To: <1457227295-3093-1-git-send-email-vz@mleia.com>
-References: <1457227295-3093-1-git-send-email-vz@mleia.com>
-Date: Mon, 07 Mar 2016 15:27:47 -0800
-Message-ID: <87d1r5yiks.fsf@eliezer.anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:40585 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1031021AbcCQRTw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 17 Mar 2016 13:19:52 -0400
+Date: Thu, 17 Mar 2016 12:19:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 10/18] dt-bindings: Add PLX Technology OXNAS Standard
+ Clocks bindings
+Message-ID: <20160317171947.GA3294@rob-hp-laptop>
+References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
+ <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
+ <1457519060-6038-11-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457519060-6038-11-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+On Wed, Mar 09, 2016 at 11:24:12AM +0100, Neil Armstrong wrote:
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../devicetree/bindings/clock/plxtech,stdclk.txt   | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
 
-Vladimir Zapolskiy <vz@mleia.com> writes:
-
-> The change fixes potential oops while accessing iomem on invalid
-> address, if devm_ioremap_resource() fails due to some reason.
->
-> The devm_ioremap_resource() function returns ERR_PTR() and never
-> returns NULL, which makes useless a following check for NULL.
->
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> Fixes: 5e63dcc74b30 ("clk: bcm2835: Add a driver for the auxiliary peripheral clock gates")
-
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJW3g50AAoJELXWKTbR/J7oUvQP/2HuBR7sueIaUn+DyvFabZqg
-zOawCSwpujq/ETmAzTUTAeVEapwg6tmPXNnu1xTlLmDWE/XyPIBKGVGxoXdEyUAb
-3D5JERWec31DidJCO+dfDNhA/dwTtrNHW6XDl4hz1GU1JP9ZxnszMTU09c7I0lhY
-ArWQMzQn0yRPZ5wHAfI+sp2yZetOwIm7o0l9XB2BHihHrGqsnZ7XC9KPQsYhDiey
-6AMoxk+D/e4R+DVWt5gmuz+lAQR5VnZxHCOM8WsSSVXoh+1tlA0Zh0w+87/w3GYd
-9rpA0kAemDX1MJ+6EcvBVZosNb8EZjjqmNsFETBtAlWPyaq40YHkWDK0ivpA736f
-6Mz8sCBiBWgxxttef05Ty8VwjXyrMmVKT6HNRSQh9862f6QecwHYTIb0U+I0cn9J
-CHaTTSkZqitbs5PQebgIPIsvnBGeyL/LFKJeFVsSdtmZvPcY/ltWHMjqpmQ7BdNX
-fRp0ooBHmsIABC1COuMslVBoxzw7wjSb4A1btkaojqYSaHriGUK1bkw4SP1M91li
-VwcCB3J8yyYaDIwjLxoWFwjyD2uTP2vgaQWAosU7T5/5PRxNTS5Kpm0TzrDzm/Z8
-x9ucZpESI8e3v/tC6VM726FQvpwSDbmPpvpBob8QGlDbSYvJJ9zW/jArp0wc1Z5j
-ZO4UXFDxBBlsRqfvbejA
-=CzEA
------END PGP SIGNATURE-----
---=-=-=--
+Acked-by: Rob Herring <robh@kernel.org>
