@@ -1,70 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35779 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751891AbcCIKZB (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2016 05:25:01 -0500
-Received: by mail-wm0-f51.google.com with SMTP id l68so170979093wml.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Mar 2016 02:25:01 -0800 (PST)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 10/18] dt-bindings: Add PLX Technology OXNAS Standard Clocks bindings
-Date: Wed,  9 Mar 2016 11:24:12 +0100
-Message-Id: <1457519060-6038-11-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
-References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
- <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 17 Mar 2016 12:01:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Scott Wood <scott.wood@nxp.com>
+Cc: Yangbo Lu <yangbo.lu@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	Zhao Qiang <qiang.zhao@freescale.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for
+ T4240-R1.0-R2.0
+Message-ID: <20160317170101.GA21009@rob-hp-laptop>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+ <1457518131-11339-6-git-send-email-yangbo.lu@nxp.com>
+ <4947024.WeMycs2fID@wuerfel>
+ <HE1PR04MB0889CE4742B92461A925B9C4F8880@HE1PR04MB0889.eurprd04.prod.outlook.com>
+ <DB5PR0401MB19286B2D23D07F5C60DB799D91880@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <DB5PR0401MB19286B2D23D07F5C60DB799D91880@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../devicetree/bindings/clock/plxtech,stdclk.txt   | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
+On Mon, Mar 14, 2016 at 05:45:43PM +0000, Scott Wood wrote:
+> On 03/14/2016 02:29 AM, Yangbo Lu wrote:
+> >> -----Original Message-----
+> >> From: Arnd Bergmann [mailto:arnd@arndb.de]
+> >> Sent: Monday, March 14, 2016 6:26 AM
+> >> To: linuxppc-dev@lists.ozlabs.org
+> >> Cc: Yangbo Lu; devicetree@vger.kernel.org; linux-arm-
+> >> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> >> clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
+> >> foundation.org; netdev@vger.kernel.org; linux-mmc@vger.kernel.org;
+> >> ulf.hansson@linaro.org; Zhao Qiang; Russell King; Bhupesh Sharma; Joerg
+> >> Roedel; Santosh Shilimkar; Scott Wood; Rob Herring; Claudiu Manoil; Kumar
+> >> Gala; Yang-Leo Li; Xiaobo Xie
+> >> Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for T4240-
+> >> R1.0-R2.0
+> >>
+> >> On Wednesday 09 March 2016 18:08:51 Yangbo Lu wrote:
+> >>> @@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device
+> >> *pdev, struct sdhci_host *host)
+> >>>         struct sdhci_pltfm_host *pltfm_host;
+> >>>         struct sdhci_esdhc *esdhc;
+> >>>         u16 host_ver;
+> >>> +       u32 svr;
+> >>>
+> >>>         pltfm_host = sdhci_priv(host);
+> >>>         esdhc = sdhci_pltfm_priv(pltfm_host);
+> >>>
+> >>> +       fsl_guts_init();
+> >>> +       svr = fsl_guts_get_svr();
+> >>> +       if (svr) {
+> >>> +               esdhc->soc_ver = SVR_SOC_VER(svr);
+> >>> +               esdhc->soc_rev = SVR_REV(svr);
+> >>> +       } else {
+> >>> +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
+> >>> +       }
+> >>> +
+> >>
+> >> This makes the driver non-portable. Better identify the specific
+> >> workarounds based on the compatible string for this device, or add a
+> >> boolean DT property for the quirk.
+> >>
+> >> 	Arnd
+> > 
+> > [Lu Yangbo-B47093] Hi Arnd, we did have a discussion about using DTS in v1 before.
+> > https://patchwork.kernel.org/patch/6834221/
+> > 
+> > We don’t have a separate DTS file for each revision of an SOC and if we did, we'd constantly have people using the wrong one.
+> > In addition, the device tree is stable ABI and errata are often discovered after device tree are deployed.
+> > See the link for details.
+> > 
+> > So we decide to read SVR from the device-config/guts MMIO block other than using DTS.
+> > Thanks.
+> 
+> Also note that this driver is already only for fsl-specific hardware,
+> and it will still work even if fsl_guts doesn't find anything to bind to
+> -- it just wouldn't be able to detect errata based on SVR in that case.
 
-diff --git a/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt b/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
-new file mode 100644
-index 0000000..c60b459
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
-@@ -0,0 +1,35 @@
-+PLX Technology OXNAS SoC Family Standard Clocks
-+================================================
-+
-+Please also refer to clock-bindings.txt in this directory for common clock
-+bindings usage.
-+
-+Required properties:
-+- compatible: Should be "oxsemi,ox810se-stdclk"
-+- #clock-cells: 1, see below
-+
-+Parent node should have the following properties :
-+- compatible: Should be "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
-+
-+For OX810SE, the clock indices are :
-+ - 0: LEON
-+ - 1: DMA_SGDMA
-+ - 2: CIPHER
-+ - 3: SATA
-+ - 4: AUDIO
-+ - 5: USBMPH
-+ - 6: ETHA
-+ - 7: PCIA
-+ - 8: NAND
-+
-+example:
-+
-+sys: sys-ctrl@000000 {
-+	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
-+	reg = <0x000000 0x100000>;
-+
-+	stdclk: stdclk {
-+		compatible = "oxsemi,ox810se-stdclk";
-+		#clock-cells = <1>;
-+	};
-+};
--- 
-1.9.1
+IIRC, it is the same IP block as i.MX and Arnd's point is this won't 
+even compile on !PPC. It is things like this that prevent sharing the 
+driver. Dealing with Si revs is a common problem. We should have a 
+common solution. There is soc_device for this purpose.
 
+OTOH, the integration differences may be enough that trying to have a 
+common driver with i.MX would not be worth it.
+
+Rob
