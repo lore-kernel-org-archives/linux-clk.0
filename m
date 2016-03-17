@@ -1,84 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from plaes.org ([188.166.43.21]:58531 "EHLO plaes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753870AbcCPRUs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 16 Mar 2016 13:20:48 -0400
-Message-ID: <1458148822.4849.1.camel@plaes.org>
-Subject: Re: [linux-sunxi] [PATCH v4 13/13] ARM: sunxi: Add Kconfig for
- sunxi clocks
-From: Priit Laes <plaes@plaes.org>
-To: vishnupatekar0510@gmail.com, robh+dt@kernel.org, corbet@lwn.net,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	patchesrdh@mveas.com, linux-clk@vger.kernel.org
-Date: Wed, 16 Mar 2016 19:20:22 +0200
-In-Reply-To: <1458144276-31108-14-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-	 <1458144276-31108-14-git-send-email-vishnupatekar0510@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <antonynpavlov@gmail.com>
+Return-Path: <antonynpavlov@gmail.com>
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: linux-mips@linux-mips.org
+Cc: Alban Bedel <albeu@free.fr>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 06/18] MIPS: dts: qca: ar9132_tl_wr1043nd_v1.dts: use "ref" for reference clock name
+Date: Thu, 17 Mar 2016 06:34:13 +0300
+Message-Id: <1458185665-4521-7-git-send-email-antonynpavlov@gmail.com>
+In-Reply-To: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
+References: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2016-03-17 at 00:04 +0800, Vishnu Patekar wrote:
-> This patch adds Kconfig for sunxi clocks.
-> Currently, only sun8i-apb0 and sun9i-cpus clocks are added.
-> It'll help to use common clocks across different SOCs.
-> We can switch to kconfig for other clocks in future.
-> 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> ---
->  drivers/clk/Kconfig        | 1 +
->  drivers/clk/sunxi/Kconfig  | 5 +++++
->  drivers/clk/sunxi/Makefile | 4 ++--
->  3 files changed, 8 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/clk/sunxi/Kconfig
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index eca8e01..f9f42e6 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -210,3 +210,4 @@ source "drivers/clk/mvebu/Kconfig"
->  
->  source "drivers/clk/samsung/Kconfig"
->  source "drivers/clk/tegra/Kconfig"
-> +source "drivers/clk/sunxi/Kconfig"
+Current ath79 clock.c code does not read reference clock and
+pll setup from devicetree. The ar724x_clocks_init() function
+recreates the clocks from scratch so devicetree clock
+information is dropped. After adding the code which picked up
+reference clock from devicetree I have found
+that kernel does not boot anymore. The SPI and UART drivers
+can't get clk; here are the bootlog error messages:
 
-Should be in alphabetic order?
+    of_serial: probe of 18020000.uart failed with error -22
+    ath79-spi: probe of 1f000000.spi failed with error -22
 
-> diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
-> new file mode 100644
-> index 0000000..3e8ede4
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/Kconfig
-> @@ -0,0 +1,5 @@
-> +config CLK_SUN8I_APB0
-> +	def_bool MACH_SUN9I || MACH_SUN8I
-> +
-> +config CLK_SUN9I_CPUS
-> +	def_bool MACH_SUN9I || MACH_SUN8I
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 3fd7901..38dfca8 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -17,8 +17,8 @@ obj-y += clk-sun9i-core.o
->  obj-y += clk-sun9i-mmc.o
->  obj-y += clk-usb.o
->  
-> -obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
-> -obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
-> +obj-$(CONFIG_CLK_SUN8I_APB0) += clk-sun8i-apb0.o
-> +obj-$(CONFIG_CLK_SUN9I_CPUS) += clk-sun9i-cpus.o
->  
->  obj-$(CONFIG_MFD_SUN6I_PRCM) += \
->  	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
-> -- 
-> 1.9.1
-> 
+The problem is that clock code assumes that reference clock
+name is "ref" but current dts-file uses another name: "oscillator".
+
+This patch fixes the problem by changing external oscillator
+dt node name to "ref".
+
+Please note that there is an alternative solution for the problem:
+
+    > --- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+    > +++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+    > @@ -16,6 +16,7 @@
+    >
+    >         extosc: oscillator {
+    >                 compatible = "fixed-clock";
+    > +               clock-output-names = "ref";
+    >                 #clock-cells = <0>;
+    >                 clock-frequency = <40000000>;
+    >         };
+
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+Cc: Alban Bedel <albeu@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+---
+ arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+index eb632a2..3c3b7ce 100644
+--- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
++++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+@@ -14,7 +14,7 @@
+ 		reg = <0x0 0x2000000>;
+ 	};
+ 
+-	extosc: oscillator {
++	extosc: ref {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <40000000>;
+-- 
+2.7.0
