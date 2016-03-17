@@ -1,217 +1,141 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 15/46] pwm: introduce the pwm_state concept
-Date: Wed, 30 Mar 2016 22:03:38 +0200
-Message-Id: <1459368249-13241-16-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <fcooper@ti.com>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+To: Rob Herring <robh@kernel.org>
+CC: Thierry Reding <thierry.reding@gmail.com>,
+        Pawel Moll
+	<pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King - ARM Linux <linux@arm.linux.org.uk>,
+        Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap
+	<linux-omap@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
+ generic node name
+References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+ <1457380318-15452-6-git-send-email-fcooper@ti.com>
+ <20160317150305.GA27356@rob-hp-laptop> <56EAE014.8070606@ti.com>
+ <CAL_Jsq+3vRMezgrA53jPgMZUYR+DAA_886K1Q6YfxV1bPinoQQ@mail.gmail.com>
+ <56EAF562.9060408@ti.com>
+ <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
+ <56EB04C1.3010709@ti.com>
+ <CAL_JsqKLhyOVUa_21bwf4vRNCNFt0tadwW+RUavgsXeJu3p1pQ@mail.gmail.com>
+Message-ID: <56EB0ADA.4020006@ti.com>
+Date: Thu, 17 Mar 2016 14:51:54 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqKLhyOVUa_21bwf4vRNCNFt0tadwW+RUavgsXeJu3p1pQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM state, represented by its period, duty_cycle and polarity,
-is currently directly stored in the PWM device.
-Declare a pwm_state structure embedding those field so that we can later
-use this struct to atomically update all the PWM parameters at once.
 
-All pwm_get_xxx() helpers are now implemented as wrappers around
-pwm_get_state().
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/pwm/core.c  |  8 ++++----
- include/linux/pwm.h | 54 +++++++++++++++++++++++++++++++++++++++++------------
- 2 files changed, 46 insertions(+), 16 deletions(-)
+On 03/17/2016 02:48 PM, Rob Herring wrote:
+> On Thu, Mar 17, 2016 at 2:25 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>> +Sekhar
+>>
+>> On 03/17/2016 01:56 PM, Rob Herring wrote:
+>>> On Thu, Mar 17, 2016 at 1:20 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>>>> On 03/17/2016 01:00 PM, Rob Herring wrote:
+>>>>> On Thu, Mar 17, 2016 at 11:49 AM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>>>>>> On 03/17/2016 10:03 AM, Rob Herring wrote:
+>>>>>>> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
+>>>>>>>> Now that the node name has been changed from ehrpwm to pwm the document
+>>>>>>>> should show this proper usage. Also change the unit address in the example
+>>>>>>>> from 0 to the proper physical address value that should be used.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>>>>>>>> ---
+>>>>>>>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+>>>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>>>>>>> index 9c100b2..20211ed 100644
+>>>>>>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>>>>>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>>>>>>> @@ -15,14 +15,14 @@ Optional properties:
+>>>>>>>>
+>>>>>>>>  Example:
+>>>>>>>>
+>>>>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+>>>>>>>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+>>>>>>>>      compatible = "ti,am33xx-ehrpwm";
+>>>>>>>>      #pwm-cells = <3>;
+>>>>>>>>      reg = <0x48300200 0x100>;
+>>>>>>>>      ti,hwmods = "ehrpwm0";
+>>>>>>>>  };
+>>>>>>>>
+>>>>>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+>>>>>>>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
+>>>>>>> No leading 0s, but more importantly the address is wrong.
+>>>>>> I will remove the leading 0. However, this value was taken
+>>>>>> from the .dtsi and I just double checked and I see the same
+>>>>>> value in the datasheet. I believe DA850,OMAP-L138 and AM18x
+>>>>>> all have the same memory mapping. I'm looking at
+>>>>>> http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
+>>>>>> addresses match up what is seen here and in the .dtsi.
+>>>>>>
+>>>>>> Can you point me to which document your looking at that
+>>>>>> shows a different value?
+>>>>> Ummm, ...
+>>>>>
+>>>>>>>>      compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>>>>>>>      #pwm-cells = <3>;
+>>>>>>>>      reg = <0x300000 0x2000>;
+>>>>> right here.
+>>>> So I don't know the history but the SOC node specifies a
+>>>> ranges value of ranges = <0x0 0x01c00000 0x400000>;. It
+>>>> seems that all child nodes of SOC have a reg property then
+>>>> is based on an offset of 0x01c00000. So this is true for
+>>>> UART, rtc, i2c, wdt, mmc, spi etc... So using a base offset
+>>>> of 0x01c00000 + 0x300000 (reg value of the pwm) equals the
+>>>> physical address of the ehrpwm0 register 0x1f00000.
+>>>>
+>>>> For the child nodes within the SOC node, the unit-address is
+>>>> always based on the physical address not based on the offset
+>>>> address.
+>>> They are all wrong and should be fixed. Unit address should match the
+>>> reg property unless the bus has defined something different (e.g.
+>>> PCI).
+>> I added Sekhar to hopefully comment if it would be better to
+>> try to get the reg properties to use their physical
+>> addresses or change the unit address to use the offset values.
+> Change the unit addresses (i.e. use ranges). The main reason ranges
+> with translation is preferred is it limits the scope of the bus as the
+> h/w design typically would.
+>
+>> I don't mind shooting a patch that makes this massive switch
+>> for all the various peripherals and documentation. However,
+>> this is a bit beyond this series.  In this series I am not
+>> setting the unit address or reg address I am simply
+>> documenting what is currently being used. This patch set is
+>> a dependency for another patchset to get PWM support for DRA7.
+> Agreed. I'm not asking for everything to be fixed.
+>
+>> Are you ok with me doing the below?
+>> I submit a v2 that removes the leading 0 in this patch. This
+>> way this patchset and my PWMSS support for DRA7 patchset can
+>> get merged. I can then follow up with another separate
+>> patchset that insures both the unit address and the value in
+>> the reg property are aligned.
+> The example is an example. It doesn't have to match dts files (if it
+> always did, then examples would be pointless). So please fix the
+> documentation now. The dts files can be updated separately.
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 6433059..f3f91e7 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 		pwm->chip = chip;
- 		pwm->pwm = chip->base + i;
- 		pwm->hwpwm = i;
--		pwm->polarity = polarity;
-+		pwm->state.polarity = polarity;
- 
- 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
- 	}
-@@ -446,8 +446,8 @@ int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
- 	if (err)
- 		return err;
- 
--	pwm->duty_cycle = duty_ns;
--	pwm->period = period_ns;
-+	pwm->state.duty_cycle = duty_ns;
-+	pwm->state.period = period_ns;
- 
- 	return 0;
- }
-@@ -480,7 +480,7 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
- 	if (err)
- 		return err;
- 
--	pwm->polarity = polarity;
-+	pwm->state.polarity = polarity;
- 
- 	return 0;
- }
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index ed65354..f0f0f37 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -97,6 +97,18 @@ enum {
- 	PWMF_EXPORTED = 1 << 2,
- };
- 
-+/*
-+ * struct pwm_state - state of a PWM channel
-+ * @period: PWM period (in nanoseconds)
-+ * @duty_cycle: PWM duty cycle (in nanoseconds)
-+ * @polarity: PWM polarity
-+ */
-+struct pwm_state {
-+	unsigned int period;
-+	unsigned int duty_cycle;
-+	enum pwm_polarity polarity;
-+};
-+
- /**
-  * struct pwm_device - PWM channel object
-  * @label: name of the PWM device
-@@ -105,10 +117,8 @@ enum {
-  * @pwm: global index of the PWM device
-  * @chip: PWM chip providing this PWM device
-  * @chip_data: chip-private data associated with the PWM device
-- * @period: period of the PWM signal (in nanoseconds)
-- * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
-- * @polarity: polarity of the PWM signal
-  * @args: PWM arguments
-+ * @state: curent PWM channel state
-  */
- struct pwm_device {
- 	const char *label;
-@@ -118,13 +128,21 @@ struct pwm_device {
- 	struct pwm_chip *chip;
- 	void *chip_data;
- 
--	unsigned int period;
--	unsigned int duty_cycle;
--	enum pwm_polarity polarity;
--
- 	struct pwm_args args;
-+	struct pwm_state state;
- };
- 
-+/**
-+ * pwm_get_state() - retrieve the current PWM state
-+ * @pwm: PWM device
-+ * @state: state to fill with the current PWM state
-+ */
-+static inline void pwm_get_state(const struct pwm_device *pwm,
-+				 struct pwm_state *state)
-+{
-+	*state = pwm->state;
-+}
-+
- static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- {
- 	return test_bit(PWMF_ENABLED, &pwm->flags);
-@@ -133,23 +151,31 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
- {
- 	if (pwm)
--		pwm->period = period;
-+		pwm->state.period = period;
- }
- 
- static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
- {
--	return pwm ? pwm->period : 0;
-+	struct pwm_state pstate;
-+
-+	pwm_get_state(pwm, &pstate);
-+
-+	return pstate.period;
- }
- 
- static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
- {
- 	if (pwm)
--		pwm->duty_cycle = duty;
-+		pwm->state.duty_cycle = duty;
- }
- 
- static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
- {
--	return pwm ? pwm->duty_cycle : 0;
-+	struct pwm_state pstate;
-+
-+	pwm_get_state(pwm, &pstate);
-+
-+	return pstate.duty_cycle;
- }
- 
- /*
-@@ -159,7 +185,11 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity);
- 
- static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
- {
--	return pwm ? pwm->polarity : PWM_POLARITY_NORMAL;
-+	struct pwm_state pstate;
-+
-+	pwm_get_state(pwm, &pstate);
-+
-+	return pstate.polarity;
- }
- 
- static inline void pwm_get_args(const struct pwm_device *pwm,
--- 
-2.5.0
+Ok will do.
+>
+> Rob
