@@ -1,82 +1,45 @@
 Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com> <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
 From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 13/13] ARM: sunxi: Add Kconfig for sunxi clocks
-Date: Sat,  5 Mar 2016 23:43:06 +0800
-Message-Id: <1457192586-25596-14-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Date: Thu, 17 Mar 2016 23:34:18 +0800
+Message-ID: <CAEzqOZugVOGarjy9NjDOhwJeU6P26Ch2aX13Tec2N0z2Gb9g7A@mail.gmail.com>
+Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
+	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds Kconfig for sunxi clocks.
-Currently, only sun8i-apb0 and sun9i-cpus clocks are added.
-It'll help to use common clocks across different SOCs.
-We can switch to kconfig for other clocks in future.
+Hello Linus,
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- drivers/clk/Kconfig        | 1 +
- drivers/clk/sunxi/Kconfig  | 5 +++++
- drivers/clk/sunxi/Makefile | 4 ++--
- 3 files changed, 8 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/sunxi/Kconfig
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e01..f9f42e6 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -210,3 +210,4 @@ source "drivers/clk/mvebu/Kconfig"
- 
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-+source "drivers/clk/sunxi/Kconfig"
-diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
-new file mode 100644
-index 0000000..afc55c9
---- /dev/null
-+++ b/drivers/clk/sunxi/Kconfig
-@@ -0,0 +1,5 @@
-+config CLK_SUN8I_APB0
-+	def_bool MACH_SUN9I || MACH_SUN8I_A83T
-+
-+config CLK_SUN9I_CPUS
-+	def_bool MACH_SUN9I || MACH_SUN8I_A83T
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 3fd7901..38dfca8 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -17,8 +17,8 @@ obj-y += clk-sun9i-core.o
- obj-y += clk-sun9i-mmc.o
- obj-y += clk-usb.o
- 
--obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
--obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
-+obj-$(CONFIG_CLK_SUN8I_APB0) += clk-sun8i-apb0.o
-+obj-$(CONFIG_CLK_SUN9I_CPUS) += clk-sun9i-cpus.o
- 
- obj-$(CONFIG_MFD_SUN6I_PRCM) += \
- 	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
--- 
-1.9.1
+On Thu, Mar 17, 2016 at 10:51 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Wed, Mar 16, 2016 at 5:04 PM, Vishnu Patekar
+> <vishnupatekar0510@gmail.com> wrote:
+>
+>> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+>> interrupt bit is 6th and A83T has one extra pin PL12.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> Acked-by: Chen-Yu Tsai <wens@csie.org>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>
+> I think I already merged this?
+AFAIK, this one is not yet merged. At least, you did not say it's merged. :)
+>
+> Yours,
+> Linus Walleij
