@@ -1,103 +1,58 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: kernel@pengutronix.de,
-	sergeimir@emcraft.com,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 00/18] ARM: vf610: Suspend/resume with self-refresh mode
-Date: Wed,  9 Mar 2016 18:16:41 -0800
-Message-Id: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ob0-f193.google.com ([209.85.214.193]:36489 "EHLO
+	mail-ob0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932621AbcCQWHt (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2016 18:07:49 -0400
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, bcousson@baylibre.com, tony@atomide.com,
+	linux@arm.linux.org.uk, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v2 3/3] pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+Date: Thu, 17 Mar 2016 17:07:43 -0500
+Message-Id: <1458252463-8821-4-git-send-email-fcooper@ti.com>
+In-Reply-To: <1458252463-8821-1-git-send-email-fcooper@ti.com>
+References: <1458252463-8821-1-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a reworked and extended respin of an older patchset posted
-back in 2014:
-http://lkml.iu.edu/hypermail/linux/kernel/1409.2/03734.html
+Now that the node name has been changed from ehrpwm to pwm the document
+should show this proper usage. Also change the unit address in the example
+from 0 to the proper physical address value that should be used.
 
-This implementation supports Vybrids STOP (standby) and LPSTOP2
-mode (mem). Only the latter puts the memory in self-refresh mode
-and the SoC in a deep sleep state. However, self-refresh is only
-supported if external pull-ups/downs are populated (which not
-all hardware revisions have in place), therefor this patchset also
-introduces a device tree property to denote whether memory can be
-put into self-refresh mode or not.
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+---
+Version 2 changes:
+Changed the unit address for da850 to match the value in the reg property.
 
-The LPSTOP2 implementation is similar to the i.MX 6 implementation:
-Entering and resuming from self-refresh mode is implemented in
-assembler, and the function is copied to SRAM while entering suspend
-mode.
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-There are several fixes and extensions necessary to make suspend
-actually working, mainly because most blocks loose its state in
-LPSTOP2 mode.
-
-Feedback welcome! Especially the linking between the GPIOs of the 
-WKPU unit (which allows to use some GPIOs as wake-up source) and
-the regular GPIO block seems rather hacky...
-
-The code has been tested on a Colibri VF50 and VF61. Currently
-there is an issue with USB Host not correctly restoring after
-resume which could not yet been resolved.
-
-Stefan Agner (18):
-  irqchip: vf610-gpc: add Vybrid GPC IRQ controller
-  ARM: dts: vf610: add GPC as new interrupt parent
-  ARM: dts: vf610-colibri: GPIO wakeup key
-  ARM: dts: vf610: add on-chip SRAM
-  ARM: dts: vf610: add modules required for PM
-  ARM: imx: clk-gate2: allow custom gate configuration
-  ARM: imx: clk-vf610: leave DDR clock on
-  ARM: clk: add WKPU unit
-  ARM: vf610: clk: add suspend/resume support
-  tty: serial: fsl_lpuart: support suspend/resume
-  pinctrl: pinctrl-imx: implement suspend/resume
-  gpio: vf610: add system PM suspend/resume
-  ARM: dts: vf610: add WKPU connection to GPIO
-  gpio: vf610: add support for WKPU unit
-  ARM: vf610: PM: initial suspend/resume support
-  ARM: vf610: PM: enable Suspend-to-RAM only if hardware fixes are in
-    place
-  Documentation: dt: add Vybrid DDR memory controller bindings
-  ARM: vf610: PM: enable SNVS access
-
- .../bindings/arm/freescale/fsl,vf610-ddrmc.txt     |  23 +
- .../devicetree/bindings/gpio/gpio-vf610.txt        |   6 +
- arch/arm/boot/dts/vf-colibri-eval-v3.dtsi          |  22 +
- arch/arm/boot/dts/vfxxx.dtsi                       |  74 ++-
- arch/arm/mach-imx/Makefile                         |   3 +
- arch/arm/mach-imx/common.h                         |  10 +
- arch/arm/mach-imx/mach-vf610.c                     |   8 +
- arch/arm/mach-imx/pm-vf610.c                       | 649 +++++++++++++++++++++
- arch/arm/mach-imx/suspend-vf610.S                  | 448 ++++++++++++++
- drivers/clk/imx/clk-gate2.c                        |   7 +-
- drivers/clk/imx/clk-vf610.c                        |  83 ++-
- drivers/clk/imx/clk.h                              |  13 +-
- drivers/gpio/gpio-vf610.c                          | 188 ++++++
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-vf610-gpc.c                    | 138 +++++
- drivers/pinctrl/freescale/pinctrl-imx.c            |  63 ++
- drivers/pinctrl/freescale/pinctrl-imx.h            |   3 +
- drivers/pinctrl/freescale/pinctrl-vf610.c          |   6 +
- drivers/tty/serial/fsl_lpuart.c                    |  16 +-
- include/dt-bindings/clock/vf610-clock.h            |   4 +-
- 20 files changed, 1750 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
- create mode 100644 arch/arm/mach-imx/pm-vf610.c
- create mode 100644 arch/arm/mach-imx/suspend-vf610.S
- create mode 100644 drivers/irqchip/irq-vf610-gpc.c
-
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 9c100b2..0f9ba50 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -15,14 +15,14 @@ Optional properties:
+ 
+ Example:
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
++ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+ 	compatible = "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x100>;
+ 	ti,hwmods = "ehrpwm0";
+ };
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
++ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
+ 	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x300000 0x2000>;
 -- 
-2.7.2
+2.7.0
+
