@@ -1,107 +1,186 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 07/13] ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-Date: Thu, 17 Mar 2016 00:04:30 +0800
-Message-Id: <1458144276-31108-8-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <antonynpavlov@gmail.com>
+Return-Path: <antonynpavlov@gmail.com>
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: linux-mips@linux-mips.org
+Cc: Gabor Juhos <juhosg@openwrt.org>,
+	Alban Bedel <albeu@free.fr>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 07/18] MIPS: ath79: introduce <dt-bindings/clock/ath79-clk.h>
+Date: Thu, 17 Mar 2016 06:34:14 +0300
+Message-Id: <1458185665-4521-8-git-send-email-antonynpavlov@gmail.com>
+In-Reply-To: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
+References: <1458185665-4521-1-git-send-email-antonynpavlov@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds A83T PRCM related clocks, clock resets.
+The include/dt-bindings/clock/ath79-clk.h header file
+is introduced so we can use symbolic identifiers for SoC clocks.
 
-As a83t apb0 gates clock support is added earlier, this enables it.
-Apart from apb0 gates, other added clocks are compatible with
-earlier sun8i socs.
-
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+Cc: Gabor Juhos <juhosg@openwrt.org>
+Cc: Alban Bedel <albeu@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 44 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/mips/ath79/clock.c               | 33 +++++++++++++++++----------------
+ arch/mips/boot/dts/qca/ar9132.dtsi    |  8 +++++---
+ include/dt-bindings/clock/ath79-clk.h | 19 +++++++++++++++++++
+ 3 files changed, 41 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index a44d4dc..691bbf1 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -267,6 +267,44 @@
- 					     "mmc2_output",
- 					     "mmc2_sample";
- 		};
-+
-+		cpus_clk: clk@01f01400 {
-+			compatible = "allwinner,sun9i-a80-cpus-clk";
-+			reg = <0x01f01400 0x4>;
-+			#clock-cells = <0>;
-+			clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&osc16M>;
-+			clock-output-names = "cpus";
-+		};
-+
-+		ahb0: ahb0_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+			clocks = <&cpus_clk>;
-+			clock-output-names = "ahb0";
-+		};
-+
-+		apb0: clk@01f0140c {
-+			compatible = "allwinner,sun8i-a23-apb0-clk";
-+			reg = <0x01f0140c 0x4>;
-+			#clock-cells = <0>;
-+			clocks = <&ahb0>;
-+			clock-output-names = "apb0";
-+		};
-+
-+		apb0_gates: clk@01f01428 {
-+			compatible = "allwinner,sun8i-a83t-apb0-gates-clk";
-+			reg = <0x01f01428 0x4>;
-+			#clock-cells = <1>;
-+			clocks = <&apb0>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>,
-+					<4>, <6>, <7>;
-+			clock-output-names = "apb0_pio", "apb0_ir",
-+					"apb0_timer", "apb0_rsb",
-+					"apb0_uart", "apb0_i2c0", "apb0_twd";
-+		};
- 	};
+diff --git a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
+index 618dfd7..c3a94ea 100644
+--- a/arch/mips/ath79/clock.c
++++ b/arch/mips/ath79/clock.c
+@@ -18,6 +18,7 @@
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
++#include <dt-bindings/clock/ath79-clk.h>
  
- 	soc {
-@@ -421,5 +459,11 @@
- 			#interrupt-cells = <3>;
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+ #include <asm/div64.h>
+ 
+@@ -28,7 +29,7 @@
+ #define AR71XX_BASE_FREQ	40000000
+ #define AR724X_BASE_FREQ	40000000
+ 
+-static struct clk *clks[3];
++static struct clk *clks[ATH79_CLK_END];
+ static struct clk_onecell_data clk_data = {
+ 	.clks = clks,
+ 	.clk_num = ARRAY_SIZE(clks),
+@@ -78,9 +79,9 @@ static void __init ar71xx_clocks_init(void)
+ 	ahb_rate = cpu_rate / div;
+ 
+ 	ath79_add_sys_clkdev("ref", ref_rate);
+-	clks[0] = ath79_add_sys_clkdev("cpu", cpu_rate);
+-	clks[1] = ath79_add_sys_clkdev("ddr", ddr_rate);
+-	clks[2] = ath79_add_sys_clkdev("ahb", ahb_rate);
++	clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
++	clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
++	clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
+ 
+ 	clk_add_alias("wdt", NULL, "ahb", NULL);
+ 	clk_add_alias("uart", NULL, "ahb", NULL);
+@@ -114,9 +115,9 @@ static void __init ar724x_clocks_init(void)
+ 	ahb_rate = cpu_rate / div;
+ 
+ 	ath79_add_sys_clkdev("ref", ref_rate);
+-	clks[0] = ath79_add_sys_clkdev("cpu", cpu_rate);
+-	clks[1] = ath79_add_sys_clkdev("ddr", ddr_rate);
+-	clks[2] = ath79_add_sys_clkdev("ahb", ahb_rate);
++	clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
++	clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
++	clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
+ 
+ 	clk_add_alias("wdt", NULL, "ahb", NULL);
+ 	clk_add_alias("uart", NULL, "ahb", NULL);
+@@ -176,9 +177,9 @@ static void __init ar933x_clocks_init(void)
+ 	}
+ 
+ 	ath79_add_sys_clkdev("ref", ref_rate);
+-	clks[0] = ath79_add_sys_clkdev("cpu", cpu_rate);
+-	clks[1] = ath79_add_sys_clkdev("ddr", ddr_rate);
+-	clks[2] = ath79_add_sys_clkdev("ahb", ahb_rate);
++	clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
++	clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
++	clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
+ 
+ 	clk_add_alias("wdt", NULL, "ahb", NULL);
+ 	clk_add_alias("uart", NULL, "ref", NULL);
+@@ -310,9 +311,9 @@ static void __init ar934x_clocks_init(void)
+ 		ahb_rate = cpu_pll / (postdiv + 1);
+ 
+ 	ath79_add_sys_clkdev("ref", ref_rate);
+-	clks[0] = ath79_add_sys_clkdev("cpu", cpu_rate);
+-	clks[1] = ath79_add_sys_clkdev("ddr", ddr_rate);
+-	clks[2] = ath79_add_sys_clkdev("ahb", ahb_rate);
++	clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
++	clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
++	clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
+ 
+ 	clk_add_alias("wdt", NULL, "ref", NULL);
+ 	clk_add_alias("uart", NULL, "ref", NULL);
+@@ -397,9 +398,9 @@ static void __init qca955x_clocks_init(void)
+ 		ahb_rate = cpu_pll / (postdiv + 1);
+ 
+ 	ath79_add_sys_clkdev("ref", ref_rate);
+-	clks[0] = ath79_add_sys_clkdev("cpu", cpu_rate);
+-	clks[1] = ath79_add_sys_clkdev("ddr", ddr_rate);
+-	clks[2] = ath79_add_sys_clkdev("ahb", ahb_rate);
++	clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
++	clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
++	clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
+ 
+ 	clk_add_alias("wdt", NULL, "ref", NULL);
+ 	clk_add_alias("uart", NULL, "ref", NULL);
+diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
+index 3bff63b..2f9a3ee 100644
+--- a/arch/mips/boot/dts/qca/ar9132.dtsi
++++ b/arch/mips/boot/dts/qca/ar9132.dtsi
+@@ -1,3 +1,5 @@
++#include <dt-bindings/clock/ath79-clk.h>
 +
-+		apb0_reset: reset@01f014b0 {
-+			reg = <0x01f014b0 0x4>;
-+			compatible = "allwinner,sun6i-a31-clock-reset";
-+			#reset-cells = <1>;
-+		};
- 	};
- };
+ / {
+ 	compatible = "qca,ar9132";
+ 
+@@ -57,7 +59,7 @@
+ 				reg = <0x18020000 0x20>;
+ 				interrupts = <3>;
+ 
+-				clocks = <&pll 2>;
++				clocks = <&pll ATH79_CLK_AHB>;
+ 				clock-names = "uart";
+ 
+ 				reg-io-width = <4>;
+@@ -100,7 +102,7 @@
+ 
+ 				interrupts = <4>;
+ 
+-				clocks = <&pll 2>;
++				clocks = <&pll ATH79_CLK_AHB>;
+ 				clock-names = "wdt";
+ 			};
+ 
+@@ -144,7 +146,7 @@
+ 			compatible = "qca,ar9132-spi", "qca,ar7100-spi";
+ 			reg = <0x1f000000 0x10>;
+ 
+-			clocks = <&pll 2>;
++			clocks = <&pll ATH79_CLK_AHB>;
+ 			clock-names = "ahb";
+ 
+ 			status = "disabled";
+diff --git a/include/dt-bindings/clock/ath79-clk.h b/include/dt-bindings/clock/ath79-clk.h
+new file mode 100644
+index 0000000..27359ad
+--- /dev/null
++++ b/include/dt-bindings/clock/ath79-clk.h
+@@ -0,0 +1,19 @@
++/*
++ * Copyright (C) 2014, 2016 Antony Pavlov <antonynpavlov@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_ATH79_CLK_H
++#define __DT_BINDINGS_ATH79_CLK_H
++
++#define ATH79_CLK_CPU		0
++#define ATH79_CLK_DDR		1
++#define ATH79_CLK_AHB		2
++
++#define ATH79_CLK_END		3
++
++#endif /* __DT_BINDINGS_ATH79_CLK_H */
 -- 
-1.9.1
+2.7.0
