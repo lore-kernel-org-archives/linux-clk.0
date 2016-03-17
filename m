@@ -1,75 +1,168 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0079.outbound.protection.outlook.com ([157.56.111.79]:2753
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932304AbcDADQ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 31 Mar 2016 23:16:59 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-	<iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, <scott.wood@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	<ulf.hansson@linaro.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"Zhao Qiang" <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Santosh Shilimkar" <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v7, 1/5] ARM64: dts: ls2080a: add device configuration node
-Date: Fri, 1 Apr 2016 11:07:27 +0800
-Message-ID: <1459480051-3701-2-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Jonathan Corbet <corbet@lwn.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH 3/8] clk: bcm2835: add missing osc and per clocks
+In-Reply-To: <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org> <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
+Date: Thu, 17 Mar 2016 10:10:19 -0700
+Message-ID: <87egb99gjo.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the dts node for device configuration unit that provides
-general purpose configuration and status for the device.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- None
-Changes for v3:
-	- None
-Changes for v4:
-	- None
-Changes for v5:
-	- Added this patch
-Changes for v6:
-	- None
-Changes for v7:
-	- None
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+kernel@martin.sperl.org writes:
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 9d746c6..8724cf1 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -191,6 +191,12 @@
- 			clocks = <&sysclk>;
- 		};
- 
-+		dcfg: dcfg@1e00000 {
-+			compatible = "fsl,ls2080a-dcfg", "syscon";
-+			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
-+		};
-+
- 		serial0: serial@21c0500 {
- 			compatible = "fsl,ns16550", "ns16550a";
- 			reg = <0x0 0x21c0500 0x0 0x100>;
--- 
-2.1.0.27.g96db324
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> Add definitions for the following clocks:
+> * AVE0
+> * DFT
+> * GP0
+> * GP1
+> * GP2
+> * PULSE
+> * SLIM
+> * SMI
+> * TEC
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c       |   71 +++++++++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/bcm2835.h |   10 +++++
+>  2 files changed, 81 insertions(+)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 710cf15..f43e1ca 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -118,6 +118,8 @@
+>  #define CM_SDCCTL		0x1a8
+>  #define CM_SDCDIV		0x1ac
+>  #define CM_ARMCTL		0x1b0
+> +#define CM_AVEOCTL		0x1b8
+> +#define CM_AVEODIV		0x1bc
+>  #define CM_EMMCCTL		0x1c0
+>  #define CM_EMMCDIV		0x1c4
+>=20=20
+> @@ -1738,6 +1740,18 @@ static const struct bcm2835_clk_desc clk_desc_arra=
+y[] =3D {
+>  		.div_reg =3D CM_TSENSDIV,
+>  		.int_bits =3D 5,
+>  		.frac_bits =3D 0),
+> +	[BCM2835_CLOCK_PULSE]	=3D REGISTER_OSC_CLK(
+> +		.name =3D "pulse",
+> +		.ctl_reg =3D CM_PULSECTL,
+> +		.div_reg =3D CM_PULSEDIV,
+> +		.int_bits =3D 12,
+> +		.frac_bits =3D 0),
 
+As I noted in previous review, PULSE has another divider on it that you
+haven't accounted for, so it would be broken if we exposed it.  I've
+dropped it from the patch.
+
+> +	[BCM2835_CLOCK_TEC]	=3D REGISTER_OSC_CLK(
+> +		.name =3D "tec",
+> +		.ctl_reg =3D CM_TECCTL,
+> +		.div_reg =3D CM_TECDIV,
+> +		.int_bits =3D 6,
+> +		.frac_bits =3D 0),
+>=20=20
+>  	/* clocks with vpu parent mux */
+>  	[BCM2835_CLOCK_H264]	=3D REGISTER_VPU_CLK(
+> @@ -1752,6 +1766,7 @@ static const struct bcm2835_clk_desc clk_desc_array=
+[] =3D {
+>  		.div_reg =3D CM_ISPDIV,
+>  		.int_bits =3D 4,
+>  		.frac_bits =3D 8),
+> +
+>  	/*
+>  	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
+>  	 * in the SDRAM controller can't be used.
+> @@ -1783,6 +1798,24 @@ static const struct bcm2835_clk_desc clk_desc_arra=
+y[] =3D {
+>  		.is_vpu_clock =3D true),
+>=20=20
+>  	/* clocks with per parent mux */
+> +	[BCM2835_CLOCK_AVEO]	=3D REGISTER_PER_CLK(
+> +		.name =3D "aveo",
+> +		.ctl_reg =3D CM_AVEOCTL,
+> +		.div_reg =3D CM_AVEODIV,
+> +		.int_bits =3D 4,
+> +		.frac_bits =3D 0),
+> +	[BCM2835_CLOCK_DFT]	=3D REGISTER_PER_CLK(
+> +		.name =3D "dft",
+> +		.ctl_reg =3D CM_DFTCTL,
+> +		.div_reg =3D CM_DFTDIV,
+> +		.int_bits =3D 5,
+> +		.frac_bits =3D 0),
+> +	[BCM2835_CLOCK_DFT]	=3D REGISTER_PER_CLK(
+> +		.name =3D "dpi",
+> +		.ctl_reg =3D CM_DPICTL,
+> +		.div_reg =3D CM_DPIDIV,
+> +		.int_bits =3D 4,
+> +		.frac_bits =3D 8),
+>=20=20
+>  	/* Arasan EMMC clock */
+>  	[BCM2835_CLOCK_EMMC]	=3D REGISTER_PER_CLK(
+> @@ -1791,6 +1824,30 @@ static const struct bcm2835_clk_desc clk_desc_arra=
+y[] =3D {
+>  		.div_reg =3D CM_EMMCDIV,
+>  		.int_bits =3D 4,
+>  		.frac_bits =3D 8),
+> +
+> +	/* General purpose (GPIO) clocks */
+> +	[BCM2835_CLOCK_GP0]	=3D REGISTER_PER_CLK(
+> +		.name =3D "gp0",
+> +		.ctl_reg =3D CM_GP0CTL,
+> +		.div_reg =3D CM_GP0DIV,
+> +		.int_bits =3D 12,
+> +		.frac_bits =3D 12,
+> +		.is_mash_clock =3D true),
+> +	[BCM2835_CLOCK_GP1]	=3D REGISTER_PER_CLK(
+> +		.name =3D "gp1",
+> +		.ctl_reg =3D CM_GP1CTL,
+> +		.div_reg =3D CM_GP1DIV,
+> +		.int_bits =3D 12,
+> +		.frac_bits =3D 12,
+> +		.is_mash_clock =3D true),
+> +	[BCM2835_CLOCK_GP2]	=3D REGISTER_PER_CLK(
+> +		.name =3D "gp2",
+> +		.ctl_reg =3D CM_GP2CTL,
+> +		.div_reg =3D CM_GP2DIV,
+> +		.int_bits =3D 12,
+> +		.frac_bits =3D 12,
+> +		.is_mash_clock =3D true),
+
+As I've noted previously, gp2 is not a mash clock.  I've dropped that
+line.
+
+Other than these two issues, this patch looks fine.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJW6uT7AAoJELXWKTbR/J7oGd0QAInFPo8JD/gVc9ry9WE5xfk0
+sgxTXD7MDbRaAyrxD7FqfXUrm/xCR0FzMxPxtsusK4l4ENnzG3jvrPMnJRvFIUdD
+tRhCXr/TmVzHcqgosOZFklbbVgIp04NgHnRyXjGFremzhWNPTJWj0MlZB05UMJJu
+amWZtKJAM9IMJD9DVEq2QB50ToVZoniq2NH3nind051QWZ2hjoo8K21kuCqr4KzL
+1QyEOgMdZrCXPzAsyFcEgnfpPaOjTm+UNSGNsyT5wExfwGSpjGuShNqzY/yPnkVw
+SFXZ9JuFMwKO/oiwgk9MmtoRNysoLS7/DJxW/uwX3hy2ts2bJ3UadtOg6+9pAcWR
+Xt61Vj7+RHVF4ouyz7jF6sKERhMXzxWYh/LGpysuo/5aTqi+ViaMTMQEUAWIwOMg
+Of2S+xzSLjyGDfNSYHYIRDwtKx4LcjGGklJqZAphLqXlmwSeAHGq2dht7wxjVUe1
+eowde2Km8G4a8hTIL0gxry/xe2RtXV50jEpUMQC6ovKGamKkSfj9Umg/tPonKFmF
+mQdfB/rFE2EYFtmgE+BrDMxAWCposGG/ae63TxlL2Sqq4sVwaqm4MtrtNFgqPvMd
+6OW67UVTpKJd6PXETEwQkFAc7AdRlV9EAmRDfn71J9lNFhyxg8PhI3w336qBe+5i
+iUGybJcep2tUhtlrxU7M
+=aFPv
+-----END PGP SIGNATURE-----
+--=-=-=--
