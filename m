@@ -1,56 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 02/41] clk: bcm: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 10:59:47 -0800
-Message-Id: <1456858826-28541-3-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Martin Sperl <kernel@martin.sperl.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/8] clk: bcm2835: add missing PLL clock divider
+In-Reply-To: <C5EA56E8-F1A1-453D-A421-3E29853F3127@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org> <1456760642-2412-3-git-send-email-kernel@martin.sperl.org> <87y49hjb4l.fsf@eliezer.anholt.net> <C5EA56E8-F1A1-453D-A421-3E29853F3127@martin.sperl.org>
+Date: Thu, 17 Mar 2016 10:58:20 -0700
+Message-ID: <8737rpm1fn.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Lee Jones <lee@kernel.org>
-Cc: Eric Anholt <eric@anholt.net>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Martin Sperl <kernel@martin.sperl.org> writes:
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 5747a9d17c74..c74ed3fd496d 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -324,21 +324,18 @@ void __init bcm2835_init_clocks(void)
- 	struct clk *clk;
- 	int ret;
- 
--	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
--					126000000);
-+	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 126000000);
- 	if (IS_ERR(clk))
- 		pr_err("apb_pclk not registered\n");
- 
--	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
--					3000000);
-+	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, 0, 3000000);
- 	if (IS_ERR(clk))
- 		pr_err("uart0_pclk not registered\n");
- 	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
- 	if (ret)
- 		pr_err("uart0_pclk alias not registered\n");
- 
--	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
--					125000000);
-+	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, 0, 125000000);
- 	if (IS_ERR(clk))
- 		pr_err("uart1_pclk not registered\n");
- 	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>> On 17.03.2016, at 17:57, Eric Anholt <eric@anholt.net> wrote:
+>>=20
+>>=20
+>> These don't exist on the hardware as far as I've been able to find.  "I
+>> found it in a header file somewhere" is not sufficient justification to
+>> expose it.
+>>=20
+>> I'm working on getting a series of all of these reviewed and ready, so
+>> I'm just dropping these PLLB hunks.
+>
+> Fine with that - my test shows that these are not configured by the firmw=
+are.
+>
+> As for headers: my experience is that these are the better resource
+> compared to all the public available documentation=E2=80=A6
+>
+> If you remember the =E2=80=9Cfrac=E2=80=9D bit discussion where you said:
+>
+>   Once again, trusting the docs turns out to be a bad idea.  You're right,
+>   the non-MASH clocks *do* have a bit 9 to enable fractional mode.  Sigh.
+>
+> Also my understanding is that those headers are still used by the firmware
+> developers, so I guess that these are pretty stable and well maintained
+> (even if the ones available are by now a bit dated).
+>
+> They even contain ifdefs for some earlier versions of the chip -=20
+> see the dma-channels and their interrupts=E2=80=A6
+> I.e: BCM2708A0 which does not have the DMA channels 9 to 15
+>
+> So I would not discount all those pieces of information as totally
+> irrelevant.
+
+I'm looking at the hardware source, and at the place where all the other
+PLL dividers are, PLLB only has ARM.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJW6vA9AAoJELXWKTbR/J7oNgMP/An7iDKJOSbTVifT05r7W2Yq
+7iHmg4PA68uNCWUQAUP/UPxUIloPSUFIYZpCEW1Wsuh7LxrR1+Nlw8lcbhFf7AfT
+PxxBG8iL6gaPBgNdu+kkHy75AxG91TnYQ8BTlU37AqFqg1fJT116moAPCD8Q87iz
+aQVurJupbB/h7k2r9fvpH+DI+rTfY8KZTENXEIePkM67U2KzvbIa2dU9sTkkLv+Q
+kNJdBnCoqPMDVvFBdsyYmGrPaly/izaVdHmfXIjv9bNHyaPZ8fIjmMBMdGRKEK/6
+IiT6XK/hm1jlejH87SqGGhhU4eKaIMuy96YGBiI8aJN7ev1Mix2HPXMqrqw+jvM5
+ZyPuVNVvvXaGqz3EGPRZA+tkL8zl7/PZ1KZkNXczIE18rU1U49M/CyHb3bsS3+nN
+kO6PLcIh00Y3PFR8vlOEA03FicxPlOnEXvO3FvQCbZVfkYCSfAQCPY42upi2fG93
+w4XeajExqsyypkiCgXdT2+sVXPyrYXcl8dgyQm7dXrv7foboaECpqkbzVrvBDvJL
+yCeHlz2+vCLOvsisEjNONxDk1xhznoQFdrDHdiXFI7rXaWYn0vyMEuV2QLqd234M
+8nGr4ZjmT0oZVpGt0Xkzy3k7agheMjvIBbfN7WNtl5mc14tOsc5JaXqB4TQwWMc9
+HT7R5bwd3d/Ert5T5voc
+=nRHH
+-----END PGP SIGNATURE-----
+--=-=-=--
