@@ -1,89 +1,77 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:29795 "EHLO smtp5-g21.free.fr"
+Received: from mail.kernel.org ([198.145.29.136]:43623 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754178AbcC3Rnn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 30 Mar 2016 13:43:43 -0400
-Message-Id: <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
-In-Reply-To: <cover.1459358017.git.moinejf@free.fr>
-References: <cover.1459358017.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Wed, 30 Mar 2016 18:43:29 +0200
-Subject: [PATCH 1/3] clk: sunxi: Add sun6i/8i display support
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
+	id S936695AbcCQR6N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 17 Mar 2016 13:58:13 -0400
+MIME-Version: 1.0
+In-Reply-To: <4107975.rId64mooHz@wuerfel>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+ <1457518131-11339-4-git-send-email-yangbo.lu@nxp.com> <20160317170640.GB21009@rob-hp-laptop>
+ <4107975.rId64mooHz@wuerfel>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 17 Mar 2016 12:57:49 -0500
+Message-ID: <CAL_JsqL8NkEQx2NoVHSUGYhtNsybCo-yfBCde+_OuMmfwbhYEw@mail.gmail.com>
+Subject: Re: [v6, 3/5] dt: move guts devicetree doc out of powerpc directory
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Yangbo Lu <yangbo.lu@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Linux IOMMU <iommu@lists.linux-foundation.org>,
+	netdev <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	scott.wood@nxp.com, Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Zhao Qiang <qiang.zhao@freescale.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
+	xiaobo.xie@nxp.com
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the clock type which is used by the sun6i/8i families for video display.
+On Thu, Mar 17, 2016 at 12:11 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 17 March 2016 12:06:40 Rob Herring wrote:
+>> > diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+>> > similarity index 91%
+>> > rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
+>> > rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
+>> > index b71b203..07adca9 100644
+>> > --- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
+>> > +++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+>> > @@ -25,6 +25,9 @@ Recommended properties:
+>> >   - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
+>> >     registers, for those SOCs that have a PAMU device.
+>> >
+>> > + - little-endian : Indicates that the global utilities block is little
+>> > +   endian. The default is big endian.
+>>
+>> The default is "the native endianness of the system".
+>
+> This may be what is currently documented, but not what we are doing
+> in practice, as there is no "native endianess" for either PowerPC or
+> ARM -- both allow running big-endian or little-endian kernels and the
+> device registers are fixed.
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 38 +++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
+Notice I said system, not architecture. The way the device registers
+are fixed is what I mean by native endianness.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 834436f..8c0fda8 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -81,6 +81,7 @@ Required properties:
- 	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
- 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
- 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
-+	"allwinner,sun6i-a31-display-clk" - for the display clocks
- 
- Required properties for all clocks:
- - reg : shall be the control register address for the clock.
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 91de0a0..0581e1b 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -1127,3 +1127,41 @@ static void __init sun6i_pll6_clk_setup(struct device_node *node)
- }
- CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
- 	       sun6i_pll6_clk_setup);
-+
-+/*
-+ * sun6i display
-+ *
-+ * rate = parent_rate / (m + 1);
-+ */
-+static void sun6i_display_factors(struct factors_request *req)
-+{
-+	u8 m;
-+
-+	if (req->rate > req->parent_rate)
-+		req->rate = req->parent_rate;
-+
-+	m = DIV_ROUND_UP(req->parent_rate, req->rate);
-+
-+	req->rate = req->parent_rate / m;
-+	req->m = m - 1;
-+}
-+
-+static const struct clk_factors_config sun6i_display_config = {
-+	.mshift = 0,
-+	.mwidth = 4,
-+};
-+
-+static const struct factors_data sun6i_display_data __initconst = {
-+	.enable = 31,
-+	.mux = 24,
-+	.muxmask = BIT(2) | BIT(1) | BIT(0),
-+	.table = &sun6i_display_config,
-+	.getter = sun6i_display_factors,
-+};
-+
-+static void __init sun6i_display_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun6i_display_data);
-+}
-+CLK_OF_DECLARE(sun6i_display, "allwinner,sun6i-a31-display-clk",
-+	       sun6i_display_setup);
--- 
-2.8.0
+If the purpose of adding this property now is to support GUTS on the
+ARM SoCs, then I'd argue using this property is probably wrong. If the
+PPC systems are designed with BE device registers and ARM systems with
+LE, then this property is not needed.
 
+> I think the property here is fine.
+
+Unless you have studied the FSL ARM based SoCs, then there is not
+enough information here to tell.
+
+Rob
