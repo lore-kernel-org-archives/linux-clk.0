@@ -1,107 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from utopia.booyaka.com ([74.50.51.50]:34146 "EHLO
-	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751227AbcCDGZv (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2016 01:25:51 -0500
-Date: Fri, 4 Mar 2016 06:25:50 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-cc: Tony Lindgren <tony@atomide.com>, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-In-Reply-To: <56D8EDF4.9070904@ti.com>
-Message-ID: <alpine.DEB.2.02.1603040553010.3980@utopia.booyaka.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com> <1456439796-28546-3-git-send-email-fcooper@ti.com> <20160301181109.GB13417@atomide.com> <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com> <20160301205043.GA4469@atomide.com>
- <56D71331.5020702@ti.com> <56D8EDF4.9070904@ti.com>
+Return-Path: <fcooper@ti.com>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+To: Rob Herring <robh@kernel.org>
+CC: <thierry.reding@gmail.com>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <bcousson@baylibre.com>, <tony@atomide.com>, <linux@arm.linux.org.uk>,
+        <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
+ generic node name
+References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+ <1457380318-15452-6-git-send-email-fcooper@ti.com>
+ <20160317150305.GA27356@rob-hp-laptop>
+Message-ID: <56EAE014.8070606@ti.com>
+Date: Thu, 17 Mar 2016 11:49:24 -0500
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160317150305.GA27356@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 3 Mar 2016, Franklin S Cooper Jr. wrote:
-
-> So I looked into this more and verified that the eCAP and
-> ePWM doesn't have their own unique clock. The PWMSS receives
-> a clock L4PER2_L3_GICLK/2 which is passed through to its
-> sub-devices (ePWM, eCAP and eQEP). The PWMSS is responsible
-> for handling its clock internally while the subdevices have
-> no role in managing this clock. So this explains why we have
-> hwmod entries for PWMSS and why we are planning on removing
-> it from the various subdevices.
-
-It's not whether they have their own unique clock, but whether the 
-submodules have OCP integration registers, speak the idle/standby 
-protocols, have direct L3/L4 ports, etc.
-
-> Since ePWM, eCAP and eQEP are subdevices of PWMSS they
-> shouldn't have their own concept of their "own" clock. The
-> ePWM , eCAP and eQEP clocks are all shared and managed by
-> their parent PWMSS. Once the PWMSS is enabled and has its
-> clock running then ePWM, eCAP and eQEP from their main clock
-> perspective have everything they need.
-> 
-> So my plan is to strip all references of clocks (including
-> hwmod entries) for ePWM, eCAP and eQEP. The devm_clk_get
-> calls made in the ePWM and eCAP will simply point to their
-> parent's dev (PWMSS). I did a couple of quick test using
-> this approach and it works. I have more testing to do but if
-> that checks out are you ok with the above approach?
-
-I don't know if that should be done or not.  I haven't stared at the code 
-yet, but based on your description, it sounds to me that it probably 
-shouldn't be done.  In any case, it's not what I meant...
-
-> Also I'm not sure how simple-bus fits in this picture. The
-> eCAP, eQEP and ePWM are all separate devices. The only thing
-> that they share is a single clock from their parent. So it
-> doesn't seem like the right approach. I'm basing this on the
-> info in this thread
-> https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg27979.html
-> that talks about the usage of simple-bus. So if its outdated
-> or I"m misinterpreting it incorrectly please let me know.
-
-What I meant is that the ECAP*, EQEP*, EHRPWM* devices don't need to be 
-registered through the hwmod code, due to the fact that they don't have 
-the integration mentioned above.  Instead, I think those three subdevices 
-should be listed as child nodes of epwmss* in the DT.
-
-Looking at the DT data from Vignesh, it looks like he's already got 
-ehrpwm1 as a child node of the epwmss1:
-
-+               epwmss1: epwmss@48440000 {
-+                       compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
-+                       reg = <0x48440000 0x30>;
-+                       ti,hwmods = "epwmss1";
-+                       #address-cells = <1>;
-+                       #size-cells = <1>;
-+                       status = "disabled";
-+                       ranges = <0x48440100  0x48440100  0x80   /* ECAP */
-+                                 0x48440180  0x48440180  0x80   /* EQEP */
-+                                 0x48440200  0x48440200  0x80>; /* EHRPWM */
-+
-+                       ehrpwm1: ehrpwm@48440200 {
-+                               compatible = "ti,dra7xx-ehrpwm",
-+                                            "ti,am33xx-ehrpwm";
-+                               #pwm-cells = <3>;
-+                               reg = <0x48440200 0x80>;
-+                               ti,hwmods = "ehrpwm1";
-
-So, drop the above line, since the subdevices don't have corresponding 
-hwmods any more.
-
-+                               status = "disabled";
-+                       };
-
-Then, here, you'd add nodes similar to ehrpwm1 for ecap1 and eqep1.  I 
-can't remember at the moment if adding "simple-bus" to the epwmss1 string 
-would be sufficient to register the subdevices after the epwmss1 is 
-probed.  If so, maybe that's all you need.
-
-+               };
-
-Then repeat for epwmss0, epwmss2.
 
 
-- Paul
+On 03/17/2016 10:03 AM, Rob Herring wrote:
+> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
+>> Now that the node name has been changed from ehrpwm to pwm the document
+>> should show this proper usage. Also change the unit address in the example
+>> from 0 to the proper physical address value that should be used.
+>>
+>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>> ---
+>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>> index 9c100b2..20211ed 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>> @@ -15,14 +15,14 @@ Optional properties:
+>>  
+>>  Example:
+>>  
+>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+>>  	compatible = "ti,am33xx-ehrpwm";
+>>  	#pwm-cells = <3>;
+>>  	reg = <0x48300200 0x100>;
+>>  	ti,hwmods = "ehrpwm0";
+>>  };
+>>  
+>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
+> No leading 0s, but more importantly the address is wrong.
+
+I will remove the leading 0. However, this value was taken
+from the .dtsi and I just double checked and I see the same
+value in the datasheet. I believe DA850,OMAP-L138 and AM18x
+all have the same memory mapping. I'm looking at
+http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
+addresses match up what is seen here and in the .dtsi.
+
+Can you point me to which document your looking at that
+shows a different value?
+
+
+>
+>>  	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>  	#pwm-cells = <3>;
+>>  	reg = <0x300000 0x2000>;
+>> -- 
+>> 2.7.0
+>>
