@@ -1,102 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:30483 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753653AbcC3Rn5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 30 Mar 2016 13:43:57 -0400
-Message-Id: <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
-In-Reply-To: <cover.1459358017.git.moinejf@free.fr>
-References: <cover.1459358017.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Wed, 30 Mar 2016 18:57:16 +0200
-Subject: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <56EAE014.8070606@ti.com>
+References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
+ <1457380318-15452-6-git-send-email-fcooper@ti.com> <20160317150305.GA27356@rob-hp-laptop>
+ <56EAE014.8070606@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 17 Mar 2016 13:00:53 -0500
+Message-ID: <CAL_Jsq+3vRMezgrA53jPgMZUYR+DAA_886K1Q6YfxV1bPinoQQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
+ generic node name
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Benoit Cousson <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the PLL type which is used by the sun8i family for audio.
+On Thu, Mar 17, 2016 at 11:49 AM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>
+>
+> On 03/17/2016 10:03 AM, Rob Herring wrote:
+>> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
+>>> Now that the node name has been changed from ehrpwm to pwm the document
+>>> should show this proper usage. Also change the unit address in the example
+>>> from 0 to the proper physical address value that should be used.
+>>>
+>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> index 9c100b2..20211ed 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> @@ -15,14 +15,14 @@ Optional properties:
+>>>
+>>>  Example:
+>>>
+>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+>>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+>>>      compatible = "ti,am33xx-ehrpwm";
+>>>      #pwm-cells = <3>;
+>>>      reg = <0x48300200 0x100>;
+>>>      ti,hwmods = "ehrpwm0";
+>>>  };
+>>>
+>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+>>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
+>> No leading 0s, but more importantly the address is wrong.
+>
+> I will remove the leading 0. However, this value was taken
+> from the .dtsi and I just double checked and I see the same
+> value in the datasheet. I believe DA850,OMAP-L138 and AM18x
+> all have the same memory mapping. I'm looking at
+> http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
+> addresses match up what is seen here and in the .dtsi.
+>
+> Can you point me to which document your looking at that
+> shows a different value?
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+Ummm, ...
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index ff93aee..917d4aa 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -10,6 +10,7 @@ Required properties:
- 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
- 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
- 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-+	"allwinner,sun8i-pll2-clk" - for the audio PLL clock
- 	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
- 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
- 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 270f2a9..7386141 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -1130,6 +1130,54 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
- 	       sun6i_pll6_clk_setup);
- 
- /*
-+ * sun8i pll2
-+ *
-+ * rate = parent_rate / (m + 1) * (n + 1) / (p + 1);
-+ */
-+static void sun8i_pll2_factors(struct factors_request *req)
-+{
-+	unsigned long n, m;
-+
-+	/* set p = 4 so that pll2 = pll2x8 / 8 */
-+	req->p = 4 - 1;
-+	rational_best_approximation(req->rate,
-+				req->parent_rate / 4,
-+				1 << 7, 1 << 5, &n, &m);
-+	req->rate = req->parent_rate / m * n / 4;
-+	req->m = m - 1;
-+	req->n = n - 1;
-+}
-+
-+static void sun8i_pll2_recalc(struct factors_request *req)
-+{
-+	req->rate = req->parent_rate / (req->m + 1) * (req->n + 1) /
-+						(req->p + 1);
-+}
-+
-+static const struct clk_factors_config sun8i_pll2_config = {
-+	.mshift = 0,
-+	.mwidth = 5,
-+	.nshift = 8,
-+	.nwidth = 7,
-+	.pshift = 16,
-+	.pwidth = 4,
-+};
-+
-+static const struct factors_data sun8i_pll2_data __initconst = {
-+	.enable = 31,
-+	.table = &sun8i_pll2_config,
-+	.getter = sun8i_pll2_factors,
-+	.recalc = sun8i_pll2_recalc,
-+};
-+
-+static void __init sun8i_pll2_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun8i_pll2_data);
-+}
-+CLK_OF_DECLARE(sun8i_pll2, "allwinner,sun8i-pll2-clk",
-+	       sun8i_pll2_setup);
-+
-+/*
-  * sun6i pll3
-  *
-  * if (p == 0) rate = k ? 270MHz : 297MHz
--- 
-2.8.0
+>>>      compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>>      #pwm-cells = <3>;
+>>>      reg = <0x300000 0x2000>;
 
+right here.
+
+>>> --
+>>> 2.7.0
+>>>
+>
