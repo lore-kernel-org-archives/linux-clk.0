@@ -1,54 +1,140 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 18 Mar 2016 18:47:20 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:43830 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754807AbcCQKkp (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2016 06:40:45 -0400
+Date: Thu, 17 Mar 2016 11:40:42 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mason <slash.tmp@free.fr>, Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
-Message-ID: <20160318174720.GP30977@lukather>
-References: <20160226194830.GA21652@lukather>
- <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
- <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
- <20160303191604.GW24999@codeaurora.org>
- <20160304152711.GR8418@lukather>
- <20160304171841.GF24999@codeaurora.org>
- <20160308221320.GI8418@lukather>
- <20160315221601.GJ25972@codeaurora.org>
- <56E91EA4.7030603@free.fr>
- <20160316203018.GQ25972@codeaurora.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar,
+	jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	patchesrdh@mveas.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 02/13] clk: sunxi: add ahb1 clock for A83T
+Message-ID: <20160317104042.GK30977@lukather>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Tm6VLls/w6NsRApE"
-In-Reply-To: <20160316203018.GQ25972@codeaurora.org>
+	protocol="application/pgp-signature"; boundary="nWEzmRaGLXxZdI3i"
+In-Reply-To: <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---Tm6VLls/w6NsRApE
+--nWEzmRaGLXxZdI3i
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 16, 2016 at 01:30:18PM -0700, Stephen Boyd wrote:
-> On 03/16, Mason wrote:
-> > On 15/03/2016 23:16, Stephen Boyd wrote:
-> > >=20
-> > > Applied to clk-next.
-> >=20
-> > For the record, I will state again that I find it quite sub-optimal
-> > to resort to dynamic allocation for small temporary pointer arrays.
-> >=20
-> > A fortiori when one considers that getting the patch right required
-> > several attempts.
-> >=20
+On Thu, Mar 17, 2016 at 12:04:25AM +0800, Vishnu Patekar wrote:
+> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+> clock index 0b1x is PLL6.
 >=20
-> Feel free to send the patch and then we can discuss and test. For
-> the record, I was waiting for Maxime or Chen-Yu to speak up if
-> they would prefer that approach, but nothing happened. Usually
-> patches spur discussions better than comments.
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++=
+++++++
+>  2 files changed, 77 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
+ation/devicetree/bindings/clock/sunxi.txt
+> index 834436f..cba9fe55 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -30,6 +30,7 @@ Required properties:
+>  	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
+>  	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
+>  	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
+> +	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
+>  	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+>  	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+>  	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 91de0a0..a7aab65 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request=
+ *req)
+>  	req->rate >>=3D req->p;
+>  }
+> =20
+> +#define SUN8I_A83T_AHB1_PARENT_PLL6	2
+> +/**
+> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
+> + * AHB rate is calculated as follows
+> + * rate =3D parent_rate >> p
+> + *
+> + * if parent is pll6, then
+> + * parent_rate =3D pll6 rate / (m + 1)
+> + */
+> +
+> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
+> +{
+> +	u8 div, calcp, calcm =3D 1;
+> +
+> +	/*
+> +	 * clock can only divide, so we will never be able to achieve
+> +	 * frequencies higher than the parent frequency
+> +	 */
+> +	if (req->parent_rate && req->rate > req->parent_rate)
+> +		req->rate =3D req->parent_rate;
+> +
+> +	div =3D DIV_ROUND_UP(req->parent_rate, req->rate);
+> +
+> +	/* calculate pre-divider if parent is pll6 */
+> +	if (req->parent_index >=3D SUN8I_A83T_AHB1_PARENT_PLL6) {
+> +		if (div < 4)
+> +			calcp =3D 0;
+> +		else if (div / 2 < 4)
+> +			calcp =3D 1;
+> +		else if (div / 4 < 4)
+> +			calcp =3D 2;
+> +		else
+> +			calcp =3D 3;
+> +
+> +		calcm =3D DIV_ROUND_UP(div, 1 << calcp);
+> +	} else {
+> +		calcp =3D __roundup_pow_of_two(div);
+> +		calcp =3D calcp > 3 ? 3 : calcp;
+> +	}
+> +
+> +	req->rate =3D (req->parent_rate / calcm) >> calcp;
+> +	req->p =3D calcp;
+> +	req->m =3D calcm - 1;
+> +}
+> +
+> +/**
+> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors=
+ and
+> +*			 parent index
+> +*/
+> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
+> +{
+> +	req->rate =3D req->parent_rate;
+> +
+> +/* apply pre-divider first if parent is pll6 */
 
-Yeah, I don't really care about which solution you choose, as long as
-it makes LLVM happy.
+The comment indentation is wrong
+
+> +	if (req->parent_index >=3D SUN6I_AHB1_PARENT_PLL6)
+
+And this is not the right define you're using.
+
+I still believe that duplicating the same logic just because of
+different dividers is not the way to go.
+
+You could solve that easily by adding a table for the muxes, and
+associate it with parents and dividers, that you could store in
+clk_factors.
 
 Maxime
 
@@ -57,26 +143,26 @@ Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
 
---Tm6VLls/w6NsRApE
+--nWEzmRaGLXxZdI3i
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJW7D8oAAoJEBx+YmzsjxAg2P4QAIJG1bA1YwlGLuNqI5xGRKYf
-F0ZDDul6nAnz00sa4Fl4lHuggMCNB43BF0HVSRU2NgfvhVnDHNS8fulyTlu+hP7D
-z8YKIOcZDYY5J64rPt3HJoqtxx/uLwe0G/5yiABcRGfdVy9Pmtfp5sVvYWV4t6Yc
-OrHnWsYy/+DZBIJV/0v5bQ13Hcgjs7GzsihJUnw8EIbCXUzZnHmrMPQIXJqFCzi/
-Y8IaWIVfv+JdJIcDNHcJHDYg9SfNW+a5f4bIm/pCSdviUmDvxQsPksJknP033MUY
-8tLLXm/SwZo0GvecWR+omcUDnwYmPA/xs40H/ckqfjLr7TCjhhjoOCOWp5kw9Ks0
-QCnSOzVLI/wbJdJ4AiXrHkwRmhNg2wVaYwjc4D/AxUcIM57Pc1V482Vgok3iAujd
-CIPa9uO2EA4ihi/pv+hBEdz4S3LWQO4dxXZm0UYmniiR6shgQA2pzfOCFi9dPbZb
-mBWzdQx0DEn4nZCHgKYDU0kL3QlsOsPLGMSz0rqMMxmzBYvNSbfyL0y2y4rROYjq
-vUoZmtF7TM5b48rwzhRrGFrfUtQBdQV9R/G2pU+p26PVcQ5gYDaxMv/wW65VQHUY
-LMsiYHOMNMPmdX8JYn+6mU/5A2Hog9IU9IiwuhHEt8Qm4bnscHKGIgfbIBtxvJad
-/X73glOB8ldfkVVQUrAr
-=gZ82
+iQIcBAEBAgAGBQJW6omqAAoJEBx+YmzsjxAg+IkP/2n5+5I/Z4nyp7elRujuyzaE
+2f3QCOY+7UOtYv0/LfUIjKujFD5ygm7RlpeIRjXVGBBErWrkvB5Nx1xe6X1IooGb
+X+10yJZe4ryQgn923+FasXa2BQxgHw38M5tfub8FBmxxru74lxrpkhDax7fI402l
+Blm9oucHEtK71F8E53x8+UUg35i0Zxf7c1iFIndDeBd4KQL5zgVd2lmjNFU4oKn1
+Y+ZQd8bDfuaioWmVFXEiN1HHtzE2s5qjbyZtt2pvX0bv5a0U470O7v+o9/jCvfs2
+PzRpy0vLbnUxwDXT/vyrL/Ntk8/ZK5HpVlJukSITNGWr7IbqSPefY+OdCgyjjymZ
+h7LLCmDUjV7bCKIHUFivE9ahFqTC6xIVw8MQEkJkymsfCvK9zKBH9bezTjAwucCK
+EWWnJwxNVTs9lI9vjSJhXtNuxSUToVyS3vO4KEPAY4BXoDh+iF58g5voQ8Vx2kCs
+cmeMaeB08SdFJpxNgdvh12IwMiggow6r9aunpKN2eZuxvIaAwsfGnxJMs+yJKeC3
+Gh/amdLJ4fQ7qfdHNCxStiAehkJKwgA5jxfjKK8x9Rvw2gwSG2I7/qGv2GUbWMFF
+VqxN2SEpc5fbfnfl/A7sTeAnx2vLGIiBA21qe0Jq5JtcId80bXlx/h2u/fY4YTnS
+083HDY2FJEsMZurPv22F
+=dNXR
 -----END PGP SIGNATURE-----
 
---Tm6VLls/w6NsRApE--
+--nWEzmRaGLXxZdI3i--
