@@ -1,98 +1,72 @@
-Return-Path: <robh@kernel.org>
-Date: Wed, 2 Mar 2016 11:31:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] doc: dt: add documentation for lpc1850-creg-clk
- driver
-Message-ID: <20160302173107.GA1227@rob-hp-laptop>
-References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
- <1456351460-15483-3-git-send-email-manabian@gmail.com>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Jonathan Corbet <corbet@lwn.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH 3/8] clk: bcm2835: add missing osc and per clocks
+In-Reply-To: <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
+References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org> <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
+Date: Thu, 17 Mar 2016 10:19:19 -0700
+Message-ID: <87twk5ja3s.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456351460-15483-3-git-send-email-manabian@gmail.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 24, 2016 at 11:04:20PM +0100, Joachim Eastwood wrote:
-> Add DT binding documentation for lpc1850-creg-clk driver.
-> 
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+--=-=-=
+Content-Type: text/plain
+
+kernel@martin.sperl.org writes:
+
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> Add definitions for the following clocks:
+> * AVE0
+> * DFT
+> * GP0
+> * GP1
+> * GP2
+> * PULSE
+> * SLIM
+> * SMI
+> * TEC
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 > ---
->  .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
 
-One typo, otherwise:
+> +	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
+> +		.name = "dft",
+> +		.ctl_reg = CM_DFTCTL,
+> +		.div_reg = CM_DFTDIV,
+> +		.int_bits = 5,
+> +		.frac_bits = 0),
+> +	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
+> +		.name = "dpi",
+> +		.ctl_reg = CM_DPICTL,
+> +		.div_reg = CM_DPIDIV,
+> +		.int_bits = 4,
+> +		.frac_bits = 8),
 
-Acked-by: Rob Herring <robh@kernel.org>
+Oh, I see you've also doubled up the DFT definition here, when it seems
+you meant to define DPI.  I've added a DPI enum value to fix it.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-> new file mode 100644
-> index 000000000000..4e13586d083c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-> @@ -0,0 +1,52 @@
-> +* NXP LPC1850 CREG clocks
-> +
-> +The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
-> +control registers for two low speed clocks. One of the clocks is a
-> +32 kHz oscillator driver with power up/down and clock gating. Next
-> +is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
-> +
-> +These clocks are used by the RTC and the Event Router peripherials.
-> +The 32 kHz can also be routed to other peripherials to enable low
-> +power modes.
-> +
-> +This binding uses the common clock binding:
-> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible:
-> +	Should be "nxp,lpc1850-creg-clk"
-> +- #clock-cells:
-> +	Shall have value <1>.
-> +- clocks:
-> +	Shall contain a phandle to the fixed 32 kHz crystall.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-s/crystall/crystal/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> +
-> +The creg-clk node must be a child of the creg syscon node.
-> +
-> +The following clocks are available from the clock node.
-> +
-> +Clock ID	Name
-> +   0		 1 kHz clock
-> +   1		32 kHz Oscillator
-> +
-> +Example:
-> +soc {
-> +	creg: syscon@40043000 {
-> +		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
-> +		reg = <0x40043000 0x1000>;
-> +
-> +		creg_clk: clock-controller {
-> +			compatible = "nxp,lpc1850-creg-clk";
-> +			clocks = <&xtal32>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		...
-> +	};
-> +
-> +	rtc: rtc@40046000 {
-> +		...
-> +		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
-> +		clock-names = "rtc", "reg";
-> +		...
-> +	};
-> +};
-> -- 
-> 1.8.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iQIcBAEBCgAGBQJW6ucXAAoJELXWKTbR/J7o1EsP+wcwNNHYiE8UMdtI0QNsqBgn
+Af5gAxinKV33OHwciZ5EgwSdBBH84hgpJe7lI4QGscMve843ltmqa6SLWW/4i/k0
+MDMlfu3xZWC2gUEDopbQHmM1hFz1guQZcuJ/rrF6ZsuoK2jmn/FPTqkJHq71nMmV
+ntgMEEGozEWU11xxwX3Ttq5x2vO2DQaBD+OjfWAlGu24+A5uDpPZbLPE21kPes/f
+xShC8OS8nSiG+kSo+sywczxWIwrK32wib7ZvWxeCNAab6dx+PWVu3rkmHgcvwAoH
+cGKQV0HF6jzbUUXlrvA83Qi/ZfQl0lZd85NRuGzQFhPhUViODnwnuroWK5OX7Okt
+S4XYcdgx6EowhHr/STeX/WxFQiVZdFVVrc/GjMW5hoVHoGLoAepO4CgUM/1jGZaT
+mA1X0c5fEIrvi+XpKP4S0Y3OVGILtoGHHEOth61pTgrY/o6jVvBnZtqR9AvkpL5t
+2LNSF88KMADcbNOcMkKGwbVDi1zCVeRZlgeyi/G5jpQUAjSPojCV2GYEchBqimqE
+WsQfEXNMIC7jSW5/Iywi+JuI4801GO3T50u4cPH8ra7ycI7/Evdsadqhl7BeoSQ1
+ACJbFQYqx0rk3THh+dYimxiALJTvTeEMd2COwM2JnDegO3dLZkn2HSInh7meZ3iw
+7n5UByawxE478tZll2YY
+=CqSU
+-----END PGP SIGNATURE-----
+--=-=-=--
