@@ -1,40 +1,52 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Xing Zheng <zhengxing@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 4/7] clk: rockchip: release io resource when rk3188_common_clk_init failed
-Date: Sun, 13 Mar 2016 00:25:36 +0800
-Message-Id: <1457799936-3183-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Scott Wood <scott.wood@nxp.com>
+To: Yangbo Lu <yangbo.lu@nxp.com>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-i2c@vger.kernel.org"
+ <linux-i2c@vger.kernel.org>, "iommu@lists.linux-foundation.org"
+ <iommu@lists.linux-foundation.org>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-mmc@vger.kernel.org"
+ <linux-mmc@vger.kernel.org>
+Subject: Re: [v6, 2/5] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Fri, 18 Mar 2016 22:54:46 +0000
+Message-ID: <DB5PR0401MB1928302BB0DDE8D9B47E4361918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+ <1457518131-11339-3-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+ Zhao Qiang <qiang.zhao@freescale.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ Yang-Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>, Claudiu
+ Manoil <claudiu.manoil@freescale.com>, Kumar Gala <galak@codeaurora.org>,
+ Xiaobo Xie <xiaobo.xie@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We should call iounmap to relase reg_base since it's not going
-to be used any more.
+On 03/09/2016 04:18 AM, Yangbo Lu wrote:
+> +#ifdef CONFIG_FSL_GUTS
+> +u32 fsl_guts_get_svr(void);
+> +int fsl_guts_init(void);
+> +#endif
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+Don't ifdef prototypes (when not providing a stub alternative).
 
- drivers/clk/rockchip/clk-rk3188.c | 1 +
- 1 file changed, 1 insertion(+)
+-Scott
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 0fcce22..d0e722a 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -773,6 +773,7 @@ static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device
- 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
- 	if (IS_ERR(ctx)) {
- 		pr_err("%s: rockchip clk init failed\n", __func__);
-+		iounmap(reg_base);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--- 
-2.3.7
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
