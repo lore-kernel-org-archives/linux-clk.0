@@ -1,93 +1,75 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:38771 "EHLO arroyo.ext.ti.com"
+Received: from smtp5-g21.free.fr ([212.27.42.5]:3615 "EHLO smtp5-g21.free.fr"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750895AbcCAMyr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 1 Mar 2016 07:54:47 -0500
-Subject: Re: [PATCH v3 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
-To: Tony Lindgren <tony@atomide.com>,
-	Franklin S Cooper Jr <fcooper@ti.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-4-git-send-email-fcooper@ti.com>
- <20160229232348.GV13417@atomide.com>
-CC: <paul@pwsan.com>, <vigneshr@ti.com>, <linux-pwm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <56D59100.3060803@ti.com>
-Date: Tue, 1 Mar 2016 14:54:24 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160229232348.GV13417@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+	id S1751126AbcCRHrh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 18 Mar 2016 03:47:37 -0400
+Date: Fri, 18 Mar 2016 08:47:25 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: sunxi: Accept a greater rate when setting a parent
+ clock
+Message-Id: <20160318084725.64448d32b15c51b070691fbb@free.fr>
+In-Reply-To: <E1advmk-0004Nt-Ba@bombadil.infradead.org>
+References: <E1advmk-0004Nt-Ba@bombadil.infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01/2016 01:23 AM, Tony Lindgren wrote:
-> * Franklin S Cooper Jr <fcooper@ti.com> [160225 14:37]:
->> From: Vignesh R <vigneshr@ti.com>
->>
->> tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
->> clock to control ehrpwm tbclk.
->> The TRM says, tbclk is derived from SYSCLKOUT. SYSCLKOUT is nothing but
->> ehrpwm functional clock derived from the gateable interface and
->> functional clock of PWMSS(l4_root_clk_div).
->> Refer AM57x TRM SPRUHZ6[1], October 2014, Table 29-4 and Section 29.2.2.1,
->> Table 29-19 and the NOTE at the end of the table.
->>
->> [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
->
-> Applying this into omap-for-v4.6/dt thanks.
->
-> Note for Tero, let's plan on getting rid of the duplicate
-> reg entries by using the standard clock output offset within
-> the clock register. I think we should easily be able to add
-> a binding for this and then deprecate the overlapping reg
-> entries.
+Ping!
 
-Yeah, we have been discussing this offline a bit, but haven't had time 
-to look at this. I believe the hwmod clock conversion is of higher 
-priority still.
+On Thu, 10 Mar 2016 08:15:02 +0100
+Jean-Francois Moine <moinejf@free.fr> wrote:
 
--Tero
-
-
->
-> Regards,
->
-> Tony
->
->> --- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
->> +++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
->> @@ -2146,4 +2146,28 @@
->>   		ti,bit-shift = <0>;
->>   		reg = <0x558>;
->>   	};
->> +
->> +       ehrpwm0_tbclk: ehrpwm0_tbclk {
->> +		#clock-cells = <0>;
->> +		compatible = "ti,gate-clock";
->> +		clocks = <&l4_root_clk_div>;
->> +		ti,bit-shift = <20>;
->> +		reg = <0x0558>;
->> +	};
->> +
->> +	ehrpwm1_tbclk: ehrpwm1_tbclk {
->> +		#clock-cells = <0>;
->> +		compatible = "ti,gate-clock";
->> +		clocks = <&l4_root_clk_div>;
->> +		ti,bit-shift = <21>;
->> +		reg = <0x0558>;
->> +	};
->> +
->> +	ehrpwm2_tbclk: ehrpwm2_tbclk {
->> +		#clock-cells = <0>;
->> +		compatible = "ti,gate-clock";
->> +		clocks = <&l4_root_clk_div>;
->> +		ti,bit-shift = <22>;
->> +		reg = <0x0558>;
->> +	};
->>   };
->> --
->> 2.7.0
->>
-
+> The best rate of a clock may be a bit greater than the requested one.
+> In such a case, the rate setting from a child clock was rejected.
+> 
+> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> ---
+> I don't know exactly why the rate constraint existed nor what can be
+> the impact of setting the rate of other clocks.
+> 
+> I had the problem when setting the PLL2 clock of the H3 (patch to come).
+> It has 4 outputs, so, it is composed of a base clock and 4 children
+> clocks pll2, pll2x2, pll2x4 and pll2x8 with a fixed factor (/4, /2, 1
+> and *2).
+> The pll2 clock rate may be only 24576000 (for the audio family 48000Hz)
+> or 22579200 (for the audio family 44100Hz).
+> 
+> Setting 24576000 asks for mul=86 and div=21,4 giving 24571428 as the
+> best rate, i.e. a bit slower than requested: good.
+> 
+> Setting 22579200 asks for mul=64 and div=17,4 giving 22588235, i.e.
+> a bit greater: then, the rate setting was rejected (no parent clock),
+> preventing audio streaming at 44100Hz.
+> ---
+>  drivers/clk/sunxi/clk-factors.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+> index 59428db..d0774c2 100644
+> --- a/drivers/clk/sunxi/clk-factors.c
+> +++ b/drivers/clk/sunxi/clk-factors.c
+> @@ -86,7 +86,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+>  	int i, num_parents;
+>  	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
+>  
+> -	/* find the parent that can help provide the fastest rate <= rate */
+> +	/* find the parent that can help provide the fastest rate */
+>  	num_parents = clk_hw_get_num_parents(hw);
+>  	for (i = 0; i < num_parents; i++) {
+>  		parent = clk_hw_get_parent_by_index(hw, i);
+> @@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+>  		child_rate = clk_factors_round_rate(hw, req->rate,
+>  						    &parent_rate);
+>  
+> -		if (child_rate <= req->rate && child_rate > best_child_rate) {
+> +		if (child_rate > best_child_rate) {
+>  			best_parent = parent;
+>  			best = parent_rate;
+>  			best_child_rate = child_rate;
+> -- 
+> 2.7.2
