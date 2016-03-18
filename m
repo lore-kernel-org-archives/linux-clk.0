@@ -1,143 +1,82 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 32/46] pwm: deprecate pwm_config(), pwm_enable() and pwm_disable()
-Date: Wed, 30 Mar 2016 22:03:55 +0200
-Message-Id: <1459368249-13241-33-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 18 Mar 2016 18:47:20 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mason <slash.tmp@free.fr>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
+Message-ID: <20160318174720.GP30977@lukather>
+References: <20160226194830.GA21652@lukather>
+ <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
+ <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
+ <20160303191604.GW24999@codeaurora.org>
+ <20160304152711.GR8418@lukather>
+ <20160304171841.GF24999@codeaurora.org>
+ <20160308221320.GI8418@lukather>
+ <20160315221601.GJ25972@codeaurora.org>
+ <56E91EA4.7030603@free.fr>
+ <20160316203018.GQ25972@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Tm6VLls/w6NsRApE"
+In-Reply-To: <20160316203018.GQ25972@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Prefix those function as deprecated to encourage all existing users to
-switch to pwm_apply_state().
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- include/linux/pwm.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+--Tm6VLls/w6NsRApE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 4aad4eb..9bac10f 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -225,8 +225,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
-  *
-  * Returns: 0 on success or a negative error code on failure.
-  */
--static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
--			     int period_ns)
-+static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
-+					  int period_ns)
- {
- 	struct pwm_state pstate;
- 
-@@ -252,8 +252,8 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-  *
-  * Returns: 0 on success or a negative error code on failure.
-  */
--static inline int pwm_set_polarity(struct pwm_device *pwm,
--				   enum pwm_polarity polarity)
-+static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
-+						enum pwm_polarity polarity)
- {
- 	struct pwm_state pstate;
- 
-@@ -284,7 +284,7 @@ static inline int pwm_set_polarity(struct pwm_device *pwm,
-  *
-  * Returns: 0 on success or a negative error code on failure.
-  */
--static inline int pwm_enable(struct pwm_device *pwm)
-+static inline int __deprecated pwm_enable(struct pwm_device *pwm)
- {
- 	struct pwm_state pstate;
- 
-@@ -303,7 +303,7 @@ static inline int pwm_enable(struct pwm_device *pwm)
-  * pwm_disable() - stop a PWM output toggling
-  * @pwm: PWM device
-  */
--static inline void pwm_disable(struct pwm_device *pwm)
-+static inline void __deprecated pwm_disable(struct pwm_device *pwm)
- {
- 	struct pwm_state pstate;
- 
-@@ -360,24 +360,24 @@ static inline int pwm_apply_state(struct pwm_device *pwm,
- 	return -ENOTSUPP;
- }
- 
--static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
--			     int period_ns)
-+static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
-+					  int period_ns)
- {
- 	return -EINVAL;
- }
- 
--static inline int pwm_set_polarity(struct pwm_device *pwm,
--				   enum pwm_polarity polarity)
-+static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
-+						enum pwm_polarity polarity)
- {
- 	return -ENOTSUPP;
- }
- 
--static inline int pwm_enable(struct pwm_device *pwm)
-+static inline int __deprecated pwm_enable(struct pwm_device *pwm)
- {
- 	return -EINVAL;
- }
- 
--static inline void pwm_disable(struct pwm_device *pwm)
-+static inline void __deprecated pwm_disable(struct pwm_device *pwm)
- {
- }
- 
--- 
-2.5.0
+On Wed, Mar 16, 2016 at 01:30:18PM -0700, Stephen Boyd wrote:
+> On 03/16, Mason wrote:
+> > On 15/03/2016 23:16, Stephen Boyd wrote:
+> > >=20
+> > > Applied to clk-next.
+> >=20
+> > For the record, I will state again that I find it quite sub-optimal
+> > to resort to dynamic allocation for small temporary pointer arrays.
+> >=20
+> > A fortiori when one considers that getting the patch right required
+> > several attempts.
+> >=20
+>=20
+> Feel free to send the patch and then we can discuss and test. For
+> the record, I was waiting for Maxime or Chen-Yu to speak up if
+> they would prefer that approach, but nothing happened. Usually
+> patches spur discussions better than comments.
+
+Yeah, I don't really care about which solution you choose, as long as
+it makes LLVM happy.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--Tm6VLls/w6NsRApE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW7D8oAAoJEBx+YmzsjxAg2P4QAIJG1bA1YwlGLuNqI5xGRKYf
+F0ZDDul6nAnz00sa4Fl4lHuggMCNB43BF0HVSRU2NgfvhVnDHNS8fulyTlu+hP7D
+z8YKIOcZDYY5J64rPt3HJoqtxx/uLwe0G/5yiABcRGfdVy9Pmtfp5sVvYWV4t6Yc
+OrHnWsYy/+DZBIJV/0v5bQ13Hcgjs7GzsihJUnw8EIbCXUzZnHmrMPQIXJqFCzi/
+Y8IaWIVfv+JdJIcDNHcJHDYg9SfNW+a5f4bIm/pCSdviUmDvxQsPksJknP033MUY
+8tLLXm/SwZo0GvecWR+omcUDnwYmPA/xs40H/ckqfjLr7TCjhhjoOCOWp5kw9Ks0
+QCnSOzVLI/wbJdJ4AiXrHkwRmhNg2wVaYwjc4D/AxUcIM57Pc1V482Vgok3iAujd
+CIPa9uO2EA4ihi/pv+hBEdz4S3LWQO4dxXZm0UYmniiR6shgQA2pzfOCFi9dPbZb
+mBWzdQx0DEn4nZCHgKYDU0kL3QlsOsPLGMSz0rqMMxmzBYvNSbfyL0y2y4rROYjq
+vUoZmtF7TM5b48rwzhRrGFrfUtQBdQV9R/G2pU+p26PVcQ5gYDaxMv/wW65VQHUY
+LMsiYHOMNMPmdX8JYn+6mU/5A2Hog9IU9IiwuhHEt8Qm4bnscHKGIgfbIBtxvJad
+/X73glOB8ldfkVVQUrAr
+=gZ82
+-----END PGP SIGNATURE-----
+
+--Tm6VLls/w6NsRApE--
