@@ -1,40 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH 05/41] clk: mediatek: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 10:59:50 -0800
-Message-Id: <1456858826-28541-6-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	bcousson@baylibre.com,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v3 0/3] ARM: am335x/am437x: Correct PWM bindings
+Date: Thu, 17 Mar 2016 20:15:20 -0500
+Message-Id: <1458263723-25770-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+Unlike the majority of other SOCs the PWM node uses ehrpwm instead of
+the generic pwm node name. This patch series switches to the pwm node
+name and while at it fix some other minor binding documentation issues.
 
-Cc: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/mediatek/clk-mtk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patch series also includes a patch to insure ABI compatibility.
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 352830369e0e..5ada644e6200 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -58,8 +58,8 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
- 	for (i = 0; i < num; i++) {
- 		const struct mtk_fixed_clk *rc = &clks[i];
- 
--		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent,
--				rc->parent ? 0 : CLK_IS_ROOT, rc->rate);
-+		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent, 0,
-+					      rc->rate);
- 
- 		if (IS_ERR(clk)) {
- 			pr_err("Failed to register clk %s: %ld\n",
+This series was tested on AM335x and AM437x GP evm. I also validated that
+ABI compatibility was maintained.
+
+V3 changes:
+Update am335x-shc.dts
+
+V2 changes:
+Dropped patches related to the ranges property.
+
+Franklin S Cooper Jr (3):
+  clk: ti: am335x/am4372: Add tbclk to pwm node
+  ARM: DTS: da850/am4372/am33xx: Use generic node name for ehrpwm
+  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt |  4 ++--
+ arch/arm/boot/dts/am335x-shc.dts                       |  2 +-
+ arch/arm/boot/dts/am33xx.dtsi                          |  6 +++---
+ arch/arm/boot/dts/am4372.dtsi                          | 12 ++++++------
+ arch/arm/boot/dts/da850.dtsi                           |  4 ++--
+ drivers/clk/ti/clk-33xx.c                              |  3 +++
+ drivers/clk/ti/clk-43xx.c                              |  6 ++++++
+ 7 files changed, 23 insertions(+), 14 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
