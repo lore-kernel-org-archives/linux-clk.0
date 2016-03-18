@@ -1,48 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 15 Mar 2016 15:16:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
-Message-ID: <20160315221601.GJ25972@codeaurora.org>
-References: <20160226194830.GA21652@lukather>
- <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
- <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
- <20160303191604.GW24999@codeaurora.org>
- <20160304152711.GR8418@lukather>
- <20160304171841.GF24999@codeaurora.org>
- <20160308221320.GI8418@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160308221320.GI8418@lukather>
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	bcousson@baylibre.com,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v3 3/3] pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+Date: Thu, 17 Mar 2016 20:15:23 -0500
+Message-Id: <1458263723-25770-4-git-send-email-fcooper@ti.com>
+In-Reply-To: <1458263723-25770-1-git-send-email-fcooper@ti.com>
+References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/08, Maxime Ripard wrote:
-> On Fri, Mar 04, 2016 at 09:18:41AM -0800, Stephen Boyd wrote:
-> > Oh right. Let's hope third time is the last.
-> > 
-> > ---8<---
-> > From: Stephen Boyd <sboyd@codeaurora.org>
-> > Subject: [PATCH] clk: sunxi: Remove use of variable length array
-> > 
-> > Using an array allocated on the stack may lead to stack overflows
-> > and other problems so let's move the allocation to the heap
-> > instead. This silences the following checker warning as well.
-> > 
-> > drivers/clk/sunxi/clk-sun8i-mbus.c:36:29: warning: Variable length array is used.
-> > 
-> > Cc: Chen-Yu Tsai <wens@csie.org>
-> > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> 
+Now that the node name has been changed from ehrpwm to pwm the document
+should show this proper usage. Also change the unit address in the example
+from 0 to the proper physical address value that should be used.
 
-Applied to clk-next.
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+---
+Version 3 changes:
+N/A
 
+Version 2 changes:
+Changed the unit address for da850 to match the value in the reg property.
+
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 9c100b2..0f9ba50 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -15,14 +15,14 @@ Optional properties:
+ 
+ Example:
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
++ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+ 	compatible = "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x100>;
+ 	ti,hwmods = "ehrpwm0";
+ };
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
++ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
+ 	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x300000 0x2000>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
