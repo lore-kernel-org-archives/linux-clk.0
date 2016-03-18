@@ -1,81 +1,167 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 30 Mar 2016 14:24:10 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Message-ID: <20160330212410.GX2350@sirena.org.uk>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+1tcKVLXPU0QafK6"
-In-Reply-To: <1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	bcousson@baylibre.com,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v3 2/3] ARM: DTS: da850/am4372/am33xx: Use generic node name for ehrpwm
+Date: Thu, 17 Mar 2016 20:15:22 -0500
+Message-Id: <1458263723-25770-3-git-send-email-fcooper@ti.com>
+In-Reply-To: <1458263723-25770-1-git-send-email-fcooper@ti.com>
+References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+When possible generic node names should be used. So change the node name
+from ehrpwm to pwm.
 
---+1tcKVLXPU0QafK6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+---
+Version 3 changes:
+Also update am335x-shc.dts
 
-On Wed, Mar 30, 2016 at 10:03:53PM +0200, Boris Brezillon wrote:
-> The continuous PWM voltage regulator is caching the voltage value in
-> the ->volt_uV field. While most of the time this value should reflect the
-> real voltage, sometime it can be sightly different if the PWM device
-> rounded the set_duty_cycle request.
-> Moreover, this value is not valid until someone has modified the regulator
-> output.
+ arch/arm/boot/dts/am335x-shc.dts |  2 +-
+ arch/arm/boot/dts/am33xx.dtsi    |  6 +++---
+ arch/arm/boot/dts/am4372.dtsi    | 12 ++++++------
+ arch/arm/boot/dts/da850.dtsi     |  4 ++--
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
---+1tcKVLXPU0QafK6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJW/EP5AAoJECTWi3JdVIfQtmsH/ipnuxlqfguiud0BHLIawruP
-udVbyxUF2cZ988A7zoAajtGLrRz0zNSluNU0PRxG+UJxeSR3AhH3sjFuNzFcLtcj
-TMmiCOeDugMKtX0Zg1PZ7pcjqUhunn6+dsKEgyVxep94s4TujTvzOXpuYNbHsBuD
-eGxym5NCDFRqepzQmD28j02zXOmgOYRK1mOT9tM0Ro7iGFRnkR53yaMpIR2c5aEj
-7axjIkIEtaQNO9GsUPo1xGoG1pd8tVPnugL8mgA3PSJSJXCXm+lVscQd8anK8IZ9
-Nl8qcTaJYIqe9RCo1Fyoi6zlmAGFaQwvf3jQS5+UzGi0T+gpZr0+ja99wawDCAg=
-=m9XJ
------END PGP SIGNATURE-----
-
---+1tcKVLXPU0QafK6--
+diff --git a/arch/arm/boot/dts/am335x-shc.dts b/arch/arm/boot/dts/am335x-shc.dts
+index 1b5b044..a10f8be 100644
+--- a/arch/arm/boot/dts/am335x-shc.dts
++++ b/arch/arm/boot/dts/am335x-shc.dts
+@@ -138,7 +138,7 @@
+ &epwmss1 {
+ 	status = "okay";
+ 
+-	ehrpwm1: ehrpwm@48302200 {
++	ehrpwm1: pwm@48302200 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ehrpwm1_pins>;
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index 1fafaad..4016254 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -688,7 +688,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			ehrpwm0: ehrpwm@48300200 {
++			ehrpwm0: pwm@48300200 {
+ 				compatible = "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+@@ -718,7 +718,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			ehrpwm1: ehrpwm@48302200 {
++			ehrpwm1: pwm@48302200 {
+ 				compatible = "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+@@ -748,7 +748,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			ehrpwm2: ehrpwm@48304200 {
++			ehrpwm2: pwm@48304200 {
+ 				compatible = "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index 92068fb..33f417c 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -679,7 +679,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			ehrpwm0: ehrpwm@48300200 {
++			ehrpwm0: pwm@48300200 {
+ 				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+@@ -705,7 +705,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			ehrpwm1: ehrpwm@48302200 {
++			ehrpwm1: pwm@48302200 {
+ 				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+@@ -731,7 +731,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			ehrpwm2: ehrpwm@48304200 {
++			ehrpwm2: pwm@48304200 {
+ 				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+@@ -749,7 +749,7 @@
+ 			ti,hwmods = "epwmss3";
+ 			status = "disabled";
+ 
+-			ehrpwm3: ehrpwm@48306200 {
++			ehrpwm3: pwm@48306200 {
+ 				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48306200 0x80>;
+@@ -767,7 +767,7 @@
+ 			ti,hwmods = "epwmss4";
+ 			status = "disabled";
+ 
+-			ehrpwm4: ehrpwm@48308200 {
++			ehrpwm4: pwm@48308200 {
+ 				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48308200 0x80>;
+@@ -785,7 +785,7 @@
+ 			ti,hwmods = "epwmss5";
+ 			status = "disabled";
+ 
+-			ehrpwm5: ehrpwm@4830a200 {
++			ehrpwm5: pwm@4830a200 {
+ 				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x4830a200 0x80>;
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index 226cda7..c3910e2 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -247,13 +247,13 @@
+ 			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+-		ehrpwm0: ehrpwm@01f00000 {
++		ehrpwm0: pwm@01f00000 {
+ 			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x300000 0x2000>;
+ 			status = "disabled";
+ 		};
+-		ehrpwm1: ehrpwm@01f02000 {
++		ehrpwm1: pwm@01f02000 {
+ 			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x302000 0x2000>;
+-- 
+2.7.0
