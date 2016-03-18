@@ -1,158 +1,97 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 02/13] clk: sunxi: add ahb1 clock for A83T
-Date: Sat,  5 Mar 2016 23:42:55 +0800
-Message-Id: <1457192586-25596-3-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-am1on0066.outbound.protection.outlook.com ([157.56.112.66]:2912
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754889AbcCRS2K convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 18 Mar 2016 14:28:10 -0400
+From: Scott Wood <scott.wood@nxp.com>
+To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
+CC: Yangbo Lu <yangbo.lu@nxp.com>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	Zhao Qiang <qiang.zhao@freescale.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for
+ T4240-R1.0-R2.0
+Date: Fri, 18 Mar 2016 18:28:05 +0000
+Message-ID: <DB5PR0401MB1928DA88B03970E1EACFB1FF918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+ <DB5PR0401MB19286B2D23D07F5C60DB799D91880@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+ <20160317170101.GA21009@rob-hp-laptop> <3706958.XeRFmKM0K5@wuerfel>
+Content-Type: text/plain; charset="Windows-1252"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-clock index 0b1x is PLL6.
+On 03/17/2016 12:06 PM, Arnd Bergmann wrote:
+> On Thursday 17 March 2016 12:01:01 Rob Herring wrote:
+>> On Mon, Mar 14, 2016 at 05:45:43PM +0000, Scott Wood wrote:
+> 
+>>>>> This makes the driver non-portable. Better identify the specific
+>>>>> workarounds based on the compatible string for this device, or add a
+>>>>> boolean DT property for the quirk.
+>>>>>
+>>>>>    Arnd
+>>>>
+>>>> [Lu Yangbo-B47093] Hi Arnd, we did have a discussion about using DTS in v1 before.
+>>>> https://patchwork.kernel.org/patch/6834221/
+>>>>
+>>>> We don’t have a separate DTS file for each revision of an SOC and if we did, we'd constantly have people using the wrong one.
+>>>> In addition, the device tree is stable ABI and errata are often discovered after device tree are deployed.
+>>>> See the link for details.
+>>>>
+>>>> So we decide to read SVR from the device-config/guts MMIO block other than using DTS.
+>>>> Thanks.
+>>>
+>>> Also note that this driver is already only for fsl-specific hardware,
+>>> and it will still work even if fsl_guts doesn't find anything to bind to
+>>> -- it just wouldn't be able to detect errata based on SVR in that case.
+>>
+>> IIRC, it is the same IP block as i.MX and Arnd's point is this won't 
+>> even compile on !PPC. It is things like this that prevent sharing the 
+>> driver.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
- 2 files changed, 77 insertions(+)
+The whole point of using the MMIO SVR instead of the PPC SPR is so that
+it will work on ARM...  The guts driver should build on any platform as
+long as OF is enabled, and if it doesn't find a node to bind to it will
+return 0 for SVR, and the eSDHC driver will continue (after printing an
+error that should be removed) without the ability to test for errata
+based on SVR.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index c09f59b..2ee7841 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -29,6 +29,7 @@ Required properties:
- 	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
- 	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
- 	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-+	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
- 	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
- 	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
- 	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 99f60ef..0ae1f09 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
- 	req->rate >>= req->p;
- }
- 
-+#define SUN8I_A83T_AHB1_PARENT_PLL6	2
-+/**
-+ * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
-+ * AHB rate is calculated as follows
-+ * rate = parent_rate >> p
-+ *
-+ * if parent is pll6, then
-+ * parent_rate = pll6 rate / (m + 1)
-+ */
-+
-+static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
-+{
-+	u8 div, calcp, calcm = 1;
-+
-+	/*
-+	 * clock can only divide, so we will never be able to achieve
-+	 * frequencies higher than the parent frequency
-+	 */
-+	if (req->parent_rate && req->rate > req->parent_rate)
-+		req->rate = req->parent_rate;
-+
-+	div = DIV_ROUND_UP(req->parent_rate, req->rate);
-+
-+	/* calculate pre-divider if parent is pll6 */
-+	if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
-+		if (div < 4)
-+			calcp = 0;
-+		else if (div / 2 < 4)
-+			calcp = 1;
-+		else if (div / 4 < 4)
-+			calcp = 2;
-+		else
-+			calcp = 3;
-+
-+		calcm = DIV_ROUND_UP(div, 1 << calcp);
-+	} else {
-+		calcp = __roundup_pow_of_two(div);
-+		calcp = calcp > 3 ? 3 : calcp;
-+}
-+
-+	req->rate = (req->parent_rate / calcm) >> calcp;
-+	req->p = calcp;
-+	req->m = calcm - 1;
-+}
-+
-+/**
-+* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
-+*			 parent index
-+*/
-+static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
-+{
-+	req->rate = req->parent_rate;
-+
-+/* apply pre-divider first if parent is pll6 */
-+	if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
-+		req->rate /= req->m + 1;
-+
-+	/* clk divider */
-+	req->rate >>= req->p;
-+}
-+
- /**
-  * sun4i_get_apb1_factors() - calculates m, p factors for APB1
-  * APB1 rate is calculated as follows
-@@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
- 	.recalc = sun6i_ahb1_recalc,
- };
- 
-+static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
-+	.mux = 12,
-+	.muxmask = BIT(1) | BIT(0),
-+	.table = &sun6i_ahb1_config,
-+	.getter = sun8i_a83t_get_ahb1_factors,
-+	.recalc = sun8i_a83t_ahb1_recalc,
-+};
-+
- static const struct factors_data sun4i_apb1_data __initconst = {
- 	.mux = 24,
- 	.muxmask = BIT(1) | BIT(0),
-@@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
- 	       sun6i_ahb1_clk_setup);
- 
-+static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
-+	       sun8i_a83t_ahb1_clk_setup);
-+
- static void __init sun4i_apb1_clk_setup(struct device_node *node)
- {
- 	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
--- 
-1.9.1
+> I think the first four patches take care of building for ARM,
+> but the problem remains if you want to enable COMPILE_TEST as
+> we need for certain automated checking.
+
+What specific problem is there with COMPILE_TEST?
+
+>> Dealing with Si revs is a common problem. We should have a 
+>> common solution. There is soc_device for this purpose.
+> 
+> Exactly. The last time this came up, I think we agreed to implement a
+> helper using glob_match() on the soc_device strings. Unfortunately
+> this hasn't happened then, but I'd still prefer that over yet another
+> vendor-specific way of dealing with the generic issue.
+
+soc_device would require encoding the SVR as a string and then decoding
+the string, which is more complicated and error prone than having
+platform-specific code test a platform-specific number.  And when would
+it get registered on arm64, which doesn't have platform code?
+
+-Scott
+
