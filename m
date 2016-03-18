@@ -1,64 +1,50 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 08/13] ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
-Date: Thu, 17 Mar 2016 00:04:31 +0800
-Message-Id: <1458144276-31108-9-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <fcooper@ti.com>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+To: kbuild test robot <lkp@intel.com>
+CC: <kbuild-all@01.org>, <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <bcousson@baylibre.com>, <tony@atomide.com>, <linux@arm.linux.org.uk>,
+        <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] ARM: DTS: da850/am4372/am33xx: Use generic node
+ name for ehrpwm
+References: <1458252463-8821-3-git-send-email-fcooper@ti.com>
+ <201603180818.rtawXhxL%fengguang.wu@intel.com>
+Message-ID: <56EB531D.7050406@ti.com>
+Date: Thu, 17 Mar 2016 20:00:13 -0500
+MIME-Version: 1.0
+In-Reply-To: <201603180818.rtawXhxL%fengguang.wu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have a driver for the R_PIO controller,
-add the corresponding device node to the dtsi.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 691bbf1..5d240b9 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -465,5 +465,17 @@
- 			compatible = "allwinner,sun6i-a31-clock-reset";
- 			#reset-cells = <1>;
- 		};
-+
-+		r_pio: pinctrl@01f02c00 {
-+			compatible = "allwinner,sun8i-a83t-r-pinctrl";
-+			reg = <0x01f02c00 0x400>;
-+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 0>;
-+			resets = <&apb0_reset 0>;
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#gpio-cells = <3>;
-+		};
- 	};
- };
--- 
-1.9.1
+On 03/17/2016 07:27 PM, kbuild test robot wrote:
+> Hi Franklin,
+>
+> [auto build test ERROR on pwm/for-next]
+> [also build test ERROR on v4.5 next-20160317]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Franklin-S-Cooper-Jr/clk-ti-am335x-am4372-Add-tbclk-to-pwm-node/20160318-060938
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm for-next
+> config: arm-multi_v7_defconfig (attached as .config)
+> reproduce:
+>         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm 
+>
+> All errors (new ones prefixed by >>):
+>
+>    ERROR (duplicate_label): Duplicate label 'ehrpwm1' on /ocp/epwmss@48302000/ehrpwm@48302200 and /ocp/epwmss@48302000/pwm@48302200
+
+Ok I see that I missed also updating am335x-shc.dts. I'll
+send a v3
+>>> ERROR: Input tree has errors, aborting (use -f to force output)
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
