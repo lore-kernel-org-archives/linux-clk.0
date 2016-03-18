@@ -1,103 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:47309 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751560AbcCBTl5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 2 Mar 2016 14:41:57 -0500
-Subject: Re: [PATCH v3 1/5] pwms: pwm-ti*: Remove support for local clock
- gating
-To: Tony Lindgren <tony@atomide.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
- <1456439796-28546-2-git-send-email-fcooper@ti.com>
- <20160229220444.GQ13417@atomide.com> <56D4C69D.1090100@ti.com>
- <20160229225536.GR13417@atomide.com> <56D4D032.7040801@ti.com>
- <20160229232011.GU13417@atomide.com>
-CC: <paul@pwsan.com>, <t-kristo@ti.com>, <vigneshr@ti.com>,
-	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-Message-ID: <56D741E6.3000708@ti.com>
-Date: Wed, 2 Mar 2016 13:41:26 -0600
+Return-Path: <robh@kernel.org>
+Date: Fri, 18 Mar 2016 11:10:57 -0500
+From: Rob Herring <robh@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	kernel@pengutronix.de, sergeimir@emcraft.com, tglx@linutronix.de,
+	jason@lakedaemon.net, marc.zyngier@arm.com, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 17/18] Documentation: dt: add Vybrid DDR memory
+ controller bindings
+Message-ID: <20160318161057.GA31181@rob-hp-laptop>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-18-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <20160229232011.GU13417@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457576219-7971-18-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Mar 09, 2016 at 06:16:58PM -0800, Stefan Agner wrote:
+> Add device-tree bindings of Vybrids LPDDR2/DDR3 SDRAM Memory
+> Controller. Access to the device is required to put the memory
+> into self-refresh mode.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  .../bindings/arm/freescale/fsl,vf610-ddrmc.txt     | 23 ++++++++++++++++++++++
 
+Move to bindings/memory-controllers/
 
-On 02/29/2016 05:20 PM, Tony Lindgren wrote:
-> * Franklin S Cooper Jr. <fcooper@ti.com> [160229 15:12]:
->>
->> On 02/29/2016 04:55 PM, Tony Lindgren wrote:
->>> * Franklin S Cooper Jr. <fcooper@ti.com> [160229 14:31]:
->>>> On 02/29/2016 04:04 PM, Tony Lindgren wrote:
->>>>> Hmm but why are you also removing the pm_runtime calls? Those
->>>>> actually do take care of gating the clocks via the interconnect
->>>>> level code that is hwmod in this case.
->>>> I removed all PM runtime calls that revolved around
->>>> pwmss_submodule_state_change. Originally the driver would do
->>>> a pm_runtime_get_sync then call pwmss_submodule_state_change
->>>> and then immediately call pm_runtime_put_sync. Without
->>>> pwmss_submodule_state_change those calls would be
->>>> meaningless.  I also removed pm_runtime calls in error paths
->>>> that no longer existed.
->>> Typically the interconnect level code can gate the clkctrl bit
->>> for the module with PM runtime even with no other driver specific
->>> registers. If you remove the pm_runtime calls, that does not
->>> happen.
->> So the clocks should be unlocked when ever the IP registers are
->> being read/written or if the peripheral is being used for
->> example
->> the pwm signal is being generated. All these cases are already
->> being handled.
->>
->> Using ecap driver as an example.
->>
->> Pm_runtime_get_sync is called within ecap_pwm_enable when
->> the pwm signal is to be generated. Pm_runtime_put_sync is called
->> when the pwm signal is to be stopped.
->>
->> When either the pwm signal polarity is set or pwm
->> configuration is made
->> then a pm_runtime_get_sync and pm_runtime_put_sync are
->> called within
->> the same function surrounding calls to the IP's registers.
->>
->> Probe is calling pm_runtime_enable while remove is calling
->> pm_runtime_disable.
-> OK good to hear you have considered this. The above answers
-> my questions then thanks.
->
->> So the correct pm_runtime calls are being made from what I
->> can see.
->> I'm not sure I understand the concern since removing those
->> calls aren't
->> creating any kind of imbalance.
-> OK thanks for checking.
->
->> If I'm not addressing your concern please give me an example
->> of where
->> you see a possible issue.
-> No that's fine. I thought you're ripping out all of the the
-> pm_runtime based on just looking at the patch :)
->
->>> Also, how do you know this change does not affect the other
->>> SoC variants using the same driver?
->> I've tested these changes on AM335x GP and AM437x GP evms.
->> AM335x
->> and AM437x were the only other users of this driver. Sorry 
->> I should of
->> documented this in my cover-letter.
-> OK good to hear.
->
-> Thanks,
->
-> Tony
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+> new file mode 100644
+> index 0000000..56a71d6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,vf610-ddrmc.txt
+> @@ -0,0 +1,23 @@
+> +Freescale Vybrid LPDDR2/DDR3 SDRAM Memory Controller
+> +
+> +The memory controller supports high performance applications for 16-bit or
+> +8-bit DDR2, or LPDDR SDRAM memories.
+> +
+> +Required properties:
+> +- compatible:	"fsl,vf610-ddrmc"
+> +- reg:		the register range of the DDRMC registers
+> +- clocks:	DDRMC main clock to clock memory and access registers.
+> +- clock-names:	Must contain "ddrc", matching entry in the clocks property.
+> +- fsl,has-cke-reset-pulls:
+> +		States whether pull-down/up are populated on DDR CKE/RESET
+> +		signals to allow using DDR self-refresh modes (see Vybrid
+> +		Hardware Development Guide for details).
+> +
+> +Example:
+> +	ddrmc: ddrmc@400ae000 {
 
-I know there are some comments regarding other patches in
-this patchset but this patch is unrelated and can be pulled
-in separately. Any objections to this or should I just
-resubmit this patch by itself?
+memory-controller@...
+
+> +		compatible = "fsl,vf610-ddrmc";
+> +		reg = <0x400ae000 0x1000>;
+> +		clocks = <&clks VF610_CLK_DDRMC>;
+> +		clock-names = "ddrc";
+> +		fsl,has-cke-reset-pulls;
+> +	}
+> -- 
+> 2.7.2
+> 
