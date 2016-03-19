@@ -1,66 +1,49 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>,
-        Tomi
- Valkeinen <tomi.valkeinen@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH 1/3] clk: ti: dpll: add support for specifying max rate for DPLLs
-Date: Wed, 16 Mar 2016 21:54:55 +0200
-Message-ID: <1458158097-21137-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
-References: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
+Return-Path: <robh@kernel.org>
+Date: Sat, 19 Mar 2016 18:59:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: yassinjaffer@gmail.com
+Cc: dev@linux-sunxi.org, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Reinder de Haan <patchesrdh@mveas.com>,
+	Jens Kuske <jenskuske@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
+ clock driver for sun[457]i
+Message-ID: <20160319235905.GA16539@rob-hp-laptop>
+References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
+ <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DPLLs typically have a maximum rate they can support, and this varies
-from DPLL to DPLL. Add support of the maximum rate value to the DPLL
-data struct, and also add check for this in the DPLL round_rate function.
+On Thu, Mar 17, 2016 at 07:43:42PM +1100, yassinjaffer@gmail.com wrote:
+> From: Yassin Jaffer <yassinjaffer@gmail.com>
+> 
+> This patch adds a composite clock type consisting of
+> a clock gate, mux, configurable dividers, and a reset control.
+> 
+> Signed-off-by: Yassin Jaffer <yassinjaffer@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Cc: Nishanth Menon <nm@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Lokesh Vutla <lokeshvutla@ti.com>
----
- drivers/clk/ti/clkt_dpll.c |    3 +++
- include/linux/clk/ti.h     |    2 ++
- 2 files changed, 5 insertions(+)
+I wish someone would just add all the sunxi clocks in one pass instead 
+of one by one.
 
-diff --git a/drivers/clk/ti/clkt_dpll.c b/drivers/clk/ti/clkt_dpll.c
-index b5cc6f6..7d97b07 100644
---- a/drivers/clk/ti/clkt_dpll.c
-+++ b/drivers/clk/ti/clkt_dpll.c
-@@ -301,6 +301,9 @@ long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
- 
- 	dd = clk->dpll_data;
- 
-+	if (dd->max_rate && target_rate > dd->max_rate)
-+		target_rate = dd->max_rate;
-+
- 	ref_rate = clk_get_rate(dd->clk_ref);
- 	clk_name = clk_hw_get_name(hw);
- 	pr_debug("clock: %s: starting DPLL round_rate, target rate %lu\n",
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 9a63860..1a48ee2 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -37,6 +37,7 @@
-  * @last_rounded_n: cache of the last N result of omap2_dpll_round_rate()
-  * @min_divider: minimum valid non-bypass divider value (actual)
-  * @max_divider: maximum valid non-bypass divider value (actual)
-+ * @max_rate: maximum clock rate for the DPLL
-  * @modes: possible values of @enable_mask
-  * @autoidle_reg: register containing the DPLL autoidle mode bitfield
-  * @idlest_reg: register containing the DPLL idle status bitfield
-@@ -81,6 +82,7 @@ struct dpll_data {
- 	u8			last_rounded_n;
- 	u8			min_divider;
- 	u16			max_divider;
-+	unsigned long		max_rate;
- 	u8			modes;
- 	void __iomem		*autoidle_reg;
- 	void __iomem		*idlest_reg;
--- 
-1.7.9.5
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/clk/sunxi/Makefile                        |   1 +
+>  drivers/clk/sunxi/clk-a10-csi.c                   | 188 ++++++++++++++++++++++
+>  3 files changed, 190 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-a10-csi.c
