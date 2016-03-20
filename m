@@ -1,77 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2on0089.outbound.protection.outlook.com ([65.55.169.89]:34687
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1758272AbcDADRW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 31 Mar 2016 23:17:22 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-	<iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, <scott.wood@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	<ulf.hansson@linaro.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"Zhao Qiang" <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Santosh Shilimkar" <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v7, 3/5] dt: move guts devicetree doc out of powerpc directory
-Date: Fri, 1 Apr 2016 11:07:29 +0800
-Message-ID: <1459480051-3701-4-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <robh@kernel.org>
+Date: Sat, 19 Mar 2016 19:40:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: thierry.reding@gmail.com, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	bcousson@baylibre.com, tony@atomide.com, linux@arm.linux.org.uk,
+	t-kristo@ti.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] pwm: pwm-tiehrpwm: Update dt binding document to
+ use generic node name
+Message-ID: <20160320004018.GA7611@rob-hp-laptop>
+References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
+ <1458263723-25770-4-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458263723-25770-4-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
-since it's used by not only PowerPC but also ARM. And add a specification
-for 'little-endian' property.
+On Thu, Mar 17, 2016 at 08:15:23PM -0500, Franklin S Cooper Jr wrote:
+> Now that the node name has been changed from ehrpwm to pwm the document
+> should show this proper usage. Also change the unit address in the example
+> from 0 to the proper physical address value that should be used.
+> 
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
+> Version 3 changes:
+> N/A
+> 
+> Version 2 changes:
+> Changed the unit address for da850 to match the value in the reg property.
+> 
+>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- None
-Changes for v3:
-	- None
-Changes for v4:
-	- Added this patch
-Changes for v5:
-	- Modified the description for little-endian property
-Changes for v6:
-	- None
-Changes for v7:
-	- None
----
- Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
- 1 file changed, 3 insertions(+)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
-
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-similarity index 91%
-rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
-index b71b203..07adca9 100644
---- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-@@ -25,6 +25,9 @@ Recommended properties:
-  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
-    registers, for those SOCs that have a PAMU device.
- 
-+ - little-endian : Indicates that the global utilities block is little
-+   endian. The default is big endian.
-+
- Examples:
- 	global-utilities@e0000 {	/* global utilities block */
- 		compatible = "fsl,mpc8548-guts";
--- 
-2.1.0.27.g96db324
-
+Acked-by: Rob Herring <robh@kernel.org>
