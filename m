@@ -1,57 +1,59 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] clk: renesas: PM Domain Cleanups and Preparation
-Date: Wed,  9 Mar 2016 20:18:30 +0100
-Message-Id: <1457551114-21764-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:16425 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753139AbcCUIZ7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2016 04:25:59 -0400
+Date: Mon, 21 Mar 2016 09:25:49 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: Accept a greater rate when setting a parent
+ clock
+Message-Id: <20160321092549.4e6245e4f02839e29aeb86a9@free.fr>
+In-Reply-To: <20160321072546.GT30977@lukather>
+References: <20160310081658.B749246B@mail.free-electrons.com>
+	<20160321072546.GT30977@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+On Mon, 21 Mar 2016 08:25:46 +0100
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-This patch series performs some cleanups related to PM Domains on the
-Renesas clock drivers, and prepares the CPG/MSSR driver for the advent
-of R-Car SYSC PM Domains.
+> > -	/* find the parent that can help provide the fastest rate <= rate */
+> > +	/* find the parent that can help provide the fastest rate */
+> >  	num_parents = clk_hw_get_num_parents(hw);
+> >  	for (i = 0; i < num_parents; i++) {
+> >  		parent = clk_hw_get_parent_by_index(hw, i);
+> > @@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+> >  		child_rate = clk_factors_round_rate(hw, req->rate,
+> >  						    &parent_rate);
+> >  
+> > -		if (child_rate <= req->rate && child_rate > best_child_rate) {
+> > +		if (child_rate > best_child_rate) {
+> 
+> I'm not sure this would work, since you'll end up picking the fastest
+> rate without considering whether it is the closest or not.
+> 
+> I guess what you want here is using the absolute difference between
+> the requested rate and the rate you're evaluating.
+> 
+> That being said, we had a similar discussion for SPI around a month
+> ago where we wanted a rate strictly lower than the requested one. I
+> guess it's time to add a flag to tell how you want to round.
 
-Support for the latter will be introduced in 3 patch series:
-  - "[PATCH v3 0/7] PM / Domains: Add DT bindings for the R-Car System
-    Controller",
-  - "[PATCH v3 00/11] soc: renesas: Add R-Car SYSC PM Domain Support",
-  - "[PATCH v3 0/6] ARM/arm64: dts: rcar: Add SYSC PM domains".
+You are right, I just removed half of the constraint, but I still wonder
+why does this sequence introduced by the commit 862b728387aef3a37
+(clk: sunxi: factors: automatic reparenting support) do
+	"provide the fastest rate <= rate"
+instead of
+	"provide the closest rate" ?
 
-This patch series is against clk/clk-next with "[PATCH v2] clk: renesas:
-Rename header file renesas.h" applied.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  clk: renesas: mstp: Drop check for CONFIG_PM_GENERIC_DOMAINS_OF
-  clk: renesas: cpg-mssr: Drop check for CONFIG_PM_GENERIC_DOMAINS_OF
-  clk: renesas: mstp: Clarify cpg_mstp_{at,de}tach_dev() domain
-    parameter
-  clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev()
-
- drivers/clk/renesas/clk-mstp.c         |  6 ++----
- drivers/clk/renesas/renesas-cpg-mssr.c | 27 ++++++++++++---------------
- include/linux/clk/renesas.h            | 10 ++++------
- 3 files changed, 18 insertions(+), 25 deletions(-)
+Emilio?
 
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
