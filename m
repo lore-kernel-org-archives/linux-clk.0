@@ -1,86 +1,38 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 01/46] pwm: rcar: make use of pwm_is_enabled()
-Date: Wed, 30 Mar 2016 22:03:24 +0200
-Message-Id: <1459368249-13241-2-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 21 Mar 2016 11:43:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: thierry.reding@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, bcousson@baylibre.com, tony@atomide.com,
+	linux@arm.linux.org.uk, t-kristo@ti.com, mturquette@baylibre.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: ti: am335x/am4372: Add tbclk to pwm node
+Message-ID: <20160321184318.GS25972@codeaurora.org>
+References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
+ <1458263723-25770-2-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458263723-25770-2-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced a
-new function to test whether a PWM device is enabled or not without
-manipulating PWM internal fields.
-Hiding this is necessary if we want to smoothly move to the atomic PWM
-config approach without impacting PWM drivers.
-Fix this driver to use pwm_is_enabled() instead of directly accessing the
-->flags field.
+On 03/17, Franklin S Cooper Jr wrote:
+> Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
+> to the time-based clk.
+> 
+> Do not remove similar entries for ehrpwm node. Later patches will switch
+> from using ehrpwm node name to pwm. But to maintain ABI compatibility we
+> shouldn't remove the old entries.
+> 
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/pwm/pwm-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 7b8ac06..1c85ecc 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -157,7 +157,7 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return div;
- 
- 	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
--	if (!test_bit(PWMF_ENABLED, &pwm->flags) && !duty_ns)
-+	if (!pwm_is_enabled(pwm) && !duty_ns)
- 		return 0;
- 
- 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+Are there any plans to get off these DT_CLK entries entirely?
+
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
