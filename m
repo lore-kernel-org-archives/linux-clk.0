@@ -1,32 +1,31 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 2 Mar 2016 08:24:24 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 15/41] clk: spear: Remove CLK_IS_ROOT
-Message-ID: <20160302025424.GN16437@vireshk-i7>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-16-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:39603 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751359AbcCVQ11 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 22 Mar 2016 12:27:27 -0400
+Date: Tue, 22 Mar 2016 17:27:10 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [RFC 4/5] WIP: clk: shmobile: r8a7795: add R clk
+Message-ID: <20160322162707.GB14057@katana>
+References: <1458587984-6313-1-git-send-email-wsa@the-dreams.de>
+ <1458587984-6313-5-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdW0o9Po8pmJx8=xDi5VQc6ToqrENOHCOr64RffcUNPdSQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-16-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <CAMuHMdW0o9Po8pmJx8=xDi5VQc6ToqrENOHCOr64RffcUNPdSQ@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01-03-16, 11:00, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
+> > +               if (0) { /* FIXME: how to check if EXTALR rate is > 0? */
 > 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/spear/spear1310_clock.c | 21 ++++++++-------------
->  drivers/clk/spear/spear1340_clock.c | 16 ++++++----------
->  drivers/clk/spear/spear3xx_clock.c  |  8 +++-----
->  drivers/clk/spear/spear6xx_clock.c  |  6 ++----
->  4 files changed, 19 insertions(+), 32 deletions(-)
+> Can't you just get its rate?
+> Please cc linux-clk for questions like this.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+I wondered if a clock provider has an easier method than simply becoming
+a clock consumer of its own clock. I thought some of you might know
+something. I'll have a second look. If that fails, I'll ask the clk
+list, of course.
 
--- 
-viresh
