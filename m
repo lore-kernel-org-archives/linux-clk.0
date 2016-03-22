@@ -1,300 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:30947 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932327AbcCHCci (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 21:32:38 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v10 6/6] ARM: dts: add dts files for Hi3519
-Date: Tue, 8 Mar 2016 10:20:18 +0800
-Message-ID: <1457403618-18317-7-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
-References: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CACRpkda1gYciHz79ZaFsQmZdq8PwxtoR2LwCO3LteCGbNQE=gA@mail.gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
+	<CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
+	<CAEzqOZugVOGarjy9NjDOhwJeU6P26Ch2aX13Tec2N0z2Gb9g7A@mail.gmail.com>
+	<CACRpkda1gYciHz79ZaFsQmZdq8PwxtoR2LwCO3LteCGbNQE=gA@mail.gmail.com>
+Date: Tue, 22 Mar 2016 14:16:20 +0100
+Message-ID: <CACRpkda-B=dVUguBSifkV_ZxzoJwawn+X-oCPjD=r8k0yWdfSg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
+	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-add dts files for Hi3519
+On Tue, Mar 22, 2016 at 2:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Mar 17, 2016 at 4:34 PM, Vishnu Patekar
+> <vishnupatekar0510@gmail.com> wrote:
+>> On Thu, Mar 17, 2016 at 10:51 PM, Linus Walleij
+>
+>>> I think I already merged this?
+>>
+>> AFAIK, this one is not yet merged. At least, you did not say it's merged. :)
+>
+> Sorry, confused it with the plain A83T controller...
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/boot/dts/Makefile        |   2 +
- arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
- arch/arm/boot/dts/hi3519.dtsi     | 187 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 231 insertions(+)
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+Sadly it does not apply so please rebase and resend this patch
+after v4.6-rc1 is out.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index a4a6d70..3ce36ff 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -141,6 +141,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5800-peach-pi.dtb
- dtb-$(CONFIG_ARCH_HI3xxx) += \
- 	hi3620-hi4511.dtb
-+dtb-$(CONFIG_ARCH_HISI) += \
-+	hi3519-demb.dtb
- dtb-$(CONFIG_ARCH_HIX5HD2) += \
- 	hisi-x5hd2-dkb.dtb
- dtb-$(CONFIG_ARCH_HIGHBANK) += \
-diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
-new file mode 100644
-index 0000000..6991ab6
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3519-demb.dts
-@@ -0,0 +1,42 @@
-+/*
-+ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "hi3519.dtsi"
-+
-+/ {
-+	model = "HiSilicon HI3519 DEMO Board";
-+	compatible = "hisilicon,hi3519";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x40000000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&dual_timer0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
-new file mode 100644
-index 0000000..5729ecf
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3519.dtsi
-@@ -0,0 +1,187 @@
-+/*
-+ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#include <dt-bindings/clock/hi3519-clock.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	chosen { };
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+	};
-+
-+	gic: interrupt-controller@10300000 {
-+		compatible = "arm,cortex-a7-gic";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
-+	};
-+
-+	clk_3m: clk_3m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <3000000>;
-+	};
-+
-+	crg: clock-reset-controller@12010000 {
-+		compatible = "hisilicon,hi3519-crg";
-+		#clock-cells = <1>;
-+		#reset-cells = <2>;
-+		reg = <0x12010000 0x10000>;
-+	};
-+
-+	soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		uart0: serial@12100000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12100000 0x1000>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART0_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart1: serial@12101000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12101000 0x1000>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART1_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart2: serial@12102000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12102000 0x1000>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART2_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart3: serial@12103000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12103000 0x1000>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART3_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart4: serial@12104000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12104000 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART4_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		dual_timer0: timer@12000000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12000000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		dual_timer1: timer@12001000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12001000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		dual_timer2: timer@12002000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12002000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		spi_bus0: spi@12120000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x12120000 0x1000>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_SPI0_CLK>;
-+			clock-names = "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disable";
-+		};
-+
-+		spi_bus1: spi@12121000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x12121000 0x1000>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_SPI1_CLK>;
-+			clock-names = "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disable";
-+		};
-+
-+		spi_bus2: spi@12122000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x12122000 0x1000>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_SPI2_CLK>;
-+			clock-names = "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disable";
-+		};
-+
-+		sysctrl: system-controller@12020000 {
-+			compatible = "hisilicon,hi3519-sysctrl", "syscon";
-+			reg = <0x12020000 0x1000>;
-+		};
-+
-+		reboot {
-+			compatible = "syscon-reboot";
-+			regmap = <&sysctrl>;
-+			offset = <0x4>;
-+			mask = <0xdeadbeef>;
-+		};
-+	};
-+};
--- 
-1.9.1
-
+Yours,
+Linus Walleij
