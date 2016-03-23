@@ -1,67 +1,68 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <lars.persson@axis.com>
+Message-ID: <56F256A9.6040405@axis.com>
+Date: Wed, 23 Mar 2016 09:41:13 +0100
+From: Lars Persson <lars.persson@axis.com>
 MIME-Version: 1.0
-In-Reply-To: <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
-Date: Wed, 9 Mar 2016 09:55:44 +0700
-Message-ID: <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>,
-	=?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/2] clk: Add Artpec-6 SoC support
+References: <cover.1456411894.git.larper@axis.com>
+In-Reply-To: <cover.1456411894.git.larper@axis.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
+Michael & Stephen,
 
-> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> interrupt bit is 6th and A83T has one extra pin PL12.
+Should we resubmit this series for 4.7 ?
+
+Also to follow up on your previous request to use the platform driver 
+framework. We have noticed recent submissions use a style that mixes 
+early clocks registered with CLK_OF_DECLARE and the remaining clocks 
+registered through a platform driver. Is this the style we should 
+implement ?
+
+Best Regards,
+  Lars Persson
+
+
+On 02/25/2016 03:58 PM, Lars Persson wrote:
+> Add clock support for the Artpec-6 SoC port. The ARM parts are in the series
+> "arm: Add Artpec-6 SoC" and it goes through the arm-soc tree.
 >
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-
-As partly noted by others:
-
-> +config PINCTRL_SUN8I_A83T_R
-> +       def_bool MACH_SUN8I
-
-bool
-
-> +       depends on RESET_CONTROLLER
-
-Should it rather select RESET_CONTROLLER?
-
-> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
-> +       { .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
-
-Module talk in bool driver.
-
-> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
-> +       .probe  = sun8i_a83t_r_pinctrl_probe,
-> +       .driver = {
-> +               .name           = "sun8i-a83t-r-pinctrl",
-> +               .of_match_table = sun8i_a83t_r_pinctrl_match,
-> +       },
-> +};
-> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
-
-Should be builtin?
-
-Yours,
-Linus Walleij
+> Changes since v3:
+> - The binding was corrected to handle two fractional divider clocks as input to
+>    the clock controller.
+> - Updated clk-artpec6.c to handle a distinct fractional divider input for each
+>    i2s clock mux.
+>
+> Changes since v2:
+> - Moved axis,artpec6-clkctrl.h to the first patch with the DT bindings.
+>
+> Changes since v1:
+>
+> - The driver now provides all clocks from the main clock controller block
+>    through one DT node.
+> - Added a header file for the clock indexes.
+> - Refer to clock-bindings.txt in the bindings document.
+>
+> A platform driver was not possible because the clocks are needed earlier in the
+> kernel startup.
+>
+> Lars Persson (2):
+>    clk: add device tree binding for Artpec-6 clock controller
+>    clk: add artpec-6 clock controller
+>
+>   .../devicetree/bindings/clock/artpec6.txt          |  41 +++++
+>   drivers/clk/Makefile                               |   1 +
+>   drivers/clk/axis/Makefile                          |   1 +
+>   drivers/clk/axis/clk-artpec6.c                     | 189 +++++++++++++++++++++
+>   include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 +++++
+>   5 files changed, 270 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+>   create mode 100644 drivers/clk/axis/Makefile
+>   create mode 100644 drivers/clk/axis/clk-artpec6.c
+>   create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
+>
