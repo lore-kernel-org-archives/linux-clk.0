@@ -1,145 +1,41 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:28446 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754569AbcCPHEJ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2016 03:04:09 -0400
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v5 1/5] ARM: at91: pm: create a separate procedure for the ULP0 mode
-Date: Wed, 16 Mar 2016 14:58:05 +0800
-Message-ID: <1458111489-23774-2-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
-References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:38298 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751789AbcCXOBZ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 10:01:25 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1458823841-19899-1-git-send-email-wsa@the-dreams.de>
+References: <1458823841-19899-1-git-send-email-wsa@the-dreams.de>
+Date: Thu, 24 Mar 2016 15:01:23 +0100
+Message-ID: <CAMuHMdXcztj9+icsPVR4mxcCLz8J3YsDAKgaMuSEe7r3dY8vTA@mail.gmail.com>
+Subject: Re: [PATCH] clk: shmobile: r8a7795: make SD clk definition specific
+ for GEN3
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To make the code more legible and prepare to add the ULP1 mode
-support in the future, create a separate procedure for the ULP0 mode.
+On Thu, Mar 24, 2016 at 1:50 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> About SD clocks: The clock type is Gen3 specific, the callbacks are all
+> Gen3 specific; I think the clock definition should also be Gen3 specific
+> and not in the general header file.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+Thanks, will queue for clk-renesas-for-v4.7 and next renesas-drivers.
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+Gr{oetje,eeting}s,
 
- arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
+                        Geert
 
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index a25defd..5fcffdc 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
- 
- 	ldr	r0, .pm_mode
- 	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_disable_main_clock
-+	beq	standby_mode
- 
- 	ldr	pmc, .pmc_base
- 
-@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 
--	/* Turn off the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--skip_disable_main_clock:
--	ldr	pmc, .pmc_base
--
--	/* Wait for interrupt */
--	at91_cpu_idle
--
--	ldr	r0, .pm_mode
--	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_enable_main_clock
-+ulp0_mode:
-+	bl	at91_pm_ulp0_mode
-+	b	ulp_exit
- 
-+ulp_exit:
- 	ldr	pmc, .pmc_base
- 
--	/* Turn on the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--	wait_moscrdy
--
- 	/* Restore PLLA setting */
- 	ldr	tmp1, .saved_pllar
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-@@ -177,7 +158,15 @@ skip_disable_main_clock:
- 
- 	wait_mckrdy
- 
--skip_enable_main_clock:
-+	b	pm_exit
-+
-+standby_mode:
-+	ldr	pmc, .pmc_base
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+pm_exit:
- 	/* Exit the self-refresh mode */
- 	mov	r0, #SRAMC_SELF_FRESH_EXIT
- 	bl	at91_sramc_self_refresh
-@@ -311,6 +300,32 @@ exit_sramc_sf:
- 	mov	pc, lr
- ENDPROC(at91_sramc_self_refresh)
- 
-+/*
-+ * void at91_pm_ulp0_mode(void)
-+ */
-+ENTRY(at91_pm_ulp0_mode)
-+	ldr	pmc, .pmc_base
-+
-+	/* Turn off the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+	/* Turn on the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscrdy
-+
-+	mov	pc, lr
-+ENDPROC(at91_pm_ulp0_mode)
-+
- .pmc_base:
- 	.word 0
- .sramc_base:
--- 
-1.7.9.5
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
