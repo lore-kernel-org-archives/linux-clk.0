@@ -1,95 +1,47 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/41] clk: mvebu: Remove CLK_IS_ROOT
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-	<1456858826-28541-9-git-send-email-sboyd@codeaurora.org>
-Date: Thu, 03 Mar 2016 11:27:38 +0100
-In-Reply-To: <1456858826-28541-9-git-send-email-sboyd@codeaurora.org> (Stephen
-	Boyd's message of "Tue, 1 Mar 2016 10:59:53 -0800")
-Message-ID: <87wppjluud.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:54124 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757445AbcCXNBG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 24 Mar 2016 09:01:06 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-clk@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] r8a7795: add clocks for the watchdogs
+Date: Thu, 24 Mar 2016 14:00:37 +0100
+Message-Id: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
- 
- On mar., mars 01 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
+Okay, here is the updated series. Rebased to latest renesas-drivers
+(renesas-drivers-2016-03-15-v4.5) and actually tested with both parent clocks
+for R. Works fine.
 
-> This flag is a no-op now. Remove usage of the flag.
->
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+All FIXMEs and comments from Geert (Thanks!) have been addressed, I hope. It
+can go in, I'd think.
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+I have still the open question if we can set a register in secure-mode somehow,
+so I can test the SWDT which is based on OSCCLK?
 
-Thanks,
+Regards,
 
-Gregory
+   Wolfram
 
-> ---
->  drivers/clk/mvebu/common.c       | 11 +++++------
->  drivers/clk/mvebu/dove-divider.c |  3 +--
->  2 files changed, 6 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-> index daa6ebdac131..66be2e0c82b4 100644
-> --- a/drivers/clk/mvebu/common.c
-> +++ b/drivers/clk/mvebu/common.c
-> @@ -137,8 +137,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->  	of_property_read_string_index(np, "clock-output-names", 0,
->  				      &tclk_name);
->  	rate = desc->get_tclk_freq(base);
-> -	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL,
-> -						   CLK_IS_ROOT, rate);
-> +	clk_data.clks[0] = clk_register_fixed_rate(NULL, tclk_name, NULL, 0,
-> +						   rate);
->  	WARN_ON(IS_ERR(clk_data.clks[0]));
->  
->  	/* Register CPU clock */
-> @@ -150,8 +150,8 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->  		&& desc->is_sscg_enabled(base))
->  		rate = desc->fix_sscg_deviation(rate);
->  
-> -	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL,
-> -						   CLK_IS_ROOT, rate);
-> +	clk_data.clks[1] = clk_register_fixed_rate(NULL, cpuclk_name, NULL, 0,
-> +						   rate);
->  	WARN_ON(IS_ERR(clk_data.clks[1]));
->  
->  	/* Register fixed-factor clocks derived from CPU clock */
-> @@ -174,8 +174,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->  					      2 + desc->num_ratios, &name);
->  		rate = desc->get_refclk_freq(base);
->  		clk_data.clks[2 + desc->num_ratios] =
-> -			clk_register_fixed_rate(NULL, name, NULL,
-> -						CLK_IS_ROOT, rate);
-> +			clk_register_fixed_rate(NULL, name, NULL, 0, rate);
->  		WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
->  	}
->  
-> diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
-> index 3e0b52daa35f..4091f3cfee19 100644
-> --- a/drivers/clk/mvebu/dove-divider.c
-> +++ b/drivers/clk/mvebu/dove-divider.c
-> @@ -225,8 +225,7 @@ static int dove_divider_init(struct device *dev, void __iomem *base,
->  	 * Create the core PLL clock.  We treat this as a fixed rate
->  	 * clock as we don't know any better, and documentation is sparse.
->  	 */
-> -	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
-> -				      2000000000UL);
-> +	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, 0, 2000000000UL);
->  	if (IS_ERR(clk))
->  		return PTR_ERR(clk);
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Wolfram Sang (5):
+  clk: shmobile: cpg-mssr: add generic support for read-only DIV6 clocks
+  clk: shmobile: r8a7795: add OSC and RINT clocks
+  clk: shmobile: r8a7795: add R clk
+  clk: shmobile: r8a7795: add stop for R clk
+  arm64: dts: salvator-x: populate EXTALR
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  4 ++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             | 27 ++++++++++++++++++----
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 18 ++++++++++-----
+ drivers/clk/renesas/renesas-cpg-mssr.h             |  3 +++
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h       |  2 ++
+ 5 files changed, 44 insertions(+), 10 deletions(-)
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.7.0
+
