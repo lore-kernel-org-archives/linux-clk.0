@@ -1,144 +1,98 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 12/13] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-Date: Sat,  5 Mar 2016 23:43:05 +0800
-Message-Id: <1457192586-25596-13-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:51845 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755674AbcCXLZF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 07:25:05 -0400
+Date: Thu, 24 Mar 2016 12:24:52 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: "Yang, Wenyou" <Wenyou.Yang@atmel.com>
+Cc: "Ferre, Nicolas" <Nicolas.FERRE@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH v5 3/5] ARM: at91: pm: configure PMC fast startup signals
+Message-ID: <20160324112452.GJ2570@piout.net>
+References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+ <1458111489-23774-4-git-send-email-wenyou.yang@atmel.com>
+ <20160317171433.GD2831@piout.net>
+ <B256D81BAE5131468A838E5D7A243641D643C03F@penmbx01>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <B256D81BAE5131468A838E5D7A243641D643C03F@penmbx01>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for Sinovoip BPI-M3 A83T based board.
+On 21/03/2016 at 02:24:32 +0000, Yang, Wenyou wrote :
+> Hi Alexandre,
+> 
+> > -----Original Message-----
+> > From: Alexandre Belloni [mailto:alexandre.belloni@free-electrons.com]
+> > Sent: 2016年3月18日 1:15
+> > To: Yang, Wenyou <Wenyou.Yang@atmel.com>
+> > Cc: Ferre, Nicolas <Nicolas.FERRE@atmel.com>; Jean-Christophe Plagniol-
+> > Villard <plagnioj@jcrosoft.com>; Russell King <linux@arm.linux.org.uk>; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-clk@vger.kernel.org; Rob Herring
+> > <robh+dt@kernel.org>; Pawel Moll <pawel.moll@arm.com>; Mark Brown
+> > <broonie@kernel.org>; Ian Campbell <ijc+devicetree@hellion.org.uk>; Kumar
+> > Gala <galak@codeaurora.org>
+> > Subject: Re: [PATCH v5 3/5] ARM: at91: pm: configure PMC fast startup signals
+> > 
+> > On 16/03/2016 at 14:58:07 +0800, Wenyou Yang wrote :
+> > > The fast startup signal is used as wake up sources for ULP1 mode.
+> > > As soon as a fast startup signal is asserted, the embedded 12 MHz RC
+> > > oscillator restarts automatically.
+> > >
+> > > This patch is to configure the fast startup signals, which signal is
+> > > enabled to trigger the PMC to wake up the system from ULP1 mode should
+> > > be configured via the DT.
+> > >
+> > > Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+> > 
+> > I would actually avoid doing that from the PMC driver and do that configuration
+> > from the aic5 driver. It has all the information you need, it knows what kind of level
+> > or edge is needed to wake up and what are the wakeup interrupts to enable. This
+> > will allow you to stop introducing a new binding. Also, this will avoid discrepancies
+> > between what is configured in the DT and what the user really wants (for exemple
+> > differences between the edge direction configured for the PIOBu in userspace
+> > versus what is in the device tree or wakeonlan activation/deactivation).
+> 
+> Thank you for your feedback.
+> 
+> But some wake-ups such as WKUP pin, ACC_CE, RXLP_MCE, don't have the corresponding
 
-It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
-mic, AP6212 Wifi, etc on it.
-It is paired with AXP813 PMIC which is almost same as AXP818.
+The WKUP pin can be configured from the shdwc driver, ACC_CE from the
+ACC driver, RXLP_MCE, from the RXLP driver because you will need
+drivers for those at some point anyway.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 79 ++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+> interrupt number. Moreover, I think, the ULP1 is very different form the ULP0, it is not woken
+> up by the interrupt. It is fallen sleep and woken up by the some mechanism in the PMC. 
+> 
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 58e461a..c0dd016 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -694,6 +694,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-a33-sinlinx-sina33.dtb \
- 	sun8i-a83t-allwinner-h8homlet-v2.dtb \
- 	sun8i-a83t-cubietruck-plus.dtb \
-+	sun8i-a83t-sinovoip-bpi-m3.dtb \
- 	sun8i-h3-orangepi-plus.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-new file mode 100644
-index 0000000..7744b63
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-@@ -0,0 +1,79 @@
-+/*
-+ * Copyright 2016 Vishnu Patekar
-+ * Vishnu Patekar <vishnupatekar0510@gmail.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+/ {
-+	model = "Sinovoip BananaPi M3 v1.2";
-+	compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_reference_design>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&r_rsb {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_b>;
-+	status = "okay";
-+};
+Well, we don't really care about the mechanism. We only care about how
+the user is able to configure the wakeup sources.
+
+With your patch set, what happens when no ULP1 sources are defined but
+there are ULP0 sources? What happens when there are both ULP1 and ULP0
+sources?
+
+What would be good is to use ULP1 when only ULP1 sources are set up and
+ULP0 in the other cases. This will greatly help the user. Also, what I'm
+suggesting actually allows to change the ULP1 sources at runtime from
+devices that are actually used which is quite better than setting them
+up statically from DT.
+
+
 -- 
-1.9.1
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
