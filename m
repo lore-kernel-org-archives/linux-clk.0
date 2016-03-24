@@ -1,194 +1,45 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Wed, 30 Mar 2016 22:18:43 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Doug
- Anderson <dianders@google.com>
-Subject: Re: [PATCH v5 00/46] pwm: add support for atomic update
-Message-ID: <20160330221843.45f2abf7@bbrezillon>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34711 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756985AbcCXOBw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2016 10:01:52 -0400
 MIME-Version: 1.0
+In-Reply-To: <1458824442-20279-2-git-send-email-wsa@the-dreams.de>
+References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+	<1458824442-20279-2-git-send-email-wsa@the-dreams.de>
+Date: Thu, 24 Mar 2016 15:01:50 +0100
+Message-ID: <CAMuHMdV04VGApxjkZCp1b9U5F0mj-1G8acMdR7pWkcaPLGx=_Q@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: shmobile: cpg-mssr: add generic support for
+ read-only DIV6 clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-+Doug (sorry, I forgot to add you in to the recipient list)
+On Thu, Mar 24, 2016 at 2:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Gen3 has two clocks (OSC and R) which look like a DIV6 clock but their
+> divider value is read-only and depends on MD pins at bootup. Add support
+> for such clocks by reading the value and adding a fixed clock.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Wed, 30 Mar 2016 22:03:23 +0200
-Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
-
-> Hello,
->=20
-> This series adds support for atomic PWM update, or IOW, the capability
-> to update all the parameters of a PWM device (enabled/disabled, period,
-> duty and polarity) in one go.
->=20
-> It also adds support for initial PWM state retrieval (or hardware readout=
-),
-> which should allow smooth handover between the bootloader and Linux. For
-> example, critical PWM users (like critical regulators controlled by a PWM)
-> can query the current PWM state, and adapt the PWM config without having
-> to disable/enable the PWM, or abruptly change the period/dutycyle/polarity
-> config.
->=20
-> Thierry, I hope this version meets your expectations, if that's not the
-> case, could you let me know quickly so I can adjust the implementation
-> accordingly (I'd really like to get most of those changes in 4.7).
-
-Oh, I forgot to mention that I'm not necessarily expecting all those
-patches to be taken in one go. We only need patches 1 to 31 for the
-problem exposed by Doug. Patch 32 is deprecating the non-atomic APIs and
-patches 33 to 46 are switching all PWM users to the atomic APIs to avoid
-compilation warnings.
-It's up to you to decide which you'd like to take.
-
->=20
-> Best Regards,
->=20
-> Boris
->=20
-> Changes since v4:
-> - introduce pwm_args to expose per-board/platform config
-> - deprecate non-atomic APIs
-> - implement non-atomic functions as wrappers around atomic ones
-> - patch all PWM users to use the atomic API
-> - rename the ->reset_state() hook into ->get_state()
-> - drop most acks
-> - rework PWM config in the pwm-regulator driver
-> - patch sun4i and sti PWM drivers to support HW readout
->=20
-> Changes since v3:
-> - rebased on pwm/for-next after pulling 4.4-rc1
-> - replace direct access to pwm fields by pwm_get/set_xxx() helpers, thus
->   fixing some build errors
-> - split changes to allow each maintainer to review/ack or take the
->   modification through its subsystem
->=20
-> Changes since v2:
-> - rebased on top of 4.3-rc2
-> - reintroduced pwm-regulator patches
->=20
-> Changes since v1:
-> - dropped applied patches
-> - squashed Heiko's fixes into the rockchip driver changes
-> - made a few cosmetic changes
-> - added kerneldoc comments
-> - added Heiko's patch to display more information in debugfs
-> - dropped pwm-regulator patches (should be submitted separately)
->=20
-> *** BLURB HERE ***
->=20
-> Boris Brezillon (45):
->   pwm: rcar: make use of pwm_is_enabled()
->   backlight: pwm_bl: remove useless call to pwm_set_period()
->   backlight: lm3630a_bl: stop messing with the pwm->period field
->   pwm: get rid of pwm->lock
->   pwm: introduce the pwm_args concept
->   pwm: use pwm_get/set_xxx() helpers where appropriate
->   clk: pwm: use pwm_get_args() where appropriate
->   hwmon: pwm-fan: use pwm_get_args() where appropriate
->   misc: max77693-haptic: use pwm_get_args() where appropriate
->   leds: pwm: use pwm_get_args() where appropriate
->   regulator: pwm: use pwm_get_args() where appropriate
->   fbdev: ssd1307fb: use pwm_get_args() where appropriate
->   backlight: pwm_bl: use pwm_get_args() where appropriate
->   pwm: keep PWM state in sync with hardware state
->   pwm: introduce the pwm_state concept
->   pwm: move the enabled/disabled info into pwm_state
->   pwm: add the PWM initial state retrieval infra
->   pwm: add the core infrastructure to allow atomic update
->   pwm: switch to the atomic API
->   pwm: rockchip: add initial state retrieval
->   pwm: rockchip: avoid glitches on already running PWMs
->   pwm: rockchip: add support for atomic update
->   pwm: sti: add support for initial state retrieval
->   pwm: sti: avoid glitches on already running PWMs
->   pwm: sun4i: implement hardware readout
->   regulator: pwm: adjust PWM config at probe time
->   regulator: pwm: swith to the atomic PWM API
->   regulator: pwm: properly initialize the ->state field
->   regulator: pwm: retrieve correct voltage
->   pwm: update documentation
->   pwm: deprecate pwm_config(), pwm_enable() and pwm_disable()
->   pwm: replace pwm_disable() by pwm_apply_state()
->   clk: pwm: switch to the atomic API
->   hwmon: pwm-fan: switch to the atomic API
->   input: misc: max77693: switch to the atomic API
->   input: misc: max8997: switch to the atomic PWM API
->   input: misc: pwm-beeper: switch to the atomic PWM API
->   leds: pwm: switch to the atomic PWM API
->   backlight: lm3630a: switch to the atomic PWM API
->   backlight: lp855x: switch to the atomic PWM API
->   backlight: lp8788: switch to the atomic PWM API
->   backlight: pwm_bl: switch to the atomic PWM API
->   video: ssd1307fb: switch to the atomic PWM API
->   drm: i915: switch to the atomic PWM API
->   ARM: s3c24xx: rx1950: switch to the atomic PWM API
->=20
-> Heiko St=C3=BCbner (1):
->   pwm: add information about polarity, duty cycle and period to debugfs
->=20
->  Documentation/pwm.txt                |  27 +++-
->  arch/arm/mach-s3c24xx/mach-rx1950.c  |  17 +-
->  drivers/clk/clk-pwm.c                |  36 ++++-
->  drivers/gpu/drm/i915/intel_panel.c   |  39 +++--
->  drivers/hwmon/pwm-fan.c              |  88 ++++++----
->  drivers/input/misc/max77693-haptic.c |  28 +++-
->  drivers/input/misc/max8997_haptic.c  |  23 ++-
->  drivers/input/misc/pwm-beeper.c      |  46 ++++--
->  drivers/leds/leds-pwm.c              |  15 +-
->  drivers/pwm/core.c                   | 186 ++++++++++-----------
->  drivers/pwm/pwm-clps711x.c           |   2 +-
->  drivers/pwm/pwm-crc.c                |   2 +-
->  drivers/pwm/pwm-lpc18xx-sct.c        |   9 +-
->  drivers/pwm/pwm-lpc32xx.c            |   9 +-
->  drivers/pwm/pwm-omap-dmtimer.c       |   2 +-
->  drivers/pwm/pwm-pxa.c                |   2 +-
->  drivers/pwm/pwm-rcar.c               |   2 +-
->  drivers/pwm/pwm-rockchip.c           | 156 +++++++++++++++---
->  drivers/pwm/pwm-spear.c              |   9 +-
->  drivers/pwm/pwm-sti.c                |  67 +++++++-
->  drivers/pwm/pwm-sun4i.c              |  73 ++++++---
->  drivers/pwm/sysfs.c                  |  98 ++++++++---
->  drivers/regulator/pwm-regulator.c    | 151 ++++++++++++++---
->  drivers/video/backlight/lm3630a_bl.c |  15 +-
->  drivers/video/backlight/lp855x_bl.c  |  15 +-
->  drivers/video/backlight/lp8788_bl.c  |  17 +-
->  drivers/video/backlight/pwm_bl.c     |  51 +++---
->  drivers/video/fbdev/ssd1307fb.c      |  28 +++-
->  include/linux/pwm.h                  | 303 ++++++++++++++++++++++++++---=
-------
->  29 files changed, 1096 insertions(+), 420 deletions(-)
->=20
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
+-- 
+Gr{oetje,eeting}s,
 
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
