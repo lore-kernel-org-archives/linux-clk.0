@@ -1,138 +1,99 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 27/46] regulator: pwm: adjust PWM config at probe time
-Date: Wed, 30 Mar 2016 22:03:50 +0200
-Message-Id: <1459368249-13241-28-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:54137 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756054AbcCXNBr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 24 Mar 2016 09:01:47 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-clk@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/5] clk: shmobile: r8a7795: add R clk
+Date: Thu, 24 Mar 2016 14:00:40 +0100
+Message-Id: <1458824442-20279-4-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM attached to a PWM regulator device might have been previously
-configured by the bootloader.
-Make sure the bootloader and linux config are in sync, and adjust the PWM
-config if that's not the case.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+R can select between two parents. We deal with it like this: During
+initialization, check if EXTALR is populated. If so, use it for R. If
+not, use R_Internal. clk_mux doesn't help here because we don't want to
+switch parents depending on the clock rate. The clock rate (and source)
+should stay constant for the watchdog, so I think a setup like this
+during initialization makes sense.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/regulator/pwm-regulator.c | 50 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
-index 9154c47..9590fb0 100644
---- a/drivers/regulator/pwm-regulator.c
-+++ b/drivers/regulator/pwm-regulator.c
-@@ -240,6 +240,52 @@ static int pwm_regulator_init_continuous(struct platform_device *pdev,
- 	return 0;
- }
+Since RFC, remove FIXME by using clk_get_rate() via clk.h
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index d305bcd3ef6619..c260da5e70e116 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -13,6 +13,7 @@
+  */
  
-+static int pwm_regulator_adjust_pwm_config(struct pwm_regulator_data *drvdata)
-+{
-+	struct pwm_state pstate = { };
-+	struct pwm_args pargs = { };
+ #include <linux/bug.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+@@ -26,6 +27,7 @@
+ 
+ #include "renesas-cpg-mssr.h"
+ 
++#define CPG_RCKCR	0x240
+ 
+ enum clk_ids {
+ 	/* External Input Clocks */
+@@ -60,6 +62,7 @@ enum r8a7795_clk_types {
+ 	CLK_TYPE_GEN3_PLL3,
+ 	CLK_TYPE_GEN3_PLL4,
+ 	CLK_TYPE_GEN3_SD,
++	CLK_TYPE_GEN3_R,
+ };
+ 
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+@@ -114,8 +117,11 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
+ 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 
+-	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, 0x0240, 8),
+-	DEF_DIV6_RO("r_int",    R8A7795_CLK_RINT,  CLK_EXTAL, 0x0240, 32),
++	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR, 8),
++	DEF_DIV6_RO("r_int",    R8A7795_CLK_RINT,  CLK_EXTAL, CPG_RCKCR, 32),
 +
-+	pwm_get_args(drvdata->pwm, &pargs);
-+	pwm_get_state(drvdata->pwm, &pstate);
++	/* must come after EXTALR because we need its rate */
++	DEF_BASE("r",           R8A7795_CLK_R, CLK_TYPE_GEN3_R, R8A7795_CLK_RINT),
+ };
+ 
+ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+@@ -581,6 +587,18 @@ struct clk * __init r8a7795_cpg_clk_register(struct device *dev,
+ 	case CLK_TYPE_GEN3_SD:
+ 		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
+ 
++	case CLK_TYPE_GEN3_R:
++		/* RINT is default. Only if EXTALR is populated, we switch to it */
++		value = readl(base + CPG_RCKCR) & 0x3f;
 +
-+	/*
-+	 * if the current period is zero this either means the PWM driver
-+	 * does not support initial state retrieval or the PWM was not
-+	 * configured.
-+	 * In any case, we setup the new period and poloarity, and assign a
-+	 * duty_cycle of 0.
-+	 */
-+	if (!pstate.period) {
-+		pstate.duty_cycle = 0;
-+		pstate.period = pargs.period;
-+		pstate.polarity = pargs.polarity;
++		if (clk_get_rate(clks[CLK_EXTALR])) {
++			parent = clks[CLK_EXTALR];
++			value |= BIT(15);
++		}
 +
-+		return pwm_apply_state(drvdata->pwm, &pstate);
-+	}
++		writel(value, base + CPG_RCKCR);
++		break;
 +
-+	/*
-+	 * Adjust the PWM dutycycle/period based on the period value provided
-+	 * in PWM args.
-+	 */
-+	if (pargs.period != pstate.period) {
-+		u64 dutycycle = (u64)pstate.duty_cycle * pargs.period;
-+
-+		do_div(dutycycle, pstate.period);
-+		pstate.duty_cycle = dutycycle;
-+		pstate.period = pargs.period;
-+	}
-+
-+	/*
-+	 * If the polarity changed, we should also change the dutycycle value.
-+	 */
-+	if (pargs.polarity != pstate.polarity) {
-+		pstate.polarity = pargs.polarity;
-+		pstate.duty_cycle = pstate.period - pstate.duty_cycle;
-+	}
-+
-+	return pwm_apply_state(drvdata->pwm, &pstate);
-+}
-+
- static int pwm_regulator_probe(struct platform_device *pdev)
- {
- 	const struct regulator_init_data *init_data;
-@@ -283,6 +329,10 @@ static int pwm_regulator_probe(struct platform_device *pdev)
- 		return PTR_ERR(drvdata->pwm);
+ 	default:
+ 		return ERR_PTR(-EINVAL);
  	}
- 
-+	ret = pwm_regulator_adjust_pwm_config(drvdata);
-+	if (ret)
-+		return ret;
-+
- 	regulator = devm_regulator_register(&pdev->dev,
- 					    &drvdata->desc, &config);
- 	if (IS_ERR(regulator)) {
 -- 
-2.5.0
+2.7.0
+
