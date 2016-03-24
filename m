@@ -1,126 +1,81 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 24/46] pwm: sti: add support for initial state retrieval
-Date: Wed, 30 Mar 2016 22:03:47 +0200
-Message-Id: <1459368249-13241-25-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, sboyd@codeaurora.org
+Subject: [PATCH v3 10/18] dt-bindings: Add PLX Technology OXNAS Standard
+ Clocks bindings
+Date: Thu, 24 Mar 2016 17:50:07 +0100
+Message-Id: <1458838215-23314-11-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
+References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Implement ->get_state() to provide support for initial state retrieval.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/pwm/pwm-sti.c | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ .../devicetree/bindings/clock/plxtech,stdclk.txt   | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
 
-diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
-index 92abbd5..0fbca94 100644
---- a/drivers/pwm/pwm-sti.c
-+++ b/drivers/pwm/pwm-sti.c
-@@ -238,6 +238,46 @@ static void sti_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	mutex_unlock(&pc->sti_pwm_lock);
- }
- 
-+static void sti_pwm_get_state(struct pwm_chip *chip,
-+			      struct pwm_device *pwm,
-+			      struct pwm_state *pstate)
-+{
-+	struct sti_pwm_chip *pc = to_sti_pwmchip(chip);
-+	unsigned int regval, prescaler;
-+	u64 timens;
-+	int ret;
+diff --git a/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt b/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
+new file mode 100644
+index 0000000..c60b459
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
+@@ -0,0 +1,35 @@
++PLX Technology OXNAS SoC Family Standard Clocks
++================================================
 +
-+	/* The clock has to be enabled to access PWM registers */
-+	ret = clk_enable(pc->clk);
-+	if (ret) {
-+		dev_err(chip->dev, "Failed to enable PWM clk");
-+		return;
-+	}
++Please also refer to clock-bindings.txt in this directory for common clock
++bindings usage.
 +
-+	regmap_field_read(pc->prescale_high, &regval);
-+	prescaler = regval << 4;
-+	regmap_field_read(pc->prescale_low, &regval);
-+	prescaler |= regval;
++Required properties:
++- compatible: Should be "oxsemi,ox810se-stdclk"
++- #clock-cells: 1, see below
 +
-+	timens = (u64)(prescaler + 1) * NSEC_PER_SEC *
-+		 (pc->cdata->max_pwm_cnt + 1);
-+	do_div(timens, pc->clk_rate);
++Parent node should have the following properties :
++- compatible: Should be "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
 +
-+	pstate->period = timens;
++For OX810SE, the clock indices are :
++ - 0: LEON
++ - 1: DMA_SGDMA
++ - 2: CIPHER
++ - 3: SATA
++ - 4: AUDIO
++ - 5: USBMPH
++ - 6: ETHA
++ - 7: PCIA
++ - 8: NAND
 +
-+	regmap_read(pc->regmap, STI_DS_REG(pwm->hwpwm), &regval);
-+	timens = (u64)(regval + 1) * pstate->period;
-+	do_div(timens, pc->cdata->max_pwm_cnt + 1);
-+	pstate->duty_cycle = timens;
++example:
 +
-+	regmap_field_read(pc->pwm_en, &regval);
-+	pstate->enabled = regval;
++sys: sys-ctrl@000000 {
++	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
++	reg = <0x000000 0x100000>;
 +
-+	pstate->polarity = PWM_POLARITY_NORMAL;
-+
-+	clk_disable(pc->clk);
-+}
-+
- static void sti_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- {
- 	struct sti_pwm_chip *pc = to_sti_pwmchip(chip);
-@@ -249,6 +289,7 @@ static const struct pwm_ops sti_pwm_ops = {
- 	.config = sti_pwm_config,
- 	.enable = sti_pwm_enable,
- 	.disable = sti_pwm_disable,
-+	.get_state = sti_pwm_get_state,
- 	.free = sti_pwm_free,
- 	.owner = THIS_MODULE,
- };
++	stdclk: stdclk {
++		compatible = "oxsemi,ox810se-stdclk";
++		#clock-cells = <1>;
++	};
++};
 -- 
-2.5.0
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
