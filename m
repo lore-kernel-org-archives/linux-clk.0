@@ -1,55 +1,69 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-        <linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-        <olof@lixom.net>, <xuwei5@hisilicon.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v10 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-Date: Thu, 31 Mar 2016 16:10:10 +0800
-Message-ID: <1459411811-12390-6-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: Scott Wood <scott.wood@nxp.com>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-i2c@vger.kernel.org"
+ <linux-i2c@vger.kernel.org>, "iommu@lists.linux-foundation.org"
+ <iommu@lists.linux-foundation.org>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-mmc@vger.kernel.org"
+ <linux-mmc@vger.kernel.org>
+Subject: RE: [v6, 2/5] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Fri, 25 Mar 2016 06:44:33 +0000
+Message-ID: <HE1PR04MB0889420582187F850129D3D0F8830@HE1PR04MB0889.eurprd04.prod.outlook.com>
+References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
+ <1457518131-11339-3-git-send-email-yangbo.lu@nxp.com>
+ <DB5PR0401MB1928302BB0DDE8D9B47E4361918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+In-Reply-To: <DB5PR0401MB1928302BB0DDE8D9B47E4361918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+ Zhao Qiang <qiang.zhao@freescale.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ Yang-Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>, Claudiu
+ Manoil <claudiu.manoil@freescale.com>, Kumar Gala <galak@codeaurora.org>,
+ Xiaobo Xie <xiaobo.xie@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jiancheng Xue <xuejiancheng@huawei.com>
+> -----Original Message-----
+> From: Scott Wood
+> Sent: Saturday, March 19, 2016 6:55 AM
+> To: Yangbo Lu; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linuxppc-
+> dev@lists.ozlabs.org; linux-clk@vger.kernel.org; linux-
+> i2c@vger.kernel.org; iommu@lists.linux-foundation.org;
+> netdev@vger.kernel.org; linux-mmc@vger.kernel.org
+> Cc: Rob Herring; Russell King; Jochen Friedrich; Joerg Roedel; Claudiu
+> Manoil; ulf.hansson@linaro.org; Bhupesh Sharma; Zhao Qiang; Kumar Gala;
+> Santosh Shilimkar; Yang-Leo Li; Xiaobo Xie
+> Subject: Re: [v6, 2/5] soc: fsl: add GUTS driver for QorIQ platforms
+> 
+> On 03/09/2016 04:18 AM, Yangbo Lu wrote:
+> > +#ifdef CONFIG_FSL_GUTS
+> > +u32 fsl_guts_get_svr(void);
+> > +int fsl_guts_init(void);
+> > +#endif
+> 
+> Don't ifdef prototypes (when not providing a stub alternative).
+> 
+> -Scott
 
-Add device tree bindings for Hi3519 system controller.
+[Lu Yangbo-B47093] Ok, will remove the ifdef.
+Thank you very much.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-new file mode 100644
-index 0000000..115c5be
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-@@ -0,0 +1,14 @@
-+* Hisilicon Hi3519 System Controller Block
-+
-+This bindings use the following binding:
-+Documentation/devicetree/bindings/mfd/syscon.txt
-+
-+Required properties:
-+- compatible: "hisilicon,hi3519-sysctrl".
-+- reg: the register region of this block
-+
-+Examples:
-+sysctrl: system-controller@12010000 {
-+	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-+	reg = <0x12010000 0x1000>;
-+};
--- 
-1.9.1
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
