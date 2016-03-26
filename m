@@ -1,68 +1,71 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 8 Mar 2016 12:33:46 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: fix check of clk_register() returned value
-Message-ID: <20160308123346.656228de@bbrezillon>
-In-Reply-To: <20160308030600.GA5845@piout.net>
-References: <1457394089-15319-1-git-send-email-vz@mleia.com>
-	<20160308030600.GA5845@piout.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	jay.xu@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	dianders@chromium.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 0/4] Add more clock compatible features and support the RK3399 clock
+Date: Sat, 26 Mar 2016 14:37:52 +0800
+Message-Id: <1458974276-10325-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 8 Mar 2016 04:06:00 +0100
-Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
 
-> On 08/03/2016 at 01:41:29 +0200, Vladimir Zapolskiy wrote :
-> > The clk_register() function returns a valid pointer to struct clk or
-> > ERR_PTR() error code, this makes a check for returned NULL value
-> > useless and may lead to oops on error path.
-> > 
-> > Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> 
-> > ---
-> > Alexandre, Boris,
-> > 
-> > I've seen your recent huge updates to the driver, but I haven't found
-> > them in clk-next, I hope that this trivial fix against clk-next won't
-> > cause a big pain on rebase.
-> > 
-> 
-> They went through arm-soc and should have been in linux-next for a while
-> now.
-> 
-> >  drivers/clk/at91/clk-h32mx.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
-> > index 61566bc..a165230 100644
-> > --- a/drivers/clk/at91/clk-h32mx.c
-> > +++ b/drivers/clk/at91/clk-h32mx.c
-> > @@ -116,7 +116,7 @@ void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
-> >  	h32mxclk->pmc = pmc;
-> >  
-> >  	clk = clk_register(NULL, &h32mxclk->hw);
-> > -	if (!clk) {
-> > +	if (IS_ERR(clk)) {
-> >  		kfree(h32mxclk);
-> >  		return;
-> >  	}
-> > -- 
-> > 2.1.4
-> > 
-> 
+Hi,
+  The patch series add support more mux parameters and multiple
+clock providers for the rockchip features of the clock framework,
+and support the clock controller for the RK3399.
 
 
+Changes in v5:
+- add some necessary clock IDs
+- keep PPLL independent into the part of the PMUCRU
+- fix PMUCRU IDs are out of range
+- add clock IDs to drivers reference
+- fix some important bugs
+- fix configuration for cpu tables
+
+Changes in v3:
+- rename pclkin_cif to pclkin_cifmux, add diagram and comment for
+  pclkin_cifmux
+- add the clk_test node
+- modify the cif_testout path
+- include two new patches that dt-bindings and header file from
+  Jianqun's patch series
+
+Changes in v2:
+- rename the aplll/apllb to lpll/bpll
+- add drv/sample clock nodes for sdmmc/sdio
+
+Xing Zheng (4):
+  clk: rockchip: fix big.LITTLE cores alternate reparent failed
+  dt-bindings: add bindings for rk3399 clock controller
+  clk: rockchip: add dt-binding header for rk3399
+  clk: rockchip: add clock controller for the RK3399
+
+ .../bindings/clock/rockchip,rk3399-cru.txt         |   83 ++
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-cpu.c                     |   15 +-
+ drivers/clk/rockchip/clk-rk3399.c                  | 1550 ++++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |   24 +-
+ include/dt-bindings/clock/rk3399-cru.h             |  752 ++++++++++
+ 6 files changed, 2417 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk3399.c
+ create mode 100644 include/dt-bindings/clock/rk3399-cru.h
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.7.9.5
