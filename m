@@ -1,210 +1,343 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Wed, 2 Mar 2016 09:45:54 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Bintian Wang <bintian.wang@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH 03/41] clk: hisilicon: Remove CLK_IS_ROOT
-Message-ID: <20160302014554.GA26572@leoy-linaro>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-4-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-4-git-send-email-sboyd@codeaurora.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v4 5/5] clk: mvebu: new driver for Armada CP110 system controller
+Date: Sun, 27 Mar 2016 11:26:17 +0200
+Message-Id: <1459070777-18049-6-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 01, 2016 at 10:59:48AM -0800, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Leo Yan <leo.yan@linaro.org>
-> Cc: Bintian Wang <bintian.wang@huawei.com>
-> Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/hisilicon/clk-hi3620.c      | 18 +++++-----
->  drivers/clk/hisilicon/clk-hi6220-stub.c |  2 +-
->  drivers/clk/hisilicon/clk-hi6220.c      | 26 +++++++-------
->  drivers/clk/hisilicon/clk-hip04.c       |  6 ++--
->  drivers/clk/hisilicon/clk-hix5hd2.c     | 60 ++++++++++++++++-----------------
->  5 files changed, 56 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-> index 7d03fe17d66f..d04a104ce1b4 100644
-> --- a/drivers/clk/hisilicon/clk-hi3620.c
-> +++ b/drivers/clk/hisilicon/clk-hi3620.c
-> @@ -78,15 +78,15 @@ static const char *const mmc3_mux_p[] __initconst = { "armpll2", "armpll3", };
->  
->  /* fixed rate clocks */
->  static struct hisi_fixed_rate_clock hi3620_fixed_rate_clks[] __initdata = {
-> -	{ HI3620_OSC32K,   "osc32k",   NULL, CLK_IS_ROOT, 32768, },
-> -	{ HI3620_OSC26M,   "osc26m",   NULL, CLK_IS_ROOT, 26000000, },
-> -	{ HI3620_PCLK,     "pclk",     NULL, CLK_IS_ROOT, 26000000, },
-> -	{ HI3620_PLL_ARM0, "armpll0",  NULL, CLK_IS_ROOT, 1600000000, },
-> -	{ HI3620_PLL_ARM1, "armpll1",  NULL, CLK_IS_ROOT, 1600000000, },
-> -	{ HI3620_PLL_PERI, "armpll2",  NULL, CLK_IS_ROOT, 1440000000, },
-> -	{ HI3620_PLL_USB,  "armpll3",  NULL, CLK_IS_ROOT, 1440000000, },
-> -	{ HI3620_PLL_HDMI, "armpll4",  NULL, CLK_IS_ROOT, 1188000000, },
-> -	{ HI3620_PLL_GPU,  "armpll5",  NULL, CLK_IS_ROOT, 1300000000, },
-> +	{ HI3620_OSC32K,   "osc32k",   NULL, 0, 32768, },
-> +	{ HI3620_OSC26M,   "osc26m",   NULL, 0, 26000000, },
-> +	{ HI3620_PCLK,     "pclk",     NULL, 0, 26000000, },
-> +	{ HI3620_PLL_ARM0, "armpll0",  NULL, 0, 1600000000, },
-> +	{ HI3620_PLL_ARM1, "armpll1",  NULL, 0, 1600000000, },
-> +	{ HI3620_PLL_PERI, "armpll2",  NULL, 0, 1440000000, },
-> +	{ HI3620_PLL_USB,  "armpll3",  NULL, 0, 1440000000, },
-> +	{ HI3620_PLL_HDMI, "armpll4",  NULL, 0, 1188000000, },
-> +	{ HI3620_PLL_GPU,  "armpll5",  NULL, 0, 1300000000, },
->  };
->  
->  /* fixed factor clocks */
-> diff --git a/drivers/clk/hisilicon/clk-hi6220-stub.c b/drivers/clk/hisilicon/clk-hi6220-stub.c
-> index 8afb40ef40ce..329a09214d12 100644
-> --- a/drivers/clk/hisilicon/clk-hi6220-stub.c
-> +++ b/drivers/clk/hisilicon/clk-hi6220-stub.c
-> @@ -235,7 +235,7 @@ static int hi6220_stub_clk_probe(struct platform_device *pdev)
->  	init.name = "acpu0";
->  	init.ops = &hi6220_stub_clk_ops;
->  	init.num_parents = 0;
-> -	init.flags = CLK_IS_ROOT;
-> +	init.flags = 0;
->  
->  	clk = devm_clk_register(dev, &stub_clk->hw);
->  	if (IS_ERR(clk))
-> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-> index 4563343b6420..f02cb41d40a4 100644
-> --- a/drivers/clk/hisilicon/clk-hi6220.c
-> +++ b/drivers/clk/hisilicon/clk-hi6220.c
-> @@ -26,19 +26,19 @@
->  
->  /* clocks in AO (always on) controller */
->  static struct hisi_fixed_rate_clock hi6220_fixed_rate_clks[] __initdata = {
-> -	{ HI6220_REF32K,	"ref32k",	NULL, CLK_IS_ROOT, 32764,     },
-> -	{ HI6220_CLK_TCXO,	"clk_tcxo",	NULL, CLK_IS_ROOT, 19200000,  },
-> -	{ HI6220_MMC1_PAD,	"mmc1_pad",	NULL, CLK_IS_ROOT, 100000000, },
-> -	{ HI6220_MMC2_PAD,	"mmc2_pad",	NULL, CLK_IS_ROOT, 100000000, },
-> -	{ HI6220_MMC0_PAD,	"mmc0_pad",	NULL, CLK_IS_ROOT, 200000000, },
-> -	{ HI6220_PLL_BBP,	"bbppll0",	NULL, CLK_IS_ROOT, 245760000, },
-> -	{ HI6220_PLL_GPU,	"gpupll",	NULL, CLK_IS_ROOT, 1000000000,},
-> -	{ HI6220_PLL1_DDR,	"ddrpll1",	NULL, CLK_IS_ROOT, 1066000000,},
-> -	{ HI6220_PLL_SYS,	"syspll",	NULL, CLK_IS_ROOT, 1200000000,},
-> -	{ HI6220_PLL_SYS_MEDIA,	"media_syspll",	NULL, CLK_IS_ROOT, 1200000000,},
-> -	{ HI6220_DDR_SRC,	"ddr_sel_src",  NULL, CLK_IS_ROOT, 1200000000,},
-> -	{ HI6220_PLL_MEDIA,	"media_pll",    NULL, CLK_IS_ROOT, 1440000000,},
-> -	{ HI6220_PLL_DDR,	"ddrpll0",      NULL, CLK_IS_ROOT, 1600000000,},
-> +	{ HI6220_REF32K,	"ref32k",	NULL, 0, 32764,     },
-> +	{ HI6220_CLK_TCXO,	"clk_tcxo",	NULL, 0, 19200000,  },
-> +	{ HI6220_MMC1_PAD,	"mmc1_pad",	NULL, 0, 100000000, },
-> +	{ HI6220_MMC2_PAD,	"mmc2_pad",	NULL, 0, 100000000, },
-> +	{ HI6220_MMC0_PAD,	"mmc0_pad",	NULL, 0, 200000000, },
-> +	{ HI6220_PLL_BBP,	"bbppll0",	NULL, 0, 245760000, },
-> +	{ HI6220_PLL_GPU,	"gpupll",	NULL, 0, 1000000000,},
-> +	{ HI6220_PLL1_DDR,	"ddrpll1",	NULL, 0, 1066000000,},
-> +	{ HI6220_PLL_SYS,	"syspll",	NULL, 0, 1200000000,},
-> +	{ HI6220_PLL_SYS_MEDIA,	"media_syspll",	NULL, 0, 1200000000,},
-> +	{ HI6220_DDR_SRC,	"ddr_sel_src",  NULL, 0, 1200000000,},
-> +	{ HI6220_PLL_MEDIA,	"media_pll",    NULL, 0, 1440000000,},
-> +	{ HI6220_PLL_DDR,	"ddrpll0",      NULL, 0, 1600000000,},
->  };
+The Armada CP110 system controller provides, amongst other things, a
+number of clocks for the platform: a small number of core clocks, and
+then a number of gatable clocks, derived from some of the core
+clocks. Those clocks are configured via registers of the CP110 System
+Controller.
 
-Tested for clk-hi6220-stub.c and clk-hi6220.c.
+The CP110 is the other core HW block (next to the AP806) used in the
+Marvel Armada 7K and 8K SoCs.
 
-Tested-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/mvebu/Kconfig                   |   3 +
+ drivers/clk/mvebu/Makefile                  |   1 +
+ drivers/clk/mvebu/cp110-system-controller.c | 265 ++++++++++++++++++++++++++++
+ 3 files changed, 269 insertions(+)
+ create mode 100644 drivers/clk/mvebu/cp110-system-controller.c
 
->  static struct hisi_fixed_factor_clock hi6220_fixed_factor_clks[] __initdata = {
-> diff --git a/drivers/clk/hisilicon/clk-hip04.c b/drivers/clk/hisilicon/clk-hip04.c
-> index 8ca967308343..b38e03da1d02 100644
-> --- a/drivers/clk/hisilicon/clk-hip04.c
-> +++ b/drivers/clk/hisilicon/clk-hip04.c
-> @@ -36,9 +36,9 @@
->  
->  /* fixed rate clocks */
->  static struct hisi_fixed_rate_clock hip04_fixed_rate_clks[] __initdata = {
-> -	{ HIP04_OSC50M,   "osc50m",   NULL, CLK_IS_ROOT, 50000000, },
-> -	{ HIP04_CLK_50M,  "clk50m",   NULL, CLK_IS_ROOT, 50000000, },
-> -	{ HIP04_CLK_168M, "clk168m",  NULL, CLK_IS_ROOT, 168750000, },
-> +	{ HIP04_OSC50M,   "osc50m",   NULL, 0, 50000000, },
-> +	{ HIP04_CLK_50M,  "clk50m",   NULL, 0, 50000000, },
-> +	{ HIP04_CLK_168M, "clk168m",  NULL, 0, 168750000, },
->  };
->  
->  static void __init hip04_clk_init(struct device_node *np)
-> diff --git a/drivers/clk/hisilicon/clk-hix5hd2.c b/drivers/clk/hisilicon/clk-hix5hd2.c
-> index 0aaf29da8491..14b05efa3c2a 100644
-> --- a/drivers/clk/hisilicon/clk-hix5hd2.c
-> +++ b/drivers/clk/hisilicon/clk-hix5hd2.c
-> @@ -14,36 +14,36 @@
->  #include "clk.h"
->  
->  static struct hisi_fixed_rate_clock hix5hd2_fixed_rate_clks[] __initdata = {
-> -	{ HIX5HD2_FIXED_1200M, "1200m", NULL, CLK_IS_ROOT, 1200000000, },
-> -	{ HIX5HD2_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
-> -	{ HIX5HD2_FIXED_48M, "48m", NULL, CLK_IS_ROOT, 48000000, },
-> -	{ HIX5HD2_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
-> -	{ HIX5HD2_FIXED_600M, "600m", NULL, CLK_IS_ROOT, 600000000, },
-> -	{ HIX5HD2_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
-> -	{ HIX5HD2_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
-> -	{ HIX5HD2_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
-> -	{ HIX5HD2_FIXED_100M, "100m", NULL, CLK_IS_ROOT, 100000000, },
-> -	{ HIX5HD2_FIXED_40M, "40m", NULL, CLK_IS_ROOT, 40000000, },
-> -	{ HIX5HD2_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
-> -	{ HIX5HD2_FIXED_1728M, "1728m", NULL, CLK_IS_ROOT, 1728000000, },
-> -	{ HIX5HD2_FIXED_28P8M, "28p8m", NULL, CLK_IS_ROOT, 28000000, },
-> -	{ HIX5HD2_FIXED_432M, "432m", NULL, CLK_IS_ROOT, 432000000, },
-> -	{ HIX5HD2_FIXED_345P6M, "345p6m", NULL, CLK_IS_ROOT, 345000000, },
-> -	{ HIX5HD2_FIXED_288M, "288m", NULL, CLK_IS_ROOT, 288000000, },
-> -	{ HIX5HD2_FIXED_60M,	"60m", NULL, CLK_IS_ROOT, 60000000, },
-> -	{ HIX5HD2_FIXED_750M, "750m", NULL, CLK_IS_ROOT, 750000000, },
-> -	{ HIX5HD2_FIXED_500M, "500m", NULL, CLK_IS_ROOT, 500000000, },
-> -	{ HIX5HD2_FIXED_54M,	"54m", NULL, CLK_IS_ROOT, 54000000, },
-> -	{ HIX5HD2_FIXED_27M, "27m", NULL, CLK_IS_ROOT, 27000000, },
-> -	{ HIX5HD2_FIXED_1500M, "1500m", NULL, CLK_IS_ROOT, 1500000000, },
-> -	{ HIX5HD2_FIXED_375M, "375m", NULL, CLK_IS_ROOT, 375000000, },
-> -	{ HIX5HD2_FIXED_187M, "187m", NULL, CLK_IS_ROOT, 187000000, },
-> -	{ HIX5HD2_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
-> -	{ HIX5HD2_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
-> -	{ HIX5HD2_FIXED_2P02M, "2m", NULL, CLK_IS_ROOT, 2000000, },
-> -	{ HIX5HD2_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
-> -	{ HIX5HD2_FIXED_25M, "25m", NULL, CLK_IS_ROOT, 25000000, },
-> -	{ HIX5HD2_FIXED_83M, "83m", NULL, CLK_IS_ROOT, 83333333, },
-> +	{ HIX5HD2_FIXED_1200M, "1200m", NULL, 0, 1200000000, },
-> +	{ HIX5HD2_FIXED_400M, "400m", NULL, 0, 400000000, },
-> +	{ HIX5HD2_FIXED_48M, "48m", NULL, 0, 48000000, },
-> +	{ HIX5HD2_FIXED_24M, "24m", NULL, 0, 24000000, },
-> +	{ HIX5HD2_FIXED_600M, "600m", NULL, 0, 600000000, },
-> +	{ HIX5HD2_FIXED_300M, "300m", NULL, 0, 300000000, },
-> +	{ HIX5HD2_FIXED_75M, "75m", NULL, 0, 75000000, },
-> +	{ HIX5HD2_FIXED_200M, "200m", NULL, 0, 200000000, },
-> +	{ HIX5HD2_FIXED_100M, "100m", NULL, 0, 100000000, },
-> +	{ HIX5HD2_FIXED_40M, "40m", NULL, 0, 40000000, },
-> +	{ HIX5HD2_FIXED_150M, "150m", NULL, 0, 150000000, },
-> +	{ HIX5HD2_FIXED_1728M, "1728m", NULL, 0, 1728000000, },
-> +	{ HIX5HD2_FIXED_28P8M, "28p8m", NULL, 0, 28000000, },
-> +	{ HIX5HD2_FIXED_432M, "432m", NULL, 0, 432000000, },
-> +	{ HIX5HD2_FIXED_345P6M, "345p6m", NULL, 0, 345000000, },
-> +	{ HIX5HD2_FIXED_288M, "288m", NULL, 0, 288000000, },
-> +	{ HIX5HD2_FIXED_60M,	"60m", NULL, 0, 60000000, },
-> +	{ HIX5HD2_FIXED_750M, "750m", NULL, 0, 750000000, },
-> +	{ HIX5HD2_FIXED_500M, "500m", NULL, 0, 500000000, },
-> +	{ HIX5HD2_FIXED_54M,	"54m", NULL, 0, 54000000, },
-> +	{ HIX5HD2_FIXED_27M, "27m", NULL, 0, 27000000, },
-> +	{ HIX5HD2_FIXED_1500M, "1500m", NULL, 0, 1500000000, },
-> +	{ HIX5HD2_FIXED_375M, "375m", NULL, 0, 375000000, },
-> +	{ HIX5HD2_FIXED_187M, "187m", NULL, 0, 187000000, },
-> +	{ HIX5HD2_FIXED_250M, "250m", NULL, 0, 250000000, },
-> +	{ HIX5HD2_FIXED_125M, "125m", NULL, 0, 125000000, },
-> +	{ HIX5HD2_FIXED_2P02M, "2m", NULL, 0, 2000000, },
-> +	{ HIX5HD2_FIXED_50M, "50m", NULL, 0, 50000000, },
-> +	{ HIX5HD2_FIXED_25M, "25m", NULL, 0, 25000000, },
-> +	{ HIX5HD2_FIXED_83M, "83m", NULL, 0, 83333333, },
->  };
->  
->  static const char *const sfc_mux_p[] __initconst = {
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index bf7ae00..3165da7 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -32,6 +32,9 @@ config ARMADA_XP_CLK
+ config ARMADA_AP806_SYSCON
+ 	bool
+ 
++config ARMADA_CP110_SYSCON
++	bool
++
+ config DOVE_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index f4aa481..7172ef6 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
++obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
+ obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
+ obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
+ obj-$(CONFIG_ORION_CLK)		+= orion.o
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+new file mode 100644
+index 0000000..7b22503
+--- /dev/null
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -0,0 +1,265 @@
++/*
++ * Marvell Armada CP110 System Controller
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++/*
++ * CP110 has 5 core clocks:
++ *
++ *  - APLL		(1 Ghz)
++ *    - PPv2 core	(1/3 APLL)
++ *    - EIP		(1/2 APLL)
++ *      - Core		(1/2 EIP)
++ *
++ *  - NAND clock, which is either:
++ *    - Equal to the core clock
++ *    - 2/5 APLL
++ *
++ * CP110 has 32 gatable clocks, for the various peripherals in the IP:
++ *
++ *  - Most have the "Core" clocks as their parents
++ *  - The NAND gatable clock has NAND-core as its parent
++ *  - The PPv2 gatable clock has PPv2-core as its parent
++ *  - The EIP* gatable clocks have EIP as their parent
++ */
++
++#define pr_fmt(fmt) "cp110-system-controller: " fmt
++
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#define CP110_PM_CLOCK_GATING_REG	0x220
++#define CP110_NAND_FLASH_CLK_CTRL_REG	0x700
++#define    NF_CLOCK_SEL_400_MASK	BIT(0)
++
++enum {
++	CP110_CLK_TYPE_CORE,
++	CP110_CLK_TYPE_GATABLE,
++};
++
++#define CP110_MAX_CORE_CLOCKS		5
++#define CP110_MAX_GATABLE_CLOCKS	32
++
++#define CP110_CLK_NUM \
++	(CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS)
++
++/* A few gatable clocks need special handling */
++#define CP110_GATE_NAND			2
++#define CP110_GATE_PPV2			3
++#define CP110_GATE_EIP150		25
++#define CP110_GATE_EIP197		26
++
++static struct clk *cp110_clks[CP110_CLK_NUM];
++
++static struct clk_onecell_data cp110_clk_data = {
++	.clks = cp110_clks,
++	.clk_num = CP110_CLK_NUM,
++};
++
++struct cp110_gate_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u8 bit_idx;
++};
++
++static int cp110_gate_enable(struct clk_hw *hw)
++{
++	struct cp110_gate_clk *gate =
++		container_of(hw, struct cp110_gate_clk, hw);
++
++	regmap_update_bits(gate->regmap, CP110_PM_CLOCK_GATING_REG,
++			   BIT(gate->bit_idx), BIT(gate->bit_idx));
++
++	return 0;
++}
++
++static void cp110_gate_disable(struct clk_hw *hw)
++{
++	struct cp110_gate_clk *gate =
++		container_of(hw, struct cp110_gate_clk, hw);
++	regmap_update_bits(gate->regmap, CP110_PM_CLOCK_GATING_REG,
++			   BIT(gate->bit_idx), 0);
++}
++
++static int cp110_gate_is_enabled(struct clk_hw *hw)
++{
++	struct cp110_gate_clk *gate =
++		container_of(hw, struct cp110_gate_clk, hw);
++	u32 val;
++
++	regmap_read(gate->regmap, CP110_PM_CLOCK_GATING_REG, &val);
++
++	return val & BIT(gate->bit_idx);
++}
++
++static const struct clk_ops cp110_gate_ops = {
++	.enable = cp110_gate_enable,
++	.disable = cp110_gate_disable,
++	.is_enabled = cp110_gate_is_enabled,
++};
++
++static struct clk *cp110_register_gate(const char *name, const char *parent_name,
++				       struct regmap *regmap, u8 bit_idx)
++{
++	struct cp110_gate_clk *gate;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &cp110_gate_ops;
++	init.flags = CLK_IS_BASIC;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	gate->regmap = regmap;
++	gate->bit_idx = bit_idx;
++	gate->hw.init = &init;
++
++	clk = clk_register(NULL, &gate->hw);
++	if (IS_ERR(clk))
++		kfree(gate);
++
++	return clk;
++}
++
++static struct clk *cp110_of_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct clk_onecell_data *clk_data = data;
++	unsigned int type = clkspec->args[0];
++	unsigned int idx = clkspec->args[1];
++
++	if (type == CP110_CLK_TYPE_CORE) {
++		if (idx > CP110_MAX_CORE_CLOCKS)
++			return ERR_PTR(-EINVAL);
++		return clk_data->clks[idx];
++	} else if (type == CP110_CLK_TYPE_GATABLE) {
++		if (idx > CP110_MAX_GATABLE_CLOCKS)
++			return ERR_PTR(-EINVAL);
++		return clk_data->clks[CP110_MAX_CORE_CLOCKS + idx];
++	}
++
++	return ERR_PTR(-EINVAL);
++}
++
++static void __init cp110_syscon_clk_init(struct device_node *np)
++{
++	struct regmap *regmap;
++	const char *name, *apll_name, *core_name, *eip_name, *nand_name;
++	u32 nand_clk_ctrl;
++	int clkidx = 0, i;
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap)) {
++		pr_err("cannot get regmap\n");
++		return;
++	}
++
++	if (regmap_read(regmap, CP110_NAND_FLASH_CLK_CTRL_REG, &nand_clk_ctrl)) {
++		pr_err("cannot read from regmap\n");
++		return;
++	}
++
++	/*
++	 * Register core clocks
++	 */
++
++        /* Register the APLL which is the root of the clk tree */
++	of_property_read_string_index(np, "core-clock-output-names",
++                                      0, &apll_name);
++        cp110_clks[0] =
++		clk_register_fixed_rate(NULL, apll_name, NULL, 0,
++					1000 * 1000 * 1000);
++
++        /* PPv2 is APLL/3 */
++	of_property_read_string_index(np, "core-clock-output-names",
++				      1, &name);
++        cp110_clks[1] =
++		clk_register_fixed_factor(NULL, name, apll_name,
++					  0, 1, 3);
++	clkidx++;
++
++        /* EIP clock is APLL/2 */
++	of_property_read_string_index(np, "core-clock-output-names",
++				      2, &eip_name);
++        cp110_clks[2] =
++		clk_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
++	clkidx++;
++
++        /* Core clock is EIP/2 */
++	of_property_read_string_index(np, "core-clock-output-names",
++				      3, &core_name);
++        cp110_clks[3] =
++		clk_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
++	clkidx++;
++
++        /* NAND can be either APLL/2.5 or core clock */
++	of_property_read_string_index(np, "core-clock-output-names",
++				      4, &nand_name);
++        if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
++                cp110_clks[4] =
++			clk_register_fixed_factor(NULL, nand_name,
++						  apll_name, 0, 2, 5);
++        else
++                cp110_clks[4] =
++			clk_register_fixed_factor(NULL, nand_name,
++						  core_name, 0, 1, 1);
++
++	/*
++	 * Register gatable clocks
++	 */
++	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
++		const char *parent;
++		int clkidx, ret;
++
++		ret = of_property_read_string_index(np, "gate-clock-output-names",
++						    i, &name);
++		/* Reached the end of the list? */
++		if (ret < 0)
++			break;
++
++		of_property_read_u32_index(np, "gate-clock-indices", i, &clkidx);
++
++		switch(clkidx) {
++		case CP110_GATE_NAND:
++			parent = nand_name;
++			break;
++		case CP110_GATE_PPV2:
++			parent = "ppv2-core";
++			break;
++		case CP110_GATE_EIP150:
++		case CP110_GATE_EIP197:
++			parent = "eip";
++			break;
++		default:
++			parent = "core";
++			break;
++		}
++
++		cp110_clks[CP110_MAX_CORE_CLOCKS + clkidx] =
++			cp110_register_gate(name, parent,
++					    regmap, clkidx);
++	}
++
++	of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
++}
++
++CLK_OF_DECLARE(cp110_syscon_clk, "marvell,cp110-system-controller0",
++	       cp110_syscon_clk_init);
+-- 
+2.6.4
