@@ -1,32 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Mar 2016 17:46:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [GIT PULL] arm: Allwinner clocks changes for 4.6
-Message-ID: <20160302014608.GF24999@codeaurora.org>
-References: <20160226194830.GA21652@lukather>
+Return-Path: <zhengxing@rock-chips.com>
+Message-ID: <56F8CB01.2070709@rock-chips.com>
+Date: Mon, 28 Mar 2016 14:11:13 +0800
+From: Xing Zheng <zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160226194830.GA21652@lukather>
+To: Heiko Stuebner <heiko@sntech.de>
+CC: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
+ jay.xu@rock-chips.com, elaine.zhang@rock-chips.com,
+ dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/4] clk: rockchip: add clock controller for the RK3399
+References: <1458974276-10325-1-git-send-email-zhengxing@rock-chips.com> <1458974276-10325-5-git-send-email-zhengxing@rock-chips.com> <9181730.v9nyazlRXy@phil>
+In-Reply-To: <9181730.v9nyazlRXy@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/26, Maxime Ripard wrote:
-> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
-> 
->   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clocks-for-4.6
-> 
-> for you to fetch changes up to 6e17b4181603d183d20c73f4535529ddf2a2a020:
-> 
->   clk: sunxi: Add apb0 gates for H3 (2016-02-25 11:30:32 -0800)
+Hi Heiko,
 
-Thanks. Pulled.
+On 2016年03月28日 08:13, Heiko Stuebner wrote:
+> Hi Xing,
+>
+> Am Samstag, 26. März 2016, 14:37:56 schrieb Xing Zheng:
+>> Add the clock tree definition for the new RK3399 SoC.
+>>
+>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
+>> ---
+> [...]
+>
+>> +	/*
+>> +	 * We use pclkin_cifinv by default GRF_SOC_CON20[9] (GSC20_9) setting in
+>> system, +	 * so we ignore the mux and make clocks nodes as following,
+>> +	 *
+>> +	 * pclkin_cifinv --|-------\
+>> +	 *                 |GSC20_9|-- pclkin_cifmux
+>> +	 * pclkin_cif    --|-------/
+>> +	 */
+>> +	GATE(PCLK_ISP1_WRAPPER, "pclkin_isp1_wrapper", "pclkin_cifmux",
+> please name that source clock pclkin_cif as in the TRM.
+> pclkin_cif is the actual input clock - if I'm reading the TRM correctly and
+> the inverter is part of the soc or so?
+>
+> That we currently hide / hardcode the phase-handling should not be part of
+> our outside connection - which should be stable even if we implement this
+> later.
+>
+>
+Yes, I think I will modify them like this:
+
+GATE(PCLK_ISP1_WRAPPER, "pclkin_isp1_wrapper", "pclkin_cif", 
+CLK_IGNORE_UNUSED,
+RK3399_CLKGATE_CON(27), 6, GFLAGS),
+
+Thanks.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+- Xing Zheng
