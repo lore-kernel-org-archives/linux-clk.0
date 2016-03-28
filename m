@@ -1,59 +1,48 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Wed, 02 Mar 2016 11:25:09 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 36/41] clk: s2mps11: Remove CLK_IS_ROOT
-Message-id: <20160302022509.GG31199@samsunx.samsung>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-37-git-send-email-sboyd@codeaurora.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <1456858826-28541-37-git-send-email-sboyd@codeaurora.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/4] clk: rockchip: add clock controller for the RK3399
+Date: Mon, 28 Mar 2016 02:13:34 +0200
+Message-ID: <9181730.v9nyazlRXy@phil>
+In-Reply-To: <1458974276-10325-5-git-send-email-zhengxing@rock-chips.com>
+References: <1458974276-10325-1-git-send-email-zhengxing@rock-chips.com> <1458974276-10325-5-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Xing,
 
-On Tue, Mar 01, 2016 at 11:00:21AM -0800, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Andi Shyti <andi.shyti@samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Acked-by: Andi Shyti <andi.shyti@samsung.com>
-
-Thanks,
-Andi
-
+Am Samstag, 26. M=E4rz 2016, 14:37:56 schrieb Xing Zheng:
+> Add the clock tree definition for the new RK3399 SoC.
+>=20
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 > ---
->  drivers/clk/clk-s2mps11.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 371150aabd15..f8c83977c7fa 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -99,17 +99,14 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
->  	[S2MPS11_CLK_AP] = {
->  		.name = "s2mps11_ap",
->  		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
->  	},
->  	[S2MPS11_CLK_CP] = {
->  		.name = "s2mps11_cp",
->  		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
->  	},
->  	[S2MPS11_CLK_BT] = {
->  		.name = "s2mps11_bt",
->  		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
->  	},
->  };
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+
+[...]
+
+> +=09/*
+> +=09 * We use pclkin_cifinv by default GRF_SOC_CON20[9] (GSC20_9) set=
+ting in
+> system, +=09 * so we ignore the mux and make clocks nodes as followin=
+g,
+> +=09 *
+> +=09 * pclkin_cifinv --|-------\
+> +=09 *                 |GSC20_9|-- pclkin_cifmux
+> +=09 * pclkin_cif    --|-------/
+> +=09 */
+> +=09GATE(PCLK_ISP1_WRAPPER, "pclkin_isp1_wrapper", "pclkin_cifmux",
+
+please name that source clock pclkin_cif as in the TRM.
+pclkin_cif is the actual input clock - if I'm reading the TRM correctly=
+ and=20
+the inverter is part of the soc or so?
+
+That we currently hide / hardcode the phase-handling should not be part=
+ of=20
+our outside connection - which should be stable even if we implement th=
+is=20
+later.
+
+
+Heiko
