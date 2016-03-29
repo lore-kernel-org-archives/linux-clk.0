@@ -1,55 +1,61 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:37075 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752146AbcC2Pqj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 29 Mar 2016 11:46:39 -0400
+Date: Tue, 29 Mar 2016 17:46:33 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 2/5] clk: shmobile: r8a7795: add OSC and RINT clocks
+Message-ID: <20160329154633.GF1398@katana>
+References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+ <1458824442-20279-3-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdWWUL6+4_vMX6QAddUyy+kbPWxq2fyRQG_Nz-LG_bmzLg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 31 Mar 2016 10:59:54 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
- sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
- marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
- mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 06/18] ARM: imx: clk-gate2: allow custom gate
- configuration
-In-Reply-To: <20160331113728.GA18833@tiger>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-7-git-send-email-stefan@agner.ch>
- <20160331113728.GA18833@tiger>
-Message-ID: <f21855561b6cbf2d2a57508ed9470ed0@agner.ch>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
+In-Reply-To: <CAMuHMdWWUL6+4_vMX6QAddUyy+kbPWxq2fyRQG_Nz-LG_bmzLg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-03-31 04:37, Shawn Guo wrote:
-> On Wed, Mar 09, 2016 at 06:16:47PM -0800, Stefan Agner wrote:
->> The 2-bit gates found i.MX and Vybrid SoC support different clock
->> configuration:
->>
->> 0b00: clk disabled
->> 0b01: clk enabled in RUN mode but disabled in WAIT and STOP mode
->> 0b10: clk enabled in RUN, WAIT and STOP mode (only Vybrid)
->> 0b11: clk enabled in RUN and WAIT mode
->>
->> For some clocks, we might want to configure different behaviour,
->> e.g. a memory clock should be on even in STOP mode. Add a new
->> function imx_clk_gate2_cgr which allow to configure specific
->> gate values through the cgr_val parameter.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> 
-> It's not appropriate to use 'ARM:' as subject prefix any more, since
-> clock drivers had been moved to drivers/clk.
 
-Agreed. Evidence on how long I dragged those patches in my own tree :-/
+--65ImJOski3p8EhYV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I applied patch 6 ~ 9 with updating the subject prefix as below.
-> 
-> clk: imx: vf610: add suspend/resume support
-> clk: imx: vf610: add WKPU unit
-> clk: imx: vf610: leave DDR clock on
-> clk: imx: clk-gate2: allow custom gate configuration
 
-Thanks!
+> Furthermore, why do you export R8A7795_CLK_RINT?
+> it's nowhere referenced from DT.
+>=20
+> I think it belongs under "Internal Core Clocks" in r8a7795-cpg-mssr.c.
 
---
-Stefan
+Ok, did this. I thought it was the same "class" as OSC, but I agree to
+your view.
+
+
+--65ImJOski3p8EhYV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW+qNZAAoJEBQN5MwUoCm2plQP/01ESK8bPNHMJr3Xh7Xzxh+w
+9vwDX7SctEbOkbbfJDe2FlLWp/9uIw6hoQWY9G8z8dIml+oD6qBNOEJAZS8Xb+0o
+OfjSyDgU8Fo+HVveLhp/gpYffb1ZUBU4guzSY3YGKdbi3JgQGkT5kV8uAEXL3q0f
+AlipN6qrKpEaGIvuXSdgZsHhHfAVSyZUFe7cdYsCYSV+NS56dESTIM/9cdUfk1Ox
+fIhsdcwWw4yqHg++eNgFHMV6nYQeVPUb1MZeOs/vB02zkDtVEI6ZfvTQDw9rhT4L
+flY5CUW5RkQU2hFQEzmfR1gz5OFbzffOY2IlOPOY+ZufcHmbbra+rAgdHtaCGnCf
+3HNNGv2lNofmZqStjtNFMFoTxA9hZy8/ArLHEoedhbqQL2uIKLcj9CySF2pLOMMY
+4PUQMbxIQPyZWG0EkcEsu6M/R7pYFTYC92nIneLaRdwmFXG0zMBQ620onWHtfCuQ
+YjI6xRD1qCnk6XoiAdBglqYvVyxNzUV6VzAxC97iTrKGbThfghvtWk2NYLUg3yE/
+dzVDHv8HTWJVW/c34+D+w6w+K+ImUo9uy/+HDUszNuxENCtGL/Q85ey2iRXhxk1m
+edfoUxBSQMk3DAz0OwJDOtBYrgZCyWJRO2QgMbBl2A6Sz01aQ3JyXCs99Lyc4mOu
+0RMHHt/xDRBeAmoUm83G
+=XEpd
+-----END PGP SIGNATURE-----
+
+--65ImJOski3p8EhYV--
