@@ -1,38 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 29 Mar 2016 16:30:04 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 33/41] clk: pwm: Remove CLK_IS_ROOT
-Date: Tue,  1 Mar 2016 11:00:18 -0800
-Message-Id: <1456858826-28541-34-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>, Barry Song <baohua@kernel.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH 4/7] clk: atlas7: Make reset_control_ops const
+Message-ID: <20160329233003.GL18567@codeaurora.org>
+References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+ <1456393512-26602-5-git-send-email-p.zabel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456393512-26602-5-git-send-email-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now. Remove usage of the flag.
+On 02/25, Philipp Zabel wrote:
+> The atlas7_rst_ops structure is never modified. Make it const.
+> 
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
 
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-pwm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to clk-fixes
 
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index 328fcfcefd8c..883045814dac 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -95,7 +95,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
- 
- 	init.name = clk_name;
- 	init.ops = &clk_pwm_ops;
--	init.flags = CLK_IS_BASIC | CLK_IS_ROOT;
-+	init.flags = CLK_IS_BASIC;
- 	init.num_parents = 0;
- 
- 	clk_pwm->pwm = pwm;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
