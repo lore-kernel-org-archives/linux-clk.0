@@ -1,249 +1,79 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Caesar Wang <caesar.upstream@gmail.com>
-Cc: Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, zhengxing <zhengxing@rock-chips.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Michael Turquette <mturquette@baylibre.com>, Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, keescook@google.com, "David S. Miller" <davem@davemloft.net>, leozwang@google.com
-Subject: Re: [PATCH 5/6] clk: rockchip: rk3036: fix and add node id for emac clock
-Date: Fri, 11 Mar 2016 13:28:43 +0100
-Message-ID: <2353919.k6rGxijjr1@diego>
-In-Reply-To: <56E2B386.7060107@gmail.com>
-References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com> <2005499.uduk6By3kM@diego> <56E2B386.7060107@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:37116 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751927AbcC2Pyz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 29 Mar 2016 11:54:55 -0400
+Date: Tue, 29 Mar 2016 17:54:39 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 3/5] clk: shmobile: r8a7795: add R clk
+Message-ID: <20160329155439.GG1398@katana>
+References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
+ <1458824442-20279-4-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdW1zTwLbgEVZD+VOEy934yUEp90pEv-ju_1+dd5RjLp-A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ahP6B03r4gLOj5uD"
+In-Reply-To: <CAMuHMdW1zTwLbgEVZD+VOEy934yUEp90pEv-ju_1+dd5RjLp-A@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Caesar,
 
-Am Freitag, 11. M=C3=A4rz 2016, 20:01:10 schrieb Caesar Wang:
-> The link [0] need a bit changes if we want the emac to be happy work.=
+--ahP6B03r4gLOj5uD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+
+> > @@ -114,8 +117,11 @@ static const struct cpg_core_clk r8a7795_core_clks=
+[] __initconst =3D {
+> >         DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250=
+),
+> >         DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244=
+),
+> >
+> > -       DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, 0x0240, 8=
+),
+> > -       DEF_DIV6_RO("r_int",    R8A7795_CLK_RINT,  CLK_EXTAL, 0x0240, 3=
+2),
+> > +       DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR=
+, 8),
+> > +       DEF_DIV6_RO("r_int",    R8A7795_CLK_RINT,  CLK_EXTAL, CPG_RCKCR=
+, 32),
+> > +
+> > +       /* must come after EXTALR because we need its rate */
 >=20
-> -RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
->=20
-> +RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
+> must come after r_int because we need that clock as a possible parent?
 
-ah, then that is probably the reason I don't get connectivity. Thanks f=
-or=20
-noticing this.
+Well, I added the comment because the dependency to EXTALR is not
+obvious. Unlike the dependency to RINT which is described in the same
+manner as the rest of the clocks.
 
-
-> I will need resend the series patches with your change in link[0], OK=
-?
->=20
-> Since the Mr.rebot just notice the build error, I will check and rese=
-nd
-> with your emac changing.
-
-ok, great :-D
+Maybe I should simply remove the comment if it creates only confusion?
 
 
-Thanks
-Heiko
+--ahP6B03r4gLOj5uD
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> =E5=9C=A8 2016=E5=B9=B403=E6=9C=8811=E6=97=A5 19:15, Heiko St=C3=BCbn=
-er =E5=86=99=E9=81=93:
-> > Hi Caesar,
-> >=20
-> > Am Freitag, 11. M=C3=A4rz 2016, 18:55:30 schrieb Caesar Wang:
-> >> From: zhengxing <zhengxing@rock-chips.com>
-> >>=20
-> >> In the emac driver, we need to refer HCLK_MAC since there are
-> >> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clocks are under t=
-he
-> >> GPLL, and it is unable to provide the accurate rate for mac_ref wh=
-ich
-> >> need to 50MHz probability, we should let it under the DPLL and are=
+iQIbBAEBAgAGBQJW+qU+AAoJEBQN5MwUoCm2ws4P93Val+LaIawxxzGgC1aqw+I3
+5pQA64JSTmJF+WqDbGi7gusGsLFDjtgMGzwW2OWV1EwRxe9/NDyxB9vFAbKCvrYd
+eJ3pwyc60b2kD1pvq/tZTXtJYDVccCi/uobRDOo8B70Nd8lkpzxslOM/XYDV8dQW
+Z7BUac/JkqIub4mbi+EBmHAIkiEYYMKL4DMnevGbsciMKA9myXAm0udUl5ciDSI7
+yb9iZ8P673mcxCC7WrAeMrP09gX73OUM6aZnUpir4GAWW1VzFrOxWcsx8vS9ho0Q
+WP4M2j6+jVpIT1w19CQux2YWsWbmN4RwpsEJ7HfCRdgg8ikn5G4Vg+P/0K/sJitY
+Lm9KP+Jy8WFrJUwfSrEFmyUGeEzuGKsDE5CxEAXemuoSwo0XZ4PT/w/MDlhYYvn2
+mAhuEBu89cR+i5Ot6ANXBu2pPB3d4zUqyiVTbNklDHt2L27JNv52hAyesHS/qSB3
+djscQ/I+mK8rlgDQ1VnOtATrC3npmcjpoCAgvq7yKb+lIAZcgG2oS/zCkzfQItb3
+S9Kf/srY0ZAHbVPQsfqOa9+GdcLyopcuFsAKRnWJwKNmsUCHr71ZQoWOMue0j7sk
+f0Cg5NgUd6S9tevbpmmXH4g+1Umu3fp2pnI4hr+gjwQtaZrYa9OEsbhzazmSTS1l
+mJXus/+hSBRG7MeEiYg=
+=clMz
+-----END PGP SIGNATURE-----
 
-> >> able to set the freq which integer multiples of 50MHz, so we add t=
-hese
-> >> emac node for reference.
-> >>=20
-> >> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> >> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> >=20
-> > I think I mentioned it somewhere before, but I'd like to do this
-> > differently, like in [0].
-> >=20
-> > That should work in a similar way and at least in my tests the repo=
-rted
-> > clock rate seems to be correct. As I said as well I haven't been ab=
-le to
-> > make the emac detect a link on my kylin boards, so it would be cool=
-
-> > if you could test if this different approach works in practice as w=
-ell.
->=20
-> I fetch your branch patches, it doesn't work for me.
-> c467a5f clk: rockchip: associate SCLK_MAC_PLL and disable reparenting=
- on
-> rk3036
-> ae7ed09 clk: rockchip: add clock-id for rk3036 emac pll source clock
-> f876a7e clk: rockchip: associate the rk3036 HCLK_EMAC clock-id
-> 5093371 clk: rockchip: add node-id for rk3036 emac hclk
->=20
-> f44eeee Revert "clk: rockchip: rk3036: fix and add node id for emac c=
-lock"
-> ..
->=20
-> It works if the patch
-> c467a5f clk: rockchip: associate SCLK_MAC_PLL and disable reparenting=
- on
-> rk3036 to change as following
->=20
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -348,8 +348,8 @@ static struct rockchip_clk_branch
-> rk3036_clk_branches[] __initdata =3D {
->                          RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, D=
-FLAGS,
->                          RK2928_CLKGATE_CON(10), 5, GFLAGS),
->=20
-> -       COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-> -                       RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DF=
-LAGS),
-> +       COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src",
-> mux_pll_src_3plls_p, CLK_SET_RATE_NO_REPARENT,
-> +                       RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DF=
-LAGS),
->=20
-> > Thanks
-> > Heiko
-> >=20
-> > ------ 8< ---------
-> >=20
-> >  From e83a8b19dbf95c40d2c908727c342fbc6b167ea1 Mon Sep 17 00:00:00 =
-2001
-> >=20
-> > From: Heiko Stuebner <heiko@sntech.de>
-> > Date: Fri, 19 Feb 2016 21:31:43 +0100
-> > Subject: [PATCH] clk: rockchip: associate SCLK_MAC_PLL and disable
-> > reparenting>=20
-> >   on rk3036
-> >=20
-> > The emac needs constant and very specific rate but the possible
-> > PLL-sources
-> > are very limited, so we expect the PLL source to be set manually on=
- per
-> > board and don't want it to get changed in an automatic way later.
-> > So add the necessary clock-id and disable reparenting on set_rate c=
-alls.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >=20
-> >   drivers/clk/rockchip/clk-rk3036.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/rockchip/clk-rk3036.c
-> > b/drivers/clk/rockchip/clk-rk3036.c index 3c742bf..0084c57 100644
-> > --- a/drivers/clk/rockchip/clk-rk3036.c
-> > +++ b/drivers/clk/rockchip/clk-rk3036.c
-> > @@ -348,7 +348,7 @@ static struct rockchip_clk_branch
-> > rk3036_clk_branches[] __initdata =3D {>=20
-> >   =09=09=09RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
-> >   =09=09=09RK2928_CLKGATE_CON(10), 5, GFLAGS),
-> >=20
-> > -=09COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-> > +=09COMPOSITE_NOGATE(SCLK_MACPLL, "mac_pll_src", mux_pll_src_3plls_=
-p,
-> > CLK_SET_RATE_NO_REPARENT,>=20
-> >   =09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
->=20
-> -RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
->=20
-> +RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
->=20
-> >   =09MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT=
-,
-> >   =09
-> >   =09=09=09RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
-> >=20
-> > ------ 8< ---------
-> >=20
-> >=20
-> > [0]
-> > https://github.com/mmind/linux-rockchip/commit/e83a8b19dbf95c40d2c9=
-08727c
-> > 342fbc6b167ea1>=20
-> >> ---
-> >>=20
-> >>   drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
-> >>   include/dt-bindings/clock/rk3036-cru.h | 2 ++
-> >>   2 files changed, 8 insertions(+), 3 deletions(-)
-> >>=20
-> >> diff --git a/drivers/clk/rockchip/clk-rk3036.c
-> >> b/drivers/clk/rockchip/clk-rk3036.c index 0703c8f..27c35fa 100644
-> >> --- a/drivers/clk/rockchip/clk-rk3036.c
-> >> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> >> @@ -348,8 +348,11 @@ static struct rockchip_clk_branch
-> >> rk3036_clk_branches[] __initdata =3D { RK2928_CLKSEL_CON(16), 0, 2=
-,
-> >> MFLAGS, 2, 5, DFLAGS,
-> >>=20
-> >>   =09=09=09RK2928_CLKGATE_CON(10), 5, GFLAGS),
-> >>=20
-> >> -=09COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
-> >> -=09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
-> >> +=09MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
-> >> +=09=09=09RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
-> >> +=09DIV(0, "mac_pll_src", "mac_pll_pre", 0,
-> >> +=09=09=09RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
-> >> +
-> >>=20
-> >>   =09MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PAREN=
-T,
-> >>   =09
-> >>   =09=09=09RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
-> >>=20
-> >> @@ -408,7 +411,7 @@ static struct rockchip_clk_branch
-> >> rk3036_clk_branches[]
-> >> __initdata =3D { GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri",
-> >> CLK_IGNORE_UNUSED,
-> >> RK2928_CLKGATE_CON(7), 3, GFLAGS), GATE(HCLK_I2S, "hclk_i2s",
-> >> "hclk_peri",
-> >> 0, RK2928_CLKGATE_CON(7), 2, GFLAGS), GATE(0, "hclk_sfc", "hclk_pe=
-ri",
-> >> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS), -=09GATE(0,=
-
-> >> "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3),=
- 15,
-> >> GFLAGS), +=09GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0,
-> >> RK2928_CLKGATE_CON(3), 5, GFLAGS),
-> >>=20
-> >>   =09/* pclk_peri gates */
-> >>   =09GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED,
-> >>=20
-> >> RK2928_CLKGATE_CON(4), 1, GFLAGS), diff --git
-> >> a/include/dt-bindings/clock/rk3036-cru.h
-> >> b/include/dt-bindings/clock/rk3036-cru.h index ebc7a7b..de44109 10=
-0644
-> >> --- a/include/dt-bindings/clock/rk3036-cru.h
-> >> +++ b/include/dt-bindings/clock/rk3036-cru.h
-> >> @@ -54,6 +54,7 @@
-> >>=20
-> >>   #define SCLK_PVTM_VIDEO=09=09125
-> >>   #define SCLK_MAC=09=09151
-> >>   #define SCLK_MACREF=09=09152
-> >>=20
-> >> +#define SCLK_MACPLL=09=09153
-> >>=20
-> >>   #define SCLK_SFC=09=09160
-> >>  =20
-> >>   /* aclk gates */
-> >>=20
-> >> @@ -92,6 +93,7 @@
-> >>=20
-> >>   #define HCLK_SDMMC=09=09456
-> >>   #define HCLK_SDIO=09=09457
-> >>   #define HCLK_EMMC=09=09459
-> >>=20
-> >> +#define HCLK_MAC=09=09460
-> >>=20
-> >>   #define HCLK_I2S=09=09462
-> >>   #define HCLK_LCDC=09=09465
-> >>   #define HCLK_ROM=09=09467
-> >=20
-> > _______________________________________________
-> > Linux-rockchip mailing list
-> > Linux-rockchip@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
+--ahP6B03r4gLOj5uD--
