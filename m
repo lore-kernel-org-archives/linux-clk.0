@@ -1,26 +1,40 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: edubezval@gmail.com, huangtao@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>, Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 8/8] ARM: dts: rockchip: enable the tsadc for rk3228 evb
-Date: Tue, 01 Mar 2016 11:03:35 +0100
-Message-ID: <2412973.Kxto885cTd@diego>
-In-Reply-To: <1455521613-27340-9-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com> <1455521613-27340-9-git-send-email-wxt@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 29 Mar 2016 16:39:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [GIT PULL] bcm2835 clk changes for 4.6 maybe
+Message-ID: <20160329233923.GR18567@codeaurora.org>
+References: <1458265130-30734-1-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458265130-30734-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 15. Februar 2016, 15:33:33 schrieb Caesar Wang:
-> This patch enables the tsadc for rk3228 evb board.
+On 03/17, Eric Anholt wrote:
+> This is late, so feel free to drop it, but I figured I'd send it to
+> you in case you were still open to merges.  I've pounded on it a bit
+> today (modesets to all sorts of resolutions on HDMI, used it for
+> testing the DPI panel support that I'm hoping to have for 4.7, and did
+> a whole lot of browsing of clk_summary as I debugged DPI), and kbuild
+> test robot came back clean, so I'm pretty happy with it.
 > 
-> The rk3228 evb board uses the CRU to reset the chip since it hasn't the
-> PMIC to connect it, and TSHUT is low active on evb board.
+> The following changes since commit 4d3ac6662452060721599a3392bc2f524af984cb:
 > 
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+>   clk: bcm2835: fix check of error code returned by devm_ioremap_resource() (2016-03-15 18:14:11 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git@github.com:anholt/linux.git tags/bcm2835-clk-next-2016-03-17
 
-applied to my dts32 branch for 4.6
+Please make sure to use a proper URL here. I don't have access to
+git@github.com, but I can fetch this from
+git://github.com/anholt/linux.git. The tag and the contents match
+so I'm fairly confident all is well.
 
-
-Thanks
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
