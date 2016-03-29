@@ -1,88 +1,43 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 3/3] ARM: dts: am43xx: add support for clkout1 clock
-Date: Wed, 16 Mar 2016 21:54:57 +0200
-Message-ID: <1458158097-21137-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
-References: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [PATCH v6 0/3] Add more clock compatible features and support the
+ RK3399 clock
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+References: <1459158697-8218-1-git-send-email-zhengxing@rock-chips.com>
+ <4649399.g7v7zsVJik@diego>
+Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
+ jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, dianders@chromium.org,
+ devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <56F9D790.1080608@rock-chips.com>
+Date: Tue, 29 Mar 2016 09:17:04 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <4649399.g7v7zsVJik@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-clkout1 clock node and its generation tree was missing. Add this based
-on the data on TRM and PRCM functional spec.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Tested-by: Benoit Parrot <bparrot@ti.com>
----
- arch/arm/boot/dts/am43xx-clocks.dtsi |   54 ++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+On 2016年03月28日 20:59, Heiko Stübner wrote:
+> Am Montag, 28. März 2016, 17:51:34 schrieb Xing Zheng:
+>>    The patch series add support more mux parameters and multiple
+>> clock providers for the rockchip features of the clock framework,
+>> and support the clock controller for the RK3399.
+> applied all 3 for 4.7 with one change:
+>
+> I've dropped the grf paragraph from the binding doc (as it is not used
+> anymore) and also dropped the gmac_phy_rx_clk input clock.
+>
+> We can add these back once they are getting used in the future.
+>
+>
+> Heiko
+>
+OK, thanks Heiko. :-)
 
-diff --git a/arch/arm/boot/dts/am43xx-clocks.dtsi b/arch/arm/boot/dts/am43xx-clocks.dtsi
-index a38af2b..f16ffb5 100644
---- a/arch/arm/boot/dts/am43xx-clocks.dtsi
-+++ b/arch/arm/boot/dts/am43xx-clocks.dtsi
-@@ -771,4 +771,58 @@
- 		ti,bit-shift = <8>;
- 		reg = <0x8a68>;
- 	};
-+
-+	clkout1_osc_div_ck: clkout1_osc_div_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,divider-clock";
-+		clocks = <&sys_clkin_ck>;
-+		ti,bit-shift = <20>;
-+		ti,max-div = <4>;
-+		reg = <0x4100>;
-+	};
-+
-+	clkout1_src2_mux_ck: clkout1_src2_mux_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,mux-clock";
-+		clocks = <&clk_rc32k_ck>, <&sysclk_div>, <&dpll_ddr_m2_ck>,
-+			 <&dpll_per_m2_ck>, <&dpll_disp_m2_ck>,
-+			 <&dpll_mpu_m2_ck>;
-+		reg = <0x4100>;
-+	};
-+
-+	clkout1_src2_pre_div_ck: clkout1_src2_pre_div_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,divider-clock";
-+		clocks = <&clkout1_src2_mux_ck>;
-+		ti,bit-shift = <4>;
-+		ti,max-div = <8>;
-+		reg = <0x4100>;
-+	};
-+
-+	clkout1_src2_post_div_ck: clkout1_src2_post_div_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,divider-clock";
-+		clocks = <&clkout1_src2_pre_div_ck>;
-+		ti,bit-shift = <8>;
-+		ti,max-div = <32>;
-+		ti,index-power-of-two;
-+		reg = <0x4100>;
-+	};
-+
-+	clkout1_mux_ck: clkout1_mux_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,mux-clock";
-+		clocks = <&clkout1_osc_div_ck>, <&clk_rc32k_ck>,
-+			 <&clkout1_src2_post_div_ck>, <&dpll_extdev_m2_ck>;
-+		ti,bit-shift = <16>;
-+		reg = <0x4100>;
-+	};
-+
-+	clkout1_ck: clkout1_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,gate-clock";
-+		clocks = <&clkout1_mux_ck>;
-+		ti,bit-shift = <23>;
-+		reg = <0x4100>;
-+	};
- };
 -- 
-1.7.9.5
+- Xing Zheng
