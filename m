@@ -1,41 +1,34 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 29 Mar 2016 16:31:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Matthew McClintock <mmcclint@codeaurora.org>
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+	qca-upstream.external@qca.qualcomm.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pradeep Banavathi <pradeepb@codeaurora.org>,
+	Senthilkumar N L <snlakshm@codeaurora.org>,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 05/17] clk: qcom: ipq4019: add some fixed clocks for
+ ddrppl and fepll
+Message-ID: <20160329233120.GQ18567@codeaurora.org>
+References: <1458770712-10880-1-git-send-email-mmcclint@codeaurora.org>
+ <1458770712-10880-6-git-send-email-mmcclint@codeaurora.org>
 MIME-Version: 1.0
-To: Joachim Eastwood <manabian@gmail.com>,  sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1456351460-15483-2-git-send-email-manabian@gmail.com>
-Cc: "Joachim Eastwood" <manabian@gmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
- <1456351460-15483-2-git-send-email-manabian@gmail.com>
-Message-ID: <20160302230159.12762.59247@quark.deferred.io>
-Subject: Re: [PATCH v4 1/2] clk: add lpc18xx creg clk driver
-Date: Wed, 02 Mar 2016 15:01:59 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458770712-10880-6-git-send-email-mmcclint@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Joachim,
+On 03/23, Matthew McClintock wrote:
+> Drivers for these don't exist yet so we will add them as fixed clocks
+> so we don't BUG() if we change clocks that reference these clocks.
+> 
+> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
+> ---
 
-Quoting Joachim Eastwood (2016-02-24 14:04:19)
-> +static struct clk *clk_register_creg_clk(struct clk_creg_data *creg_clk,
-> +                                        const char **parent_name,
-> +                                        struct regmap *syscon)
-> +{
-> +       struct clk_init_data init;
-> +
-> +       init.ops =3D creg_clk->ops;
-> +       init.name =3D creg_clk->name;
-> +       init.parent_names =3D parent_name;
-> +       init.num_parents =3D 1;
-> +
-> +       creg_clk->reg =3D syscon;
-> +       creg_clk->hw.init =3D &init;
-> +
-> +       return clk_register(NULL, &creg_clk->hw);
+Applied to clk-fixes
 
-This should be devm_clk_register with your struct device *dev passed
-into it.
-
-Otherwise this patch looks good for merge.
-
-Regards,
-Mike
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
