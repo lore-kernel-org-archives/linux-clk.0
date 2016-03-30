@@ -1,24 +1,81 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 1/5] clk: rockchip: add more mux parameters for new pll sources
-Date: Wed, 09 Mar 2016 02:12:31 +0100
-Message-ID: <2242962.kh0Ty0L2C4@phil>
-In-Reply-To: <1456827275-8035-2-git-send-email-zhengxing@rock-chips.com>
-References: <1456827275-8035-1-git-send-email-zhengxing@rock-chips.com> <1456827275-8035-2-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH] clk: sunxi: Accept a greater rate when setting a parent
+ clock
+To: Jean-Francois Moine <moinejf@free.fr>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20160310081658.B749246B@mail.free-electrons.com>
+ <20160321072546.GT30977@lukather>
+ <20160321092549.4e6245e4f02839e29aeb86a9@free.fr>
+From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>
+Message-ID: <56FC3BEB.8030106@elopez.com.ar>
+Date: Wed, 30 Mar 2016 17:49:47 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20160321092549.4e6245e4f02839e29aeb86a9@free.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="windows-1252"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 1. M=E4rz 2016, 18:14:31 schrieb Xing Zheng:
-> Thers are only two parent PLLs that APLL and GPLL for core on the
-> previous SoCs (RK3066/RK3188/RK3288/RK3368). Hence, we set fixed
-> GPLL as alternate parent when core is switching freq.
->=20
-> Since RK3399 big.LITTLE architecture, we need to select and adapt
-> more PLLs (ALPLL/ABPLL/DPLL/GPLL) sources.
->=20
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+[Sorry for the delay, I meant to reply to this post a while back but I
+forgot]
 
-note to self: looks good to go
+El 21/03/16 a las 05:25, Jean-Francois Moine escribi=F3:
+> On Mon, 21 Mar 2016 08:25:46 +0100
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+> =
+
+>>> -	/* find the parent that can help provide the fastest rate <=3D rate */
+>>> +	/* find the parent that can help provide the fastest rate */
+>>>  	num_parents =3D clk_hw_get_num_parents(hw);
+>>>  	for (i =3D 0; i < num_parents; i++) {
+>>>  		parent =3D clk_hw_get_parent_by_index(hw, i);
+>>> @@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_hw=
+ *hw,
+>>>  		child_rate =3D clk_factors_round_rate(hw, req->rate,
+>>>  						    &parent_rate);
+>>>  =
+
+>>> -		if (child_rate <=3D req->rate && child_rate > best_child_rate) {
+>>> +		if (child_rate > best_child_rate) {
+>>
+>> I'm not sure this would work, since you'll end up picking the fastest
+>> rate without considering whether it is the closest or not.
+>>
+>> I guess what you want here is using the absolute difference between
+>> the requested rate and the rate you're evaluating.
+>>
+>> That being said, we had a similar discussion for SPI around a month
+>> ago where we wanted a rate strictly lower than the requested one. I
+>> guess it's time to add a flag to tell how you want to round.
+> =
+
+> You are right, I just removed half of the constraint, but I still wonder
+> why does this sequence introduced by the commit 862b728387aef3a37
+> (clk: sunxi: factors: automatic reparenting support) do
+> 	"provide the fastest rate <=3D rate"
+> instead of
+> 	"provide the closest rate" ?
+> =
+
+> Emilio?
+
+Overclocking components is usually not a good default in my opinion. I
+don't recall at the moment if there was some other justification apart
+from playing it safe.
+
+Cheers,
+Emilio
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
