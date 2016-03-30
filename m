@@ -1,71 +1,134 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v4 0/5] clk: mvebu: clock drivers for Marvell Armada 7K/8K
-Date: Sun, 27 Mar 2016 11:26:12 +0200
-Message-Id: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 14/46] pwm: keep PWM state in sync with hardware state
+Date: Wed, 30 Mar 2016 22:03:37 +0200
+Message-Id: <1459368249-13241-15-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Before the introduction of pwm_args, the core and some drivers were
+resetting the PWM period and polarity states to the reference values
+(those provided through the DT, a PWM lookup table or hardcoded in the
+driver).
 
-Here is a new version of the clock drivers for the Marvell Armada
-7K/8K. Changes since v3:
+Now that all PWM users are correctly using pwm_args to configure their
+PWM device, we can safely remove some pwm_set_period/polarity() calls.
 
- - Addition of a driver for the CP110 system controller, which
-   provides clocks. The CP110 is the other big HW block contained in
-   the Armada 7K/8K, next to the AP806.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c         | 5 -----
+ drivers/pwm/pwm-clps711x.c | 1 -
+ drivers/pwm/pwm-pxa.c      | 1 -
+ 3 files changed, 7 deletions(-)
 
- - Everything rebase on v4.6-rc1.
-
- - Addition of Rob Herring Acked-by on the AP806 DT bindings.
-
- - Minor adjustements to the A806 DT binding documentation: the
-   proposed clock names have been changed with a "ap-" suffix, so that
-   we don't have any naming conflicts between the clocks provided by
-   the AP806 and the clocks provided by the CP110. Since only the
-   proposed clock names were changed, I kept Rob Herring
-   Acked-by. Rob, let me know if there is any issue with this.
-
-Thanks!
-
-Thomas
-
-Thomas Petazzoni (5):
-  clk: unconditionally recurse into clk/mvebu/
-  dt-bindings: arm: add DT binding for Marvell AP806 system controller
-  clk: mvebu: new driver for Armada AP806 system controller
-  dt-bindings: arm: add DT binding for Marvell CP110 system controller
-  clk: mvebu: new driver for Armada CP110 system controller
-
- .../arm/marvell/ap806-system-controller.txt        |  35 +++
- .../arm/marvell/cp110-system-controller0.txt       |  88 +++++++
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/mvebu/Kconfig                          |   6 +
- drivers/clk/mvebu/Makefile                         |   2 +
- drivers/clk/mvebu/ap806-system-controller.c        | 106 +++++++++
- drivers/clk/mvebu/cp110-system-controller.c        | 265 +++++++++++++++++++++
- 7 files changed, 503 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
- create mode 100644 drivers/clk/mvebu/ap806-system-controller.c
- create mode 100644 drivers/clk/mvebu/cp110-system-controller.c
-
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index cd55d61..6433059 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -147,13 +147,11 @@ of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 		return pwm;
+ 
+ 	pwm->args.period = args->args[1];
+-	pwm_set_period(pwm, pwm->args.period);
+ 
+ 	if (args->args[2] & PWM_POLARITY_INVERTED)
+ 		pwm->args.polarity = PWM_POLARITY_INVERSED;
+ 	else
+ 		pwm->args.polarity = PWM_POLARITY_NORMAL;
+-	pwm_set_polarity(pwm, pwm->args.polarity);
+ 
+ 	return pwm;
+ }
+@@ -175,7 +173,6 @@ of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 		return pwm;
+ 
+ 	pwm->args.period = args->args[1];
+-	pwm_set_period(pwm, pwm->args.period);
+ 
+ 	return pwm;
+ }
+@@ -745,8 +742,6 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
+ 
+ 	pwm->args.period = chosen->period;
+ 	pwm->args.polarity = chosen->polarity;
+-	pwm_set_period(pwm, chosen->period);
+-	pwm_set_polarity(pwm, chosen->polarity);
+ 
+ out:
+ 	mutex_unlock(&pwm_lookup_lock);
+diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+index 807a48d..7d33542 100644
+--- a/drivers/pwm/pwm-clps711x.c
++++ b/drivers/pwm/pwm-clps711x.c
+@@ -61,7 +61,6 @@ static int clps711x_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 
+ 	/* Store constant period value */
+ 	pwm->args.period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, freq);
+-	pwm_set_period(pwm, pwm->args.period);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
+index 3fcc886..58b709f 100644
+--- a/drivers/pwm/pwm-pxa.c
++++ b/drivers/pwm/pwm-pxa.c
+@@ -161,7 +161,6 @@ pxa_pwm_of_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 		return pwm;
+ 
+ 	pwm->args.period = args->args[0];
+-	pwm_set_period(pwm, args->args[0]);
+ 
+ 	return pwm;
+ }
 -- 
-2.6.4
+2.5.0
