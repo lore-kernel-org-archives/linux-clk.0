@@ -1,46 +1,144 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Lee Jones <lee@kernel.org>
-Subject: Re: [PATCH 02/41] clk: bcm: Remove CLK_IS_ROOT
-In-Reply-To: <1456858826-28541-3-git-send-email-sboyd@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org> <1456858826-28541-3-git-send-email-sboyd@codeaurora.org>
-Date: Wed, 02 Mar 2016 13:59:30 -0800
-Message-ID: <871t7szgl9.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 16/46] pwm: move the enabled/disabled info into pwm_state
+Date: Wed, 30 Mar 2016 22:03:39 +0200
+Message-Id: <1459368249-13241-17-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+Prepare the transition to PWM atomic update by moving the enabled/disabled
+state into the pwm_state struct. This way we can easily update the whole
+PWM state by copying the new state in the ->state field.
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c  | 13 +++++++++----
+ include/linux/pwm.h | 11 ++++++++---
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
-> This flag is a no-op now. Remove usage of the flag.
-
-I like that this flag is going away.  It's a nice cleanup.
-
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJW12JCAAoJELXWKTbR/J7o2xwQALU9iSfrLVxDYIIVg8APqbNm
-G+Hy7ZMcUbvfKcxxdkZCAFsrEsJ9mtCrYFVofloNcKUuk4hfgIOIFZoW1EoJ2mpi
-015ubVDpniuUVmO6NNT40cj6G8e/0kJcADCX8m1dp/91ylgxUM+r2OCeYB3lJDHH
-YI2Jb7fXR2krTLJOSrBZXQORym6Yh7LNMD/jGcm7orYyrdbiqQIr9BQ02Ye92tBF
-b1jEwHXDxHfJc1nqyS8Kxgwdr8rRAn3NDFcClyu/Exv5GbaSi6oVMU9prhilTpbD
-DnN5ub6pIMShvsc2yiCQpaNIoCNLh5TqepQfFe6X0FIJcm8nP0vWiaZXN3pXAihD
-3dPfqtFseakD0kHt8+DXTO9/wzpPYjhlzjdSUrCdzRZYMhouAYtvHo+5p8YInI+r
-NJ8iLQBdpeiGjLY8Uv/mWcUUcR7Ys37eQkdP90/jLXb0gCHCjdXn3mJPIXOeamts
-HNIOahHpWXleR5BI7npd+9N7s6dNPOF5nON08BwbqPVa65p697eJ1J1dgrUyOToM
-5/Rw0cZ0eitpWAa/kTvu08jBmX9IXIx8bmV5MsWtOT76LNpEVJ+/VWf4rDVBnHNU
-NDExAqJ6g7ImyFeiC+ItMQSvzQaBhzVGxZlLtk7B/NkfnWmnMYWcFlBnxvG1dokf
-I07A/B0KON7bjQ6lxqpq
-=mfPV
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index f3f91e7..c240b54 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -499,10 +499,10 @@ int pwm_enable(struct pwm_device *pwm)
+ 	if (!pwm)
+ 		return -EINVAL;
+ 
+-	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
++	if (!pwm_is_enabled(pwm)) {
+ 		err = pwm->chip->ops->enable(pwm->chip, pwm);
+-		if (err)
+-			clear_bit(PWMF_ENABLED, &pwm->flags);
++		if (!err)
++			pwm->state.enabled = true;
+ 	}
+ 
+ 	return err;
+@@ -515,8 +515,13 @@ EXPORT_SYMBOL_GPL(pwm_enable);
+  */
+ void pwm_disable(struct pwm_device *pwm)
+ {
+-	if (pwm && test_and_clear_bit(PWMF_ENABLED, &pwm->flags))
++	if (!pwm)
++		return;
++
++	if (pwm_is_enabled(pwm)) {
+ 		pwm->chip->ops->disable(pwm->chip, pwm);
++		pwm->state.enabled = false;
++	}
+ }
+ EXPORT_SYMBOL_GPL(pwm_disable);
+ 
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index f0f0f37..55bf463 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -93,8 +93,7 @@ struct pwm_args {
+ 
+ enum {
+ 	PWMF_REQUESTED = 1 << 0,
+-	PWMF_ENABLED = 1 << 1,
+-	PWMF_EXPORTED = 1 << 2,
++	PWMF_EXPORTED = 1 << 1,
+ };
+ 
+ /*
+@@ -102,11 +101,13 @@ enum {
+  * @period: PWM period (in nanoseconds)
+  * @duty_cycle: PWM duty cycle (in nanoseconds)
+  * @polarity: PWM polarity
++ * @enabled: PWM enabled status
+  */
+ struct pwm_state {
+ 	unsigned int period;
+ 	unsigned int duty_cycle;
+ 	enum pwm_polarity polarity;
++	bool enabled;
+ };
+ 
+ /**
+@@ -145,7 +146,11 @@ static inline void pwm_get_state(const struct pwm_device *pwm,
+ 
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+ {
+-	return test_bit(PWMF_ENABLED, &pwm->flags);
++	struct pwm_state pstate;
++
++	pwm_get_state(pwm, &pstate);
++
++	return pstate.enabled;
+ }
+ 
+ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
+-- 
+2.5.0
