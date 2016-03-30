@@ -1,30 +1,138 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40585 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1031021AbcCQRTw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 17 Mar 2016 13:19:52 -0400
-Date: Thu, 17 Mar 2016 12:19:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 10/18] dt-bindings: Add PLX Technology OXNAS Standard
- Clocks bindings
-Message-ID: <20160317171947.GA3294@rob-hp-laptop>
-References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
- <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
- <1457519060-6038-11-git-send-email-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457519060-6038-11-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 27/46] regulator: pwm: adjust PWM config at probe time
+Date: Wed, 30 Mar 2016 22:03:50 +0200
+Message-Id: <1459368249-13241-28-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 11:24:12AM +0100, Neil Armstrong wrote:
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  .../devicetree/bindings/clock/plxtech,stdclk.txt   | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/plxtech,stdclk.txt
+The PWM attached to a PWM regulator device might have been previously
+configured by the bootloader.
+Make sure the bootloader and linux config are in sync, and adjust the PWM
+config if that's not the case.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/regulator/pwm-regulator.c | 50 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 9154c47..9590fb0 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -240,6 +240,52 @@ static int pwm_regulator_init_continuous(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static int pwm_regulator_adjust_pwm_config(struct pwm_regulator_data *drvdata)
++{
++	struct pwm_state pstate = { };
++	struct pwm_args pargs = { };
++
++	pwm_get_args(drvdata->pwm, &pargs);
++	pwm_get_state(drvdata->pwm, &pstate);
++
++	/*
++	 * if the current period is zero this either means the PWM driver
++	 * does not support initial state retrieval or the PWM was not
++	 * configured.
++	 * In any case, we setup the new period and poloarity, and assign a
++	 * duty_cycle of 0.
++	 */
++	if (!pstate.period) {
++		pstate.duty_cycle = 0;
++		pstate.period = pargs.period;
++		pstate.polarity = pargs.polarity;
++
++		return pwm_apply_state(drvdata->pwm, &pstate);
++	}
++
++	/*
++	 * Adjust the PWM dutycycle/period based on the period value provided
++	 * in PWM args.
++	 */
++	if (pargs.period != pstate.period) {
++		u64 dutycycle = (u64)pstate.duty_cycle * pargs.period;
++
++		do_div(dutycycle, pstate.period);
++		pstate.duty_cycle = dutycycle;
++		pstate.period = pargs.period;
++	}
++
++	/*
++	 * If the polarity changed, we should also change the dutycycle value.
++	 */
++	if (pargs.polarity != pstate.polarity) {
++		pstate.polarity = pargs.polarity;
++		pstate.duty_cycle = pstate.period - pstate.duty_cycle;
++	}
++
++	return pwm_apply_state(drvdata->pwm, &pstate);
++}
++
+ static int pwm_regulator_probe(struct platform_device *pdev)
+ {
+ 	const struct regulator_init_data *init_data;
+@@ -283,6 +329,10 @@ static int pwm_regulator_probe(struct platform_device *pdev)
+ 		return PTR_ERR(drvdata->pwm);
+ 	}
+ 
++	ret = pwm_regulator_adjust_pwm_config(drvdata);
++	if (ret)
++		return ret;
++
+ 	regulator = devm_regulator_register(&pdev->dev,
+ 					    &drvdata->desc, &config);
+ 	if (IS_ERR(regulator)) {
+-- 
+2.5.0
