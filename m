@@ -1,59 +1,126 @@
-Return-Path: <lars.persson@axis.com>
-From: Lars Persson <lars.persson@axis.com>
-To: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: [PATCH v5 0/2] clk: Add Artpec-6 SoC support
-Date: Thu, 31 Mar 2016 20:02:49 +0200
-Message-Id: <cover.1459447089.git.larper@axis.com>
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 24/46] pwm: sti: add support for initial state retrieval
+Date: Wed, 30 Mar 2016 22:03:47 +0200
+Message-Id: <1459368249-13241-25-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock support for the Artpec-6 SoC port. The ARM parts are merged in
-4.6-rc1.
+Implement ->get_state() to provide support for initial state retrieval.
 
-Changes since v4:
-- Update the maintainer entry with the correct clock directory.
-- Implement split clock registration with early clocks through CLK_OF_DECLARE
-  and deferrable clocks through a platform driver.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/pwm-sti.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Changes since v3:
-- The binding was corrected to handle two fractional divider clocks as input to
-  the clock controller.
-- Updated clk-artpec6.c to handle a distinct fractional divider input for each
-  i2s clock mux.
-
-Changes since v2:
-- Moved axis,artpec6-clkctrl.h to the first patch with the DT bindings.
-
-Changes since v1:
-- The driver now provides all clocks from the main clock controller block
-  through one DT node.
-- Added a header file for the clock indexes.
-- Refer to clock-bindings.txt in the bindings document.
-
-Lars Persson (2):
-  clk: add device tree binding for Artpec-6 clock controller
-  clk: add artpec-6 clock controller
-
- .../devicetree/bindings/clock/artpec6.txt          |  41 ++++
- MAINTAINERS                                        |   2 +-
- drivers/clk/Makefile                               |   1 +
- drivers/clk/axis/Makefile                          |   1 +
- drivers/clk/axis/clk-artpec6.c                     | 230 +++++++++++++++++++++
- include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 ++++
- 6 files changed, 312 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
- create mode 100644 drivers/clk/axis/Makefile
- create mode 100644 drivers/clk/axis/clk-artpec6.c
- create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
-
+diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
+index 92abbd5..0fbca94 100644
+--- a/drivers/pwm/pwm-sti.c
++++ b/drivers/pwm/pwm-sti.c
+@@ -238,6 +238,46 @@ static void sti_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	mutex_unlock(&pc->sti_pwm_lock);
+ }
+ 
++static void sti_pwm_get_state(struct pwm_chip *chip,
++			      struct pwm_device *pwm,
++			      struct pwm_state *pstate)
++{
++	struct sti_pwm_chip *pc = to_sti_pwmchip(chip);
++	unsigned int regval, prescaler;
++	u64 timens;
++	int ret;
++
++	/* The clock has to be enabled to access PWM registers */
++	ret = clk_enable(pc->clk);
++	if (ret) {
++		dev_err(chip->dev, "Failed to enable PWM clk");
++		return;
++	}
++
++	regmap_field_read(pc->prescale_high, &regval);
++	prescaler = regval << 4;
++	regmap_field_read(pc->prescale_low, &regval);
++	prescaler |= regval;
++
++	timens = (u64)(prescaler + 1) * NSEC_PER_SEC *
++		 (pc->cdata->max_pwm_cnt + 1);
++	do_div(timens, pc->clk_rate);
++
++	pstate->period = timens;
++
++	regmap_read(pc->regmap, STI_DS_REG(pwm->hwpwm), &regval);
++	timens = (u64)(regval + 1) * pstate->period;
++	do_div(timens, pc->cdata->max_pwm_cnt + 1);
++	pstate->duty_cycle = timens;
++
++	regmap_field_read(pc->pwm_en, &regval);
++	pstate->enabled = regval;
++
++	pstate->polarity = PWM_POLARITY_NORMAL;
++
++	clk_disable(pc->clk);
++}
++
+ static void sti_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct sti_pwm_chip *pc = to_sti_pwmchip(chip);
+@@ -249,6 +289,7 @@ static const struct pwm_ops sti_pwm_ops = {
+ 	.config = sti_pwm_config,
+ 	.enable = sti_pwm_enable,
+ 	.disable = sti_pwm_disable,
++	.get_state = sti_pwm_get_state,
+ 	.free = sti_pwm_free,
+ 	.owner = THIS_MODULE,
+ };
 -- 
-2.1.4
+2.5.0
