@@ -1,121 +1,210 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47846 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750965AbcCBRFI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 2 Mar 2016 12:05:08 -0500
-Date: Wed, 2 Mar 2016 09:05:03 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: clk: ti: Add support for dm814x ADPLL
-Message-ID: <20160302170502.GS21163@atomide.com>
-References: <20160302111130.GA10965@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160302111130.GA10965@mwanda>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 23/46] pwm: rockchip: add support for atomic update
+Date: Wed, 30 Mar 2016 22:03:46 +0200
+Message-Id: <1459368249-13241-24-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi
+Implement the ->apply() function to add support for atomic update.
 
-* Dan Carpenter <dan.carpenter@oracle.com> [160302 03:12]:
-> Hello Tony Lindgren,
-> 
-> The patch e6ab1637c643: "clk: ti: Add support for dm814x ADPLL" from
-> Feb 26, 2016, leads to the following static checker warnings:
-> 
-> 	drivers/clk/ti/adpll.c:465 ti_adpll_recalc_rate()
-> 	warn: should '__readw(d->regs + 20) << 18' be a 64 bit type?
-> 
-> 	drivers/clk/ti/adpll.c:945 ti_adpll_probe()
-> 	error: we previously assumed 'd->clocks' could be null (see line 921)
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/pwm/pwm-rockchip.c | 63 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 39 insertions(+), 24 deletions(-)
 
-Stephen already patched most of this with "clk: ti: Fix some errors
-found by static checkers", some mysteries remain below though.
-
-> This should probably be:
-> 		rate = (u64)readw_relaxed(d->regs + ADPLL_MN2DIV_OFFSET) << 18;
-
-Already fixed by Stephen.
-
->    773  static void ti_adpll_free_resources(struct ti_adpll_data *d)
->    774  {
->    775          int i;
->    776  
->    777          for (i = TI_ADPLL_M3; i >= 0; i--) {
->    778                  struct ti_adpll_clock *ac = &d->clocks[i];
->    779  
->    780                  if (!ac || IS_ERR_OR_NULL(ac->clk))
-> 
-> ac can't possibly be NULL here.
-
-Yeah looks like we can remove ac check here.
-
->    910          err = ti_adpll_init_registers(d);
->    911          if (err)
->    912                  return err;
->    913  
->    914          err = ti_adpll_init_inputs(d);
->    915          if (err)
->    916                  return err;
->                         ^^^^^^^^^^
-> This is the last direct return in the function, meaning that
-> ti_adpll_init_inputs() must allocate something but I can't see what.
-> It should match clkdev_drop() and ac->unregister()?  I don't understand.
-
-Hmm I don't get this one. How did you get a warning here, is this a
-warning from sparse also?
-
->    917  
->    918          d->clocks = devm_kzalloc(d->dev, sizeof(struct ti_adpll_clock) *
->    919                                   TI_ADPLL_NR_CLOCKS,
->    920                                   GFP_KERNEL);
->    921          if (!d->clocks)
->    922                  goto free;
-> 
-> We don't set the error code here.
-
-Fixed by Stephen.
-
->    924          err = ti_adpll_init_dco(d);
->    925          if (err) {
->    926                  dev_err(dev, "could not register dco: %i\n", err);
->    927                  goto free;
->    928          }
->    929  
->    930          err = ti_adpll_init_children_adpll_s(d);
->    931          if (err)
->    932                  goto free;
->    933          err = ti_adpll_init_children_adpll_lj(d);
->    934          if (err)
->    935                  goto free;
->    936  
->    937          err = of_clk_add_provider(d->np, of_clk_src_onecell_get, &d->outputs);
->    938          if (err)
->    939                  goto free;
->    940  
->    941          return 0;
->    942  
->    943  free:
->    944          WARN_ON(1);
->    945          ti_adpll_free_resources(d);
-> 
-> This is a classic one err bug, where we have a single exit point but
-> it's too complicated and subtle to handle all errors so we mess up.  The
-> label doesn't indicate what we are freeing.
-
-Well there's really not much to free with devm.. We could rename
-the label to unregister to avoid confusion?
-
-> Ideally, the allocate and the free functions mirror each other but I
-> don't see a ti_adpll_(alloc|register|whatever)_resources().  Possibly
-> this is a mirror of ti_adpll_init_dco() so it could be called
-> ti_adpll_free_dco()?  I'm not sure.
-
-Or it could be just be renamed to ti_adpll_unregister() as
-we're not freeing any memory there.
-
-Regards,
-
-Tony
+diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
+index 5c7e79c..ed27740 100644
+--- a/drivers/pwm/pwm-rockchip.c
++++ b/drivers/pwm/pwm-rockchip.c
+@@ -50,7 +50,8 @@ struct rockchip_pwm_data {
+ 	const struct pwm_ops *ops;
+ 
+ 	void (*set_enable)(struct pwm_chip *chip,
+-			   struct pwm_device *pwm, bool enable);
++			   struct pwm_device *pwm, bool enable,
++			   enum pwm_polarity polarity);
+ 	void (*get_state)(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			  struct pwm_state *pstate);
+ };
+@@ -61,7 +62,8 @@ static inline struct rockchip_pwm_chip *to_rockchip_pwm_chip(struct pwm_chip *c)
+ }
+ 
+ static void rockchip_pwm_set_enable_v1(struct pwm_chip *chip,
+-				       struct pwm_device *pwm, bool enable)
++				       struct pwm_device *pwm, bool enable,
++				       enum pwm_polarity polarity)
+ {
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
+ 	u32 enable_conf = PWM_CTRL_OUTPUT_EN | PWM_CTRL_TIMER_EN;
+@@ -91,14 +93,15 @@ static void rockchip_pwm_get_state_v1(struct pwm_chip *chip,
+ }
+ 
+ static void rockchip_pwm_set_enable_v2(struct pwm_chip *chip,
+-				       struct pwm_device *pwm, bool enable)
++				       struct pwm_device *pwm, bool enable,
++				       enum pwm_polarity polarity)
+ {
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
+ 	u32 enable_conf = PWM_OUTPUT_LEFT | PWM_LP_DISABLE | PWM_ENABLE |
+ 			  PWM_CONTINUOUS;
+ 	u32 val;
+ 
+-	if (pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED)
++	if (polarity == PWM_POLARITY_INVERSED)
+ 		enable_conf |= PWM_DUTY_NEGATIVE | PWM_INACTIVE_POSITIVE;
+ 	else
+ 		enable_conf |= PWM_DUTY_POSITIVE | PWM_INACTIVE_NEGATIVE;
+@@ -168,7 +171,6 @@ static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
+ 	unsigned long period, duty;
+ 	u64 clk_rate, div;
+-	int ret;
+ 
+ 	clk_rate = clk_get_rate(pc->clk);
+ 
+@@ -185,15 +187,8 @@ static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	do_div(div, pc->data->prescaler * NSEC_PER_SEC);
+ 	duty = div;
+ 
+-	ret = clk_enable(pc->clk);
+-	if (ret)
+-		return ret;
+-
+ 	writel(period, pc->base + pc->data->regs.period);
+ 	writel(duty, pc->base + pc->data->regs.duty);
+-	writel(0, pc->base + pc->data->regs.cntr);
+-
+-	clk_disable(pc->clk);
+ 
+ 	return 0;
+ }
+@@ -211,43 +206,63 @@ static int rockchip_pwm_set_polarity(struct pwm_chip *chip,
+ 	return 0;
+ }
+ 
+-static int rockchip_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
++static int rockchip_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			      struct pwm_state *state)
+ {
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
++	struct pwm_state curstate;
++	bool enabled;
+ 	int ret;
+ 
++	pwm_get_state(pwm, &curstate);
++	enabled = curstate.enabled;
++
+ 	ret = clk_enable(pc->clk);
+ 	if (ret)
+ 		return ret;
+ 
+-	pc->data->set_enable(chip, pwm, true);
++	if (state->polarity != curstate.polarity && enabled) {
++		pc->data->set_enable(chip, pwm, false, state->polarity);
++		enabled = false;
++	}
+ 
+-	return 0;
+-}
++	ret = rockchip_pwm_config(chip, pwm, state->duty_cycle, state->period);
++	if (ret) {
++		if (enabled != curstate.enabled)
++			pc->data->set_enable(chip, pwm, !enabled,
++					     state->polarity);
+ 
+-static void rockchip_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
++		goto out;
++	}
+ 
+-	pc->data->set_enable(chip, pwm, false);
++	if (state->enabled != enabled)
++		pc->data->set_enable(chip, pwm, state->enabled,
++				     state->polarity);
+ 
++	/*
++	 * Update the state with the real hardware, which can differ a bit
++	 * because of period/duty_cycle approximation.
++	 */
++	rockchip_pwm_get_state(chip, pwm, state);
++
++out:
+ 	clk_disable(pc->clk);
++
++	return ret;
+ }
+ 
+ static const struct pwm_ops rockchip_pwm_ops_v1 = {
+ 	.get_state = rockchip_pwm_get_state,
+ 	.config = rockchip_pwm_config,
+-	.enable = rockchip_pwm_enable,
+-	.disable = rockchip_pwm_disable,
++	.apply = rockchip_pwm_apply,
+ 	.owner = THIS_MODULE,
+ };
+ 
+ static const struct pwm_ops rockchip_pwm_ops_v2 = {
+ 	.get_state = rockchip_pwm_get_state,
+ 	.config = rockchip_pwm_config,
++	.apply = rockchip_pwm_apply,
+ 	.set_polarity = rockchip_pwm_set_polarity,
+-	.enable = rockchip_pwm_enable,
+-	.disable = rockchip_pwm_disable,
+ 	.owner = THIS_MODULE,
+ };
+ 
+-- 
+2.5.0
