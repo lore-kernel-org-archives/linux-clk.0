@@ -1,54 +1,112 @@
-Return-Path: <slash.tmp@free.fr>
-Subject: Re: [PATCH] clk: sunxi: Remove use of VLAIS
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>
-References: <20160226194830.GA21652@lukather>
- <1456878048-23393-1-git-send-email-sboyd@codeaurora.org>
- <CAGb2v65TZh0uBD-WEURP6znxx0t427UBk4gLDpMMPUJ3vbc99Q@mail.gmail.com>
- <20160303191604.GW24999@codeaurora.org> <20160304152711.GR8418@lukather>
- <20160304171841.GF24999@codeaurora.org> <20160308221320.GI8418@lukather>
- <20160315221601.GJ25972@codeaurora.org>
-From: Mason <slash.tmp@free.fr>
-Message-ID: <56E91EA4.7030603@free.fr>
-Date: Wed, 16 Mar 2016 09:51:48 +0100
-MIME-Version: 1.0
-In-Reply-To: <20160315221601.GJ25972@codeaurora.org>
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 46/46] ARM: s3c24xx: rx1950: switch to the atomic PWM API
+Date: Wed, 30 Mar 2016 22:04:09 +0200
+Message-Id: <1459368249-13241-47-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15/03/2016 23:16, Stephen Boyd wrote:
+Replace pwm_disable/enable/config() by pwm_apply_state().
 
-> On 03/08, Maxime Ripard wrote:
->
->> On Fri, Mar 04, 2016 at 09:18:41AM -0800, Stephen Boyd wrote:
->>
->>> Oh right. Let's hope third time is the last.
->>>
->>> ---8<---
->>> From: Stephen Boyd <sboyd@codeaurora.org>
->>> Subject: [PATCH] clk: sunxi: Remove use of variable length array
->>>
->>> Using an array allocated on the stack may lead to stack overflows
->>> and other problems so let's move the allocation to the heap
->>> instead. This silences the following checker warning as well.
->>>
->>> drivers/clk/sunxi/clk-sun8i-mbus.c:36:29: warning: Variable length array is used.
->>>
->>> Cc: Chen-Yu Tsai <wens@csie.org>
->>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
->>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->>
->> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->>
-> 
-> Applied to clk-next.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ arch/arm/mach-s3c24xx/mach-rx1950.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-For the record, I will state again that I find it quite sub-optimal
-to resort to dynamic allocation for small temporary pointer arrays.
-
-A fortiori when one considers that getting the patch right required
-several attempts.
-
-Regards.
+diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
+index 774c982..2dc9487 100644
+--- a/arch/arm/mach-s3c24xx/mach-rx1950.c
++++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
+@@ -384,10 +384,15 @@ static struct pwm_device *lcd_pwm;
+ 
+ static void rx1950_lcd_power(int enable)
+ {
++	struct pwm_state pstate;
+ 	int i;
+ 	static int enabled;
++
+ 	if (enabled == enable)
+ 		return;
++
++	pwm_get_state(lcd_pwm, &pstate);
++
+ 	if (!enable) {
+ 
+ 		/* GPC11-GPC15->OUTPUT */
+@@ -433,15 +438,21 @@ static void rx1950_lcd_power(int enable)
+ 
+ 		/* GPB1->OUTPUT, GPB1->0 */
+ 		gpio_direction_output(S3C2410_GPB(1), 0);
+-		pwm_config(lcd_pwm, 0, LCD_PWM_PERIOD);
++
++		pstate.enabled = false;
++		pstate.period = LCD_PWM_PERIOD;
++		pstate.duty_cycle = 0;
++		pwm_apply_state(lcd_pwm, &pstate);
+ 		pwm_disable(lcd_pwm);
+ 
+ 		/* GPC0->0, GPC10->0 */
+ 		gpio_direction_output(S3C2410_GPC(0), 0);
+ 		gpio_direction_output(S3C2410_GPC(10), 0);
+ 	} else {
+-		pwm_config(lcd_pwm, LCD_PWM_DUTY, LCD_PWM_PERIOD);
+-		pwm_enable(lcd_pwm);
++		pstate.enabled = true;
++		pstate.period = LCD_PWM_PERIOD;
++		pstate.duty_cycle = LCD_PWM_DUTY;
++		pwm_apply_state(lcd_pwm, &pstate);
+ 
+ 		gpio_direction_output(S3C2410_GPC(0), 1);
+ 		gpio_direction_output(S3C2410_GPC(5), 1);
+-- 
+2.5.0
