@@ -1,64 +1,62 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 08/13] ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
-Date: Sat,  5 Mar 2016 23:43:01 +0800
-Message-Id: <1457192586-25596-9-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:43635 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752953AbcC3O7J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 30 Mar 2016 10:59:09 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-clk@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/5] clk: renesas: r8a7795: add OSC and RINT clocks
+Date: Wed, 30 Mar 2016 16:58:19 +0200
+Message-Id: <1459349902-13243-3-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
+References: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have a driver for the R_PIO controller,
-add the corresponding device node to the dtsi.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 691bbf1..5d240b9 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -465,5 +465,17 @@
- 			compatible = "allwinner,sun6i-a31-clock-reset";
- 			#reset-cells = <1>;
- 		};
+Since V1:  * don't export RINT to DT bindings, keep it internal.
+	   * also, introduce RCKCR already here to not hardcode address
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 9dc2b735ead85d..08715ca2ebb49d 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -26,6 +26,7 @@
+ 
+ #include "renesas-cpg-mssr.h"
+ 
++#define CPG_RCKCR	0x240
+ 
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+@@ -50,6 +51,7 @@ enum clk_ids {
+ 	CLK_S3,
+ 	CLK_SDSRC,
+ 	CLK_SSPSRC,
++	CLK_RINT,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -116,6 +118,9 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+ 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
+ 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
 +
-+		r_pio: pinctrl@01f02c00 {
-+			compatible = "allwinner,sun8i-a83t-r-pinctrl";
-+			reg = <0x01f02c00 0x400>;
-+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 0>;
-+			resets = <&apb0_reset 0>;
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#gpio-cells = <3>;
-+		};
- 	};
++	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR, 8),
++	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
  };
+ 
+ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
 -- 
-1.9.1
+2.7.0
+
