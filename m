@@ -1,133 +1,160 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 17/41] clk: tegra: Remove CLK_IS_ROOT
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-18-git-send-email-sboyd@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Thierry
- Reding <treding@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <56D719E2.9010501@nvidia.com>
-Date: Wed, 2 Mar 2016 11:50:42 -0500
-MIME-Version: 1.0
-In-Reply-To: <1456858826-28541-18-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 38/46] input: misc: pwm-beeper: switch to the atomic PWM API
+Date: Wed, 30 Mar 2016 22:04:01 +0200
+Message-Id: <1459368249-13241-39-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 3/1/2016 2:00 PM, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Rhyland Klein <rklein@nvidia.com>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/tegra/clk-audio-sync.c  |  2 +-
->  drivers/clk/tegra/clk-dfll.c        |  1 -
->  drivers/clk/tegra/clk-tegra-fixed.c |  6 ++----
->  drivers/clk/tegra/clk-tegra114.c    |  3 +--
->  drivers/clk/tegra/clk-tegra20.c     | 10 ++++------
->  5 files changed, 8 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-> index c0f7843e80e6..92d04ce2dee6 100644
-> --- a/drivers/clk/tegra/clk-audio-sync.c
-> +++ b/drivers/clk/tegra/clk-audio-sync.c
-> @@ -72,7 +72,7 @@ struct clk *tegra_clk_register_sync_source(const char *name,
->  
->  	init.ops = &tegra_clk_sync_source_ops;
->  	init.name = name;
-> -	init.flags = CLK_IS_ROOT;
-> +	init.flags = 0;
->  	init.parent_names = NULL;
->  	init.num_parents = 0;
->  
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 86a307b17eb0..19bfa07e24b1 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -995,7 +995,6 @@ static const struct clk_ops dfll_clk_ops = {
->  };
->  
->  static struct clk_init_data dfll_clk_init_data = {
-> -	.flags		= CLK_IS_ROOT,
->  	.ops		= &dfll_clk_ops,
->  	.num_parents	= 0,
->  };
-> diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
-> index da0b5941c89f..d64ec7a1b976 100644
-> --- a/drivers/clk/tegra/clk-tegra-fixed.c
-> +++ b/drivers/clk/tegra/clk-tegra-fixed.c
-> @@ -52,8 +52,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
->  		return -EINVAL;
->  	}
->  
-> -	osc = clk_register_fixed_rate(NULL, "osc", NULL, CLK_IS_ROOT,
-> -				      *osc_freq);
-> +	osc = clk_register_fixed_rate(NULL, "osc", NULL, 0, *osc_freq);
->  
->  	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_m, clks);
->  	if (!dt_clk)
-> @@ -88,8 +87,7 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
->  	/* clk_32k */
->  	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_32k, tegra_clks);
->  	if (dt_clk) {
-> -		clk = clk_register_fixed_rate(NULL, "clk_32k", NULL,
-> -					CLK_IS_ROOT, 32768);
-> +		clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, 0, 32768);
->  		*dt_clk = clk;
->  	}
->  
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index 4a24aa4bbdea..df47ec3169c3 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -972,8 +972,7 @@ static void __init tegra114_fixed_clk_init(void __iomem *clk_base)
->  	struct clk *clk;
->  
->  	/* clk_32k */
-> -	clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, CLK_IS_ROOT,
-> -				      32768);
-> +	clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, 0, 32768);
->  	clks[TEGRA114_CLK_CLK_32K] = clk;
->  
->  	/* clk_m_div2 */
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 7a48e986c4c9..7ad63837694f 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -837,15 +837,13 @@ static void __init tegra20_periph_clk_init(void)
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
->  	/* cdev1 */
-> -	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, CLK_IS_ROOT,
-> -				      26000000);
-> +	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
->  				    clk_base, 0, 94, periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_CDEV1] = clk;
->  
->  	/* cdev2 */
-> -	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, CLK_IS_ROOT,
-> -				      26000000);
-> +	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
->  				    clk_base, 0, 93, periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_CDEV2] = clk;
-> @@ -879,8 +877,8 @@ static void __init tegra20_osc_clk_init(void)
->  	input_freq = tegra20_clk_measure_input_freq();
->  
->  	/* clk_m */
-> -	clk = clk_register_fixed_rate(NULL, "clk_m", NULL, CLK_IS_ROOT |
-> -				      CLK_IGNORE_UNUSED, input_freq);
-> +	clk = clk_register_fixed_rate(NULL, "clk_m", NULL, CLK_IGNORE_UNUSED,
-> +				      input_freq);
->  	clks[TEGRA20_CLK_CLK_M] = clk;
->  
->  	/* pll_ref */
-> 
+pwm_config/enable/disable() have been deprecated and should be replaced
+by pwm_apply_state().
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/input/misc/pwm-beeper.c | 46 +++++++++++++++++++++++++++--------------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
 
+diff --git a/drivers/input/misc/pwm-beeper.c b/drivers/input/misc/pwm-beeper.c
+index f2261ab..36c9897 100644
+--- a/drivers/input/misc/pwm-beeper.c
++++ b/drivers/input/misc/pwm-beeper.c
+@@ -34,7 +34,7 @@ static int pwm_beeper_event(struct input_dev *input,
+ {
+ 	int ret = 0;
+ 	struct pwm_beeper *beeper = input_get_drvdata(input);
+-	unsigned long period;
++	struct pwm_state pstate;
+ 
+ 	if (type != EV_SND || value < 0)
+ 		return -EINVAL;
+@@ -49,19 +49,22 @@ static int pwm_beeper_event(struct input_dev *input,
+ 		return -EINVAL;
+ 	}
+ 
++	pwm_get_state(beeper->pwm, &pstate);
++
+ 	if (value == 0) {
+-		pwm_disable(beeper->pwm);
++		pstate.enabled = false;
+ 	} else {
+-		period = HZ_TO_NANOSECONDS(value);
+-		ret = pwm_config(beeper->pwm, period / 2, period);
+-		if (ret)
+-			return ret;
+-		ret = pwm_enable(beeper->pwm);
+-		if (ret)
+-			return ret;
+-		beeper->period = period;
++		pstate.enabled = false;
++		pstate.period = HZ_TO_NANOSECONDS(value);
++		pstate.duty_cycle = pstate.period / 2;
+ 	}
+ 
++	ret = pwm_apply_state(beeper->pwm, &pstate);
++	if (ret)
++		return ret;
++
++	beeper->period = value ? pstate.period : 0;
++
+ 	return 0;
+ }
+ 
+@@ -132,10 +135,13 @@ err_free:
+ static int pwm_beeper_remove(struct platform_device *pdev)
+ {
+ 	struct pwm_beeper *beeper = platform_get_drvdata(pdev);
++	struct pwm_state pstate;
+ 
+ 	input_unregister_device(beeper->input);
+ 
+-	pwm_disable(beeper->pwm);
++	pwm_get_state(beeper->pwm, &pstate);
++	pstate.enabled = false;
++	pwm_apply_state(beeper->pwm, &pstate);
+ 	pwm_free(beeper->pwm);
+ 
+ 	kfree(beeper);
+@@ -147,8 +153,13 @@ static int __maybe_unused pwm_beeper_suspend(struct device *dev)
+ {
+ 	struct pwm_beeper *beeper = dev_get_drvdata(dev);
+ 
+-	if (beeper->period)
+-		pwm_disable(beeper->pwm);
++	if (beeper->period) {
++		struct pwm_state pstate;
++
++		pwm_get_state(beeper->pwm, &pstate);
++		pstate.enabled = false;
++		pwm_apply_state(beeper->pwm, &pstate);
++	}
+ 
+ 	return 0;
+ }
+@@ -158,8 +169,13 @@ static int __maybe_unused pwm_beeper_resume(struct device *dev)
+ 	struct pwm_beeper *beeper = dev_get_drvdata(dev);
+ 
+ 	if (beeper->period) {
+-		pwm_config(beeper->pwm, beeper->period / 2, beeper->period);
+-		pwm_enable(beeper->pwm);
++		struct pwm_state pstate;
++
++		pwm_get_state(beeper->pwm, &pstate);
++		pstate.period = beeper->period;
++		pstate.duty_cycle = beeper->period / 2;
++		pstate.enabled = true;
++		pwm_apply_state(beeper->pwm, &pstate);
+ 	}
+ 
+ 	return 0;
 -- 
-nvpublic
+2.5.0
