@@ -1,48 +1,166 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 30 Mar 2016 19:43:14 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: ARM: dts: imx6ul: add more functionality to i.MX6UL
-Message-ID: <20160330114313.GE28207@tiger>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
- <1457095043-14115-1-git-send-email-LW@KARO-electronics.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1457095043-14115-1-git-send-email-LW@KARO-electronics.de>
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 45/46] drm: i915: switch to the atomic PWM API
+Date: Wed, 30 Mar 2016 22:04:08 +0200
+Message-Id: <1459368249-13241-46-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 04, 2016 at 01:37:21PM +0100, Lothar Waßmann wrote:
-> [PATCHv3 1/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL modules
-> [PATCHv3 2/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL mainboard
+pwm_config/enable/disable() have been deprecated and should be replaced
+by pwm_apply_state().
 
-Applied both, thanks.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/i915/intel_panel.c | 39 +++++++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 13 deletions(-)
 
-> 
-> This patchset adds more functionality to the i.MX6UL machines.
-> 
-> Changes vs. v1:
-> - added patch to implement KPP clock for i.MX6UL to prevent conflicts
->   when this patch would go via a different tree.
-> - added board support for Ka-Ro electronics TX6UL module for the same
->   reason
-> - added imx6ul specific compatibles as requested by Lucas Stach
-> 
-> Changes vs. v2:
-> - dropped patches which have already been applied in the meantime
-> - addressed comments by Shawn Guo
-> 
-> 
+diff --git a/drivers/gpu/drm/i915/intel_panel.c b/drivers/gpu/drm/i915/intel_panel.c
+index 21ee647..b86bd20 100644
+--- a/drivers/gpu/drm/i915/intel_panel.c
++++ b/drivers/gpu/drm/i915/intel_panel.c
+@@ -538,10 +538,10 @@ static u32 bxt_get_backlight(struct intel_connector *connector)
+ static u32 pwm_get_backlight(struct intel_connector *connector)
+ {
+ 	struct intel_panel *panel = &connector->panel;
+-	int duty_ns;
++	struct pwm_state pstate;
+ 
+-	duty_ns = pwm_get_duty_cycle(panel->backlight.pwm);
+-	return DIV_ROUND_UP(duty_ns * 100, CRC_PMIC_PWM_PERIOD_NS);
++	pwm_get_state(panel->backlight.pwm, &pstate);
++	return DIV_ROUND_UP(pstate.duty_cycle * 100, CRC_PMIC_PWM_PERIOD_NS);
+ }
+ 
+ static u32 intel_panel_get_backlight(struct intel_connector *connector)
+@@ -630,9 +630,12 @@ static void bxt_set_backlight(struct intel_connector *connector, u32 level)
+ static void pwm_set_backlight(struct intel_connector *connector, u32 level)
+ {
+ 	struct intel_panel *panel = &connector->panel;
+-	int duty_ns = DIV_ROUND_UP(level * CRC_PMIC_PWM_PERIOD_NS, 100);
++	struct pwm_state pstate;
+ 
+-	pwm_config(panel->backlight.pwm, duty_ns, CRC_PMIC_PWM_PERIOD_NS);
++	pwm_get_state(panel->backlight.pwm, &pstate);
++	pstate.duty_cycle = DIV_ROUND_UP(level * CRC_PMIC_PWM_PERIOD_NS, 100);
++	pstate.period = CRC_PMIC_PWM_PERIOD_NS;
++	pwm_apply_state(panel->backlight.pwm, &pstate);
+ }
+ 
+ static void
+@@ -801,11 +804,15 @@ static void bxt_disable_backlight(struct intel_connector *connector)
+ static void pwm_disable_backlight(struct intel_connector *connector)
+ {
+ 	struct intel_panel *panel = &connector->panel;
++	struct pwm_state pstate;
+ 
+ 	/* Disable the backlight */
+-	pwm_config(panel->backlight.pwm, 0, CRC_PMIC_PWM_PERIOD_NS);
++	pwm_get_state(panel->backlight.pwm, &pstate);
++	pstate.duty_cycle = 0;
++	pwm_apply_state(panel->backlight.pwm, &pstate);
+ 	usleep_range(2000, 3000);
+-	pwm_disable(panel->backlight.pwm);
++	pstate.enabled = false;
++	pwm_apply_state(panel->backlight.pwm, &pstate);
+ }
+ 
+ void intel_panel_disable_backlight(struct intel_connector *connector)
+@@ -1068,8 +1075,11 @@ static void bxt_enable_backlight(struct intel_connector *connector)
+ static void pwm_enable_backlight(struct intel_connector *connector)
+ {
+ 	struct intel_panel *panel = &connector->panel;
++	struct pwm_state pstate;
+ 
+-	pwm_enable(panel->backlight.pwm);
++	pwm_get_state(panel->backlight.pwm, &pstate);
++	pstate.enabled = true;
++	pwm_apply_state(panel->backlight.pwm, &pstate);
+ 	intel_panel_actually_set_backlight(connector, panel->backlight.level);
+ }
+ 
+@@ -1630,6 +1640,7 @@ static int pwm_setup_backlight(struct intel_connector *connector,
+ {
+ 	struct drm_device *dev = connector->base.dev;
+ 	struct intel_panel *panel = &connector->panel;
++	struct pwm_state pstate;
+ 	int retval;
+ 
+ 	/* Get the PWM chip for backlight control */
+@@ -1640,8 +1651,10 @@ static int pwm_setup_backlight(struct intel_connector *connector,
+ 		return -ENODEV;
+ 	}
+ 
+-	retval = pwm_config(panel->backlight.pwm, CRC_PMIC_PWM_PERIOD_NS,
+-			    CRC_PMIC_PWM_PERIOD_NS);
++	pwm_get_state(panel->backlight.pwm, &pstate);
++	pstate.period = CRC_PMIC_PWM_PERIOD_NS;
++	pstate.duty_cycle = CRC_PMIC_PWM_PERIOD_NS;
++	retval = pwm_apply_state(panel->backlight.pwm, &pstate);
+ 	if (retval < 0) {
+ 		DRM_ERROR("Failed to configure the pwm chip\n");
+ 		pwm_put(panel->backlight.pwm);
+@@ -1651,9 +1664,9 @@ static int pwm_setup_backlight(struct intel_connector *connector,
+ 
+ 	panel->backlight.min = 0; /* 0% */
+ 	panel->backlight.max = 100; /* 100% */
+-	panel->backlight.level = DIV_ROUND_UP(
+-				 pwm_get_duty_cycle(panel->backlight.pwm) * 100,
+-				 CRC_PMIC_PWM_PERIOD_NS);
++	pwm_get_state(panel->backlight.pwm, &pstate);
++	panel->backlight.level = DIV_ROUND_UP(pstate.duty_cycle * 100,
++					      pstate.period);
+ 	panel->backlight.enabled = panel->backlight.level != 0;
+ 
+ 	return 0;
+-- 
+2.5.0
