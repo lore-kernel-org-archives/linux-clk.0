@@ -49,50 +49,73 @@ Cc: Mike Turquette <mturquette@baylibre.com>,
 	Alexander Shiyan <shc_work@mail.ru>,
 	Milo Kim <milo.kim@ti.com>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 12/46] fbdev: ssd1307fb: use pwm_get_args() where appropriate
-Date: Wed, 30 Mar 2016 22:03:35 +0200
-Message-Id: <1459368249-13241-13-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 29/46] regulator: pwm: properly initialize the ->state field
+Date: Wed, 30 Mar 2016 22:03:52 +0200
+Message-Id: <1459368249-13241-30-git-send-email-boris.brezillon@free-electrons.com>
 In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM framework has clarified the concept of reference PWM config
-(the platform dependent config retrieved from the DT or the PWM
-lookup table) and real PWM state.
-
-Use pwm_get_args() when the PWM user wants to retrieve this reference
-config and not the current state.
-
-This is part of the rework allowing the PWM framework to support
-hardware readout and expose real PWM state even when the PWM has
-just been requested (before the user calls pwm_config/enable/disable()).
+The ->state field is currently initialized to 0, thus referencing the
+voltage selector at index 0, which might not reflect the current voltage
+value.
+If possible, retrieve the current voltage selector from the PWM state, else
+return -EINVAL.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/video/fbdev/ssd1307fb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/regulator/pwm-regulator.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
-index fa34808..df9c63a 100644
---- a/drivers/video/fbdev/ssd1307fb.c
-+++ b/drivers/video/fbdev/ssd1307fb.c
-@@ -286,6 +286,7 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 42cc312..9374796 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -48,10 +48,35 @@ struct pwm_voltages {
+ /**
+  * Voltage table call-backs
+  */
++static void pwm_regulator_init_state(struct regulator_dev *rdev)
++{
++	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
++	struct pwm_state pwm_state;
++	unsigned int dutycycle;
++	int i;
++
++	pwm_get_state(drvdata->pwm, &pwm_state);
++
++	if (!pwm_state.period)
++		return;
++
++	dutycycle = (pwm_state.duty_cycle * 100) / pwm_state.period;
++
++	for (i = 0; i < rdev->desc->n_voltages; i++) {
++		if (dutycycle == drvdata->duty_cycle_table[i].dutycycle) {
++			drvdata->state = i;
++			return;
++		}
++	}
++}
++
+ static int pwm_regulator_get_voltage_sel(struct regulator_dev *rdev)
  {
- 	int ret;
- 	u32 precharge, dclk, com_invdir, compins;
-+	struct pwm_args pargs = { };
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
  
- 	if (par->device_info->need_pwm) {
- 		par->pwm = pwm_get(&par->client->dev, NULL);
-@@ -294,7 +295,8 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
- 			return PTR_ERR(par->pwm);
- 		}
++	if (drvdata->state < 0)
++		pwm_regulator_init_state(rdev);
++
+ 	return drvdata->state;
+ }
  
--		par->pwm_period = pwm_get_period(par->pwm);
-+		pwm_get_args(par->pwm, &pargs);
-+		par->pwm_period = pargs.period;
- 		/* Enable the PWM */
- 		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period);
- 		pwm_enable(par->pwm);
+@@ -234,6 +259,7 @@ static int pwm_regulator_init_table(struct platform_device *pdev,
+ 		return ret;
+ 	}
+ 
++	drvdata->state			= -EINVAL;
+ 	drvdata->duty_cycle_table	= duty_cycle_table;
+ 	memcpy(&drvdata->ops, &pwm_regulator_voltage_table_ops,
+ 	       sizeof(drvdata->ops));
 -- 
 2.5.0
