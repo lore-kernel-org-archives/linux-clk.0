@@ -1,95 +1,81 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 30 Mar 2016 14:24:10 -0700
+From: Mark Brown <broonie@kernel.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Message-ID: <20160330212410.GX2350@sirena.org.uk>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <56EAF562.9060408@ti.com>
-References: <1457380318-15452-1-git-send-email-fcooper@ti.com>
- <1457380318-15452-6-git-send-email-fcooper@ti.com> <20160317150305.GA27356@rob-hp-laptop>
- <56EAE014.8070606@ti.com> <CAL_Jsq+3vRMezgrA53jPgMZUYR+DAA_886K1Q6YfxV1bPinoQQ@mail.gmail.com>
- <56EAF562.9060408@ti.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 17 Mar 2016 13:56:16 -0500
-Message-ID: <CAL_JsqLwpvjMHmEwhouiUR1vs4xG2hOn4AovNv1VaFEaSDpMug@mail.gmail.com>
-Subject: Re: [PATCH 5/5] pwm: pwm-tiehrpwm: Update dt binding document to use
- generic node name
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+1tcKVLXPU0QafK6"
+In-Reply-To: <1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 17, 2016 at 1:20 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
->
->
-> On 03/17/2016 01:00 PM, Rob Herring wrote:
->> On Thu, Mar 17, 2016 at 11:49 AM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
->>>
->>> On 03/17/2016 10:03 AM, Rob Herring wrote:
->>>> On Mon, Mar 07, 2016 at 01:51:58PM -0600, Franklin S Cooper Jr wrote:
->>>>> Now that the node name has been changed from ehrpwm to pwm the document
->>>>> should show this proper usage. Also change the unit address in the example
->>>>> from 0 to the proper physical address value that should be used.
->>>>>
->>>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
->>>>> ---
->>>>>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
->>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>> index 9c100b2..20211ed 100644
->>>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->>>>> @@ -15,14 +15,14 @@ Optional properties:
->>>>>
->>>>>  Example:
->>>>>
->>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
->>>>> +ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
->>>>>      compatible = "ti,am33xx-ehrpwm";
->>>>>      #pwm-cells = <3>;
->>>>>      reg = <0x48300200 0x100>;
->>>>>      ti,hwmods = "ehrpwm0";
->>>>>  };
->>>>>
->>>>> -ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
->>>>> +ehrpwm0: pwm@01f00000 { /* EHRPWM on da850 */
->>>> No leading 0s, but more importantly the address is wrong.
->>> I will remove the leading 0. However, this value was taken
->>> from the .dtsi and I just double checked and I see the same
->>> value in the datasheet. I believe DA850,OMAP-L138 and AM18x
->>> all have the same memory mapping. I'm looking at
->>> http://www.ti.com/lit/ds/symlink/am1808.pdf page 233 and the
->>> addresses match up what is seen here and in the .dtsi.
->>>
->>> Can you point me to which document your looking at that
->>> shows a different value?
->> Ummm, ...
->>
->>>>>      compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->>>>>      #pwm-cells = <3>;
->>>>>      reg = <0x300000 0x2000>;
->> right here.
->
-> So I don't know the history but the SOC node specifies a
-> ranges value of ranges = <0x0 0x01c00000 0x400000>;. It
-> seems that all child nodes of SOC have a reg property then
-> is based on an offset of 0x01c00000. So this is true for
-> UART, rtc, i2c, wdt, mmc, spi etc... So using a base offset
-> of 0x01c00000 + 0x300000 (reg value of the pwm) equals the
-> physical address of the ehrpwm0 register 0x1f00000.
->
-> For the child nodes within the SOC node, the unit-address is
-> always based on the physical address not based on the offset
-> address.
 
-They are all wrong and should be fixed. Unit address should match the
-reg property unless the bus has defined something different (e.g.
-PCI).
+--+1tcKVLXPU0QafK6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Rob
+On Wed, Mar 30, 2016 at 10:03:53PM +0200, Boris Brezillon wrote:
+> The continuous PWM voltage regulator is caching the voltage value in
+> the ->volt_uV field. While most of the time this value should reflect the
+> real voltage, sometime it can be sightly different if the PWM device
+> rounded the set_duty_cycle request.
+> Moreover, this value is not valid until someone has modified the regulator
+> output.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--+1tcKVLXPU0QafK6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJW/EP5AAoJECTWi3JdVIfQtmsH/ipnuxlqfguiud0BHLIawruP
+udVbyxUF2cZ988A7zoAajtGLrRz0zNSluNU0PRxG+UJxeSR3AhH3sjFuNzFcLtcj
+TMmiCOeDugMKtX0Zg1PZ7pcjqUhunn6+dsKEgyVxep94s4TujTvzOXpuYNbHsBuD
+eGxym5NCDFRqepzQmD28j02zXOmgOYRK1mOT9tM0Ro7iGFRnkR53yaMpIR2c5aEj
+7axjIkIEtaQNO9GsUPo1xGoG1pd8tVPnugL8mgA3PSJSJXCXm+lVscQd8anK8IZ9
+Nl8qcTaJYIqe9RCo1Fyoi6zlmAGFaQwvf3jQS5+UzGi0T+gpZr0+ja99wawDCAg=
+=m9XJ
+-----END PGP SIGNATURE-----
+
+--+1tcKVLXPU0QafK6--
