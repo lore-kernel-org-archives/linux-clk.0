@@ -1,175 +1,98 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0068.outbound.protection.outlook.com ([157.56.111.68]:26336
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1758270AbcDADRV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 31 Mar 2016 23:17:21 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-	<iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, <scott.wood@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	<ulf.hansson@linaro.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"Zhao Qiang" <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Santosh Shilimkar" <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v7, 4/5] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Date: Fri, 1 Apr 2016 11:07:30 +0800
-Message-ID: <1459480051-3701-5-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 13/46] backlight: pwm_bl: use pwm_get_args() where appropriate
+Date: Wed, 30 Mar 2016 22:03:36 +0200
+Message-Id: <1459368249-13241-14-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move mpc85xx.h to include/linux/fsl and rename it to svr.h as
-a common header file. It has been used for mpc85xx and it will
-be used for ARM-based SoC as well.
+The PWM framework has clarified the concept of reference PWM config
+(the platform dependent config retrieved from the DT or the PWM
+lookup table) and real PWM state.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
----
-Changes for v2:
-	- None
-Changes for v3:
-	- None
-Changes for v4:
-	- None
-Changes for v5:
-	- Changed to Move mpc85xx.h to include/linux/fsl/
-	- Adjusted '#include <linux/fsl/svr.h>' position in file
-Changes for v6:
-	- None
-Changes for v7:
-	- Added 'Acked-by: Wolfram Sang' for I2C part
-	- Also applied to arch/powerpc/kernel/cpu_setup_fsl_booke.S
----
- arch/powerpc/kernel/cpu_setup_fsl_booke.S                     | 2 +-
- drivers/clk/clk-qoriq.c                                       | 3 +--
- drivers/i2c/busses/i2c-mpc.c                                  | 2 +-
- drivers/iommu/fsl_pamu.c                                      | 3 +--
- drivers/net/ethernet/freescale/gianfar.c                      | 2 +-
- arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h | 4 ++--
- 6 files changed, 7 insertions(+), 9 deletions(-)
- rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+Use pwm_get_args() when the PWM user wants to retrieve this reference
+config and not the current state.
 
-diff --git a/arch/powerpc/kernel/cpu_setup_fsl_booke.S b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-index 462aed9..2b0284e 100644
---- a/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-+++ b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-@@ -13,13 +13,13 @@
-  *
-  */
+This is part of the rework allowing the PWM framework to support
+hardware readout and expose real PWM state even when the PWM has
+just been requested (before the user calls pwm_config/enable/disable()).
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/video/backlight/pwm_bl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index a33a290..2479c11 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -201,6 +201,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct pwm_bl_data *pb;
+ 	int initial_blank = FB_BLANK_UNBLANK;
++	struct pwm_args pargs = { };
+ 	int ret;
  
-+#include <linux/fsl/svr.h>
- #include <asm/page.h>
- #include <asm/processor.h>
- #include <asm/cputable.h>
- #include <asm/ppc_asm.h>
- #include <asm/mmu-book3e.h>
- #include <asm/asm-offsets.h>
--#include <asm/mpc85xx.h>
+ 	if (!data) {
+@@ -312,7 +313,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	 * set the period from platform data if it has not already been set
+ 	 * via the PWM lookup table.
+ 	 */
+-	pb->period = pwm_get_period(pb->pwm);
++	pwm_get_args(pb->pwm, &pargs);
++	pb->period = pargs.period;
+ 	if (!pb->period && (data->pwm_period_ns > 0))
+ 		pb->period = data->pwm_period_ns;
  
- _GLOBAL(__e500_icache_setup)
- 	mfspr	r0, SPRN_L1CSR1
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 7bc1c45..fc7f722 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -1148,8 +1149,6 @@ bad_args:
- }
- 
- #ifdef CONFIG_PPC
--#include <asm/mpc85xx.h>
--
- static const u32 a4510_svrs[] __initconst = {
- 	(SVR_P2040 << 8) | 0x10,	/* P2040 1.0 */
- 	(SVR_P2040 << 8) | 0x11,	/* P2040 1.1 */
-diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
-index 48ecffe..600704c 100644
---- a/drivers/i2c/busses/i2c-mpc.c
-+++ b/drivers/i2c/busses/i2c-mpc.c
-@@ -27,9 +27,9 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/fsl/svr.h>
- 
- #include <asm/mpc52xx.h>
--#include <asm/mpc85xx.h>
- #include <sysdev/fsl_soc.h>
- 
- #define DRV_NAME "mpc-i2c"
-diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
-index a34355f..af8fb27 100644
---- a/drivers/iommu/fsl_pamu.c
-+++ b/drivers/iommu/fsl_pamu.c
-@@ -21,11 +21,10 @@
- #include "fsl_pamu.h"
- 
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/interrupt.h>
- #include <linux/genalloc.h>
- 
--#include <asm/mpc85xx.h>
--
- /* define indexes for each operation mapping scenario */
- #define OMI_QMAN        0x00
- #define OMI_FMAN        0x01
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index d2f917a..2224b10 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -86,11 +86,11 @@
- #include <linux/udp.h>
- #include <linux/in.h>
- #include <linux/net_tstamp.h>
-+#include <linux/fsl/svr.h>
- 
- #include <asm/io.h>
- #ifdef CONFIG_PPC
- #include <asm/reg.h>
--#include <asm/mpc85xx.h>
- #endif
- #include <asm/irq.h>
- #include <asm/uaccess.h>
-diff --git a/arch/powerpc/include/asm/mpc85xx.h b/include/linux/fsl/svr.h
-similarity index 97%
-rename from arch/powerpc/include/asm/mpc85xx.h
-rename to include/linux/fsl/svr.h
-index 213f3a8..8d13836 100644
---- a/arch/powerpc/include/asm/mpc85xx.h
-+++ b/include/linux/fsl/svr.h
-@@ -9,8 +9,8 @@
-  * (at your option) any later version.
-  */
- 
--#ifndef __ASM_PPC_MPC85XX_H
--#define __ASM_PPC_MPC85XX_H
-+#ifndef FSL_SVR_H
-+#define FSL_SVR_H
- 
- #define SVR_REV(svr)	((svr) & 0xFF)		/* SOC design resision */
- #define SVR_MAJ(svr)	(((svr) >>  4) & 0xF)	/* Major revision field*/
 -- 
-2.1.0.27.g96db324
-
+2.5.0
