@@ -1,113 +1,89 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v10 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Thu, 31 Mar 2016 16:10:05 +0800
-Message-ID: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:29795 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754178AbcC3Rnn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 30 Mar 2016 13:43:43 -0400
+Message-Id: <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
+In-Reply-To: <cover.1459358017.git.moinejf@free.fr>
+References: <cover.1459358017.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Wed, 30 Mar 2016 18:43:29 +0200
+Subject: [PATCH 1/3] clk: sunxi: Add sun6i/8i display support
+To: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jiancheng Xue <xuejiancheng@huawei.com>
+Add the clock type which is used by the sun6i/8i families for video display.
 
-Hello,
+Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 38 +++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
-
-PATCH 3~6 in this serials have been acked. PATCH 1~2 are still waiting for being acked.
-
-Any comments will be appreciated!
-
-Thanks!
-
-Change Log
-----------
-v10:
---Fixed issues pointed by Stephen Boyd.
-  Use EXPORT_SYMBOL_GPL instead of EXPORT_SYMBOL.
---Fixed some compile warning on some platforms
-
-v9:
---Fixed issues pointed by Michael Turquette.
-  Remove some unused header included by source files.
-  Add a specific config option for compiling reset module. 
-
-v8:
---Made hi3519 clock driver can be compiled as a module
---Fixed an issue in arch/arm/Kconfig.debug
-
-v7:
---Rebased to v4.5-rc1
-
-v6:
--Changed clock driver to a real platform driver
-
-v5:
--Adjusted clock and reset controller driver code
-
-v4:
--Rebased to v4.4-rc7
--Divided patches according to Rob's comments
--Added spi nodes in hi3519-demb.dts
-
-v3:
--Rebased to v4.4-rc4
--Adjusted according to Arnd's comments
--Removed ARCH_HI3519, using ARCH_HISI directly
-
-v2:
--Rebased to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Deleted unused clocks definitions.
--Adjusted the ARCH_xxx order in Kconfig file
--Renamed ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: export some hisilicon APIs to modules
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: debug: add hi3519 debug uart
-  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |  15 ++
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 129 ++++++++++++++
- drivers/clk/hisilicon/clk.c                        |  23 ++-
- drivers/clk/hisilicon/clk.h                        |  14 +-
- drivers/clk/hisilicon/reset.c                      | 124 ++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
- 15 files changed, 669 insertions(+), 34 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 834436f..8c0fda8 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -81,6 +81,7 @@ Required properties:
+ 	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
+ 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
+ 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
++	"allwinner,sun6i-a31-display-clk" - for the display clocks
+ 
+ Required properties for all clocks:
+ - reg : shall be the control register address for the clock.
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 91de0a0..0581e1b 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -1127,3 +1127,41 @@ static void __init sun6i_pll6_clk_setup(struct device_node *node)
+ }
+ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
+ 	       sun6i_pll6_clk_setup);
++
++/*
++ * sun6i display
++ *
++ * rate = parent_rate / (m + 1);
++ */
++static void sun6i_display_factors(struct factors_request *req)
++{
++	u8 m;
++
++	if (req->rate > req->parent_rate)
++		req->rate = req->parent_rate;
++
++	m = DIV_ROUND_UP(req->parent_rate, req->rate);
++
++	req->rate = req->parent_rate / m;
++	req->m = m - 1;
++}
++
++static const struct clk_factors_config sun6i_display_config = {
++	.mshift = 0,
++	.mwidth = 4,
++};
++
++static const struct factors_data sun6i_display_data __initconst = {
++	.enable = 31,
++	.mux = 24,
++	.muxmask = BIT(2) | BIT(1) | BIT(0),
++	.table = &sun6i_display_config,
++	.getter = sun6i_display_factors,
++};
++
++static void __init sun6i_display_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun6i_display_data);
++}
++CLK_OF_DECLARE(sun6i_display, "allwinner,sun6i-a31-display-clk",
++	       sun6i_display_setup);
 -- 
-1.9.1
+2.8.0
+
