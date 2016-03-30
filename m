@@ -1,114 +1,44 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:30688 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932327AbcCHCcS (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 21:32:18 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v10 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Tue, 8 Mar 2016 10:20:12 +0800
-Message-ID: <1457403618-18317-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from sauhun.de ([89.238.76.85]:43640 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752708AbcC3O7b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 30 Mar 2016 10:59:31 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-clk@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/5] clk: renesas: r8a7795: add stop for R clk
+Date: Wed, 30 Mar 2016 16:58:21 +0200
+Message-Id: <1459349902-13243-5-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
+References: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
-Any comments will be appreciated!
+No change since V1.
 
-Thanks!
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Change Log
-----------
-v10:
---Fixed issues pointed by Stephen Boyd.
-
-v9:
---Fixed issues pointed by Michael Turquette.
-
-v8:
---Made hi3519 clock driver can be compiled as a module
---Fixed an issue in arch/arm/Kconfig.debug
-
-v7:
---Rebased to v4.5-rc1
-
-v6:
--Changed clock driver to a real platform driver
-
-v5:
--Adjusted clock and reset controller driver code
-
-v4:
--Rebased to v4.4-rc7
--Divided patches according to Rob's comments
--Added spi nodes in hi3519-demb.dts
-
-v3:
--Rebased to v4.4-rc4
--Adjusted according to Arnd's comments
--Removed ARCH_HI3519, using ARCH_HISI directly
-
-v2:
--Rebased to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Deleted unused clocks definitions.
--Adjusted the ARCH_xxx order in Kconfig file
--Renamed ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: export some hisilicon APIs to modules
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: debug: add hi3519 debug uart
-  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |  15 ++
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 129 ++++++++++++++
- drivers/clk/hisilicon/clk.c                        |  23 ++-
- drivers/clk/hisilicon/clk.h                        |  14 +-
- drivers/clk/hisilicon/reset.c                      | 124 ++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
- 15 files changed, 669 insertions(+), 34 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 19b02645771876..6af7f5b6e8240b 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -151,6 +151,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
++	DEF_MOD("rwdt0",		 402,	R8A7795_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
 -- 
-1.9.1
+2.7.0
 
