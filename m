@@ -1,68 +1,44 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Bai Ping <ping.bai@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+Subject: [PATCH BUGFIX] clk: imx6q: fix typo in CAN clock definition
+Date: Wed, 30 Mar 2016 14:23:03 +0200
+Message-Id: <1459340583-14743-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 31 Mar 2016 10:53:44 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
- sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
- marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
- mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/18] ARM: dts: vf610: add GPC as new interrupt parent
-In-Reply-To: <20160331082137.GW28207@tiger>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-3-git-send-email-stefan@agner.ch>
- <20160331082137.GW28207@tiger>
-Message-ID: <5c2e731d0fc986bc680a582584efee19@agner.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-03-31 01:21, Shawn Guo wrote:
-> On Wed, Mar 09, 2016 at 06:16:43PM -0800, Stefan Agner wrote:
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> 
-> So this patch cannot be applied before the fsl,vf610-gpc driver gets
-> landed on mainline.
+commit ee36027427c7 ("clk: imx: Add clock support for imx6qp")
+introduced a regression due to a subtle typo in the 'can_root' clock
+definition. The effect is that trying to configure the bitrate of the
+can interfaces fails with -EDOM or produces a division by zero error
+due to the clock_freq of the can serial clock being reported as '0'.
 
-Yes!
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ drivers/clk/imx/clk-imx6q.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Stefan
-
->> ---
->>  arch/arm/boot/dts/vfxxx.dtsi | 10 +++++++++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
->> index 5e49fbd..909988d 100644
->> --- a/arch/arm/boot/dts/vfxxx.dtsi
->> +++ b/arch/arm/boot/dts/vfxxx.dtsi
->> @@ -88,7 +88,7 @@
->>  		#address-cells = <1>;
->>  		#size-cells = <1>;
->>  		compatible = "simple-bus";
->> -		interrupt-parent = <&mscm_ir>;
->> +		interrupt-parent = <&gpc>;
->>  		ranges;
->>
->>  		aips0: aips-bus@40000000 {
->> @@ -475,6 +475,14 @@
->>  				reg = <0x4006e000 0x1000>;
->>  				interrupts = <96 IRQ_TYPE_LEVEL_HIGH>;
->>  			};
->> +
->> +			gpc: gpc@4006c000 {
->> +				compatible = "fsl,vf610-gpc";
->> +				reg = <0x4006c000 0x1000>;
->> +				interrupt-controller;
->> +				#interrupt-cells = <2>;
->> +				interrupt-parent = <&mscm_ir>;
->> +			};
->>  		};
->>
->>  		aips1: aips-bus@40080000 {
->> --
->> 2.7.2
->>
->>
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 02e1818..2beb396f 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -394,7 +394,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 		clk[IMX6QDL_CLK_LDB_DI1_DIV_3_5] = imx_clk_fixed_factor("ldb_di1_div_3_5", "ldb_di1", 2, 7);
+ 	} else {
+ 		clk[IMX6QDL_CLK_ECSPI_ROOT] = imx_clk_divider("ecspi_root", "pll3_60m", base + 0x38, 19, 6);
+-		clk[IMX6QDL_CLK_CAN_ROOT] = imx_clk_divider("can_root", "pll3_60", base + 0x20, 2, 6);
++		clk[IMX6QDL_CLK_CAN_ROOT] = imx_clk_divider("can_root", "pll3_60m", base + 0x20, 2, 6);
+ 		clk[IMX6QDL_CLK_IPG_PER] = imx_clk_fixup_divider("ipg_per", "ipg", base + 0x1c, 0, 6, imx_cscmr1_fixup);
+ 		clk[IMX6QDL_CLK_UART_SERIAL_PODF] = imx_clk_divider("uart_serial_podf", "pll3_80m",          base + 0x24, 0,  6);
+ 		clk[IMX6QDL_CLK_LDB_DI0_DIV_3_5] = imx_clk_fixed_factor("ldb_di0_div_3_5", "ldb_di0_sel", 2, 7);
+-- 
+2.1.4
