@@ -1,109 +1,103 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.131]:49443 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750850AbcCIB0y (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2016 20:26:54 -0500
-Subject: Re: [RESEND PATCH v2 5/5] clk: rockchip: add clock controller for the
- RK3399
-To: Jianqun Xu <jay.xu@rock-chips.com>,
-	Doug Anderson <dianders@chromium.org>
-References: <1456827275-8035-1-git-send-email-zhengxing@rock-chips.com>
- <1456827322-8130-1-git-send-email-zhengxing@rock-chips.com>
- <CAD=FV=VhMY=YO7zVYeP-+LY0gPvQ8yjaAUEGVJrMGLwbGjqVmg@mail.gmail.com>
- <56DF7393.4020600@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Tao Huang <huangtao@rock-chips.com>,
-	elaine.zhang@rock-chips.com
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <56DF7BCA.3000900@rock-chips.com>
-Date: Wed, 9 Mar 2016 09:26:34 +0800
-MIME-Version: 1.0
-In-Reply-To: <56DF7393.4020600@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Received: from sauhun.de ([89.238.76.85]:43632 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753925AbcC3O66 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 30 Mar 2016 10:58:58 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-clk@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/5] clk: renesas: cpg-mssr: add generic support for read-only DIV6 clocks
+Date: Wed, 30 Mar 2016 16:58:18 +0200
+Message-Id: <1459349902-13243-2-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
+References: <1459349902-13243-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Doug,
-     Yes, I will resend my patch series include the previous patches 
-(header file and dt-bindings) of the Jianqun, and update the header file 
-for the MMC defines.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks.
+Gen3 has two clocks (OSC and R) which look like a DIV6 clock but their
+divider value is read-only and depends on MD pins at bootup. Add support
+for such clocks by reading the value and adding a fixed clock.
 
-On 2016年03月09日 08:51, Jianqun Xu wrote:
-> Hi Doug:
->
-> 在 09/03/2016 07:34, Doug Anderson 写道:
->> Xing Zheng,
->>
->> On Tue, Mar 1, 2016 at 2:15 AM, Xing Zheng <zhengxing@rock-chips.com> 
->> wrote:
->>> +       MMC(SCLK_SDMMC_DRV, "emmc_drv",    "clk_sdmmc", 
->>> RK3399_SDMMC_CON0, 1),
->>> +       MMC(SCLK_SDMMC_SAMPLE,  "emmc_sample", "clk_sdmmc", 
->>> RK3399_SDMMC_CON1, 1),
->>
->> Can you and Jianqun Xu please coordinate?  Though I don't have a TRM
->> for rk3399 and I haven't looked through this whole patch, I know for
->> sure there's a problem when I pick the latest patch series from both
->> of you it doesn't compile.
->>
->> I believe this is the latest from each of you in patchwork:
->>
->> 8462411   [v3,1/3] dt-bindings: add bindings for rk3399 clock controller
->> 8462431   [v3,2/3] clk: rockchip: add dt-binding header for rk3399
->> 8462441   [v3,3/3] ARM64: dts: rockchip: add core dtsi file for rk3399
->>
->> 8463741   [RESEND,v2,1/5] clk: rockchip: add more mux parameters for
->> new pll sources
->> 8463801   [RESEND,v2,2/5] clk: rockchip: Add support for multiple
->> clock providers
->> 8463771   [RESEND,v2,3/5] clk: rockchip: add new pll-type for rk3399
->> and similar socs
->> 8463781   [RESEND,v2,4/5] clk: rockchip: add a 
->> COMPOSITE_FRACMUX_NOGATE type
->> 8463831   [RESEND,v2,5/5] clk: rockchip: add clock controller for the 
->> RK3399
->>
->>
->> Specifically your patch from March 1st refers to SCLK_SDMMC_DRV and
->> SCLK_SDMMC_SAMPLE.  Those defines existed in Jianqun Xu's patch back
->> on Feb 19th <https://patchwork.kernel.org/patch/8355411/>, but his
->> latest patch series from March 1st
->> <https://patchwork.kernel.org/patch/8462431/> no longer has those
->> #defines.
->>
->> Can you two resolve this so I can pick both patch series and see that
->> they compile?  ...or let me know where I messed up, of course.
->>
-> ok, we will upload dtsi later after the clk-rk3399 driver been applied.
-> xing will send the patches for rk3399 together.
->
-> We hope the dtsi could be applied first but depends on clk driver, but 
-> it seems
-> not a good idea, we will resend dtsi patch after more drivers are 
-> applied.
->
-> Thanks Doug.
->
->> Thanks!
->>
->> -Doug
->>
->>
->>
->
->
->
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
+Since V1, rebased and tag added.
+
+ drivers/clk/renesas/renesas-cpg-mssr.c | 18 ++++++++++++------
+ drivers/clk/renesas/renesas-cpg-mssr.h |  3 +++
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 886e0fa3c00d20..1f2dc3629f0e02 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -254,7 +254,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ {
+ 	struct clk *clk = NULL, *parent;
+ 	struct device *dev = priv->dev;
+-	unsigned int id = core->id;
++	unsigned int id = core->id, div = core->div;
+ 	const char *parent_name;
+ 
+ 	WARN_DEBUG(id >= priv->num_core_clks);
+@@ -267,6 +267,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 
+ 	case CLK_TYPE_FF:
+ 	case CLK_TYPE_DIV6P1:
++	case CLK_TYPE_DIV6_RO:
+ 		WARN_DEBUG(core->parent >= priv->num_core_clks);
+ 		parent = priv->clks[core->parent];
+ 		if (IS_ERR(parent)) {
+@@ -275,13 +276,18 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 		}
+ 
+ 		parent_name = __clk_get_name(parent);
+-		if (core->type == CLK_TYPE_FF) {
+-			clk = clk_register_fixed_factor(NULL, core->name,
+-							parent_name, 0,
+-							core->mult, core->div);
+-		} else {
++
++		if (core->type == CLK_TYPE_DIV6_RO)
++			/* Multiply with the DIV6 register value */
++			div *= (readl(priv->base + core->offset) & 0x3f) + 1;
++
++		if (core->type == CLK_TYPE_DIV6P1) {
+ 			clk = cpg_div6_register(core->name, 1, &parent_name,
+ 						priv->base + core->offset);
++		} else {
++			clk = clk_register_fixed_factor(NULL, core->name,
++							parent_name, 0,
++							core->mult, div);
+ 		}
+ 		break;
+ 
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index cad3c7d1b0c6f0..0d1e3e811e79bf 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -37,6 +37,7 @@ enum clk_types {
+ 	CLK_TYPE_IN,		/* External Clock Input */
+ 	CLK_TYPE_FF,		/* Fixed Factor Clock */
+ 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
++	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
+ 
+ 	/* Custom definitions start here */
+ 	CLK_TYPE_CUSTOM,
+@@ -53,6 +54,8 @@ enum clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_FF, _parent, .div = _div, .mult = _mult)
+ #define DEF_DIV6P1(_name, _id, _parent, _offset)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
++#define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
++	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
+ 
+     /*
+      * Definitions of Module Clocks
 -- 
-- Xing Zheng
-
+2.7.0
 
