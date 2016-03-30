@@ -1,126 +1,193 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:30113 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754178AbcC3Rnu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 30 Mar 2016 13:43:50 -0400
-Message-Id: <e63499f789971b8c45a0ae5e90bd127371cbcf19.1459358017.git.moinejf@free.fr>
-In-Reply-To: <cover.1459358017.git.moinejf@free.fr>
-References: <cover.1459358017.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Wed, 30 Mar 2016 18:50:43 +0200
-Subject: [PATCH 2/3] clk: sunxi: Add sun6i/8i PLL video support
-To: Emilio Lopez <emilio@elopez.com.ar>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Sender: linux-clk-owner@vger.kernel.org
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 00/46] pwm: add support for atomic update
+Date: Wed, 30 Mar 2016 22:03:23 +0200
+Message-Id: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the PLL type which is used by the sun6i/8i families for video display.
+Hello,
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 65 +++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
+This series adds support for atomic PWM update, or IOW, the capability
+to update all the parameters of a PWM device (enabled/disabled, period,
+duty and polarity) in one go.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 8c0fda8..ff93aee 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -10,6 +10,7 @@ Required properties:
- 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
- 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
- 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-+	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
- 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
- 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
- 	"allwinner,sun4i-a10-pll6-clk" - for the PLL6 clock
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 0581e1b..270f2a9 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/log2.h>
-+#include <linux/rational.h>
- 
- #include "clk-factors.h"
- 
-@@ -1129,6 +1130,70 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
- 	       sun6i_pll6_clk_setup);
- 
- /*
-+ * sun6i pll3
-+ *
-+ * if (p == 0) rate = k ? 270MHz : 297MHz
-+ * else rate = parent_rate / (m + 1) * (n + 1);
-+ */
-+static void sun6i_pll3_factors(struct factors_request *req)
-+{
-+	unsigned long n, m;
-+
-+	if (req->rate == 270000000) {
-+		req->m = 0;
-+		req->p = 0;
-+		req->k = 0;
-+	} else if (req->rate == 297000000) {
-+		req->m = 0;
-+		req->p = 0;
-+		req->k = 1;
-+	} else {
-+		rational_best_approximation(req->rate,
-+					req->parent_rate,
-+					1 << 7, 1 << 4, &n, &m);
-+		req->rate = req->parent_rate / m * n;
-+		req->p = 1;
-+		req->m = m - 1;
-+		req->n = n - 1;
-+	}
-+}
-+
-+static void sun6i_pll3_recalc(struct factors_request *req)
-+{
-+	if (req->p)
-+		req->rate = req->parent_rate / (req->m + 1) * (req->n + 1);
-+	else if (req->k)
-+		req->rate = 270000000;
-+	else
-+		req->rate = 297000000;
-+}
-+
-+static const struct clk_factors_config sun6i_pll3_config = {
-+	.mshift = 0,
-+	.mwidth = 4,
-+	.nshift = 8,
-+	.nwidth = 7,
-+	.pshift = 24,	/* mode selection fractional / integer */
-+	.pwidth = 1,
-+	.kshift = 25,	/* fraction 270 / 297 MHz */
-+	.kwidth = 1,
-+};
-+
-+static const struct factors_data sun6i_pll3_data __initconst = {
-+	.enable = 31,
-+	.table = &sun6i_pll3_config,
-+	.getter = sun6i_pll3_factors,
-+	.recalc = sun6i_pll3_recalc,
-+};
-+
-+static void __init sun6i_pll3_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun6i_pll3_data);
-+}
-+CLK_OF_DECLARE(sun6i_pll3, "allwinner,sun6i-a31-pll3-clk",
-+	        sun6i_pll3_setup);
-+
-+/*
-  * sun6i display
-  *
-  * rate = parent_rate / (m + 1);
+It also adds support for initial PWM state retrieval (or hardware readout),
+which should allow smooth handover between the bootloader and Linux. For
+example, critical PWM users (like critical regulators controlled by a PWM)
+can query the current PWM state, and adapt the PWM config without having
+to disable/enable the PWM, or abruptly change the period/dutycyle/polarity
+config.
+
+Thierry, I hope this version meets your expectations, if that's not the
+case, could you let me know quickly so I can adjust the implementation
+accordingly (I'd really like to get most of those changes in 4.7).
+
+Best Regards,
+
+Boris
+
+Changes since v4:
+- introduce pwm_args to expose per-board/platform config
+- deprecate non-atomic APIs
+- implement non-atomic functions as wrappers around atomic ones
+- patch all PWM users to use the atomic API
+- rename the ->reset_state() hook into ->get_state()
+- drop most acks
+- rework PWM config in the pwm-regulator driver
+- patch sun4i and sti PWM drivers to support HW readout
+
+Changes since v3:
+- rebased on pwm/for-next after pulling 4.4-rc1
+- replace direct access to pwm fields by pwm_get/set_xxx() helpers, thus
+  fixing some build errors
+- split changes to allow each maintainer to review/ack or take the
+  modification through its subsystem
+
+Changes since v2:
+- rebased on top of 4.3-rc2
+- reintroduced pwm-regulator patches
+
+Changes since v1:
+- dropped applied patches
+- squashed Heiko's fixes into the rockchip driver changes
+- made a few cosmetic changes
+- added kerneldoc comments
+- added Heiko's patch to display more information in debugfs
+- dropped pwm-regulator patches (should be submitted separately)
+
+*** BLURB HERE ***
+
+Boris Brezillon (45):
+  pwm: rcar: make use of pwm_is_enabled()
+  backlight: pwm_bl: remove useless call to pwm_set_period()
+  backlight: lm3630a_bl: stop messing with the pwm->period field
+  pwm: get rid of pwm->lock
+  pwm: introduce the pwm_args concept
+  pwm: use pwm_get/set_xxx() helpers where appropriate
+  clk: pwm: use pwm_get_args() where appropriate
+  hwmon: pwm-fan: use pwm_get_args() where appropriate
+  misc: max77693-haptic: use pwm_get_args() where appropriate
+  leds: pwm: use pwm_get_args() where appropriate
+  regulator: pwm: use pwm_get_args() where appropriate
+  fbdev: ssd1307fb: use pwm_get_args() where appropriate
+  backlight: pwm_bl: use pwm_get_args() where appropriate
+  pwm: keep PWM state in sync with hardware state
+  pwm: introduce the pwm_state concept
+  pwm: move the enabled/disabled info into pwm_state
+  pwm: add the PWM initial state retrieval infra
+  pwm: add the core infrastructure to allow atomic update
+  pwm: switch to the atomic API
+  pwm: rockchip: add initial state retrieval
+  pwm: rockchip: avoid glitches on already running PWMs
+  pwm: rockchip: add support for atomic update
+  pwm: sti: add support for initial state retrieval
+  pwm: sti: avoid glitches on already running PWMs
+  pwm: sun4i: implement hardware readout
+  regulator: pwm: adjust PWM config at probe time
+  regulator: pwm: swith to the atomic PWM API
+  regulator: pwm: properly initialize the ->state field
+  regulator: pwm: retrieve correct voltage
+  pwm: update documentation
+  pwm: deprecate pwm_config(), pwm_enable() and pwm_disable()
+  pwm: replace pwm_disable() by pwm_apply_state()
+  clk: pwm: switch to the atomic API
+  hwmon: pwm-fan: switch to the atomic API
+  input: misc: max77693: switch to the atomic API
+  input: misc: max8997: switch to the atomic PWM API
+  input: misc: pwm-beeper: switch to the atomic PWM API
+  leds: pwm: switch to the atomic PWM API
+  backlight: lm3630a: switch to the atomic PWM API
+  backlight: lp855x: switch to the atomic PWM API
+  backlight: lp8788: switch to the atomic PWM API
+  backlight: pwm_bl: switch to the atomic PWM API
+  video: ssd1307fb: switch to the atomic PWM API
+  drm: i915: switch to the atomic PWM API
+  ARM: s3c24xx: rx1950: switch to the atomic PWM API
+
+Heiko Stübner (1):
+  pwm: add information about polarity, duty cycle and period to debugfs
+
+ Documentation/pwm.txt                |  27 +++-
+ arch/arm/mach-s3c24xx/mach-rx1950.c  |  17 +-
+ drivers/clk/clk-pwm.c                |  36 ++++-
+ drivers/gpu/drm/i915/intel_panel.c   |  39 +++--
+ drivers/hwmon/pwm-fan.c              |  88 ++++++----
+ drivers/input/misc/max77693-haptic.c |  28 +++-
+ drivers/input/misc/max8997_haptic.c  |  23 ++-
+ drivers/input/misc/pwm-beeper.c      |  46 ++++--
+ drivers/leds/leds-pwm.c              |  15 +-
+ drivers/pwm/core.c                   | 186 ++++++++++-----------
+ drivers/pwm/pwm-clps711x.c           |   2 +-
+ drivers/pwm/pwm-crc.c                |   2 +-
+ drivers/pwm/pwm-lpc18xx-sct.c        |   9 +-
+ drivers/pwm/pwm-lpc32xx.c            |   9 +-
+ drivers/pwm/pwm-omap-dmtimer.c       |   2 +-
+ drivers/pwm/pwm-pxa.c                |   2 +-
+ drivers/pwm/pwm-rcar.c               |   2 +-
+ drivers/pwm/pwm-rockchip.c           | 156 +++++++++++++++---
+ drivers/pwm/pwm-spear.c              |   9 +-
+ drivers/pwm/pwm-sti.c                |  67 +++++++-
+ drivers/pwm/pwm-sun4i.c              |  73 ++++++---
+ drivers/pwm/sysfs.c                  |  98 ++++++++---
+ drivers/regulator/pwm-regulator.c    | 151 ++++++++++++++---
+ drivers/video/backlight/lm3630a_bl.c |  15 +-
+ drivers/video/backlight/lp855x_bl.c  |  15 +-
+ drivers/video/backlight/lp8788_bl.c  |  17 +-
+ drivers/video/backlight/pwm_bl.c     |  51 +++---
+ drivers/video/fbdev/ssd1307fb.c      |  28 +++-
+ include/linux/pwm.h                  | 303 ++++++++++++++++++++++++++---------
+ 29 files changed, 1096 insertions(+), 420 deletions(-)
+
 -- 
-2.8.0
-
+2.5.0
