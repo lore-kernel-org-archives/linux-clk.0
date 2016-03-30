@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 1/2] clk: tegra: Fix pllre Tegra210 and add pll_re_out1
-Date: Mon, 21 Mar 2016 15:58:52 -0400
-Message-ID: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 43/46] backlight: pwm_bl: switch to the atomic PWM API
+Date: Wed, 30 Mar 2016 22:04:06 +0200
+Message-Id: <1459368249-13241-44-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use a new Tegra210 version of the pll_register_pllre function to
-allow setting the proper settings for the m and n div fields.
+pwm_config/enable/disable() have been deprecated and should be replaced
+by pwm_apply_state().
 
-Additionally define PLL_RE_OUT1 on Tegra210.
-
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/clk/tegra/clk-pll.c              | 46 ++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra210.c         | 15 +++++++++--
- drivers/clk/tegra/clk.h                  |  6 +++++
- include/dt-bindings/clock/tegra210-car.h |  2 +-
- 4 files changed, 66 insertions(+), 3 deletions(-)
+ drivers/video/backlight/pwm_bl.c | 43 ++++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 6ac3f843e7ca..4e194ecc8d5e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2013,6 +2013,52 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- #endif
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 2479c11..b069fb2 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -43,8 +43,22 @@ struct pwm_bl_data {
+ 	void			(*exit)(struct device *);
+ };
  
- #if defined(CONFIG_ARCH_TEGRA_210_SOC)
-+struct clk *tegra_clk_register_pllre_tegra210(const char *name,
-+			  const char *parent_name, void __iomem *clk_base,
-+			  void __iomem *pmc, unsigned long flags,
-+			  struct tegra_clk_pll_params *pll_params,
-+			  spinlock_t *lock, unsigned long parent_rate)
++static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
 +{
-+	u32 val;
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk;
++	unsigned int lth = pb->lth_brightness;
++	int duty_cycle;
 +
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++	if (pb->levels)
++		duty_cycle = pb->levels[brightness];
++	else
++		duty_cycle = brightness;
 +
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	/* program minimum rate by default */
-+
-+	val = pll_readl_base(pll);
-+	if (val & PLL_BASE_ENABLE)
-+		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
-+				BIT(pll_params->iddq_bit_idx));
-+	else {
-+		val = 0x4 << divm_shift(pll);
-+		val |= 0x41 << divn_shift(pll);
-+		pll_writel_base(val, pll);
-+	}
-+
-+	/* disable lock override */
-+
-+	val = pll_readl_misc(pll);
-+	val &= ~BIT(29);
-+	pll_writel_misc(val, pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pllre_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
++	return (duty_cycle * (pb->period - lth) / pb->scale) + lth;
 +}
 +
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
  {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 637041fd53ad..ce262582547c 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2582,8 +2582,10 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 	clks[TEGRA210_CLK_PLL_D_OUT0] = clk;
++	struct pwm_state pstate;
+ 	int err;
  
- 	/* PLLRE */
--	clk = tegra_clk_register_pllre("pll_re_vco", "pll_ref", clk_base, pmc,
--			     0, &pll_re_vco_params, &pll_re_lock, pll_ref_freq);
-+	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
-+						clk_base, pmc, 0,
-+						&pll_re_vco_params,
-+						&pll_re_lock, pll_ref_freq);
- 	clk_register_clkdev(clk, "pll_re_vco", NULL);
- 	clks[TEGRA210_CLK_PLL_RE_VCO] = clk;
+ 	if (pb->enabled)
+@@ -57,17 +71,24 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
+ 	if (pb->enable_gpio)
+ 		gpiod_set_value(pb->enable_gpio, 1);
  
-@@ -2593,6 +2595,15 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 	clk_register_clkdev(clk, "pll_re_out", NULL);
- 	clks[TEGRA210_CLK_PLL_RE_OUT] = clk;
+-	pwm_enable(pb->pwm);
++	pwm_get_state(pb->pwm, &pstate);
++	pstate.duty_cycle = compute_duty_cycle(pb, brightness);
++	pstate.enabled = true;
++	pwm_apply_state(pb->pwm, &pstate);
+ 	pb->enabled = true;
+ }
  
-+	clk = tegra_clk_register_divider("pll_re_out1_div", "pll_re_vco",
-+					 clk_base + PLLRE_OUT1, 0,
-+					 TEGRA_DIVIDER_ROUND_UP,
-+					 8, 8, 1, NULL);
-+	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
-+					 clk_base + PLLRE_OUT1, 1, 0,
-+					 CLK_SET_RATE_PARENT, 0, NULL);
-+	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
+ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+ {
++	struct pwm_state pstate;
 +
- 	/* PLLE */
- 	clk = tegra_clk_register_plle_tegra210("pll_e", "pll_ref",
- 				      clk_base, 0, &pll_e_params, NULL);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 4dbcfaec576a..9f26c1ba1e5b 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -386,6 +386,12 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
- 			   struct tegra_clk_pll_params *pll_params,
- 			   spinlock_t *lock, unsigned long parent_rate);
+ 	if (!pb->enabled)
+ 		return;
  
-+struct clk *tegra_clk_register_pllre_tegra210(const char *name,
-+			   const char *parent_name, void __iomem *clk_base,
-+			   void __iomem *pmc, unsigned long flags,
-+			   struct tegra_clk_pll_params *pll_params,
-+			   spinlock_t *lock, unsigned long parent_rate);
-+
- struct clk *tegra_clk_register_plle_tegra114(const char *name,
- 				const char *parent_name,
- 				void __iomem *clk_base, unsigned long flags,
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 0a05b0d36ae7..bd3530e56d46 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -346,7 +346,7 @@
- #define TEGRA210_CLK_PLL_P_OUT_HSIO 316
- #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
- #define TEGRA210_CLK_XUSB_SSP_SRC 318
--/* 319 */
-+#define TEGRA210_CLK_PLL_RE_OUT1 319
- /* 320 */
- /* 321 */
- /* 322 */
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
++	pwm_get_state(pb->pwm, &pstate);
++	pstate.duty_cycle = 0;
++	pstate.enabled = false;
++	pwm_apply_state(pb->pwm, &pstate);
+ 
+ 	if (pb->enable_gpio)
+ 		gpiod_set_value(pb->enable_gpio, 0);
+@@ -76,24 +97,10 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+ 	pb->enabled = false;
+ }
+ 
+-static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
+-{
+-	unsigned int lth = pb->lth_brightness;
+-	int duty_cycle;
+-
+-	if (pb->levels)
+-		duty_cycle = pb->levels[brightness];
+-	else
+-		duty_cycle = brightness;
+-
+-	return (duty_cycle * (pb->period - lth) / pb->scale) + lth;
+-}
+-
+ static int pwm_backlight_update_status(struct backlight_device *bl)
+ {
+ 	struct pwm_bl_data *pb = bl_get_data(bl);
+ 	int brightness = bl->props.brightness;
+-	int duty_cycle;
+ 
+ 	if (bl->props.power != FB_BLANK_UNBLANK ||
+ 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
+@@ -104,8 +111,6 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 		brightness = pb->notify(pb->dev, brightness);
+ 
+ 	if (brightness > 0) {
+-		duty_cycle = compute_duty_cycle(pb, brightness);
+-		pwm_config(pb->pwm, duty_cycle, pb->period);
+ 		pwm_backlight_power_on(pb, brightness);
+ 	} else
+ 		pwm_backlight_power_off(pb);
 -- 
-1.9.1
+2.5.0
