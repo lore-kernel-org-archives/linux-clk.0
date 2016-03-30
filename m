@@ -1,84 +1,175 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
-Date: Thu,  3 Mar 2016 22:47:05 +0100
-Message-Id: <1457041625-21163-3-git-send-email-manabian@gmail.com>
-In-Reply-To: <1457041625-21163-1-git-send-email-manabian@gmail.com>
-References: <1457041625-21163-1-git-send-email-manabian@gmail.com>
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 28/46] regulator: pwm: swith to the atomic PWM API
+Date: Wed, 30 Mar 2016 22:03:51 +0200
+Message-Id: <1459368249-13241-29-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT binding documentation for lpc1850-creg-clk driver.
+pwm_config/enable/disable() have been deprecated in favor of
+pwm_apply_state().
+Replace all those calls with the equivalent pwm_get/apply_state().
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ drivers/regulator/pwm-regulator.c | 54 ++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-new file mode 100644
-index 000000000000..6f1c7b4e4d2c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-@@ -0,0 +1,52 @@
-+* NXP LPC1850 CREG clocks
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 9590fb0..42cc312 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -59,16 +59,18 @@ static int pwm_regulator_set_voltage_sel(struct regulator_dev *rdev,
+ 					 unsigned selector)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+-	struct pwm_args pargs = { };
+-	int dutycycle;
++	struct pwm_state pstate = { };
++	u64 dutycycle;
+ 	int ret;
+ 
+-	pwm_get_args(drvdata->pwm, &pargs);
++	pwm_get_state(drvdata->pwm, &pstate);
+ 
+-	dutycycle = (pargs.period *
+-		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
++	dutycycle = drvdata->duty_cycle_table[selector].dutycycle;
++	dutycycle *= pstate.period;
++	do_div(dutycycle, 100);
++	pstate.duty_cycle = dutycycle;
+ 
+-	ret = pwm_config(drvdata->pwm, dutycycle, pargs.period);
++	ret = pwm_apply_state(drvdata->pwm, &pstate);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+@@ -93,24 +95,39 @@ static int pwm_regulator_list_voltage(struct regulator_dev *rdev,
+ static int pwm_regulator_enable(struct regulator_dev *dev)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
++	struct pwm_state pstate = { };
 +
-+The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
-+control registers for two low speed clocks. One of the clocks is a
-+32 kHz oscillator driver with power up/down and clock gating. Next
-+is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
++	pwm_get_state(drvdata->pwm, &pstate);
++	if (pstate.enabled)
++		return 0;
 +
-+These clocks are used by the RTC and the Event Router peripherials.
-+The 32 kHz can also be routed to other peripherials to enable low
-+power modes.
++	pstate.enabled = true;
+ 
+-	return pwm_enable(drvdata->pwm);
++	return pwm_apply_state(drvdata->pwm, &pstate);
+ }
+ 
+ static int pwm_regulator_disable(struct regulator_dev *dev)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
++	struct pwm_state pstate = { };
+ 
+-	pwm_disable(drvdata->pwm);
++	pwm_get_state(drvdata->pwm, &pstate);
++	if (!pstate.enabled)
++		return 0;
+ 
+-	return 0;
++	pstate.enabled = false;
 +
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
++	return pwm_apply_state(drvdata->pwm, &pstate);
+ }
+ 
+ static int pwm_regulator_is_enabled(struct regulator_dev *dev)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
++	struct pwm_state pstate = { };
+ 
+-	return pwm_is_enabled(drvdata->pwm);
++	pwm_get_state(drvdata->pwm, &pstate);
 +
-+Required properties:
-+- compatible:
-+	Should be "nxp,lpc1850-creg-clk"
-+- #clock-cells:
-+	Shall have value <1>.
-+- clocks:
-+	Shall contain a phandle to the fixed 32 kHz crystal.
-+
-+The creg-clk node must be a child of the creg syscon node.
-+
-+The following clocks are available from the clock node.
-+
-+Clock ID	Name
-+   0		 1 kHz clock
-+   1		32 kHz Oscillator
-+
-+Example:
-+soc {
-+	creg: syscon@40043000 {
-+		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
-+		reg = <0x40043000 0x1000>;
-+
-+		creg_clk: clock-controller {
-+			compatible = "nxp,lpc1850-creg-clk";
-+			clocks = <&xtal32>;
-+			#clock-cells = <1>;
-+		};
-+
-+		...
-+	};
-+
-+	rtc: rtc@40046000 {
-+		...
-+		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
-+		clock-names = "rtc", "reg";
-+		...
-+	};
-+};
++	return pstate.enabled;
+ }
+ 
+ /**
+@@ -138,25 +155,22 @@ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+ 	unsigned int ramp_delay = rdev->constraints->ramp_delay;
+-	struct pwm_args pargs = { };
+-	int duty_cycle;
++	struct pwm_state pstate = { };
++	u64 duty_cycle;
+ 	int ret;
+ 
+-	pwm_get_args(drvdata->pwm, &pargs);
++	pwm_get_state(drvdata->pwm, &pstate);
+ 	duty_cycle = pwm_voltage_to_duty_cycle_percentage(rdev, min_uV);
++	duty_cycle *= pstate.period;
++	do_div(duty_cycle, 100);
++	pstate.duty_cycle = duty_cycle;
+ 
+-	ret = pwm_config(drvdata->pwm, (pargs.period / 100) * duty_cycle,
+-			 pargs.period);
++	ret = pwm_apply_state(drvdata->pwm, &pstate);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+ 	}
+ 
+-	ret = pwm_enable(drvdata->pwm);
+-	if (ret) {
+-		dev_err(&rdev->dev, "Failed to enable PWM\n");
+-		return ret;
+-	}
+ 	drvdata->volt_uV = min_uV;
+ 
+ 	/* Delay required by PWM regulator to settle to the new voltage */
 -- 
-1.8.0
+2.5.0
