@@ -1,141 +1,78 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-Subject: Re: [PATCH 0/6] arc_emac: fixes the emac issues oand cleanup emac
- drivers
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
- <56E2CC39.6050907@cogentembedded.com> <56E2DAC4.4020105@gmail.com>
- <56E3126C.7000100@cogentembedded.com>
-Cc: Caesar Wang <caesar.upstream@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>,
- Alexander Kochetkov <al.kochet@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Russell King <linux@arm.linux.org.uk>, zhengxing <zhengxing@rock-chips.com>,
- linux-rockchip@lists.infradead.org, Caesar Wang <wxt@rock-chips.com>,
- devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-arm-kernel@lists.infradead.org, Jiri Kosina <trivial@kernel.org>,
- netdev@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, keescook@google.com,
- "David S. Miller" <davem@davemloft.net>, leozwang@google.com
-From: Caesar Wang <caesar.upstream@gmail.com>
-Message-ID: <56E4E6D9.8060103@gmail.com>
-Date: Sun, 13 Mar 2016 12:04:41 +0800
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 30 Mar 2016 14:23:04 -0700
+From: Mark Brown <broonie@kernel.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Message-ID: <20160330212304.GW2350@sirena.org.uk>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-29-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <56E3126C.7000100@cogentembedded.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="s3puAW9DMBtS2ARW"
+In-Reply-To: <1459368249-13241-29-git-send-email-boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v5 28/46] regulator: pwm: swith to the atomic PWM API
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--s3puAW9DMBtS2ARW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-在 2016年03月12日 02:46, Sergei Shtylyov 写道:
-> Hello.
->
-> On 03/11/2016 05:48 PM, Caesar Wang wrote:
->
-> [...]
->
->>>> Hi Rob, David:
->>>> PATCH[1/6-2/6]: ====>
->>>> net: arc_emac: make the rockchip emac document more compatible
->>>> net: arc_emac: add phy-reset-* are optional for device tree
->>>>
->>>> The patches change the rockchip emac document for more compatible and
->>>> Add the phy-reset-* property for document.
->>>>
->>>> This patch adds the following property for arc_emac.
->>>>
->>>> phy-reset-* include the following:
->>>> 1) phy-reset-gpios:
->>>> The phy-reset-gpios is an optional property for arc emac device 
->>>> tree boot.
->>>> Change the binding document to match the driver code.
->>>>
->>>> 2) phy-reset-duration:
->>>> Different boards may require different phy reset duration. Add 
->>>> property
->>>> phy-reset-duration for device tree probe, so that the boards that need
->>>> a longer reset duration can specify it in their device tree.
->>>>
->>>> 3) phy-reset-active-high:
->>>> We need that for a custom hardware that needs the reverse reset 
->>>> sequence.
->>>
->>>    Why not infer this from the "phy-reset-gpios" prop?
->>
->> See:
->> https://patchwork.kernel.org/patch/8564511/
-> >
->> phy-reset-active-high : If present then the reset sequence using the 
->> GPIO
->>   specified in the "phy-reset-gpios" property is reversed (H=reset 
->> state,
->>   L=operation state).
->
->    Referring to your own suggested bindings isn't an answer. If the 
-> driver that you're copying from here (fec) had a reason to handle the 
-> GPIO sense with the help of an extra prop (legacy code), it doesn't 
-> mean your new driver needs to mimic this as well, AFAIU...
+On Wed, Mar 30, 2016 at 10:03:51PM +0200, Boris Brezillon wrote:
+> pwm_config/enable/disable() have been deprecated in favor of
+> pwm_apply_state().
+> Replace all those calls with the equivalent pwm_get/apply_state().
 
-I know your suggestion is a fair request.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Oh, that copy from the 'freescale/fec_main.c' ....
+--s3puAW9DMBtS2ARW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So, The exist way was old and unwise in mainline. :(
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-wxt@nb:~/kernel/drivers/net/ethernet$ ag reset-gpios
-micrel/ks8851.c
-1427:    gpio = of_get_named_gpio_flags(spi->dev.of_node, "reset-gpios",
+iQEcBAEBCAAGBQJW/EOzAAoJECTWi3JdVIfQ+k8H/0AJ6dz8O64HpBcKpVdlzTjm
+XadmMu/4rogd7PPyfk9L6YU6L4pdMMxPaO/LURz/OTOb4L3uzeDXmidHCXV10oka
+2lwnEmngQ5LZHQo/+jcNDdljpG1RYYT8RI7Zoy/tLx5wrtHIajyx7nui1snwgvYA
+ggbi93H4s/KC+jTcG6b1RxxApC+Dv56xEyAlNVw1t+YIHuM4KGOA/aoLy3+60Hp/
+d70O6IlMh53v4SvFMDjG4pCLKc5mA/dCninOcrqMbjA7NXcqnNgDJLnHuuJQNOLM
+8MKUHRy64dGTGrE1T/Ybq0oE8RyntPT/ANNlV4Or6Lbv+cLWuT4GAErGrExQxFM=
+=CoDU
+-----END PGP SIGNATURE-----
 
-arc/emac_main.c
-787:    phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
-797:        dev_err(dev, "failed to get phy-reset-gpios: %d\n", err);
-
-arc/emac_main.c~
-784:    phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
-794:        dev_err(dev, "failed to get phy-reset-gpios: %d\n", err);
-
-davicom/dm9000.c
-1451:    reset_gpios = of_get_named_gpio_flags(dev->of_node, 
-"reset-gpios", 0,
-
-freescale/fec_main.c
-3206:    phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
-3216:        dev_err(&pdev->dev, "failed to get phy-reset-gpios: %d\n", 
-err);
-
-cadence/macb.c
-2958:        int gpio = of_get_named_gpio(phy_node, "reset-gpios", 0);
-
-...
-
-
-Anyway, I will update it with your suggestion.
-
-Thanks,
-
-
-Caesar
-
-
-
-
-
->
->> Thanks,
->>
->> Caesar
->
-> MBR, Sergei
->
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
-
--- 
-Thanks,
-Caesar
+--s3puAW9DMBtS2ARW--
