@@ -1,37 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 29 Mar 2016 16:30:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>, Barry Song <baohua@kernel.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:29666 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753717AbcC3Rnj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 30 Mar 2016 13:43:39 -0400
+Message-Id: <cover.1459358017.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Wed, 30 Mar 2016 19:13:37 +0200
+Subject: [PATCH 0/3] clk: sunxi: Add the clocks used for audio/video on sun8i
+To: Emilio Lopez <emilio@elopez.com.ar>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH 5/7] clk: sunxi: Make reset_control_ops const
-Message-ID: <20160329233009.GM18567@codeaurora.org>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
- <1456393512-26602-6-git-send-email-p.zabel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456393512-26602-6-git-send-email-p.zabel@pengutronix.de>
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/25, Philipp Zabel wrote:
-> The sunxi_ve_reset_ops, sun9i_mmc_reset_ops, and sunxi_usb_reset_ops
-> structures are never modified. Make them const.
-> 
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
+This patch series replaces a part of a previous series about
+"Add a DRM display driver to the Allwinner H3".
 
-Applied to clk-fixes
+I will resubmit the H3 DRM video driver and also submit the H3
+components for audio on HDMI as soon as the HDMI PHY of the H3
+(and A64) will be known.
+
+Changes:
+- simplify and use the 'recalc' callback (Chen-Yu Tsai)
+- add a SoC type in the compatibles (Maxime Ripard)
+- audio PLL added
+
+Jean-Francois Moine (3):
+  clk: sunxi: Add sun6i/8i display support
+  clk: sunxi: Add sun6i/8i PLL video support
+  clk: sunxi: Add sun8i PLL audio support
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |   3 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 151 ++++++++++++++++++++++
+ 2 files changed, 154 insertions(+)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.0
+
