@@ -49,86 +49,58 @@ Cc: Mike Turquette <mturquette@baylibre.com>,
 	Alexander Shiyan <shc_work@mail.ru>,
 	Milo Kim <milo.kim@ti.com>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 14/46] pwm: keep PWM state in sync with hardware state
-Date: Wed, 30 Mar 2016 22:03:37 +0200
-Message-Id: <1459368249-13241-15-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 17/46] pwm: add the PWM initial state retrieval infra
+Date: Wed, 30 Mar 2016 22:03:40 +0200
+Message-Id: <1459368249-13241-18-git-send-email-boris.brezillon@free-electrons.com>
 In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Before the introduction of pwm_args, the core and some drivers were
-resetting the PWM period and polarity states to the reference values
-(those provided through the DT, a PWM lookup table or hardcoded in the
-driver).
-
-Now that all PWM users are correctly using pwm_args to configure their
-PWM device, we can safely remove some pwm_set_period/polarity() calls.
+Add a ->get_state() function to the pwm_ops struct to let PWM drivers
+initialize the PWM state attached to a PWM device.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/pwm/core.c         | 5 -----
- drivers/pwm/pwm-clps711x.c | 1 -
- drivers/pwm/pwm-pxa.c      | 1 -
- 3 files changed, 7 deletions(-)
+ drivers/pwm/core.c  | 3 +++
+ include/linux/pwm.h | 5 +++++
+ 2 files changed, 8 insertions(+)
 
 diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index cd55d61..6433059 100644
+index c240b54..a909c64 100644
 --- a/drivers/pwm/core.c
 +++ b/drivers/pwm/core.c
-@@ -147,13 +147,11 @@ of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_args *args)
- 		return pwm;
+@@ -270,6 +270,9 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 		pwm->hwpwm = i;
+ 		pwm->state.polarity = polarity;
  
- 	pwm->args.period = args->args[1];
--	pwm_set_period(pwm, pwm->args.period);
++		if (chip->ops->get_state)
++			chip->ops->get_state(chip, pwm, &pwm->state);
++
+ 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
+ 	}
  
- 	if (args->args[2] & PWM_POLARITY_INVERTED)
- 		pwm->args.polarity = PWM_POLARITY_INVERSED;
- 	else
- 		pwm->args.polarity = PWM_POLARITY_NORMAL;
--	pwm_set_polarity(pwm, pwm->args.polarity);
- 
- 	return pwm;
- }
-@@ -175,7 +173,6 @@ of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
- 		return pwm;
- 
- 	pwm->args.period = args->args[1];
--	pwm_set_period(pwm, pwm->args.period);
- 
- 	return pwm;
- }
-@@ -745,8 +742,6 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
- 
- 	pwm->args.period = chosen->period;
- 	pwm->args.polarity = chosen->polarity;
--	pwm_set_period(pwm, chosen->period);
--	pwm_set_polarity(pwm, chosen->polarity);
- 
- out:
- 	mutex_unlock(&pwm_lookup_lock);
-diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
-index 807a48d..7d33542 100644
---- a/drivers/pwm/pwm-clps711x.c
-+++ b/drivers/pwm/pwm-clps711x.c
-@@ -61,7 +61,6 @@ static int clps711x_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 
- 	/* Store constant period value */
- 	pwm->args.period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, freq);
--	pwm_set_period(pwm, pwm->args.period);
- 
- 	return 0;
- }
-diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
-index 3fcc886..58b709f 100644
---- a/drivers/pwm/pwm-pxa.c
-+++ b/drivers/pwm/pwm-pxa.c
-@@ -161,7 +161,6 @@ pxa_pwm_of_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
- 		return pwm;
- 
- 	pwm->args.period = args->args[0];
--	pwm_set_period(pwm, args->args[0]);
- 
- 	return pwm;
- }
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 55bf463..ceedcf8 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -211,6 +211,9 @@ static inline void pwm_get_args(const struct pwm_device *pwm,
+  * @set_polarity: configure the polarity of this PWM
+  * @enable: enable PWM output toggling
+  * @disable: disable PWM output toggling
++ * @get_state: get the current PWM state. This function is only
++ *	       called once per PWM device when the PWM chip is
++ *	       registered.
+  * @dbg_show: optional routine to show contents in debugfs
+  * @owner: helps prevent removal of modules exporting active PWMs
+  */
+@@ -223,6 +226,8 @@ struct pwm_ops {
+ 			    enum pwm_polarity polarity);
+ 	int (*enable)(struct pwm_chip *chip, struct pwm_device *pwm);
+ 	void (*disable)(struct pwm_chip *chip, struct pwm_device *pwm);
++	void (*get_state)(struct pwm_chip *chip, struct pwm_device *pwm,
++			  struct pwm_state *pstate);
+ #ifdef CONFIG_DEBUG_FS
+ 	void (*dbg_show)(struct pwm_chip *chip, struct seq_file *s);
+ #endif
 -- 
 2.5.0
