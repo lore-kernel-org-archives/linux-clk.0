@@ -1,43 +1,261 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [PATCH v6 0/3] Add more clock compatible features and support the
- RK3399 clock
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-References: <1459158697-8218-1-git-send-email-zhengxing@rock-chips.com>
- <4649399.g7v7zsVJik@diego>
-Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
- jay.xu@rock-chips.com, elaine.zhang@rock-chips.com, dianders@chromium.org,
- devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <56F9D790.1080608@rock-chips.com>
-Date: Tue, 29 Mar 2016 09:17:04 +0800
-MIME-Version: 1.0
-In-Reply-To: <4649399.g7v7zsVJik@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 19/46] pwm: switch to the atomic API
+Date: Wed, 30 Mar 2016 22:03:42 +0200
+Message-Id: <1459368249-13241-20-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Replace legacy pwm_get/set_xxx() and pwm_config/enable/disable() calls
+by pwm_get/apply_state().
 
-On 2016年03月28日 20:59, Heiko Stübner wrote:
-> Am Montag, 28. März 2016, 17:51:34 schrieb Xing Zheng:
->>    The patch series add support more mux parameters and multiple
->> clock providers for the rockchip features of the clock framework,
->> and support the clock controller for the RK3399.
-> applied all 3 for 4.7 with one change:
->
-> I've dropped the grf paragraph from the binding doc (as it is not used
-> anymore) and also dropped the gmac_phy_rx_clk input clock.
->
-> We can add these back once they are getting used in the future.
->
->
-> Heiko
->
-OK, thanks Heiko. :-)
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c  |  5 ++++-
+ drivers/pwm/sysfs.c | 61 +++++++++++++++++++++++++++++++----------------------
+ 2 files changed, 40 insertions(+), 26 deletions(-)
 
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 62e6b3c..c2b1569 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -882,13 +882,16 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+ 
+ 	for (i = 0; i < chip->npwm; i++) {
+ 		struct pwm_device *pwm = &chip->pwms[i];
++		struct pwm_state pstate;
++
++		pwm_get_state(pwm, &pstate);
+ 
+ 		seq_printf(s, " pwm-%-3d (%-20.20s):", i, pwm->label);
+ 
+ 		if (test_bit(PWMF_REQUESTED, &pwm->flags))
+ 			seq_puts(s, " requested");
+ 
+-		if (pwm_is_enabled(pwm))
++		if (pstate.enabled)
+ 			seq_puts(s, " enabled");
+ 
+ 		seq_puts(s, "\n");
+diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
+index ab28c89..7ec1747 100644
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -47,13 +47,13 @@ static ssize_t period_show(struct device *child,
+ {
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	const struct pwm_device *pwm = export->pwm;
+-	unsigned int period;
++	struct pwm_state pstate;
+ 
+ 	mutex_lock(&export->lock);
+-	period = pwm_get_period(pwm);
++	pwm_get_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+-	return sprintf(buf, "%u\n", period);
++	return sprintf(buf, "%u\n", pstate.period);
+ }
+ 
+ static ssize_t period_store(struct device *child,
+@@ -62,6 +62,7 @@ static ssize_t period_store(struct device *child,
+ {
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	struct pwm_device *pwm = export->pwm;
++	struct pwm_state pstate;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -70,7 +71,9 @@ static ssize_t period_store(struct device *child,
+ 		return ret;
+ 
+ 	mutex_lock(&export->lock);
+-	ret = pwm_config(pwm, pwm_get_duty_cycle(pwm), val);
++	pwm_get_state(pwm, &pstate);
++	pstate.period = val;
++	ret = pwm_apply_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+@@ -82,13 +85,13 @@ static ssize_t duty_cycle_show(struct device *child,
+ {
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	const struct pwm_device *pwm = export->pwm;
+-	unsigned int duty;
++	struct pwm_state pstate;
+ 
+ 	mutex_lock(&export->lock);
+-	duty = pwm_get_duty_cycle(pwm);
++	pwm_get_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+-	return sprintf(buf, "%u\n", duty);
++	return sprintf(buf, "%u\n", pstate.duty_cycle);
+ }
+ 
+ static ssize_t duty_cycle_store(struct device *child,
+@@ -97,6 +100,7 @@ static ssize_t duty_cycle_store(struct device *child,
+ {
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	struct pwm_device *pwm = export->pwm;
++	struct pwm_state pstate;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -105,7 +109,9 @@ static ssize_t duty_cycle_store(struct device *child,
+ 		return ret;
+ 
+ 	mutex_lock(&export->lock);
+-	ret = pwm_config(pwm, val, pwm_get_period(pwm));
++	pwm_get_state(pwm, &pstate);
++	pstate.duty_cycle = val;
++	ret = pwm_apply_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+@@ -117,13 +123,13 @@ static ssize_t enable_show(struct device *child,
+ {
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	const struct pwm_device *pwm = export->pwm;
+-	bool enabled;
++	struct pwm_state pstate;
+ 
+ 	mutex_lock(&export->lock);
+-	enabled = pwm_is_enabled(pwm);
++	pwm_get_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+-	return sprintf(buf, "%d\n", enabled);
++	return sprintf(buf, "%d\n", pstate.enabled);
+ }
+ 
+ static ssize_t enable_store(struct device *child,
+@@ -132,24 +138,20 @@ static ssize_t enable_store(struct device *child,
+ {
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	struct pwm_device *pwm = export->pwm;
++	struct pwm_state pstate;
+ 	int val, ret;
+ 
+ 	ret = kstrtoint(buf, 0, &val);
+ 	if (ret)
+ 		return ret;
+ 
++	if (val != 0 && val != 1)
++		return -EINVAL;
++
+ 	mutex_lock(&export->lock);
+-	switch (val) {
+-	case 0:
+-		pwm_disable(pwm);
+-		break;
+-	case 1:
+-		ret = pwm_enable(pwm);
+-		break;
+-	default:
+-		ret = -EINVAL;
+-		break;
+-	}
++	pwm_get_state(pwm, &pstate);
++	pstate.enabled = val;
++	ret = pwm_apply_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+@@ -162,9 +164,13 @@ static ssize_t polarity_show(struct device *child,
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	const struct pwm_device *pwm = export->pwm;
+ 	const char *polarity = "unknown";
++	struct pwm_state pstate;
+ 
+ 	mutex_lock(&export->lock);
+-	switch (pwm_get_polarity(pwm)) {
++	pwm_get_state(pwm, &pstate);
++	mutex_unlock(&export->lock);
++
++	switch (pstate.polarity) {
+ 	case PWM_POLARITY_NORMAL:
+ 		polarity = "normal";
+ 		break;
+@@ -173,7 +179,6 @@ static ssize_t polarity_show(struct device *child,
+ 		polarity = "inversed";
+ 		break;
+ 	}
+-	mutex_unlock(&export->lock);
+ 
+ 	return sprintf(buf, "%s\n", polarity);
+ }
+@@ -185,6 +190,7 @@ static ssize_t polarity_store(struct device *child,
+ 	struct pwm_export *export = child_to_pwm_export(child);
+ 	struct pwm_device *pwm = export->pwm;
+ 	enum pwm_polarity polarity;
++	struct pwm_state pstate;
+ 	int ret;
+ 
+ 	if (sysfs_streq(buf, "normal"))
+@@ -195,7 +201,12 @@ static ssize_t polarity_store(struct device *child,
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&export->lock);
+-	ret = pwm_set_polarity(pwm, polarity);
++	pwm_get_state(pwm, &pstate);
++	pstate.polarity = polarity;
++	if (pstate.enabled)
++		ret = -EBUSY;
++	else
++		ret = pwm_apply_state(pwm, &pstate);
+ 	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
 -- 
-- Xing Zheng
+2.5.0
