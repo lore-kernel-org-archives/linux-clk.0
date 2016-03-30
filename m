@@ -49,62 +49,65 @@ Cc: Mike Turquette <mturquette@baylibre.com>,
 	Alexander Shiyan <shc_work@mail.ru>,
 	Milo Kim <milo.kim@ti.com>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 42/46] backlight: lp8788: switch to the atomic PWM API
-Date: Wed, 30 Mar 2016 22:04:05 +0200
-Message-Id: <1459368249-13241-43-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 31/46] pwm: update documentation
+Date: Wed, 30 Mar 2016 22:03:54 +0200
+Message-Id: <1459368249-13241-32-git-send-email-boris.brezillon@free-electrons.com>
 In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_config/enable/disable() have been deprecated and should be replaced
-by pwm_apply_state().
+Update the PWM subsystem documentation to reflect the atomic PWM changes.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/video/backlight/lp8788_bl.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ Documentation/pwm.txt | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
-index 5d583d7..521c730 100644
---- a/drivers/video/backlight/lp8788_bl.c
-+++ b/drivers/video/backlight/lp8788_bl.c
-@@ -124,16 +124,13 @@ static int lp8788_backlight_configure(struct lp8788_bl *bl)
+diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
+index ca895fd..cb25fca 100644
+--- a/Documentation/pwm.txt
++++ b/Documentation/pwm.txt
+@@ -42,9 +42,23 @@ variants of these functions, devm_pwm_get() and devm_pwm_put(), also exist.
  
- static void lp8788_pwm_ctrl(struct lp8788_bl *bl, int br, int max_br)
- {
--	unsigned int period;
--	unsigned int duty;
- 	struct device *dev;
-+	struct pwm_state pstate;
- 	struct pwm_device *pwm;
+ After being requested, a PWM has to be configured using:
  
- 	if (!bl->pdata)
- 		return;
+-int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns);
++int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *pstate);
  
--	period = bl->pdata->period_ns;
--	duty = br * period / max_br;
- 	dev = bl->lp->dev;
- 
- 	/* request PWM device with the consumer name */
-@@ -147,11 +144,15 @@ static void lp8788_pwm_ctrl(struct lp8788_bl *bl, int br, int max_br)
- 		bl->pwm = pwm;
- 	}
- 
--	pwm_config(bl->pwm, duty, period);
--	if (duty)
--		pwm_enable(bl->pwm);
-+	pwm_get_state(bl->pwm, &pstate);
-+	pstate.period = bl->pdata->period_ns;
-+	pstate.duty_cycle = br * pstate.period / max_br;
-+	if (pstate.duty_cycle)
-+		pstate.enabled = true;
- 	else
--		pwm_disable(bl->pwm);
-+		pstate.enabled = false;
+-To start/stop toggling the PWM output use pwm_enable()/pwm_disable().
++This API controls both the PWM period/duty_cycle config and the
++enable/disable state.
 +
-+	pwm_apply_state(bl->pwm, &pstate);
- }
++The legacy pwm_config(), pwm_enable() and pwm_disable() are now deprecated,
++and should be replaced by pwm_apply_state() calls.
++
++The PWM user API also allows one to query the PWM state with pwm_get_state().
++
++In addition to the PWM state, the PWM API also exposes PWM arguments, which
++are the reference PWM config one should use on this PWM.
++PWM arguments are usually platform-specific and allows the PWM user to only
++care about dutycycle relatively to the full period (like, duty = 50% of the
++period). struct pwm_args contains 2 fields (period and polarity) and should
++be used to set the initial PWM config (usually done in the probe function
++of the PWM user). PWM arguments are retrieved with pwm_get_args().
  
- static int lp8788_bl_update_status(struct backlight_device *bl_dev)
+ Using PWMs with the sysfs interface
+ -----------------------------------
+@@ -105,6 +119,15 @@ goes low for the remainder of the period. Conversely, a signal with inversed
+ polarity starts low for the duration of the duty cycle and goes high for the
+ remainder of the period.
+ 
++Drivers are encouraged to implement ->apply() instead of the legacy
++->enable(), ->disable() and ->config() methods. Doing that should provide
++atomicity in the PWM config workflow, which is required when the PWM controls
++a critical device (like a regulator).
++
++The implementation of ->get_state() (a method used to retrieve initial PWM
++state) is also encouraged for the same reason: letting the PWM user know
++about the current PWM state would allow him to avoid glitches.
++
+ Locking
+ -------
+ 
 -- 
 2.5.0
