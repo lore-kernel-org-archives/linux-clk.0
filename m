@@ -1,66 +1,114 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	keescook@google.com,
-	leozwang@google.com,
-	sergei.shtylyov@cogentembedded.com,
-	netdev@vger.kernel.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/9] clk: rockchip: add node-id for rk3036 emac hclk
-Date: Mon, 14 Mar 2016 16:01:56 +0800
-Message-Id: <1457942520-12859-6-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
-References: <1457942520-12859-1-git-send-email-wxt@rock-chips.com>
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 09/46] misc: max77693-haptic: use pwm_get_args() where appropriate
+Date: Wed, 30 Mar 2016 22:03:32 +0200
+Message-Id: <1459368249-13241-10-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Xing Zheng <zhengxing@rock-chips.com>
+The PWM framework has clarified the concept of reference PWM config
+(the platform dependent config retrieved from the DT or the PWM
+lookup table) and real PWM state.
 
-Add the node-id for the emac hclk to the binding header.
+Use pwm_get_args() when the PWM user wants to retrieve this reference
+config and not the current state.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-Cc: Xing Zheng <zhengxing@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
+This is part of the rework allowing the PWM framework to support
+hardware readout and expose real PWM state even when the PWM has
+just been requested (before the user calls pwm_config/enable/disable()).
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
+ drivers/input/misc/max77693-haptic.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Changes in v3:
-- Add the Cc people.
-
-Changes in v2: None
-
- include/dt-bindings/clock/rk3036-cru.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
-index ebc7a7b..3396591 100644
---- a/include/dt-bindings/clock/rk3036-cru.h
-+++ b/include/dt-bindings/clock/rk3036-cru.h
-@@ -92,6 +92,7 @@
- #define HCLK_SDMMC		456
- #define HCLK_SDIO		457
- #define HCLK_EMMC		459
-+#define HCLK_MAC		460
- #define HCLK_I2S		462
- #define HCLK_LCDC		465
- #define HCLK_ROM		467
+diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+index 6d96bff..cf6aac0 100644
+--- a/drivers/input/misc/max77693-haptic.c
++++ b/drivers/input/misc/max77693-haptic.c
+@@ -70,10 +70,13 @@ struct max77693_haptic {
+ 
+ static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
+ {
+-	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
++	struct pwm_args pargs = { };
++	int delta;
+ 	int error;
+ 
+-	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
++	pwm_get_args(haptic->pwm_dev, &pargs);
++	delta = (pargs.period + haptic->pwm_duty) / 2;
++	error = pwm_config(haptic->pwm_dev, delta, pargs.period);
+ 	if (error) {
+ 		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
+ 		return error;
+@@ -234,6 +237,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
+ 				       struct ff_effect *effect)
+ {
+ 	struct max77693_haptic *haptic = input_get_drvdata(dev);
++	struct pwm_args pargs = { };
+ 	u64 period_mag_multi;
+ 
+ 	haptic->magnitude = effect->u.rumble.strong_magnitude;
+@@ -245,7 +249,8 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
+ 	 * The formula to convert magnitude to pwm_duty as follows:
+ 	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
+ 	 */
+-	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
++	pwm_get_args(haptic->pwm_dev, &pargs);
++	period_mag_multi = (u64)pargs.period * haptic->magnitude;
+ 	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
+ 						MAX_MAGNITUDE_SHIFT);
+ 
 -- 
-1.9.1
+2.5.0
