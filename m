@@ -1,61 +1,127 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37075 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752146AbcC2Pqj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 29 Mar 2016 11:46:39 -0400
-Date: Tue, 29 Mar 2016 17:46:33 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 2/5] clk: shmobile: r8a7795: add OSC and RINT clocks
-Message-ID: <20160329154633.GF1398@katana>
-References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
- <1458824442-20279-3-git-send-email-wsa@the-dreams.de>
- <CAMuHMdWWUL6+4_vMX6QAddUyy+kbPWxq2fyRQG_Nz-LG_bmzLg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
-In-Reply-To: <CAMuHMdWWUL6+4_vMX6QAddUyy+kbPWxq2fyRQG_Nz-LG_bmzLg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
+Date: Wed, 30 Mar 2016 22:03:53 +0200
+Message-Id: <1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The continuous PWM voltage regulator is caching the voltage value in
+the ->volt_uV field. While most of the time this value should reflect the
+real voltage, sometime it can be sightly different if the PWM device
+rounded the set_duty_cycle request.
+Moreover, this value is not valid until someone has modified the regulator
+output.
 
---65ImJOski3p8EhYV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove the ->volt_uV field and always rely on the PWM state to calculate
+the regulator output.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/regulator/pwm-regulator.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-> Furthermore, why do you export R8A7795_CLK_RINT?
-> it's nowhere referenced from DT.
->=20
-> I think it belongs under "Internal Core Clocks" in r8a7795-cpg-mssr.c.
-
-Ok, did this. I thought it was the same "class" as OSC, but I agree to
-your view.
-
-
---65ImJOski3p8EhYV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJW+qNZAAoJEBQN5MwUoCm2plQP/01ESK8bPNHMJr3Xh7Xzxh+w
-9vwDX7SctEbOkbbfJDe2FlLWp/9uIw6hoQWY9G8z8dIml+oD6qBNOEJAZS8Xb+0o
-OfjSyDgU8Fo+HVveLhp/gpYffb1ZUBU4guzSY3YGKdbi3JgQGkT5kV8uAEXL3q0f
-AlipN6qrKpEaGIvuXSdgZsHhHfAVSyZUFe7cdYsCYSV+NS56dESTIM/9cdUfk1Ox
-fIhsdcwWw4yqHg++eNgFHMV6nYQeVPUb1MZeOs/vB02zkDtVEI6ZfvTQDw9rhT4L
-flY5CUW5RkQU2hFQEzmfR1gz5OFbzffOY2IlOPOY+ZufcHmbbra+rAgdHtaCGnCf
-3HNNGv2lNofmZqStjtNFMFoTxA9hZy8/ArLHEoedhbqQL2uIKLcj9CySF2pLOMMY
-4PUQMbxIQPyZWG0EkcEsu6M/R7pYFTYC92nIneLaRdwmFXG0zMBQ620onWHtfCuQ
-YjI6xRD1qCnk6XoiAdBglqYvVyxNzUV6VzAxC97iTrKGbThfghvtWk2NYLUg3yE/
-dzVDHv8HTWJVW/c34+D+w6w+K+ImUo9uy/+HDUszNuxENCtGL/Q85ey2iRXhxk1m
-edfoUxBSQMk3DAz0OwJDOtBYrgZCyWJRO2QgMbBl2A6Sz01aQ3JyXCs99Lyc4mOu
-0RMHHt/xDRBeAmoUm83G
-=XEpd
------END PGP SIGNATURE-----
-
---65ImJOski3p8EhYV--
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 9374796..77f42d8 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -35,9 +35,6 @@ struct pwm_regulator_data {
+ 	struct regulator_ops ops;
+ 
+ 	int state;
+-
+-	/* Continuous voltage */
+-	int volt_uV;
+ };
+ 
+ struct pwm_voltages {
+@@ -167,11 +164,27 @@ static int pwm_voltage_to_duty_cycle_percentage(struct regulator_dev *rdev, int
+ 	return ((req_uV * 100) - (min_uV * 100)) / diff;
+ }
+ 
++static int pwm_duty_cycle_percentage_to_voltage(struct regulator_dev *rdev,
++						int dutycycle)
++{
++	int min_uV = rdev->constraints->min_uV;
++	int max_uV = rdev->constraints->max_uV;
++	int diff = max_uV - min_uV;
++
++	return min_uV + ((diff * dutycycle) / 100);
++}
++
+ static int pwm_regulator_get_voltage(struct regulator_dev *rdev)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
++	struct pwm_state pstate;
++	u64 dutycycle;
+ 
+-	return drvdata->volt_uV;
++	pwm_get_state(drvdata->pwm, &pstate);
++	dutycycle = pstate.duty_cycle * 100;
++	do_div(dutycycle, pstate.period);
++
++	return pwm_duty_cycle_percentage_to_voltage(rdev, dutycycle);
+ }
+ 
+ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
+@@ -196,8 +209,6 @@ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
+ 		return ret;
+ 	}
+ 
+-	drvdata->volt_uV = min_uV;
+-
+ 	/* Delay required by PWM regulator to settle to the new voltage */
+ 	usleep_range(ramp_delay, ramp_delay + 1000);
+ 
+-- 
+2.5.0
