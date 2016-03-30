@@ -1,121 +1,102 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:17851 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932297AbcCHBuR (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Mar 2016 20:50:17 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v4 4/5] Documentation: atmel-pmc: add DT bindings for fast startup
-Date: Tue, 8 Mar 2016 09:42:01 +0800
-Message-ID: <1457401322-29120-5-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
-References: <1457401322-29120-1-git-send-email-wenyou.yang@atmel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from smtp5-g21.free.fr ([212.27.42.5]:30483 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753653AbcC3Rn5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 30 Mar 2016 13:43:57 -0400
+Message-Id: <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
+In-Reply-To: <cover.1459358017.git.moinejf@free.fr>
+References: <cover.1459358017.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Wed, 30 Mar 2016 18:57:16 +0200
+Subject: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
+To: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
-to trigger a fast restart signal to PMC.
+Add the PLL type which is used by the sun8i family for audio.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-Acked-by: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
 ---
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-Changes in v4:
- - add Acked-by tag.
-
-Changes in v3:
- - update the property description.
-
-Changes in v2:
- - change the property name and property description.
-
- .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-index 795cc78..0d2481c 100644
---- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-@@ -12,3 +12,66 @@ Examples:
- 		compatible = "atmel,at91rm9200-pmc";
- 		reg = <0xfffffc00 0x100>;
- 	};
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index ff93aee..917d4aa 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
+ 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
+ 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
++	"allwinner,sun8i-pll2-clk" - for the audio PLL clock
+ 	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
+ 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
+ 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 270f2a9..7386141 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -1130,6 +1130,54 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
+ 	       sun6i_pll6_clk_setup);
+ 
+ /*
++ * sun8i pll2
++ *
++ * rate = parent_rate / (m + 1) * (n + 1) / (p + 1);
++ */
++static void sun8i_pll2_factors(struct factors_request *req)
++{
++	unsigned long n, m;
 +
-+PMC Fast Startup Signals
++	/* set p = 4 so that pll2 = pll2x8 / 8 */
++	req->p = 4 - 1;
++	rational_best_approximation(req->rate,
++				req->parent_rate / 4,
++				1 << 7, 1 << 5, &n, &m);
++	req->rate = req->parent_rate / m * n / 4;
++	req->m = m - 1;
++	req->n = n - 1;
++}
 +
-+The PMC Fast Start Signals are used as the wake up source to trigger the PMC
-+to wake up the system from the ULP1 mode.
++static void sun8i_pll2_recalc(struct factors_request *req)
++{
++	req->rate = req->parent_rate / (req->m + 1) * (req->n + 1) /
++						(req->p + 1);
++}
 +
-+required properties:
-+- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
++static const struct clk_factors_config sun8i_pll2_config = {
++	.mshift = 0,
++	.mwidth = 5,
++	.nshift = 8,
++	.nwidth = 7,
++	.pshift = 16,
++	.pwidth = 4,
++};
 +
-+optional properties:
-+- atmel,wkup-trigger: boolean, WKUP input can trigger a fast restart signal.
-+- atmel,secumod-trigger: boolean, SECUMOD can trigger a fast restart signal.
-+- atmel,piobu0-trigger: boolean, PIOBU0 input can trigger a fast restart signal.
-+- atmel,piobu1-trigger: boolean, PIOBU1 input can trigger a fast restart signal.
-+- atmel,piobu2-trigger: boolean, PIOBU2 input can trigger a fast restart signal.
-+- atmel,piobu3-trigger: boolean, PIOBU3 input can trigger a fast restart signal.
-+- atmel,piobu4-trigger: boolean, PIOBU4 input can trigger a fast restart signal.
-+- atmel,piobu5-trigger: boolean, PIOBU5 input can trigger a fast restart signal.
-+- atmel,piobu6-trigger: boolean, PIOBU6 input can trigger a fast restart signal.
-+- atmel,piobu7-trigger: boolean, PIOBU7 input can trigger a fast restart signal.
-+- atmel,gmac-wol-trigger: boolean, GMAC_WOL can trigger a fast restart signal.
-+- atmel,rtc-alarm-trigger: boolean, RTC alarm can trigger a fast restart signal.
-+- atmel,usb-resume-trigger: boolean, USB resume can trigger a fast restart
-+  signal.
-+- atmel,sdmmc-cd-trigger: boolean, SDMMC card detect can trigger a fast
-+  restart signal.
-+- atmel,rxlp-match-trigger: boolean, Matching condition on RXLP can trigger
-+  a fast restart signal.
-+- atmel,acc-comparison-trigger: boolean, ACC comparison can trigger a fast
-+  restart signal.
++static const struct factors_data sun8i_pll2_data __initconst = {
++	.enable = 31,
++	.table = &sun8i_pll2_config,
++	.getter = sun8i_pll2_factors,
++	.recalc = sun8i_pll2_recalc,
++};
 +
-+- atmel,wkup-trigger-level: int, defines the active polarity of the wake-up
-+  input. Supported values are: 1 or 0.
-+- atmel,piobu0-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU0 input. Supported values are: 1 or 0.
-+- atmel,piobu1-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU1 input. Supported values are: 1 or 0.
-+- atmel,piobu2-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU2 input. Supported values are: 1 or 0".
-+- atmel,piobu3-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU3 input. Supported values are: 1 or 0.
-+- atmel,piobu4-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU4 input. Supported values are: 1 or 0.
-+- atmel,piobu5-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU5 input. Supported values are: 1 or 0.
-+- atmel,piobu6-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU6 input. Supported values are: 1 or 0.
-+- atmel,piobu7-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU7 input. Supported values are: 1 or 0.
++static void __init sun8i_pll2_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun8i_pll2_data);
++}
++CLK_OF_DECLARE(sun8i_pll2, "allwinner,sun8i-pll2-clk",
++	       sun8i_pll2_setup);
 +
-+Example:
-+
-+	pmc: pmc@f0014000 {
-+		compatible = "atmel,sama5d2-pmc";
-+		reg = <0xf0014000 0x160>;
-+
-+		pmc_fast_restart {
-+			compatible = "atmel,sama5d2-pmc-fast-startup";
-+			atmel,wkup-trigger;
-+			atmel,rtc-alarm-trigger;
-+			atmel,wkup-trigger-level = <0>;
-+		};
-+	};
++/*
+  * sun6i pll3
+  *
+  * if (p == 0) rate = k ? 270MHz : 297MHz
 -- 
-1.7.9.5
+2.8.0
 
