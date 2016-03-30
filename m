@@ -1,38 +1,91 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Xing Zheng <zhengxing@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
 	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 7/7] clk: rockchip: fix a typo for rockchip_rk3399_pll_set_params
-Date: Sun, 13 Mar 2016 00:26:02 +0800
-Message-Id: <1457799962-3308-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1457799871-3015-1-git-send-email-shawn.lin@rock-chips.com>
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 20/46] pwm: add information about polarity, duty cycle and period to debugfs
+Date: Wed, 30 Mar 2016 22:03:43 +0200
+Message-Id: <1459368249-13241-21-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+From: Heiko Stübner <heiko@sntech.de>
+
+The pwm-states make it possible to also output the polarity, duty cycle
+and period information in the debugfs pwm summary-outout.
+This makes it easier to gather overview information about pwms without
+needing to walk through the sysfs attributes of every pwm.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
+ drivers/pwm/core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/clk/rockchip/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index f490ce4..128a6b2 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -733,7 +733,7 @@ static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
- 	/* wait for the pll to lock */
- 	ret = rockchip_rk3399_pll_wait_lock(pll);
- 	if (ret) {
--		pr_warn("%s: pll update unsucessful, trying to restore old params\n",
-+		pr_warn("%s: pll update unsuccessful, trying to restore old params\n",
- 			__func__);
- 		rockchip_rk3399_pll_set_params(pll, &cur);
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index c2b1569..9a83840 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -894,6 +894,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+ 		if (pstate.enabled)
+ 			seq_puts(s, " enabled");
+ 
++		seq_printf(s, " period:%uns", pstate.period);
++		seq_printf(s, " duty:%uns", pstate.duty_cycle);
++		seq_printf(s, " polarity:%s",
++			   pstate.polarity ? "inverse" : "normal");
++
+ 		seq_puts(s, "\n");
  	}
+ }
 -- 
-2.3.7
+2.5.0
