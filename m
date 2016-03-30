@@ -1,76 +1,330 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 0/6] arc_emac: fixes the emac issues oand cleanup emac
- drivers
-To: Caesar Wang <caesar.upstream@gmail.com>
-References: <1457693731-6966-1-git-send-email-wxt@rock-chips.com>
- <56E2CC39.6050907@cogentembedded.com> <56E2DAC4.4020105@gmail.com>
-Cc: Caesar Wang <wxt@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
- zhengxing <zhengxing@rock-chips.com>,
- Alexander Kochetkov <al.kochet@gmail.com>, netdev@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, keescook@google.com,
- Jiri Kosina <trivial@kernel.org>, linux-clk@vger.kernel.org,
- leozwang@google.com
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56E3126C.7000100@cogentembedded.com>
-Date: Fri, 11 Mar 2016 21:46:04 +0300
-MIME-Version: 1.0
-In-Reply-To: <56E2DAC4.4020105@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 04/46] pwm: get rid of pwm->lock
+Date: Wed, 30 Mar 2016 22:03:27 +0200
+Message-Id: <1459368249-13241-5-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+PWM devices are not protected against concurrent accesses. The lock in
+pwm_device might let PWM users think it is, but it's actually only
+protecting the enabled state.
 
-On 03/11/2016 05:48 PM, Caesar Wang wrote:
+Removing this lock should be fine as long as all PWM users are aware that
+accesses to the PWM device have to be serialized, which seems to be the
+case for all of them except the sysfs interface.
+Patch the sysfs code by adding a lock to the pwm_export struct and making
+sure it's taken for all accesses to the exported PWM device.
 
-[...]
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c  | 19 ++++--------------
+ drivers/pwm/sysfs.c | 57 ++++++++++++++++++++++++++++++++++++++++++-----------
+ include/linux/pwm.h |  2 --
+ 3 files changed, 50 insertions(+), 28 deletions(-)
 
->>> Hi Rob, David:
->>> PATCH[1/6-2/6]: ====>
->>> net: arc_emac: make the rockchip emac document more compatible
->>> net: arc_emac: add phy-reset-* are optional for device tree
->>>
->>> The patches change the rockchip emac document for more compatible and
->>> Add the phy-reset-* property for document.
->>>
->>> This patch adds the following property for arc_emac.
->>>
->>> phy-reset-* include the following:
->>> 1) phy-reset-gpios:
->>> The phy-reset-gpios is an optional property for arc emac device tree boot.
->>> Change the binding document to match the driver code.
->>>
->>> 2) phy-reset-duration:
->>> Different boards may require different phy reset duration. Add property
->>> phy-reset-duration for device tree probe, so that the boards that need
->>> a longer reset duration can specify it in their device tree.
->>>
->>> 3) phy-reset-active-high:
->>> We need that for a custom hardware that needs the reverse reset sequence.
->>
->>    Why not infer this from the "phy-reset-gpios" prop?
->
-> See:
-> https://patchwork.kernel.org/patch/8564511/
- >
-> phy-reset-active-high : If present then the reset sequence using the GPIO
->   specified in the "phy-reset-gpios" property is reversed (H=reset state,
->   L=operation state).
-
-    Referring to your own suggested bindings isn't an answer. If the driver 
-that you're copying from here (fec) had a reason to handle the GPIO sense with 
-the help of an extra prop (legacy code), it doesn't mean your new driver needs 
-to mimic this as well, AFAIU...
-
-> Thanks,
->
-> Caesar
-
-MBR, Sergei
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 7831bc6..7c330ff 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -269,7 +269,6 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 		pwm->pwm = chip->base + i;
+ 		pwm->hwpwm = i;
+ 		pwm->polarity = polarity;
+-		mutex_init(&pwm->lock);
+ 
+ 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
+ 	}
+@@ -474,22 +473,16 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
+ 	if (!pwm->chip->ops->set_polarity)
+ 		return -ENOSYS;
+ 
+-	mutex_lock(&pwm->lock);
+-
+-	if (pwm_is_enabled(pwm)) {
+-		err = -EBUSY;
+-		goto unlock;
+-	}
++	if (pwm_is_enabled(pwm))
++		return -EBUSY;
+ 
+ 	err = pwm->chip->ops->set_polarity(pwm->chip, pwm, polarity);
+ 	if (err)
+-		goto unlock;
++		return err;
+ 
+ 	pwm->polarity = polarity;
+ 
+-unlock:
+-	mutex_unlock(&pwm->lock);
+-	return err;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pwm_set_polarity);
+ 
+@@ -506,16 +499,12 @@ int pwm_enable(struct pwm_device *pwm)
+ 	if (!pwm)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&pwm->lock);
+-
+ 	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
+ 		err = pwm->chip->ops->enable(pwm->chip, pwm);
+ 		if (err)
+ 			clear_bit(PWMF_ENABLED, &pwm->flags);
+ 	}
+ 
+-	mutex_unlock(&pwm->lock);
+-
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(pwm_enable);
+diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
+index 9c90886..ab28c89 100644
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -26,6 +26,7 @@
+ struct pwm_export {
+ 	struct device child;
+ 	struct pwm_device *pwm;
++	struct mutex lock;
+ };
+ 
+ static struct pwm_export *child_to_pwm_export(struct device *child)
+@@ -44,16 +45,23 @@ static ssize_t period_show(struct device *child,
+ 			   struct device_attribute *attr,
+ 			   char *buf)
+ {
+-	const struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	const struct pwm_device *pwm = export->pwm;
++	unsigned int period;
++
++	mutex_lock(&export->lock);
++	period = pwm_get_period(pwm);
++	mutex_unlock(&export->lock);
+ 
+-	return sprintf(buf, "%u\n", pwm_get_period(pwm));
++	return sprintf(buf, "%u\n", period);
+ }
+ 
+ static ssize_t period_store(struct device *child,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
+-	struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	struct pwm_device *pwm = export->pwm;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -61,7 +69,9 @@ static ssize_t period_store(struct device *child,
+ 	if (ret)
+ 		return ret;
+ 
++	mutex_lock(&export->lock);
+ 	ret = pwm_config(pwm, pwm_get_duty_cycle(pwm), val);
++	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+ }
+@@ -70,16 +80,23 @@ static ssize_t duty_cycle_show(struct device *child,
+ 			       struct device_attribute *attr,
+ 			       char *buf)
+ {
+-	const struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	const struct pwm_device *pwm = export->pwm;
++	unsigned int duty;
++
++	mutex_lock(&export->lock);
++	duty = pwm_get_duty_cycle(pwm);
++	mutex_unlock(&export->lock);
+ 
+-	return sprintf(buf, "%u\n", pwm_get_duty_cycle(pwm));
++	return sprintf(buf, "%u\n", duty);
+ }
+ 
+ static ssize_t duty_cycle_store(struct device *child,
+ 				struct device_attribute *attr,
+ 				const char *buf, size_t size)
+ {
+-	struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	struct pwm_device *pwm = export->pwm;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -87,7 +104,9 @@ static ssize_t duty_cycle_store(struct device *child,
+ 	if (ret)
+ 		return ret;
+ 
++	mutex_lock(&export->lock);
+ 	ret = pwm_config(pwm, val, pwm_get_period(pwm));
++	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+ }
+@@ -96,22 +115,30 @@ static ssize_t enable_show(struct device *child,
+ 			   struct device_attribute *attr,
+ 			   char *buf)
+ {
+-	const struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	const struct pwm_device *pwm = export->pwm;
++	bool enabled;
++
++	mutex_lock(&export->lock);
++	enabled = pwm_is_enabled(pwm);
++	mutex_unlock(&export->lock);
+ 
+-	return sprintf(buf, "%d\n", pwm_is_enabled(pwm));
++	return sprintf(buf, "%d\n", enabled);
+ }
+ 
+ static ssize_t enable_store(struct device *child,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
+-	struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	struct pwm_device *pwm = export->pwm;
+ 	int val, ret;
+ 
+ 	ret = kstrtoint(buf, 0, &val);
+ 	if (ret)
+ 		return ret;
+ 
++	mutex_lock(&export->lock);
+ 	switch (val) {
+ 	case 0:
+ 		pwm_disable(pwm);
+@@ -123,6 +150,7 @@ static ssize_t enable_store(struct device *child,
+ 		ret = -EINVAL;
+ 		break;
+ 	}
++	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+ }
+@@ -131,9 +159,11 @@ static ssize_t polarity_show(struct device *child,
+ 			     struct device_attribute *attr,
+ 			     char *buf)
+ {
+-	const struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	const struct pwm_device *pwm = export->pwm;
+ 	const char *polarity = "unknown";
+ 
++	mutex_lock(&export->lock);
+ 	switch (pwm_get_polarity(pwm)) {
+ 	case PWM_POLARITY_NORMAL:
+ 		polarity = "normal";
+@@ -143,6 +173,7 @@ static ssize_t polarity_show(struct device *child,
+ 		polarity = "inversed";
+ 		break;
+ 	}
++	mutex_unlock(&export->lock);
+ 
+ 	return sprintf(buf, "%s\n", polarity);
+ }
+@@ -151,7 +182,8 @@ static ssize_t polarity_store(struct device *child,
+ 			      struct device_attribute *attr,
+ 			      const char *buf, size_t size)
+ {
+-	struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_export *export = child_to_pwm_export(child);
++	struct pwm_device *pwm = export->pwm;
+ 	enum pwm_polarity polarity;
+ 	int ret;
+ 
+@@ -162,7 +194,9 @@ static ssize_t polarity_store(struct device *child,
+ 	else
+ 		return -EINVAL;
+ 
++	mutex_lock(&export->lock);
+ 	ret = pwm_set_polarity(pwm, polarity);
++	mutex_unlock(&export->lock);
+ 
+ 	return ret ? : size;
+ }
+@@ -203,6 +237,7 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
+ 	}
+ 
+ 	export->pwm = pwm;
++	mutex_init(&export->lock);
+ 
+ 	export->child.release = pwm_export_release;
+ 	export->child.parent = parent;
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index cfc3ed4..6555f01 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -88,7 +88,6 @@ enum {
+  * @pwm: global index of the PWM device
+  * @chip: PWM chip providing this PWM device
+  * @chip_data: chip-private data associated with the PWM device
+- * @lock: used to serialize accesses to the PWM device where necessary
+  * @period: period of the PWM signal (in nanoseconds)
+  * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
+  * @polarity: polarity of the PWM signal
+@@ -100,7 +99,6 @@ struct pwm_device {
+ 	unsigned int pwm;
+ 	struct pwm_chip *chip;
+ 	void *chip_data;
+-	struct mutex lock;
+ 
+ 	unsigned int period;
+ 	unsigned int duty_cycle;
+-- 
+2.5.0
