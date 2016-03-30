@@ -1,85 +1,126 @@
 Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 31 Mar 2016 09:57:49 +0200
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Mark
- Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil
- Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
-Message-ID: <20160331095749.4be1e76b@bbrezillon>
-In-Reply-To: <20160330215510.GS18567@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 34/46] clk: pwm: switch to the atomic API
+Date: Wed, 30 Mar 2016 22:03:57 +0200
+Message-Id: <1459368249-13241-35-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
-	<20160330215510.GS18567@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 30 Mar 2016 14:55:10 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+pwm_config/enable/disable() have been deprecated and should be replaced
+by pwm_apply_state().
 
-> On 03/30, Boris Brezillon wrote:
-> > @@ -74,6 +74,23 @@ enum pwm_polarity {
-> >  	PWM_POLARITY_INVERSED,
-> >  };
-> >  
-> > +/**
-> > + * struct pwm_args - PWM arguments
-> > + * @period: reference period
-> > + * @polarity: reference polarity
-> > + *
-> > + * This structure describe board-dependent arguments attached to a PWM
-> 
-> s/describe/describes/
-> 
-> > + * device. Those arguments are usually retrieved from the PWM lookup table or
-> > + * DT definition.
-> > + * This should not be confused with the PWM state: PWM args not representing
-> 
-> s/not representing/don't represent/ ?
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/clk/clk-pwm.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
-Yes, I meant "are not representing", but "don't represent" is fine.
-
-> 
-> > + * the current PWM state, but the configuration the PWM user plan to use
-> 
-> s/plan/plans/
-> 
-> > + * on this PWM device.
-> > + */
-> > +struct pwm_args {
-> > +	unsigned int period;
-> > +	enum pwm_polarity polarity;
-> > +};
-> > +
-> 
-
-
-
+diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+index ebcd738..49ec5b1 100644
+--- a/drivers/clk/clk-pwm.c
++++ b/drivers/clk/clk-pwm.c
+@@ -28,15 +28,29 @@ static inline struct clk_pwm *to_clk_pwm(struct clk_hw *hw)
+ static int clk_pwm_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
++	struct pwm_state pstate;
+ 
+-	return pwm_enable(clk_pwm->pwm);
++	pwm_get_state(clk_pwm->pwm, &pstate);
++	if (pstate.enabled)
++		return 0;
++
++	pstate.enabled = true;
++
++	return pwm_apply_state(clk_pwm->pwm, &pstate);
+ }
+ 
+ static void clk_pwm_unprepare(struct clk_hw *hw)
+ {
+ 	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
++	struct pwm_state pstate;
++
++	pwm_get_state(clk_pwm->pwm, &pstate);
++	if (!pstate.enabled)
++		return;
+ 
+-	pwm_disable(clk_pwm->pwm);
++	pstate.enabled = false;
++
++	pwm_apply_state(clk_pwm->pwm, &pstate);
+ }
+ 
+ static unsigned long clk_pwm_recalc_rate(struct clk_hw *hw,
+@@ -56,6 +70,7 @@ static const struct clk_ops clk_pwm_ops = {
+ static int clk_pwm_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
++	struct pwm_state pstate;
+ 	struct pwm_args pargs = { };
+ 	struct clk_init_data init;
+ 	struct clk_pwm *clk_pwm;
+@@ -88,7 +103,12 @@ static int clk_pwm_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = pwm_config(pwm, (pargs.period + 1) >> 1, pargs.period);
++	pwm_get_state(pwm, &pstate);
++	pstate.period = pargs.period;
++	pstate.polarity = pargs.polarity;
++	pstate.duty_cycle = (pargs.period + 1) >> 1;
++
++	ret = pwm_apply_state(pwm, &pstate);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.5.0
