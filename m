@@ -1,73 +1,119 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54134 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757664AbcCXNBf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 24 Mar 2016 09:01:35 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-clk@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] clk: shmobile: r8a7795: add OSC and RINT clocks
-Date: Thu, 24 Mar 2016 14:00:39 +0100
-Message-Id: <1458824442-20279-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
-References: <1458824442-20279-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 11/46] regulator: pwm: use pwm_get_args() where appropriate
+Date: Wed, 30 Mar 2016 22:03:34 +0200
+Message-Id: <1459368249-13241-12-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The PWM framework has clarified the concept of reference PWM config
+(the platform dependent config retrieved from the DT or the PWM
+lookup table) and real PWM state.
 
-And put LAST_DT_CORE_CLK to a place where it won't be missed on updates.
+Use pwm_get_args() when the PWM user wants to retrieve this reference
+config and not the current state.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This is part of the rework allowing the PWM framework to support
+hardware readout and expose real PWM state even when the PWM has
+just been requested (before the user calls pwm_config/enable/disable()).
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
+ drivers/regulator/pwm-regulator.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Since RFC, moved CLK_RINT to the end and reworked LAST_DT_CORE_CLK
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c       | 8 ++++----
- include/dt-bindings/clock/r8a7795-cpg-mssr.h | 2 ++
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index a9f933055663cb..d305bcd3ef6619 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -28,11 +28,8 @@
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 4689d62..9154c47 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -59,16 +59,16 @@ static int pwm_regulator_set_voltage_sel(struct regulator_dev *rdev,
+ 					 unsigned selector)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+-	unsigned int pwm_reg_period;
++	struct pwm_args pargs = { };
+ 	int dutycycle;
+ 	int ret;
  
+-	pwm_reg_period = pwm_get_period(drvdata->pwm);
++	pwm_get_args(drvdata->pwm, &pargs);
  
- enum clk_ids {
--	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R8A7795_CLK_OSC,
--
- 	/* External Input Clocks */
--	CLK_EXTAL,
-+	CLK_EXTAL = LAST_DT_CORE_CLK + 1,
- 	CLK_EXTALR,
+-	dutycycle = (pwm_reg_period *
++	dutycycle = (pargs.period *
+ 		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
  
- 	/* Internal Core Clocks */
-@@ -116,6 +113,9 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
- 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
-+
-+	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, 0x0240, 8),
-+	DEF_DIV6_RO("r_int",    R8A7795_CLK_RINT,  CLK_EXTAL, 0x0240, 32),
- };
+-	ret = pwm_config(drvdata->pwm, dutycycle, pwm_reg_period);
++	ret = pwm_config(drvdata->pwm, dutycycle, pargs.period);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+@@ -138,13 +138,15 @@ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+ 	unsigned int ramp_delay = rdev->constraints->ramp_delay;
+-	unsigned int period = pwm_get_period(drvdata->pwm);
++	struct pwm_args pargs = { };
+ 	int duty_cycle;
+ 	int ret;
  
- static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
-diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-index e864aae0a2561c..274c2728e6dff5 100644
---- a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-@@ -59,5 +59,7 @@
- #define R8A7795_CLK_CPEX		44
- #define R8A7795_CLK_R			45
- #define R8A7795_CLK_OSC			46
-+#define R8A7795_CLK_RINT		47
-+#define LAST_DT_CORE_CLK		R8A7795_CLK_RINT
++	pwm_get_args(drvdata->pwm, &pargs);
+ 	duty_cycle = pwm_voltage_to_duty_cycle_percentage(rdev, min_uV);
  
- #endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
+-	ret = pwm_config(drvdata->pwm, (period / 100) * duty_cycle, period);
++	ret = pwm_config(drvdata->pwm, (pargs.period / 100) * duty_cycle,
++			 pargs.period);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ 		return ret;
 -- 
-2.7.0
-
+2.5.0
