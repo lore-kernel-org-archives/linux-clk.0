@@ -1,27 +1,88 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Mar 2016 17:48:55 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 26/41] clk: efm32gg: Remove CLK_IS_ROOT
-Message-ID: <20160303014855.GS24999@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 31 Mar 2016 16:33:25 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/18] ARM: dts: vf610: add on-chip SRAM
+Message-ID: <20160331083325.GX28207@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-5-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1456858826-28541-27-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457576219-7971-5-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
+On Wed, Mar 09, 2016 at 06:16:45PM -0800, Stefan Agner wrote:
+> Add Vybrids massive on-chip SRAM areas. Make use of the memory
+> region functionality to denominate the retained SRAM area in
+> LPSTOP2 and LPSTOP3.
 > 
-> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+This one looks fine to me.  I was going to pick it up separately, but it
+doesn't apply.
+
+Shawn
+
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  arch/arm/boot/dts/vfxxx.dtsi | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+> index 909988d..b038ea4 100644
+> --- a/arch/arm/boot/dts/vfxxx.dtsi
+> +++ b/arch/arm/boot/dts/vfxxx.dtsi
+> @@ -91,6 +91,43 @@
+>  		interrupt-parent = <&gpc>;
+>  		ranges;
+>  
+> +		ocram0: sram@3f000000 {
+> +			compatible = "mmio-sram";
+> +			reg = <0x3f000000 0x40000>;
+> +
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges = <0 0x3f000000 0x40000>;
+> +
+> +			stbyram1@0 {
+> +				reg = <0x0 0x4000>;
+> +				label = "stbyram1";
+> +				pool;
+> +			};
+> +
+> +			stbyram2@4000 {
+> +				reg = <0x4000 0xc000>;
+> +				label = "stbyram2";
+> +				pool;
+> +			};
+> +		};
+> +
+> +		ocram1: sram@3f040000 {
+> +			compatible = "mmio-sram";
+> +			reg = <0x3f040000 0x40000>;
+> +		};
+> +
+> +		gfxram0: sram@3f400000 {
+> +			compatible = "mmio-sram";
+> +			reg = <0x3f400000 0x80000>;
+> +		};
+> +
+> +		/* used by L2 cache */
+> +		gfxram1: sram@3f480000 {
+> +			compatible = "mmio-sram";
+> +			reg = <0x3f480000 0x80000>;
+> +		};
+> +
+>  		aips0: aips-bus@40000000 {
+>  			compatible = "fsl,aips-bus", "simple-bus";
+>  			#address-cells = <1>;
+> -- 
+> 2.7.2
+> 
+> 
