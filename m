@@ -1,29 +1,160 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 15 Mar 2016 15:19:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 20/41] clk: versatile: Remove CLK_IS_ROOT
-Message-ID: <20160315221931.GK25972@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-21-git-send-email-sboyd@codeaurora.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Thu, 31 Mar 2016 20:54:54 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
+ <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
+ linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
+ Vetter <daniel.vetter@intel.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
+ Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 32/46] pwm: deprecate pwm_config(), pwm_enable() and
+ pwm_disable()
+Message-ID: <20160331205454.630734ab@bbrezillon>
+In-Reply-To: <20160331173858.GB39098@dtor-ws>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-33-git-send-email-boris.brezillon@free-electrons.com>
+	<20160331173858.GB39098@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-21-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+Hi Dmitry,
 
-Applied to clk-next
+On Thu, 31 Mar 2016 10:38:58 -0700
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+
+> Hi Boris,
+> 
+> On Wed, Mar 30, 2016 at 10:03:55PM +0200, Boris Brezillon wrote:
+> > Prefix those function as deprecated to encourage all existing users to
+> > switch to pwm_apply_state().
+> 
+> Why not keep at least some of them as wrappers where we do not need to
+> chnage several parameters at once? It is much easier to have a driver
+> do:
+> 
+> 	error = pwm_enable(pwm);
+> 	if (error)
+> 		...
+> 
+> rather than declaring the state variable, fectch it, adjust and then
+> apply.
+
+True. Actually deprecating the non-atomic API was not my primary goal.
+Thierry would you mind if we keep both APIs around?
+
+> 
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > ---
+> >  include/linux/pwm.h | 24 ++++++++++++------------
+> >  1 file changed, 12 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> > index 4aad4eb..9bac10f 100644
+> > --- a/include/linux/pwm.h
+> > +++ b/include/linux/pwm.h
+> > @@ -225,8 +225,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
+> >   *
+> >   * Returns: 0 on success or a negative error code on failure.
+> >   */
+> > -static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
+> > -			     int period_ns)
+> > +static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
+> > +					  int period_ns)
+> >  {
+> >  	struct pwm_state pstate;
+> >  
+> > @@ -252,8 +252,8 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
+> >   *
+> >   * Returns: 0 on success or a negative error code on failure.
+> >   */
+> > -static inline int pwm_set_polarity(struct pwm_device *pwm,
+> > -				   enum pwm_polarity polarity)
+> > +static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
+> > +						enum pwm_polarity polarity)
+> >  {
+> >  	struct pwm_state pstate;
+> >  
+> > @@ -284,7 +284,7 @@ static inline int pwm_set_polarity(struct pwm_device *pwm,
+> >   *
+> >   * Returns: 0 on success or a negative error code on failure.
+> >   */
+> > -static inline int pwm_enable(struct pwm_device *pwm)
+> > +static inline int __deprecated pwm_enable(struct pwm_device *pwm)
+> >  {
+> >  	struct pwm_state pstate;
+> >  
+> > @@ -303,7 +303,7 @@ static inline int pwm_enable(struct pwm_device *pwm)
+> >   * pwm_disable() - stop a PWM output toggling
+> >   * @pwm: PWM device
+> >   */
+> > -static inline void pwm_disable(struct pwm_device *pwm)
+> > +static inline void __deprecated pwm_disable(struct pwm_device *pwm)
+> >  {
+> >  	struct pwm_state pstate;
+> >  
+> > @@ -360,24 +360,24 @@ static inline int pwm_apply_state(struct pwm_device *pwm,
+> >  	return -ENOTSUPP;
+> >  }
+> >  
+> > -static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
+> > -			     int period_ns)
+> > +static inline int __deprecated pwm_config(struct pwm_device *pwm, int duty_ns,
+> > +					  int period_ns)
+> >  {
+> >  	return -EINVAL;
+> >  }
+> >  
+> > -static inline int pwm_set_polarity(struct pwm_device *pwm,
+> > -				   enum pwm_polarity polarity)
+> > +static inline int __deprecated pwm_set_polarity(struct pwm_device *pwm,
+> > +						enum pwm_polarity polarity)
+> >  {
+> >  	return -ENOTSUPP;
+> >  }
+> >  
+> > -static inline int pwm_enable(struct pwm_device *pwm)
+> > +static inline int __deprecated pwm_enable(struct pwm_device *pwm)
+> >  {
+> >  	return -EINVAL;
+> >  }
+> >  
+> > -static inline void pwm_disable(struct pwm_device *pwm)
+> > +static inline void __deprecated pwm_disable(struct pwm_device *pwm)
+> >  {
+> >  }
+> >  
+> > -- 
+> > 2.5.0
+> > 
+> 
+
+
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
