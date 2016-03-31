@@ -1,185 +1,64 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 31 Mar 2016 16:21:37 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 3/3] clk: mvebu: new driver for Armada AP806 system controller
-Date: Fri,  4 Mar 2016 13:57:55 +0100
-Message-Id: <1457096275-7581-4-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1457096275-7581-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH 02/18] ARM: dts: vf610: add GPC as new interrupt parent
+Message-ID: <20160331082137.GW28207@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-3-git-send-email-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457576219-7971-3-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Armada AP806 system controller, amongst other things, provides a
-number of clocks for the platform: the CPU cluster clocks, whose
-frequencies are found by reading the Sample At Reset register, one
-fixed clock, and another clock derived from the fixed clock, which is
-the one used by most peripherals in AP806.
+On Wed, Mar 09, 2016 at 06:16:43PM -0800, Stefan Agner wrote:
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-The AP806 is one of the two core HW blocks used in the Marvell 7K/8K
-SoCs.
+So this patch cannot be applied before the fsl,vf610-gpc driver gets
+landed on mainline.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/mvebu/Kconfig                   |   3 +
- drivers/clk/mvebu/Makefile                  |   1 +
- drivers/clk/mvebu/ap806-system-controller.c | 106 ++++++++++++++++++++++++++++
- 3 files changed, 110 insertions(+)
- create mode 100644 drivers/clk/mvebu/ap806-system-controller.c
+Shawn
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index eaee8f0..bf7ae00 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -29,6 +29,9 @@ config ARMADA_XP_CLK
- 	select MVEBU_CLK_COMMON
- 	select MVEBU_CLK_CPU
- 
-+config ARMADA_AP806_SYSCON
-+	bool
-+
- config DOVE_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 8866115..f4aa481 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
-+obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
- obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
- obj-$(CONFIG_ORION_CLK)		+= orion.o
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-new file mode 100644
-index 0000000..c33c209
---- /dev/null
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -0,0 +1,106 @@
-+/*
-+ * Marvell Armada AP806 System Controller
-+ *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#define pr_fmt(fmt) "ap806-system-controller: " fmt
-+
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+
-+#define AP806_SAR_REG			0x400
-+#define AP806_SAR_CLKFREQ_MODE_MASK	0x1f
-+
-+#define AP806_CLK_NUM 			4
-+
-+static struct clk *ap806_clks[AP806_CLK_NUM];
-+
-+static struct clk_onecell_data ap806_clk_data = {
-+	.clks = ap806_clks,
-+	.clk_num = AP806_CLK_NUM,
-+};
-+
-+static void __init ap806_syscon_clk_init(struct device_node *np)
-+{
-+	unsigned int freq_mode, cpuclk_freq;
-+	const char *name, *fixedclk_name;
-+	struct regmap *regmap;
-+	u32 reg;
-+
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap)) {
-+		pr_err("cannot get regmap\n");
-+		return;
-+	}
-+
-+	if (regmap_read(regmap, AP806_SAR_REG, &reg)) {
-+		pr_err("cannot read from regmap\n");
-+		return;
-+	}
-+
-+	freq_mode = reg & AP806_SAR_CLKFREQ_MODE_MASK;
-+	switch(freq_mode) {
-+	case 0x0 ... 0x5:
-+		cpuclk_freq = 2000;
-+		break;
-+	case 0x6 ... 0xB:
-+		cpuclk_freq = 1800;
-+		break;
-+	case 0xC ... 0x11:
-+		cpuclk_freq = 1600;
-+		break;
-+	case 0x12 ... 0x16:
-+		cpuclk_freq = 1400;
-+		break;
-+	case 0x17 ... 0x19:
-+		cpuclk_freq = 1300;
-+		break;
-+	default:
-+		pr_err("invalid SAR value\n");
-+		return;
-+	}
-+
-+	/* Convert to hertz */
-+	cpuclk_freq *= 1000 * 1000;
-+
-+	/* CPU clocks depend on the Sample At Reset configuration */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      0, &name);
-+	ap806_clks[0] = clk_register_fixed_rate(NULL, name, NULL,
-+						0, cpuclk_freq);
-+
-+	of_property_read_string_index(np, "clock-output-names",
-+				      1, &name);
-+	ap806_clks[1] = clk_register_fixed_rate(NULL, name, NULL, 0,
-+						cpuclk_freq);
-+
-+	/* Fixed clock is always 1200 Mhz */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      2, &fixedclk_name);
-+	ap806_clks[2] = clk_register_fixed_rate(NULL, fixedclk_name, NULL, 0,
-+						1200 * 1000 * 1000);
-+
-+	/* MSS Clock is fixed clock divided by 6 */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      3, &name);
-+	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
-+						  0, 1, 6);
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
-+}
-+
-+CLK_OF_DECLARE(ap806_syscon_clk, "marvell,ap806-system-controller",
-+	       ap806_syscon_clk_init);
--- 
-2.6.4
+> ---
+>  arch/arm/boot/dts/vfxxx.dtsi | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+> index 5e49fbd..909988d 100644
+> --- a/arch/arm/boot/dts/vfxxx.dtsi
+> +++ b/arch/arm/boot/dts/vfxxx.dtsi
+> @@ -88,7 +88,7 @@
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+>  		compatible = "simple-bus";
+> -		interrupt-parent = <&mscm_ir>;
+> +		interrupt-parent = <&gpc>;
+>  		ranges;
+>  
+>  		aips0: aips-bus@40000000 {
+> @@ -475,6 +475,14 @@
+>  				reg = <0x4006e000 0x1000>;
+>  				interrupts = <96 IRQ_TYPE_LEVEL_HIGH>;
+>  			};
+> +
+> +			gpc: gpc@4006c000 {
+> +				compatible = "fsl,vf610-gpc";
+> +				reg = <0x4006c000 0x1000>;
+> +				interrupt-controller;
+> +				#interrupt-cells = <2>;
+> +				interrupt-parent = <&mscm_ir>;
+> +			};
+>  		};
+>  
+>  		aips1: aips-bus@40080000 {
+> -- 
+> 2.7.2
+> 
+> 
