@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v5 4/5] Documentation: atmel-pmc: add DT bindings for fast startup
-Date: Wed, 16 Mar 2016 14:58:08 +0800
-Message-ID: <1458111489-23774-5-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
-References: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 31 Mar 2016 19:41:48 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 10/18] tty: serial: fsl_lpuart: support suspend/resume
+Message-ID: <20160331114148.GC18833@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-11-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457576219-7971-11-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
-to trigger a fast restart signal to PMC.
+On Wed, Mar 09, 2016 at 06:16:51PM -0800, Stefan Agner wrote:
+> In order to allow wake support in STOP sleep mode, clocks are
+> needed. Use imx_clk_gate2_cgr to disable automatic clock gating
+> in low power mode STOP. This allows to enable wake by UART using:
+> echo enabled > /sys/class/tty/ttyLP0/power/wakeup
+> 
+> However, if wake is not enabled, the driver should disable the
+> clocks explicitly to save power.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/clk/imx/clk-vf610.c     | 12 ++++++------
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-Acked-by: Rob Herring <robh+dt@kernel.org>
----
+It should go to a separate patch.
 
-Changes in v5:
- - due to the DT property expression change, update the binding
-   document.
+Shawn
 
-Changes in v4:
- - add Acked-by tag.
-
-Changes in v3:
- - update the property description.
-
-Changes in v2:
- - change the property name and property description.
-
- .../devicetree/bindings/arm/atmel-pmc.txt          |   52 ++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-index 795cc78..76fdc66 100644
---- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-@@ -12,3 +12,55 @@ Examples:
- 		compatible = "atmel,at91rm9200-pmc";
- 		reg = <0xfffffc00 0x100>;
- 	};
-+
-+PMC Fast Startup Signals
-+
-+The PMC Fast Start Signals are used as the wake up source to trigger the PMC
-+to wake up the system from the ULP1 mode.
-+
-+required properties:
-+- compatible: should be "atmel,sama5d2-pmc-fast-startup".
-+
-+optional properties:
-+- atmel,wakeup-rtc-timer: boolean to enable RTC alarm wake-up.
-+- atmel,wakeup-usb-resume: boolean to enable USB resume wake-up.
-+- atmel,wakeup-sdmmc-cd: boolean to enable SDMMC card detect wake-up.
-+- atmel,wakeup-rxlp-match: boolean to enable RXLP matching condition wake-up.
-+- atmel,wakeup-acc-comparison: boolean to enable ACC comparison wake-up.
-+
-+The node contains child nodes for each wake-up input pin that the platform uses.
-+
-+Input nodes
-+
-+Required properties:
-+- reg: should contain the wake-up input index [0 - 10], to enable
-+  the corresponding wake-up input.
-+
-+Optional properties:
-+- atmel,wakeup-active-high: boolean to declare the corresponding wake-up
-+  input described by the child be active high.
-+  The default is to be active low.
-+
-+Example:
-+
-+	pmc: pmc@f0014000 {
-+		compatible = "atmel,sama5d2-pmc";
-+		reg = <0xf0014000 0x160>;
-+
-+		pmc_fast_restart {
-+			compatible = "atmel,sama5d2-pmc-fast-startup";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			atmel,wakeup-rtc-timer;
-+
-+			wkpin: input@0 {
-+				reg = <0>;
-+			};
-+
-+			gmac_wol: input@10 {
-+				reg = <10>;
-+				atmel,wakeup-active-high;
-+			};
-+		};
-+	};
--- 
-1.7.9.5
+>  drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
+>  2 files changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+> index e2e2c43..170a96c 100644
+> --- a/drivers/clk/imx/clk-vf610.c
+> +++ b/drivers/clk/imx/clk-vf610.c
+> @@ -315,12 +315,12 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+>  
+>  	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
+>  
+> -	clk[VF610_CLK_UART0] = imx_clk_gate2("uart0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(7));
+> -	clk[VF610_CLK_UART1] = imx_clk_gate2("uart1", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(8));
+> -	clk[VF610_CLK_UART2] = imx_clk_gate2("uart2", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(9));
+> -	clk[VF610_CLK_UART3] = imx_clk_gate2("uart3", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(10));
+> -	clk[VF610_CLK_UART4] = imx_clk_gate2("uart4", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(9));
+> -	clk[VF610_CLK_UART5] = imx_clk_gate2("uart5", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(10));
+> +	clk[VF610_CLK_UART0] = imx_clk_gate2_cgr("uart0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(7), 0x2);
+> +	clk[VF610_CLK_UART1] = imx_clk_gate2_cgr("uart1", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(8), 0x2);
+> +	clk[VF610_CLK_UART2] = imx_clk_gate2_cgr("uart2", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(9), 0x2);
+> +	clk[VF610_CLK_UART3] = imx_clk_gate2_cgr("uart3", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(10), 0x2);
+> +	clk[VF610_CLK_UART4] = imx_clk_gate2_cgr("uart4", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(9), 0x2);
+> +	clk[VF610_CLK_UART5] = imx_clk_gate2_cgr("uart5", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(10), 0x2);
+>  
+>  	clk[VF610_CLK_I2C0] = imx_clk_gate2("i2c0", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(6));
+>  	clk[VF610_CLK_I2C1] = imx_clk_gate2("i2c1", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(7));
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+> index 3d79003..94e29ba 100644
+> --- a/drivers/tty/serial/fsl_lpuart.c
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> @@ -483,9 +483,8 @@ static void lpuart_dma_rx_complete(void *arg)
+>  	spin_unlock_irqrestore(&sport->port.lock, flags);
+>  }
+>  
+> -static void lpuart_timer_func(unsigned long data)
+> +static void lpuart_dma_rx_terminate(struct lpuart_port *sport)
+>  {
+> -	struct lpuart_port *sport = (struct lpuart_port *)data;
+>  	struct tty_port *port = &sport->port.state->port;
+>  	struct dma_tx_state state;
+>  	unsigned long flags;
+> @@ -510,6 +509,11 @@ static void lpuart_timer_func(unsigned long data)
+>  	spin_unlock_irqrestore(&sport->port.lock, flags);
+>  }
+>  
+> +static void lpuart_timer_func(unsigned long data)
+> +{
+> +	lpuart_dma_rx_terminate((struct lpuart_port *)data);
+> +}
+> +
+>  static inline void lpuart_prepare_rx(struct lpuart_port *sport)
+>  {
+>  	unsigned long flags;
+> @@ -1915,7 +1919,12 @@ static int lpuart_suspend(struct device *dev)
+>  		writeb(temp, sport->port.membase + UARTCR2);
+>  	}
+>  
+> +	if (sport->dma_rx_in_progress)
+> +		lpuart_dma_rx_terminate(sport);
+> +
+>  	uart_suspend_port(&lpuart_reg, &sport->port);
+> +	if (sport->port.suspended && !sport->port.irq_wake)
+> +		clk_disable_unprepare(sport->clk);
+>  
+>  	return 0;
+>  }
+> @@ -1925,6 +1934,9 @@ static int lpuart_resume(struct device *dev)
+>  	struct lpuart_port *sport = dev_get_drvdata(dev);
+>  	unsigned long temp;
+>  
+> +	if (sport->port.suspended && !sport->port.irq_wake)
+> +		clk_prepare_enable(sport->clk);
+> +
+>  	if (sport->lpuart32) {
+>  		lpuart32_setup_watermark(sport);
+>  		temp = lpuart32_read(sport->port.membase + UARTCTRL);
+> -- 
+> 2.7.2
+> 
+> 
