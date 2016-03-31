@@ -1,44 +1,62 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: ARM: dts: imx6ul: add more functionality to i.MX6UL
-Date: Fri,  4 Mar 2016 13:37:21 +0100
-Message-Id: <1457095043-14115-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>, <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 31 Mar 2016 16:07:25 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/18] irqchip: vf610-gpc: add Vybrid GPC IRQ controller
+Message-ID: <20160331080725.GU28207@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-2-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1457576219-7971-2-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-[PATCHv3 1/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL modules
-[PATCHv3 2/2] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL mainboard
+On Wed, Mar 09, 2016 at 06:16:42PM -0800, Stefan Agner wrote:
+> +static int __init vf610_gpc_of_init(struct device_node *node,
+> +			       struct device_node *parent)
+> +{
+> +	struct irq_domain *domain, *domain_parent;
+> +	int i;
+> +
+> +	domain_parent = irq_find_host(parent);
+> +	if (!domain_parent) {
+> +		pr_err("vf610_gpc: interrupt-parent not found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	gpc_base = of_io_request_and_map(node, 0, "gpc");
+> +	if (WARN_ON(!gpc_base))
 
-This patchset adds more functionality to the i.MX6UL machines.
+of_io_request_and_map() doesn't return NULL for error but an error code
+encoded by ERR_PTR().  That said, you should use IS_ERR(gpc_base) rather
+than !gpc_base for error check.
 
-Changes vs. v1:
-- added patch to implement KPP clock for i.MX6UL to prevent conflicts
-  when this patch would go via a different tree.
-- added board support for Ka-Ro electronics TX6UL module for the same
-  reason
-- added imx6ul specific compatibles as requested by Lucas Stach
+Shawn
 
-Changes vs. v2:
-- dropped patches which have already been applied in the meantime
-- addressed comments by Shawn Guo
+> +		return PTR_ERR(gpc_base);
+> +
+> +	domain = irq_domain_add_hierarchy(domain_parent, 0, VF610_GPC_MAX_IRQS,
+> +					  node, &gpc_irq_domain_ops, NULL);
+> +	if (!domain) {
+> +		iounmap(gpc_base);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	/* Initially mask all interrupts for wakeup */
+> +	for (i = 0; i < IMR_NUM; i++)
+> +		writel_relaxed(~0, gpc_base + VF610_GPC_IMR1 + i * 4);
+> +
+> +	return 0;
+> +}
+> +IRQCHIP_DECLARE(vf610_gpc, "fsl,vf610-gpc", vf610_gpc_of_init);
+> -- 
+> 2.7.2
+> 
+> 
