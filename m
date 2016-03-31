@@ -1,25 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 4 Mar 2016 14:31:19 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 27/41] clk: fixed-rate: Remove CLK_IS_ROOT
-Message-ID: <20160304223119.GE25972@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-28-git-send-email-sboyd@codeaurora.org>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-28-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 31 Mar 2016 10:53:44 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+ sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+ marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/18] ARM: dts: vf610: add GPC as new interrupt parent
+In-Reply-To: <20160331082137.GW28207@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-3-git-send-email-stefan@agner.ch>
+ <20160331082137.GW28207@tiger>
+Message-ID: <5c2e731d0fc986bc680a582584efee19@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
+On 2016-03-31 01:21, Shawn Guo wrote:
+> On Wed, Mar 09, 2016 at 06:16:43PM -0800, Stefan Agner wrote:
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> So this patch cannot be applied before the fsl,vf610-gpc driver gets
+> landed on mainline.
 
-Applied to clk-next
+Yes!
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--
+Stefan
+
+>> ---
+>>  arch/arm/boot/dts/vfxxx.dtsi | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+>> index 5e49fbd..909988d 100644
+>> --- a/arch/arm/boot/dts/vfxxx.dtsi
+>> +++ b/arch/arm/boot/dts/vfxxx.dtsi
+>> @@ -88,7 +88,7 @@
+>>  		#address-cells = <1>;
+>>  		#size-cells = <1>;
+>>  		compatible = "simple-bus";
+>> -		interrupt-parent = <&mscm_ir>;
+>> +		interrupt-parent = <&gpc>;
+>>  		ranges;
+>>
+>>  		aips0: aips-bus@40000000 {
+>> @@ -475,6 +475,14 @@
+>>  				reg = <0x4006e000 0x1000>;
+>>  				interrupts = <96 IRQ_TYPE_LEVEL_HIGH>;
+>>  			};
+>> +
+>> +			gpc: gpc@4006c000 {
+>> +				compatible = "fsl,vf610-gpc";
+>> +				reg = <0x4006c000 0x1000>;
+>> +				interrupt-controller;
+>> +				#interrupt-cells = <2>;
+>> +				interrupt-parent = <&mscm_ir>;
+>> +			};
+>>  		};
+>>
+>>  		aips1: aips-bus@40080000 {
+>> --
+>> 2.7.2
+>>
+>>
