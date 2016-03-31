@@ -1,144 +1,72 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qg0-f67.google.com ([209.85.192.67]:33778 "EHLO
+	mail-qg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753060AbcCaNvi (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2016 09:51:38 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAOMZO5D=veSYdWbjksCk-qik3OnJ2i5Wkv8MrCZnTANibeDqLA@mail.gmail.com>
+References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+	<CAOMZO5D=veSYdWbjksCk-qik3OnJ2i5Wkv8MrCZnTANibeDqLA@mail.gmail.com>
+Date: Thu, 31 Mar 2016 21:51:37 +0800
+Message-ID: <CAA+hA=Rfu58OXOFqxFK0CTwBXWPwzjM2n_52rdPbZL83YmpYRQ@mail.gmail.com>
+Subject: Re: [PATCH V3 0/5] clk: support clocks which requires parent clock on
+ during operation
+From: Dong Aisheng <dongas86@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@freescale.com>,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 16/46] pwm: move the enabled/disabled info into pwm_state
-Date: Wed, 30 Mar 2016 22:03:39 +0200
-Message-Id: <1459368249-13241-17-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	"Ranjani.Vaidyanathan@freescale.com"
+	<Ranjani.Vaidyanathan@freescale.com>,
+	Li Frank-B20596 <b20596@freescale.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Jason Liu <r64343@freescale.com>,
+	Anson Huang <b20788@freescale.com>,
+	Dong Aisheng <b29396@freescale.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Prepare the transition to PWM atomic update by moving the enabled/disabled
-state into the pwm_state struct. This way we can easily update the whole
-PWM state by copying the new state in the ->state field.
+Hi Fabio,
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/pwm/core.c  | 13 +++++++++----
- include/linux/pwm.h | 11 ++++++++---
- 2 files changed, 17 insertions(+), 7 deletions(-)
+On Thu, Mar 31, 2016 at 12:00 AM, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Dong,
+>
+> On Tue, Jul 28, 2015 at 10:19 AM, Dong Aisheng
+> <aisheng.dong@freescale.com> wrote:
+>> This patch series adds support in clock framework for clocks which operations
+>> requires its parent clock is on.
+>>
+>> Such clock type is initially met on Freescale i.MX7D platform that all clocks
+>> operations, including enable/disable, rate change and re-parent, requires its
+>> parent clock on. No sure if any other SoC has the similar clock type.
+>>
+>> Current clock core can not support such type of clock well.
+>>
+>> This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
+>> in clock core that enable its parent clock firstly for each operation and disable
+>> it later after operation complete.
+>>
+>> The most special case is for set_parent() operation which requires both parent,
+>> old one and new one, to be enabled at the same time during the operation.
+>>
+>> The patch series is based on for-next branch of Michael's git:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+>
+> Do you plan to resend this series?
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index f3f91e7..c240b54 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -499,10 +499,10 @@ int pwm_enable(struct pwm_device *pwm)
- 	if (!pwm)
- 		return -EINVAL;
- 
--	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
-+	if (!pwm_is_enabled(pwm)) {
- 		err = pwm->chip->ops->enable(pwm->chip, pwm);
--		if (err)
--			clear_bit(PWMF_ENABLED, &pwm->flags);
-+		if (!err)
-+			pwm->state.enabled = true;
- 	}
- 
- 	return err;
-@@ -515,8 +515,13 @@ EXPORT_SYMBOL_GPL(pwm_enable);
-  */
- void pwm_disable(struct pwm_device *pwm)
- {
--	if (pwm && test_and_clear_bit(PWMF_ENABLED, &pwm->flags))
-+	if (!pwm)
-+		return;
-+
-+	if (pwm_is_enabled(pwm)) {
- 		pwm->chip->ops->disable(pwm->chip, pwm);
-+		pwm->state.enabled = false;
-+	}
- }
- EXPORT_SYMBOL_GPL(pwm_disable);
- 
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index f0f0f37..55bf463 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -93,8 +93,7 @@ struct pwm_args {
- 
- enum {
- 	PWMF_REQUESTED = 1 << 0,
--	PWMF_ENABLED = 1 << 1,
--	PWMF_EXPORTED = 1 << 2,
-+	PWMF_EXPORTED = 1 << 1,
- };
- 
- /*
-@@ -102,11 +101,13 @@ enum {
-  * @period: PWM period (in nanoseconds)
-  * @duty_cycle: PWM duty cycle (in nanoseconds)
-  * @polarity: PWM polarity
-+ * @enabled: PWM enabled status
-  */
- struct pwm_state {
- 	unsigned int period;
- 	unsigned int duty_cycle;
- 	enum pwm_polarity polarity;
-+	bool enabled;
- };
- 
- /**
-@@ -145,7 +146,11 @@ static inline void pwm_get_state(const struct pwm_device *pwm,
- 
- static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- {
--	return test_bit(PWMF_ENABLED, &pwm->flags);
-+	struct pwm_state pstate;
-+
-+	pwm_get_state(pwm, &pstate);
-+
-+	return pstate.enabled;
- }
- 
- static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
--- 
-2.5.0
+It is in my TODO list.
+I'm currently busy with some other items.
+Will be able to do it in a few days.
+
+Regards
+Dong Aisheng
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
