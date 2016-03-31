@@ -1,189 +1,122 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 04/13] ARM: dts: sun8i-a83t: Add basic clocks and resets
-Date: Thu, 17 Mar 2016 00:04:27 +0800
-Message-Id: <1458144276-31108-5-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Thu, 31 Mar 2016 09:07:09 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
+ <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
+ linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
+ Vetter <daniel.vetter@intel.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
+ Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args() where
+ appropriate
+Message-ID: <20160331090709.5c3bdf70@bbrezillon>
+In-Reply-To: <20160330225244.GA24044@roeck-us.net>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
+	<20160330225244.GA24044@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds A83T system bus clocks, bus gates, and clock resets.
+Hi Guenter,
 
-Three ahb reset registers are combined into one node.
+On Wed, 30 Mar 2016 15:52:44 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 114 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 112 insertions(+), 2 deletions(-)
+> On Wed, Mar 30, 2016 at 10:03:31PM +0200, Boris Brezillon wrote:
+> > The PWM framework has clarified the concept of reference PWM config
+> > (the platform dependent config retrieved from the DT or the PWM
+> > lookup table) and real PWM state.
+> > 
+> > Use pwm_get_args() when the PWM user wants to retrieve this reference
+> > config and not the current state.
+> > 
+> > This is part of the rework allowing the PWM framework to support
+> > hardware readout and expose real PWM state even when the PWM has
+> > just been requested (before the user calls pwm_config/enable/disable()).
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > ---
+> >  drivers/hwmon/pwm-fan.c | 19 +++++++++++++------
+> >  1 file changed, 13 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> > index 3e23003..82c5656 100644
+> > --- a/drivers/hwmon/pwm-fan.c
+> > +++ b/drivers/hwmon/pwm-fan.c
+> > @@ -40,15 +40,18 @@ struct pwm_fan_ctx {
+> >  
+> >  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+> >  {
+> > +	struct pwm_args pargs = { };
+> 
+> Hi Boris,
+> 
+> I guess I am missing some context; sorry for that. Unfortunately,
+> I did not easily find an explanation, so please bear with me.
+> 
+> Two questions: Why do we need a local copy of struct pwm_args instead
+> of a pointer to it ? If it can change while being used, isn't it
+> inconsistent anyway ?
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index d3473f8..2689af4 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -146,6 +146,97 @@
- 			clocks = <&osc16M>;
- 			clock-output-names = "osc16M-d512";
- 		};
-+
-+		pll6: clk@01c20028 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun9i-a80-pll4-clk";
-+			reg = <0x01c20028 0x4>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll6";
-+		};
-+
-+		pll6d2: pll6d2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+			clocks = <&pll6>;
-+			clock-output-names = "pll6d2";
-+		};
-+
-+		ahb1: clk@01c20054 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun8i-a83t-ahb1-clk";
-+			reg = <0x01c20054 0x4>;
-+			clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&pll6>;
-+			clock-output-names = "ahb1";
-+		};
-+
-+		apb1: apb1_clk@01c20054 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun8i-a83t-apb1-clk";
-+			reg = <0x01c20054 0x4>;
-+			clocks = <&ahb1>;
-+			clock-output-names = "apb1";
-+		};
-+
-+		apb2: clk@01c20058 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-apb1-clk";
-+			reg = <0x01c20058 0x4>;
-+			clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&pll6>;
-+			clock-output-names = "apb2";
-+		};
-+
-+		ahb2: clk@01c2005c {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun8i-h3-ahb2-clk";
-+			reg = <0x01c2005c 0x4>;
-+			clocks = <&ahb1>, <&pll6d2>;
-+			clock-output-names = "ahb2";
-+		};
-+
-+		bus_gates: clk@01c20060 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun8i-a83t-bus-gates-clk";
-+			reg = <0x01c20060 0x10>;
-+			clocks = <&ahb1>, <&ahb2>, <&apb1>, <&apb2>;
-+			clock-names = "ahb1", "ahb2", "apb1", "apb2";
-+			clock-indices = <1>, <5>, <6>,
-+					<8>, <9>, <10>,
-+					<13>, <14>, <17>,
-+					<19>, <20>,
-+					<21>, <24>,
-+					<26>, <27>,
-+					<29>, <32>,
-+					<36>, <37>,
-+					<40>, <43>,
-+					<44>, <52>, <53>,
-+					<54>, <65>,
-+					<69>, <76>, <77>,
-+					<78>, <79>, <96>,
-+					<97>, <98>,
-+					<112>, <113>,
-+					<114>, <115>,
-+					<116>;
-+			clock-output-names = "bus_mipidsi", "bus_ss", "bus_dma",
-+					     "bus_mmc0", "bus_mmc1", "bus_mmc2",
-+					     "bus_nand", "bus_sdram", "bus_emac",
-+					     "bus_hstimer", "bus_spi0",
-+					     "bus_spi1", "bus_usb_otg",
-+					     "bus_ehci0", "bus_ehci1",
-+					     "bus_ohci0", "bus_ve",
-+					     "bus_lcd0", "bus_lcd1",
-+					     "bus_csi", "bus_hdmi",
-+					     "bus_de", "bus_gpu", "bus_msgbox",
-+					     "bus_spinlock", "bus_spdif",
-+					     "bus_pio", "bus_i2s0", "bus_i2s1",
-+					     "bus_i2s2", "bus_tdm", "bus_i2c0",
-+					     "bus_i2c1", "bus_i2c2",
-+					     "bus_uart0", "bus_uart1",
-+					     "bus_uart2", "bus_uart3",
-+					     "bus_uart4";
-+		};
- 	};
- 
- 	soc {
-@@ -160,7 +251,7 @@
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&osc24M>;
-+			clocks = <&bus_gates 69>;
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -189,6 +280,24 @@
- 			};
- 		};
- 
-+		ahb_reset: reset@01c202c0 {
-+			reg = <0x01c202c0 0xc>;
-+			compatible = "allwinner,sun6i-a31-clock-reset";
-+			#reset-cells = <1>;
-+		};
-+
-+		apb1_reset: reset@01c202d0 {
-+			reg = <0x01c202d0 0x4>;
-+			compatible = "allwinner,sun6i-a31-clock-reset";
-+			#reset-cells = <1>;
-+		};
-+
-+		apb2_reset: reset@01c202d8 {
-+			reg = <0x01c202d8 0x4>;
-+			compatible = "allwinner,sun6i-a31-clock-reset";
-+			#reset-cells = <1>;
-+		};
-+
- 		timer@01c20c00 {
- 			compatible = "allwinner,sun4i-a10-timer";
- 			reg = <0x01c20c00 0xa0>;
-@@ -210,7 +319,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&bus_gates 112>;
-+			resets = <&apb2_reset 16>;
- 			status = "disabled";
- 		};
- 
+It cannot change after pwm_get() is called. For the reason behind
+prototype: I just followed the Thierry's proposal, but I'm perfectly
+fine returning a const struct pwm_args pointer intead of passing
+pwm_args as a parameter.
+
+Thierry, what's your opinion?
+
+
+> 
+> Also, assuming the local copy is necessary, why initialize pargs ? 
+> After all, pwm_get_args() just overwrites it.
+
+It's a leftover from a previous version where pwm_get_args was
+implemented this way:
+
+static inline void pwm_get_args(pwm, args)
+{
+	if (pwm)
+		*args = pwm->args
+}
+
+and this implementation was generating a lot of 'uninitialized
+variable' warnings.
+
+I just decided to drop the 'if (pwm)' test, because, IMO, this
+should be checked way before calling pwm_get_args() is called.
+
+Anyway, apparently I forgot to modify a few patches after this
+modification.
+
+Thanks for the review.
+
+Boris
+
+
 -- 
-1.9.1
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
