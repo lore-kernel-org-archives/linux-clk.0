@@ -1,77 +1,74 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Thu, 10 Mar 2016 08:15:02 +0100
-Subject: [PATCH] clk: sunxi: Accept a greater rate when setting a parent clock
-To: Emilio López <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [RESEND PATCH v10 3/6] ARM: hisi: add compatible string for Hi3519 soc
+Date: Thu, 31 Mar 2016 16:10:08 +0800
+Message-ID: <1459411811-12390-4-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Message-ID: <E1advmf-0004Nt-5A@bombadil.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The best rate of a clock may be a bit greater than the requested one.
-In such a case, the rate setting from a child clock was rejected.
+From: Jiancheng Xue <xuejiancheng@huawei.com>
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+add compatible string for Hi3519 soc.
+
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
-I don't know exactly why the rate constraint existed nor what can be
-the impact of setting the rate of other clocks.
+ arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-I had the problem when setting the PLL2 clock of the H3 (patch to come).
-It has 4 outputs, so, it is composed of a base clock and 4 children
-clocks pll2, pll2x2, pll2x4 and pll2x8 with a fixed factor (/4, /2, 1
-and *2).
-The pll2 clock rate may be only 24576000 (for the audio family 48000Hz)
-or 22579200 (for the audio family 44100Hz).
-
-Setting 24576000 asks for mul=86 and div=21,4 giving 24571428 as the
-best rate, i.e. a bit slower than requested: good.
-
-Setting 22579200 asks for mul=64 and div=17,4 giving 22588235, i.e.
-a bit greater: then, the rate setting was rejected (no parent clock),
-preventing audio streaming at 44100Hz.
----
- drivers/clk/sunxi/clk-factors.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index 59428db..d0774c2 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -86,7 +86,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
- 	int i, num_parents;
- 	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index 8cc6215..00dae89 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
+ 	.dt_compat	= hi3xxx_compat,
+ MACHINE_END
  
--	/* find the parent that can help provide the fastest rate <= rate */
-+	/* find the parent that can help provide the fastest rate */
- 	num_parents = clk_hw_get_num_parents(hw);
- 	for (i = 0; i < num_parents; i++) {
- 		parent = clk_hw_get_parent_by_index(hw, i);
-@@ -100,7 +100,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
- 		child_rate = clk_factors_round_rate(hw, req->rate,
- 						    &parent_rate);
+-static const char *const hix5hd2_compat[] __initconst = {
++static const char *const hisilicon_compat[] __initconst = {
+ 	"hisilicon,hix5hd2",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
+-	.dt_compat	= hix5hd2_compat,
+-MACHINE_END
+-
+-static const char *const hip04_compat[] __initconst = {
+ 	"hisilicon,hip04-d01",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
+-	.dt_compat	= hip04_compat,
+-MACHINE_END
+-
+-static const char *const hip01_compat[] __initconst = {
+ 	"hisilicon,hip01",
+ 	"hisilicon,hip01-ca9x2",
++	"hisilicon,hi3519",
+ 	NULL,
+ };
  
--		if (child_rate <= req->rate && child_rate > best_child_rate) {
-+		if (child_rate > best_child_rate) {
- 			best_parent = parent;
- 			best = parent_rate;
- 			best_child_rate = child_rate;
+-DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+-	.dt_compat      = hip01_compat,
++DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
++	.dt_compat	= hisilicon_compat,
+ MACHINE_END
 -- 
-2.7.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
