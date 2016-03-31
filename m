@@ -1,91 +1,113 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 31 Mar 2016 16:19:08 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
-	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
-	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 03/18] ARM: dts: vf610-colibri: GPIO wakeup key
-Message-ID: <20160331081908.GV28207@tiger>
-References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
- <1457576219-7971-4-git-send-email-stefan@agner.ch>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [RESEND PATCH v10 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
+Date: Thu, 31 Mar 2016 16:10:05 +0800
+Message-ID: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1457576219-7971-4-git-send-email-stefan@agner.ch>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 06:16:44PM -0800, Stefan Agner wrote:
-> Enable GPIO wakeup key on Vybrid PAD 41 which is routed to the
-> Colibri default wakeup pin SO-DIMM 45.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
 
-I think this one can be merged independently, right?  One small comment
-below though.
+Hello,
 
-> ---
->  arch/arm/boot/dts/vf-colibri-eval-v3.dtsi | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-> index 4d8b7f6..936ece6 100644
-> --- a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-> +++ b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
-> @@ -39,6 +39,8 @@
->   *     OTHER DEALINGS IN THE SOFTWARE.
->   */
->  
-> +#include <dt-bindings/input/input.h>
-> +
->  / {
->  	chosen {
->  		stdout-path = "serial0:115200n8";
-> @@ -74,6 +76,20 @@
->  		gpio = <&gpio2 19 GPIO_ACTIVE_LOW>; /* USBH_PEN resp. USBH_P_EN */
->  		vin-supply = <&reg_5v0>;
->  	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_gpiokeys>;
-> +
-> +		power {
-> +			label = "Wake-Up";
-> +			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-> +			linux,code = <KEY_WAKEUP>;
-> +			debounce-interval = <10>;
-> +			gpio-key,wakeup;
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
+It has been tested on hi3519 reference board.
 
-Please use generic 'wakeup-source' instead.  See the following document
-for details.
+PATCH 3~6 in this serials have been acked. PATCH 1~2 are still waiting for being acked.
 
-Documentation/devicetree/bindings/power/wakeup-source.txt
+Any comments will be appreciated!
 
-Shawn
+Thanks!
 
-> +		};
-> +	};
->  };
->  
->  &bl {
-> @@ -157,5 +173,11 @@
->  				VF610_PAD_PTB21__GPIO_43	0x22ed
->  			>;
->  		};
-> +
-> +		pinctrl_gpiokeys: gpiokeys {
-> +			fsl,pins = <
-> +				VF610_PAD_PTB19__GPIO_41	0x218d
-> +			>;
-> +		};
->  	};
->  };
-> -- 
-> 2.7.2
-> 
-> 
+Change Log
+----------
+v10:
+--Fixed issues pointed by Stephen Boyd.
+  Use EXPORT_SYMBOL_GPL instead of EXPORT_SYMBOL.
+--Fixed some compile warning on some platforms
+
+v9:
+--Fixed issues pointed by Michael Turquette.
+  Remove some unused header included by source files.
+  Add a specific config option for compiling reset module. 
+
+v8:
+--Made hi3519 clock driver can be compiled as a module
+--Fixed an issue in arch/arm/Kconfig.debug
+
+v7:
+--Rebased to v4.5-rc1
+
+v6:
+-Changed clock driver to a real platform driver
+
+v5:
+-Adjusted clock and reset controller driver code
+
+v4:
+-Rebased to v4.4-rc7
+-Divided patches according to Rob's comments
+-Added spi nodes in hi3519-demb.dts
+
+v3:
+-Rebased to v4.4-rc4
+-Adjusted according to Arnd's comments
+-Removed ARCH_HI3519, using ARCH_HISI directly
+
+v2:
+-Rebased to v4.4-rc3
+-Put dt-binding doc and header file in a separate patch.
+-Deleted unused clocks definitions.
+-Adjusted the ARCH_xxx order in Kconfig file
+-Renamed ARCH_HI3xxx to ARCH_36xx
+
+Jiancheng Xue (6):
+  clk: hisilicon: export some hisilicon APIs to modules
+  clk: hisilicon: add CRG driver for hi3519 soc
+  ARM: hisi: add compatible string for Hi3519 soc
+  ARM: debug: add hi3519 debug uart
+  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
+
+ .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
+ arch/arm/mach-hisi/hisilicon.c                     |  23 +--
+ drivers/clk/hisilicon/Kconfig                      |  15 ++
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 129 ++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  23 ++-
+ drivers/clk/hisilicon/clk.h                        |  14 +-
+ drivers/clk/hisilicon/reset.c                      | 124 ++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 ++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
+ 15 files changed, 669 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
+-- 
+1.9.1
