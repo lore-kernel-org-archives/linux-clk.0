@@ -1,49 +1,85 @@
-Return-Path: <robh@kernel.org>
-Date: Sat, 19 Mar 2016 18:59:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: yassinjaffer@gmail.com
-Cc: dev@linux-sunxi.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Reinder de Haan <patchesrdh@mveas.com>,
-	Jens Kuske <jenskuske@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
- clock driver for sun[457]i
-Message-ID: <20160319235905.GA16539@rob-hp-laptop>
-References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
- <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Thu, 31 Mar 2016 09:57:49 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+ Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Mark
+ Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil
+ Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
+ <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
+ <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
+ Vetter <daniel.vetter@intel.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
+ Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
+Message-ID: <20160331095749.4be1e76b@bbrezillon>
+In-Reply-To: <20160330215510.GS18567@codeaurora.org>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
+	<20160330215510.GS18567@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 17, 2016 at 07:43:42PM +1100, yassinjaffer@gmail.com wrote:
-> From: Yassin Jaffer <yassinjaffer@gmail.com>
+On Wed, 30 Mar 2016 14:55:10 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
+
+> On 03/30, Boris Brezillon wrote:
+> > @@ -74,6 +74,23 @@ enum pwm_polarity {
+> >  	PWM_POLARITY_INVERSED,
+> >  };
+> >  
+> > +/**
+> > + * struct pwm_args - PWM arguments
+> > + * @period: reference period
+> > + * @polarity: reference polarity
+> > + *
+> > + * This structure describe board-dependent arguments attached to a PWM
 > 
-> This patch adds a composite clock type consisting of
-> a clock gate, mux, configurable dividers, and a reset control.
+> s/describe/describes/
 > 
-> Signed-off-by: Yassin Jaffer <yassinjaffer@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
+> > + * device. Those arguments are usually retrieved from the PWM lookup table or
+> > + * DT definition.
+> > + * This should not be confused with the PWM state: PWM args not representing
+> 
+> s/not representing/don't represent/ ?
 
-I wish someone would just add all the sunxi clocks in one pass instead 
-of one by one.
+Yes, I meant "are not representing", but "don't represent" is fine.
 
-Acked-by: Rob Herring <robh@kernel.org>
+> 
+> > + * the current PWM state, but the configuration the PWM user plan to use
+> 
+> s/plan/plans/
+> 
+> > + * on this PWM device.
+> > + */
+> > +struct pwm_args {
+> > +	unsigned int period;
+> > +	enum pwm_polarity polarity;
+> > +};
+> > +
+> 
 
->  drivers/clk/sunxi/Makefile                        |   1 +
->  drivers/clk/sunxi/clk-a10-csi.c                   | 188 ++++++++++++++++++++++
->  3 files changed, 190 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-a10-csi.c
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
