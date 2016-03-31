@@ -1,31 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from utopia.booyaka.com ([74.50.51.50]:41454 "EHLO
-	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759058AbcCDQcX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2016 11:32:23 -0500
-Date: Fri, 4 Mar 2016 16:32:22 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-cc: Tony Lindgren <tony@atomide.com>, t-kristo@ti.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-In-Reply-To: <56D97E51.5050602@ti.com>
-Message-ID: <alpine.DEB.2.02.1603041632030.3980@utopia.booyaka.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com> <1456439796-28546-3-git-send-email-fcooper@ti.com> <20160301181109.GB13417@atomide.com> <alpine.DEB.2.02.1603011858510.14948@utopia.booyaka.com> <20160301205043.GA4469@atomide.com>
- <56D71331.5020702@ti.com> <56D8EDF4.9070904@ti.com> <alpine.DEB.2.02.1603040553010.3980@utopia.booyaka.com> <56D97E51.5050602@ti.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v5 0/2] clk: Add Artpec-6 SoC support
+Date: Thu, 31 Mar 2016 20:02:49 +0200
+Message-Id: <cover.1459447089.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 4 Mar 2016, Franklin S Cooper Jr. wrote:
+Add clock support for the Artpec-6 SoC port. The ARM parts are merged in
+4.6-rc1.
 
-> So what you want to happen
-> is already happening in the driver. So I don't believe
-> simple-bus is needed.
+Changes since v4:
+- Update the maintainer entry with the correct clock directory.
+- Implement split clock registration with early clocks through CLK_OF_DECLARE
+  and deferrable clocks through a platform driver.
 
-OK great, even better!
+Changes since v3:
+- The binding was corrected to handle two fractional divider clocks as input to
+  the clock controller.
+- Updated clk-artpec6.c to handle a distinct fractional divider input for each
+  i2s clock mux.
 
-- Paul
+Changes since v2:
+- Moved axis,artpec6-clkctrl.h to the first patch with the DT bindings.
+
+Changes since v1:
+- The driver now provides all clocks from the main clock controller block
+  through one DT node.
+- Added a header file for the clock indexes.
+- Refer to clock-bindings.txt in the bindings document.
+
+Lars Persson (2):
+  clk: add device tree binding for Artpec-6 clock controller
+  clk: add artpec-6 clock controller
+
+ .../devicetree/bindings/clock/artpec6.txt          |  41 ++++
+ MAINTAINERS                                        |   2 +-
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axis/Makefile                          |   1 +
+ drivers/clk/axis/clk-artpec6.c                     | 230 +++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 ++++
+ 6 files changed, 312 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 drivers/clk/axis/Makefile
+ create mode 100644 drivers/clk/axis/clk-artpec6.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
+
+-- 
+2.1.4
