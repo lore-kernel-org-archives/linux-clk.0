@@ -1,111 +1,100 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Scott Wood <scott.wood@nxp.com>
-To: Yangbo Lu <yangbo.lu@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for
- T4240-R1.0-R2.0
-Date: Mon, 14 Mar 2016 17:45:43 +0000
-Message-ID: <DB5PR0401MB19286B2D23D07F5C60DB799D91880@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-References: <1457518131-11339-1-git-send-email-yangbo.lu@nxp.com>
- <1457518131-11339-6-git-send-email-yangbo.lu@nxp.com>
- <4947024.WeMycs2fID@wuerfel>
- <HE1PR04MB0889CE4742B92461A925B9C4F8880@HE1PR04MB0889.eurprd04.prod.outlook.com>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- Zhao Qiang <qiang.zhao@freescale.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Kumar Gala <galak@codeaurora.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Yang-Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Rob
- Herring <robh+dt@kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Xiaobo Xie <xiaobo.xie@nxp.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="windows-1252"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 31 Mar 2016 10:55:13 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+ sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+ marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/18] ARM: dts: vf610-colibri: GPIO wakeup key
+In-Reply-To: <20160331081908.GV28207@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-4-git-send-email-stefan@agner.ch>
+ <20160331081908.GV28207@tiger>
+Message-ID: <fa5e44e044a2fd8056886c72db2f8483@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/14/2016 02:29 AM, Yangbo Lu wrote:
->> -----Original Message-----
->> From: Arnd Bergmann [mailto:arnd@arndb.de]
->> Sent: Monday, March 14, 2016 6:26 AM
->> To: linuxppc-dev@lists.ozlabs.org
->> Cc: Yangbo Lu; devicetree@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
->> clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
->> foundation.org; netdev@vger.kernel.org; linux-mmc@vger.kernel.org;
->> ulf.hansson@linaro.org; Zhao Qiang; Russell King; Bhupesh Sharma; Joerg
->> Roedel; Santosh Shilimkar; Scott Wood; Rob Herring; Claudiu Manoil; Kumar
->> Gala; Yang-Leo Li; Xiaobo Xie
->> Subject: Re: [v6, 5/5] mmc: sdhci-of-esdhc: fix host version for T4240-
->> R1.0-R2.0
+On 2016-03-31 01:19, Shawn Guo wrote:
+> On Wed, Mar 09, 2016 at 06:16:44PM -0800, Stefan Agner wrote:
+>> Enable GPIO wakeup key on Vybrid PAD 41 which is routed to the
+>> Colibri default wakeup pin SO-DIMM 45.
 >>
->> On Wednesday 09 March 2016 18:08:51 Yangbo Lu wrote:
->>> @@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device
->> *pdev, struct sdhci_host *host)
->>>         struct sdhci_pltfm_host *pltfm_host;
->>>         struct sdhci_esdhc *esdhc;
->>>         u16 host_ver;
->>> +       u32 svr;
->>>
->>>         pltfm_host =3D sdhci_priv(host);
->>>         esdhc =3D sdhci_pltfm_priv(pltfm_host);
->>>
->>> +       fsl_guts_init();
->>> +       svr =3D fsl_guts_get_svr();
->>> +       if (svr) {
->>> +               esdhc->soc_ver =3D SVR_SOC_VER(svr);
->>> +               esdhc->soc_rev =3D SVR_REV(svr);
->>> +       } else {
->>> +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
->>> +       }
->>> +
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> 
+> I think this one can be merged independently, right?  One small comment
+> below though.
+> 
+
+Yes, shouldn't cause any trouble even if wakeup/suspend is not yet
+implemented.
+
+>> ---
+>>  arch/arm/boot/dts/vf-colibri-eval-v3.dtsi | 22 ++++++++++++++++++++++
+>>  1 file changed, 22 insertions(+)
 >>
->> This makes the driver non-portable. Better identify the specific
->> workarounds based on the compatible string for this device, or add a
->> boolean DT property for the quirk.
+>> diff --git a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
+>> index 4d8b7f6..936ece6 100644
+>> --- a/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
+>> +++ b/arch/arm/boot/dts/vf-colibri-eval-v3.dtsi
+>> @@ -39,6 +39,8 @@
+>>   *     OTHER DEALINGS IN THE SOFTWARE.
+>>   */
 >>
->> 	Arnd
-> =
+>> +#include <dt-bindings/input/input.h>
+>> +
+>>  / {
+>>  	chosen {
+>>  		stdout-path = "serial0:115200n8";
+>> @@ -74,6 +76,20 @@
+>>  		gpio = <&gpio2 19 GPIO_ACTIVE_LOW>; /* USBH_PEN resp. USBH_P_EN */
+>>  		vin-supply = <&reg_5v0>;
+>>  	};
+>> +
+>> +	gpio-keys {
+>> +		compatible = "gpio-keys";
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pinctrl_gpiokeys>;
+>> +
+>> +		power {
+>> +			label = "Wake-Up";
+>> +			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+>> +			linux,code = <KEY_WAKEUP>;
+>> +			debounce-interval = <10>;
+>> +			gpio-key,wakeup;
+> 
+> Please use generic 'wakeup-source' instead.  See the following document
+> for details.
+> 
+> Documentation/devicetree/bindings/power/wakeup-source.txt
 
-> [Lu Yangbo-B47093] Hi Arnd, we did have a discussion about using DTS in v=
-1 before.
-> https://patchwork.kernel.org/patch/6834221/
-> =
+Will do.
 
-> We don=92t have a separate DTS file for each revision of an SOC and if we=
- did, we'd constantly have people using the wrong one.
-> In addition, the device tree is stable ABI and errata are often discovere=
-d after device tree are deployed.
-> See the link for details.
-> =
+--
+Stefan
 
-> So we decide to read SVR from the device-config/guts MMIO block other tha=
-n using DTS.
-> Thanks.
-
-Also note that this driver is already only for fsl-specific hardware,
-and it will still work even if fsl_guts doesn't find anything to bind to
--- it just wouldn't be able to detect errata based on SVR in that case.
-
--Scott
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+>> +		};
+>> +	};
+>>  };
+>>
+>>  &bl {
+>> @@ -157,5 +173,11 @@
+>>  				VF610_PAD_PTB21__GPIO_43	0x22ed
+>>  			>;
+>>  		};
+>> +
+>> +		pinctrl_gpiokeys: gpiokeys {
+>> +			fsl,pins = <
+>> +				VF610_PAD_PTB19__GPIO_41	0x218d
+>> +			>;
+>> +		};
+>>  	};
+>>  };
+>> --
+>> 2.7.2
+>>
+>>
