@@ -1,78 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:28315 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754569AbcCPHDc (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2016 03:03:32 -0400
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v5 0/5] ARM: at91: pm: add ULP1 mode support
-Date: Wed, 16 Mar 2016 14:58:04 +0800
-Message-ID: <1458111489-23774-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <pi-cheng.chen@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160311165152.4103.82090@quark.deferred.io>
+References: <20160309152420.20de187a@xhacker>
+	<20160311165152.4103.82090@quark.deferred.io>
+Date: Thu, 31 Mar 2016 10:34:15 +0800
+Message-ID: <CALx668WqPF12eD=f3mfd-=TYwVe4bVk0YVoKtGV_XPM8c+_FeA@mail.gmail.com>
+Subject: Re: [Query]set clk rate must operate its coordinated clock
+From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Jisheng Zhang <jszhang@marvell.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
++linux-mediatek list
 
-In order to achieve the lowest power consumption, in the ULP1 mode,
-all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
+On Sat, Mar 12, 2016 at 12:51 AM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Jisheng,
+>
+> Quoting Jisheng Zhang (2016-03-08 23:24:20)
+>> Dear Stephen, Michael, Sebastian and all,
+>>
+>> I have the following clk case which I dunno the elegant solution:
+>>
+>>
+>> cpuclk have two parents: cpupll and refclk. When set the cpuclk freq, we
+>> have to set its parent's freq, I.E cpupll freq. But before changing the
+>> cpupll's freq, we should set its refclk as its parent firstly.
+>>
+>> AFAIK, this is a common case, I have seen such requirement in rockchip, samsung
+>> clk driver. They solve this by notifier, but as pointed out by Michael
+>> in http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351565.html
+>>
+>> "This is also a hack and it points towards some missing infrastructure in the
+>> clock framework."
+>>
+>> I also don't like the notifier solution, I believe the elegant solution could
+>> be using the coordinated clock infrastructure. So what's the status of
+>> this infrastructure? I can test, and I can even add some code to make it be
+>> ready to be merged if you guide me ;)
+>
+> Thanks for the email. I hope to finish that feature before ELC. I have
+> Cc'd Pi-Cheng Chen from Mediatek who is also interested in coordinated
+> clock rates.
 
-The fast startup signal is used as a wake up source for ULP1 mode.
-As soon as the wake up event is asserted, the embedded 12MHz RC
-oscillator restarts automatically, which fast startup signal
-to trigger the PMC to wake up the system from the ULP1 mode can be
-configured via DT.
+Hi Mike,
 
-Changes in v5:
- - to improve the scalability, rework the DT expression part, use
-   the child nodes to describe the wake-up input and its active level.
- - due to the DT property expression change, update the binding
-   document.
- - due to the DT property expression change, update the fast restart
-   node's property.
+Sorry for my late response.
+Glad to hear that you're still working on it.
+I am ready to test it on Mediatek platform.
+Looking forwards to the new clk feature.
 
-Changes in v4:
- - add Acked-by tag.
- - add fast_restart node to the DT file.
+Thanks,
+Pi-Cheng
 
-Changes in v3:
- - use 0 and 1, not string, to define the trigger active polarity.
- - update the property description.
-
-Changes in v2:
- - fix label pm_exit to ulp_exit.
- - shorten the pmc-fast-startup property's name.
- - use the value property, instead of bool property for high
-   or low triggered.
- - change the property name and property description.
-
-Wenyou Yang (5):
-  ARM: at91: pm: create a separate procedure for the ULP0 mode
-  ARM: at91: pm: add ULP1 mode support
-  ARM: at91: pm: configure PMC fast startup signals
-  Documentation: atmel-pmc: add DT bindings for fast startup
-  ARM: at91/dt: sama5d2_xplained: add fast_restart node
-
- .../devicetree/bindings/arm/atmel-pmc.txt          |   52 +++++++
- arch/arm/boot/dts/at91-sama5d2_xplained.dts        |   19 +++
- arch/arm/mach-at91/pm.c                            |   82 +++++++++-
- arch/arm/mach-at91/pm.h                            |    7 +
- arch/arm/mach-at91/pm_suspend.S                    |  158 +++++++++++++++++---
- include/linux/clk/at91_pmc.h                       |   18 +++
- 6 files changed, 311 insertions(+), 25 deletions(-)
-
--- 
-1.7.9.5
-
+>
+> Regards,
+> Mike
+>
+>>
+>> Thanks in advance,
+>> Jisheng
