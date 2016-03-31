@@ -1,78 +1,127 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 30 Mar 2016 15:01:49 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 34/46] clk: pwm: switch to the atomic API
-Message-ID: <20160330220149.GU18567@codeaurora.org>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-35-git-send-email-boris.brezillon@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459368249-13241-35-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v5 1/2] clk: add device tree binding for Artpec-6 clock controller
+Date: Thu, 31 Mar 2016 20:02:50 +0200
+Message-Id: <3d38a3e4b2595c5bb3003d0b02200506c414d4da.1459447089.git.larper@axis.com>
+In-Reply-To: <cover.1459447089.git.larper@axis.com>
+References: <cover.1459447089.git.larper@axis.com>
+In-Reply-To: <cover.1459447089.git.larper@axis.com>
+References: <cover.1459447089.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/30, Boris Brezillon wrote:
-> diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-> index ebcd738..49ec5b1 100644
-> --- a/drivers/clk/clk-pwm.c
-> +++ b/drivers/clk/clk-pwm.c
-> @@ -28,15 +28,29 @@ static inline struct clk_pwm *to_clk_pwm(struct clk_hw *hw)
->  static int clk_pwm_prepare(struct clk_hw *hw)
->  {
->  	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-> +	struct pwm_state pstate;
->  
-> -	return pwm_enable(clk_pwm->pwm);
-> +	pwm_get_state(clk_pwm->pwm, &pstate);
-> +	if (pstate.enabled)
-> +		return 0;
-> +
-> +	pstate.enabled = true;
-> +
-> +	return pwm_apply_state(clk_pwm->pwm, &pstate);
+Add device tree documentation for the main clock controller in the
+Artpec-6 SoC.
 
-This doesn't seem atomic anymore if we're checking the state and
-then not calling apply_state if it's already enabled. But I
-assume this doesn't matter because we "own" the pwm here?
-Otherwise I would think this would be unconditional apply state
-and duplicates would be ignored in the pwm framework.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   | 38 ++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
 
+diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+new file mode 100644
+index 0000000..9ba9bd0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+@@ -0,0 +1,41 @@
++* Clock bindings for Axis ARTPEC-6 chip
++
++The bindings are based on the clock provider binding in
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++External clocks:
++----------------
++
++There are two external inputs to the main clock controller which should be
++provided using the common clock bindings.
++- "sys_refclk": External 50 Mhz oscillator (required)
++- "i2s_refclk": Alternate audio reference clock (optional).
++
++Main clock controller
++---------------------
++
++Required properties:
++- #clock-cells: Should be <1>
++  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
++- compatible: Should be "axis,artpec6-clkctrl"
++- reg: Must contain the base address and length of the system controller
++- clocks:  Must contain a phandle entry for each clock in clock-names
++- clock-names: Must include the external oscillator ("sys_refclk"). Optional
++  ones are the audio reference clock ("i2s_refclk") and the audio fractional
++  dividers ("frac_clk0" and "frac_clk1").
++
++Examples:
++
++ext_clk: ext_clk {
++	#clock-cells = <0>;
++	compatible = "fixed-clock";
++	clock-frequency = <50000000>;
++};
++
++clkctrl: clkctrl {
++	#clock-cells = <1>;
++	compatible = "axis,artpec6-clkctrl";
++	reg = <0xf8000000 0x48>;
++	clocks = <&ext_clk>;
++	clock-names = "sys_refclk";
++};
+diff --git a/include/dt-bindings/clock/axis,artpec6-clkctrl.h b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
+new file mode 100644
+index 0000000..f9f04dc
+--- /dev/null
++++ b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
+@@ -0,0 +1,38 @@
++/*
++ * ARTPEC-6 clock controller indexes
++ *
++ * Copyright 2016 Axis Comunications AB.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
++#define DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
++
++#define ARTPEC6_CLK_CPU			0
++#define ARTPEC6_CLK_CPU_PERIPH		1
++#define ARTPEC6_CLK_NAND_CLKA		2
++#define ARTPEC6_CLK_NAND_CLKB		3
++#define ARTPEC6_CLK_ETH_ACLK		4
++#define ARTPEC6_CLK_DMA_ACLK		5
++#define ARTPEC6_CLK_PTP_REF		6
++#define ARTPEC6_CLK_SD_PCLK		7
++#define ARTPEC6_CLK_SD_IMCLK		8
++#define ARTPEC6_CLK_I2S_HST		9
++#define ARTPEC6_CLK_I2S0_CLK		10
++#define ARTPEC6_CLK_I2S1_CLK		11
++#define ARTPEC6_CLK_UART_PCLK		12
++#define ARTPEC6_CLK_UART_REFCLK		13
++#define ARTPEC6_CLK_I2C			14
++#define ARTPEC6_CLK_SPI_PCLK		15
++#define ARTPEC6_CLK_SPI_SSPCLK		16
++#define ARTPEC6_CLK_SYS_TIMER		17
++#define ARTPEC6_CLK_FRACDIV_IN		18
++#define ARTPEC6_CLK_DBG_PCLK		19
++
++/* This must be the highest clock index plus one. */
++#define ARTPEC6_CLK_NUMCLOCKS		20
++
++#endif
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
