@@ -1,28 +1,71 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 12 Apr 2016 14:07:47 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: thierry.reding@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, bcousson@baylibre.com, linux@arm.linux.org.uk,
-	t-kristo@ti.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] ARM: DTS: da850/am4372/am33xx: Use generic node
- name for ehrpwm
-Message-ID: <20160412210746.GC5995@atomide.com>
-References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
- <1458263723-25770-3-git-send-email-fcooper@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458263723-25770-3-git-send-email-fcooper@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:33272 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754066AbcDAO0s (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2016 10:26:48 -0400
+Received: by mail-wm0-f49.google.com with SMTP id f198so28343916wme.0
+        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2016 07:26:48 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 2/2] dt-bindings: Add Oxford Semiconductor OXNAS Standard Clocks bindings
+Date: Fri,  1 Apr 2016 16:26:31 +0200
+Message-Id: <1459520791-13269-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
+References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Franklin S Cooper Jr <fcooper@ti.com> [160317 18:16]:
-> When possible generic node names should be used. So change the node name
-> from ehrpwm to pwm.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../devicetree/bindings/clock/oxnas,stdclk.txt     | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
 
-Picking this patch into omap-for-v4.7/dt thanks.
+diff --git a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+new file mode 100644
+index 0000000..208cca6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+@@ -0,0 +1,35 @@
++Oxford Semiconductor OXNAS SoC Family Standard Clocks
++================================================
++
++Please also refer to clock-bindings.txt in this directory for common clock
++bindings usage.
++
++Required properties:
++- compatible: Should be "oxsemi,ox810se-stdclk"
++- #clock-cells: 1, see below
++
++Parent node should have the following properties :
++- compatible: Should be "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
++
++For OX810SE, the clock indices are :
++ - 0: LEON
++ - 1: DMA_SGDMA
++ - 2: CIPHER
++ - 3: SATA
++ - 4: AUDIO
++ - 5: USBMPH
++ - 6: ETHA
++ - 7: PCIA
++ - 8: NAND
++
++example:
++
++sys: sys-ctrl@000000 {
++	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
++	reg = <0x000000 0x100000>;
++
++	stdclk: stdclk {
++		compatible = "oxsemi,ox810se-stdclk";
++		#clock-cells = <1>;
++	};
++};
+-- 
+1.9.1
 
-Tony
