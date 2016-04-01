@@ -1,106 +1,269 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:33155 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751785AbcDUMSt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2016 08:18:49 -0400
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	Jose Abreu <Jose.Abreu@synopsys.com>
-CC: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org"
-	<linux-snps-arc@lists.infradead.org>
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-Date: Thu, 21 Apr 2016 12:18:39 +0000
-Message-ID: <1461241114.2928.4.camel@synopsys.com>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
-	 <20160415234631.GB4690@codeaurora.org> <5714B763.8010109@synopsys.com>
-	 <5714C9BA.8040004@synopsys.com> <5715F6AC.7090501@synopsys.com>
-	 <20160420015451.GH15324@codeaurora.org> <5717503F.7020806@synopsys.com>
-	 <1461168765.3149.31.camel@synopsys.com> <5718A298.50601@synopsys.com>
-In-Reply-To: <5718A298.50601@synopsys.com>
-Content-Type: text/plain; charset="utf-7"
-MIME-Version: 1.0
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36231 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752761AbcDAO0s (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2016 10:26:48 -0400
+Received: by mail-wm0-f46.google.com with SMTP id 127so21919834wmu.1
+        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2016 07:26:47 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
+Date: Fri,  1 Apr 2016 16:26:30 +0200
+Message-Id: <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
+References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jose,
+Add Oxford Semiconductor OXNAS SoC Family Standard Clocks support.
 
-On Thu, 2016-04-21 at 10:51 +-0100, Jose Abreu wrote:
-+AD4- Hi Alexey,
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/Kconfig     |   6 ++
+ drivers/clk/Makefile    |   1 +
+ drivers/clk/clk-oxnas.c | 202 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 209 insertions(+)
+ create mode 100644 drivers/clk/clk-oxnas.c
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 16f7d33..2efdbab 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -197,6 +197,12 @@ config COMMON_CLK_PXA
+ 	---help---
+ 	  Support for the Marvell PXA SoC.
+ 
++config COMMON_CLK_OXNAS
++	bool
++	select MFD_SYSCON
++	---help---
++	  Support for the OXNAS SoC Family clocks.
++
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d6..627da26 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -33,6 +33,7 @@ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+ obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
++obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
+ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+new file mode 100644
+index 0000000..5f02cfa
+--- /dev/null
++++ b/drivers/clk/clk-oxnas.c
+@@ -0,0 +1,202 @@
++/*
++ * Copyright (C) 2010 Broadcom
++ * Copyright (C) 2012 Stephen Warren
++ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/stringify.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++
++/* Standard regmap gate clocks */
++struct clk_oxnas {
++	struct clk_hw hw;
++	signed char bit;
++	struct regmap *regmap;
++};
++
++/* Regmap offsets */
++#define CLK_STAT_REGOFFSET	0x24
++#define CLK_SET_REGOFFSET	0x2c
++#define CLK_CLR_REGOFFSET	0x30
++
++static inline struct clk_oxnas *to_clk_oxnas(struct clk_hw *hw)
++{
++	return container_of(hw, struct clk_oxnas, hw);
++}
++
++static int oxnas_clk_is_enabled(struct clk_hw *hw)
++{
++	struct clk_oxnas *std = to_clk_oxnas(hw);
++	int ret;
++	unsigned int val;
++
++	ret = regmap_read(std->regmap, CLK_STAT_REGOFFSET, &val);
++	if (ret < 0)
++		return ret;
++
++	return val & BIT(std->bit);
++}
++
++static int oxnas_clk_enable(struct clk_hw *hw)
++{
++	struct clk_oxnas *std = to_clk_oxnas(hw);
++
++	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
++
++	return 0;
++}
++
++static void oxnas_clk_disable(struct clk_hw *hw)
++{
++	struct clk_oxnas *std = to_clk_oxnas(hw);
++
++	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
++}
++
++static const struct clk_ops oxnas_clk_ops = {
++	.enable = oxnas_clk_enable,
++	.disable = oxnas_clk_disable,
++	.is_enabled = oxnas_clk_is_enabled,
++};
++
++static const char *const oxnas_clk_parents[] = {
++	"oscillator",
++};
++
++static const char *const eth_parents[] = {
++	"gmacclk",
++};
++
++#define DECLARE_STD_CLKP(__clk, __parent)			\
++static const struct clk_init_data clk_##__clk##_init = {	\
++	.name = __stringify(__clk),				\
++	.ops = &oxnas_clk_ops,					\
++	.parent_names = __parent,				\
++	.num_parents = ARRAY_SIZE(__parent),			\
++}
++
++#define DECLARE_STD_CLK(__clk) DECLARE_STD_CLKP(__clk, oxnas_clk_parents)
++
++/* Clk init data declaration */
++DECLARE_STD_CLK(leon);
++DECLARE_STD_CLK(dma_sgdma);
++DECLARE_STD_CLK(cipher);
++DECLARE_STD_CLK(sata);
++DECLARE_STD_CLK(audio);
++DECLARE_STD_CLK(usbmph);
++DECLARE_STD_CLKP(etha, eth_parents);
++DECLARE_STD_CLK(pciea);
++DECLARE_STD_CLK(nand);
++
++/* Bit - Name association */
++static const struct clk_init_data *clk_oxnas_init[] = {
++	[0] = &clk_leon_init,
++	[1] = &clk_dma_sgdma_init,
++	[2] = &clk_cipher_init,
++	[3] = NULL,		/* Do not touch to DDR clock */
++	[4] = &clk_sata_init,
++	[5] = &clk_audio_init,
++	[6] = &clk_usbmph_init,
++	[7] = &clk_etha_init,
++	[8] = &clk_pciea_init,
++	[9] = &clk_nand_init,
++};
++
++static int oxnas_stdclk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct regmap *regmap;
++	struct clk_oxnas *clk_oxnas;
++	struct clk_onecell_data *onecell_data;
++	struct clk **clks;
++	unsigned int clks_count = 0;
++	int i;
++
++	clk_oxnas = devm_kzalloc(&pdev->dev,
++				 sizeof(*clk_oxnas)*ARRAY_SIZE(clk_oxnas_init),
++				 GFP_KERNEL);
++	if (!clk_oxnas)
++		return -ENOMEM;
++
++	clks = devm_kzalloc(&pdev->dev,
++			    sizeof(*clks)*ARRAY_SIZE(clk_oxnas_init),
++			    GFP_KERNEL);
++	if (!clks)
++		return -ENOMEM;
++
++	onecell_data = devm_kzalloc(&pdev->dev, sizeof(*onecell_data),
++				     GFP_KERNEL);
++	if (!onecell_data)
++		return -ENOMEM;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (!regmap) {
++		dev_err(&pdev->dev, "failed to have parent regmap\n");
++		return -EINVAL;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
++		struct clk_oxnas *_clk;
++
++		if (!clk_oxnas_init[i])
++			continue;
++
++		_clk = &clk_oxnas[i];
++		_clk->bit = i;
++		_clk->hw.init = clk_oxnas_init[i];
++		_clk->regmap = regmap;
++
++		clks[clks_count] = devm_clk_register(&pdev->dev, &_clk->hw);
++		if (WARN_ON(IS_ERR(clks[clks_count])))
++			return PTR_ERR(clks[clks_count]);
++
++		++clks_count;
++	}
++
++	onecell_data->clks = clks;
++	onecell_data->clk_num = clks_count;
++
++	return of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
++}
++
++static int oxnas_stdclk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++
++	return 0;
++}
++
++static const struct of_device_id oxnas_stdclk_dt_ids[] = {
++	{ .compatible = "oxsemi,ox810se-stdclk" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
++
++static struct platform_driver oxnas_stdclk_driver = {
++	.probe = oxnas_stdclk_probe,
++	.remove = oxnas_stdclk_remove,
++	.driver	= {
++		.name = "oxnas-stdclk",
++		.of_match_table = of_match_ptr(oxnas_stdclk_dt_ids),
++	},
++};
++
++module_platform_driver(oxnas_stdclk_driver);
+-- 
+1.9.1
 
-+AD4- +AD4- +AD4- +AD4- Otherwise, I still prefer two DTS files for the two different FPGA
-+AD4- +AD4- +AD4- +AD4- versions. At the least, please use ioremap for any pointers that
-+AD4- +AD4- +AD4- +AD4- you readl/writel here.
-+AD4- +AD4- +AD4- +AD4- 
-+AD4- +AD4- +AD4- +AD4- Beyond that, we should have a fixed rate source clk somewhere in
-+AD4- +AD4- +AD4- +AD4- the software view of the clk tree, because that reflects reality.
-+AD4- +AD4- +AD4- +AD4- Hardcoding the parent rate in the structure works, but doesn't
-+AD4- +AD4- +AD4- +AD4- properly express the clk tree.
-+AD4- +AD4- +AD4- +AD4- 
-+AD4- +AD4- +AD4- Can I use a property in the DT to pass this reference clock? something like this:
-+AD4- +AD4- +AD4- +AKAAoACgAKA-snps,parent-freq +AD0- +ADw-0xFBED9 27000000+AD4-, +ADw-0x0 28224000+AD4AOw- /+ACo- Tuple
-+AD4- +AD4- +AD4- +ADw-fpga-version reference-clock-freq+AD4-, fpga-version +AD0- 0 is default +ACo-/
-+AD4- +AD4- +AD4- 
-+AD4- +AD4- +AD4- Or use a parent clock? like:
-+AD4- +AD4- +AD4- +AKAAoACgAKA-clk +AHs-
-+AD4- +AD4- +AD4- +AKAAoACgAKAAoACgAKAAoA-compatible +AD0- +ACI-fixed-clock+ACIAOw-
-+AD4- +AD4- +AD4- +AKAAoACgAKAAoACgAKAAoA-clock-frequency +AD0- +ADw-27000000+AD4AOw-
-+AD4- +AD4- +AD4- +AKAAoACgAKAAoACgAKAAoAAj-clock-cells +AD0- +ADw-0+AD4AOw-
-+AD4- +AD4- +AD4- +AKAAoACgAKAAoACgAKAAoA-snps,fpga-version +AD0- +ADw-0xFBED9+AD4AOw-
-+AD4- +AD4- +AD4- +AKAAoACgAKAAfQ-
-+AD4- +AD4- +AD4- 
-+AD4- +AD4- +AD4- It is important to distinguish between the different versions automatically, is
-+AD4- +AD4- +AD4- any of these solutions ok?
-+AD4- +AD4- I do like that solution with a master clock but with some fine-tuning
-+AD4- +AD4- for simplification.
-+AD4- +AD4- 
-+AD4- +AD4- We'll add master clock node for I2S as a fixed clock like that:
-+AD4- +AD4- -------------------+AD4-8------------------
-+AD4- +AD4- 	i2s+AF8-master+AF8-clock: clk +AHs-
-+AD4- +AD4- 		+ACM-clock-cells +AD0- +ADw-0+AD4AOw-
-+AD4- +AD4- 		compatible +AD0- +ACI-fixed-clock+ACIAOw-
-+AD4- +AD4- 		clock-frequency +AD0- +ADw-27000000+AD4AOw-
-+AD4- +AD4- 	+AH0AOw-
-+AD4- +AD4- -------------------+AD4-8------------------
-+AD4- +AD4- 
-+AD4- +AD4- Note there's no mention of MB version, just a value of the frequency.
-+AD4- +AD4- And in the driver itself value of that master clock will be used for
-+AD4- +AD4- population of +ACI-pll+AF8-clk-+AD4-ref+AF8-clk+ACI- directly.
-+AD4- +AD4- 
-+AD4- +AD4- These are benefits we'll get with that approach:
-+AD4- +AD4- +AKAAWw-1+AF0- We escape any IOs not related to our clock device (I mean
-+AD4- +AD4- +AKAAoACgAKAAoAAi-snps,i2s-pll-clock+ACI-) itself.
-+AD4- +AD4- +AKAAWw-2+AF0- We'll use whatever reference clock value is given.
-+AD4- +AD4- +AKAAoACgAKAAoA-I.e. we'll be able to do a fix-up of that reference clock
-+AD4- +AD4- +AKAAoACgAKAAoA-value early in platform code depending on HW we're running on.
-+AD4- +AD4- +AKAAoACgAKAAoA-That's what people do here and there.
-+AD4- +AD4- +AKAAWw-3+AF0- Remember another clock driver for AXS10x board is right around
-+AD4- +AD4- +AKAAoACgAKAAoA-the corner. I mean the one for ARC PGU which uses exactly the same
-+AD4- +AD4- +AKAAoACgAKAAoA-master clock. So one fixup as mentioned above will work
-+AD4- +AD4- +AKAAoACgAKAAoA-at once for 2 clock drivers.
-+AD4- +AD4- 
-+AD4- +AD4- Let me know if above makes sense.
-+AD4- That approach can't be used because the reference clock value will change in the
-+AD4- next firmware release.+AKAAoA-The new release will have a reference clock of 28224000
-+AD4- Hz instead of the usual 27000000 Hz, so we need to have a way to distinguish
-+AD4- between them. Because of that we can't have only one master clock unless you
-+AD4- state to users that they have to change the reference clock value when using the
-+AD4- new firmware release. Stephen suggested to use two DT files (one for each
-+AD4- firmware release), but as Vineet said this would be annoying to the user so I am
-+AD4- trying to use another solution so that only one DT file is required.
-
-Ok reference clock will change.
-But I may guess we'll still be able to determine at least that new
-firmware version in run-time, right? If so we'll update a fix-up in
-early axs10x platform code so that reference clock will be set as+AKA-28224000 Hz.
-
-And indeed 2 DT files is a no go - we want to run the same one binary
-(with built-in .dtb) on all flavors of AXS boards. And fix-up I'm talking about
-will actually do transformation of .dtb early on kernel boot process so that will
-be a complete equivalent of different DT files.
-
--Alexey
