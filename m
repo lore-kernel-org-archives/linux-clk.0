@@ -1,182 +1,526 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1on0082.outbound.protection.outlook.com ([157.56.110.82]:51393
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752379AbcDVGhv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 22 Apr 2016 02:37:51 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-	<netdev@vger.kernel.org>
-CC: <ulf.hansson@linaro.org>, <scott.wood@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v8, 5/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Date: Fri, 22 Apr 2016 14:27:42 +0800
-Message-ID: <1461306464-19521-6-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
-References: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	sjan@baylibre.com,
+	ahaslam@baylibre.com,
+	abailon@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 1/5] clk: Switch clk handling to signed long and introduce Quantum State
+Date: Fri,  1 Apr 2016 13:37:11 +0200
+Message-Id: <1459510635-8204-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move mpc85xx.h to include/linux/fsl and rename it to svr.h as
-a common header file. It has been used for mpc85xx and it will
-be used for ARM-based SoC as well.
+In order to handle the quantum clock state for rate, accuracy and phase,
+switch all core functions to signed long.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Joerg Roedel <jroedel@suse.de>
----
-Changes for v2:
-	- None
-Changes for v3:
-	- None
-Changes for v4:
-	- None
-Changes for v5:
-	- Changed to Move mpc85xx.h to include/linux/fsl/
-	- Adjusted '#include <linux/fsl/svr.h>' position in file
-Changes for v6:
-	- None
-Changes for v7:
-	- Added 'Acked-by: Wolfram Sang' for I2C part
-	- Also applied to arch/powerpc/kernel/cpu_setup_fsl_booke.S
-Changes for v8:
-	- Added 'Acked-by: Stephen Boyd' for clk part
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Joerg Roedel' for iommu part
----
- arch/powerpc/kernel/cpu_setup_fsl_booke.S                     | 2 +-
- drivers/clk/clk-qoriq.c                                       | 3 +--
- drivers/i2c/busses/i2c-mpc.c                                  | 2 +-
- drivers/iommu/fsl_pamu.c                                      | 3 +--
- drivers/net/ethernet/freescale/gianfar.c                      | 2 +-
- arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h | 4 ++--
- 6 files changed, 7 insertions(+), 9 deletions(-)
- rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+Also add QUATUM state flag and QUANTUM return value.
 
-diff --git a/arch/powerpc/kernel/cpu_setup_fsl_booke.S b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-index 462aed9..2b0284e 100644
---- a/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-+++ b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-@@ -13,13 +13,13 @@
-  *
-  */
+Set QUANTUM default state in clk_core_init.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/clk.c            | 104 +++++++++++++++++++++++--------------------
+ include/linux/clk-provider.h |  12 +++--
+ include/linux/clk.h          |  22 ++++-----
+ 3 files changed, 74 insertions(+), 64 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fb74dc1..db7eced 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -51,9 +51,9 @@ struct clk_core {
+ 	struct clk_core		**parents;
+ 	u8			num_parents;
+ 	u8			new_parent_index;
+-	unsigned long		rate;
+-	unsigned long		req_rate;
+-	unsigned long		new_rate;
++	long			rate;
++	long			req_rate;
++	long			new_rate;
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
+@@ -62,7 +62,7 @@ struct clk_core {
+ 	unsigned int		prepare_count;
+ 	unsigned long		min_rate;
+ 	unsigned long		max_rate;
+-	unsigned long		accuracy;
++	long			accuracy;
+ 	int			phase;
+ 	struct hlist_head	children;
+ 	struct hlist_node	child_node;
+@@ -82,8 +82,8 @@ struct clk {
+ 	struct clk_core	*core;
+ 	const char *dev_id;
+ 	const char *con_id;
+-	unsigned long min_rate;
+-	unsigned long max_rate;
++	long min_rate;
++	long max_rate;
+ 	struct hlist_node clks_node;
+ };
  
-+#include <linux/fsl/svr.h>
- #include <asm/page.h>
- #include <asm/processor.h>
- #include <asm/cputable.h>
- #include <asm/ppc_asm.h>
- #include <asm/mmu-book3e.h>
- #include <asm/asm-offsets.h>
--#include <asm/mpc85xx.h>
- 
- _GLOBAL(__e500_icache_setup)
- 	mfspr	r0, SPRN_L1CSR1
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 7bc1c45..fc7f722 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -1148,8 +1149,6 @@ bad_args:
+@@ -374,9 +374,9 @@ unsigned int __clk_get_enable_count(struct clk *clk)
+ 	return !clk ? 0 : clk->core->enable_count;
  }
  
- #ifdef CONFIG_PPC
--#include <asm/mpc85xx.h>
--
- static const u32 a4510_svrs[] __initconst = {
- 	(SVR_P2040 << 8) | 0x10,	/* P2040 1.0 */
- 	(SVR_P2040 << 8) | 0x11,	/* P2040 1.1 */
-diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
-index 48ecffe..600704c 100644
---- a/drivers/i2c/busses/i2c-mpc.c
-+++ b/drivers/i2c/busses/i2c-mpc.c
-@@ -27,9 +27,9 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/fsl/svr.h>
+-static unsigned long clk_core_get_rate_nolock(struct clk_core *core)
++static long clk_core_get_rate_nolock(struct clk_core *core)
+ {
+-	unsigned long ret;
++	long ret;
  
- #include <asm/mpc52xx.h>
--#include <asm/mpc85xx.h>
- #include <sysdev/fsl_soc.h>
+ 	if (!core) {
+ 		ret = 0;
+@@ -395,13 +395,13 @@ out:
+ 	return ret;
+ }
  
- #define DRV_NAME "mpc-i2c"
-diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
-index a34355f..af8fb27 100644
---- a/drivers/iommu/fsl_pamu.c
-+++ b/drivers/iommu/fsl_pamu.c
-@@ -21,11 +21,10 @@
- #include "fsl_pamu.h"
+-unsigned long clk_hw_get_rate(const struct clk_hw *hw)
++long clk_hw_get_rate(const struct clk_hw *hw)
+ {
+ 	return clk_core_get_rate_nolock(hw->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_rate);
  
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/interrupt.h>
- #include <linux/genalloc.h>
+-static unsigned long __clk_get_accuracy(struct clk_core *core)
++static long __clk_get_accuracy(struct clk_core *core)
+ {
+ 	if (!core)
+ 		return 0;
+@@ -440,8 +440,8 @@ bool __clk_is_enabled(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_is_enabled);
  
--#include <asm/mpc85xx.h>
--
- /* define indexes for each operation mapping scenario */
- #define OMI_QMAN        0x00
- #define OMI_FMAN        0x01
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index d2f917a..2224b10 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -86,11 +86,11 @@
- #include <linux/udp.h>
- #include <linux/in.h>
- #include <linux/net_tstamp.h>
-+#include <linux/fsl/svr.h>
+-static bool mux_is_better_rate(unsigned long rate, unsigned long now,
+-			   unsigned long best, unsigned long flags)
++static bool mux_is_better_rate(long rate, long now,
++			   long best, unsigned long flags)
+ {
+ 	if (flags & CLK_MUX_ROUND_CLOSEST)
+ 		return abs(now - rate) < abs(best - rate);
+@@ -455,7 +455,7 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, struct clk_rate_request *req,
+ {
+ 	struct clk_core *core = hw->core, *parent, *best_parent = NULL;
+ 	int i, num_parents, ret;
+-	unsigned long best = 0;
++	long best = 0;
+ 	struct clk_rate_request parent_req = *req;
  
- #include <asm/io.h>
- #ifdef CONFIG_PPC
- #include <asm/reg.h>
--#include <asm/mpc85xx.h>
- #endif
- #include <asm/irq.h>
- #include <asm/uaccess.h>
-diff --git a/arch/powerpc/include/asm/mpc85xx.h b/include/linux/fsl/svr.h
-similarity index 97%
-rename from arch/powerpc/include/asm/mpc85xx.h
-rename to include/linux/fsl/svr.h
-index 213f3a8..8d13836 100644
---- a/arch/powerpc/include/asm/mpc85xx.h
-+++ b/include/linux/fsl/svr.h
-@@ -9,8 +9,8 @@
-  * (at your option) any later version.
+ 	/* if NO_REPARENT flag set, pass through to current parent */
+@@ -520,8 +520,8 @@ struct clk *__clk_lookup(const char *name)
+ }
+ 
+ static void clk_core_get_boundaries(struct clk_core *core,
+-				    unsigned long *min_rate,
+-				    unsigned long *max_rate)
++				    long *min_rate,
++				    long *max_rate)
+ {
+ 	struct clk *clk_user;
+ 
+@@ -535,8 +535,8 @@ static void clk_core_get_boundaries(struct clk_core *core,
+ 		*max_rate = min(*max_rate, clk_user->max_rate);
+ }
+ 
+-void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+-			   unsigned long max_rate)
++void clk_hw_set_rate_range(struct clk_hw *hw, long min_rate,
++			   long max_rate)
+ {
+ 	hw->core->min_rate = min_rate;
+ 	hw->core->max_rate = max_rate;
+@@ -839,7 +839,7 @@ int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ }
+ EXPORT_SYMBOL_GPL(__clk_determine_rate);
+ 
+-unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
++long clk_hw_round_rate(struct clk_hw *hw, long rate)
+ {
+ 	int ret;
+ 	struct clk_rate_request req;
+@@ -864,7 +864,7 @@ EXPORT_SYMBOL_GPL(clk_hw_round_rate);
+  * use which is then returned.  If clk doesn't support round_rate operation
+  * then the parent rate is returned.
   */
+-long clk_round_rate(struct clk *clk, unsigned long rate)
++long clk_round_rate(struct clk *clk, long rate)
+ {
+ 	struct clk_rate_request req;
+ 	int ret;
+@@ -902,7 +902,7 @@ EXPORT_SYMBOL_GPL(clk_round_rate);
+  * a driver returns that.
+  */
+ static int __clk_notify(struct clk_core *core, unsigned long msg,
+-		unsigned long old_rate, unsigned long new_rate)
++		long old_rate, long new_rate)
+ {
+ 	struct clk_notifier *cn;
+ 	struct clk_notifier_data cnd;
+@@ -933,7 +933,7 @@ static int __clk_notify(struct clk_core *core, unsigned long msg,
+  */
+ static void __clk_recalc_accuracies(struct clk_core *core)
+ {
+-	unsigned long parent_accuracy = 0;
++	long parent_accuracy = 0;
+ 	struct clk_core *child;
  
--#ifndef __ASM_PPC_MPC85XX_H
--#define __ASM_PPC_MPC85XX_H
-+#ifndef FSL_SVR_H
-+#define FSL_SVR_H
+ 	lockdep_assert_held(&prepare_lock);
+@@ -953,7 +953,7 @@ static void __clk_recalc_accuracies(struct clk_core *core)
  
- #define SVR_REV(svr)	((svr) & 0xFF)		/* SOC design resision */
- #define SVR_MAJ(svr)	(((svr) >>  4) & 0xF)	/* Major revision field*/
+ static long clk_core_get_accuracy(struct clk_core *core)
+ {
+-	unsigned long accuracy;
++	long accuracy;
+ 
+ 	clk_prepare_lock();
+ 	if (core && (core->flags & CLK_GET_ACCURACY_NOCACHE))
+@@ -983,8 +983,8 @@ long clk_get_accuracy(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(clk_get_accuracy);
+ 
+-static unsigned long clk_recalc(struct clk_core *core,
+-				unsigned long parent_rate)
++static long clk_recalc(struct clk_core *core,
++			long parent_rate)
+ {
+ 	if (core->ops->recalc_rate)
+ 		return core->ops->recalc_rate(core->hw, parent_rate);
+@@ -1005,8 +1005,8 @@ static unsigned long clk_recalc(struct clk_core *core,
+  */
+ static void __clk_recalc_rates(struct clk_core *core, unsigned long msg)
+ {
+-	unsigned long old_rate;
+-	unsigned long parent_rate = 0;
++	long old_rate;
++	long parent_rate = 0;
+ 	struct clk_core *child;
+ 
+ 	lockdep_assert_held(&prepare_lock);
+@@ -1029,9 +1029,9 @@ static void __clk_recalc_rates(struct clk_core *core, unsigned long msg)
+ 		__clk_recalc_rates(child, msg);
+ }
+ 
+-static unsigned long clk_core_get_rate(struct clk_core *core)
++static long clk_core_get_rate(struct clk_core *core)
+ {
+-	unsigned long rate;
++	long rate;
+ 
+ 	clk_prepare_lock();
+ 
+@@ -1052,7 +1052,7 @@ static unsigned long clk_core_get_rate(struct clk_core *core)
+  * is set, which means a recalc_rate will be issued.
+  * If clk is NULL then returns 0.
+  */
+-unsigned long clk_get_rate(struct clk *clk)
++long clk_get_rate(struct clk *clk)
+ {
+ 	if (!clk)
+ 		return 0;
+@@ -1219,10 +1219,10 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+  * take on the rate of its parent.
+  */
+ static int __clk_speculate_rates(struct clk_core *core,
+-				 unsigned long parent_rate)
++				 long parent_rate)
+ {
+ 	struct clk_core *child;
+-	unsigned long new_rate;
++	long new_rate;
+ 	int ret = NOTIFY_DONE;
+ 
+ 	lockdep_assert_held(&prepare_lock);
+@@ -1249,7 +1249,7 @@ out:
+ 	return ret;
+ }
+ 
+-static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
++static void clk_calc_subtree(struct clk_core *core, long new_rate,
+ 			     struct clk_core *new_parent, u8 p_index)
+ {
+ 	struct clk_core *child;
+@@ -1273,14 +1273,14 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+  * changed.
+  */
+ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+-					   unsigned long rate)
++					   long rate)
+ {
+ 	struct clk_core *top = core;
+ 	struct clk_core *old_parent, *parent;
+-	unsigned long best_parent_rate = 0;
+-	unsigned long new_rate;
+-	unsigned long min_rate;
+-	unsigned long max_rate;
++	long best_parent_rate = 0;
++	long new_rate;
++	long min_rate;
++	long max_rate;
+ 	int p_index = 0;
+ 	long ret;
+ 
+@@ -1412,8 +1412,8 @@ static void clk_change_rate(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+ 	struct hlist_node *tmp;
+-	unsigned long old_rate;
+-	unsigned long best_parent_rate = 0;
++	long old_rate;
++	long best_parent_rate = 0;
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
+ 
+@@ -1491,10 +1491,10 @@ static void clk_change_rate(struct clk_core *core)
+ }
+ 
+ static int clk_core_set_rate_nolock(struct clk_core *core,
+-				    unsigned long req_rate)
++				    long req_rate)
+ {
+ 	struct clk_core *top, *fail_clk;
+-	unsigned long rate = req_rate;
++	long rate = req_rate;
+ 	int ret = 0;
+ 
+ 	if (!core)
+@@ -1550,7 +1550,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+  *
+  * Returns 0 on success, -EERROR otherwise.
+  */
+-int clk_set_rate(struct clk *clk, unsigned long rate)
++int clk_set_rate(struct clk *clk, long rate)
+ {
+ 	int ret;
+ 
+@@ -1576,7 +1576,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
++int clk_set_rate_range(struct clk *clk, long min, long max)
+ {
+ 	int ret = 0;
+ 
+@@ -1611,7 +1611,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_range);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_min_rate(struct clk *clk, unsigned long rate)
++int clk_set_min_rate(struct clk *clk, long rate)
+ {
+ 	if (!clk)
+ 		return 0;
+@@ -1627,7 +1627,7 @@ EXPORT_SYMBOL_GPL(clk_set_min_rate);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_max_rate(struct clk *clk, unsigned long rate)
++int clk_set_max_rate(struct clk *clk, long rate)
+ {
+ 	if (!clk)
+ 		return 0;
+@@ -1722,7 +1722,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ {
+ 	int ret = 0;
+ 	int p_index = 0;
+-	unsigned long p_rate = 0;
++	long p_rate = 0;
+ 
+ 	if (!core)
+ 		return 0;
+@@ -2258,7 +2258,7 @@ static int __clk_core_init(struct clk_core *core)
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+ 	struct hlist_node *tmp2;
+-	unsigned long rate;
++	long rate;
+ 
+ 	if (!core)
+ 		return -EINVAL;
+@@ -2347,6 +2347,8 @@ static int __clk_core_init(struct clk_core *core)
+ 					__clk_get_accuracy(core->parent));
+ 	else if (core->parent)
+ 		core->accuracy = core->parent->accuracy;
++	else if ((core->flags & CLK_STATE_IS_QUANTUM))
++		core->accuracy = -EQUANTUM_STATE;
+ 	else
+ 		core->accuracy = 0;
+ 
+@@ -2357,6 +2359,8 @@ static int __clk_core_init(struct clk_core *core)
+ 	 */
+ 	if (core->ops->get_phase)
+ 		core->phase = core->ops->get_phase(core->hw);
++	else if ((core->flags & CLK_STATE_IS_QUANTUM))
++		core->phase = -EQUANTUM_STATE;
+ 	else
+ 		core->phase = 0;
+ 
+@@ -2371,6 +2375,8 @@ static int __clk_core_init(struct clk_core *core)
+ 				clk_core_get_rate_nolock(core->parent));
+ 	else if (core->parent)
+ 		rate = core->parent->rate;
++	else if ((core->flags & CLK_STATE_IS_QUANTUM))
++		rate = -EQUANTUM_STATE;
+ 	else
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
+@@ -2423,7 +2429,7 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 	clk->core = hw->core;
+ 	clk->dev_id = dev_id;
+ 	clk->con_id = con_id;
+-	clk->max_rate = ULONG_MAX;
++	clk->max_rate = LONG_MAX;
+ 
+ 	clk_prepare_lock();
+ 	hlist_add_head(&clk->clks_node, &hw->core->clks);
+@@ -2475,7 +2481,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	core->flags = hw->init->flags;
+ 	core->num_parents = hw->init->num_parents;
+ 	core->min_rate = 0;
+-	core->max_rate = ULONG_MAX;
++	core->max_rate = LONG_MAX;
+ 	hw->core = core;
+ 
+ 	/* allocate local copy in case parent_names is __initdata */
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index da95258..03f96db 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -32,6 +32,10 @@
+ #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
+ #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
++#define CLK_STATE_IS_QUANTUM	BIT(11) /* Clock in a quantum state */
++
++/* Quantum State clock status report for rate, accuracy and phase */
++#define EQUANTUM_STATE		(LONG_MAX)
+ 
+ struct clk;
+ struct clk_hw;
+@@ -667,7 +671,7 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+-unsigned long clk_hw_get_rate(const struct clk_hw *hw);
++long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
+ unsigned long clk_hw_get_flags(const struct clk_hw *hw);
+ bool clk_hw_is_prepared(const struct clk_hw *hw);
+@@ -680,8 +684,8 @@ int __clk_determine_rate(struct clk_hw *core, struct clk_rate_request *req);
+ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
+ 				     struct clk_rate_request *req);
+ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
+-void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+-			   unsigned long max_rate);
++void clk_hw_set_rate_range(struct clk_hw *hw, long min_rate,
++			   long max_rate);
+ 
+ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ {
+@@ -692,7 +696,7 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ /*
+  * FIXME clock api without lock protection
+  */
+-unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
++long clk_hw_round_rate(struct clk_hw *hw, long rate);
+ 
+ struct of_device_id;
+ 
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..1d3ee61 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -74,8 +74,8 @@ struct clk_notifier {
+  */
+ struct clk_notifier_data {
+ 	struct clk		*clk;
+-	unsigned long		old_rate;
+-	unsigned long		new_rate;
++	long		old_rate;
++	long		new_rate;
+ };
+ 
+ /**
+@@ -269,7 +269,7 @@ void clk_disable(struct clk *clk);
+  *		  This is only valid once the clock source has been enabled.
+  * @clk: clock source
+  */
+-unsigned long clk_get_rate(struct clk *clk);
++long clk_get_rate(struct clk *clk);
+ 
+ /**
+  * clk_put	- "free" the clock source
+@@ -322,7 +322,7 @@ void devm_clk_put(struct device *dev, struct clk *clk);
+  *
+  * Returns rounded clock rate in Hz, or negative errno.
+  */
+-long clk_round_rate(struct clk *clk, unsigned long rate);
++long clk_round_rate(struct clk *clk, long rate);
+ 
+ /**
+  * clk_set_rate - set the clock rate for a clock source
+@@ -331,7 +331,7 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_rate(struct clk *clk, unsigned long rate);
++int clk_set_rate(struct clk *clk, long rate);
+ 
+ /**
+  * clk_has_parent - check if a clock is a possible parent for another
+@@ -353,7 +353,7 @@ bool clk_has_parent(struct clk *clk, struct clk *parent);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max);
++int clk_set_rate_range(struct clk *clk, long min, long max);
+ 
+ /**
+  * clk_set_min_rate - set a minimum clock rate for a clock source
+@@ -362,7 +362,7 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_min_rate(struct clk *clk, unsigned long rate);
++int clk_set_min_rate(struct clk *clk, long rate);
+ 
+ /**
+  * clk_set_max_rate - set a maximum clock rate for a clock source
+@@ -371,7 +371,7 @@ int clk_set_min_rate(struct clk *clk, unsigned long rate);
+  *
+  * Returns success (0) or negative errno.
+  */
+-int clk_set_max_rate(struct clk *clk, unsigned long rate);
++int clk_set_max_rate(struct clk *clk, long rate);
+ 
+ /**
+  * clk_set_parent - set the parent clock source for this clock
+@@ -431,17 +431,17 @@ static inline int clk_enable(struct clk *clk)
+ 
+ static inline void clk_disable(struct clk *clk) {}
+ 
+-static inline unsigned long clk_get_rate(struct clk *clk)
++static inline long clk_get_rate(struct clk *clk)
+ {
+ 	return 0;
+ }
+ 
+-static inline int clk_set_rate(struct clk *clk, unsigned long rate)
++static inline int clk_set_rate(struct clk *clk, long rate)
+ {
+ 	return 0;
+ }
+ 
+-static inline long clk_round_rate(struct clk *clk, unsigned long rate)
++static inline long clk_round_rate(struct clk *clk, long rate)
+ {
+ 	return 0;
+ }
 -- 
-2.1.0.27.g96db324
-
+1.9.1
