@@ -1,69 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 30 Mar 2016 14:58:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <shawnguo@kernel.org>
+Date: Fri, 1 Apr 2016 10:25:07 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+	sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+	marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 07/46] clk: pwm: use pwm_get_args() where appropriate
-Message-ID: <20160330215800.GT18567@codeaurora.org>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-8-git-send-email-boris.brezillon@free-electrons.com>
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 15/18] ARM: vf610: PM: initial suspend/resume support
+Message-ID: <20160401022507.GF18833@tiger>
+References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
+ <1457576219-7971-16-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459368249-13241-8-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1457576219-7971-16-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/30, Boris Brezillon wrote:
-> The PWM framework has clarified the concept of reference PWM config
-> (the platform dependent config retrieved from the DT or the PWM
-> lookup table) and real PWM state.
+On Wed, Mar 09, 2016 at 06:16:56PM -0800, Stefan Agner wrote:
+> Add system suspend and resume support for Vybrid SoC. The standby
+> sleep state puts the SoC in STOP mode. The SoC can be woken through
+> an interrupt from GPC (Global Power Controller). The GPC can use any
+> interrupt as wake-up source. To save power the main PLL1 is bypassed
+> and uses the 24MHz on-chip oscillator. However, memory clock need to
+> be at full speed, hence the PLL2 needs to be on to keep the memory
+> clocked. The mode is completely implemented in C since we can access
+> the full memory at all times. The mode provides most power saving
+> while being able to be woken by any IRQ as wake-up source.
 > 
-> Use pwm_get_args() when the PWM user wants to retrieve this reference
-> config and not the current state.
+> The mem sleep state (Suspend-to-RAM) uses Vybrid's LPSTOP2 mode. This
+> mode powergates most parts of the SoC expect some peripherials such as
+> Wake-Up controller (WKPU) or LP RTC. Parts of the internal SRAM is
+> retained too. The suspend code written in assembly runs from this SRAM.
+> The code puts the main memory (DDR3) into self-refresh mode and takes
+> it out of self-refresh mode on resume. Verified with Colibri VF50/VF61
+> V1.2A.
 > 
-> This is part of the rework allowing the PWM framework to support
-> hardware readout and expose real PWM state even when the PWM has
-> just been requested (before the user calls pwm_config/enable/disable()).
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
+>  arch/arm/mach-imx/Makefile        |   3 +
+>  arch/arm/mach-imx/common.h        |  10 +
+>  arch/arm/mach-imx/mach-vf610.c    |   8 +
+>  arch/arm/mach-imx/pm-vf610.c      | 634 ++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-imx/suspend-vf610.S | 437 ++++++++++++++++++++++++++
+>  drivers/clk/imx/clk-vf610.c       |  17 +
+>  6 files changed, 1109 insertions(+)
+>  create mode 100644 arch/arm/mach-imx/pm-vf610.c
+>  create mode 100644 arch/arm/mach-imx/suspend-vf610.S
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+I know this is how we implemented suspend for i.MX6.  But this is not
+the direction moving forward.  When people was pushing a pile of code
+adding suspend for i.MX7D, I refused to take it and asked them to push
+those hardware details into firmware and use PSCI to implement suspend.
+I would like to suggest the same for Vybrid.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Shawn
