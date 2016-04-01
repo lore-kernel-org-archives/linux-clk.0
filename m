@@ -1,41 +1,64 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v2 0/5] Add support for rk818
-Date: Thu, 21 Apr 2016 15:12:34 +0200
-Message-Id: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <k.debski@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+To: 'Boris Brezillon' <boris.brezillon@free-electrons.com>,
+ 'Thierry Reding' <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: 'Mike Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ 'Mark Brown' <broonie@kernel.org>, 'Liam Girdwood' <lgirdwood@gmail.com>,
+ lm-sensors@lm-sensors.org, 'Jean Delvare' <jdelvare@suse.com>,
+ 'Guenter Roeck' <linux@roeck-us.net>,
+ 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>,
+ 'Jacek Anaszewski' <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
+ 'Maxime Ripard' <maxime.ripard@free-electrons.com>,
+ 'Chen-Yu Tsai' <wens@csie.org>, linux-sunxi@googlegroups.com,
+ 'Joachim Eastwood' <manabian@gmail.com>,
+ 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>,
+ 'Heiko Stuebner' <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ 'Jingoo Han' <jingoohan1@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org,
+ 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>,
+ 'Tomi Valkeinen' <tomi.valkeinen@ti.com>,
+ 'Robert Jarzmik' <robert.jarzmik@free.fr>,
+ 'Alexandre Belloni' <alexandre.belloni@free-electrons.com>,
+ 'Kukjin Kim' <kgene@kernel.org>,
+ 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ 'Daniel Vetter' <daniel.vetter@intel.com>,
+ 'Jani Nikula' <jani.nikula@linux.intel.com>,
+ 'Jonathan Corbet' <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ 'David Airlie' <airlied@linux.ie>, 'Daniel Vetter' <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ 'Hartley Sweeten' <hsweeten@visionengravers.com>,
+ 'Ryan Mallon' <rmallon@gmail.com>, 'Alexander Shiyan' <shc_work@mail.ru>,
+ 'Milo Kim' <milo.kim@ti.com>
+References: 
+ <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-36-git-send-email-boris.brezillon@free-electrons.com>
+In-reply-to: 
+ <1459368249-13241-36-git-send-email-boris.brezillon@free-electrons.com>
+Subject: RE: [PATCH v5 35/46] hwmon: pwm-fan: switch to the atomic API
+Date: Fri, 01 Apr 2016 10:29:55 +0200
+Message-id: <00e601d18bf0$acd69150$0683b3f0$@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hopefully, this is the right approach now.
+Hi Boris,
 
-Changes since v1:
-- dropped the renaming of the drivers
-- renamed the rk808 struct in mfd/rk808.h
+From: Boris Brezillon [mailto:boris.brezillon@free-electrons.com]
+Sent: Wednesday, March 30, 2016 10:04 PM
+Subject: [PATCH v5 35/46] hwmon: pwm-fan: switch to the atomic API
+> 
+> pwm_config/enable/disable() have been deprecated and should be replaced
+> by pwm_apply_state().
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Patch 3 is a cosmetic patch for the regulator driver.
+Acked-by: Kamil Debski <k.debski@samsung.com>
 
-Wadim Egorov (7):
-  drivers: mfd: rk808: rename rk808 struct to rk8xx
-  mfd: RK808: Add RK818 support
-  regulator: rk808: Migrate to regulator core's simplified DT parsing
-    code
-  regulator: rk808: Add regulator driver for RK818
-  mfd: dt-bindings: Add RK818 device tree bindings document
-  clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
-  rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
-
- Documentation/devicetree/bindings/mfd/rk808.txt |  37 ++-
- drivers/clk/Kconfig                             |   4 +-
- drivers/clk/clk-rk808.c                         |  20 +-
- drivers/mfd/Kconfig                             |   4 +-
- drivers/mfd/rk808.c                             | 253 +++++++++++---
- drivers/regulator/Kconfig                       |   4 +-
- drivers/regulator/rk808-regulator.c             | 425 +++++++++++++-----------
- drivers/rtc/Kconfig                             |   4 +-
- drivers/rtc/rtc-rk808.c                         |  50 +--
- include/linux/mfd/rk808.h                       | 164 ++++++++-
- 10 files changed, 674 insertions(+), 291 deletions(-)
-
+Best wishes,
 -- 
-1.9.1
+Kamil Debski
+Samsung R&D Institute Poland
