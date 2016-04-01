@@ -1,43 +1,61 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v3 7/8] clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
-Date: Mon, 25 Apr 2016 15:20:47 +0200
-Message-Id: <1461590448-47685-8-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,  linux-clk@vger.kernel.org,  sjan@baylibre.com,  ahaslam@baylibre.com,  abailon@baylibre.com
+Subject: Re: [PATCH 4/5] dt-bindings: clock: add schrodinger clock bindings
+References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+	<1459510635-8204-5-git-send-email-narmstrong@baylibre.com>
+	<20160401161840.23150.64514@quark.deferred.io>
+Date: Fri, 01 Apr 2016 11:27:25 -0700
+In-Reply-To: <20160401161840.23150.64514@quark.deferred.io> (Michael
+	Turquette's message of "Fri, 01 Apr 2016 09:18:40 -0700")
+Message-ID: <7hh9flnq0i.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The RK808 and RK818 PMICs are using a similar register map.
-We can reuse the clk driver for the RK818 PMIC. So let's add
-the RK818 in the Kconfig description.
+Michael Turquette <mturquette@baylibre.com> writes:
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
-Changes since v2:
-- Added Acked-by
----
- drivers/clk/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Quoting Neil Armstrong (2016-04-01 04:37:14)
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  .../devicetree/bindings/clock/schrodinger.txt          | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/schrodinger.txt
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/schrodinger.txt b/Documentation/devicetree/bindings/clock/schrodinger.txt
+>> new file mode 100644
+>> index 0000000..ecb1a51
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/schrodinger.txt
+>> @@ -0,0 +1,18 @@
+>> +Binding for schrodinger Quantum clock sources.
+>> +
+>> +This binding uses the common clock binding[1].
+>> +
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Required properties:
+>> +- compatible : shall be "schrodinger-clock".
+>> +- #clock-cells : from common clock binding; shall be set to 0.
+>> +
+>> +Optional properties:
+>> +- clock-output-names : From common clock binding.
+>> +
+>> +Example:
+>> +       cat {
+>> +               compatible = "schrodinger-clock";
+>> +               #clock-cells = <0>;
+>
+> I know it is out of scope for this series, but I wonder what would
+> constitute a valid status property for the cat node? Should we propose
+> adding "dead" and "alive" values to the status property in ePAPR?
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..64b4daa 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -49,10 +49,10 @@ config COMMON_CLK_MAX77802
- 	  This driver supports Maxim 77802 crystal oscillator clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK808"
-+	tristate "Clock driver for RK808/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK808 crystal oscillator clock. These
-+	  This driver supports RK808 and RK818 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
--- 
-1.9.1
+IMO, "dead" and "alive" could probably be mapped onto "ok" and
+"disabled" without too much confusion.
+
+However, with this series, we will clearly need to add support for
+status = "both".;
+
+Kevin
