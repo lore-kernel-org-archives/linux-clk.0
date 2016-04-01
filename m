@@ -1,82 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51711 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932174AbcDYNDR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 25 Apr 2016 09:03:17 -0400
-Date: Mon, 25 Apr 2016 08:03:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
-	t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH v6 3/7] ARM: dts: am437x/am33xx/da850: Add new ECAP and
- EPWM bindings
-Message-ID: <20160425130308.GA7802@rob-hp-laptop>
-References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
- <1461343238-29274-4-git-send-email-fcooper@ti.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461343238-29274-4-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, linux-clk@vger.kernel.org,
+ sjan@baylibre.com, ahaslam@baylibre.com, abailon@baylibre.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1459510635-8204-5-git-send-email-narmstrong@baylibre.com>
+Cc: "Neil Armstrong" <narmstrong@baylibre.com>
+References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+ <1459510635-8204-5-git-send-email-narmstrong@baylibre.com>
+Message-ID: <20160401161840.23150.64514@quark.deferred.io>
+Subject: Re: [PATCH 4/5] dt-bindings: clock: add schrodinger clock bindings
+Date: Fri, 01 Apr 2016 09:18:40 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 22, 2016 at 11:40:34AM -0500, Franklin S Cooper Jr wrote:
-> Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
-> provide the various required clocks.
-> 
-> For AM437 and AM335x, add the required clocks explicitly to DT. The
-> hwmod entries for ECAP and EPWM will be removed and this will prevent
-> anything from breaking.
-> 
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Quoting Neil Armstrong (2016-04-01 04:37:14)
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->  .../devicetree/bindings/pwm/pwm-tiecap.txt         | 12 +++--
->  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 12 +++--
->  arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
->  arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
->  arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
->  5 files changed, 95 insertions(+), 28 deletions(-)
+>  .../devicetree/bindings/clock/schrodinger.txt          | 18 ++++++++++++=
+++++++
+>  1 file changed, 18 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/schrodinger.t=
+xt
+> =
 
-[...]
+> diff --git a/Documentation/devicetree/bindings/clock/schrodinger.txt b/Do=
+cumentation/devicetree/bindings/clock/schrodinger.txt
+> new file mode 100644
+> index 0000000..ecb1a51
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/schrodinger.txt
+> @@ -0,0 +1,18 @@
+> +Binding for schrodinger Quantum clock sources.
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible : shall be "schrodinger-clock".
+> +- #clock-cells : from common clock binding; shall be set to 0.
+> +
+> +Optional properties:
+> +- clock-output-names : From common clock binding.
+> +
+> +Example:
+> +       cat {
+> +               compatible =3D "schrodinger-clock";
+> +               #clock-cells =3D <0>;
 
-> diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-> index 12fcde4..e858460 100644
-> --- a/arch/arm/boot/dts/am4372.dtsi
-> +++ b/arch/arm/boot/dts/am4372.dtsi
-> @@ -672,18 +672,26 @@
->  			status = "disabled";
->  
->  			ecap0: ecap@48300100 {
-> -				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
-> +				compatible = "ti,am4372-ecap",
+I know it is out of scope for this series, but I wonder what would
+constitute a valid status property for the cat node? Should we propose
+adding "dead" and "alive" values to the status property in ePAPR?
 
-This doesn't appear to be documented.
+Regards,
+Mike
 
-> +					     "ti,am3352-ecap",
-> +					     "ti,am33xx-ecap";
->  				#pwm-cells = <3>;
->  				reg = <0x48300100 0x80>;
->  				ti,hwmods = "ecap0";
-> +				clocks = <&l4ls_gclk>;
-> +				clock-names = "fck";
->  				status = "disabled";
->  			};
->  
->  			ehrpwm0: pwm@48300200 {
-> -				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-> +				compatible = "ti,am4372-ehrpwm",
+> +       };
+> -- =
 
-ditto.
-
-> +					     "ti,am3352-ehrpwm",
-> +					     "ti,am33xx-ehrpwm";
->  				#pwm-cells = <3>;
->  				reg = <0x48300200 0x80>;
->  				ti,hwmods = "ehrpwm0";
-> +				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
-> +				clock-names = "tbclk", "fck";
->  				status = "disabled";
->  			};
->  		};
+> 1.9.1
+>=20
