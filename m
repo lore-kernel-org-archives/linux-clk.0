@@ -1,70 +1,35 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for selecting
- system clocks by ID
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Mark Brown <broonie@kernel.org>
-References: <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io> <56C42BAF.3050900@ti.com>
- <20160217120759.GO7544@sirena.org.uk> <56C4CF8B.5010005@ti.com>
- <5715025C.7070108@ti.com> <20160418162910.GG3217@sirena.org.uk>
- <20160421222911.GE13149@codeaurora.org> <571A106B.8040301@ti.com>
-CC: <alsa-devel@alsa-project.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jyri Sarha
-	<jsarha@ti.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <571A144B.7000203@ti.com>
-Date: Fri, 22 Apr 2016 15:08:43 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:48847 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752681AbcDARGE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 1 Apr 2016 13:06:04 -0400
+Date: Fri, 1 Apr 2016 12:05:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: sunxi: Add sun6i/8i display support
+Message-ID: <20160401170555.GA2962@rob-hp-laptop>
+References: <cover.1459358017.git.moinejf@free.fr>
+ <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
 MIME-Version: 1.0
-In-Reply-To: <571A106B.8040301@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22/04/16 14:52, Peter Ujfalusi wrote:
-> On 04/22/16 01:29, Stephen Boyd wrote:
->>>> The first issue with converting the McASP to use CCF internally for clock
->>>> selection, muxing and rate configuration is that the daVinci platform does not
->>>> use CCF at all. Given that the davinci-mcasp driver is used by daVinci, we
->>>> need to have non CCF way supported in ASoC...
->>>
->>> Well, at least long term we do need daVinci converting to CCF - this is
->>> going to continue to cause problems, devices not part of the SoC can and
->>> do contain clocks and are going to end up being supported via the clock
->>> API.
->>
->> Does anyone here know what's involved in converting daVinci to
->> CCF? It doesn't look too far off from what is in the CCF today,
->> so I'm not sure what's blocking the transition.
->
-> Not entirely sure, but most likely new clk driver(s) for daVinci under
-> drivers/clk/ti/ new set of structures to describe the clocks if the ti_clk* is
-> not applicable I guess for starter. Support for DT, non DT boots as most of
-> daVinci is not booting with DT and most likely never will.
-> It might help to have different daVinci boards for testing the transition. I
-> only have OMAP-L138-evm. I don't think it is enough for testing an entire
-> architecture for this big change...
->
-> Tero might have better estimates on what is involved when switching an
-> architecture to CCF from custom, but at least synchronized API - so we don't
-> need to convert drivers at least.
->
+On Wed, Mar 30, 2016 at 06:43:29PM +0200, Jean-Francois Moine wrote:
+> Add the clock type which is used by the sun6i/8i families for video display.
+> 
+> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
-Davinci is currently a mutant architecture, it is overriding the common 
-clk APIs and using its own. Converting these to CCF may open a can of 
-worms in many ways.
+Acked-by: Rob Herring <robh@kernel.org>
 
-All the clock data should be converted to support CCF, (from 
-arch/arm/mach-davinci/), along with whatever Peter said.
-
-This also in a situation where many/most upstream people don't even have 
-davinci devices... Personally I have a grand total of zero davinci 
-boards on my desk so at least I am unable to work on this right now.
-
--Tero
+>  drivers/clk/sunxi/clk-sunxi.c                     | 38 +++++++++++++++++++++++
+>  2 files changed, 39 insertions(+)
