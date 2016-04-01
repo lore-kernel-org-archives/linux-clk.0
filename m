@@ -1,76 +1,174 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, lee.jones@linaro.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v4 1/7] regulator: rk808: Add rk808_reg_ops_ranges for LDO3
-Date: Tue, 26 Apr 2016 16:54:04 +0200
-Message-Id: <1461682450-22173-2-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
-References: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	sjan@baylibre.com,
+	ahaslam@baylibre.com,
+	abailon@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 2/5] clk: Introduce clk-schrodinger as Quantum clock implementation
+Date: Fri,  1 Apr 2016 13:37:12 +0200
+Message-Id: <1459510635-8204-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-LDO_REG3 descriptor is using linear_ranges.
-Add and use proper ops for LDO_REG3.
+For handling the new quantum physics, add a Quantum clock
+or Schrodingers clock in reference of the great experiment,
+organize a new implementation that describes a simple but
+Logical quantum clock.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/regulator/rk808-regulator.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ drivers/clk/clk-schrodinger.c | 110 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h  |  17 +++++++
+ 2 files changed, 127 insertions(+)
+ create mode 100644 drivers/clk/clk-schrodinger.c
 
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index 67f72fe..6601ab5 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -238,6 +238,21 @@ static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
- 				  sel);
- }
- 
-+static int rk808_set_suspend_voltage_range(struct regulator_dev *rdev, int uv)
+diff --git a/drivers/clk/clk-schrodinger.c b/drivers/clk/clk-schrodinger.c
+new file mode 100644
+index 0000000..14dd329
+--- /dev/null
++++ b/drivers/clk/clk-schrodinger.c
+@@ -0,0 +1,110 @@
++/*
++ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
++ * Copyright (C) 2010-2011 Canonical Ltd <jeremy.kerr@canonical.com>
++ * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Schrodinger's clock implementation
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/err.h>
++#include <linux/of.h>
++
++/*
++ * basic unknown-rate clock that cannot gate
++ *
++ * Traits of this clock:
++ * parent - fixed parent.  No clk_set_parent support
++ */
++
++const struct clk_ops clk_schrodinger_ops = {
++	/* This is the point, since this clock is is in a quantum state,
++	 * any action could lead to a physical degradation of the clock */
++};
++EXPORT_SYMBOL_GPL(clk_schrodinger_ops);
++
++/**
++ * clk_register_schrodinger - register schrodinger clock with the
++ *							   clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @fixed_accuracy: non-adjustable clock rate
++ */
++struct clk *clk_register_schrodinger_with_accuracy(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags)
 +{
-+	unsigned int reg;
-+	int sel = regulator_map_voltage_linear_range(rdev, uv, uv);
++	struct clk_schrodinger *schrodinger;
++	struct clk *clk;
++	struct clk_init_data init;
 +
-+	if (sel < 0)
-+		return -EINVAL;
++	/* allocate schrodinger clock */
++	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
++	if (!fixed)
++		return ERR_PTR(-ENOMEM);
 +
-+	reg = rdev->desc->vsel_reg + RK808_SLP_REG_OFFSET;
++	init.name = name;
++	init.ops = &clk_schrodinger_ops;
++	init.flags = flags | CLK_STATE_IS_QUANTUM;
++	init.parent_names = (parent_name ? &parent_name : NULL);
++	init.num_parents = (parent_name ? 1 : 0);
 +
-+	return regmap_update_bits(rdev->regmap, reg,
-+				  rdev->desc->vsel_mask,
-+				  sel);
++	/* struct clk_schrodinger assignments */
++	fixed->hw.init = &init;
++
++	/* register the clock */
++	clk = clk_register(dev, &fixed->hw);
++	if (IS_ERR(clk))
++		kfree(schrodinger);
++
++	return clk;
 +}
++EXPORT_SYMBOL_GPL(clk_register_schrodinger);
 +
- static int rk808_set_suspend_enable(struct regulator_dev *rdev)
- {
- 	unsigned int reg;
-@@ -288,6 +303,19 @@ static struct regulator_ops rk808_reg_ops = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
++void clk_unregister_schrodinger(struct clk *clk)
++{
++	struct clk_hw *hw;
++
++	hw = __clk_get_hw(clk);
++	if (!hw)
++		return;
++
++	clk_unregister(clk);
++	kfree(to_clk_schrodinger(hw));
++}
++EXPORT_SYMBOL_GPL(clk_unregister_schrodinger);
++
++#ifdef CONFIG_OF
++/**
++ * of_schrodinger_clk_setup() - Setup function for schrodinger clock
++ */
++void of_schrodinger_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	const char *clk_name = node->name;
++	u32 rate;
++	u32 accuracy = 0;
++
++	if (of_property_read_u32(node, "clock-frequency", &rate))
++		return;
++
++	of_property_read_u32(node, "clock-accuracy", &accuracy);
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	clk = clk_register_schrodinger_with_accuracy(NULL, clk_name, NULL,
++						    0, rate, accuracy);
++	if (!IS_ERR(clk))
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++EXPORT_SYMBOL_GPL(of_schrodinger_clk_setup);
++CLK_OF_DECLARE(schrodinger_clk, "schrodinger-clock", of_schrodinger_clk_setup);
++#endif
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 03f96db..4414476 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -269,6 +269,23 @@ struct clk_hw {
+  */
  
-+static struct regulator_ops rk808_reg_ops_ranges = {
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.map_voltage		= regulator_map_voltage_linear_range,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.set_suspend_voltage	= rk808_set_suspend_voltage_range,
-+	.set_suspend_enable	= rk808_set_suspend_enable,
-+	.set_suspend_disable	= rk808_set_suspend_disable,
+ /**
++ * struct clk_schrodinger - schrodinger unknown rate clock
++ * @hw:		handle between common and hardware-specific interfaces
++ */
++struct clk_schrodinger {
++	struct		clk_hw hw;
++	u8		flags;
 +};
 +
- static struct regulator_ops rk808_switch_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
-@@ -383,7 +411,7 @@ static const struct regulator_desc rk808_reg[] = {
- 		.name = "LDO_REG3",
- 		.supply_name = "vcc7",
- 		.id = RK808_ID_LDO3,
--		.ops = &rk808_reg_ops,
-+		.ops = &rk808_reg_ops_ranges,
- 		.type = REGULATOR_VOLTAGE,
- 		.n_voltages = 16,
- 		.linear_ranges = rk808_ldo3_voltage_ranges,
++#define to_clk_schrodinger(_hw) container_of(_hw, struct clk_schrodinger, hw)
++
++extern const struct clk_ops clk_schrodinger_ops;
++struct clk *clk_register_schrodingere(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags);
++void clk_unregister_schrodinger(struct clk *clk);
++void of_schrodinger_clk_setup(struct device_node *np);
++
++/**
+  * struct clk_fixed_rate - fixed-rate clock
+  * @hw:		handle between common and hardware-specific interfaces
+  * @fixed_rate:	constant frequency of clock
 -- 
 1.9.1
