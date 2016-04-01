@@ -1,61 +1,74 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 1/2] clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
-Date: Fri, 29 Apr 2016 17:42:35 +0000
-Message-Id: <1461951756-16804-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
-References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <k.debski@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+To: 'Boris Brezillon' <boris.brezillon@free-electrons.com>,
+ 'Thierry Reding' <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: 'Mike Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ 'Mark Brown' <broonie@kernel.org>, 'Liam Girdwood' <lgirdwood@gmail.com>,
+ lm-sensors@lm-sensors.org, 'Jean Delvare' <jdelvare@suse.com>,
+ 'Guenter Roeck' <linux@roeck-us.net>,
+ 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>,
+ 'Jacek Anaszewski' <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
+ 'Maxime Ripard' <maxime.ripard@free-electrons.com>,
+ 'Chen-Yu Tsai' <wens@csie.org>, linux-sunxi@googlegroups.com,
+ 'Joachim Eastwood' <manabian@gmail.com>,
+ 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>,
+ 'Heiko Stuebner' <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ 'Jingoo Han' <jingoohan1@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org,
+ 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>,
+ 'Tomi Valkeinen' <tomi.valkeinen@ti.com>,
+ 'Robert Jarzmik' <robert.jarzmik@free.fr>,
+ 'Alexandre Belloni' <alexandre.belloni@free-electrons.com>,
+ 'Kukjin Kim' <kgene@kernel.org>,
+ 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ 'Daniel Vetter' <daniel.vetter@intel.com>,
+ 'Jani Nikula' <jani.nikula@linux.intel.com>,
+ 'Jonathan Corbet' <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ 'David Airlie' <airlied@linux.ie>, 'Daniel Vetter' <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ 'Hartley Sweeten' <hsweeten@visionengravers.com>,
+ 'Ryan Mallon' <rmallon@gmail.com>, 'Alexander Shiyan' <shc_work@mail.ru>,
+ 'Milo Kim' <milo.kim@ti.com>
+References: 
+ <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
+In-reply-to: 
+ <1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
+Subject: RE: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args() where
+ appropriate
+Date: Fri, 01 Apr 2016 10:29:57 +0200
+Message-id: <00e701d18bf0$ade6efe0$09b4cfa0$@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Hi Boris,
 
-The bcm2835 firmware enables several clocks and plls before
-booting the linux kernel.
+From: Boris Brezillon [mailto:boris.brezillon@free-electrons.com]
+Sent: Wednesday, March 30, 2016 10:04 PM
+Subject: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args() where
+appropriate
+> 
+> The PWM framework has clarified the concept of reference PWM config (the
+> platform dependent config retrieved from the DT or the PWM lookup table)
+> and real PWM state.
+> 
+> Use pwm_get_args() when the PWM user wants to retrieve this reference
+> config and not the current state.
+> 
+> This is part of the rework allowing the PWM framework to support hardware
+> readout and expose real PWM state even when the PWM has just been
+> requested (before the user calls pwm_config/enable/disable()).
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-These plls should never get disabled as it may result in a
-stopped system clock and more.
+Acked-by: Kamil Debski <k.debski@samsung.com>
 
-So during probing we check if the clock is enabled
-and if it is then mark that clock with CLK_IS_CRITICAL.
-
-As a consequence this will also enable the corresponding
-parent plls and pll-divs.
-
-This is intended as a stop-gap until CLK_ENABLE_HAND_OFF
-becomes available, at which point it should be used instead.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 35f8de7..03b7f01 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1251,6 +1251,14 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
- 	}
- 
-+	/* if the clock is running, then enable CRITICAL */
-+	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
-+		dev_dbg(cprman->dev,
-+			"found firmware enabled clock %s - enabling critical\n",
-+			data->name);
-+		init.flags |= CLK_IS_CRITICAL;
-+	}
-+
- 	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
- 		return NULL;
+Best wishes,
 -- 
-2.1.4
+Kamil Debski
+Samsung R&D Institute Poland
