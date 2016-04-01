@@ -1,216 +1,66 @@
-Return-Path: <marc.zyngier@arm.com>
-Date: Fri, 11 Mar 2016 03:41:37 +0000
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
- kernel@pengutronix.de, sergeimir@emcraft.com, tglx@linutronix.de,
- jason@lakedaemon.net, robh+dt@kernel.org, pawel.moll@arm.com,
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 31 Mar 2016 23:40:42 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kernel@pengutronix.de,
+ sergeimir@emcraft.com, tglx@linutronix.de, jason@lakedaemon.net,
+ marc.zyngier@arm.com, robh+dt@kernel.org, pawel.moll@arm.com,
  mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/18] irqchip: vf610-gpc: add Vybrid GPC IRQ controller
-Message-ID: <20160311034137.169f22ae@arm.com>
-In-Reply-To: <1457576219-7971-2-git-send-email-stefan@agner.ch>
+Subject: Re: [PATCH 15/18] ARM: vf610: PM: initial suspend/resume support
+In-Reply-To: <20160401022507.GF18833@tiger>
 References: <1457576219-7971-1-git-send-email-stefan@agner.ch>
-	<1457576219-7971-2-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+ <1457576219-7971-16-git-send-email-stefan@agner.ch>
+ <20160401022507.GF18833@tiger>
+Message-ID: <f8da1f10269809cd07dfdda9f43a5dbf@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed,  9 Mar 2016 18:16:42 -0800
-Stefan Agner <stefan@agner.ch> wrote:
-
-Hi Stefan,
-
-> This patch introduces a driver for Vybrids GPC (Global Power
-> Controller). Vybrids GPC IP is simpler than the one found in
-> i.MX 6: There is no power gating control (GPC) and the GPC INTC
-> does not need to clear IRQ masks for an interrupt to get routed
-> to the GIC (the mask only applys for wake-up control).
+On 2016-03-31 19:25, Shawn Guo wrote:
+> On Wed, Mar 09, 2016 at 06:16:56PM -0800, Stefan Agner wrote:
+>> Add system suspend and resume support for Vybrid SoC. The standby
+>> sleep state puts the SoC in STOP mode. The SoC can be woken through
+>> an interrupt from GPC (Global Power Controller). The GPC can use any
+>> interrupt as wake-up source. To save power the main PLL1 is bypassed
+>> and uses the 24MHz on-chip oscillator. However, memory clock need to
+>> be at full speed, hence the PLL2 needs to be on to keep the memory
+>> clocked. The mode is completely implemented in C since we can access
+>> the full memory at all times. The mode provides most power saving
+>> while being able to be woken by any IRQ as wake-up source.
+>>
+>> The mem sleep state (Suspend-to-RAM) uses Vybrid's LPSTOP2 mode. This
+>> mode powergates most parts of the SoC expect some peripherials such as
+>> Wake-Up controller (WKPU) or LP RTC. Parts of the internal SRAM is
+>> retained too. The suspend code written in assembly runs from this SRAM.
+>> The code puts the main memory (DDR3) into self-refresh mode and takes
+>> it out of self-refresh mode on resume. Verified with Colibri VF50/VF61
+>> V1.2A.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>  arch/arm/mach-imx/Makefile        |   3 +
+>>  arch/arm/mach-imx/common.h        |  10 +
+>>  arch/arm/mach-imx/mach-vf610.c    |   8 +
+>>  arch/arm/mach-imx/pm-vf610.c      | 634 ++++++++++++++++++++++++++++++++++++++
+>>  arch/arm/mach-imx/suspend-vf610.S | 437 ++++++++++++++++++++++++++
+>>  drivers/clk/imx/clk-vf610.c       |  17 +
+>>  6 files changed, 1109 insertions(+)
+>>  create mode 100644 arch/arm/mach-imx/pm-vf610.c
+>>  create mode 100644 arch/arm/mach-imx/suspend-vf610.S
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/irqchip/Makefile        |   1 +
->  drivers/irqchip/irq-vf610-gpc.c | 138 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 139 insertions(+)
->  create mode 100644 drivers/irqchip/irq-vf610-gpc.c
-> 
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index 18caacb..0a77ac6 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -45,6 +45,7 @@ obj-$(CONFIG_TS4800_IRQ)		+= irq-ts4800.o
->  obj-$(CONFIG_XTENSA)			+= irq-xtensa-pic.o
->  obj-$(CONFIG_XTENSA_MX)			+= irq-xtensa-mx.o
->  obj-$(CONFIG_IRQ_CROSSBAR)		+= irq-crossbar.o
-> +obj-$(CONFIG_SOC_VF610)			+= irq-vf610-gpc.o
->  obj-$(CONFIG_SOC_VF610)			+= irq-vf610-mscm-ir.o
->  obj-$(CONFIG_BCM7038_L1_IRQ)		+= irq-bcm7038-l1.o
->  obj-$(CONFIG_BCM7120_L2_IRQ)		+= irq-bcm7120-l2.o
-> diff --git a/drivers/irqchip/irq-vf610-gpc.c b/drivers/irqchip/irq-vf610-gpc.c
-> new file mode 100644
-> index 0000000..2c6a043
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-vf610-gpc.c
-> @@ -0,0 +1,138 @@
-> +/*
-> + * Copyright (C) 2016 Toradex AG
-> + * Author: Stefan Agner <stefan@agner.ch>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + *
-> + * The GPC (General Power Controller) irqchip driver takes care of the
-> + * interrupt wakeup functionality.
-> + *
-> + * o All peripheral interrupts of the Vybrid SoC can be used as wakeup
-> + *   source from STOP mode. In LPSTOP mode however, the GPC is unpowered
-> + *   too and cannot be used to as a wakeup source. The WKPU (Wakeup Unit)
-> + *   is responsible for wakeups from LPSTOP modes.
-> + */
-> +
-> +#include <linux/cpu_pm.h>
-> +#include <linux/io.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/regmap.h>
-> +
-> +#define IMR_NUM			4
-> +#define VF610_GPC_IMR1		0x044
-> +#define VF610_GPC_MAX_IRQS	(IMR_NUM * 32)
-> +
-> +static void __iomem *gpc_base;
-> +
-> +static int vf610_gpc_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +	unsigned int idx = d->hwirq / 32;
-> +	void __iomem *reg_imr = gpc_base + VF610_GPC_IMR1 + (idx * 4);
-> +	u32 mask = 1 << d->hwirq % 32;
-> +
-> +	if (on)
-> +		writel_relaxed(readl_relaxed(reg_imr) & ~mask, reg_imr);
-> +	else
-> +		writel_relaxed(readl_relaxed(reg_imr) | mask, reg_imr);
-> +
-> +	/*
-> +	 * Do *not* call into the parent, as the GIC doesn't have any
-> +	 * wake-up facility...
-> +	 */
-> +	return 0;
-> +}
-> +
-> +static struct irq_chip vf610_gpc_chip = {
-> +	.name			= "vf610-gpc",
-> +	.irq_mask		= irq_chip_mask_parent,
-> +	.irq_unmask		= irq_chip_unmask_parent,
-> +	.irq_enable		= irq_chip_enable_parent,
-> +	.irq_disable		= irq_chip_disable_parent,
+> I know this is how we implemented suspend for i.MX6.  But this is not
+> the direction moving forward.  When people was pushing a pile of code
+> adding suspend for i.MX7D, I refused to take it and asked them to push
+> those hardware details into firmware and use PSCI to implement suspend.
+> I would like to suggest the same for Vybrid.
 
-Any reason why you are providing enable/disable methods? This driver
-seems to be GIC specific (various comments in the code), but the GIC
-doesn't implement those.
+Yeah I saw your comment on the i.MX7D patchset, and kind of hoped it
+does not apply for Vybrid :-)
 
-> +	.irq_eoi		= irq_chip_eoi_parent,
-> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-> +	.irq_set_wake		= vf610_gpc_irq_set_wake,
-> +};
-> +
-> +static int vf610_gpc_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> +				  unsigned int nr_irqs, void *arg)
-> +{
-> +	int i;
-> +	irq_hw_number_t hwirq;
-> +	struct irq_fwspec *fwspec = arg;
-> +	struct irq_fwspec parent_fwspec;
-> +
-> +	if (!irq_domain_get_of_node(domain->parent))
-> +		return -EINVAL;
-> +
-> +	if (fwspec->param_count != 2)
-> +		return -EINVAL;
-> +
-> +	hwirq = fwspec->param[0];
-> +	for (i = 0; i < nr_irqs; i++)
-> +		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-> +					      &vf610_gpc_chip, NULL);
-> +
-> +	parent_fwspec = *fwspec;
+I see, need to look into PSCI closer, and see how much work it would be
+to set that up and transfer the code into it...
 
-Now I'm confused. The next irqchip in the hierarchy cannot be the GIC,
-because that's the wrong fwspec format (the GIC expect 3 parameters).
-Glancing at patch #2, I can see that this points to the mscm, so maybe
-it is that the comments are just wrong?
-
-> +	parent_fwspec.fwnode = domain->parent->fwnode;
-> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
-> +					    &parent_fwspec);
-> +}
-> +
-> +static int vf610_gpc_domain_translate(struct irq_domain *d,
-> +					  struct irq_fwspec *fwspec,
-> +					  unsigned long *hwirq,
-> +					  unsigned int *type)
-> +{
-> +	if (WARN_ON(fwspec->param_count < 2))
-> +		return -EINVAL;
-> +	*hwirq = fwspec->param[0];
-> +	*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
-> +	return 0;
-> +}
-> +
-> +static const struct irq_domain_ops gpc_irq_domain_ops = {
-> +	.translate = vf610_gpc_domain_translate,
-> +	.alloc = vf610_gpc_domain_alloc,
-> +	.free = irq_domain_free_irqs_common,
-> +};
-> +
-> +static int __init vf610_gpc_of_init(struct device_node *node,
-> +			       struct device_node *parent)
-> +{
-> +	struct irq_domain *domain, *domain_parent;
-> +	int i;
-> +
-> +	domain_parent = irq_find_host(parent);
-> +	if (!domain_parent) {
-> +		pr_err("vf610_gpc: interrupt-parent not found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	gpc_base = of_io_request_and_map(node, 0, "gpc");
-> +	if (WARN_ON(!gpc_base))
-> +		return PTR_ERR(gpc_base);
-
-If gpc_base is NULL, PTR_ERR(NULL) returns 0. Probably not what you
-want here...
-
-> +
-> +	domain = irq_domain_add_hierarchy(domain_parent, 0, VF610_GPC_MAX_IRQS,
-> +					  node, &gpc_irq_domain_ops, NULL);
-> +	if (!domain) {
-> +		iounmap(gpc_base);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Initially mask all interrupts for wakeup */
-> +	for (i = 0; i < IMR_NUM; i++)
-> +		writel_relaxed(~0, gpc_base + VF610_GPC_IMR1 + i * 4);
-> +
-> +	return 0;
-> +}
-> +IRQCHIP_DECLARE(vf610_gpc, "fsl,vf610-gpc", vf610_gpc_of_init);
-
-It would be good to have some binding documentation as well.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny.
+--
+Stefan
