@@ -1,67 +1,136 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40504 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753394AbcDJP0G (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 11:26:06 -0400
-Date: Sun, 10 Apr 2016 02:40:55 -0700
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: sunxi: Add sun6i/8i display support
-Message-ID: <20160410094055.GW4227@lukather>
-References: <cover.1459358017.git.moinejf@free.fr>
- <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:36560 "EHLO
+	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751212AbcDBKpx (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2016 06:45:53 -0400
+Received: by mail-lf0-f48.google.com with SMTP id g184so30704088lfb.3
+        for <linux-clk@vger.kernel.org>; Sat, 02 Apr 2016 03:45:52 -0700 (PDT)
+Subject: Re: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
+ <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
+ <20160402005045.GX18567@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <56FFA2D5.4060603@baylibre.com>
+Date: Sat, 2 Apr 2016 12:45:41 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1PHmS26pdpOR3Xc0"
-In-Reply-To: <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
+In-Reply-To: <20160402005045.GX18567@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/02/2016 02:50 AM, Stephen Boyd wrote:
+>> +
+>> +/* Bit - Name association */
+>> +static const struct clk_init_data *clk_oxnas_init[] = {
+>> +	[0] = &clk_leon_init,
+>> +	[1] = &clk_dma_sgdma_init,
+>> +	[2] = &clk_cipher_init,
+>> +	[3] = NULL,		/* Do not touch to DDR clock */
+> 
+> Why do we have this here then? The dt binding has different
+> numbers, so having this array with a hole in it seems fragile
+> when we're using the order of this array to map to the clk
+> indices.
 
---1PHmS26pdpOR3Xc0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-On Wed, Mar 30, 2016 at 06:43:29PM +0200, Jean-Francois Moine wrote:
-> Add the clock type which is used by the sun6i/8i families for video displ=
-ay.
->=20
-> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+I skipped the DDR clock since it must be touched in any case, I could have introduced a read-only clock....
 
-Applied, thanks
+I already posted an arm-soc dts pull request with the DTSI using the bindings indices.
+Here the array indice is the register bit index, maybe I can order by bindings indice and add the hardware bit in an intermediate structure ?
 
-Maxime
+>> +	clk_oxnas = devm_kzalloc(&pdev->dev,
+>> +				 sizeof(*clk_oxnas)*ARRAY_SIZE(clk_oxnas_init),
+>> +				 GFP_KERNEL);
+> 
+> devm_kcalloc()?
+> 
+>> +	if (!clk_oxnas)
+>> +		return -ENOMEM;
+>> +
+>> +	clks = devm_kzalloc(&pdev->dev,
+>> +			    sizeof(*clks)*ARRAY_SIZE(clk_oxnas_init),
+>> +			    GFP_KERNEL);
+> 
+> devm_kcalloc()? This can be one smaller because DDR is never
+> touched?
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Sure
+> 
+>> +	if (!clks)
+>> +		return -ENOMEM;
+>> +
+>> +	onecell_data = devm_kzalloc(&pdev->dev, sizeof(*onecell_data),
+>> +				     GFP_KERNEL);
+> 
+> Maybe we should have one structure that we allocate all at once?
+> 
+>> +	if (!onecell_data)
+>> +		return -ENOMEM;
+>> +
+>> +	regmap = syscon_node_to_regmap(of_get_parent(np));
+> 
+> Can we use dev_get_regmap(&pdev->dev.parent) here instead? I'd
+> prefer device APIs over DT APIs here. 
 
---1PHmS26pdpOR3Xc0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Ok
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>> +	if (!regmap) {
+>> +		dev_err(&pdev->dev, "failed to have parent regmap\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
+>> +		struct clk_oxnas *_clk;
+>> +
+>> +		if (!clk_oxnas_init[i])
+>> +			continue;
+>> +
+>> +		_clk = &clk_oxnas[i];
+>> +		_clk->bit = i;
+> 
+> Ah I see now, the order is used to encode bit offset. The comment
+> above the init data array could be expanded a bit then please.
+Sure it need clarifications !
 
-iQIcBAEBAgAGBQJXCh+nAAoJEBx+YmzsjxAgyMkQAJgnteTTnvQ75xLENAMFDzBs
-J8xDCorbQbt76y/EzPNGppTFJCZTGVDLpHmlCQH8Mm6CaKjHYH4S2auqrVt6ItQS
-qMOGO1ALw7Dcxu2L4ItbtELifOOOHOTFiQSL1fYKvtuJ3eWkwcApLQ4HsONHofTw
-t1NTqChMb4b3nJj78MT2JD2D0ZrqZepaDna/LN0n4Fz00qpWdtHdX6IUbidebDLK
-XyZ1fsqi79dOOKcIew8ELym+HYZHYErv3wH26LaQQqhi6MK8iihLSnFEuSWxDd5/
-mqmd9xIPppwrcYv9W9074nWUk/iyFmHi9KkesA+yuXrO3vn5/TVmkz5mqgZ2tWLi
-ItvjKNMIsnmQqfpePev9NTHYva/bOocI7HX0SwZwBgH6Ba0sH9fNfNvGcGZRltRR
-FLb1CxaSHZrzpxRmkUvl8Z2PTw2rl1fQ7Q8mB5ZrFFfvKcVEkL3STbeRkxI6giPU
-zv0R+XIY07ORlWhxpsUdPK525T8resQsJgL0BG4T1gCw4vYzjUWrtHLiXWW5G2Dq
-j8NwN4jmDVqnItnRTSI/XEymDMa82TRXYEIMOMF6XGSsc4eF4i6NUNLL4VKPPVhL
-V+YnfUtU2mz/qm3wjfKiem8lhEjiySySTo0+KxOUz7zmqZWlLIiJ/YdVj68popsq
-ci3eJiLFSSCygJhO5/Ra
-=IGOm
------END PGP SIGNATURE-----
+> 
+>> +		_clk->hw.init = clk_oxnas_init[i];
+>> +		_clk->regmap = regmap;
+>> +
+>> +		clks[clks_count] = devm_clk_register(&pdev->dev, &_clk->hw);
+>> +		if (WARN_ON(IS_ERR(clks[clks_count])))
+>> +			return PTR_ERR(clks[clks_count]);
+>> +
+>> +		++clks_count;
+>> +	}
+>> +
+>> +	onecell_data->clks = clks;
+>> +	onecell_data->clk_num = clks_count;
+>> +
+>> +	return of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
+>> +}
+>> +
+>> +static const struct of_device_id oxnas_stdclk_dt_ids[] = {
+>> +	{ .compatible = "oxsemi,ox810se-stdclk" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
+>> +
+>> +static struct platform_driver oxnas_stdclk_driver = {
+>> +	.probe = oxnas_stdclk_probe,
+>> +	.remove = oxnas_stdclk_remove,
+>> +	.driver	= {
+>> +		.name = "oxnas-stdclk",
+>> +		.of_match_table = of_match_ptr(oxnas_stdclk_dt_ids),
+> 
+> You can drop of_match_ptr() here, it will just lead to unused
+> variable warnings.
 
---1PHmS26pdpOR3Xc0--
+OK, thanks for the review, I hope the next post will go throught 4.7 !
+
+Regards,
+Neil
+
