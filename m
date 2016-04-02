@@ -1,85 +1,170 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
- <20160415234631.GB4690@codeaurora.org> <5714B763.8010109@synopsys.com>
- <5714C9BA.8040004@synopsys.com>
-CC: Jose Abreu <Jose.Abreu@synopsys.com>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-snps-arc@lists.infradead.org>,
-	<CARLOS.PALMINHA@synopsys.com>, <Alexey.Brodkin@synopsys.com>,
-	<mturquette@baylibre.com>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Message-ID: <5715F6AC.7090501@synopsys.com>
-Date: Tue, 19 Apr 2016 10:13:16 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33799 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754928AbcDBAus (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2016 20:50:48 -0400
+Date: Fri, 1 Apr 2016 17:50:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
+Message-ID: <20160402005045.GX18567@codeaurora.org>
+References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
+ <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <5714C9BA.8040004@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vineet,
+On 04/01, Neil Armstrong wrote:
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 16f7d33..2efdbab 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -197,6 +197,12 @@ config COMMON_CLK_PXA
+>  	---help---
+>  	  Support for the Marvell PXA SoC.
+>  
+> +config COMMON_CLK_OXNAS
+> +	bool
 
+Please add some text in quotes here so that this is user visible.
 
-On 18-04-2016 12:49, Vineet Gupta wrote:
-> On Monday 18 April 2016 04:00 PM, Jose Abreu wrote:
->>>> +	if (readl((void *)FPGA_VER_INFO) <= FPGA_VER_27M) {
->>>> Please don't readl directly from addresses. I think I mentioned
->>>> that before and didn't get back to you when you replied asking
->>>> for other solutions. I still think a proper DT is in order
->>>> instead of doing this check for ref_clk.
->> I think that the DT approach would be better but I also think that using two DT
->> files with only one change between them is not viable. I can see some alternatives:
->>     1) Pass the region of FPGA version in reg field of DT so that writel is not
->> directly used;
->>     2) Create a dummy parent clock driver that reads from FPGA version register
->> and returns the rate;
->>     3) Last resort: Use two DT files for each FPGA version.
->>
->> @Vineet, @Alexey: Can you give some suggestions?
->>
->> Some background:
->> We are expecting a new firmware release for the AXS board that will change the
->> reference clock value of the I2S PLL from 27MHz to 28.224MHz. Due to this change
->> the dividers of this PLL will change. Right now I am directly reading from the
->> FPGA version register but Stephen suggested to use a DT approach so that this
->> rate is declared as parent clock. This would be a good solution but would
->> require the usage of two different DT files (one for the current firmware and
->> another for the new firmware), which I think is not ideal. What is your opinion?
->> Some other solutions are listed above.
-> Consider this my ignorance of clk drivers, what exactly is the problem with that
-> readl() for FPGA ver. Having 2 versions of DT is annoyance for sure, but the
-> bigger headache is that it still won't help cases of users mixing and matching
-> boards and DT. IMO this runtime check is pretty nice and will support both types
-> of boards with exact same code/DT !
->
-> FWIW, both solutions #1 and #3 seem to imply a different DT - no ?
+> +	select MFD_SYSCON
+> +	---help---
+> +	  Support for the OXNAS SoC Family clocks.
+> +
+> diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+> new file mode 100644
+> index 0000000..5f02cfa
+> --- /dev/null
+> +++ b/drivers/clk/clk-oxnas.c
+> @@ -0,0 +1,202 @@
+> +
+> +/* Clk init data declaration */
+> +DECLARE_STD_CLK(leon);
+> +DECLARE_STD_CLK(dma_sgdma);
+> +DECLARE_STD_CLK(cipher);
+> +DECLARE_STD_CLK(sata);
+> +DECLARE_STD_CLK(audio);
+> +DECLARE_STD_CLK(usbmph);
+> +DECLARE_STD_CLKP(etha, eth_parents);
+> +DECLARE_STD_CLK(pciea);
+> +DECLARE_STD_CLK(nand);
+> +
+> +/* Bit - Name association */
+> +static const struct clk_init_data *clk_oxnas_init[] = {
+> +	[0] = &clk_leon_init,
+> +	[1] = &clk_dma_sgdma_init,
+> +	[2] = &clk_cipher_init,
+> +	[3] = NULL,		/* Do not touch to DDR clock */
 
-Solution 1 only requires that the FPGA version register is declared in the DT,
-something like this:
-    i2s_clock@100a0 {
-        compatible = "snps,axs10x-i2s-pll-clock";
-        reg = <0x100a0 0x10 0x11230 0x04>;
-        #clock-cells = <0>;
-    };
+Why do we have this here then? The dt binding has different
+numbers, so having this array with a hole in it seems fragile
+when we're using the order of this array to map to the clk
+indices.
 
-And then the region is io-remapped. This solution would discard the direct readl
-from the address and would still be compatible with the different firmwares
-using the same DT.
+> +	[4] = &clk_sata_init,
+> +	[5] = &clk_audio_init,
+> +	[6] = &clk_usbmph_init,
+> +	[7] = &clk_etha_init,
+> +	[8] = &clk_pciea_init,
+> +	[9] = &clk_nand_init,
+> +};
+> +
+> +static int oxnas_stdclk_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct regmap *regmap;
+> +	struct clk_oxnas *clk_oxnas;
+> +	struct clk_onecell_data *onecell_data;
+> +	struct clk **clks;
+> +	unsigned int clks_count = 0;
+> +	int i;
+> +
+> +	clk_oxnas = devm_kzalloc(&pdev->dev,
+> +				 sizeof(*clk_oxnas)*ARRAY_SIZE(clk_oxnas_init),
+> +				 GFP_KERNEL);
 
-Solution 3 is the alternative that Stephen suggested which requires two
-different DT's.
+devm_kcalloc()?
 
->
-> And I really don't see how #2 makes things more elegant/abstracted w.r.t clk
-> framework ?
+> +	if (!clk_oxnas)
+> +		return -ENOMEM;
+> +
+> +	clks = devm_kzalloc(&pdev->dev,
+> +			    sizeof(*clks)*ARRAY_SIZE(clk_oxnas_init),
+> +			    GFP_KERNEL);
 
-Yes, solution 2 is more of a workaround and is not the best by far.
+devm_kcalloc()? This can be one smaller because DDR is never
+touched?
 
->
-> So I prefer what you had before.
-> -Vineet
+> +	if (!clks)
+> +		return -ENOMEM;
+> +
+> +	onecell_data = devm_kzalloc(&pdev->dev, sizeof(*onecell_data),
+> +				     GFP_KERNEL);
 
-@Stephen: can you give some input so that I can submit a v6?
+Maybe we should have one structure that we allocate all at once?
 
-Best regards,
-Jose Miguel Abreu
+> +	if (!onecell_data)
+> +		return -ENOMEM;
+> +
+> +	regmap = syscon_node_to_regmap(of_get_parent(np));
+
+Can we use dev_get_regmap(&pdev->dev.parent) here instead? I'd
+prefer device APIs over DT APIs here. 
+
+> +	if (!regmap) {
+> +		dev_err(&pdev->dev, "failed to have parent regmap\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
+> +		struct clk_oxnas *_clk;
+> +
+> +		if (!clk_oxnas_init[i])
+> +			continue;
+> +
+> +		_clk = &clk_oxnas[i];
+> +		_clk->bit = i;
+
+Ah I see now, the order is used to encode bit offset. The comment
+above the init data array could be expanded a bit then please.
+
+> +		_clk->hw.init = clk_oxnas_init[i];
+> +		_clk->regmap = regmap;
+> +
+> +		clks[clks_count] = devm_clk_register(&pdev->dev, &_clk->hw);
+> +		if (WARN_ON(IS_ERR(clks[clks_count])))
+> +			return PTR_ERR(clks[clks_count]);
+> +
+> +		++clks_count;
+> +	}
+> +
+> +	onecell_data->clks = clks;
+> +	onecell_data->clk_num = clks_count;
+> +
+> +	return of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
+> +}
+> +
+> +static const struct of_device_id oxnas_stdclk_dt_ids[] = {
+> +	{ .compatible = "oxsemi,ox810se-stdclk" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
+> +
+> +static struct platform_driver oxnas_stdclk_driver = {
+> +	.probe = oxnas_stdclk_probe,
+> +	.remove = oxnas_stdclk_remove,
+> +	.driver	= {
+> +		.name = "oxnas-stdclk",
+> +		.of_match_table = of_match_ptr(oxnas_stdclk_dt_ids),
+
+You can drop of_match_ptr() here, it will just lead to unused
+variable warnings.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
