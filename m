@@ -1,48 +1,70 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] clk: renesas: mstp: Provide dummy attach/detach_dev callbacks
-Date: Wed, 13 Apr 2016 16:44:16 +0200
-Message-Id: <1460558657-10128-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
-References: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Apr 2016 18:27:31 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 3/5] clk: mvebu: new driver for Armada AP806 system
+ controller
+Message-ID: <20160402012731.GE18567@codeaurora.org>
+References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1459070777-18049-4-git-send-email-thomas.petazzoni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1459070777-18049-4-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Provide dummy cpg_mstp_{at,de}tach_dev() PM Domain callbacks if CPG/MSTP
-support is not included, so the rcar-sysc driver won't have to care
-about this.
+On 03/27, Thomas Petazzoni wrote:
+> diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+> new file mode 100644
+> index 0000000..c33c209
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/ap806-system-controller.c
+> @@ -0,0 +1,106 @@
+> +
+> +#define pr_fmt(fmt) "ap806-system-controller: " fmt
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/clk.h>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- include/linux/clk/renesas.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Is this used?
 
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 095b1681daf46faf..ab57a298a3740c5c 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -25,7 +25,12 @@ void r8a7779_clocks_init(u32 mode);
- void rcar_gen2_clocks_init(u32 mode);
- 
- void cpg_mstp_add_clk_domain(struct device_node *np);
-+#ifdef CONFIG_CLK_RENESAS_CPG_MSTP
- int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
- void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev);
-+#else
-+#define cpg_mstp_attach_dev	NULL
-+#define cpg_mstp_detach_dev	NULL
-+#endif
- 
- #endif
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+
+Is this used?
+
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/regmap.h>
+> +
+> +#define AP806_SAR_REG			0x400
+> +#define AP806_SAR_CLKFREQ_MODE_MASK	0x1f
+> +
+> +#define AP806_CLK_NUM 			4
+> +
+> +static struct clk *ap806_clks[AP806_CLK_NUM];
+> +
+> +static struct clk_onecell_data ap806_clk_data = {
+> +	.clks = ap806_clks,
+> +	.clk_num = AP806_CLK_NUM,
+> +};
+> +
+> +static void __init ap806_syscon_clk_init(struct device_node *np)
+
+Can this be a platform driver instead?
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
