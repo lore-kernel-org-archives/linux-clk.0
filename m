@@ -1,266 +1,158 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 17:40:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
-	olof@lixom.net, xuwei5@hisilicon.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
-	yanghongwei@hisilicon.com, suwenping@hisilicon.com,
-	raojun@hisilicon.com, ml.yang@hisilicon.com, gaofei@hisilicon.com,
-	zhangzhenxing@hisilicon.com,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: Re: [RESEND PATCH v10 2/6] clk: hisilicon: add CRG driver for hi3519
- soc
-Message-ID: <20160416004055.GN26353@codeaurora.org>
-References: <1459411811-12390-1-git-send-email-xuejiancheng@hisilicon.com>
- <1459411811-12390-3-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 4 Apr 2016 17:20:48 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args() where
+ appropriate
+Message-ID: <20160404152048.GA17856@ulmo>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
+ <20160330225244.GA24044@roeck-us.net>
+ <20160331090709.5c3bdf70@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459411811-12390-3-git-send-email-xuejiancheng@hisilicon.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+In-Reply-To: <20160331090709.5c3bdf70@bbrezillon>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/31, Jiancheng Xue wrote:
-> diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
-> new file mode 100644
-> index 0000000..ee9df82
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/clk-hi3519.c
-> @@ -0,0 +1,129 @@
-> +/*
-> + * Hi3519 Clock Driver
-> + *
-> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <dt-bindings/clock/hi3519-clock.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
 
-Please include <linux/clk-provider.h> here.
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +#include "clk.h"
-> +#include "reset.h"
-> +
-> +#define HI3519_INNER_CLK_OFFSET	64
-> +#define HI3519_FIXED_24M	65
-> +#define HI3519_FIXED_50M	66
-> +#define HI3519_FIXED_75M	67
-> +#define HI3519_FIXED_125M	68
-> +#define HI3519_FIXED_150M	69
-> +#define HI3519_FIXED_200M	70
-> +#define HI3519_FIXED_250M	71
-> +#define HI3519_FIXED_300M	72
-> +#define HI3519_FIXED_400M	73
-> +#define HI3519_FMC_MUX		74
-> +
-> +#define HI3519_NR_CLKS		128
-> +
-> +static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
-> +	{ HI3519_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
-> +	{ HI3519_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
-> +	{ HI3519_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
-> +	{ HI3519_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
-> +	{ HI3519_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
-> +	{ HI3519_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
-> +	{ HI3519_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
-> +	{ HI3519_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
-> +	{ HI3519_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
+On Thu, Mar 31, 2016 at 09:07:09AM +0200, Boris Brezillon wrote:
+> Hi Guenter,
+>=20
+> On Wed, 30 Mar 2016 15:52:44 -0700
+> Guenter Roeck <linux@roeck-us.net> wrote:
+>=20
+> > On Wed, Mar 30, 2016 at 10:03:31PM +0200, Boris Brezillon wrote:
+> > > The PWM framework has clarified the concept of reference PWM config
+> > > (the platform dependent config retrieved from the DT or the PWM
+> > > lookup table) and real PWM state.
+> > >=20
+> > > Use pwm_get_args() when the PWM user wants to retrieve this reference
+> > > config and not the current state.
+> > >=20
+> > > This is part of the rework allowing the PWM framework to support
+> > > hardware readout and expose real PWM state even when the PWM has
+> > > just been requested (before the user calls pwm_config/enable/disable(=
+)).
+> > >=20
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > ---
+> > >  drivers/hwmon/pwm-fan.c | 19 +++++++++++++------
+> > >  1 file changed, 13 insertions(+), 6 deletions(-)
+> > >=20
+> > > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> > > index 3e23003..82c5656 100644
+> > > --- a/drivers/hwmon/pwm-fan.c
+> > > +++ b/drivers/hwmon/pwm-fan.c
+> > > @@ -40,15 +40,18 @@ struct pwm_fan_ctx {
+> > > =20
+> > >  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+> > >  {
+> > > +	struct pwm_args pargs =3D { };
+> >=20
+> > Hi Boris,
+> >=20
+> > I guess I am missing some context; sorry for that. Unfortunately,
+> > I did not easily find an explanation, so please bear with me.
+> >=20
+> > Two questions: Why do we need a local copy of struct pwm_args instead
+> > of a pointer to it ? If it can change while being used, isn't it
+> > inconsistent anyway ?
+>=20
+> It cannot change after pwm_get() is called. For the reason behind
+> prototype: I just followed the Thierry's proposal, but I'm perfectly
+> fine returning a const struct pwm_args pointer intead of passing
+> pwm_args as a parameter.
+>=20
+> Thierry, what's your opinion?
 
-CLK_IS_ROOT is dead. Please remove it.
+I do prefer the current variant because it is more consistent with the
+new atomic API, even if not strictly necessary because of the immutable
+data.
 
-> +};
-> +
-> +static const char *const fmc_mux_p[] = {
-> +		"24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m", };
-> +static u32 fmc_mux_table[] = {0, 1, 2, 3, 4, 5, 6, 7};
-> +
-> +static const struct hisi_mux_clock hi3519_mux_clks[] = {
-> +	{ HI3519_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
-> +		CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
-> +};
-> +
-> +static const struct hisi_gate_clock hi3519_gate_clks[] = {
-> +	{ HI3519_FMC_CLK, "clk_fmc", "fmc_mux",
-> +		CLK_SET_RATE_PARENT, 0xc0, 1, 0, },
-> +	{ HI3519_UART0_CLK, "clk_uart0", "24m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 20, 0, },
-> +	{ HI3519_UART1_CLK, "clk_uart1", "24m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 21, 0, },
-> +	{ HI3519_UART2_CLK, "clk_uart2", "24m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 22, 0, },
-> +	{ HI3519_UART3_CLK, "clk_uart3", "24m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 23, 0, },
-> +	{ HI3519_UART4_CLK, "clk_uart4", "24m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 24, 0, },
-> +	{ HI3519_SPI0_CLK, "clk_spi0", "50m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 16, 0, },
-> +	{ HI3519_SPI1_CLK, "clk_spi1", "50m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 17, 0, },
-> +	{ HI3519_SPI2_CLK, "clk_spi2", "50m",
-> +		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
-> +};
-> +
-> +static int hi3519_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct hisi_clock_data *clk_data;
-> +
-> +	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
-> +	if (!clk_data)
-> +		return -ENODEV;
-> +
-> +	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
-> +				     ARRAY_SIZE(hi3519_fixed_rate_clks),
-> +				     clk_data);
-> +	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
-> +					clk_data);
-> +	hisi_clk_register_gate(hi3519_gate_clks,
-> +			ARRAY_SIZE(hi3519_gate_clks), clk_data);
-> +
-> +	return hisi_reset_init(np);
+> > Also, assuming the local copy is necessary, why initialize pargs ?=20
+> > After all, pwm_get_args() just overwrites it.
+>=20
+> It's a leftover from a previous version where pwm_get_args was
+> implemented this way:
+>=20
+> static inline void pwm_get_args(pwm, args)
+> {
+> 	if (pwm)
+> 		*args =3D pwm->args
+> }
+>=20
+> and this implementation was generating a lot of 'uninitialized
+> variable' warnings.
+>=20
+> I just decided to drop the 'if (pwm)' test, because, IMO, this
+> should be checked way before calling pwm_get_args() is called.
 
-Now that this is a platform driver we need to do lots of cleanup
-in error cases. I mean we need to unregister clks, OF clk
-providers, and reset controllers. Please add all that code too.
+Sounds fine to me.
 
-> +}
-> +
-> +static const struct of_device_id hi3519_clk_match_table[] = {
-> +	{ .compatible = "hisilicon,hi3519-crg" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
-> +
-> +static struct platform_driver hi3519_clk_driver = {
-> +	.probe          = hi3519_clk_probe,
-> +	.driver         = {
-> +		.name   = "hi3519-clk",
-> +		.of_match_table = hi3519_clk_match_table,
-> +	},
-> +};
-> +
-> +static int __init hi3519_clk_init(void)
-> +{
-> +	return platform_driver_register(&hi3519_clk_driver);
-> +}
-> +core_initcall(hi3519_clk_init);
-> +
-> +static void __exit hi3519_clk_exit(void)
-> +{
-> +	platform_driver_unregister(&hi3519_clk_driver);
-> +}
-> +module_exit(hi3519_clk_exit);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
-> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-> new file mode 100644
-> index 0000000..8035366
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/reset.c
-> @@ -0,0 +1,124 @@
-> +/*
-> + * Hisilicon Reset Controller Driver
-> + *
-> + * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
+Thierry
 
-Please add #include "reset.h"
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +#define	HISI_RESET_BIT_MASK	0x1f
-> +#define	HISI_RESET_OFFSET_SHIFT	8
-> +#define	HISI_RESET_OFFSET_MASK	0xffff00
-[..]
-> +static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
-> +	unsigned long flags;
-> +	u32 offset, reg;
-> +	u8 bit;
-> +
-> +	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
-> +	bit = id & HISI_RESET_BIT_MASK;
-> +
-> +	spin_lock_irqsave(&rstc->lock, flags);
-> +
-> +	reg = readl(rstc->membase + offset);
-> +	writel(reg & ~BIT(bit), rstc->membase + offset);
-> +
-> +	spin_unlock_irqrestore(&rstc->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct reset_control_ops hisi_reset_ops = {
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-const? I think that's required now.
+iQIcBAABCAAGBQJXAoZLAAoJEN0jrNd/PrOhsEQQAKKy319NRaO6e/ciYlg6vDDN
+rdmFDoQgotIfLetr3KUFRP95Q3Cldg3cRW9oEg+OH8Uhf84Wg6Ug+glGDCmZ5jtl
+MNH8yavaO/eE0Ai1uV9rv7Nv6uJKoh+P11aQ7ht6HHr7+Iim8D6HGxdCEnqcxYz/
+Np9mk3jc2pj4FYxY8t8B4xuQS9/sbxKpCRRcQUDXVLnun+88Q+hWPlYA6ypTtQZ3
+deJzpGD3vWZIPtF1ZCm1U6gLetexRC84wyKmVGvV1yaeXaiXnr13MbUn2YbtBRFC
+oYRkNh59URh9bflVUnBORWi0Z9W7JBOt9f9pDUcOnY600rxhn0fXjt5aStdp6bDQ
+WHG/8pXEk5SdwU9PNDUPxhmfM3kO8a3v4KczSthjsUaMBd/76x1TroWTeSk4kuLD
+yEP3ZUP4fPb4hrE7Jvd5ruDnYgv0Vtk2MOa8IssefGYSO36pKTRyBCw7LKwmp+ww
+oFfZMR/KESTFCK59URYElJJHCUOWu3/u4TilXnimjRv2Co6HGdhZj5RTFhe1R3NE
+jO+k3ods1O9oVrVLmteHoePGnt6PCkPR/1szu5xW8XoFgL/58EWusji+XbMOlAlJ
+VJLrWoH2rOUW2/AEKvlasgeUOYFEszRM+vRyId/4awPJhhX5GVV3f+nY5UZLfW5I
+aPz78WqEqGpe2nzBw+67
+=pF1x
+-----END PGP SIGNATURE-----
 
-> +	.assert		= hisi_reset_assert,
-> +	.deassert	= hisi_reset_deassert,
-> +};
-> +
-> +int hisi_reset_init(struct device_node *np)
-> +{
-> +	struct hisi_reset_controller *rstc;
-> +
-> +	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
-> +	if (!rstc)
-> +		return -ENOMEM;
-> +
-> +	rstc->membase = of_iomap(np, 0);
-> +	if (!rstc->membase)
-> +		return -EINVAL;
-
-memory leak of rstc here.
-
-> +
-> +	spin_lock_init(&rstc->lock);
-> +
-> +	rstc->rcdev.owner = THIS_MODULE;
-> +	rstc->rcdev.ops = &hisi_reset_ops;
-> +	rstc->rcdev.of_node = np;
-> +	rstc->rcdev.of_reset_n_cells = 2;
-> +	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
-> +
-> +	return reset_controller_register(&rstc->rcdev);
-> +}
-> +EXPORT_SYMBOL_GPL(hisi_reset_init);
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--PNTmBPCT7hxwcZjr--
