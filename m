@@ -1,125 +1,98 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:51472 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751769AbcDVFuk (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 01:50:40 -0400
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	Jose Abreu <Jose.Abreu@synopsys.com>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
- <20160415234631.GB4690@codeaurora.org> <5714B763.8010109@synopsys.com>
- <5714C9BA.8040004@synopsys.com> <5715F6AC.7090501@synopsys.com>
- <20160420015451.GH15324@codeaurora.org> <5717503F.7020806@synopsys.com>
- <1461168765.3149.31.camel@synopsys.com> <5718A298.50601@synopsys.com>
- <1461241114.2928.4.camel@synopsys.com>
-CC: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org"
-	<linux-snps-arc@lists.infradead.org>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <5719BB9C.6010800@synopsys.com>
-Date: Fri, 22 Apr 2016 11:20:20 +0530
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 4 Apr 2016 14:24:50 -0700
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>, yassinjaffer@gmail.com,
+	dev@linux-sunxi.org, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Reinder de Haan <patchesrdh@mveas.com>,
+	Jens Kuske <jenskuske@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
+ clock driver for sun[457]i
+Message-ID: <20160404212450.GP4227@lukather>
+References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
+ <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
+ <20160319235905.GA16539@rob-hp-laptop>
+ <20160402011436.GA18567@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1461241114.2928.4.camel@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="l3ej7W/Jb2pB3qL2"
+In-Reply-To: <20160402011436.GA18567@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 21 April 2016 05:48 PM, Alexey Brodkin wrote:
-> Hi Jose,
-> 
-> On Thu, 2016-04-21 at 10:51 +0100, Jose Abreu wrote:
->> Hi Alexey,
-> 
-> 
->>>>> Otherwise, I still prefer two DTS files for the two different FPGA
->>>>> versions. At the least, please use ioremap for any pointers that
->>>>> you readl/writel here.
->>>>>
->>>>> Beyond that, we should have a fixed rate source clk somewhere in
->>>>> the software view of the clk tree, because that reflects reality.
->>>>> Hardcoding the parent rate in the structure works, but doesn't
->>>>> properly express the clk tree.
->>>>>
->>>> Can I use a property in the DT to pass this reference clock? something like this:
->>>>     snps,parent-freq = <0xFBED9 27000000>, <0x0 28224000>; /* Tuple
->>>> <fpga-version reference-clock-freq>, fpga-version = 0 is default */
->>>>
->>>> Or use a parent clock? like:
->>>>     clk {
->>>>         compatible = "fixed-clock";
->>>>         clock-frequency = <27000000>;
->>>>         #clock-cells = <0>;
->>>>         snps,fpga-version = <0xFBED9>;
->>>>     }
->>>>
->>>> It is important to distinguish between the different versions automatically, is
->>>> any of these solutions ok?
->>> I do like that solution with a master clock but with some fine-tuning
->>> for simplification.
->>>
->>> We'll add master clock node for I2S as a fixed clock like that:
->>> ------------------->8------------------
->>> 	i2s_master_clock: clk {
->>> 		#clock-cells = <0>;
->>> 		compatible = "fixed-clock";
->>> 		clock-frequency = <27000000>;
->>> 	};
->>> ------------------->8------------------
->>>
->>> Note there's no mention of MB version, just a value of the frequency.
->>> And in the driver itself value of that master clock will be used for
->>> population of "pll_clk->ref_clk" directly.
->>>
->>> These are benefits we'll get with that approach:
->>>  [1] We escape any IOs not related to our clock device (I mean
->>>      "snps,i2s-pll-clock") itself.
->>>  [2] We'll use whatever reference clock value is given.
->>>      I.e. we'll be able to do a fix-up of that reference clock
->>>      value early in platform code depending on HW we're running on.
->>>      That's what people do here and there.
->>>  [3] Remember another clock driver for AXS10x board is right around
->>>      the corner. I mean the one for ARC PGU which uses exactly the same
->>>      master clock. So one fixup as mentioned above will work
->>>      at once for 2 clock drivers.
->>>
->>> Let me know if above makes sense.
->> That approach can't be used because the reference clock value will change in the
->> next firmware release.  The new release will have a reference clock of 28224000
->> Hz instead of the usual 27000000 Hz, so we need to have a way to distinguish
->> between them. Because of that we can't have only one master clock unless you
->> state to users that they have to change the reference clock value when using the
->> new firmware release. Stephen suggested to use two DT files (one for each
->> firmware release), but as Vineet said this would be annoying to the user so I am
->> trying to use another solution so that only one DT file is required.
-> 
-> Ok reference clock will change.
-> But I may guess we'll still be able to determine at least that new
-> firmware version in run-time, right? If so we'll update a fix-up in
-> early axs10x platform code so that reference clock will be set as 28224000 Hz.
 
+--l3ej7W/Jb2pB3qL2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please no - lets not bolt-in more hacks and instead try do this cleanly if
-possible. And from other discusions it seems there might be a way. The readl
-approach seems fine to me (with ioremap) if that is what it takes.
+Hi Stephen
 
+On Fri, Apr 01, 2016 at 06:14:36PM -0700, Stephen Boyd wrote:
+> On 03/19, Rob Herring wrote:
+> > On Thu, Mar 17, 2016 at 07:43:42PM +1100, yassinjaffer@gmail.com wrote:
+> > > From: Yassin Jaffer <yassinjaffer@gmail.com>
+> > >=20
+> > > This patch adds a composite clock type consisting of
+> > > a clock gate, mux, configurable dividers, and a reset control.
+> > >=20
+> > > Signed-off-by: Yassin Jaffer <yassinjaffer@gmail.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
+> >=20
+> > I wish someone would just add all the sunxi clocks in one pass instead=
+=20
+> > of one by one.
+> >=20
+> > Acked-by: Rob Herring <robh@kernel.org>
+>=20
+> Me too!
 
-> And indeed 2 DT files is a no go - we want to run the same one binary
-> (with built-in .dtb) on all flavors of AXS boards.
+I understand, but it's probably not going to happen. The clock tree is
+massive, and obviously you have to multiply that by the number of SoCs
+we have.
 
-Right - 2 DT is not acceptable unless we are feeling bored and want more emails
-for AXS board support :-)
+And to be honest, I don't really see the point of merging clock
+drivers that have never been tested, and might be massively broken,
+especially now that we have this ABI requirement for the DT, and we
+can't adjust the binding when we actually start using that clock.
 
- And fix-up I'm talking about
-> will actually do transformation of .dtb early on kernel boot process so that will
-> be a complete equivalent of different DT files.
-> 
-> -Alexey--
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--l3ej7W/Jb2pB3qL2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXAtuiAAoJEBx+YmzsjxAguXQQALPz/C2eYgvsBZHnW3isuHrQ
+Rqf006TV5j2tRV+Rjh26qMrCQMhAPAJJAT3PirSqZaGFzSK7c6U8E92XSIM3+jAf
+/reHDaKF4WtJUDN5ZGuuAQXNN9pLmsQJQxWnHXibVHvS7LEdG7Ytjft8vPFIAVgE
+oHl9TOEtsM+oB/1FbAv3Zcz8Lm6tHDF84A5zcjyAYoB7e26cAR/rvwmB0jP7y9iT
++NpM+ddUnvH3zS/tBt1BoZ0ASfXjV1vqEWmOvxGFRSl0RtXL7P63hz6BjbS1AjHk
+toi5sYPmesCy4y/9oFfLrFdr9zg0EcvnHSztfjfzqNVgltuNYWpqM5xOfQS4gwdc
+E8gU7zs3K/1KINSZkvtAAeNasg5UhF24CiNaVejl5zTJVd6BuDJ02Cnk7aSLtM/h
+bnsRQudw2TP+/FVnO4Hvfhzov8yqkOJYhO4Q9H1aOCvVxMih3O9KbZd6W11bgV3r
+chv6OqnOZn5gPTGZZUHzmn2xpIHYuk1hCXpiZumRthk2JVH8H1EKto7mlgAgtirq
+N/ASFPlzv1muE5KW9Yy7nKGxDxmC/TGhvf1LiuYU6WSDu3fLfI/TFkpwcU21UMnD
+vAri50c/XZ+voBQqug250eqNMPX8HzLzealLr+vz+0A9QvieJMrh6Qzf/K4+XFh5
+uRSMs6I3FGppyNmrMODY
+=OTS+
+-----END PGP SIGNATURE-----
+
+--l3ej7W/Jb2pB3qL2--
