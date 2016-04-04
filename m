@@ -1,166 +1,134 @@
 Return-Path: <thierry.reding@gmail.com>
 Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 15:04:09 +0200
+Date: Mon, 4 Apr 2016 17:34:33 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Penny Chiu <pchiu@nvidia.com>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/11] clk: tegra: dfll: Move SoC specific data into
- of_device_id
-Message-ID: <20160422130409.GK9047@ulmo.ba.sec>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-3-git-send-email-pchiu@nvidia.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 36/46] input: misc: max77693: switch to the atomic API
+Message-ID: <20160404153433.GD17856@ulmo>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-37-git-send-email-boris.brezillon@free-electrons.com>
+ <20160331174801.GC39098@dtor-ws>
+ <20160331205718.057a6f38@bbrezillon>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wIc/V6YLA2QdyfT4"
-In-Reply-To: <1461321071-6431-3-git-send-email-pchiu@nvidia.com>
+	protocol="application/pgp-signature"; boundary="8w3uRX/HFJGApMzv"
+In-Reply-To: <20160331205718.057a6f38@bbrezillon>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---wIc/V6YLA2QdyfT4
+--8w3uRX/HFJGApMzv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 22, 2016 at 06:31:02PM +0800, Penny Chiu wrote:
-> Move all SoC specific fcpu data into of_device_id structure, and
-> move SoC fcpu data assignments from init function to probe
-> function.
+On Thu, Mar 31, 2016 at 08:57:18PM +0200, Boris Brezillon wrote:
+> On Thu, 31 Mar 2016 10:48:01 -0700
+> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 >=20
-> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 51 ++++++++++++++++++++++--=
-------
->  1 file changed, 37 insertions(+), 14 deletions(-)
+> > Hi Boris,
+> >=20
+> > On Wed, Mar 30, 2016 at 10:03:59PM +0200, Boris Brezillon wrote:
+> > > pwm_config/enable/disable() have been deprecated and should be replac=
+ed
+> > > by pwm_apply_state().
+> > >=20
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > ---
+> > >  drivers/input/misc/max77693-haptic.c | 23 +++++++++++++++++------
+> > >  1 file changed, 17 insertions(+), 6 deletions(-)
+> > >=20
+> > > diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/mis=
+c/max77693-haptic.c
+> > > index cf6aac0..aef7dc4 100644
+> > > --- a/drivers/input/misc/max77693-haptic.c
+> > > +++ b/drivers/input/misc/max77693-haptic.c
+> > > @@ -70,13 +70,16 @@ struct max77693_haptic {
+> > > =20
+> > >  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *ha=
+ptic)
+> > >  {
+> > > +	struct pwm_state pstate;
+> > >  	struct pwm_args pargs =3D { };
+> > > -	int delta;
+> > >  	int error;
+> > > =20
+> > >  	pwm_get_args(haptic->pwm_dev, &pargs);
+> > > -	delta =3D (pargs.period + haptic->pwm_duty) / 2;
+> > > -	error =3D pwm_config(haptic->pwm_dev, delta, pargs.period);
+> > > +	pwm_get_state(haptic->pwm_dev, &pstate);
+> > > +
+> > > +	pstate.period =3D pargs.period;
+> > > +	pstate.duty_cycle =3D (pargs.period + haptic->pwm_duty) / 2;
+> > > +	error =3D pwm_apply_state(haptic->pwm_dev, &pstate);
+> >=20
+> > This does not make sense with regard to the atomic API. If you look in
+> > max77693_haptic_play_work(), right after calling
+> > max77693_haptic_set_duty_cycle() we either try to enable or disable the
+> > pwm. When switching to this new API we should combine both actions.
 >=20
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/teg=
-ra/clk-tegra124-dfll-fcpu.c
-> index 5e5958e..b577bc6 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -21,6 +21,7 @@
->  #include <linux/err.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <soc/tegra/fuse.h>
-> =20
-> @@ -28,8 +29,15 @@
->  #include "clk-dfll.h"
->  #include "cvb.h"
-> =20
-> +struct dfll_fcpu_data {
-> +	const unsigned long *cpu_max_freq_table;
-> +	unsigned int cpu_max_freq_table_size;
-> +	const struct cvb_table *cpu_cvb_tables;
-> +	unsigned int cpu_cvb_tables_size;
-> +};
-> +
->  /* Maximum CPU frequency, indexed by CPU speedo id */
-> -static const unsigned long cpu_max_freq_table[] =3D {
-> +static const unsigned long tegra124_cpu_max_freq_table[] =3D {
->  	[0] =3D 2014500000UL,
->  	[1] =3D 2320500000UL,
->  	[2] =3D 2116500000UL,
-> @@ -79,18 +87,39 @@ static const struct cvb_table tegra124_cpu_cvb_tables=
-[] =3D {
->  	},
->  };
-> =20
-> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data =3D {
-> +	.cpu_max_freq_table =3D tegra124_cpu_max_freq_table,
-> +	.cpu_max_freq_table_size =3D ARRAY_SIZE(tegra124_cpu_max_freq_table),
-> +	.cpu_cvb_tables =3D tegra124_cpu_cvb_tables,
-> +	.cpu_cvb_tables_size =3D ARRAY_SIZE(tegra124_cpu_cvb_tables)
-> +};
-> +
-> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] =3D {
+> True. I'll address that, unless Thierry is fine keeping the non-atomic
+> API, in which case I'll just drop patches 32 to 46.
 
-There's no need to prefix this with tegra124_ since obviously the goal
-is to make this a table that works at least on Tegra210 as well.
-
-> +	{
-> +		.compatible =3D "nvidia,tegra124-dfll",
-> +		.data =3D &tegra124_dfll_fcpu_data
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra124_dfll_fcpu_of_match);
-> +
->  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->  {
->  	int process_id, speedo_id, speedo_value, ret;
->  	struct rail_alignment align;
->  	struct tegra_dfll_soc_data *soc;
->  	const struct cvb_table *cvb;
-> +	const struct of_device_id *of_id;
-> +	const struct dfll_fcpu_data *fcpu_data;
-> +
-> +	of_id =3D of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-> +	fcpu_data =3D of_id->data;
-
-You should be using of_device_get_match_data() nowadays. That allows you
-to do this in one step while at the same time allowing to keep the match
-tables where they are.
-
-> =20
->  	process_id =3D tegra_sku_info.cpu_process_id;
->  	speedo_id =3D tegra_sku_info.cpu_speedo_id;
->  	speedo_value =3D tegra_sku_info.cpu_speedo_value;
-> =20
-> -	if (speedo_id >=3D ARRAY_SIZE(cpu_max_freq_table)) {
-> +	if (speedo_id >=3D fcpu_data->cpu_max_freq_table_size) {
->  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=3D%d\n",
->  			speedo_id);
->  		return -ENODEV;
-> @@ -121,12 +150,12 @@ static int tegra124_dfll_fcpu_probe(struct platform=
-_device *pdev)
->  		return -EINVAL;
->  	}
-> =20
-> -	cvb =3D tegra_cvb_build_opp_table(tegra124_cpu_cvb_tables,
-> -					ARRAY_SIZE(tegra124_cpu_cvb_tables),
-> -					&align,
-> -					process_id, speedo_id, speedo_value,
-> -					cpu_max_freq_table[speedo_id],
-> -					soc->dev);
-> +	cvb =3D tegra_cvb_build_opp_table(fcpu_data->cpu_cvb_tables,
-> +				fcpu_data->cpu_cvb_tables_size,
-> +				&align,
-> +				process_id, speedo_id, speedo_value,
-> +				fcpu_data->cpu_max_freq_table[speedo_id],
-> +				soc->dev);
-
-This, and potentially other parts will conflict with some cleanup I
-recently did to this code. You may want to rebase on some linux-next
-earlier next week which should have those cleanup patches.
+I'm fine with keeping the pwm_enable(), pwm_disable() and pwm_config()
+APIs, but they should only be used as shortcuts. Where possible the new
+atomic API should be used to combine multiple operations into one.
 
 Thierry
 
---wIc/V6YLA2QdyfT4
+--8w3uRX/HFJGApMzv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXGiFIAAoJEN0jrNd/PrOhdrUQAIg46qfJRBZdtpZLPib8iNwv
-5q9IE8KHsTuGc7fcz5lEroc2nkBhMO6zwaRo/BL+IdPhbohDCLlEbZ+CGi1jRGY6
-Rbn0KfB9etmEB9wRbNwR+IdI7uWqmFaXm6HrYNjWpFz/B+rJBlZu0EqfP3DDQ1dW
-42RZRqkHluqQ2Tkv4cENG1qUsTlSJtPT0h8vGlpuJIOEep3q5z2sOFC9C2cehc82
-JEhS6iBjELJwKbMZDT5bXF3TjtWHKA9+Q9S84Ju/2yYtC8RkpYasabwdlHAAcLsC
-MimTQtsiM6r+//+U5GZ2Edw9fj6rfnpzNwObnW2mrUOCvzgfY3ui1lbltOqwZLvg
-xSRDwSR3ZQw/IDQ88pX2DqUGWbXvJbD/JWnEqH+pGlbQruM5AYd0JhE1AlqgMnc2
-PGuzcmlBS7BCOCHUbXPsHydxASWQLEl7akpc1/b6y0zDsBG3OCFW9+awASHEZ8tQ
-FhFPQRBFQVs5mfLP+7fqMtIzlrS1U96ylDk0YgpJ/PyYAoJa8kXzS1z/WUTnCAAF
-Z9YCZIIo+MdLQAQPNwpPVrphD/9TNIaOd8nSPqf2UnS7cKWfAfL2wd96Vs+aX0TI
-8j1gxbj6k0rLBGh6bsXTjznQi5Vp06baTudqAKSXBAvofkccPhq4BCCFRHP2urPf
-2OtUk5aQZqYbITWbjGWU
-=EiSu
+iQIcBAABCAAGBQJXAomJAAoJEN0jrNd/PrOhH+EP/3jGqBaPwMU4xFzqvHz67ECo
+BWRC6Xmjcjj3cLylcB4IeIBaTRxiGF8rf61/1tooFEr49b285hU5/V5ndhjk6HDm
+v7YjqNjFjWkHJvEGhUyf4iCNCw9rtGdDvYwz0tI6bBnMS8Ll6ZaMSTA8UkfiKUiv
+nCHUFyzrvYm7QmMn+Wr7IgyhhiK0LO4eqQk5LY4aP1qMFSnknAv+VXPKFH1pWJ3d
+BMo6SW2l31oC7kEKTM7BscdEbOdTBlSC5sCdff0QjKYWevyjmPcYZJtYqZw9dD14
+rdKL0aXHjeh3PWKMeXYk0rkiCpR4o7bvFn0BSUpQwNCLQYaHLfFFKqqWFiUWa+cF
+JFJJhMpUMeqfmfqGu6KQ3BY7ThzpGFkEGPgrXVIve2sPTUwccwWls0ZPTWtF2F7L
+ED7EvnCnYMEFfzyrav/vLIDz6vKhR5MLjXiTKanuwDEpx3zEG0W44IbA+8JxvNAO
+zfOnAByBx47TLUdHIZqSBtnLRrxQrAh91VrMJaDHqfTn+eJFDxOuVoQ1E2reKqCk
+OF0Ljt6VvQSKpzslj/2lf/dY4Iap40xf7avutbDW6Y9LF0LFgayiAQ5uRD7Bam6N
+vEfMdfObS6YYpx9Dr1uvVEoAYVDH9CETQISWNWYwyUNW0LhSfanIAhkaIpUpsYbQ
+00YdDc4WqABZU72XaLSG
+=oCBS
 -----END PGP SIGNATURE-----
 
---wIc/V6YLA2QdyfT4--
+--8w3uRX/HFJGApMzv--
