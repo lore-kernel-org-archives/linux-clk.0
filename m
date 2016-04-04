@@ -1,73 +1,63 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Joel Stanley <joel@jms.id.au>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 03/11] doc/devicetree: Add Aspeed clock bindings
-Date: Wed, 27 Apr 2016 11:12:41 +0200
-Message-ID: <4459295.XmBqACy0jk@diego>
-In-Reply-To: <CACPK8XfvLR+yZv77C0Eq=RsPOufrwvQjdPtBhnufNc=eJRLZYg@mail.gmail.com>
-References: <1461225849-28074-1-git-send-email-joel@jms.id.au> <4956403.scaVRGhPEf@diego> <CACPK8XfvLR+yZv77C0Eq=RsPOufrwvQjdPtBhnufNc=eJRLZYg@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 4 Apr 2016 00:15:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Subject: Re: [v7, 3/5] dt: move guts devicetree doc out of powerpc directory
+Message-ID: <20160404051552.GG17806@rob-hp-laptop>
+References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
+ <1459480051-3701-4-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <1459480051-3701-4-git-send-email-yangbo.lu@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, ulf.hansson@linaro.org,
+ Zhao Qiang <qiang.zhao@freescale.com>, Russell King <linux@arm.linux.org.uk>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, scott.wood@nxp.com,
+ xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
+ linux-i2c@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
+ linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Joel,
+On Fri, Apr 01, 2016 at 11:07:29AM +0800, Yangbo Lu wrote:
+> Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
+> since it's used by not only PowerPC but also ARM. And add a specification
+> for 'little-endian' property.
+> 
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> ---
+> Changes for v2:
+> 	- None
+> Changes for v3:
+> 	- None
+> Changes for v4:
+> 	- Added this patch
+> Changes for v5:
+> 	- Modified the description for little-endian property
+> Changes for v6:
+> 	- None
+> Changes for v7:
+> 	- None
+> ---
+>  Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>  rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
 
-Am Mittwoch, 27. April 2016, 18:01:00 schrieb Joel Stanley:
-> On Thu, Apr 21, 2016 at 8:50 PM, Heiko St=FCbner <heiko@sntech.de> wr=
-ote:
-> > [+clock-related patches should include clock-maintainers and lists]=
+Acked-by: Rob Herring <robh@kernel.org>
 
->=20
-> Thanks.
->=20
-> > Am Donnerstag, 21. April 2016, 17:34:01 schrieb Joel Stanley:
-> >> +For example:
-> >> +
-> >> +     clk_clkin: clk_clkin {
-> >> +             #clock-cells =3D <0>;
-> >> +             compatible =3D "fixed-clock";
-> >> +             clock-frequency =3D <48000000>;
-> >> +     };
-> >> +
-> >> +     clk_hpll: clk_hpll {
-> >> +             compatible =3D "aspeed,g4-hpll-clock";
-> >> +             #clock-cells =3D <0>;
-> >> +             reg =3D <0x1e6e2008 0x4>;
-> >> +     };
-> >> +
-> >> +     clk_apb: clk_apb@1e6e2008 {
-> >> +             #clock-cells =3D <0>;
-> >> +             compatible =3D "aspeed,g4-apb-clock";
-> >> +             reg =3D <0x1e6e2008 0x4>;
-> >> +             clocks =3D <&clk_hpll>;
-> >> +     };
-> >=20
-> > You have both the hpll and apb_clk in the same register (probably e=
-ven
-> > more
-> > clocks?) and separate clock instances where each instance will of_i=
-omap
-> > the
-> > register itself (and thus multiple times in general).
->=20
-> Yep. I agree that's not ideal.
->=20
-> > From what I remember exposing the clock controller as one block (in=
-stead
-> > of
-> > declaring each clock individually in the dts) is still the preferre=
-d way
-> > but I don't think I can find Mike's mail from back then easily.
->=20
-> I can't picture how that would look. I took my lead from the moxart
-> clock driver; is there a better example that I should follow?
-
-qcom, samsung, rockchip, hisilicon, imx, ...
-
-I guess the design would depend on the actual layout of your clock- / s=
-ystem-
-controller - aka what else is contained there.
-
-
-Heiko
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
