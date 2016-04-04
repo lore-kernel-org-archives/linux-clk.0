@@ -1,31 +1,68 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 3/3] ARM: dts: am43xx: add support for clkout1 clock
-To: Tony Lindgren <tony@atomide.com>
-References: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
- <1458158097-21137-4-git-send-email-t-kristo@ti.com>
- <20160412210538.GB5995@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <570E4103.2060301@ti.com>
-Date: Wed, 13 Apr 2016 15:52:19 +0300
-MIME-Version: 1.0
-In-Reply-To: <20160412210538.GB5995@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v6 0/2] clk: Add Artpec-6 SoC support
+Date: Mon,  4 Apr 2016 11:23:21 +0200
+Message-Id: <cover.1459761337.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/13/2016 12:05 AM, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [160316 12:55]:
->> clkout1 clock node and its generation tree was missing. Add this based
->> on the data on TRM and PRCM functional spec.
->
-> Can I pick this one separately?
+Add clock support for the Artpec-6 SoC port. The ARM parts are merged in
+4.6-rc1.
 
-Yes it has no dependencies towards the other patches.
+Changes since v5:
+- Improved code formatting.
+- Pass device pointer when registering the clocks.
+- Detect registration failures in the probe function.
 
--Tero
+Changes since v4:
+- Update the maintainer entry with the correct clock directory.
+- Implement split clock registration with early clocks through CLK_OF_DECLARE
+  and deferrable clocks through a platform driver.
 
->
-> Tony
->
+Changes since v3:
+- The binding was corrected to handle two fractional divider clocks as input to
+  the clock controller.
+- Updated clk-artpec6.c to handle a distinct fractional divider input for each
+  i2s clock mux.
+
+Changes since v2:
+- Moved axis,artpec6-clkctrl.h to the first patch with the DT bindings.
+
+Changes since v1:
+- The driver now provides all clocks from the main clock controller block
+  through one DT node.
+- Added a header file for the clock indexes.
+- Refer to clock-bindings.txt in the bindings document.
+
+Lars Persson (2):
+  clk: add device tree binding for Artpec-6 clock controller
+  clk: add artpec-6 clock controller
+
+Lars Persson (2):
+  clk: add device tree binding for Artpec-6 clock controller
+  clk: add artpec-6 clock controller
+
+ .../devicetree/bindings/clock/artpec6.txt          |  41 ++++
+ MAINTAINERS                                        |   2 +-
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axis/Makefile                          |   1 +
+ drivers/clk/axis/clk-artpec6.c                     | 242 +++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   |  38 ++++
+ 6 files changed, 324 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 drivers/clk/axis/Makefile
+ create mode 100644 drivers/clk/axis/clk-artpec6.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
+
+-- 
+2.1.4
