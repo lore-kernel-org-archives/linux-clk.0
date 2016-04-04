@@ -1,127 +1,127 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 05/24] input: misc: max77693: use pwm_get_args() where appropriate
-Date: Thu, 14 Apr 2016 21:17:25 +0200
-Message-Id: <1460661464-11216-6-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+	Lars Persson <larper@axis.com>
+Subject: [PATCH v6 1/2] clk: add device tree binding for Artpec-6 clock controller
+Date: Mon,  4 Apr 2016 11:23:22 +0200
+Message-Id: <3d38a3e4b2595c5bb3003d0b02200506c414d4da.1459761338.git.larper@axis.com>
+In-Reply-To: <cover.1459761337.git.larper@axis.com>
+References: <cover.1459761337.git.larper@axis.com>
+In-Reply-To: <cover.1459761337.git.larper@axis.com>
+References: <cover.1459761337.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM framework has clarified the concept of reference PWM config
-(the platform dependent config retrieved from the DT or the PWM
-lookup table) and real PWM state.
+Add device tree documentation for the main clock controller in the
+Artpec-6 SoC.
 
-Use pwm_get_args() when the PWM user wants to retrieve this reference
-config and not the current state.
-
-This is part of the rework allowing the PWM framework to support
-hardware readout and expose real PWM state even when the PWM has
-just been requested (before the user calls pwm_config/enable/disable()).
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lars Persson <larper@axis.com>
 ---
- drivers/input/misc/max77693-haptic.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec6-clkctrl.h   | 38 ++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
 
-diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-index 6d96bff..29ddeb7 100644
---- a/drivers/input/misc/max77693-haptic.c
-+++ b/drivers/input/misc/max77693-haptic.c
-@@ -70,10 +70,13 @@ struct max77693_haptic {
- 
- static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
- {
--	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
-+	struct pwm_args pargs;
-+	int delta;
- 	int error;
- 
--	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
-+	pwm_get_args(haptic->pwm_dev, &pargs);
-+	delta = (pargs.period + haptic->pwm_duty) / 2;
-+	error = pwm_config(haptic->pwm_dev, delta, pargs.period);
- 	if (error) {
- 		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
- 		return error;
-@@ -234,6 +237,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
- 				       struct ff_effect *effect)
- {
- 	struct max77693_haptic *haptic = input_get_drvdata(dev);
-+	struct pwm_args pargs;
- 	u64 period_mag_multi;
- 
- 	haptic->magnitude = effect->u.rumble.strong_magnitude;
-@@ -245,7 +249,8 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
- 	 * The formula to convert magnitude to pwm_duty as follows:
- 	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
- 	 */
--	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
-+	pwm_get_args(haptic->pwm_dev, &pargs);
-+	period_mag_multi = (u64)pargs.period * haptic->magnitude;
- 	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
- 						MAX_MAGNITUDE_SHIFT);
- 
-@@ -329,6 +334,12 @@ static int max77693_haptic_probe(struct platform_device *pdev)
- 		return PTR_ERR(haptic->pwm_dev);
- 	}
- 
-+	/*
-+	 * FIXME: pwm_apply_args() should be removed when switching to the
-+	 * atomic PWM API.
-+	 */
-+	pwm_apply_args(haptic->pwm_dev);
+diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+new file mode 100644
+index 0000000..9ba9bd0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+@@ -0,0 +1,41 @@
++* Clock bindings for Axis ARTPEC-6 chip
 +
- 	haptic->motor_reg = devm_regulator_get(&pdev->dev, "haptic");
- 	if (IS_ERR(haptic->motor_reg)) {
- 		dev_err(&pdev->dev, "failed to get regulator\n");
++The bindings are based on the clock provider binding in
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++External clocks:
++----------------
++
++There are two external inputs to the main clock controller which should be
++provided using the common clock bindings.
++- "sys_refclk": External 50 Mhz oscillator (required)
++- "i2s_refclk": Alternate audio reference clock (optional).
++
++Main clock controller
++---------------------
++
++Required properties:
++- #clock-cells: Should be <1>
++  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
++- compatible: Should be "axis,artpec6-clkctrl"
++- reg: Must contain the base address and length of the system controller
++- clocks:  Must contain a phandle entry for each clock in clock-names
++- clock-names: Must include the external oscillator ("sys_refclk"). Optional
++  ones are the audio reference clock ("i2s_refclk") and the audio fractional
++  dividers ("frac_clk0" and "frac_clk1").
++
++Examples:
++
++ext_clk: ext_clk {
++	#clock-cells = <0>;
++	compatible = "fixed-clock";
++	clock-frequency = <50000000>;
++};
++
++clkctrl: clkctrl {
++	#clock-cells = <1>;
++	compatible = "axis,artpec6-clkctrl";
++	reg = <0xf8000000 0x48>;
++	clocks = <&ext_clk>;
++	clock-names = "sys_refclk";
++};
+diff --git a/include/dt-bindings/clock/axis,artpec6-clkctrl.h b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
+new file mode 100644
+index 0000000..f9f04dc
+--- /dev/null
++++ b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
+@@ -0,0 +1,38 @@
++/*
++ * ARTPEC-6 clock controller indexes
++ *
++ * Copyright 2016 Axis Comunications AB.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
++#define DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
++
++#define ARTPEC6_CLK_CPU			0
++#define ARTPEC6_CLK_CPU_PERIPH		1
++#define ARTPEC6_CLK_NAND_CLKA		2
++#define ARTPEC6_CLK_NAND_CLKB		3
++#define ARTPEC6_CLK_ETH_ACLK		4
++#define ARTPEC6_CLK_DMA_ACLK		5
++#define ARTPEC6_CLK_PTP_REF		6
++#define ARTPEC6_CLK_SD_PCLK		7
++#define ARTPEC6_CLK_SD_IMCLK		8
++#define ARTPEC6_CLK_I2S_HST		9
++#define ARTPEC6_CLK_I2S0_CLK		10
++#define ARTPEC6_CLK_I2S1_CLK		11
++#define ARTPEC6_CLK_UART_PCLK		12
++#define ARTPEC6_CLK_UART_REFCLK		13
++#define ARTPEC6_CLK_I2C			14
++#define ARTPEC6_CLK_SPI_PCLK		15
++#define ARTPEC6_CLK_SPI_SSPCLK		16
++#define ARTPEC6_CLK_SYS_TIMER		17
++#define ARTPEC6_CLK_FRACDIV_IN		18
++#define ARTPEC6_CLK_DBG_PCLK		19
++
++/* This must be the highest clock index plus one. */
++#define ARTPEC6_CLK_NUMCLOCKS		20
++
++#endif
 -- 
-2.5.0
+2.1.4
