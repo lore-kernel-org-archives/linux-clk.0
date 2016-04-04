@@ -1,177 +1,80 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 15:16:37 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Penny Chiu <pchiu@nvidia.com>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] clk: tegra: Add Tegra210 support in DFLL driver
-Message-ID: <20160422131637.GM9047@ulmo.ba.sec>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-5-git-send-email-pchiu@nvidia.com>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Mon, 4 Apr 2016 10:57:20 +0100
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <broonie@kernel.org>, <wsa@the-dreams.de>
+Subject: Re: Handling clocks on external busses
+Message-ID: <20160404095720.GJ31814@localhost.localdomain>
+References: <20151124173718.GK18889@ck-lbox>
+ <20151202125855.GB6058@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="M2Pxvdb9QxnGd/3e"
-In-Reply-To: <1461321071-6431-5-git-send-email-pchiu@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151202125855.GB6058@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Dec 02, 2015 at 12:58:55PM +0000, Charles Keepax wrote:
+> On Tue, Nov 24, 2015 at 05:37:18PM +0000, Charles Keepax wrote:
+> > Hi,
+> > 
+> > When a clock driver is controlling a clock that is controlled
+> > over I2C / SPI, we need to perform a write on that bus to enable
+> > the clock. However, such busses often have their own clocks that
+> > must be enabled. Since all clock prepares are controlled under
+> > one large mutex this easily causes deadlock. The device is
+> > waiting for the I2C / SPI write to complete and the I2C / SPI
+> > driver is waiting for the clock prepare lock to be released so it
+> > can enable its own clock.
+> > 
+> > I have had a bit of a search and it seems the only really advice
+> > kicking about is that all I2C / SPI drivers should leave the
+> > clock prepared all the time. Is that intended to be the long term
+> > solution, should I treat not leaving the clock prepared as a bug?
+> > 
+> > Thanks,
+> > Charles
+> 
+> Adding a few more people for visibility.
+> 
+> So after a bit more digging it seems this has been mitigated slightly
+> as a lot of SPI driver have been updated to execute transfers in
+> thread rather than from a worker thread and it seems the clock
+> framework lets you re-enter the locked sections if called from the
+> same thread.
+> 
+> I am looking at moving some (in mainline) clocking code into an actual
+> clocking driver (for a SPI/I2C audio CODEC) but I am rather nervous
+> about this causing problems for customers with random deadlocks.
+> 
+> I guess the naive solution looks like individual locks per clock, but
+> from what I have been able to google it looks like there are some
+> challenges with that approach, does anyone have any links to previous
+> discussions on that? And any suggestions on how I might approach
+> this?
+> 
+> Thanks,
+> Charles
 
---M2Pxvdb9QxnGd/3e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi guys,
 
-On Fri, Apr 22, 2016 at 06:31:04PM +0800, Penny Chiu wrote:
-> Add Tegra210 support and related CVB table in tegra124 DFLL driver,
-> and also update the binding document.
->=20
-> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
-> ---
->  .../bindings/clock/nvidia,tegra124-dfll.txt        |  4 +-
->  drivers/clk/tegra/Makefile                         |  4 +-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         | 55 ++++++++++++++++=
-++++++
->  3 files changed, 61 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll=
-=2Etxt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> index 84080a8..42a1fe6 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> @@ -11,7 +11,9 @@ communicating with an off-chip PMIC either via an I2C b=
-us or via PWM signals.
->  Currently only the I2C mode is supported by these bindings.
-> =20
->  Required properties:
-> -- compatible : should be "nvidia,tegra124-dfll"
-> +- compatible : should be one of following:
-> +  - "nvidia,tegra124-dfll" for the Tegra124 SoC
-> +  - "nvidia,tegra210-dfll" for the Tegra210 SoC
->  - reg : Defines the following set of registers, in the order listed:
->          - registers for the DFLL control logic.
->          - registers for the I2C output logic.
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 97984c5..9b8e9de 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -17,7 +17,9 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         +=3D clk-tegra2=
-0.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         +=3D clk-tegra30.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+=3D clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D clk-tegra124.o
-> -obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D clk-tegra124-dfll-fcpu.o
-> +ifneq ($(filter y, $(CONFIG_ARCH_TEGRA_124_SOC) $(CONFIG_ARCH_TEGRA_210_=
-SOC)),)
-> +obj-y					+=3D clk-tegra124-dfll-fcpu.o
-> +endif
+Still struggling with this, basically the issue is that I need to
+add a clock DT binding so a clock source can be user controlled.
+But I can't find anyway to control a clock
+that is behind a SPI interface reliably. Yes if the SPI transfer
+gets executed in thread things work because of the re-entrant
+clock locking, but when that doesn't happen and the SPI core punts
+this to its worker thread things lock up. I also tried using
+async SPI calls, which technically violates the requirement then
+the clock is prepared before prepare returns although in our case
+this doesn't really matter, but even that can potentially cause
+issues as you have a potential mutex inversion (between the SPI
+bus lock and the clock prepare lock).
 
-This is better written as:
+How would we feel about just adding the clock binding at the
+moment and parsing it manually to set the clock source? Then we
+could add a proper clock driver once the locking is fixed in the
+clock framework.
 
-	obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D clk-tegra124-dfll-fcpu.o
-	obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+=3D clk-tegra124-dfll-fcpu.o
-
-This works because obj-* variables are sorted using make's $(sort)
-function, which lexically sorts and removes duplicates.
-
-> +static const unsigned long tegra210_cpu_max_freq_table[] =3D {
-> +	[0] =3D 1912500000UL,
-> +	[1] =3D 1912500000UL,
-> +};
-> +
->  static const struct cvb_table tegra124_cpu_cvb_tables[] =3D {
->  	{
->  		.speedo_id =3D -1,
-> @@ -87,6 +92,45 @@ static const struct cvb_table tegra124_cpu_cvb_tables[=
-] =3D {
->  	},
->  };
-> =20
-> +static const struct cvb_table tegra210_cpu_cvb_tables[] =3D {
-> +	{
-> +		.speedo_id =3D -1,
-> +		.process_id =3D -1,
-> +		.min_millivolts =3D 850,
-> +		.max_millivolts =3D 1170,
-> +		.speedo_scale =3D 100,
-> +		.voltage_scale =3D 1000,
-> +		.cvb_table =3D {
-> +			{51000000UL,    {1007452, -23865, 370} },
-> +			{102000000UL,   {1007452, -23865, 370} },
-> +			{204000000UL,   {1007452, -23865, 370} },
-> +			{306000000UL,   {1052709, -24875, 370} },
-> +			{408000000UL,   {1099069, -25895, 370} },
-> +			{510000000UL,   {1146534, -26905, 370} },
-> +			{612000000UL,   {1195102, -27915, 370} },
-> +			{714000000UL,   {1244773, -28925, 370} },
-> +			{816000000UL,   {1295549, -29935, 370} },
-> +			{918000000UL,   {1347428, -30955, 370} },
-> +			{1020000000UL,  {1400411, -31965, 370} },
-> +			{1122000000UL,  {1454497, -32975, 370} },
-> +			{1224000000UL,  {1509687, -33985, 370} },
-> +			{1326000000UL,  {1565981, -35005, 370} },
-> +			{1428000000UL,  {1623379, -36015, 370} },
-> +			{1530000000UL,  {1681880, -37025, 370} },
-> +			{1632000000UL,  {1741485, -38035, 370} },
-> +			{1734000000UL,  {1802194, -39055, 370} },
-> +			{1836000000UL,  {1864006, -40065, 370} },
-> +			{1912500000UL,  {1910780, -40815, 370} },
-> +			{0,             {      0,      0,   0} },
-> +		},
-> +		.cpu_dfll_data =3D {
-> +			.tune0_low =3D 0xffead0ff,
-> +			.tune0_high =3D 0xffead0ff,
-> +			.tune1 =3D 0x20091d9,
-> +		}
-> +	},
-> +};
-> +
->  static const struct dfll_fcpu_data tegra124_dfll_fcpu_data =3D {
->  	.cpu_max_freq_table =3D tegra124_cpu_max_freq_table,
->  	.cpu_max_freq_table_size =3D ARRAY_SIZE(tegra124_cpu_max_freq_table),
-> @@ -94,11 +138,22 @@ static const struct dfll_fcpu_data tegra124_dfll_fcp=
-u_data =3D {
->  	.cpu_cvb_tables_size =3D ARRAY_SIZE(tegra124_cpu_cvb_tables)
->  };
-> =20
-> +static const struct dfll_fcpu_data tegra210_dfll_fcpu_data =3D {
-> +	.cpu_max_freq_table =3D tegra210_cpu_max_freq_table,
-> +	.cpu_max_freq_table_size =3D ARRAY_SIZE(tegra210_cpu_max_freq_table),
-> +	.cpu_cvb_tables =3D tegra210_cpu_cvb_tables,
-> +	.cpu_cvb_tables_size =3D ARRAY_SIZE(tegra210_cpu_cvb_tables)
-> +};
-
-I think it would be better to keep all Tegra124 and Tegra210 data
-together, so you should first list the Tegra124 maximum frequencies,
-followed by the Tegra124 CVB table and the Tegra124 DFLL FCPU data,
-then the same for Tegra210 data. That way we can make sure all new
-appears in one hunk in a patch, which makes review and maintenance a
-lot easier.
-
-Thierry
-
---M2Pxvdb9QxnGd/3e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXGiQ1AAoJEN0jrNd/PrOhuFUP/j5wlskiABisA7sC9RtmrGKq
-oohiPTfqGQiapgpiTnB5Tc+7XwOwlr4RslFlwGl8Ngpk9G4XuuQz9rgF0qKvnrfT
-CNdUJMx9WNDsOxIjXq4rrIQFQtg8MvO9XOPMNhB9wdpSYUIbkxiBKBqbpaU6NQau
-M/u7m38+Hx4XWlmx/zsrKOaCsQBsJR+HE5bjE6CqWrhLnry7FxYD1oe6JouBtl5V
-uJgvOA0OJPxbMFYKjIzTdca1JWt11ukpWWc//6QyfJ4arfdlEGEjAOCqwxtw4jE0
-UGDMo3w8PtDpxGF8HjBo2huXK3NN1fSkOoAxoKo1Zu5GzxBCwobNxiWXyvlXgzpc
-hbLdgno68/K5QpPw9EUFQuiXmJ5jig1xc7WJ3SGMhHSJVqyg3p9osUMKlMSdbMQS
-UdTaKzymSn5a/9Nw/qE4yUxyvrPSEuCNU87ZCSuR8w10MRXBVccxo0dcBv6waOLS
-EEz1O1uYi6QR22FLGWGWJ++Kqvyhx1mgGnzvZuLoN0aUa2/wZjbFRelR0kpU3Zph
-UjuDpCKct27RgDrQtwK3OFMRTnIA3AzHLkmqgZbdTQq61Jm1GIZ+y2ntyyuzLVrM
-VmNrN77lMq9/DMtr6Q55YPDb/nAdICHXi00xSjod842cL/cgEaa/VOxZdWs2ZY5t
-b4zIv5ZOAns4ih/R6TlO
-=iKJV
------END PGP SIGNATURE-----
-
---M2Pxvdb9QxnGd/3e--
+Thanks,
+Charles
