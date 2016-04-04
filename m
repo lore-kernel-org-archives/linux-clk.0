@@ -1,98 +1,138 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57842 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753070AbcD1VHW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 28 Apr 2016 17:07:22 -0400
-Date: Thu, 28 Apr 2016 16:07:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
-	t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH v7 2/9] ARM: dts: am437x: Add missing compatibles to PWM
- binding documents
-Message-ID: <20160428210716.GA12508@rob-hp-laptop>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
- <1461710209-6563-3-git-send-email-fcooper@ti.com>
+Return-Path: <slash.tmp@free.fr>
+Subject: [PATCH v3] clk: tango4: improve clkgen driver
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>
+References: <56BE0F25.2040909@free.fr> <20160225220803.GK4847@codeaurora.org>
+ <56D066B1.7000808@free.fr>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <57023205.6050903@free.fr>
+Date: Mon, 4 Apr 2016 11:21:09 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461710209-6563-3-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <56D066B1.7000808@free.fr>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 26, 2016 at 05:36:42PM -0500, Franklin S Cooper Jr wrote:
-> There are several SOC specific compatibles for ECAP, EHRPWM and PWMMS
-> that are in use but aren't properly documented. Therefore, fix this
-> by adding the compatibles to the appropriate binding documents.
-> 
-> While at it make minor corrections to the binding document.
-> 
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-tiecap.txt          | 12 ++++++++++--
->  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt        | 12 ++++++++++--
->  .../devicetree/bindings/pwm/pwm-tipwmss.txt         | 21 +++++++++++++++++++--
->  3 files changed, 39 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-> index fb81179..788da6c 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-> @@ -2,8 +2,9 @@ TI SOC ECAP based APWM controller
->  
->  Required properties:
->  - compatible: Must be "ti,<soc>-ecap".
-> -  for am33xx - compatible = "ti,am33xx-ecap";
-> -  for da850  - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
-> +  for am33xx  - compatible = "ti,am33xx-ecap";
-> +  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
-> +  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->    the cells format. The PWM channel index ranges from 0 to 4. The only third
->    cell flag supported by this binding is PWM_POLARITY_INVERTED.
-> @@ -22,6 +23,13 @@ ecap0: ecap@0 { /* ECAP on am33xx */
->  	ti,hwmods = "ecap0";
->  };
->  
-> +ecap0: ecap@0 { /* ECAP on am4372 */
+From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
 
-The unit address is wrong.
+Add support for USB and SDIO clocks.
+Report unsupported setups and panic.
 
-> +	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
-> +	#pwm-cells = <3>;
-> +	reg = <0x48300100 0x80>;
-> +	ti,hwmods = "ecap0";
-> +};
-> +
->  ecap0: ecap@0 { /* ECAP on da850 */
->  	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->  	#pwm-cells = <3>;
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-> index 9c100b2..99b544f 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-> @@ -2,8 +2,9 @@ TI SOC EHRPWM based PWM controller
->  
->  Required properties:
->  - compatible: Must be "ti,<soc>-ehrpwm".
-> -  for am33xx - compatible = "ti,am33xx-ehrpwm";
-> -  for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-> +  for am33xx  - compatible = "ti,am33xx-ehrpwm";
-> +  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
-> +  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->    the cells format. The only third cell flag supported by this binding is
->    PWM_POLARITY_INVERTED.
-> @@ -22,6 +23,13 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
->  	ti,hwmods = "ehrpwm0";
->  };
->  
-> +ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
+Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+---
+ drivers/clk/clk-tango4.c | 73 +++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 48 insertions(+), 25 deletions(-)
 
-ditto
-
-Otherwise,
-
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
+index 004ab7dfcfe3..eef75e305a59 100644
+--- a/drivers/clk/clk-tango4.c
++++ b/drivers/clk/clk-tango4.c
+@@ -4,17 +4,19 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ 
+-static struct clk *out[2];
+-static struct clk_onecell_data clk_data = { out, 2 };
++#define CLK_COUNT 4 /* cpu_clk, sys_clk, usb_clk, sdio_clk */
++static struct clk *clks[CLK_COUNT];
++static struct clk_onecell_data clk_data = { clks, CLK_COUNT };
+ 
+-#define SYSCLK_CTRL	0x20
+-#define CPUCLK_CTRL	0x24
+-#define LEGACY_DIV	0x3c
++#define SYSCLK_DIV	0x20
++#define CPUCLK_DIV	0x24
++#define DIV_BYPASS	BIT(23)
+ 
+-#define PLL_N(val)	(((val) >>  0) & 0x7f)
+-#define PLL_K(val)	(((val) >> 13) & 0x7)
+-#define PLL_M(val)	(((val) >> 16) & 0x7)
+-#define DIV_INDEX(val)	(((val) >>  8) & 0xf)
++/*** CLKGEN_PLL ***/
++#define extract_pll_n(val)	((val >>  0) & ((1u << 7) - 1))
++#define extract_pll_k(val)	((val >> 13) & ((1u << 3) - 1))
++#define extract_pll_m(val)	((val >> 16) & ((1u << 3) - 1))
++#define extract_pll_isel(val)	((val >> 24) & ((1u << 3) - 1))
+ 
+ static void __init make_pll(int idx, const char *parent, void __iomem *base)
+ {
+@@ -22,40 +24,61 @@ static void __init make_pll(int idx, const char *parent, void __iomem *base)
+ 	u32 val, mul, div;
+ 
+ 	sprintf(name, "pll%d", idx);
+-	val = readl_relaxed(base + idx*8);
+-	mul =  PLL_N(val) + 1;
+-	div = (PLL_M(val) + 1) << PLL_K(val);
++	val = readl(base + idx * 8);
++	mul =  extract_pll_n(val) + 1;
++	div = (extract_pll_m(val) + 1) << extract_pll_k(val);
+ 	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
++	if (extract_pll_isel(val) != 1)
++		panic("%s: input not set to XTAL_IN\n", name);
+ }
+ 
+-static int __init get_div(void __iomem *base)
++static void __init make_cd(int idx, void __iomem *base)
+ {
+-	u8 sysclk_tab[16] = { 2, 4, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4 };
+-	int idx = DIV_INDEX(readl_relaxed(base + LEGACY_DIV));
++	char name[8];
++	u32 val, mul, div;
+ 
+-	return sysclk_tab[idx];
++	sprintf(name, "cd%d", idx);
++	val = readl(base + idx * 8);
++	mul =  1 << 27;
++	div = (2 << 27) + val;
++	clk_register_fixed_factor(NULL, name, "pll2", 0, mul, div);
++	if (val > 0xf0000000)
++		panic("%s: unsupported divider %x\n", name, val);
+ }
+ 
+ static void __init tango4_clkgen_setup(struct device_node *np)
+ {
+-	int div, ret;
++	struct clk **pp = clk_data.clks;
+ 	void __iomem *base = of_iomap(np, 0);
+ 	const char *parent = of_clk_get_parent_name(np, 0);
+ 
+ 	if (!base)
+-		panic("%s: invalid address\n", np->full_name);
++		panic("%s: invalid address\n", np->name);
++
++	if (readl(base + CPUCLK_DIV) & DIV_BYPASS)
++		panic("%s: unsupported cpuclk setup\n", np->name);
++
++	if (readl(base + SYSCLK_DIV) & DIV_BYPASS)
++		panic("%s: unsupported sysclk setup\n", np->name);
++
++	writel(0x100, base + CPUCLK_DIV); /* disable frequency ramping */
+ 
+ 	make_pll(0, parent, base);
+ 	make_pll(1, parent, base);
++	make_pll(2, parent, base);
++	make_cd(2, base + 0x80);
++	make_cd(6, base + 0x80);
+ 
+-	out[0] = clk_register_divider(NULL, "cpuclk", "pll0", 0,
+-			base + CPUCLK_CTRL, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
++	pp[0] = clk_register_divider(NULL, "cpu_clk", "pll0", 0,
++			base + CPUCLK_DIV, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
++	pp[1] = clk_register_fixed_factor(NULL, "sys_clk", "pll1", 0, 1, 4);
++	pp[2] = clk_register_fixed_factor(NULL,  "usb_clk", "cd2", 0, 1, 2);
++	pp[3] = clk_register_fixed_factor(NULL, "sdio_clk", "cd6", 0, 1, 2);
+ 
+-	div = readl_relaxed(base + SYSCLK_CTRL) & BIT(23) ? get_div(base) : 4;
+-	out[1] = clk_register_fixed_factor(NULL, "sysclk", "pll1", 0, 1, div);
++	if (IS_ERR(pp[0]) || IS_ERR(pp[1]) || IS_ERR(pp[2]) || IS_ERR(pp[3]))
++		panic("%s: clk registration failed\n", np->name);
+ 
+-	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+-	if (IS_ERR(out[0]) || IS_ERR(out[1]) || ret < 0)
+-		panic("%s: clk registration failed\n", np->full_name);
++	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data))
++		panic("%s: clk provider registration failed\n", np->name);
+ }
+ CLK_OF_DECLARE(tango4_clkgen, "sigma,tango4-clkgen", tango4_clkgen_setup);
+-- 
+2.8.0
