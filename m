@@ -1,48 +1,68 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	sjan@baylibre.com,
-	ahaslam@baylibre.com,
-	abailon@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 0/5] Introduce Quantum Clock handling
-Date: Fri,  1 Apr 2016 13:37:10 +0200
-Message-Id: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1459510635-8204-2-git-send-email-narmstrong@baylibre.com>
+References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+	<1459510635-8204-2-git-send-email-narmstrong@baylibre.com>
+Date: Mon, 4 Apr 2016 11:10:02 +0200
+Message-ID: <CAMuHMdXbruqfFM5NU3KLHxeGvERyv0Jx19-PozzTzWMn_AHnLA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: Switch clk handling to signed long and introduce
+ Quantum State
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	sjan@baylibre.com, Axel Haslam <ahaslam@baylibre.com>, abailon@baylibre.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-As today, handling of future but close Quantum physics as
-part of our modern computing model is clearly and really not
-ready. Introduce a simple, clear and clean but straightforward
-implementation of a Quantum concept in the clk framework
-looking for a great future for experimental physics handling.
+Hi Neil,
 
-For handling the new quantum physics, add a Quantum clock
-or Schrodingers clock in reference of the great experiment,
-organize a new implementation that describes a simple but
-Logical quantum clock.
+On Fri, Apr 1, 2016 at 1:37 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> In order to handle the quantum clock state for rate, accuracy and phase,
+> switch all core functions to signed long.
+>
+> Also add QUATUM state flag and QUANTUM return value.
+>
+> Set QUANTUM default state in clk_core_init.
 
-Researched-by: Just Another Kernel Experiment Research <joker@baylibre.com>
-Tested-by: Brotherhood After The Most Andvanced Number <batman@baylibre.com>
+Thanks for your patch!
 
-Neil Armstrong (5):
-  clk: Switch clk handling to signed long and introduce Quantum State
-  clk: Introduce clk-schrodinger as Quantum clock implementation
-  clk: Add build support for schrodinger clock
-  dt-bindings: clock: add schrodinger clock bindings
-  MAINTAINERS: Add Neil Armstrong as maintainers of schrodinger clock
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/clk/clk.c            | 104 +++++++++++++++++++++++--------------------
+>  include/linux/clk-provider.h |  12 +++--
+>  include/linux/clk.h          |  22 ++++-----
+>  3 files changed, 74 insertions(+), 64 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index fb74dc1..db7eced 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -51,9 +51,9 @@ struct clk_core {
+>         struct clk_core         **parents;
+>         u8                      num_parents;
+>         u8                      new_parent_index;
+> -       unsigned long           rate;
+> -       unsigned long           req_rate;
+> -       unsigned long           new_rate;
+> +       long                    rate;
+> +       long                    req_rate;
+> +       long                    new_rate;
 
- .../devicetree/bindings/clock/schrodinger.txt      |  18 ++++
- MAINTAINERS                                        |   6 ++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-schrodinger.c                      | 110 +++++++++++++++++++++
- drivers/clk/clk.c                                  | 104 ++++++++++---------
- include/linux/clk-provider.h                       |  29 +++++-
- include/linux/clk.h                                |  22 ++---
- 7 files changed, 226 insertions(+), 64 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/schrodinger.txt
- create mode 100644 drivers/clk/clk-schrodinger.c
+To account for the imaginary part of the phase, I think this should be a
+complex number, not just a long.
 
--- 
-1.9.1
+Apart from that, it's definitely a step in the right direction!
+
+Sorry for the late comments, I was on holidays last Friday...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
