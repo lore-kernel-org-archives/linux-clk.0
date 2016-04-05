@@ -1,64 +1,92 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1461654582-668-3-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-	<1461654582-668-3-git-send-email-geert+renesas@glider.be>
-Date: Wed, 27 Apr 2016 15:59:52 +0200
-Message-ID: <CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk@vger.kernel.org,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <joe@perches.com>
+Message-ID: <1459891815.6715.15.camel@perches.com>
+Subject: Re: [PATCH] clk: ti: dflt: remove redundant unlikely
+From: Joe Perches <joe@perches.com>
+To: Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>, Andrew Morton
+	 <akpm@linux-foundation.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Tue, 05 Apr 2016 14:30:15 -0700
+In-Reply-To: <1459880937-22349-1-git-send-email-s-anna@ti.com>
+References: <1459880937-22349-1-git-send-email-s-anna@ti.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> As a pure Clock Domain does not have the concept of powering the domain
-> itself, the CPG/MSTP driver does not provide power_off() and power_on()
-> callbacks.
-> However, the genpd core may still perform a dummy power down, causing
-> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
-> status being "off-0".
->
-> Use the always-on governor to make sure the domain is never powered
-> down, and always shows up as "on" in pm_genpd_summary.
+On Tue, 2016-04-05 at 13:28 -0500, Suman Anna wrote:
+> Commit 7aba4f5201d1 ("clk: ti: dflt: fix enable_reg validity check")
+> fixed a validation check by using an IS_ERR() macro within the
+> existing unlikely expression, but IS_ERR() macro already has an
+> unlikely inside it, so get rid of the redundant unlikely macro
+> from the validation check.
+[]
+> diff --git a/drivers/clk/ti/clkt_dflt.c b/drivers/clk/ti/clkt_dflt.c
+[]
+> @@ -222,7 +222,7 @@ int omap2_dflt_clk_enable(struct clk_hw *hw)
+>  		}
+>  	}
+>  
+> -	if (unlikely(IS_ERR(clk->enable_reg))) {
+> +	if (IS_ERR(clk->enable_reg)) {
+>  		pr_err("%s: %s missing enable_reg\n", __func__,
+>  		       clk_hw_get_name(hw));
+>  		ret = -EINVAL;
 
-Hmm.
+There are several of these:
 
-Hypothetically, what if the clock domain would be a subdomain, where
-its master is able to power down? Using the always on governor would
-prevent the master from power off as well.
+$ git grep -n -E "likely.*\bIS_ERR\s*\(" *
+drivers/clk/ti/clkt_dflt.c:225: if (unlikely(IS_ERR(clk->enable_reg))) {
+drivers/md/dm-verity-fec.c:76:  if (unlikely(IS_ERR(res))) {
+drivers/md/dm-verity-fec.c:168:                 if (unlikely(IS_ERR(par)))
+drivers/md/dm-verity-fec.c:253:         if (unlikely(IS_ERR(bbuf))) {
+drivers/net/ethernet/broadcom/bnxt/bnxt.c:1109:         if (unlikely(IS_ERR(skb)))
+drivers/net/ethernet/hisilicon/hns/hns_enet.c:1010:     if (unlikely(!phy_dev) || IS_ERR(phy_dev))
+drivers/net/ethernet/sun/ldmvsw.c:302:  if (unlikely(IS_ERR(vp))) {
+drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2547: if (likely(!IS_ERR(thread))) {
+drivers/scsi/bnx2i/bnx2i_init.c:431:    if (likely(!IS_ERR(thread))) {
+drivers/scsi/fcoe/fcoe.c:1263:  if (likely(!IS_ERR(thread))) {
+drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1500:               if (likely(!IS_ERR(pfmr))) {
+drivers/thermal/intel_powerclamp.c:541:         if (likely(!IS_ERR(thread))) {
+drivers/thermal/intel_powerclamp.c:591:         if (likely(!IS_ERR(thread))) {
+drivers/tty/serial/serial_core.c:2682:  if (likely(!IS_ERR(tty_dev))) {
+fs/gfs2/dir.c:854:      if (unlikely(dent == NULL || IS_ERR(dent))) {
+fs/ntfs/inode.c:2724:   if (unlikely(err || IS_ERR(m))) {
+fs/ntfs/lcnalloc.c:744: if (likely(page && !IS_ERR(page))) {
+fs/ntfs/mft.c:85:       if (likely(!IS_ERR(page))) {
+fs/ntfs/mft.c:168:      if (likely(!IS_ERR(m)))
+fs/ntfs/mft.c:285:              if (likely(!IS_ERR(m))) {
+fs/ntfs/mft.c:1311:     if (unlikely(IS_ERR(rl) || !rl->length || rl->lcn < 0)) {
+fs/ntfs/mft.c:1742:     if (unlikely(IS_ERR(rl) || !rl->length || rl->lcn < 0)) {
+fs/ntfs/mft.c:1784:             if (likely(!IS_ERR(rl2)))
+fs/ntfs/namei.c:132:            if (likely(!IS_ERR(dent_inode))) {
+fs/ntfs/runlist.c:968:  if (likely(!IS_ERR(old_rl)))
+fs/ntfs/super.c:1492:   if (unlikely(IS_ERR(tmp_ino) || is_bad_inode(tmp_ino))) {
+net/ipv6/addrconf.c:3212:               if (unlikely(IS_ERR(rt)))
+net/kcm/kcmsock.c:1969: if (unlikely(IS_ERR(newfile))) {
+net/openvswitch/datapath.c:1315:                if (likely(!IS_ERR(reply))) {
+net/socket.c:399:       if (likely(!IS_ERR(newfile))) {
 
-I am wondering whether we should introduce some similar as
-pm_runtime_no_callbacks() but for the generic PM domain instead.
+Maybe a new checkpatch test like:
+---
+ scripts/checkpatch.pl | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-What do you think?
-
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/clk/renesas/clk-mstp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 969fbb61ab07b9b8..5093a250650dad6d 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -319,7 +319,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
->         pd->flags = GENPD_FLAG_PM_CLK;
->         pd->attach_dev = cpg_mstp_attach_dev;
->         pd->detach_dev = cpg_mstp_detach_dev;
-> -       pm_genpd_init(pd, &simple_qos_governor, false);
-> +       pm_genpd_init(pd, &pm_domain_always_on_gov, false);
->
->         of_genpd_add_provider_simple(np, pd);
->  }
-> --
-> 1.9.1
->
-
-Kind regards
-Uffe
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e3d9c34..25e81b9 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5734,6 +5734,13 @@ sub process {
+ 			}
+ 		}
+ 
++# check for IS_ERR with likely
++
++		if ($line =~ /\b((?:un)?likely)\s*\(\s*\!?\s*IS_ERR\s*\(/) {
++			WARN("IS_ERR_IS_UNLIKELY",
++			     "Using $1 isn't recommended as IS_ERR already uses unlikely\n" . $herecurr);
++		}
++
+ # check for semaphores initialized locked
+ 		if ($line =~ /^.\s*sema_init.+,\W?0\W?\)/) {
+ 			WARN("CONSIDER_COMPLETION",
