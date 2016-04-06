@@ -1,44 +1,96 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
-Date: Tue, 26 Apr 2016 09:09:41 +0200
-Message-Id: <1461654582-668-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <sjoerd.simons@collabora.co.uk>
+Message-ID: <1459949826.23936.19.camel@collabora.co.uk>
+Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
+ clocks
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org"
+	 <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	 <linux-arm-kernel@lists.infradead.org>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
+	 <linux-clk@vger.kernel.org>
+Date: Wed, 06 Apr 2016 15:37:06 +0200
+In-Reply-To: <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
+References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	 <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-All local setup of the generic_pm_domain structure should have been
-completed before calling pm_genpd_init().
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 1f2dc3629f0e02a0..0d595311c659a741 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -493,9 +493,9 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
- 	genpd->flags = GENPD_FLAG_PM_CLK;
--	pm_genpd_init(genpd, &simple_qos_governor, false);
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
-+	pm_genpd_init(genpd, &simple_qos_governor, false);
- 	cpg_mssr_clk_domain = pd;
- 
- 	of_genpd_add_provider_simple(np, genpd);
--- 
-1.9.1
+T24gV2VkLCAyMDE2LTA0LTA2IGF0IDE1OjExICswMjAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
+dGU6Cj4gQ0MgTWlrZSwgU3RlcGhlbiwgbGludXgtY2xrICh0aGlzIHRpbWUgd2l0aCB0aGUgbmV3
+IE1pa2UpCj4gCj4gT24gV2VkLCBBcHIgNiwgMjAxNiBhdCAyOjUyIFBNLCBTam9lcmQgU2ltb25z
+Cj4gPHNqb2VyZC5zaW1vbnNAY29sbGFib3JhLmNvLnVrPiB3cm90ZToKPiA+IAo+ID4gY2xrX2dl
+dCBvbiBhIGRpc2FibGVkIGNsb2NrIG5vZGUgd2lsbCByZXR1cm4gRVBST0JFX0RFRkVSLCB3aGlj
+aAo+ID4gY2FuCj4gPiBjYXVzZSBkcml2ZXJzIHRvIGJlIGRlZmVycmVkIGZvcmV2ZXIgaWYgc3Vj
+aCBjbG9ja3MgYXJlIHJlZmVyZW5jZWQKPiA+IGluCj4gPiB0aGVpciBjbG9ja3MgcHJvcGVydHku
+Cj4gSXMgdGhpcyBhIHNpZGUgZWZmZWN0IG9mIGNvbW1pdCAzZTVkZDZmNmU2OTAwNDhkICgiY2xr
+OiBJZ25vcmUKPiBkaXNhYmxlZCBEVAo+IGNsb2NrIHByb3ZpZGVycyIpPwoKWWVzIGl0IHNlZW1z
+IHNvLiBSZXZlcnRpbmcgdGhhdCBwYXRjaCBtZWFucyB0aGF0IGkgY2FuIGRyb3AgdGhpcyBvbmUK
+YW5kIGdldCB0aGUgZXhwZWN0ZWQgYmVoYXZpb3VyIGFnYWluLgoKVGhvdWdoIGV2ZW4gc28gSSdt
+IG5vdCBzdXJlIHdoYXQgdGhlIGNvbnZlbnRpb24gaXMgZm9yIGNsb2NrcyBsaWtlCnRoZXNlLCB0
+aGUgcjhhNzc5MS5kdHNpIGlzIGluY29uc2lzdGVudCwgYXMgc29tZSBhcmUgZGlzYWJsZWQgd2hp
+bGUKb3RoZXJzIChlLmcuIHRoZSBhdWRpbyBjbG9ja3MpIGFyZSAwaHouIFdvdWxkIGJlIGdvb2Qg
+dG8gZ2V0IHNvbWUgaW5wdXQKb24gdGhhdCByZWdhcmRsZXNzLgoKPiA+IAo+ID4gVXBkYXRlIHRo
+ZSB2YXJpb3VzIGRpc2FibGVkIGV4dGVybmFsIGNsb2NrIG5vZGVzIHRvIGRlZmF1bHQgdG8gYQo+
+ID4gZnJlcXVlbmN5IG9mIDAsIGJ1dCBkb24ndCBkaXNhYmxlIHRoZW0gdG8gcHJldmVudMKgdGhp
+cy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogU2pvZXJkIFNpbW9ucyA8c2pvZXJkLnNpbW9uc0Bj
+b2xsYWJvcmEuY28udWs+Cj4gPiAKPiA+IC0tLQo+ID4gCj4gPiDCoGFyY2gvYXJtL2Jvb3QvZHRz
+L3I4YTc3OTEta29lbHNjaC5kdHMgfCAxICsKPiA+IMKgYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc5
+MS1wb3J0ZXIuZHRzwqDCoHwgMSArCj4gPiDCoGFyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3OTEuZHRz
+acKgwqDCoMKgwqDCoMKgwqB8IDUgKy0tLS0KPiA+IMKgMyBmaWxlcyBjaGFuZ2VkLCAzIGluc2Vy
+dGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9i
+b290L2R0cy9yOGE3NzkxLWtvZWxzY2guZHRzCj4gPiBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3
+OTEta29lbHNjaC5kdHMKPiA+IGluZGV4IDFhZGY4NzcuLmRhNTljMjggMTAwNjQ0Cj4gPiAtLS0g
+YS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLWtvZWxzY2guZHRzCj4gPiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9yOGE3NzkxLWtvZWxzY2guZHRzCj4gPiBAQCAtNjYwLDYgKzY2MCw3IEBACj4g
+PiDCoH07Cj4gPiAKPiA+IMKgJnBjaWVfYnVzX2NsayB7Cj4gPiArwqDCoMKgwqDCoMKgwqBjbG9j
+ay1mcmVxdWVuY3kgPSA8MTAwMDAwMDAwPjsKPiA+IMKgwqDCoMKgwqDCoMKgwqBzdGF0dXMgPSAi
+b2theSI7Cj4gPiDCoH07Cj4gPiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9y
+OGE3NzkxLXBvcnRlci5kdHMKPiA+IGIvYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc5MS1wb3J0ZXIu
+ZHRzCj4gPiBpbmRleCA5NTU0ZDEzLi4xOWIyNTdlIDEwMDY0NAo+ID4gLS0tIGEvYXJjaC9hcm0v
+Ym9vdC9kdHMvcjhhNzc5MS1wb3J0ZXIuZHRzCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9y
+OGE3NzkxLXBvcnRlci5kdHMKPiA+IEBAIC00MTMsNiArNDEzLDcgQEAKPiA+IMKgfTsKPiA+IAo+
+ID4gwqAmcGNpZV9idXNfY2xrIHsKPiA+ICvCoMKgwqDCoMKgwqDCoGNsb2NrLWZyZXF1ZW5jeSA9
+IDwxMDAwMDAwMDA+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoHN0YXR1cyA9ICJva2F5IjsKPiA+IMKg
+fTsKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3OTEuZHRzaQo+
+ID4gYi9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLmR0c2kKPiA+IGluZGV4IDg2OTM4ODguLjY3
+NmRmNjMgMTAwNjQ0Cj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLmR0c2kKPiA+
+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3OTEuZHRzaQo+ID4gQEAgLTExMDQsOCArMTEw
+NCw3IEBACj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBjaWVfYnVzX2Nsazog
+cGNpZV9idXMgewo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgY29tcGF0aWJsZSA9ICJmaXhlZC1jbG9jayI7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAjY2xvY2stY2VsbHMgPSA8MD47Cj4gPiAtwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNsb2NrLWZyZXF1ZW5j
+eSA9IDwxMDAwMDAwMDA+Owo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBzdGF0dXMgPSAiZGlzYWJsZWQiOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9jay1mcmVxdWVuY3kgPSA8MD47Cj4gPiDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH07Cj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgLyogRXh0ZXJuYWwgU0NJRiBjbG9jayAqLwo+ID4gQEAgLTExMTQsNyAr
+MTExMyw2IEBACj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAjY2xvY2stY2VsbHMgPSA8MD47Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBUaGlzIHZhbHVlIG11c3QgYmUgb3ZlcnJpZGRlbiBieSB0
+aGUKPiA+IGJvYXJkLiAqLwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgY2xvY2stZnJlcXVlbmN5ID0gPDA+Owo+ID4gLcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdGF0dXMgPSAiZGlzYWJsZWQiOwo+ID4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ID4gCj4gPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoC8qIEV4dGVybmFsIFVTQiBjbG9jayAtIGNhbiBiZSBvdmVycmlkZGVu
+IGJ5IHRoZQo+ID4gYm9hcmQgKi8KPiA+IEBAIC0xMTMwLDcgKzExMjgsNiBAQAo+ID4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2Nsb2NrLWNlbGxzID0g
+PDA+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+LyogVGhpcyB2YWx1ZSBtdXN0IGJlIG92ZXJyaWRkZW4gYnkgdGhlCj4gPiBib2FyZC4gKi8KPiA+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNsb2NrLWZy
+ZXF1ZW5jeSA9IDwwPjsKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgc3RhdHVzID0gImRpc2FibGVkIjsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgfTsKPiA+IAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBT
+cGVjaWFsIENQRyBjbG9ja3MgKi8KPiA+IC0tCj4gPiAyLjguMC5yYzMKPiBHcntvZXRqZSxlZXRp
+bmd9cywKPiAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqBHZWVydAo+IAo+IC0tCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBM
+aW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51Cj4geC1tNjhrLm9yZwo+IAo+IEluIHBlcnNv
+bmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEK
+PiBoYWNrZXIuIEJ1dAo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNh
+eSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nCj4gbGlrZSB0aGF0Lgo+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAtLSBMaW51
+cyBUb3J2YWxkcwoKLS0gClNqb2VyZCBTaW1vbnMKQ29sbGFib3JhIEx0ZC4K
