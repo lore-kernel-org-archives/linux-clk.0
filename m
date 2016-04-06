@@ -1,77 +1,28 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:55299 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753760AbcDFBMI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2016 21:12:08 -0400
+Date: Wed, 6 Apr 2016 10:12:03 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [v2,5/5] arm64: dts: salvator-x: populate EXTALR
+Message-ID: <20160406011203.GH27262@verge.net.au>
+References: <1459349902-13243-6-git-send-email-wsa@the-dreams.de>
 MIME-Version: 1.0
-In-Reply-To: <CAA+hA=SNp7bQZSUp5R5v9BfXMffS-4-msv12G5UAQJTxUMKW=A@mail.gmail.com>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
-	<20160421034520.GA19965@shlinux2.ap.freescale.net>
-	<20160426012341.GB8870@tiger>
-	<CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
-	<1461663072.7839.17.camel@pengutronix.de>
-	<CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
-	<CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
-	<20160427015835.GE30692@tiger>
-	<CAA+hA=SNp7bQZSUp5R5v9BfXMffS-4-msv12G5UAQJTxUMKW=A@mail.gmail.com>
-Date: Tue, 26 Apr 2016 23:56:01 -0300
-Message-ID: <CAOMZO5BeAxPLerGMkaadkEZusW8wHkO5P6SiZeHOCKWstHUTSA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-From: Fabio Estevam <festevam@gmail.com>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1459349902-13243-6-git-send-email-wsa@the-dreams.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 26, 2016 at 11:45 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+On Wed, Mar 30, 2016 at 04:58:22PM +0200, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> It can be used for the watchdog.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->> We need to firstly understand why this is happening.  The .prepare hook
->> is defined to be non-atomic context, and so that we call sleep function
->> in there.  We did everything right.  Why are we getting the warning?  If
->> I'm correct, this warning only happens on i.MX7D.  Why is that?
->>
->
-> This is mainly caused by during kernel early booting, there's only one init idle
-> task running.
-> See:
-> void __init sched_init(void)
-> {
-> .....
->         /*
->          * Make us the idle thread. Technically, schedule() should not be
->          * called from this thread, however somewhere below it might be,
->          * but because we are the idle thread, we just pick up running again
->          * when this runqueue becomes "idle".
->          */
->         init_idle(current, smp_processor_id());
-> ...
-> }
->
-> And the idle sched class indicates it's not valid to schedule for idle task.
-> const struct sched_class idle_sched_class = {
->         /* .next is NULL */
->         /* no enqueue/yield_task for idle tasks */
->
->         /* dequeue is not valid, we print a debug message there: */
->         .dequeue_task           = dequeue_task_idle,
-> ...........
->
-> }
->
-> /*
->  * It is not legal to sleep in the idle task - print a warning
->  * message if some code attempts to do it:
->  */
-> static void
-> dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
-> {
->         raw_spin_unlock_irq(&rq->lock);
->         printk(KERN_ERR "bad: scheduling from the idle thread!\n");
->         dump_stack();
->         raw_spin_lock_irq(&rq->lock);
-> }
->
->
-> Below is the full log of imx7d booting FYI.
-
-This does not answer Shawn's question: why do we see this only on mx7d?
+Thanks, I have queued this up.
