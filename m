@@ -1,48 +1,73 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Thu, 14 Apr 2016 09:49:18 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew
- Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
- Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell
- CP110 system controller
-Message-ID: <20160414094918.6f65e5cf@free-electrons.com>
-In-Reply-To: <20160413180122.4f997a9a@free-electrons.com>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160328194756.GA28967@rob-hp-laptop>
-	<20160413180122.4f997a9a@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <HE1PR04MB0889D75DC56E180D3508E7A1F89F0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
+	<CAPDyKFqgMCvbqMYZ-uM-rTnVvfJkCYbhv2kucCRyNyc9FWoR=Q@mail.gmail.com>
+	<HE1PR04MB0889D75DC56E180D3508E7A1F89F0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+Date: Wed, 6 Apr 2016 10:14:36 +0200
+Message-ID: <CAPDyKFp8GDzSkpbTKoRL=rwiBrsWmsgN95zB-QJwfZTnq4M8BA@mail.gmail.com>
+Subject: Re: [v7, 0/5] Fix eSDHC host version register bug
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Yangbo Lu <yangbo.lu@nxp.com>, Scott Wood <scott.wood@nxp.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-mmc <linux-mmc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Zhao Qiang <qiang.zhao@freescale.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+>>
+>> I was about to queue this for next, when I noticed that checkpatch is
+>> complaining/warning lots about these patches. Can you please a round of
+>> checkpatch and fix what makes sense.
+>>
+>> Kind regards
+>> Uffe
+>
+> [Lu Yangbo-B47093] Sorry about this, Uffe...
 
-On Wed, 13 Apr 2016 18:01:22 +0200, Thomas Petazzoni wrote:
+No worries!
 
-> In fact, the more I think of it, the less I find encoding the clock
-> output names in the DT to be useful for such a driver. For generic
-> clock drivers, it makes complete sense, but here the driver is really
-> tied to the specific system controller of that SoC, so the clock names
-> will not change.
+> Should I ignore the warnings that update MAINTAINERS?
 
-My bad: there will be two instances of the CP110 system controller, one
-for the master CP110 and one for the slave CP110. So having the
-possibility of setting the clock names in the DT is actually a good
-thing, so I'll keep it.
+drivers/soc/fsl/guts.c isn't part of the MAINTAINERS file, it should be.
 
-Thanks!
+I also realize that the FREESCALE QUICC ENGINE LIBRARY section
+drivers/soc/fsl/qe/* also need an active maintainer, as it's currently
+orphan.
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Perhaps we should have create a new section for drivers/soc/fsl/*
+instead that covers all of the above? Maybe you or Scott are
+interested to pick it up?
+
+I also noted that, "include/linux/fsl/" isn't present in MAINTAINERS,
+please add that as well.
+
+> Regarding the 'undocumented' warning, I will added a patch updates doc before all the patches, Ok?
+
+Yes, good!
+
+>
+> Thanks a lot :)
+>
+
+Kind regards
+Uffe
