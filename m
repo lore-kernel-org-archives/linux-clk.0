@@ -1,261 +1,180 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <keguang.zhang@gmail.com>
+Return-Path: <keguang.zhang@gmail.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 23/24] pwm: switch to the atomic API
-Date: Thu, 14 Apr 2016 21:17:43 +0200
-Message-Id: <1460661464-11216-24-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-pm@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH 5/7] gpio: Loongson1: add Loongson1 GPIO driver
+Date: Wed,  6 Apr 2016 20:09:35 +0800
+Message-Id: <1459944577-6423-6-git-send-email-keguang.zhang@gmail.com>
+In-Reply-To: <1459944577-6423-1-git-send-email-keguang.zhang@gmail.com>
+References: <1459944577-6423-1-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace legacy pwm_get/set_xxx() and pwm_config/enable/disable() calls
-by pwm_get/apply_state().
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+This patch adds GPIO driver for Loongson1B.
+
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 ---
- drivers/pwm/core.c  |  5 ++++-
- drivers/pwm/sysfs.c | 61 +++++++++++++++++++++++++++++++----------------------
- 2 files changed, 40 insertions(+), 26 deletions(-)
+ drivers/gpio/Kconfig          |   7 +++
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-loongson1.c | 102 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 110 insertions(+)
+ create mode 100644 drivers/gpio/gpio-loongson1.c
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 112a696..aefffcf 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -947,13 +947,16 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 5f3429f..373b8a7 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -510,6 +510,13 @@ config GPIO_ZX
+ 	help
+ 	  Say yes here to support the GPIO device on ZTE ZX SoCs.
  
- 	for (i = 0; i < chip->npwm; i++) {
- 		struct pwm_device *pwm = &chip->pwms[i];
-+		struct pwm_state state;
++config GPIO_LOONGSON1
++	tristate "Loongson1 GPIO support"
++	depends on MACH_LOONGSON32
++	select GPIO_GENERIC
++	help
++	  Say Y or M here to support GPIO on Loongson1 SoCs.
 +
-+		pwm_get_state(pwm, &state);
+ endmenu
  
- 		seq_printf(s, " pwm-%-3d (%-20.20s):", i, pwm->label);
- 
- 		if (test_bit(PWMF_REQUESTED, &pwm->flags))
- 			seq_puts(s, " requested");
- 
--		if (pwm_is_enabled(pwm))
-+		if (state.enabled)
- 			seq_puts(s, " enabled");
- 
- 		seq_puts(s, "\n");
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index ab28c89..40daf1c 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -47,13 +47,13 @@ static ssize_t period_show(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
--	unsigned int period;
-+	struct pwm_state state;
- 
- 	mutex_lock(&export->lock);
--	period = pwm_get_period(pwm);
-+	pwm_get_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
--	return sprintf(buf, "%u\n", period);
-+	return sprintf(buf, "%u\n", state.period);
- }
- 
- static ssize_t period_store(struct device *child,
-@@ -62,6 +62,7 @@ static ssize_t period_store(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state state;
- 	unsigned int val;
- 	int ret;
- 
-@@ -70,7 +71,9 @@ static ssize_t period_store(struct device *child,
- 		return ret;
- 
- 	mutex_lock(&export->lock);
--	ret = pwm_config(pwm, pwm_get_duty_cycle(pwm), val);
-+	pwm_get_state(pwm, &state);
-+	state.period = val;
-+	ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
-@@ -82,13 +85,13 @@ static ssize_t duty_cycle_show(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
--	unsigned int duty;
-+	struct pwm_state state;
- 
- 	mutex_lock(&export->lock);
--	duty = pwm_get_duty_cycle(pwm);
-+	pwm_get_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
--	return sprintf(buf, "%u\n", duty);
-+	return sprintf(buf, "%u\n", state.duty_cycle);
- }
- 
- static ssize_t duty_cycle_store(struct device *child,
-@@ -97,6 +100,7 @@ static ssize_t duty_cycle_store(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state state;
- 	unsigned int val;
- 	int ret;
- 
-@@ -105,7 +109,9 @@ static ssize_t duty_cycle_store(struct device *child,
- 		return ret;
- 
- 	mutex_lock(&export->lock);
--	ret = pwm_config(pwm, val, pwm_get_period(pwm));
-+	pwm_get_state(pwm, &state);
-+	state.duty_cycle = val;
-+	ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
-@@ -117,13 +123,13 @@ static ssize_t enable_show(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
--	bool enabled;
-+	struct pwm_state state;
- 
- 	mutex_lock(&export->lock);
--	enabled = pwm_is_enabled(pwm);
-+	pwm_get_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
--	return sprintf(buf, "%d\n", enabled);
-+	return sprintf(buf, "%d\n", state.enabled);
- }
- 
- static ssize_t enable_store(struct device *child,
-@@ -132,24 +138,20 @@ static ssize_t enable_store(struct device *child,
- {
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
-+	struct pwm_state state;
- 	int val, ret;
- 
- 	ret = kstrtoint(buf, 0, &val);
- 	if (ret)
- 		return ret;
- 
-+	if (val != 0 && val != 1)
+ menu "Port-mapped I/O GPIO drivers"
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 1e0b74f..40ab913 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -127,3 +127,4 @@ obj-$(CONFIG_GPIO_XTENSA)	+= gpio-xtensa.o
+ obj-$(CONFIG_GPIO_ZEVIO)	+= gpio-zevio.o
+ obj-$(CONFIG_GPIO_ZYNQ)		+= gpio-zynq.o
+ obj-$(CONFIG_GPIO_ZX)		+= gpio-zx.o
++obj-$(CONFIG_GPIO_LOONGSON1)	+= gpio-loongson1.o
+diff --git a/drivers/gpio/gpio-loongson1.c b/drivers/gpio/gpio-loongson1.c
+new file mode 100644
+index 0000000..10c09bd
+--- /dev/null
++++ b/drivers/gpio/gpio-loongson1.c
+@@ -0,0 +1,102 @@
++/*
++ * GPIO Driver for Loongson 1 SoC
++ *
++ * Copyright (C) 2015-2016 Zhang, Keguang <keguang.zhang@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/gpio/driver.h>
++#include <linux/platform_device.h>
++
++/* Loongson 1 GPIO Register Definitions */
++#define GPIO_CFG		0x0
++#define GPIO_DIR		0x10
++#define GPIO_DATA		0x20
++#define GPIO_OUTPUT		0x30
++
++static void __iomem *gpio_reg_base;
++
++static int ls1x_gpio_request(struct gpio_chip *gc, unsigned int offset)
++{
++	unsigned long pinmask = gc->pin2mask(gc, offset);
++	unsigned long flags;
++
++	spin_lock_irqsave(&gc->bgpio_lock, flags);
++	__raw_writel(__raw_readl(gpio_reg_base + GPIO_CFG) | pinmask,
++		     gpio_reg_base + GPIO_CFG);
++	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
++
++	return 0;
++}
++
++static void ls1x_gpio_free(struct gpio_chip *gc, unsigned int offset)
++{
++	unsigned long pinmask = gc->pin2mask(gc, offset);
++	unsigned long flags;
++
++	spin_lock_irqsave(&gc->bgpio_lock, flags);
++	__raw_writel(__raw_readl(gpio_reg_base + GPIO_CFG) & ~pinmask,
++		     gpio_reg_base + GPIO_CFG);
++	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
++}
++
++static int ls1x_gpio_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct gpio_chip *gc;
++	struct resource *res;
++	int ret;
++
++	gc = devm_kzalloc(dev, sizeof(*gc), GFP_KERNEL);
++	if (!gc)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(dev, "failed to get I/O memory\n");
 +		return -EINVAL;
++	}
 +
- 	mutex_lock(&export->lock);
--	switch (val) {
--	case 0:
--		pwm_disable(pwm);
--		break;
--	case 1:
--		ret = pwm_enable(pwm);
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
-+	pwm_get_state(pwm, &state);
-+	state.enabled = val;
-+	ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
-@@ -162,9 +164,13 @@ static ssize_t polarity_show(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	const struct pwm_device *pwm = export->pwm;
- 	const char *polarity = "unknown";
-+	struct pwm_state state;
- 
- 	mutex_lock(&export->lock);
--	switch (pwm_get_polarity(pwm)) {
-+	pwm_get_state(pwm, &state);
-+	mutex_unlock(&export->lock);
++	gpio_reg_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(gpio_reg_base))
++		return PTR_ERR(gpio_reg_base);
 +
-+	switch (state.polarity) {
- 	case PWM_POLARITY_NORMAL:
- 		polarity = "normal";
- 		break;
-@@ -173,7 +179,6 @@ static ssize_t polarity_show(struct device *child,
- 		polarity = "inversed";
- 		break;
- 	}
--	mutex_unlock(&export->lock);
- 
- 	return sprintf(buf, "%s\n", polarity);
- }
-@@ -185,6 +190,7 @@ static ssize_t polarity_store(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
- 	enum pwm_polarity polarity;
-+	struct pwm_state state;
- 	int ret;
- 
- 	if (sysfs_streq(buf, "normal"))
-@@ -195,7 +201,12 @@ static ssize_t polarity_store(struct device *child,
- 		return -EINVAL;
- 
- 	mutex_lock(&export->lock);
--	ret = pwm_set_polarity(pwm, polarity);
-+	pwm_get_state(pwm, &state);
-+	state.polarity = polarity;
-+	if (state.enabled)
-+		ret = -EBUSY;
-+	else
-+		ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
- 
- 	return ret ? : size;
++	ret = bgpio_init(gc, dev, 4, gpio_reg_base + GPIO_DATA,
++			 gpio_reg_base + GPIO_OUTPUT, NULL,
++			 NULL, gpio_reg_base + GPIO_DIR, 0);
++	if (ret)
++		goto err;
++
++	gc->owner = THIS_MODULE;
++	gc->request = ls1x_gpio_request;
++	gc->free = ls1x_gpio_free;
++	gc->base = pdev->id * 32;
++
++	ret = devm_gpiochip_add_data(dev, gc, NULL);
++	if (ret)
++		goto err;
++
++	platform_set_drvdata(pdev, gc);
++	dev_info(dev, "Loongson1 GPIO driver registered\n");
++
++	return 0;
++err:
++	dev_err(dev, "failed to register GPIO device\n");
++	return ret;
++}
++
++static struct platform_driver ls1x_gpio_driver = {
++	.probe	= ls1x_gpio_probe,
++	.driver	= {
++		.name	= "ls1x-gpio",
++	},
++};
++
++module_platform_driver(ls1x_gpio_driver);
++
++MODULE_AUTHOR("Kelvin Cheung <keguang.zhang@gmail.com>");
++MODULE_DESCRIPTION("Loongson1 GPIO driver");
++MODULE_LICENSE("GPL");
 -- 
-2.5.0
+1.9.1
