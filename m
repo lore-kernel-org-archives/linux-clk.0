@@ -1,46 +1,27 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 21/28] clk: ti: am33xx: fix timer3/6 init time setup for module clocks
-Date: Thu, 14 Apr 2016 14:08:10 +0300
-Message-ID: <1460632097-25727-22-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 6 Apr 2016 22:52:30 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Bai Ping <ping.bai@nxp.com>, Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH BUGFIX] clk: imx6q: fix typo in CAN clock definition
+Message-ID: <20160406145230.GB4022@tiger>
+References: <1459340583-14743-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1459340583-14743-1-git-send-email-LW@KARO-electronics.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-timer*_fck are going to be renamed as timer*_mod_ck:s. Fix the init
-time configuration of timer3/timer6 to take this into account, and
-lookup for the module clock in case the lookup for fck fails.
+On Wed, Mar 30, 2016 at 02:23:03PM +0200, Lothar Waﬂmann wrote:
+> commit ee36027427c7 ("clk: imx: Add clock support for imx6qp")
+> introduced a regression due to a subtle typo in the 'can_root' clock
+> definition. The effect is that trying to configure the bitrate of the
+> can interfaces fails with -EDOM or produces a division by zero error
+> due to the clock_freq of the can serial clock being reported as '0'.
+> 
+> Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-33xx.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index 43847bc..2343a22 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -66,9 +66,15 @@ int __init am33xx_dt_clk_init(void)
- 
- 	clk1 = ti_clk_get("sys_clkin_ck");
- 	clk2 = ti_clk_get("timer3_fck");
-+	if (IS_ERR(clk2))
-+		clk2 = ti_clk_get("timer3_mod_ck");
-+
- 	clk_set_parent(clk2, clk1);
- 
- 	clk2 = ti_clk_get("timer6_fck");
-+	if (IS_ERR(clk2))
-+		clk2 = ti_clk_get("timer6_mod_ck");
-+
- 	clk_set_parent(clk2, clk1);
- 	/*
- 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
--- 
-1.7.9.5
+Applied, thanks.
