@@ -1,64 +1,55 @@
-Return-Path: <k.debski@samsung.com>
-From: Kamil Debski <k.debski@samsung.com>
-To: 'Boris Brezillon' <boris.brezillon@free-electrons.com>,
- 'Thierry Reding' <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-Cc: 'Mike Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- 'Mark Brown' <broonie@kernel.org>, 'Liam Girdwood' <lgirdwood@gmail.com>,
- lm-sensors@lm-sensors.org, 'Jean Delvare' <jdelvare@suse.com>,
- 'Guenter Roeck' <linux@roeck-us.net>,
- 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
- 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>,
- 'Jacek Anaszewski' <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
- 'Maxime Ripard' <maxime.ripard@free-electrons.com>,
- 'Chen-Yu Tsai' <wens@csie.org>, linux-sunxi@googlegroups.com,
- 'Joachim Eastwood' <manabian@gmail.com>,
- 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>,
- 'Heiko Stuebner' <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
- 'Jingoo Han' <jingoohan1@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org,
- 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>,
- 'Tomi Valkeinen' <tomi.valkeinen@ti.com>,
- 'Robert Jarzmik' <robert.jarzmik@free.fr>,
- 'Alexandre Belloni' <alexandre.belloni@free-electrons.com>,
- 'Kukjin Kim' <kgene@kernel.org>,
- 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- 'Daniel Vetter' <daniel.vetter@intel.com>,
- 'Jani Nikula' <jani.nikula@linux.intel.com>,
- 'Jonathan Corbet' <corbet@lwn.net>, linux-doc@vger.kernel.org,
- 'David Airlie' <airlied@linux.ie>, 'Daniel Vetter' <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- 'Hartley Sweeten' <hsweeten@visionengravers.com>,
- 'Ryan Mallon' <rmallon@gmail.com>, 'Alexander Shiyan' <shc_work@mail.ru>,
- 'Milo Kim' <milo.kim@ti.com>
-References: 
- <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-36-git-send-email-boris.brezillon@free-electrons.com>
-In-reply-to: 
- <1459368249-13241-36-git-send-email-boris.brezillon@free-electrons.com>
-Subject: RE: [PATCH v5 35/46] hwmon: pwm-fan: switch to the atomic API
-Date: Fri, 01 Apr 2016 10:29:55 +0200
-Message-id: <00e601d18bf0$acd69150$0683b3f0$@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=US-ASCII
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Thu, 7 Apr 2016 12:26:55 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH V1 2/7] cpufreq: Loongson1: Update cpufreq of Loongson1B
+Message-ID: <20160407065655.GH14903@vireshk-i7>
+References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
+ <1459946095-7637-3-git-send-email-keguang.zhang@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1459946095-7637-3-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Boris,
-
-From: Boris Brezillon [mailto:boris.brezillon@free-electrons.com]
-Sent: Wednesday, March 30, 2016 10:04 PM
-Subject: [PATCH v5 35/46] hwmon: pwm-fan: switch to the atomic API
+On 06-04-16, 20:34, Keguang Zhang wrote:
+> From: Kelvin Cheung <keguang.zhang@gmail.com>
 > 
-> pwm_config/enable/disable() have been deprecated and should be replaced
-> by pwm_apply_state().
+> - Rename the file to loongson1-cpufreq.c
+> - Use kcalloc() instead of kzalloc()
+> - Use devm_kzalloc() instead of global structure
+> - Use dev_get_platdata() to access the platform_data field
+>   instead of referencing it directly
+> - Remove superfluous error messages
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+> ---
+>  drivers/cpufreq/Makefile            |   2 +-
+>  drivers/cpufreq/loongson1-cpufreq.c | 230 ++++++++++++++++++++++++++++++++++++
+>  drivers/cpufreq/ls1x-cpufreq.c      | 222 ----------------------------------
+>  3 files changed, 231 insertions(+), 223 deletions(-)
+>  create mode 100644 drivers/cpufreq/loongson1-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/ls1x-cpufreq.c
 
-Acked-by: Kamil Debski <k.debski@samsung.com>
+This can't be reviewed. I am not going to compare them line by line to
+see what you might have changed in between.
 
-Best wishes,
+Please use '-C -M' options of git format-patch to generate this, it
+will give a review-able output of this.
 -- 
-Kamil Debski
-Samsung R&D Institute Poland
+viresh
