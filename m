@@ -1,348 +1,107 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-Subject: Re: [PATCH 1/2 v6] clk/axs10x: Add I2S PLL clock driver
-To: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-snps-arc@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-References: <cover.1461258787.git.joabreu@synopsys.com>
- <6bae37562ffc6c62c015e12b7bf6a35c9a3e734d.1461258787.git.joabreu@synopsys.com>
-CC: <CARLOS.PALMINHA@synopsys.com>, <Alexey.Brodkin@synopsys.com>,
-	<Vineet.Gupta1@synopsys.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Message-ID: <57191417.6040909@synopsys.com>
-Date: Thu, 21 Apr 2016 18:55:35 +0100
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Thu, 7 Apr 2016 23:54:31 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Liam Girdwood
+ <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>,
+ lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck
+ <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
+ <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
+ linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
+ Vetter <daniel.vetter@intel.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
+ Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Stephen
+ Barber <smbarber@chromium.org>
+Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
+Message-ID: <20160407235431.788dc24a@bbrezillon>
+In-Reply-To: <20160330212410.GX2350@sirena.org.uk>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
+	<20160330212410.GX2350@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <6bae37562ffc6c62c015e12b7bf6a35c9a3e734d.1461258787.git.joabreu@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding device tree mailing list and Rob Herring.
+Hi Mark,
 
-On 21-04-2016 18:19, Jose Abreu wrote:
-> The ARC SDP I2S clock can be programmed using a
-> specific PLL.
->
-> This patch has the goal of adding a clock driver
-> that programs this PLL.
->
-> At this moment the rate values are hardcoded in
-> a table but in the future it would be ideal to
-> use a function which determines the PLL values
-> given the desired rate.
->
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> ---
->
-> Changes v5 -> v6:
-> * Use parent clock to determine PLL input rate instead of using hardcoded values
-> * Documentation update (added 'clocks' field)
->
-> Changes v4 -> v5:
-> * Documentation update (as suggested by Alexey Brodkin)
-> * Changed compatible string to "snps,axs10x-i2s-pll-clock" (as suggested by Alexey Brodkin)
->
-> Changes v3 -> v4:
-> * Added binding document (as suggested by Stephen Boyd)
-> * Minor code style fixes (as suggested by Stephen Boyd)
-> * Use ioremap (as suggested by Stephen Boyd)
-> * Implement round_rate (as suggested by Stephen Boyd)
-> * Change to platform driver (as suggested by Stephen Boyd)
-> * Use {readl/writel}_relaxed (as suggested by Vineet Gupta)
->
-> Changes v2 -> v3:
-> * Implemented recalc_rate
->
-> Changes v1 -> v2:
-> * Renamed folder to axs10x (as suggested by Alexey Brodkin)
-> * Added more supported rates
->
->  .../bindings/clock/axs10x-i2s-pll-clock.txt        |  25 +++
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/axs10x/Makefile                        |   1 +
->  drivers/clk/axs10x/i2s_pll_clock.c                 | 228 +++++++++++++++++++++
->  4 files changed, 255 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
->  create mode 100644 drivers/clk/axs10x/Makefile
->  create mode 100644 drivers/clk/axs10x/i2s_pll_clock.c
->
-> diff --git a/Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt b/Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
-> new file mode 100644
-> index 0000000..5ffc8df
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
-> @@ -0,0 +1,25 @@
-> +Binding for the AXS10X I2S PLL clock
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible: shall be "snps,axs10x-i2s-pll-clock"
-> +- reg : address and length of the I2S PLL register set.
-> +- clocks: shall be the input parent clock phandle for the PLL.
-> +- #clock-cells: from common clock binding; Should always be set to 0.
-> +
-> +Example:
-> +	pll_clock: pll_clock {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <27000000>;
-> +		#clock-cells = <0>;
-> +	};
-> +
-> +	i2s_clock@100a0 {
-> +		compatible = "snps,axs10x-i2s-pll-clock";
-> +		reg = <0x100a0 0x10>;
-> +		clocks = <&pll_clock>;
-> +		#clock-cells = <0>;
-> +	};
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 46869d6..2ca62dc6 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -84,3 +84,4 @@ obj-$(CONFIG_X86)			+= x86/
->  obj-$(CONFIG_ARCH_ZX)			+= zte/
->  obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
->  obj-$(CONFIG_H8300)		+= h8300/
-> +obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
-> diff --git a/drivers/clk/axs10x/Makefile b/drivers/clk/axs10x/Makefile
-> new file mode 100644
-> index 0000000..01996b8
-> --- /dev/null
-> +++ b/drivers/clk/axs10x/Makefile
-> @@ -0,0 +1 @@
-> +obj-y += i2s_pll_clock.o
-> diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
-> new file mode 100644
-> index 0000000..411310d
-> --- /dev/null
-> +++ b/drivers/clk/axs10x/i2s_pll_clock.c
-> @@ -0,0 +1,228 @@
-> +/*
-> + * Synopsys AXS10X SDP I2S PLL clock driver
-> + *
-> + * Copyright (C) 2016 Synopsys
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2. This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/device.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/of.h>
-> +
-> +/* PLL registers addresses */
-> +#define PLL_IDIV_REG	0x0
-> +#define PLL_FBDIV_REG	0x4
-> +#define PLL_ODIV0_REG	0x8
-> +#define PLL_ODIV1_REG	0xC
-> +
-> +struct i2s_pll_cfg {
-> +	unsigned int rate;
-> +	unsigned int idiv;
-> +	unsigned int fbdiv;
-> +	unsigned int odiv0;
-> +	unsigned int odiv1;
-> +};
-> +
-> +static const struct i2s_pll_cfg i2s_pll_cfg_27m[] = {
-> +	/* 27 Mhz */
-> +	{ 1024000, 0x104, 0x451, 0x10E38, 0x2000 },
-> +	{ 1411200, 0x104, 0x596, 0x10D35, 0x2000 },
-> +	{ 1536000, 0x208, 0xA28, 0x10B2C, 0x2000 },
-> +	{ 2048000, 0x82, 0x451, 0x10E38, 0x2000 },
-> +	{ 2822400, 0x82, 0x596, 0x10D35, 0x2000 },
-> +	{ 3072000, 0x104, 0xA28, 0x10B2C, 0x2000 },
-> +	{ 2116800, 0x82, 0x3CF, 0x10C30, 0x2000 },
-> +	{ 2304000, 0x104, 0x79E, 0x10B2C, 0x2000 },
-> +	{ 0, 0, 0, 0, 0 },
-> +};
-> +
-> +static const struct i2s_pll_cfg i2s_pll_cfg_28m[] = {
-> +	/* 28.224 Mhz */
-> +	{ 1024000, 0x82, 0x105, 0x107DF, 0x2000 },
-> +	{ 1411200, 0x28A, 0x1, 0x10001, 0x2000 },
-> +	{ 1536000, 0xA28, 0x187, 0x10042, 0x2000 },
-> +	{ 2048000, 0x41, 0x105, 0x107DF, 0x2000 },
-> +	{ 2822400, 0x145, 0x1, 0x10001, 0x2000 },
-> +	{ 3072000, 0x514, 0x187, 0x10042, 0x2000 },
-> +	{ 2116800, 0x514, 0x42, 0x10001, 0x2000 },
-> +	{ 2304000, 0x619, 0x82, 0x10001, 0x2000 },
-> +	{ 0, 0, 0, 0, 0 },
-> +};
-> +
-> +struct i2s_pll_clk {
-> +	void __iomem *base;
-> +	struct clk_hw hw;
-> +	struct device *dev;
-> +};
-> +
-> +static inline void i2s_pll_write(struct i2s_pll_clk *clk, unsigned int reg,
-> +		unsigned int val)
-> +{
-> +	writel_relaxed(val, clk->base + reg);
-> +}
-> +
-> +static inline unsigned int i2s_pll_read(struct i2s_pll_clk *clk,
-> +		unsigned int reg)
-> +{
-> +	return readl_relaxed(clk->base + reg);
-> +}
-> +
-> +static inline struct i2s_pll_clk *to_i2s_pll_clk(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct i2s_pll_clk, hw);
-> +}
-> +
-> +static inline unsigned int i2s_pll_get_value(unsigned int val)
-> +{
-> +	return (val & 0x3F) + ((val >> 6) & 0x3F);
-> +}
-> +
-> +static const struct i2s_pll_cfg *i2s_pll_get_cfg(unsigned long prate)
-> +{
-> +	switch (prate) {
-> +	case 27000000:
-> +		return i2s_pll_cfg_27m;
-> +	case 28224000:
-> +		return i2s_pll_cfg_28m;
-> +	default:
-> +		return NULL;
-> +	}
-> +}
-> +
-> +static unsigned long i2s_pll_recalc_rate(struct clk_hw *hw,
-> +			unsigned long parent_rate)
-> +{
-> +	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
-> +	unsigned int idiv, fbdiv, odiv;
-> +
-> +	idiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_IDIV_REG));
-> +	fbdiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_FBDIV_REG));
-> +	odiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_ODIV0_REG));
-> +
-> +	return ((parent_rate / idiv) * fbdiv) / odiv;
-> +}
-> +
-> +static long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			unsigned long *prate)
-> +{
-> +	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
-> +	const struct i2s_pll_cfg *pll_cfg = i2s_pll_get_cfg(*prate);
-> +	int i;
-> +
-> +	if (!pll_cfg) {
-> +		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i = 0; pll_cfg[i].rate != 0; i++)
-> +		if (pll_cfg[i].rate == rate)
-> +			return rate;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			unsigned long parent_rate)
-> +{
-> +	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
-> +	const struct i2s_pll_cfg *pll_cfg = i2s_pll_get_cfg(parent_rate);
-> +	int i;
-> +
-> +	if (!pll_cfg) {
-> +		dev_err(clk->dev, "invalid parent rate=%ld\n", parent_rate);
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i = 0; pll_cfg[i].rate != 0; i++) {
-> +		if (pll_cfg[i].rate == rate) {
-> +			i2s_pll_write(clk, PLL_IDIV_REG, pll_cfg[i].idiv);
-> +			i2s_pll_write(clk, PLL_FBDIV_REG, pll_cfg[i].fbdiv);
-> +			i2s_pll_write(clk, PLL_ODIV0_REG, pll_cfg[i].odiv0);
-> +			i2s_pll_write(clk, PLL_ODIV1_REG, pll_cfg[i].odiv1);
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	dev_err(clk->dev, "invalid rate=%ld, parent_rate=%ld\n", rate,
-> +			parent_rate);
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct clk_ops i2s_pll_ops = {
-> +	.recalc_rate = i2s_pll_recalc_rate,
-> +	.round_rate = i2s_pll_round_rate,
-> +	.set_rate = i2s_pll_set_rate,
-> +};
-> +
-> +static int i2s_pll_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->of_node;
-> +	const char *clk_name;
-> +	const char *parent_name;
-> +	struct clk *clk;
-> +	struct i2s_pll_clk *pll_clk;
-> +	struct clk_init_data init;
-> +	struct resource *mem;
-> +
-> +	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
-> +	if (!pll_clk)
-> +		return -ENOMEM;
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	pll_clk->base = devm_ioremap_resource(dev, mem);
-> +	if (IS_ERR(pll_clk->base))
-> +		return PTR_ERR(pll_clk->base);
-> +
-> +	clk_name = node->name;
-> +	init.name = clk_name;
-> +	init.ops = &i2s_pll_ops;
-> +	parent_name = of_clk_get_parent_name(node, 0);
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +	pll_clk->hw.init = &init;
-> +	pll_clk->dev = dev;
-> +
-> +	clk = devm_clk_register(dev, &pll_clk->hw);
-> +	if (IS_ERR(clk)) {
-> +		dev_err(dev, "failed to register %s clock (%ld)\n",
-> +				clk_name, PTR_ERR(clk));
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +}
-> +
-> +static int i2s_pll_clk_remove(struct platform_device *pdev)
-> +{
-> +	of_clk_del_provider(pdev->dev.of_node);
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id i2s_pll_clk_id[] = {
-> +	{ .compatible = "snps,axs10x-i2s-pll-clock", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, i2s_pll_clk_id);
-> +
-> +static struct platform_driver i2s_pll_clk_driver = {
-> +	.driver = {
-> +		.name = "axs10x-i2s-pll-clock",
-> +		.of_match_table = i2s_pll_clk_id,
-> +	},
-> +	.probe = i2s_pll_clk_probe,
-> +	.remove = i2s_pll_clk_remove,
-> +};
-> +module_platform_driver(i2s_pll_clk_driver);
-> +
-> +MODULE_AUTHOR("Jose Abreu <joabreu@synopsys.com>");
-> +MODULE_DESCRIPTION("Synopsys AXS10X SDP I2S PLL Clock Driver");
-> +MODULE_LICENSE("GPL v2");
+On Wed, 30 Mar 2016 14:24:10 -0700
+Mark Brown <broonie@kernel.org> wrote:
+
+> On Wed, Mar 30, 2016 at 10:03:53PM +0200, Boris Brezillon wrote:
+> > The continuous PWM voltage regulator is caching the voltage value in
+> > the ->volt_uV field. While most of the time this value should reflect the
+> > real voltage, sometime it can be sightly different if the PWM device
+> > rounded the set_duty_cycle request.
+> > Moreover, this value is not valid until someone has modified the regulator
+> > output.
+> 
+> Acked-by: Mark Brown <broonie@kernel.org>
+
+Actually this patch introduces a bug (reported by Stephen):
+
+"
+I applied your patch series [PATCH v5 00/46] pwm: add support for
+atomic update and found a null pointer dereference when probing a
+pwm-regulator at boot. See the below stack trace:
+
+[ 4.282374] [<ffffffc000399088>] pwm_regulator_get_voltage+0x78/0xa0
+[ 4.289344] [<ffffffc000390740>] regulator_attr_is_visible+0x7c/0x264
+[ 4.296408] [<ffffffc0001f75a0>] internal_create_group+0x14c/0x280
+[ 4.303184] [<ffffffc0001f76e8>] sysfs_create_group+0x14/0x1c
+[ 4.309483] [<ffffffc0001f77c8>] sysfs_create_groups+0x30/0x78
+[ 4.315881] [<ffffffc00043631c>] device_add+0x224/0x4d8
+[ 4.321609] [<ffffffc0004365ec>] device_register+0x1c/0x28
+[ 4.327623] [<ffffffc0003952a4>] regulator_register+0x2e4/0xc14
+[ 4.334112] [<ffffffc000396844>] devm_regulator_register+0x54/0x94
+[ 4.340887] [<ffffffc000399328>] pwm_regulator_probe+0x278/0x2b8
+[ 4.347473] [<ffffffc000439fe4>] platform_drv_probe+0x58/0xa4
+[ 4.353772] [<ffffffc0004387a8>] driver_probe_device+0x114/0x2ac
+[ 4.360358] [<ffffffc0004389a4>] __driver_attach+0x64/0x90
+[ 4.366371] [<ffffffc000436f50>] bus_for_each_dev+0x74/0x90
+[ 4.372478] [<ffffffc000438bd4>] driver_attach+0x20/0x28
+[ 4.378299] [<ffffffc00043778c>] bus_add_driver+0xe8/0x1e0
+[ 4.384312] [<ffffffc00043959c>] driver_register+0x98/0xe4
+[ 4.390326] [<ffffffc00043aa04>] __platform_driver_register+0x48/0x50
+[ 4.397388] [<ffffffc000cb2710>] pwm_regulator_driver_init+0x18/0x20
+[ 4.404356] [<ffffffc000c8ca7c>] do_one_initcall+0xf8/0x180
+[ 4.410466] [<ffffffc000c8cc58>] kernel_init_freeable+0x154/0x1f4
+[ 4.417148] [<ffffffc000929cf4>] kernel_init+0x10/0xf8
+[ 4.422782] [<ffffffc000084450>] ret_from_fork+0x10/0x40
+
+It looks like the root cause is that regulator_attr_is_visible will
+try to get the voltage, but at this point in regulator_register,
+rdev->constraints is still null. So
+pwm_duty_cycle_percentage_to_voltage will dereference a null
+rdev->constraints pointer.
+"
+
+The problem is that we need to know the min and max voltage constraints
+to calculate the current voltage. ->get_voltage() is called when the
+sysfs attributes are created (part of device registration), and
+set_machine_constraints() is called after device_register(), thus
+leading to the NULL pointer dereference.
+
+Is there any reason for calling set_machine_constraints() after
+device_register() in regulator_register()?
+
+Best Regards,
+
+Boris
