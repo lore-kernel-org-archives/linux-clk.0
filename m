@@ -1,40 +1,56 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Apr 2016 12:28:39 -0700
+Date: Thu, 7 Apr 2016 16:21:55 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, tony@atomide.com,
-	linux-arm-kernel@lists.infradead.org, Nishanth Menon <nm@ti.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Lokesh Vutla <lokeshvutla@ti.com>
-Subject: Re: [PATCH 2/3] clk: ti: amx3xx: limit the maximum frequency of
- DPLLs based on spec
-Message-ID: <20160401192839.GW18567@codeaurora.org>
-References: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
- <1458158097-21137-3-git-send-email-t-kristo@ti.com>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
+ clocks
+Message-ID: <20160407232155.GH18567@codeaurora.org>
+References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
+ <1459949826.23936.19.camel@collabora.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458158097-21137-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1459949826.23936.19.camel@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/16, Tero Kristo wrote:
-> AM33xx/AM43xx devices use the same DPLL IP blocks, which only support
-> maximum rate of 1GHz [1] for the default and 2GHz for the low-jitter type
-> DPLLs [2]. Reflect this limitation in the DPLL init code by adding the
-> max-rate parameter based on the DPLL types.
+On 04/06, Sjoerd Simons wrote:
+> On Wed, 2016-04-06 at 15:11 +0200, Geert Uytterhoeven wrote:
+> > CC Mike, Stephen, linux-clk (this time with the new Mike)
+> > 
+> > On Wed, Apr 6, 2016 at 2:52 PM, Sjoerd Simons
+> > <sjoerd.simons@collabora.co.uk> wrote:
+> > > 
+> > > clk_get on a disabled clock node will return EPROBE_DEFER, which
+> > > can
+> > > cause drivers to be deferred forever if such clocks are referenced
+> > > in
+> > > their clocks property.
+> > Is this a side effect of commit 3e5dd6f6e690048d ("clk: Ignore
+> > disabled DT
+> > clock providers")?
 > 
-> [1] Functional, integration & test specification for GS70 ADPLLS, Rev 1.0-01
-> [2] Functional, integration & test specification for GS70 ADPLLLJ, Rev 0.8-02
+> Yes it seems so. Reverting that patch means that i can drop this one
+> and get the expected behaviour again.
+
+The DT is broken then? Is it possible to mark these status =
+"okay" so that things work again?
+
 > 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: Lokesh Vutla <lokeshvutla@ti.com>
-> ---
+> Though even so I'm not sure what the convention is for clocks like
+> these, the r8a7791.dtsi is inconsistent, as some are disabled while
+> others (e.g. the audio clocks) are 0hz. Would be good to get some input
+> on that regardless.
+> 
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Or I can apply these two targeting 4.7 if you like.
+What's the question here?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
