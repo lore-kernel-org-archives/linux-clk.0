@@ -1,114 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:46:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, CARLOS.PALMINHA@synopsys.com,
-	Alexey.Brodkin@synopsys.com, Vineet.Gupta1@synopsys.com,
-	mturquette@baylibre.com
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-Message-ID: <20160415234631.GB4690@codeaurora.org>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:38130 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756915AbcDHNbl (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2016 09:31:41 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 1/5] clk: tegra: dfll: Update kerneldoc
+Date: Fri,  8 Apr 2016 15:31:33 +0200
+Message-Id: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/11, Jose Abreu wrote:
-> new file mode 100644
-> index 0000000..3ba4e2f
-> --- /dev/null
-> +++ b/drivers/clk/axs10x/i2s_pll_clock.c
-> @@ -0,0 +1,217 @@
-> +
-> +static int i2s_pll_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->of_node;
-> +	const char *clk_name;
-> +	struct clk *clk;
-> +	struct i2s_pll_clk *pll_clk;
-> +	struct clk_init_data init;
-> +	struct resource *mem;
-> +
-> +	if (!node)
-> +		return -ENODEV;
+From: Thierry Reding <treding@nvidia.com>
 
-Does this ever happen? Looks like dead code.
+The kerneldoc for struct tegra_dfll_soc_data is stale. Update it to
+match the current structure definition.
 
-> +
-> +	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
-> +	if (!pll_clk)
-> +		return -ENOMEM;
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	pll_clk->base = devm_ioremap_resource(dev, mem);
-> +	if (IS_ERR(pll_clk->base))
-> +		return PTR_ERR(pll_clk->base);
-> +
-> +	clk_name = node->name;
-> +	init.name = clk_name;
-> +	init.ops = &i2s_pll_ops;
-> +	init.num_parents = 0;
-> +	pll_clk->hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &pll_clk->hw);
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/clk/tegra/clk-dfll.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Pass dev as first argument. Also use devm_clk_register() instead.
-
-> +	if (IS_ERR(clk)) {
-> +		dev_err(dev, "failed to register %s div clock (%ld)\n",
-> +				clk_name, PTR_ERR(clk));
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	if (readl((void *)FPGA_VER_INFO) <= FPGA_VER_27M) {
-
-Please don't readl directly from addresses. I think I mentioned
-that before and didn't get back to you when you replied asking
-for other solutions. I still think a proper DT is in order
-instead of doing this check for ref_clk.
-
-> +		pll_clk->ref_clk = 27000000;
-> +		pll_clk->pll_cfg = i2s_pll_cfg_27m;
-> +	} else {
-> +		pll_clk->ref_clk = 28224000;
-> +		pll_clk->pll_cfg = i2s_pll_cfg_28m;
-> +	}
-
-We should do this before registering the clk with the framework.
-
-> +
-> +	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +}
-> +
-> +static int i2s_pll_clk_remove(struct platform_device *pdev)
-> +{
-> +	of_clk_del_provider(pdev->dev.of_node);
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id i2s_pll_clk_id[] = {
-> +	{ .compatible = "snps,i2s-pll-clock", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, i2s_pll_clk_id);
-> +
-> +static struct platform_driver i2s_pll_clk_driver = {
-> +	.driver = {
-> +		.name = "i2s-pll-clock",
-> +		.of_match_table = of_match_ptr(i2s_pll_clk_id),
-
-You can drop of_match_ptr(), it doesn't have much use besides
-introducing compilation warnings.
-
-> +	},
-> +	.probe = i2s_pll_clk_probe,
-> +	.remove = i2s_pll_clk_remove,
-> +};
-> +module_platform_driver(i2s_pll_clk_driver);
-> 
-
+diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+index 2e4c0772a5dc..7e66c07c4d2b 100644
+--- a/drivers/clk/tegra/clk-dfll.h
++++ b/drivers/clk/tegra/clk-dfll.h
+@@ -24,15 +24,14 @@
+ 
+ /**
+  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
+- * @opp_dev: struct device * that holds the OPP table for the DFLL
++ * @dev: struct device * that holds the OPP table for the DFLL
+  * @min_millivolts: minimum voltage (in mV) that the DFLL can operate
+  * @tune0_low: DFLL tuning register 0 (low voltage range)
+  * @tune0_high: DFLL tuning register 0 (high voltage range)
+  * @tune1: DFLL tuning register 1
+- * @assert_dvco_reset: fn ptr to place the DVCO in reset
+- * @deassert_dvco_reset: fn ptr to release the DVCO reset
+- * @set_clock_trimmers_high: fn ptr to tune clock trimmers for high voltage
+- * @set_clock_trimmers_low: fn ptr to tune clock trimmers for low voltage
++ * @init_clock_trimmers: callback to initialize clock trimmers
++ * @set_clock_trimmers_high: callback to tune clock trimmers for high voltage
++ * @set_clock_trimmers_low: callback to tune clock trimmers for low voltage
+  */
+ struct tegra_dfll_soc_data {
+ 	struct device *dev;
+@@ -40,6 +39,7 @@ struct tegra_dfll_soc_data {
+ 	u32 tune0_low;
+ 	u32 tune0_high;
+ 	u32 tune1;
++
+ 	void (*init_clock_trimmers)(void);
+ 	void (*set_clock_trimmers_high)(void);
+ 	void (*set_clock_trimmers_low)(void);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.0
+
