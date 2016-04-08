@@ -1,149 +1,161 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40521 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753394AbcDJP0K (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 11:26:10 -0400
-Date: Sun, 10 Apr 2016 02:53:22 -0700
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
-Message-ID: <20160410095322.GZ4227@lukather>
-References: <cover.1459358017.git.moinejf@free.fr>
- <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH 1/2] clk: tegra: Fix pllre Tegra210 and add pll_re_out1
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>
+References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <5707CBFC.8070203@nvidia.com>
+Date: Fri, 8 Apr 2016 11:19:24 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NJ5+aVN4Egd/eJfU"
-In-Reply-To: <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-
---NJ5+aVN4Egd/eJfU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Wed, Mar 30, 2016 at 06:57:16PM +0200, Jean-Francois Moine wrote:
-> Add the PLL type which is used by the sun8i family for audio.
->=20
-> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+On 3/21/2016 3:58 PM, Rhyland Klein wrote:
+> Use a new Tegra210 version of the pll_register_pllre function to
+> allow setting the proper settings for the m and n div fields.
+> 
+> Additionally define PLL_RE_OUT1 on Tegra210.
+> 
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++=
-++++++
->  2 files changed, 49 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index ff93aee..917d4aa 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -10,6 +10,7 @@ Required properties:
->  	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
->  	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
->  	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-> +	"allwinner,sun8i-pll2-clk" - for the audio PLL clock
 
-You should mention the name of the first SoC that introduced it.
+Ping.
 
->  	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
->  	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
->  	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 270f2a9..7386141 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -1130,6 +1130,54 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pl=
-l6-clk",
->  	       sun6i_pll6_clk_setup);
-> =20
->  /*
-> + * sun8i pll2
-> + *
-> + * rate =3D parent_rate / (m + 1) * (n + 1) / (p + 1);
-
-                         ^ I'm guessing it's a "*" instead?
-
-> + */
-> +static void sun8i_pll2_factors(struct factors_request *req)
+>  drivers/clk/tegra/clk-pll.c              | 46 ++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-tegra210.c         | 15 +++++++++--
+>  drivers/clk/tegra/clk.h                  |  6 +++++
+>  include/dt-bindings/clock/tegra210-car.h |  2 +-
+>  4 files changed, 66 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 6ac3f843e7ca..4e194ecc8d5e 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -2013,6 +2013,52 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+>  #endif
+>  
+>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+> +struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+> +			  const char *parent_name, void __iomem *clk_base,
+> +			  void __iomem *pmc, unsigned long flags,
+> +			  struct tegra_clk_pll_params *pll_params,
+> +			  spinlock_t *lock, unsigned long parent_rate)
 > +{
-> +	unsigned long n, m;
+> +	u32 val;
+> +	struct tegra_clk_pll *pll;
+> +	struct clk *clk;
 > +
-> +	/* set p =3D 4 so that pll2 =3D pll2x8 / 8 */
-> +	req->p =3D 4 - 1;
-> +	rational_best_approximation(req->rate,
-> +				req->parent_rate / 4,
-> +				1 << 7, 1 << 5, &n, &m);
-> +	req->rate =3D req->parent_rate / m * n / 4;
-> +	req->m =3D m - 1;
-> +	req->n =3D n - 1;
+> +	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+> +
+> +	if (pll_params->adjust_vco)
+> +		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+> +							     parent_rate);
+> +
+> +	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+> +	if (IS_ERR(pll))
+> +		return ERR_CAST(pll);
+> +
+> +	/* program minimum rate by default */
+> +
+> +	val = pll_readl_base(pll);
+> +	if (val & PLL_BASE_ENABLE)
+> +		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
+> +				BIT(pll_params->iddq_bit_idx));
+> +	else {
+> +		val = 0x4 << divm_shift(pll);
+> +		val |= 0x41 << divn_shift(pll);
+> +		pll_writel_base(val, pll);
+> +	}
+> +
+> +	/* disable lock override */
+> +
+> +	val = pll_readl_misc(pll);
+> +	val &= ~BIT(29);
+> +	pll_writel_misc(val, pll);
+> +
+> +	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+> +				      &tegra_clk_pllre_ops);
+> +	if (IS_ERR(clk))
+> +		kfree(pll);
+> +
+> +	return clk;
 > +}
 > +
-> +static void sun8i_pll2_recalc(struct factors_request *req)
-> +{
-> +	req->rate =3D req->parent_rate / (req->m + 1) * (req->n + 1) /
-> +						(req->p + 1);
-> +}
+>  static int clk_plle_tegra210_enable(struct clk_hw *hw)
+>  {
+>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 637041fd53ad..ce262582547c 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2582,8 +2582,10 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>  	clks[TEGRA210_CLK_PLL_D_OUT0] = clk;
+>  
+>  	/* PLLRE */
+> -	clk = tegra_clk_register_pllre("pll_re_vco", "pll_ref", clk_base, pmc,
+> -			     0, &pll_re_vco_params, &pll_re_lock, pll_ref_freq);
+> +	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
+> +						clk_base, pmc, 0,
+> +						&pll_re_vco_params,
+> +						&pll_re_lock, pll_ref_freq);
+>  	clk_register_clkdev(clk, "pll_re_vco", NULL);
+>  	clks[TEGRA210_CLK_PLL_RE_VCO] = clk;
+>  
+> @@ -2593,6 +2595,15 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>  	clk_register_clkdev(clk, "pll_re_out", NULL);
+>  	clks[TEGRA210_CLK_PLL_RE_OUT] = clk;
+>  
+> +	clk = tegra_clk_register_divider("pll_re_out1_div", "pll_re_vco",
+> +					 clk_base + PLLRE_OUT1, 0,
+> +					 TEGRA_DIVIDER_ROUND_UP,
+> +					 8, 8, 1, NULL);
+> +	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
+> +					 clk_base + PLLRE_OUT1, 1, 0,
+> +					 CLK_SET_RATE_PARENT, 0, NULL);
+> +	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
 > +
-> +static const struct clk_factors_config sun8i_pll2_config =3D {
-> +	.mshift =3D 0,
-> +	.mwidth =3D 5,
-> +	.nshift =3D 8,
-> +	.nwidth =3D 7,
-> +	.pshift =3D 16,
-> +	.pwidth =3D 4,
-> +};
+>  	/* PLLE */
+>  	clk = tegra_clk_register_plle_tegra210("pll_e", "pll_ref",
+>  				      clk_base, 0, &pll_e_params, NULL);
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 4dbcfaec576a..9f26c1ba1e5b 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -386,6 +386,12 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
+>  			   struct tegra_clk_pll_params *pll_params,
+>  			   spinlock_t *lock, unsigned long parent_rate);
+>  
+> +struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+> +			   const char *parent_name, void __iomem *clk_base,
+> +			   void __iomem *pmc, unsigned long flags,
+> +			   struct tegra_clk_pll_params *pll_params,
+> +			   spinlock_t *lock, unsigned long parent_rate);
 > +
-> +static const struct factors_data sun8i_pll2_data __initconst =3D {
-> +	.enable =3D 31,
-> +	.table =3D &sun8i_pll2_config,
-> +	.getter =3D sun8i_pll2_factors,
-> +	.recalc =3D sun8i_pll2_recalc,
-> +};
-> +
-> +static void __init sun8i_pll2_setup(struct device_node *node)
-> +{
-> +	sunxi_factors_clk_setup(node, &sun8i_pll2_data);
-> +}
-> +CLK_OF_DECLARE(sun8i_pll2, "allwinner,sun8i-pll2-clk",
-> +	       sun8i_pll2_setup);
+>  struct clk *tegra_clk_register_plle_tegra114(const char *name,
+>  				const char *parent_name,
+>  				void __iomem *clk_base, unsigned long flags,
+> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> index 0a05b0d36ae7..bd3530e56d46 100644
+> --- a/include/dt-bindings/clock/tegra210-car.h
+> +++ b/include/dt-bindings/clock/tegra210-car.h
+> @@ -346,7 +346,7 @@
+>  #define TEGRA210_CLK_PLL_P_OUT_HSIO 316
+>  #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
+>  #define TEGRA210_CLK_XUSB_SSP_SRC 318
+> -/* 319 */
+> +#define TEGRA210_CLK_PLL_RE_OUT1 319
+>  /* 320 */
+>  /* 321 */
+>  /* 322 */
+> 
 
-How do you plan on supporting the multiple pll2 output?
 
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---NJ5+aVN4Egd/eJfU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXCiKSAAoJEBx+YmzsjxAg/XIQAIWR2mWfXIFmYjk11PSvXO7g
-UiPAGN/65qT7PZThWClaflrtwWdLCJMW9pDbF42Y2agusqmzRCyxN1qj7FSbtnQn
-6EnhZf5O4OFBtOsmEzCi2mlFhMxi+Ep9bCM3SSAMsPCuyYnNshYBQMmpwrUltsXW
-oTpLqxM3dvir8CSd+PFE620HXKNT469U2rPr8xQMkU7raIl8lGQ+8YrMWB6EBLxn
-LN5SBjqOMFNWP398zjH4208mAxYcc8Z/VdetLl4VyKBB214l58wvCvmfLeJoMYOx
-ZQb4X4Qsu2i48L7ZfvcGF9Tuic9G6PbrQBtS1NHQaNyJq/qX5iVaTd4mq5WtgqEB
-NGp1S43DogiJXWJfAF8xVAU8pxswqNC71cypgxV8kBaZXnFVPZxniCXZkRBr2i7p
-SKGk4CsXk3Ivr/hs0HpuvjAOVUSmUSYrrM5DcoP5TlEoK0YZgKjm8R4+JejVhcIw
-4aK3sAOBcx+YZIq0mDXr4qLl7w1XJLD+NBQw0Fq7FnrScY8+BLv232FryNEkiXBj
-VS5uMhQFBM9gwxCTxYk8U+Yz2pTY3cw31VeUkPiWYWY/ArDDa6fA7iEfV2oGsyNz
-IzvPV+DyyA9VRHhUH3sBi/JWeLcBdViLHhgU8TfvmyG5ax17H8tbkD4Sr/f0J5Jn
-v4dyn3LXT97LYg5hplhf
-=TgMR
------END PGP SIGNATURE-----
-
---NJ5+aVN4Egd/eJfU--
+-- 
+nvpublic
