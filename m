@@ -1,118 +1,157 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 12 Apr 2016 14:45:08 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:35674 "EHLO
+	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758423AbcDHNbr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2016 09:31:47 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 15/46] pwm: introduce the pwm_state concept
-Message-ID: <20160412144508.2ee181fe@bbrezillon>
-In-Reply-To: <20160412122141.GP18882@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-16-git-send-email-boris.brezillon@free-electrons.com>
-	<20160412114904.GM18882@ulmo.ba.sec>
-	<20160412141718.5fe4cf24@bbrezillon>
-	<20160412122141.GP18882@ulmo.ba.sec>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Cc: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 4/5] clk: tegra: dfll: Properly clean up on failure and removal
+Date: Fri,  8 Apr 2016 15:31:36 +0200
+Message-Id: <1460122297-14420-4-git-send-email-thierry.reding@gmail.com>
+In-Reply-To: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
+References: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Apr 2016 14:21:41 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
+From: Thierry Reding <treding@nvidia.com>
 
-> On Tue, Apr 12, 2016 at 02:17:18PM +0200, Boris Brezillon wrote:
-> > On Tue, 12 Apr 2016 13:49:04 +0200
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > 
-> > > On Wed, Mar 30, 2016 at 10:03:38PM +0200, Boris Brezillon wrote:
-> > > > The PWM state, represented by its period, duty_cycle and polarity,
-> > > > is currently directly stored in the PWM device.
-> > > > Declare a pwm_state structure embedding those field so that we can later
-> > > > use this struct to atomically update all the PWM parameters at once.
-> > > > 
-> > > > All pwm_get_xxx() helpers are now implemented as wrappers around
-> > > > pwm_get_state().
-> > > > 
-> > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > > ---
-> > > >  drivers/pwm/core.c  |  8 ++++----
-> > > >  include/linux/pwm.h | 54 +++++++++++++++++++++++++++++++++++++++++------------
-> > > >  2 files changed, 46 insertions(+), 16 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> > > > index 6433059..f3f91e7 100644
-> > > > --- a/drivers/pwm/core.c
-> > > > +++ b/drivers/pwm/core.c
-> > > > @@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
-> > > >  		pwm->chip = chip;
-> > > >  		pwm->pwm = chip->base + i;
-> > > >  		pwm->hwpwm = i;
-> > > > -		pwm->polarity = polarity;
-> > > > +		pwm->state.polarity = polarity;
-> > > 
-> > > Would this not more correctly be assigned to pwm->args.polarity? After
-> > > all this is setting up the "initial" state, much like DT or the lookup
-> > > tables would for duty cycle and period.
-> > 
-> > Yes, I wasn't sure about the pwm_add_with_polarity() meaning. To me,
-> > all the reference info should be extracted from DT, PWM lookup table or
-> > driver specific ->request() implementation, but I can definitely
-> > initialize the args.polarity here too.
-> > 
-> > Should I keep the pwm->state.polarity assignment (to set the initial
-> > polarity when the driver does not support hardware readout)?
-> 
-> Wouldn't this work automatically as part of the pwm_apply_args() helper
-> if we extended it with this setting?
+Upon failure to probe the DFLL, the OPP table will not be cleaned up
+properly. Fix this and while at it make sure the OPP table will also be
+cleared upon driver removal.
 
-Well, as you explained in you answer to patch 5, pwm_apply_args()
-should be called on a per-request basis (each time a PWM device is
-requested), while the initial polarity setting should only be applied
-when registering the PWM chip (and its devices). After that, the
-framework takes care of keeping the PWM state in sync with the hardware
-state.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/clk/tegra/clk-dfll.h               |  2 ++
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 31 ++++++++++++++++++++++++++----
+ drivers/clk/tegra/cvb.c                    | 16 +++++++++++++++
+ drivers/clk/tegra/cvb.h                    |  3 +++
+ 4 files changed, 48 insertions(+), 4 deletions(-)
 
-Let's take a real (though a bit unusual) example. Say you have a single
-PWM device referenced by two different users. Only one user can be
-enabled at a time, but each of them has its own reference config
-(different polarity, different period).
-
-User1 calls pwm_get() and applies its own polarity and period. Then
-user1 is unregistered and release the PWM device, leaving the polarity
-and period untouched.
-
-User2 is registered and request the same PWM device, but user2 is
-smarter and tries to extract the current PWM state before adapting the
-config according to pwm_args. If you just reset pwm->state.polarity
-each time pwm_apply_args() is called (and you suggested to call it as
-part of the request procedure), then this means the PWM state is no
-longer in sync with the hardware state.
-
-
+diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+index d192982b1f96..ed2ad888268f 100644
+--- a/drivers/clk/tegra/clk-dfll.h
++++ b/drivers/clk/tegra/clk-dfll.h
+@@ -25,6 +25,7 @@
+ /**
+  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
+  * @dev: struct device * that holds the OPP table for the DFLL
++ * @max_freq: maximum frequency supported on this SoC
+  * @cvb: CPU frequency table for this SoC
+  * @init_clock_trimmers: callback to initialize clock trimmers
+  * @set_clock_trimmers_high: callback to tune clock trimmers for high voltage
+@@ -32,6 +33,7 @@
+  */
+ struct tegra_dfll_soc_data {
+ 	struct device *dev;
++	unsigned long max_freq;
+ 	const struct cvb_table *cvb;
+ 
+ 	void (*init_clock_trimmers)(void);
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index c7ffd4fd2231..d052d9fa8230 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -84,7 +84,7 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
+ 
+ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ {
+-	int process_id, speedo_id, speedo_value;
++	int process_id, speedo_id, speedo_value, err;
+ 	struct tegra_dfll_soc_data *soc;
+ 
+ 	process_id = tegra_sku_info.cpu_process_id;
+@@ -107,18 +107,41 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
++	soc->max_freq = cpu_max_freq_table[speedo_id];
++
+ 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+ 					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
+ 					   process_id, speedo_id, speedo_value,
+-					   cpu_max_freq_table[speedo_id]);
++					   soc->max_freq);
+ 	if (IS_ERR(soc->cvb)) {
+ 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
+ 			PTR_ERR(soc->cvb));
+ 		return PTR_ERR(soc->cvb);
+ 	}
+ 
++	err = tegra_dfll_register(pdev, soc);
++	if (err < 0) {
++		tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
++		return err;
++	}
++
++	platform_set_drvdata(pdev, soc);
++
++	return 0;
++}
++
++static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
++{
++	struct tegra_dfll_soc_data *soc = platform_get_drvdata(pdev);
++	int err;
++
++	err = tegra_dfll_unregister(pdev);
++	if (err < 0)
++		dev_err(&pdev->dev, "failed to unregister DFLL: %d\n", err);
++
++	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
+ 
+-	return tegra_dfll_register(pdev, soc);
++	return 0;
+ }
+ 
+ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+@@ -134,7 +157,7 @@ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 
+ static struct platform_driver tegra124_dfll_fcpu_driver = {
+ 	.probe = tegra124_dfll_fcpu_probe,
+-	.remove = tegra_dfll_unregister,
++	.remove = tegra124_dfll_fcpu_remove,
+ 	.driver = {
+ 		.name = "tegra124-dfll",
+ 		.of_match_table = tegra124_dfll_fcpu_of_match,
+diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
+index 7a099b18c368..624115e82ff9 100644
+--- a/drivers/clk/tegra/cvb.c
++++ b/drivers/clk/tegra/cvb.c
+@@ -130,3 +130,19 @@ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
+ 
+ 	return ERR_PTR(-EINVAL);
+ }
++
++void tegra_cvb_remove_opp_table(struct device *dev,
++				const struct cvb_table *table,
++				unsigned long max_freq)
++{
++	unsigned int i;
++
++	for (i = 0; i < MAX_DVFS_FREQS; i++) {
++		const struct cvb_table_freq_entry *entry = &table->entries[i];
++
++		if (!entry->freq || (entry->freq > max_freq))
++			break;
++
++		dev_pm_opp_remove(dev, entry->freq);
++	}
++}
+diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
+index e6bf8581badd..c1f077993b2a 100644
+--- a/drivers/clk/tegra/cvb.h
++++ b/drivers/clk/tegra/cvb.h
+@@ -61,5 +61,8 @@ const struct cvb_table *
+ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
+ 			size_t count, int process_id, int speedo_id,
+ 			int speedo_value, unsigned long max_freq);
++void tegra_cvb_remove_opp_table(struct device *dev,
++				const struct cvb_table *table,
++				unsigned long max_freq);
+ 
+ #endif
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.8.0
+
