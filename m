@@ -1,61 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:19201 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753144AbcDNLc1 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2016 07:32:27 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O5M00KWJG20GX20@mailout2.w1.samsung.com> for
- linux-clk@vger.kernel.org; Thu, 14 Apr 2016 12:32:24 +0100 (BST)
-Subject: Re: Programming a clock in the device tree
-To: Peter Rosin <peda@lysator.liu.se>
-References: <570ED310.3020604@lysator.liu.se>
-Cc: linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <570F7FB4.9010504@samsung.com>
-Date: Thu, 14 Apr 2016 13:32:04 +0200
-MIME-version: 1.0
-In-reply-to: <570ED310.3020604@lysator.liu.se>
-Content-type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <keguang.zhang@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <57079B87.9030209@nod.at>
+References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
+ <1460115779-13141-4-git-send-email-keguang.zhang@gmail.com> <57079B87.9030209@nod.at>
+From: Kelvin Cheung <keguang.zhang@gmail.com>
+Date: Fri, 8 Apr 2016 22:30:21 +0800
+Message-ID: <CAJhJPsXaidmMUX7CcTHshaYGZ-iqbaAExMh6eoOFDEAuzp4t7A@mail.gmail.com>
+Subject: Re: [PATCH V2 4/7] mtd: nand: add Loongson1 NAND driver
+To: Richard Weinberger <richard@nod.at>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org
+Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/14/2016 01:15 AM, Peter Rosin wrote:
-> Hi!
-> 
-> I'm trying to connect (in a device tree) a programmable clock
-> to a device that does not expect the clock to need any
-> programming.
-> 
-> I can hack this and add a clk_set_rate at the appropriate point
-> in the driver for the clk consumer, but I was expecting to see
-> some way of just adding a device tree node to get this done for
-> me.
-> 
-> It just feels wrong to add this hack to the driver as the
-> programmable clock might be needed for more than one device and
-> the decisions by one driver might conflict with other needs (the
-> driver in question can use a variety of clock rates, so the rate
-> it should request is policy not belonging in a driver).
-> 
-> Adding a device tree frequency property to the driver in question
-> is also a possibility, but that would need code duplication for
-> other clock consumers as well, when someone wants to use those
-> drivers in the way I'm now trying to use this driver.
-> 
-> I.e. I expected to see a driver, just like the fixed clock
-> driver, but that programs a parent clock instead of just
-> representing a fixed oscillator. Is there such a thing? If not,
-> what is it that I'm not seeing? Because I just can't believe that
-> I'm the first person to need this...
+On 04/08/2016 07:52 PM, Richard Weinberger wrote:
+> Am 08.04.2016 um 13:42 schrieb Keguang Zhang:
+>> + chip->options = NAND_NO_SUBPAGE_WRITE;
+>> + chip->ecc.mode = NAND_ECC_SOFT;
+> Is the lack of HW ECC and subpage write a hardware limitation?
 
-How about using assigned-{clocks, clock-parents, clock-rates}
-properties in the clock provider node? Wouldn't it help in your
-case? Documentation can be found in Documentation/devicetree/
-bindings/clock/clock-bindings.txt
+Yes, that's the hardware limitation of Loongson1B NAND controller.
 
+> Thanks,
+> //richard
 
--- 
-Regards,
-Sylwester
+Best regards,
+
+Keguang Zhang
