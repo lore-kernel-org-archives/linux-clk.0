@@ -1,40 +1,124 @@
-Return-Path: <robh@kernel.org>
-Date: Thu, 14 Apr 2016 12:37:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>
-Subject: Re: [PATCH v5 4/5] dt-bindings: arm: add DT binding for Marvell
- CP110 system controller
-Message-ID: <20160414173738.GA24292@rob-hp-laptop>
-References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1460648013-31320-5-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <ralf@linux-mips.org>
+Date: Fri, 8 Apr 2016 12:06:00 +0200
+From: Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Ungerer <gerg@uclinux.org>,
+        Ryan Mallon <rmallon@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Steven Miao <realmz6@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wan ZongShun <mcuos.com@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Russell King <linux@arm.linux.org.uk>,
+        linux-m68k@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        John Crispin <blogic@openwrt.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Hans-Christian Egtvedt <egtvedt@samfundet.no>,
+        Paul Walmsley <paul@pwsan.com>,
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+Message-ID: <20160408100600.GI1668@linux-mips.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160408003328.GA14441@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460648013-31320-5-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <20160408003328.GA14441@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 14, 2016 at 05:33:32PM +0200, Thomas Petazzoni wrote:
-> This commit adds the DT binding documentation for the Marvell CP110
-> system controller, which is part of the CP110 HW block, itself used in
-> the Marvell Armada 7K and 8K SoCs.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  .../arm/marvell/cp110-system-controller0.txt       | 83 ++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+On Thu, Apr 07, 2016 at 05:33:28PM -0700, Stephen Boyd wrote:
 
-Acked-by: Rob Herring <rob@kernel.org>
+> On 04/05, Masahiro Yamada wrote:
+> > The clk_disable() in the common clock framework (drivers/clk/clk.c)
+> > returns immediately if a given clk is NULL or an error pointer.  It
+> > allows clock consumers to call clk_disable() without IS_ERR_OR_NULL
+> > checking if drivers are only used with the common clock framework.
+> > 
+> > Unfortunately, NULL/error checking is missing from some of non-common
+> > clk_disable() implementations.  This prevents us from completely
+> > dropping NULL/error checking from callers.  Let's make it tree-wide
+> > consistent by adding IS_ERR_OR_NULL(clk) to all callees.
+> > 
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Acked-by: Greg Ungerer <gerg@uclinux.org>
+> > Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+> > ---
+> > 
+> > Stephen,
+> > 
+> > This patch has been unapplied for a long time.
+> > 
+> > Please let me know if there is something wrong with this patch.
+> > 
+> 
+> I'm mostly confused why we wouldn't want to encourage people to
+> call clk_disable or unprepare on a clk that's an error pointer.
+> Typically an error pointer should be dealt with, instead of
+> silently ignored, so why wasn't it dealt with by passing it up
+> the probe() path?
+
+While your argument makes perfect sense, Many clk_disable implementations
+are already doing similar checks, for example:
+
+arch/arm/mach-davinci/clock.c:
+
+void clk_disable(struct clk *clk)
+{
+	unsigned long flags;
+
+	if (clk == NULL || IS_ERR(clk))
+		return;
+[...]
+
+arch/arm/mach-omap1/clock.c
+
+void clk_disable(struct clk *clk)
+{
+        unsigned long flags;
+
+        if (clk == NULL || IS_ERR(clk))
+                return;
+[...]
+
+arch/avr32/mach-at32ap/clock.c
+
+void clk_disable(struct clk *clk)
+{
+        unsigned long flags;
+
+        if (IS_ERR_OR_NULL(clk))
+                return;
+[...]
+
+arch/mips/lantiq/clk.c:
+
+static inline int clk_good(struct clk *clk)
+{
+	return clk && !IS_ERR(clk);
+}
+
+[...]
+
+void clk_disable(struct clk *clk)
+{
+	if (unlikely(!clk_good(clk)))
+		return;
+
+	if (clk->disable)
+[...]
+
+So should we go and weed out these checks?
+
+  Ralf
