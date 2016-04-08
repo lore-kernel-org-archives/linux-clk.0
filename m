@@ -1,200 +1,196 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 02/13] clk: Add {devm_}clk_hw_{register,unregister}() APIs
-Date: Thu, 21 Apr 2016 15:21:53 -0700
-Message-Id: <1461277324-27185-3-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <keguang.zhang@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160406142652.GC27292@vkoul-mobl.iind.intel.com>
+References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
+ <1459946095-7637-4-git-send-email-keguang.zhang@gmail.com> <20160406142652.GC27292@vkoul-mobl.iind.intel.com>
+From: Kelvin Cheung <keguang.zhang@gmail.com>
+Date: Fri, 8 Apr 2016 19:43:58 +0800
+Message-ID: <CAJhJPsVj5EKLK8tAt4RG9ug73oV0hiJGe59nBKAHoM0tbVzcdw@mail.gmail.com>
+Subject: Re: [PATCH V1 3/7] dmaengine: Loongson1: add Loongson1 dmaengine driver
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
+	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
+Content-Type: multipart/alternative; boundary=001a1145b3ce131c16052ff7b7c1
 List-ID: <linux-clk.vger.kernel.org>
 
-We've largely split the clk consumer and provider APIs along
-struct clk and struct clk_hw, but clk_register() still returns a
-struct clk pointer for each struct clk_hw that's registered.
-Eventually we'd like to only allocate struct clks when there's a
-user, because struct clk is per-user now, so clk_register() needs
-to change.
+--001a1145b3ce131c16052ff7b7c1
+Content-Type: text/plain; charset=UTF-8
 
-Let's add new APIs to register struct clk_hws, but this time
-we'll hide the struct clk from the caller by returning an int
-error code. Also add an unregistration API that takes the clk_hw
-structure that was passed to the registration API. This way
-provider drivers never have to deal with a struct clk pointer
-unless they're using the clk consumer APIs.
+2016-04-06 22:26 GMT+08:00 Vinod Koul <vinod.koul@intel.com>:
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- Documentation/driver-model/devres.txt |  1 +
- drivers/clk/clk.c                     | 86 +++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h          |  6 +++
- 3 files changed, 93 insertions(+)
+> On Wed, Apr 06, 2016 at 08:34:51PM +0800, Keguang Zhang wrote:
+> > @@ -527,6 +527,15 @@ config ZX_DMA
+> >       help
+> >         Support the DMA engine for ZTE ZX296702 platform devices.
+> >
+> > +config DMA_LOONGSON1
+>
+> The kconfig and makefile is sorted alphabetically, pls arrage these entries
+> accordingly
+>
 
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 73b98dfbcea4..108d45553e1b 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -236,6 +236,7 @@ certainly invest a bit more effort into libata core layer).
- CLOCK
-   devm_clk_get()
-   devm_clk_put()
-+  devm_clk_hw_register()
- 
- DMA
-   dmam_alloc_coherent()
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fb74dc1f7520..0ef919666827 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2536,6 +2536,22 @@ fail_out:
- }
- EXPORT_SYMBOL_GPL(clk_register);
- 
-+/**
-+ * clk_hw_register - register a clk_hw and return an error code
-+ * @dev: device that is registering this clock
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * clk_hw_register is the primary interface for populating the clock tree with
-+ * new clock nodes. It returns an integer equal to zero indicating success or
-+ * less than zero indicating failure. Drivers must test for an error code after
-+ * calling clk_hw_register().
-+ */
-+int clk_hw_register(struct device *dev, struct clk_hw *hw)
-+{
-+	return PTR_ERR_OR_ZERO(clk_register(dev, hw));
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register);
-+
- /* Free memory allocated for a clock. */
- static void __clk_release(struct kref *ref)
- {
-@@ -2637,11 +2653,26 @@ unlock:
- }
- EXPORT_SYMBOL_GPL(clk_unregister);
- 
-+/**
-+ * clk_hw_unregister - unregister a currently registered clk_hw
-+ * @hw: hardware-specific clock data to unregister
-+ */
-+void clk_hw_unregister(struct clk_hw *hw)
-+{
-+	clk_unregister(hw->clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_unregister);
-+
- static void devm_clk_release(struct device *dev, void *res)
- {
- 	clk_unregister(*(struct clk **)res);
- }
- 
-+static void devm_clk_hw_release(struct device *dev, void *res)
-+{
-+	clk_hw_unregister(*(struct clk_hw **)res);
-+}
-+
- /**
-  * devm_clk_register - resource managed clk_register()
-  * @dev: device that is registering this clock
-@@ -2672,6 +2703,36 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(devm_clk_register);
- 
-+/**
-+ * devm_clk_hw_register - resource managed clk_hw_register()
-+ * @dev: device that is registering this clock
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * Managed clk_hw_register(). Clocks returned from this function are
-+ * automatically clk_hw_unregister()ed on driver detach. See clk_hw_register()
-+ * for more information.
-+ */
-+int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
-+{
-+	struct clk_hw **hwp;
-+	int ret;
-+
-+	hwp = devres_alloc(devm_clk_hw_release, sizeof(*hwp), GFP_KERNEL);
-+	if (!hwp)
-+		return -ENOMEM;
-+
-+	ret = clk_hw_register(dev, hw);
-+	if (!ret) {
-+		*hwp = hw;
-+		devres_add(dev, hwp);
-+	} else {
-+		devres_free(hwp);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_hw_register);
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk *c = res;
-@@ -2680,6 +2741,15 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
- 	return c == data;
- }
- 
-+static int devm_clk_hw_match(struct device *dev, void *res, void *data)
-+{
-+	struct clk_hw *hw = res;
-+
-+	if (WARN_ON(!hw))
-+		return 0;
-+	return hw == data;
-+}
-+
- /**
-  * devm_clk_unregister - resource managed clk_unregister()
-  * @clk: clock to unregister
-@@ -2694,6 +2764,22 @@ void devm_clk_unregister(struct device *dev, struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(devm_clk_unregister);
- 
-+/**
-+ * devm_clk_hw_unregister - resource managed clk_hw_unregister()
-+ * @dev: device that is unregistering the hardware-specific clock data
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * Unregister a clk_hw registered with devm_clk_hw_register(). Normally
-+ * this function will not need to be called and the resource management
-+ * code will ensure that the resource is freed.
-+ */
-+void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
-+{
-+	WARN_ON(devres_release(dev, devm_clk_hw_release, devm_clk_hw_match,
-+				hw));
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
-+
- /*
-  * clkdev helpers
-  */
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index da95258127aa..bc6c8de1fac1 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -655,9 +655,15 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
- struct clk *clk_register(struct device *dev, struct clk_hw *hw);
- struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
- 
-+int __must_check clk_hw_register(struct device *dev, struct clk_hw *hw);
-+int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw *hw);
-+
- void clk_unregister(struct clk *clk);
- void devm_clk_unregister(struct device *dev, struct clk *clk);
- 
-+void clk_hw_unregister(struct clk_hw *hw);
-+void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
-+
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
+will do.
+
+
+>
+> > +
+> > +             /*memorize the physical address of descriptor */
+>
+> bad comment style
+>
+
+will fix.
+
+
+>
+
+
+> > +     /*allocate DMA descriptors */
+>
+> here and other places too :(
+>
+
+will fix.
+
+
+>
+> > +static enum dma_status ls1x_dma_tx_status(struct dma_chan *chan,
+> > +                                       dma_cookie_t cookie,
+> > +                                       struct dma_tx_state *txstate)
+> > +{
+> > +     struct ls1x_dma_chan *dma_chan = to_ls1x_dma_chan(chan);
+> > +     struct ls1x_dma_desc *dma_desc = dma_chan->dma_desc;
+> > +     struct virt_dma_desc *vdesc;
+> > +     enum dma_status status;
+> > +     unsigned int residue = 0;
+> > +     unsigned long flags;
+> > +
+> > +     status = dma_cookie_status(chan, cookie, txstate);
+> > +     if ((status == DMA_COMPLETE) || !txstate)
+> > +             return status;
+> > +
+> > +     spin_lock_irqsave(&dma_chan->vchan.lock, flags);
+> > +
+> > +     vdesc = vchan_find_desc(&dma_chan->vchan, cookie);
+> > +     if (vdesc)
+> > +             /* not yet processed */
+> > +             residue = ls1x_dma_desc_residue(to_ls1x_dma_desc(vdesc),
+> 0);
+>
+> If your usage queries reside repeatedly, then it might make sense to store
+> the size which is residue here
+>
+
+Querying residues is not the usual case.
+It almost returns with DMA_COMPLETE.
+
+
+>
+> --
+> ~Vinod
+>
+
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+
+Kelvin Cheung
+
+--001a1145b3ce131c16052ff7b7c1
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><div class=3D"gmail_quo=
+te">2016-04-06 22:26 GMT+08:00 Vinod Koul <span dir=3D"ltr">&lt;<a href=3D"=
+mailto:vinod.koul@intel.com" target=3D"_blank">vinod.koul@intel.com</a>&gt;=
+</span>:<br><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
+.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><span class=
+=3D"">On Wed, Apr 06, 2016 at 08:34:51PM +0800, Keguang Zhang wrote:<br>
+&gt; @@ -527,6 +527,15 @@ config ZX_DMA<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0help<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Support the DMA engine for ZTE ZX2967=
+02 platform devices.<br>
+&gt;<br>
+&gt; +config DMA_LOONGSON1<br>
+<br>
+</span>The kconfig and makefile is sorted alphabetically, pls arrage these =
+entries<br>
+accordingly<br></blockquote><div>=C2=A0</div><div>will do.<br></div><div>=
+=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
+.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<span class=3D""><br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/*memorize the physic=
+al address of descriptor */<br>
+<br>
+</span>bad comment style<br></blockquote><div>=C2=A0</div><div>will fix.<br=
+>=C2=A0<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
+0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<span class=3D""></span>=C2=A0</blockquote><blockquote class=3D"gmail_quote=
+" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
+padding-left:1ex"><span class=3D"">
+<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0/*allocate DMA descriptors */<br>
+<br>
+</span>here and other places too :(<br></blockquote><div><br>will fix.<br>=
+=C2=A0<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
+px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<span class=3D""><br>
+&gt; +static enum dma_status ls1x_dma_tx_status(struct dma_chan *chan,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dma_c=
+ookie_t cookie,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struc=
+t dma_tx_state *txstate)<br>
+&gt; +{<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct ls1x_dma_chan *dma_chan =3D to_ls1x_dma_ch=
+an(chan);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct ls1x_dma_desc *dma_desc =3D dma_chan-&gt;d=
+ma_desc;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct virt_dma_desc *vdesc;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0enum dma_status status;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0unsigned int residue =3D 0;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0unsigned long flags;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0status =3D dma_cookie_status(chan, cookie, txstat=
+e);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if ((status =3D=3D DMA_COMPLETE) || !txstate)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return status;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0spin_lock_irqsave(&amp;dma_chan-&gt;vchan.lock, f=
+lags);<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0vdesc =3D vchan_find_desc(&amp;dma_chan-&gt;vchan=
+, cookie);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (vdesc)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* not yet processed =
+*/<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0residue =3D ls1x_dma_=
+desc_residue(to_ls1x_dma_desc(vdesc), 0);<br>
+<br>
+</span>If your usage queries reside repeatedly, then it might make sense to=
+ store<br>
+the size which is residue here<br></blockquote><div><br></div><div>Querying=
+ residues is not the usual case.<br></div><div>It almost returns with <span=
+ class=3D"">DMA_COMPLETE.</span></div><div>=C2=A0<br></div><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
+gb(204,204,204);padding-left:1ex">
+<span class=3D""><font color=3D"#888888"><br>
+--<br>
+~Vinod<br>
+</font></span></blockquote></div><br><br clear=3D"all"><br>-- <br><div clas=
+s=3D"gmail_signature"><div dir=3D"ltr"><div><div dir=3D"ltr"><div><div dir=
+=3D"ltr"><div>Best regards,<br><br>Kelvin Cheung<br></div></div></div></div=
+></div></div></div>
+</div></div>
+
+--001a1145b3ce131c16052ff7b7c1--
