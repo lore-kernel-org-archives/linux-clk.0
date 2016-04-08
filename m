@@ -1,44 +1,134 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 19 Apr 2016 18:54:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	CARLOS.PALMINHA@synopsys.com, Alexey.Brodkin@synopsys.com,
-	mturquette@baylibre.com
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-Message-ID: <20160420015451.GH15324@codeaurora.org>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
- <20160415234631.GB4690@codeaurora.org>
- <5714B763.8010109@synopsys.com>
- <5714C9BA.8040004@synopsys.com>
- <5715F6AC.7090501@synopsys.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5715F6AC.7090501@synopsys.com>
+In-Reply-To: <20160408100600.GI1668@linux-mips.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+	<20160408003328.GA14441@codeaurora.org>
+	<20160408100600.GI1668@linux-mips.org>
+Date: Fri, 8 Apr 2016 20:15:05 +0900
+Message-ID: <CAK7LNASmvJfmFKVLWpQ8GZYKs6ntSk1Lae-witX=1hDGotQV_Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-mips@linux-mips.org, linux-m68k@vger.kernel.org,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Greg Ungerer <gerg@uclinux.org>,
+        linux-clk@vger.kernel.org,
+        Hans-Christian Egtvedt <egtvedt@samfundet.no>,
+        Russell King <linux@arm.linux.org.uk>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Kevin Hilman <khilman@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Wan ZongShun <mcuos.com@gmail.com>, Steven Miao <realmz6@gmail.com>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Simon Horman <horms@verge.net.au>, linux-omap@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        John Crispin <blogic@openwrt.org>, Paul Walmsley <paul@pwsan.com>,
+        Eric Miao <eric.y.miao@gmail.com>, Ryan Mallon <rmallon@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Hartley Sweeten <hsweeten@visionengravers.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19, Jose Abreu wrote:
-> 
-> @Stephen: can you give some input so that I can submit a v6?
-> 
+2016-04-08 19:06 GMT+09:00 Ralf Baechle <ralf@linux-mips.org>:
+> On Thu, Apr 07, 2016 at 05:33:28PM -0700, Stephen Boyd wrote:
+>
+>> On 04/05, Masahiro Yamada wrote:
+>> > The clk_disable() in the common clock framework (drivers/clk/clk.c)
+>> > returns immediately if a given clk is NULL or an error pointer.  It
+>> > allows clock consumers to call clk_disable() without IS_ERR_OR_NULL
+>> > checking if drivers are only used with the common clock framework.
+>> >
+>> > Unfortunately, NULL/error checking is missing from some of non-common
+>> > clk_disable() implementations.  This prevents us from completely
+>> > dropping NULL/error checking from callers.  Let's make it tree-wide
+>> > consistent by adding IS_ERR_OR_NULL(clk) to all callees.
+>> >
+>> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> > Acked-by: Greg Ungerer <gerg@uclinux.org>
+>> > Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+>> > ---
+>> >
+>> > Stephen,
+>> >
+>> > This patch has been unapplied for a long time.
+>> >
+>> > Please let me know if there is something wrong with this patch.
+>> >
+>>
+>> I'm mostly confused why we wouldn't want to encourage people to
+>> call clk_disable or unprepare on a clk that's an error pointer.
+>> Typically an error pointer should be dealt with, instead of
+>> silently ignored, so why wasn't it dealt with by passing it up
+>> the probe() path?
+>
+> While your argument makes perfect sense, Many clk_disable implementations
+> are already doing similar checks, for example:
+>
+> arch/arm/mach-davinci/clock.c:
+>
+> void clk_disable(struct clk *clk)
+> {
+>         unsigned long flags;
+>
+>         if (clk == NULL || IS_ERR(clk))
+>                 return;
+> [...]
+>
+> arch/arm/mach-omap1/clock.c
+>
+> void clk_disable(struct clk *clk)
+> {
+>         unsigned long flags;
+>
+>         if (clk == NULL || IS_ERR(clk))
+>                 return;
+> [...]
+>
+> arch/avr32/mach-at32ap/clock.c
+>
+> void clk_disable(struct clk *clk)
+> {
+>         unsigned long flags;
+>
+>         if (IS_ERR_OR_NULL(clk))
+>                 return;
+> [...]
+>
+> arch/mips/lantiq/clk.c:
+>
+> static inline int clk_good(struct clk *clk)
+> {
+>         return clk && !IS_ERR(clk);
+> }
+>
+> [...]
+>
+> void clk_disable(struct clk *clk)
+> {
+>         if (unlikely(!clk_good(clk)))
+>                 return;
+>
+>         if (clk->disable)
+> [...]
+>
+> So should we go and weed out these checks?
+>
+>   Ralf
 
-I don't prefer putting the second register in the same DT node,
-but that's really up to the DT reviewers to approve such a
-design. The current binding has been acked by Rob right?
 
-Assuming the new binding is acked/reviewed then that solution is
-fine.
+Please help me understand your thought clearly.
 
-Otherwise, I still prefer two DTS files for the two different FPGA
-versions. At the least, please use ioremap for any pointers that
-you readl/writel here.
+[1] Should calling clk_unprepare/disable() with a NULL pointer be allowed?
 
-Beyond that, we should have a fixed rate source clk somewhere in
-the software view of the clk tree, because that reflects reality.
-Hardcoding the parent rate in the structure works, but doesn't
-properly express the clk tree.
+[2] Should calling clk_unprepare/disable() with an error pointer be allowed?
+
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards
+Masahiro Yamada
