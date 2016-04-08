@@ -1,39 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 15:44:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock updates for 4.7
-Message-ID: <20160415224401.GW14441@codeaurora.org>
-References: <20160413072001.GM28903@tiger>
+Return-Path: <jun.nie@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160413072001.GM28903@tiger>
+In-Reply-To: <5706F7F7.3030205@codeaurora.org>
+References: <1460020558-5152-1-git-send-email-jun.nie@linaro.org>
+	<5706F7F7.3030205@codeaurora.org>
+Date: Fri, 8 Apr 2016 08:46:39 +0800
+Message-ID: <CABymUCMLZ+UcH-Vo1i_Zj+N-r-uVeYPvnBLkJzyp1oZRRUVwjQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: disable unused clk if enable_count == 0
+From: Jun Nie <jun.nie@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Shawn Guo <shawn.guo@linaro.org>, Jason Liu <jason.liu@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/13, Shawn Guo wrote:
-> Hi Mike, Stephen,
-> 
-> Please pull the following i.MX clock updates I queued for 4.7, and keep
-> the branch stable.  Thanks.
-> 
-> Shawn
-> 
-> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
-> 
->   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.7
-> 
-> for you to fetch changes up to 69c542e8022ca53c5fee664548163809eb1777c3:
-> 
->   clk: imx: vf610: fix whitespace in vf610-clock.h (2016-04-12 09:31:08 +0800)
+2016-04-08 8:14 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 04/07/2016 02:15 AM, Jun Nie wrote:
+>> If .is_enabled callback is not implemented, clk_core_is_enabled
+>> will take software enable_count as enable status. If enable_count
+>> is zero, .disable will not be called as software assume clock
+>> is not enabled though clock may be booted with  free running state.
+>> Disable the clock in this situation.
+>>
+>> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+>> ---
+>
+> Why not implement the is_enabled callback then?
 
-Thanks. Pulled.
+The is_enabled callback is not mandatory according to sanity check
+code, so there is risk that some clock is not gated even we have
+called clk_disable_unused_subtree. If is_enabled callback is mandatory
+when CLK_IGNORE_UNUSED is not set, Adding a sanity check will fill
+this gap.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Jun
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
