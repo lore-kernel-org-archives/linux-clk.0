@@ -1,81 +1,126 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V3] clk: bcm2835: mark enabled clocks with CLK_ENABLE_HAND_OFF
-In-Reply-To: <1461770664-29384-1-git-send-email-kernel@martin.sperl.org>
-References: <1461770664-29384-1-git-send-email-kernel@martin.sperl.org>
-Date: Thu, 28 Apr 2016 13:22:22 -0700
-Message-ID: <87d1p9v5z5.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <keguang.zhang@gmail.com>
+Return-Path: <keguang.zhang@gmail.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH V2 1/7] clk: Loongson1: Update clocks of Loongson1B
+Date: Fri,  8 Apr 2016 19:42:55 +0800
+Message-Id: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-kernel@martin.sperl.org writes:
+- Rename the file to clk-loongson1.c
+- Add AC97, DMA and NAND clock
+- Update clock names
+- Remove superfluous error messages
 
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> The bcm2835 firmware enables several clocks and plls before
-> booting the linux kernel.
->
-> These plls should never get disabled as it may result in a
-> stopped system clock and more.
->
-> So during probing we check if the clock is enabled
-> and if it is then mark that clock with CLK_ENABLE_HAND_OFF.
-> As a consequence this will also enable the corresponding
-> parent plls and pll-divs.
->
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
->
-> --
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 35f8de7..65d62c2 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -1251,7 +1251,14 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
->  		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
->  	}
->
-> +	/* if the clock is running then enable HAND_OFF */
-> +	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
-> +		dev_info(cprman->dev,
-> +			 "found enabled clock %s - enabling hand off\n",
-> +			 data->name);
-> +		init.flags |= CLK_ENABLE_HAND_OFF;
-> +	}
-> +
+---
+V2:
+   Regenerate the patch to make it review-able.
+---
+ drivers/clk/Makefile                        |  2 +-
+ drivers/clk/{clk-ls1x.c => clk-loongson1.c} | 25 +++++++++++++------------
+ 2 files changed, 14 insertions(+), 13 deletions(-)
+ rename drivers/clk/{clk-ls1x.c => clk-loongson1.c} (86%)
 
-The debug shouldn't be at dev_info() level, but other than that this
-seems like a good plan once CLK_ENABLE_HAND_OFF lands.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJXInD+AAoJELXWKTbR/J7oXAYP/1rIspBoceUeuGMqcMiMv1Ef
-rYKSacq0kDFNNcpthSD/fnHKyVc7Ljxc7moSh9oWFEVsnI1R1e/n/4x2G5YBUqJh
-b5tTj8ewx0csUwR4+Z7U4lOdH2xoAfYg/6Uj4dj7sQj8PQ33fEdc3/xT5CiRgk+I
-8UblxaDRM4lpckLdteLQ3hzfWkwZSBQ1GCfXb5mlb5+cVCFCcWWxyEDwaDv40DP8
-Bu5vrmxfkWtHIpcWKRMfltpWCzvwOEJRL8mVAoHWV6TQoiqxySfayzInzq6ldFe5
-lvMakVkNk6qXPEPOzl3Pv8WPnV2JiDgw64kiVTY9Za30J+Bl+E/PQL0QCtcV2jYI
-GmhUljV6yFSQ3R6OtlQebhQUVUMgksX2kK+Zy8pDE/kOIaf9lbhdnD6DCxzjdgQK
-QlJULh4kXw5OJ6xvAtfgLyPd1YQN57q3q3e9iOLu8kQe8iCLmv7d/7CL9btlxFjq
-dV2Qky/JWQi62J2D+EfQyoupHTyehMMvbQzckCswBgCS1ncWX0yb+Qb0H92Xkjtb
-qrAob4+PIXmiq1YgjeKHit89pYgYwPlGQ3ywTbW328cgo0Aubo3jU5jMKA8RsJ6Q
-cQ4WZFHfZ2x0IKNrxa+CmzeWW0i5BA+7md8mszbSv7Zfs8YPDzgAh83TicTxoLas
-F2Ltl0lTqN4g71HZHqM5
-=iRbf
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d6..5845b2c 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -25,7 +25,7 @@ obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+-obj-$(CONFIG_MACH_LOONGSON32)		+= clk-ls1x.o
++obj-$(CONFIG_MACH_LOONGSON32)		+= clk-loongson1.o
+ obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_COMMON_CLK_MAX77802)	+= clk-max77802.o
+diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-loongson1.c
+similarity index 86%
+rename from drivers/clk/clk-ls1x.c
+rename to drivers/clk/clk-loongson1.c
+index d4c6198..ce2135c 100644
+--- a/drivers/clk/clk-ls1x.c
++++ b/drivers/clk/clk-loongson1.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2012 Zhang, Keguang <keguang.zhang@gmail.com>
++ * Copyright (c) 2012-2016 Zhang, Keguang <keguang.zhang@gmail.com>
+  *
+  * This program is free software; you can redistribute  it and/or modify it
+  * under  the terms of  the GNU General  Public License as published by the
+@@ -58,11 +58,9 @@ static struct clk *__init clk_register_pll(struct device *dev,
+ 	struct clk_init_data init;
+ 
+ 	/* allocate the divider */
+-	hw = kzalloc(sizeof(struct clk_hw), GFP_KERNEL);
+-	if (!hw) {
+-		pr_err("%s: could not allocate clk_hw\n", __func__);
++	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++	if (!hw)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &ls1x_pll_clk_ops;
+@@ -80,9 +78,9 @@ static struct clk *__init clk_register_pll(struct device *dev,
+ 	return clk;
+ }
+ 
+-static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
+-static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
+-static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
++static const char *const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
++static const char *const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
++static const char *const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
+ 
+ void __init ls1x_clk_init(void)
+ {
+@@ -147,6 +145,7 @@ void __init ls1x_clk_init(void)
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+ 			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
+ 	clk_register_clkdev(clk, "ahb_clk", NULL);
++	clk_register_clkdev(clk, "ls1x-dma", NULL);
+ 	clk_register_clkdev(clk, "stmmaceth", NULL);
+ 
+ 	/* clock derived from AHB clk */
+@@ -154,9 +153,11 @@ void __init ls1x_clk_init(void)
+ 	clk = clk_register_fixed_factor(NULL, "apb_clk", "ahb_clk", 0, 1,
+ 					DIV_APB);
+ 	clk_register_clkdev(clk, "apb_clk", NULL);
+-	clk_register_clkdev(clk, "ls1x_i2c", NULL);
+-	clk_register_clkdev(clk, "ls1x_pwmtimer", NULL);
+-	clk_register_clkdev(clk, "ls1x_spi", NULL);
+-	clk_register_clkdev(clk, "ls1x_wdt", NULL);
++	clk_register_clkdev(clk, "ls1x-ac97", NULL);
++	clk_register_clkdev(clk, "ls1x-i2c", NULL);
++	clk_register_clkdev(clk, "ls1x-nand", NULL);
++	clk_register_clkdev(clk, "ls1x-pwmtimer", NULL);
++	clk_register_clkdev(clk, "ls1x-spi", NULL);
++	clk_register_clkdev(clk, "ls1x-wdt", NULL);
+ 	clk_register_clkdev(clk, "serial8250", NULL);
+ }
+-- 
+1.9.1
