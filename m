@@ -1,48 +1,149 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 00/28] ARM: OMAP2+: hwmod module clock type support
-Date: Thu, 14 Apr 2016 14:07:49 +0300
-Message-ID: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:40521 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753394AbcDJP0K (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 11:26:10 -0400
+Date: Sun, 10 Apr 2016 02:53:22 -0700
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
+Message-ID: <20160410095322.GZ4227@lukather>
+References: <cover.1459358017.git.moinejf@free.fr>
+ <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NJ5+aVN4Egd/eJfU"
+In-Reply-To: <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
+
+
+--NJ5+aVN4Egd/eJfU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-v2 contains following changes in comparison to v1:
+On Wed, Mar 30, 2016 at 06:57:16PM +0200, Jean-Francois Moine wrote:
+> Add the PLL type which is used by the sun8i family for audio.
+>=20
+> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++=
+++++++
+>  2 files changed, 49 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
+ation/devicetree/bindings/clock/sunxi.txt
+> index ff93aee..917d4aa 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -10,6 +10,7 @@ Required properties:
+>  	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
+>  	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
+>  	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
+> +	"allwinner,sun8i-pll2-clk" - for the audio PLL clock
 
-- Patch ordering changed a bit, clk/ti, mach-omap2, dts patches are now
-  mostly grouped together, with the exception of the introduction of
-  clock helper API, which is needed by everything else. Please note
-  that the ordering must be preserved between mach-omap2/clk-driver/dts
-  to avoid boot problems.
-- Dropped hwmod data removal patches for now, this allows booting with
-  either new or old DTS data.
-- Fixed a typo in the hwmod clock driver timeout handling, the comparison
-  for timeout against ktime_us_delta was wrong causing too short
-  timeouts, this was apparent with cpuidle enabled on OMAP4
-- Added patch #6 to fetch hwmod main clock based on the hwmod name itself,
-  if found, ignore main_clk / clkctrl setup for the hwmod
-- Added patch #7 to fix issue in omap2 timer caused by patch #6, with
-  dynamic parsing of main clock, the hwmod must be setup before attempting
-  to access main_clk.
+You should mention the name of the first SoC that introduced it.
 
-Boot tested on am335x-evm, am335x-evmsk, am3517-evm, am37x-evm, am437x-sk,
-am437x-gp-evm, am57xx-evm, omap3-beagle-xm, omap3-beagle, am335x-boneblack,
-am335x-bone, omap3-crane, dra72x-ev, dra7xx-evm, ldp3430, omap4-panda-es,
-omap4-panda, omap2430-sdp, omap3430-sdp, omap4-sdp-es23plus, omap5-uevm.
+>  	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
+>  	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
+>  	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 270f2a9..7386141 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -1130,6 +1130,54 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pl=
+l6-clk",
+>  	       sun6i_pll6_clk_setup);
+> =20
+>  /*
+> + * sun8i pll2
+> + *
+> + * rate =3D parent_rate / (m + 1) * (n + 1) / (p + 1);
 
-Suspend-resume tested on omap3-beagle, omap4-panda-es.
+                         ^ I'm guessing it's a "*" instead?
 
-Cpuidle tested on omap4-panda-es. For some reason cpuidle is not functional
-for me on omap3-beagle, even on plain 4.6-rc2.
+> + */
+> +static void sun8i_pll2_factors(struct factors_request *req)
+> +{
+> +	unsigned long n, m;
+> +
+> +	/* set p =3D 4 so that pll2 =3D pll2x8 / 8 */
+> +	req->p =3D 4 - 1;
+> +	rational_best_approximation(req->rate,
+> +				req->parent_rate / 4,
+> +				1 << 7, 1 << 5, &n, &m);
+> +	req->rate =3D req->parent_rate / m * n / 4;
+> +	req->m =3D m - 1;
+> +	req->n =3D n - 1;
+> +}
+> +
+> +static void sun8i_pll2_recalc(struct factors_request *req)
+> +{
+> +	req->rate =3D req->parent_rate / (req->m + 1) * (req->n + 1) /
+> +						(req->p + 1);
+> +}
+> +
+> +static const struct clk_factors_config sun8i_pll2_config =3D {
+> +	.mshift =3D 0,
+> +	.mwidth =3D 5,
+> +	.nshift =3D 8,
+> +	.nwidth =3D 7,
+> +	.pshift =3D 16,
+> +	.pwidth =3D 4,
+> +};
+> +
+> +static const struct factors_data sun8i_pll2_data __initconst =3D {
+> +	.enable =3D 31,
+> +	.table =3D &sun8i_pll2_config,
+> +	.getter =3D sun8i_pll2_factors,
+> +	.recalc =3D sun8i_pll2_recalc,
+> +};
+> +
+> +static void __init sun8i_pll2_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun8i_pll2_data);
+> +}
+> +CLK_OF_DECLARE(sun8i_pll2, "allwinner,sun8i-pll2-clk",
+> +	       sun8i_pll2_setup);
 
-Branch pushed at:
-tree: https://github.com/t-kristo/linux-pm.git
-branch: 4.6-rc2-hwmod-clks-v2
+How do you plan on supporting the multiple pll2 output?
 
--Tero
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--NJ5+aVN4Egd/eJfU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXCiKSAAoJEBx+YmzsjxAg/XIQAIWR2mWfXIFmYjk11PSvXO7g
+UiPAGN/65qT7PZThWClaflrtwWdLCJMW9pDbF42Y2agusqmzRCyxN1qj7FSbtnQn
+6EnhZf5O4OFBtOsmEzCi2mlFhMxi+Ep9bCM3SSAMsPCuyYnNshYBQMmpwrUltsXW
+oTpLqxM3dvir8CSd+PFE620HXKNT469U2rPr8xQMkU7raIl8lGQ+8YrMWB6EBLxn
+LN5SBjqOMFNWP398zjH4208mAxYcc8Z/VdetLl4VyKBB214l58wvCvmfLeJoMYOx
+ZQb4X4Qsu2i48L7ZfvcGF9Tuic9G6PbrQBtS1NHQaNyJq/qX5iVaTd4mq5WtgqEB
+NGp1S43DogiJXWJfAF8xVAU8pxswqNC71cypgxV8kBaZXnFVPZxniCXZkRBr2i7p
+SKGk4CsXk3Ivr/hs0HpuvjAOVUSmUSYrrM5DcoP5TlEoK0YZgKjm8R4+JejVhcIw
+4aK3sAOBcx+YZIq0mDXr4qLl7w1XJLD+NBQw0Fq7FnrScY8+BLv232FryNEkiXBj
+VS5uMhQFBM9gwxCTxYk8U+Yz2pTY3cw31VeUkPiWYWY/ArDDa6fA7iEfV2oGsyNz
+IzvPV+DyyA9VRHhUH3sBi/JWeLcBdViLHhgU8TfvmyG5ax17H8tbkD4Sr/f0J5Jn
+v4dyn3LXT97LYg5hplhf
+=TgMR
+-----END PGP SIGNATURE-----
+
+--NJ5+aVN4Egd/eJfU--
