@@ -1,90 +1,123 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:59759 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755359AbcDJQz6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 12:55:58 -0400
+Date: Sun, 10 Apr 2016 18:55:47 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 13/24] input: misc: max8997: explicitly apply PWM config extracted from pwm_args
-Date: Thu, 14 Apr 2016 21:17:33 +0200
-Message-Id: <1460661464-11216-14-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
+Message-Id: <20160410185547.2829e5f3aee51d50ee454a91@free.fr>
+In-Reply-To: <20160410095322.GZ4227@lukather>
+References: <cover.1459358017.git.moinejf@free.fr>
+	<8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
+	<20160410095322.GZ4227@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Call pwm_apply_args() just after requesting the PWM device so that the
-polarity and period are initialized according to the information provided
-in pwm_args.
+On Sun, 10 Apr 2016 02:53:22 -0700
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-This is an intermediate state, and pwm_apply_args() should be dropped as
-soon as the atomic PWM infrastructure is in place and the driver makes
-use of it.
+> Hi,
+> 
+> On Wed, Mar 30, 2016 at 06:57:16PM +0200, Jean-Francois Moine wrote:
+> > Add the PLL type which is used by the sun8i family for audio.
+> > 
+> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> > ---
+> >  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+> >  drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++++++++
+> >  2 files changed, 49 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> > index ff93aee..917d4aa 100644
+> > --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> > +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> > @@ -10,6 +10,7 @@ Required properties:
+> >  	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
+> >  	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
+> >  	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
+> > +	"allwinner,sun8i-pll2-clk" - for the audio PLL clock
+> 
+> You should mention the name of the first SoC that introduced it.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/input/misc/max8997_haptic.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+As I know only the pll2 of the H3, is it OK for
+	"allwinner,sun8i-h3-pll2-clk"
+?
 
-diff --git a/drivers/input/misc/max8997_haptic.c b/drivers/input/misc/max8997_haptic.c
-index a806ba3..bf17f65 100644
---- a/drivers/input/misc/max8997_haptic.c
-+++ b/drivers/input/misc/max8997_haptic.c
-@@ -304,6 +304,12 @@ static int max8997_haptic_probe(struct platform_device *pdev)
- 				error);
- 			goto err_free_mem;
- 		}
-+
-+		/*
-+		 * FIXME: pwm_apply_args() should be removed when switching to
-+		 * the atomic PWM API.
-+		 */
-+		pwm_apply_args(chip->pwm);
- 		break;
- 
- 	default:
+> >  	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
+> >  	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
+> >  	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
+> > diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> > index 270f2a9..7386141 100644
+> > --- a/drivers/clk/sunxi/clk-sunxi.c
+> > +++ b/drivers/clk/sunxi/clk-sunxi.c
+> > @@ -1130,6 +1130,54 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
+> >  	       sun6i_pll6_clk_setup);
+> >  
+> >  /*
+> > + * sun8i pll2
+> > + *
+> > + * rate = parent_rate / (m + 1) * (n + 1) / (p + 1);
+> 
+>                          ^ I'm guessing it's a "*" instead?
+
+No, 'm' is a divider, as 'p'.
+
+> > + */
+> > +static void sun8i_pll2_factors(struct factors_request *req)
+> > +{
+> > +	unsigned long n, m;
+> > +
+> > +	/* set p = 4 so that pll2 = pll2x8 / 8 */
+> > +	req->p = 4 - 1;
+> > +	rational_best_approximation(req->rate,
+> > +				req->parent_rate / 4,
+> > +				1 << 7, 1 << 5, &n, &m);
+> > +	req->rate = req->parent_rate / m * n / 4;
+> > +	req->m = m - 1;
+> > +	req->n = n - 1;
+> > +}
+> > +
+> > +static void sun8i_pll2_recalc(struct factors_request *req)
+> > +{
+> > +	req->rate = req->parent_rate / (req->m + 1) * (req->n + 1) /
+> > +						(req->p + 1);
+> > +}
+> > +
+> > +static const struct clk_factors_config sun8i_pll2_config = {
+> > +	.mshift = 0,
+> > +	.mwidth = 5,
+> > +	.nshift = 8,
+> > +	.nwidth = 7,
+> > +	.pshift = 16,
+> > +	.pwidth = 4,
+> > +};
+> > +
+> > +static const struct factors_data sun8i_pll2_data __initconst = {
+> > +	.enable = 31,
+> > +	.table = &sun8i_pll2_config,
+> > +	.getter = sun8i_pll2_factors,
+> > +	.recalc = sun8i_pll2_recalc,
+> > +};
+> > +
+> > +static void __init sun8i_pll2_setup(struct device_node *node)
+> > +{
+> > +	sunxi_factors_clk_setup(node, &sun8i_pll2_data);
+> > +}
+> > +CLK_OF_DECLARE(sun8i_pll2, "allwinner,sun8i-pll2-clk",
+> > +	       sun8i_pll2_setup);
+> 
+> How do you plan on supporting the multiple pll2 output?
+
+Using fixed-clocks in the DTS if needed.
+
 -- 
-2.5.0
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
