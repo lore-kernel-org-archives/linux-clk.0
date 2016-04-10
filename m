@@ -1,182 +1,67 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:34137 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758378AbcDHNbp (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2016 09:31:45 -0400
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 3/5] clk: tegra: dfll: Make code more comprehensible
-Date: Fri,  8 Apr 2016 15:31:35 +0200
-Message-Id: <1460122297-14420-3-git-send-email-thierry.reding@gmail.com>
-In-Reply-To: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
-References: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:40504 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753394AbcDJP0G (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 11:26:06 -0400
+Date: Sun, 10 Apr 2016 02:40:55 -0700
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: sunxi: Add sun6i/8i display support
+Message-ID: <20160410094055.GW4227@lukather>
+References: <cover.1459358017.git.moinejf@free.fr>
+ <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1PHmS26pdpOR3Xc0"
+In-Reply-To: <2b347763e38cfeeb7a2d6af6357eaea6c4ec07ac.1459358017.git.moinejf@free.fr>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
 
-Rename some variables and structure fields to make the code more
-comprehensible. Also change the prototype of internal functions to be
-more in line with the OPP core functions.
+--1PHmS26pdpOR3Xc0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 11 +++---
- drivers/clk/tegra/cvb.c                    | 55 +++++++++++++++---------------
- drivers/clk/tegra/cvb.h                    | 12 +++----
- 3 files changed, 37 insertions(+), 41 deletions(-)
+On Wed, Mar 30, 2016 at 06:43:29PM +0200, Jean-Francois Moine wrote:
+> Add the clock type which is used by the sun6i/8i families for video displ=
+ay.
+>=20
+> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 6bfa5ca40d02..c7ffd4fd2231 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -47,7 +47,7 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
- 		},
- 		.speedo_scale = 100,
- 		.voltage_scale = 1000,
--		.cvb_table = {
-+		.entries = {
- 			{204000000UL,   {1112619, -29295, 402} },
- 			{306000000UL,	{1150460, -30585, 402} },
- 			{408000000UL,	{1190122, -31865, 402} },
-@@ -107,11 +107,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	soc->cvb = tegra_cvb_build_opp_table(tegra124_cpu_cvb_tables,
--					     ARRAY_SIZE(tegra124_cpu_cvb_tables),
--					     process_id, speedo_id, speedo_value,
--					     cpu_max_freq_table[speedo_id],
--					     soc->dev);
-+	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
-+					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
-+					   process_id, speedo_id, speedo_value,
-+					   cpu_max_freq_table[speedo_id]);
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index 69c74eec3a4b..7a099b18c368 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -61,29 +61,28 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
- 	return mv;
- }
- 
--static int build_opp_table(const struct cvb_table *d,
--			   int speedo_value,
--			   unsigned long max_freq,
--			   struct device *opp_dev)
-+static int build_opp_table(struct device *dev, const struct cvb_table *table,
-+			   int speedo_value, unsigned long max_freq)
- {
-+	const struct rail_alignment *align = &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
--	const struct cvb_table_freq_entry *table = NULL;
--	const struct rail_alignment *align = &d->alignment;
- 
--	min_mv = round_voltage(d->min_millivolts, align, UP);
--	max_mv = round_voltage(d->max_millivolts, align, DOWN);
-+	min_mv = round_voltage(table->min_millivolts, align, UP);
-+	max_mv = round_voltage(table->max_millivolts, align, DOWN);
- 
- 	for (i = 0; i < MAX_DVFS_FREQS; i++) {
--		table = &d->cvb_table[i];
--		if (!table->freq || (table->freq > max_freq))
-+		const struct cvb_table_freq_entry *entry = &table->entries[i];
-+
-+		if (!entry->freq || (entry->freq > max_freq))
- 			break;
- 
--		dfll_mv = get_cvb_voltage(
--			speedo_value, d->speedo_scale, &table->coefficients);
--		dfll_mv = round_cvb_voltage(dfll_mv, d->voltage_scale, align);
-+		dfll_mv = get_cvb_voltage(speedo_value, table->speedo_scale,
-+					  &entry->coefficients);
-+		dfll_mv = round_cvb_voltage(dfll_mv, table->voltage_scale,
-+					    align);
- 		dfll_mv = clamp(dfll_mv, min_mv, max_mv);
- 
--		ret = dev_pm_opp_add(opp_dev, table->freq, dfll_mv * 1000);
-+		ret = dev_pm_opp_add(dev, entry->freq, dfll_mv * 1000);
- 		if (ret)
- 			return ret;
- 	}
-@@ -92,7 +91,7 @@ static int build_opp_table(const struct cvb_table *d,
- }
- 
- /**
-- * tegra_cvb_build_opp_table - build OPP table from Tegra CVB tables
-+ * tegra_cvb_add_opp_table - build OPP table from Tegra CVB tables
-  * @cvb_tables: array of CVB tables
-  * @sz: size of the previously mentioned array
-  * @process_id: process id of the HW module
-@@ -108,25 +107,25 @@ static int build_opp_table(const struct cvb_table *d,
-  * given @opp_dev. Returns a pointer to the struct cvb_table that matched
-  * or an ERR_PTR on failure.
-  */
--const struct cvb_table *tegra_cvb_build_opp_table(
--		const struct cvb_table *cvb_tables,
--		size_t sz, int process_id,
--		int speedo_id, int speedo_value,
--		unsigned long max_rate,
--		struct device *opp_dev)
-+const struct cvb_table *
-+tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
-+			size_t count, int process_id, int speedo_id,
-+			int speedo_value, unsigned long max_freq)
- {
--	int i, ret;
-+	size_t i;
-+	int ret;
- 
--	for (i = 0; i < sz; i++) {
--		const struct cvb_table *d = &cvb_tables[i];
-+	for (i = 0; i < count; i++) {
-+		const struct cvb_table *table = &tables[i];
- 
--		if (d->speedo_id != -1 && d->speedo_id != speedo_id)
-+		if (table->speedo_id != -1 && table->speedo_id != speedo_id)
- 			continue;
--		if (d->process_id != -1 && d->process_id != process_id)
-+
-+		if (table->process_id != -1 && table->process_id != process_id)
- 			continue;
- 
--		ret = build_opp_table(d, speedo_value, max_rate, opp_dev);
--		return ret ? ERR_PTR(ret) : d;
-+		ret = build_opp_table(dev, table, speedo_value, max_freq);
-+		return ret ? ERR_PTR(ret) : table;
- 	}
- 
- 	return ERR_PTR(-EINVAL);
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index f62cdc4f4234..e6bf8581badd 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -53,15 +53,13 @@ struct cvb_table {
- 
- 	int speedo_scale;
- 	int voltage_scale;
--	struct cvb_table_freq_entry cvb_table[MAX_DVFS_FREQS];
-+	struct cvb_table_freq_entry entries[MAX_DVFS_FREQS];
- 	struct cvb_cpu_dfll_data cpu_dfll_data;
- };
- 
--const struct cvb_table *tegra_cvb_build_opp_table(
--		const struct cvb_table *cvb_tables,
--		size_t sz, int process_id,
--		int speedo_id, int speedo_value,
--		unsigned long max_rate,
--		struct device *opp_dev);
-+const struct cvb_table *
-+tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
-+			size_t count, int process_id, int speedo_id,
-+			int speedo_value, unsigned long max_freq);
- 
- #endif
--- 
-2.8.0
+Applied, thanks
 
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--1PHmS26pdpOR3Xc0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXCh+nAAoJEBx+YmzsjxAgyMkQAJgnteTTnvQ75xLENAMFDzBs
+J8xDCorbQbt76y/EzPNGppTFJCZTGVDLpHmlCQH8Mm6CaKjHYH4S2auqrVt6ItQS
+qMOGO1ALw7Dcxu2L4ItbtELifOOOHOTFiQSL1fYKvtuJ3eWkwcApLQ4HsONHofTw
+t1NTqChMb4b3nJj78MT2JD2D0ZrqZepaDna/LN0n4Fz00qpWdtHdX6IUbidebDLK
+XyZ1fsqi79dOOKcIew8ELym+HYZHYErv3wH26LaQQqhi6MK8iihLSnFEuSWxDd5/
+mqmd9xIPppwrcYv9W9074nWUk/iyFmHi9KkesA+yuXrO3vn5/TVmkz5mqgZ2tWLi
+ItvjKNMIsnmQqfpePev9NTHYva/bOocI7HX0SwZwBgH6Ba0sH9fNfNvGcGZRltRR
+FLb1CxaSHZrzpxRmkUvl8Z2PTw2rl1fQ7Q8mB5ZrFFfvKcVEkL3STbeRkxI6giPU
+zv0R+XIY07ORlWhxpsUdPK525T8resQsJgL0BG4T1gCw4vYzjUWrtHLiXWW5G2Dq
+j8NwN4jmDVqnItnRTSI/XEymDMa82TRXYEIMOMF6XGSsc4eF4i6NUNLL4VKPPVhL
+V+YnfUtU2mz/qm3wjfKiem8lhEjiySySTo0+KxOUz7zmqZWlLIiJ/YdVj68popsq
+ci3eJiLFSSCygJhO5/Ra
+=IGOm
+-----END PGP SIGNATURE-----
+
+--1PHmS26pdpOR3Xc0--
