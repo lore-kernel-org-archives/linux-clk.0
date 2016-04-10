@@ -1,70 +1,139 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 13:53:14 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lucas Stach <dev@lynxeye.de>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:54605 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755743AbcDJRLf convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 13:11:35 -0400
+Date: Sun, 10 Apr 2016 19:11:21 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: tegra30: fix PLL_U post divider and init rate
-Message-ID: <20160422115314.GF9047@ulmo.ba.sec>
-References: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
- <1456778767-18413-2-git-send-email-dev@lynxeye.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aZoGpuMECXJckB41"
-In-Reply-To: <1456778767-18413-2-git-send-email-dev@lynxeye.de>
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: sunxi: Add sun6i/8i PLL video support
+Message-Id: <20160410191121.6f791f375110cf358b0ee1ab@free.fr>
+In-Reply-To: <20160410095006.GY4227@lukather>
+References: <cover.1459358017.git.moinejf@free.fr>
+	<e63499f789971b8c45a0ae5e90bd127371cbcf19.1459358017.git.moinejf@free.fr>
+	<20160410095006.GY4227@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, 10 Apr 2016 02:50:06 -0700
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
---aZoGpuMECXJckB41
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi,
+> 
+> On Wed, Mar 30, 2016 at 06:50:43PM +0200, Jean-Francois Moine wrote:
+> > Add the PLL type which is used by the sun6i/8i families for video display.
+> > 
+> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> > ---
+> >  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+> >  drivers/clk/sunxi/clk-sunxi.c                     | 65 +++++++++++++++++++++++
+> >  2 files changed, 66 insertions(+)
+	[snip]
+> > diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> > index 0581e1b..270f2a9 100644
+> > --- a/drivers/clk/sunxi/clk-sunxi.c
+> > +++ b/drivers/clk/sunxi/clk-sunxi.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/spinlock.h>
+> >  #include <linux/log2.h>
+> > +#include <linux/rational.h>
+> >  
+> >  #include "clk-factors.h"
+> >  
+> > @@ -1129,6 +1130,70 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
+> >  	       sun6i_pll6_clk_setup);
+> >  
+> >  /*
+> > + * sun6i pll3
+> > + *
+> > + * if (p == 0) rate = k ? 270MHz : 297MHz
+> > + * else rate = parent_rate / (m + 1) * (n + 1);
+> > + */
+> > +static void sun6i_pll3_factors(struct factors_request *req)
+> > +{
+> > +	unsigned long n, m;
+> > +
+> > +	if (req->rate == 270000000) {
+> > +		req->m = 0;
+> > +		req->p = 0;
+> > +		req->k = 0;
+> > +	} else if (req->rate == 297000000) {
+> > +		req->m = 0;
+> > +		req->p = 0;
+> > +		req->k = 1;
+> > +	} else {
+> > +		rational_best_approximation(req->rate,
+> > +					req->parent_rate,
+> > +					1 << 7, 1 << 4, &n, &m);
+> > +		req->rate = req->parent_rate / m * n;
+> > +		req->p = 1;
+> > +		req->m = m - 1;
+> > +		req->n = n - 1;
+> > +	}
+> > +}
+> > +
+> > +static void sun6i_pll3_recalc(struct factors_request *req)
+> > +{
+> > +	if (req->p)
+> > +		req->rate = req->parent_rate / (req->m + 1) * (req->n + 1);
+> > +	else if (req->k)
+> > +		req->rate = 270000000;
+> > +	else
+> > +		req->rate = 297000000;
+> > +}
+> > +
+> > +static const struct clk_factors_config sun6i_pll3_config = {
+> > +	.mshift = 0,
+> > +	.mwidth = 4,
+> > +	.nshift = 8,
+> > +	.nwidth = 7,
+> > +	.pshift = 24,	/* mode selection fractional / integer */
+> > +	.pwidth = 1,
+> > +	.kshift = 25,	/* fraction 270 / 297 MHz */
+> > +	.kwidth = 1,
+> > +};
+> 
+> That's not what p and k are.
+> 
+> Please add extra parameters to deal with fractional rates in the
+> clk_factors_config (like an extra bit + an array with the two rate
+> exposed.
+> 
+> That way, you can also deal with it in the core, instead of doing a
+> hack.
 
-On Mon, Feb 29, 2016 at 09:46:07PM +0100, Lucas Stach wrote:
-> The post divider value in the frequency table is wrong as it
-> would lead to the PLL producing a output rate of 960MHz instead
-> of the desired 480MHz. This wasn't a problem as nothing used the
-> table to actually init the PLL rate, but the bootloader
-> configuration was used unaltered.
->=20
-> If the bootloader does not set up the PLL it will fail to come
-> when used under Linux. To fix this don't rely on the bootloader,
-> but set the correct rate in the clock driver.
->=20
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> ---
->  drivers/clk/tegra/clk-tegra30.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+It is really a good way to add generic code for only one clock?
+Otherwise, there is no 'P' nor 'K' in the pll3 documentation, what is
+the trouble of using the variables 'p' and 'k' for other functions? And
+noone said that the variables should have the same name as those of the
+documentation.
+Anyway, I am stupid and obedient: this code was proposed by Chen-Yu Tsai
+on Sat, 6 Feb 2016 17:56:00 +0800:
 
-Applied, thanks.
+> clk-factors now supports a custom .recalc callback. Along with get_factors,
+> you can support pretty much any clock that has four variables, not including
+> the mux and clock gate.
+> 
+> So for this you'd have the div as factor m, and the integer mode bit as p,
+> and the fraction bit as n, and recalc would be somewhat like this:
+> 
+> if (p) {
+>         rate = parent_rate / (m + 1);
+> } else if (n) {
+>         rate = 297000000;
+> } else {
+>         rate = 270000000;
+> }
+> 
+> get_factors should be easy enough to figure out.
 
-Thierry
-
---aZoGpuMECXJckB41
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXGhCpAAoJEN0jrNd/PrOhhWcP/ijRSz+2FB4jkdzVVXoJMEsC
-tekBAsy4D8Fm7wlTbjucgcPPMILZw8OXSjOx6QDSm/M1RXg6cMEtu57IIk8yyHHx
-qI5FEsk5hs2ltF6jeCODWMbJB15q3Xr3VWwoCt2FZWEiZSkivXvqjRRozZBBZNYx
-lz3CVNW45tXS1YzaVA251ACZ3YeNMIttsV4XJHdMeTTUZWmAvVl6i4CSR6oP9OYy
-OVQ7kT5w6NqGf/F5qgJPexR9Bm9EuolGXftekvEt0DzRsy+OSQiaBo9pXWq1WaDl
-C90pKHIvAmKIhXkGY6FIBVjGlgWQspGIrKN/fOmNBu0RYXbiw5W+r95xzLgLqWxy
-RpnTV+qS6dpLxWvx+yzC9hzQmth6FeIuw+m9XeRoZzZ3FCm6uQZoA5WQHhrSAwvi
-gLxUF6tjDXZGcNQ2+tjza5A079p66n4SLqlLVStziiYO41vVDyUiU/9EwiM1hpzB
-5Ejve8R1Sf9Wg8yRCwyINUberGWQqvh1OMzoMYUMQUPV5sJbomkkQ3Z9AP747/2B
-EwR+6KdQEw99TQNwMiA1ZsZrjbcW8nB4g4y1xKkd939QB0f/EG22/8fNhyLEU3gq
-hbuWvrMzmwsUCecr+1xuOrpHu4UyebS2ovOFg0+vFUNxCF1TiOAPjjp49D93a/VF
-IkUhxgzyk33LjzMXBw9z
-=I9oY
------END PGP SIGNATURE-----
-
---aZoGpuMECXJckB41--
+-- 
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
