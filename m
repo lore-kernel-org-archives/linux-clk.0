@@ -1,14 +1,15 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 17:33:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 11 Apr 2016 09:22:11 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Keguang Zhang <keguang.zhang@gmail.com>
 Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
 	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
 	Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
 	Vinod Koul <vinod.koul@intel.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
@@ -17,29 +18,38 @@ Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
 	Richard Weinberger <richard@nod.at>,
 	David Woodhouse <dwmw2@infradead.org>,
 	Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH V1 1/7] clk: Loongson1: Update clocks of Loongson1B
-Message-ID: <20160416003322.GK26353@codeaurora.org>
-References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
- <1459946095-7637-2-git-send-email-keguang.zhang@gmail.com>
+Subject: Re: [PATCH V2 2/7] cpufreq: Loongson1: Update cpufreq of Loongson1B
+Message-ID: <20160411035211.GA16238@vireshk-i7>
+References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
+ <1460115779-13141-2-git-send-email-keguang.zhang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459946095-7637-2-git-send-email-keguang.zhang@gmail.com>
+In-Reply-To: <1460115779-13141-2-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Keguang Zhang wrote:
+On 08-04-16, 19:42, Keguang Zhang wrote:
 > From: Kelvin Cheung <keguang.zhang@gmail.com>
 > 
-> - Rename the file to clk-loongson1.c
-> - Add AC97, DMA and NAND clock
-> - Update clock names
+> - Rename the file to loongson1-cpufreq.c
+> - Use kcalloc() instead of kzalloc()
+> - Use devm_kzalloc() instead of global structure
+> - Use dev_get_platdata() to access the platform_data field
+>   instead of referencing it directly
 > - Remove superfluous error messages
-> 
-> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
-> ---
 
-Can you please send this with git format-patch -M? I can't easily
-tell what has changed.
+Its much better now, in the sense that I can see what you have done.
+And see you have done a lot.
+
+That's not how you are supposed to send the patches, sorry.
+
+You need to break this patch into multiple patches, each targeting a
+particular fix.
+
+And I have no idea now, what change you have done to make it work for
+Loongson1B. Which of the above changes does that?
+
+And please, just send out a separate cpufreq series and don't send
+everything in a single patchset that covers DMA, cpufreq, clk, etc..
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+viresh
