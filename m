@@ -1,41 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:35714 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751680AbcDAO0q (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2016 10:26:46 -0400
-Received: by mail-wm0-f50.google.com with SMTP id 191so21967443wmq.0
-        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2016 07:26:46 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 0/2] clk: Add Oxford Semiconductor OXNAS Clocks support
-Date: Fri,  1 Apr 2016 16:26:29 +0200
-Message-Id: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 17/30] dt-bindings: clk: ti: Document module clock type
+Date: Mon, 11 Apr 2016 11:19:08 +0300
+Message-ID: <1460362761-4842-18-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset includes support for the standard clocks controller for the
-Oxford Semiconductor OXNAS SoC Family.
+Document the new TI module clock type, which is intended to replace the
+internal clock control handling within omap_hwmod. Module clock is
+effectively a gate clock controlling both interface and functional
+clocks for a single hardware IP block.
 
-It was originally posted part of a platform patchset available here :
-http://lkml.kernel.org/r/1458838215-23314-1-git-send-email-narmstrong@baylibre.com
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ .../devicetree/bindings/clock/ti/module.txt        |   59 ++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/module.txt
 
-Changes this v3 patchset :
-- Get rid of PLX Technology, replace by Oxford Semiconductor
-
-Neil Armstrong (2):
-  clk: Add Oxford Semiconductor OXNAS Standard Clocks
-  dt-bindings: Add Oxford Semiconductor OXNAS Standard Clocks bindings
-
- .../devicetree/bindings/clock/oxnas,stdclk.txt     |  35 ++++
- drivers/clk/Kconfig                                |   6 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-oxnas.c                            | 202 +++++++++++++++++++++
- 4 files changed, 244 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
- create mode 100644 drivers/clk/clk-oxnas.c
-
+diff --git a/Documentation/devicetree/bindings/clock/ti/module.txt b/Documentation/devicetree/bindings/clock/ti/module.txt
+new file mode 100644
+index 0000000..0329667
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/module.txt
+@@ -0,0 +1,59 @@
++Binding for Texas Instruments module clock.
++
++Binding status: Unstable - ABI compatibility may be broken in the future
++
++This binding uses the common clock binding[1]. This clock is
++quite much similar to the basic gate-clock [2], however, internally
++it controls an OMAP module clock, which effectively handles
++both interface and functional clocks for a single module. In some
++cases, support for mux clock [3] is composited to the same clock node,
++currently only needed for proper support of timer module clocks.
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++[2] Documentation/devicetree/bindings/clock/ti/gate.txt
++[3] Documentation/devicetree/bindings/clock/ti/mux.txt
++
++Required properties:
++- compatible : shall be one of:
++  "ti,omap4-mod-clock" - basic module clock, no gating supported
++  "ti,omap4-hw-mod-clock" - module clock with hardware gating support
++  "ti,omap4-sw-mod-clock" - module clock with software forced gating support
++  "ti,omap4-sw-no-idlest-mod-clock" - module clock with software forced gating
++				      support, misses idlest
++  "ti,omap4-mux-mod-clock" - composite clock with mux and module clocks, no
++			     gating supported
++  "ti,omap4-hw-mux-mod-clock" - composite clock with mux and module clocks,
++				with hardware gating
++  "ti,omap4-sw-mux-mod-clock" - composite clock with mux and module clocks,
++				with software forced gating
++
++- #clock-cells : from common clock binding; shall be set to 0
++- clocks : link to phandle of parent clock(s)
++- reg : offset for register controlling adjustable gate and optional mux
++
++Optional properties:
++- ti,bit-shift : bit shift for programming the clock mux, only needed for
++		 the nodes of the mux variant
++
++Examples:
++	timer6_mod_ck: timer6_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0570>;
++		clocks = <&syc_clk_div_ck>, <&sys_32k_ck>;
++		ti,bit-shift = <24>;
++	};
++
++	i2c1_mod_ck: i2c1_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x14a0>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	hsi_mod_ck: hsi_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1338>;
++		clocks = <&hsi_fck>;
++	};
 -- 
-1.9.1
-
+1.7.9.5
