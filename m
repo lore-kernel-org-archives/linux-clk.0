@@ -1,103 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34553 "EHLO
-	mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673AbcDQNgm (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 17 Apr 2016 09:36:42 -0400
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
-Date: Sun, 17 Apr 2016 16:34:11 +0300
-Message-Id: <1460900051-3065-1-git-send-email-digetx@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 03/30] ARM: OMAP2+: omap_device: create clock alias purely from DT data
+Date: Mon, 11 Apr 2016 11:18:54 +0300
+Message-ID: <1460362761-4842-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_get_rate() takes a mutex, hence cannot be used while IRQ's been
-disabled. Replace it with a locked version.
+This avoids the need to add most of the clock aliases under
+drivers/clk/ti/clk-xyz.c files.
 
-[    3.430853] [<c0850fcc>] (dump_stack) from [<c00411f8>] (__schedule_bug+0x50/0x64)
-[    3.431079] [<c00411f8>] (__schedule_bug) from [<c08553a8>] (__schedule+0x5c8/0x688)
-[    3.431453] [<c08553a8>] (__schedule) from [<c08558f4>] (schedule_preempt_disabled+0x24/0x34)
-[    3.431835] [<c08558f4>] (schedule_preempt_disabled) from [<c0856f24>] (__mutex_lock_slowpath+0xbc/0x170)
-[    3.432204] [<c0856f24>] (__mutex_lock_slowpath) from [<c0857024>] (mutex_lock+0x4c/0x50)
-[    3.432427] [<c0857024>] (mutex_lock) from [<c0610368>] (clk_prepare_lock+0x88/0xfc)
-[    3.432800] [<c0610368>] (clk_prepare_lock) from [<c0611034>] (clk_get_rate+0xc/0x60)
-[    3.433177] [<c0611034>] (clk_get_rate) from [<c034f10c>] (tegra_pmc_enter_suspend_mode+0x188/0x20c)
-[    3.433580] [<c034f10c>] (tegra_pmc_enter_suspend_mode) from [<c0020d48>] (tegra_idle_lp2_last+0xc/0x40)
-[    3.433795] [<c0020d48>] (tegra_idle_lp2_last) from [<c0021e1c>] (tegra20_idle_lp2_coupled+0x118/0x1fc)
-[    3.434171] [<c0021e1c>] (tegra20_idle_lp2_coupled) from [<c055ec24>] (cpuidle_enter_state+0x3c/0x160)
-[    3.434551] [<c055ec24>] (cpuidle_enter_state) from [<c0560ce8>] (cpuidle_enter_state_coupled+0x3dc/0x3f4)
-[    3.434959] [<c0560ce8>] (cpuidle_enter_state_coupled) from [<c0055f1c>] (cpu_startup_entry+0x240/0x288)
-[    3.435340] [<c0055f1c>] (cpu_startup_entry) from [<c0b29c84>] (start_kernel+0x3b4/0x3c0)
-[    3.435557] [<c0b29c84>] (start_kernel) from [<00008074>] (0x8074)
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/tegra/clk-tegra-pmc.c | 9 +++++++++
- drivers/soc/tegra/pmc.c           | 2 +-
- include/linux/clk/tegra.h         | 2 ++
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ arch/arm/mach-omap2/omap_device.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index 91377ab..1ccf414 100644
---- a/drivers/clk/tegra/clk-tegra-pmc.c
-+++ b/drivers/clk/tegra/clk-tegra-pmc.c
-@@ -78,6 +78,8 @@ static struct pmc_clk_init_data pmc_clks[] = {
- 	PMC_CLK(3, 22, 18),
- };
- 
-+static struct clk_hw *pclk_hw;
-+
- void __init tegra_pmc_clk_init(void __iomem *pmc_base,
- 				struct tegra_clk *tegra_clks)
- {
-@@ -112,6 +114,9 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
- 		clk_register_clkdev(clk, data->dev_name, data->gate_name);
+diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+index f7ff3b9..b32d7c8 100644
+--- a/arch/arm/mach-omap2/omap_device.c
++++ b/arch/arm/mach-omap2/omap_device.c
+@@ -63,7 +63,22 @@ static void _add_clkdev(struct omap_device *od, const char *clk_alias,
+ 		return;
  	}
  
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
-+	pclk_hw = __clk_get_hw(*dt_clk);
+-	rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev), clk_name, NULL);
++	r = clk_get_sys(NULL, clk_name);
 +
- 	/* blink */
- 	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
- 	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
-@@ -129,3 +134,7 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
- 	*dt_clk = clk;
- }
- 
-+unsigned long tegra_pmc_get_pclk_rate(void)
-+{
-+	return clk_hw_get_rate(pclk_hw);
-+}
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 08966c2..6752714 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -638,7 +638,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
- 		break;
- 
- 	case TEGRA_SUSPEND_LP2:
--		rate = clk_get_rate(pmc->clk);
-+		rate = tegra_pmc_get_pclk_rate();
- 		break;
- 
- 	default:
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 57bf7aa..717d71d 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -121,4 +121,6 @@ static inline void tegra_cpu_clock_resume(void)
- }
- #endif
- 
-+unsigned long tegra_pmc_get_pclk_rate(void);
++	if (IS_ERR(r) && of_have_populated_dt()) {
++		struct of_phandle_args clkspec;
 +
- #endif /* __LINUX_CLK_TEGRA_H_ */
++		clkspec.np = of_find_node_by_name(NULL, clk_name);
++
++		r = of_clk_get_from_provider(&clkspec);
++
++		rc = clk_register_clkdev(r, clk_alias,
++					 dev_name(&od->pdev->dev));
++	} else {
++		rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev),
++				   clk_name, NULL);
++	}
++
+ 	if (rc) {
+ 		if (rc == -ENODEV || rc == -ENOMEM)
+ 			dev_err(&od->pdev->dev,
 -- 
-2.8.1
-
+1.7.9.5
