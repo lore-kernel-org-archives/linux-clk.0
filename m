@@ -1,97 +1,47 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 26 Apr 2016 17:24:15 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	mingo@redhat.com, tglx@linutronix.de
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-Message-ID: <20160426092414.GH8870@tiger>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 15/30] clk: ti: remove un-used definitions from public clk_hw_omap struct
+Date: Mon, 11 Apr 2016 11:19:06 +0300
+Message-ID: <1460362761-4842-16-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 26, 2016 at 01:51:13PM +0800, Dong Aisheng wrote:
-> Hi Shawn,
-> 
-> On Tue, Apr 26, 2016 at 9:23 AM, Shawn Guo <shawnguo@kernel.org> wrote:
-> > On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
-> >> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
-> >> > If a clock gets enabled early during boot time, it can lead to a PLL
-> >> > startup. The wait_lock function makes sure that the PLL is really
-> >> > stareted up before it gets used. However, the function sleeps which
-> >> > leads to scheduling and an error:
-> >> > bad: scheduling from the idle thread!
-> >> > ...
-> >> >
-> >> > Use udelay in case IRQ's are still disabled.
-> >> >
-> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> > ---
-> >> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
-> >> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >> >
-> >> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> >> > index c05c43d..b5ff561 100644
-> >> > --- a/drivers/clk/imx/clk-pllv3.c
-> >> > +++ b/drivers/clk/imx/clk-pllv3.c
-> >> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
-> >> >                     break;
-> >> >             if (time_after(jiffies, timeout))
-> >> >                     break;
-> >> > -           usleep_range(50, 500);
-> >> > +           if (unlikely(irqs_disabled()))
-> >>
-> >> This causes a bit confusion that clk_pllv3_prepare is sleepable.
-> >> But this line indicates it's possible to be called in irq context.
-> >> Although it's only happened during kernel boot phase where irq is
-> >> still not enabled.
-> >> It seems schedule_debug() somehow did not catch it during early boot
-> >> phase. Maybe schedule guys can help explain.
-> >>
-> >> My question is if it's really worthy to introduce this confusion
-> >> to fix the issue since the delay is minor?
-> >
-> > I do not understand why it's confusing.  The code already obviously
-> > indicates this is a special handling for cases where irq is still not
-> > enabled, rather than for irq context.
-> >
-> 
-> The code itself has nothing telling it's a special handling for the
-> case where irq is
-> still not enabled.
+Clksel support has been deprecated a while back, so remove these from
+the struct also.
 
-I think the following if-clause is telling that.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/linux/clk/ti.h |    4 ----
+ 1 file changed, 4 deletions(-)
 
-	if (unlikely(irqs_disabled()))
-
-> Even it tells, it may still cause confusing by adding complexity in
-> clk_pllv3_prepare()
-> which actually should be called in non-atomic context as it could sleep.
-
-I agree with you on that.
-
-> > The patch is to fix the "bad: scheduling from the idle thread!" warning
-> > rather than minimize the delay.  Do you have an opinion on how to fix
-> > the warning?
-> >
-> 
-> I just wonder maybe we could simply just using udelay(50) instead of
-> usleep_range(50, 500) to eliminate the confusing since it's minor cast.
-> What do you think of it?
-
-I'm fine with it.  Since I haven't sent the patch to clk maintainers, I
-could replace Stefan's patch with yours, if you can send me a patch
-quickly.
-
-Shawn
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 210e946..1451291 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -127,8 +127,6 @@ struct clk_hw_omap_ops {
+  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
+  * @flags: see "struct clk.flags possibilities" above
+  * @clksel_reg: for clksel clks, register va containing src/divisor select
+- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
+- * @clksel: for clksel clks, pointer to struct clksel for this clock
+  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
+  * @clkdm_name: clockdomain name that this clock is contained in
+  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
+@@ -143,8 +141,6 @@ struct clk_hw_omap {
+ 	u8			enable_bit;
+ 	u8			flags;
+ 	void __iomem		*clksel_reg;
+-	u32			clksel_mask;
+-	const struct clksel	*clksel;
+ 	struct dpll_data	*dpll_data;
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+-- 
+1.7.9.5
