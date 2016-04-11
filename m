@@ -1,61 +1,62 @@
-Return-Path: <peter.ujfalusi@ti.com>
-Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for selecting
- system clocks by ID
-To: Mark Brown <broonie@kernel.org>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io> <56C42BAF.3050900@ti.com>
- <20160217120759.GO7544@sirena.org.uk> <56C4CF8B.5010005@ti.com>
-CC: <alsa-devel@alsa-project.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Jyri Sarha <jsarha@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Kristo, Tero"
-	<t-kristo@ti.com>, <linux-clk@vger.kernel.org>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <5715025C.7070108@ti.com>
-Date: Mon, 18 Apr 2016 18:50:52 +0300
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 16/30] clk: ti: mux: export mux clock APIs locally
+Date: Mon, 11 Apr 2016 11:19:07 +0300
+Message-ID: <1460362761-4842-17-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <56C4CF8B.5010005@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/17/2016 09:52 PM, Peter Ujfalusi wrote:
-> On 02/17/2016 02:07 PM, Mark Brown wrote:
->> On Wed, Feb 17, 2016 at 10:13:35AM +0200, Peter Ujfalusi wrote:
->>
->>> With this change we don't need to write custom machine drivers for setup not
->>> using sysclk_id == 0.
->>> I do think this is reasonable change by itself.
->>
->>> However I do think that the current simple-card is flawed regarding to clock
->>> selection and the change Jyri and me are proposing is reasonable.
->>
->> But you define a new ABI to specify it in the process, I'd rather fix
->> the flaws by using the common clock ABI than extend any device stuff.
->> If it didn't define a new ABI I'd probably not worry about it but one of
->> the issues we have with DT is that we do end up making ABIs every time
->> we put something in DT.
-> 
-> I understand. This should have been supported by simple-card since the
-> beginning. When we tried to move all boards to use simple-card, we hit the
-> wall by not being able to select and configure other sysclk_id than 0.
-> I don't want to create yet another simple card which handles only sysclk_id 1 ;)
-> On the other hand this ABI is backwards compatible since if it is missing it
-> will default to the configuration we right now have regarding to sysclk_dir
-> and sysclk_id.
-> 
-> I will look at the CCF implementation for McASP first then for aic3x.
+get_parent and set_parent are going to be required by the support of
+module clocks, so export these locally.
 
-The first issue with converting the McASP to use CCF internally for clock
-selection, muxing and rate configuration is that the daVinci platform does not
-use CCF at all. Given that the davinci-mcasp driver is used by daVinci, we
-need to have non CCF way supported in ASoC...
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clock.h |    3 +++
+ drivers/clk/ti/mux.c   |    4 ++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 90f3f47..7eca8a1 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -224,6 +224,9 @@ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
+ extern const struct clk_ops ti_clk_divider_ops;
+ extern const struct clk_ops ti_clk_mux_ops;
+ 
++u8 ti_clk_mux_get_parent(struct clk_hw *hw);
++int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index);
++
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+ 
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 44777ab..57ff471 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -26,7 +26,7 @@
+ #undef pr_fmt
+ #define pr_fmt(fmt) "%s: " fmt, __func__
+ 
+-static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
++u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+@@ -63,7 +63,7 @@ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ 	return val;
+ }
+ 
+-static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
++int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
 -- 
-Péter
+1.7.9.5
