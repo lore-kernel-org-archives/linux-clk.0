@@ -1,96 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular2.263xmail.com ([211.157.152.4]:50206 "EHLO
-	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751010AbcDKB4a (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 21:56:30 -0400
-From: Finlye Xiao <finley.xiao@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com,
-	wxt@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com,
-	zhangqing@rock-chips.com, xxx@rock-chips.com,
-	huangtao@rock-chips.com, Finley Xiao <finley.xiao@rock-chips.com>
-Subject: [PATCH v1] clk: Add clk_composite_set_rate_and_parent
-Date: Mon, 11 Apr 2016 09:54:12 +0800
-Message-Id: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 02/30] clk: ti: dpll: use ti_clk_get to fetch ref/bypass clocks
+Date: Mon, 11 Apr 2016 11:18:53 +0300
+Message-ID: <1460362761-4842-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+This allows getting rid of the DT_CLK() aliases under drivers/clk/ti.
 
-Some of Rockchip's clocks should consider the priority of .set_parent
-and .set_rate to prevent a too large temporary clock rate.
-
-For example, the gpu clock can be parented to cpll(750MHz) and
-usbphy_480m(480MHz), 375MHz comes from cpll and the div is set
-to 2, 480MHz comes from usbphy_480m and the div is set to 1.
-
->From the code, when change rate from 480MHz to 375MHz, it changes
-the gpu's parent from USBPHY_480M to cpll first(.set_parent), but the
-div value is still 1 and the gpu's rate will be 750MHz at the moment,
-then it changes the div value from 1 to 2(.set_rate) and the gpu's
-rate will be changed to 375MHz(480MHZ->750MHz->375MHz), here temporary
-rate is 750MHz, the voltage which supply for 480MHz certainly can not
-supply for 750MHz, so the gpu will crash.
-
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/clk-composite.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/ti/dpll.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 1f903e1f8..4d4b5ab 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -151,6 +151,33 @@ static int clk_composite_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return rate_ops->set_rate(rate_hw, rate, parent_rate);
- }
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 3bc9959..0042fc2 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -220,8 +220,8 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
+ 	if (dpll->num_parents < 2)
+ 		return ERR_PTR(-EINVAL);
  
-+static int clk_composite_set_rate_and_parent(struct clk_hw *hw,
-+					     unsigned long rate,
-+					     unsigned long parent_rate,
-+					     u8 index)
-+{
-+	struct clk_composite *composite = to_clk_composite(hw);
-+	const struct clk_ops *rate_ops = composite->rate_ops;
-+	const struct clk_ops *mux_ops = composite->mux_ops;
-+	struct clk_hw *rate_hw = composite->rate_hw;
-+	struct clk_hw *mux_hw = composite->mux_hw;
-+	unsigned long temp_rate;
-+
-+	__clk_hw_set_clk(rate_hw, hw);
-+	__clk_hw_set_clk(mux_hw, hw);
-+
-+	temp_rate = rate_ops->recalc_rate(rate_hw, parent_rate);
-+	if (temp_rate > rate) {
-+		rate_ops->set_rate(rate_hw, rate, parent_rate);
-+		mux_ops->set_parent(mux_hw, index);
-+	} else {
-+		mux_ops->set_parent(mux_hw, index);
-+		rate_ops->set_rate(rate_hw, rate, parent_rate);
-+	}
-+
-+	return 0;
-+}
-+
- static int clk_composite_is_enabled(struct clk_hw *hw)
- {
- 	struct clk_composite *composite = to_clk_composite(hw);
-@@ -250,6 +277,12 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 		composite->rate_ops = rate_ops;
- 	}
+-	clk_ref = clk_get_sys(NULL, dpll->parents[0]);
+-	clk_bypass = clk_get_sys(NULL, dpll->parents[1]);
++	clk_ref = ti_clk_get(dpll->parents[0]);
++	clk_bypass = ti_clk_get(dpll->parents[1]);
  
-+	if (mux_hw && mux_ops && rate_hw && rate_ops) {
-+		if (mux_ops->set_parent && rate_ops->set_rate)
-+			clk_composite_ops->set_rate_and_parent =
-+			clk_composite_set_rate_and_parent;
-+	}
-+
- 	if (gate_hw && gate_ops) {
- 		if (!gate_ops->is_enabled || !gate_ops->enable ||
- 		    !gate_ops->disable) {
+ 	if (IS_ERR_OR_NULL(clk_ref) || IS_ERR_OR_NULL(clk_bypass))
+ 		return ERR_PTR(-EAGAIN);
 -- 
-1.9.1
-
-
+1.7.9.5
