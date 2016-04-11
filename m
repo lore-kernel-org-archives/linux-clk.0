@@ -1,113 +1,40 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: RE: [v7, 0/5] Fix eSDHC host version register bug
-Date: Wed, 6 Apr 2016 06:12:58 +0000
-Message-ID: <HE1PR04MB0889D75DC56E180D3508E7A1F89F0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
- <CAPDyKFqgMCvbqMYZ-uM-rTnVvfJkCYbhv2kucCRyNyc9FWoR=Q@mail.gmail.com>
-In-Reply-To: <CAPDyKFqgMCvbqMYZ-uM-rTnVvfJkCYbhv2kucCRyNyc9FWoR=Q@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:36015 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932358AbcDKOAT (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2016 10:00:19 -0400
+Received: by mail-wm0-f49.google.com with SMTP id v188so87703951wme.1
+        for <linux-clk@vger.kernel.org>; Mon, 11 Apr 2016 07:00:13 -0700 (PDT)
+Subject: Re: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
+ <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
+ <20160402005045.GX18567@codeaurora.org> <5701210A.4060807@baylibre.com>
+ <20160407233113.GI18567@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <570BADE3.8080201@baylibre.com>
+Date: Mon, 11 Apr 2016 16:00:03 +0200
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Zhao Qiang <qiang.zhao@freescale.com>, Russell King <linux@arm.linux.org.uk>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- linux-mmc <linux-mmc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Scott Wood <scott.wood@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Rob Herring <robh+dt@kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- Jochen Friedrich <jochen@scram.de>, Kumar Gala <galak@codeaurora.org>,
- Yang-Leo Li <leoyang.li@nxp.com>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20160407233113.GI18567@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Ulf Hansson [mailto:ulf.hansson@linaro.org]
-> Sent: Tuesday, April 05, 2016 7:28 PM
-> To: Yangbo Lu
-> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
-> clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
-> foundation.org; netdev@vger.kernel.org; linux-mmc; Rob Herring; Scott
-> Wood; Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil;
-> Bhupesh Sharma; Zhao Qiang; Kumar Gala; Santosh Shilimkar; Yang-Leo Li;
-> Xiaobo Xie
-> Subject: Re: [v7, 0/5] Fix eSDHC host version register bug
+On 04/08/2016 01:31 AM, Stephen Boyd wrote:
+> On 04/03, Neil Armstrong wrote:
+>> On 04/02/2016 02:50 AM, Stephen Boyd wrote:
 > 
-> On 1 April 2016 at 05:07, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> > This patchset is used to fix a host version register bug in the
-> > T4240-R1.0-R2.0 eSDHC controller. To get the SoC version and revision,
-> > it's needed to add the GUTS driver to access the global utilities
-> registers.
-> >
-> > So, the first three patches are to add the GUTS driver.
-> > The following two patches are to enable GUTS driver support to get SVR
-> > in eSDHC driver and fix host version for T4240.
-> >
-> > Yangbo Lu (5):
-> >   ARM64: dts: ls2080a: add device configuration node
-> >   soc: fsl: add GUTS driver for QorIQ platforms
-> >   dt: move guts devicetree doc out of powerpc directory
-> >   powerpc/fsl: move mpc85xx.h to include/linux/fsl
-> >   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-> >
-> >  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
-> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 ++
-> >  arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
-> >  drivers/clk/clk-qoriq.c                            |   3 +-
-> >  drivers/i2c/busses/i2c-mpc.c                       |   2 +-
-> >  drivers/iommu/fsl_pamu.c                           |   3 +-
-> >  drivers/mmc/host/Kconfig                           |   1 +
-> >  drivers/mmc/host/sdhci-of-esdhc.c                  |  23 ++++
-> >  drivers/net/ethernet/freescale/gianfar.c           |   2 +-
-> >  drivers/soc/Kconfig                                |   2 +-
-> >  drivers/soc/fsl/Kconfig                            |   8 ++
-> >  drivers/soc/fsl/Makefile                           |   1 +
-> >  drivers/soc/fsl/guts.c                             | 119
-> +++++++++++++++++++++
-> >  include/linux/fsl/guts.h                           |  98 ++++++++-----
-> ----
-> >  .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
-> >  15 files changed, 219 insertions(+), 58 deletions(-)  rename
-> > Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
-> > create mode 100644 drivers/soc/fsl/Kconfig  create mode 100644
-> > drivers/soc/fsl/guts.c  rename arch/powerpc/include/asm/mpc85xx.h =>
-> > include/linux/fsl/svr.h (97%)
-> >
-> > --
-> > 2.1.0.27.g96db324
-> >
+> Ok. I was hoping that we could make simple-mfd look to see if
+> there's a syscon and then attach it to the parent device, but it
+> seems that simple-mfd is not actually a driver and it might not
+> even make a parent device for the children nodes?
 > 
-> I was about to queue this for next, when I noticed that checkpatch is
-> complaining/warning lots about these patches. Can you please a round of
-> checkpatch and fix what makes sense.
-> 
-> Kind regards
-> Uffe
 
-[Lu Yangbo-B47093] Sorry about this, Uffe...
-Should I ignore the warnings that update MAINTAINERS?
-Regarding the 'undocumented' warning, I will added a patch updates doc before all the patches, Ok?
+It seems so, I will look at the device hierarchy next week.
+Syscon is only used by these syscon_node_to_regmap() or similar calls, and they are the only APIs available.
 
-Thanks a lot :)
- 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This call is at least used by clk-mtk, nxp and at91 clocks, is there a plan for these to change to another API ?
+
+Neil
