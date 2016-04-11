@@ -1,195 +1,57 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [RESEND PATCH 1/8] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
-Date: Wed, 20 Apr 2016 17:34:33 +0800
-Message-ID: <1461144880-8724-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 04/30] ARM: OMAP2+: hwmod: use new ti_clk_get API to search for clock handles
+Date: Mon, 11 Apr 2016 11:18:55 +0300
+Message-ID: <1460362761-4842-5-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This can be useful when clock core wants to enable/disable clocks.
-Then we don't have to convert the struct clk_core to struct clk to call
-clk_enable/clk_disable which is a bit un-align with exist using.
+The new API avoids the need to add clock aliases for most of the clocks,
+should use of it is preferred. Many of the existing clock aliases are
+only created because of hwmod data.
 
-And after introduce clk_core_{enable|disable}_lock, we can refine
-clk_enable and clk_disable a bit.
-
-As well as clk_core_{enable|disable}_lock, we also added
-clk_core_{prepare|unprepare}_lock and clk_core_prepare_enable/
-clk_core_unprepare_disable for clock core to easily use.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/clk.c | 85 +++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 63 insertions(+), 22 deletions(-)
+ arch/arm/mach-omap2/omap_hwmod.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9f77cc6..0f9f756 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -591,6 +591,13 @@ static void clk_core_unprepare(struct clk_core *core)
- 	clk_core_unprepare(core->parent);
- }
- 
-+static void clk_core_unprepare_lock(struct clk_core *core)
-+{
-+	clk_prepare_lock();
-+	clk_core_unprepare(core);
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * clk_unprepare - undo preparation of a clock source
-  * @clk: the clk being unprepared
-@@ -607,9 +614,7 @@ void clk_unprepare(struct clk *clk)
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	clk_prepare_lock();
--	clk_core_unprepare(clk->core);
--	clk_prepare_unlock();
-+	clk_core_unprepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_unprepare);
- 
-@@ -645,6 +650,17 @@ static int clk_core_prepare(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_prepare_lock(struct clk_core *core)
-+{
-+	int ret;
-+
-+	clk_prepare_lock();
-+	ret = clk_core_prepare(core);
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
- /**
-  * clk_prepare - prepare a clock source
-  * @clk: the clk being prepared
-@@ -659,16 +675,10 @@ static int clk_core_prepare(struct clk_core *core)
-  */
- int clk_prepare(struct clk *clk)
- {
--	int ret;
--
- 	if (!clk)
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index b6d62e4..c2f6811 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -786,7 +786,7 @@ static int _init_main_clk(struct omap_hwmod *oh)
+ 	if (!oh->main_clk)
  		return 0;
  
--	clk_prepare_lock();
--	ret = clk_core_prepare(clk->core);
--	clk_prepare_unlock();
--
--	return ret;
-+	return clk_core_prepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_prepare);
+-	oh->_clk = clk_get(NULL, oh->main_clk);
++	oh->_clk = ti_clk_get(oh->main_clk);
+ 	if (IS_ERR(oh->_clk)) {
+ 		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
+ 			oh->name, oh->main_clk);
+@@ -831,7 +831,7 @@ static int _init_interface_clks(struct omap_hwmod *oh)
+ 		if (!os->clk)
+ 			continue;
  
-@@ -698,6 +708,15 @@ static void clk_core_disable(struct clk_core *core)
- 	clk_core_disable(core->parent);
- }
+-		c = clk_get(NULL, os->clk);
++		c = ti_clk_get(os->clk);
+ 		if (IS_ERR(c)) {
+ 			pr_warn("omap_hwmod: %s: cannot clk_get interface_clk %s\n",
+ 				oh->name, os->clk);
+@@ -868,7 +868,7 @@ static int _init_opt_clks(struct omap_hwmod *oh)
+ 	int ret = 0;
  
-+static void clk_core_disable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+
-+	flags = clk_enable_lock();
-+	clk_core_disable(core);
-+	clk_enable_unlock(flags);
-+}
-+
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -712,14 +731,10 @@ static void clk_core_disable(struct clk_core *core)
-  */
- void clk_disable(struct clk *clk)
- {
--	unsigned long flags;
--
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	flags = clk_enable_lock();
--	clk_core_disable(clk->core);
--	clk_enable_unlock(flags);
-+	clk_core_disable_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -758,6 +773,18 @@ static int clk_core_enable(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_enable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	flags = clk_enable_lock();
-+	ret = clk_core_enable(core);
-+	clk_enable_unlock(flags);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -773,19 +800,33 @@ static int clk_core_enable(struct clk_core *core)
-  */
- int clk_enable(struct clk *clk)
- {
--	unsigned long flags;
--	int ret;
--
- 	if (!clk)
- 		return 0;
- 
--	flags = clk_enable_lock();
--	ret = clk_core_enable(clk->core);
--	clk_enable_unlock(flags);
-+	return clk_core_enable_lock(clk->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static int clk_core_prepare_enable(struct clk_core *core)
-+{
-+	int ret;
-+
-+	ret = clk_core_prepare_lock(core);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_core_enable_lock(core);
-+	if (ret)
-+		clk_core_unprepare_lock(core);
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static void clk_core_disable_unprepare(struct clk_core *core)
-+{
-+	clk_core_disable_lock(core);
-+	clk_core_unprepare_lock(core);
-+}
- 
- static int clk_core_round_rate_nolock(struct clk_core *core,
- 				      struct clk_rate_request *req)
+ 	for (i = oh->opt_clks_cnt, oc = oh->opt_clks; i > 0; i--, oc++) {
+-		c = clk_get(NULL, oc->clk);
++		c = ti_clk_get(oc->clk);
+ 		if (IS_ERR(c)) {
+ 			pr_warn("omap_hwmod: %s: cannot clk_get opt_clk %s\n",
+ 				oh->name, oc->clk);
 -- 
-1.9.1
+1.7.9.5
