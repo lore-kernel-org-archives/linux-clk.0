@@ -1,44 +1,40 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Fri, 15 Apr 2016 18:36:11 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com,
-	javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net,
-	geert+renesas@glider.be, sjoerd.simons@collabora.co.uk,
-	treding@nvidia.com, public_timo.s@silentcreek.de
-Subject: Re: [PATCH 3/6] regulator: rk808: Make rk808 generic, rename
- rk808-regulator.c
-Message-ID: <201604151850.X92LLQkG%fengguang.wu@intel.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 22/30] ARM: AM33xx: fix module_wait_ready without clkctrl register
+Date: Mon, 11 Apr 2016 11:19:13 +0300
+Message-ID: <1460362761-4842-23-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460711790-22646-4-git-send-email-w.egorov@phytec.de>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Wadim,
+If the module has no clkctrl register defined, module_wait_ready should
+not try to access this. This can potentially cause an illegal register
+access, and result in bad idle reporting also.
 
-[auto build test WARNING on regulator/for-next]
-[also build test WARNING on v4.6-rc3 next-20160414]
-[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-
-url:    https://github.com/0day-ci/linux/commits/Wadim-Egorov/Add-RK818-PMIC-support/20160415-172610
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/regulator/rk8xx-regulator.c:617:3-8: No need to set .owner here. The core will do it.
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ arch/arm/mach-omap2/cm33xx.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-omap2/cm33xx.c b/arch/arm/mach-omap2/cm33xx.c
+index 7b181f9..c073fb5 100644
+--- a/arch/arm/mach-omap2/cm33xx.c
++++ b/arch/arm/mach-omap2/cm33xx.c
+@@ -220,6 +220,9 @@ static int am33xx_cm_wait_module_ready(u8 part, s16 inst, u16 clkctrl_offs,
+ {
+ 	int i = 0;
+ 
++	if (!clkctrl_offs)
++		return 0;
++
+ 	omap_test_timeout(_is_module_ready(inst, clkctrl_offs),
+ 			  MAX_MODULE_READY_TIME, i);
+ 
+-- 
+1.7.9.5
