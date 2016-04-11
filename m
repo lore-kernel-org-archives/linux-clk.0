@@ -1,247 +1,316 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <Jose.Abreu@synopsys.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+To: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v5 3/5] clk: mvebu: new driver for Armada AP806 system controller
-Date: Thu, 14 Apr 2016 17:33:31 +0200
-Message-Id: <1460648013-31320-4-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	linux-snps-arc@lists.infradead.org,
+	sboyd@codeaurora.org
+Cc: CARLOS.PALMINHA@synopsys.com, Alexey.Brodkin@synopsys.com,
+	Vineet.Gupta1@synopsys.com, mturquette@baylibre.com,
+	Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
+Date: Mon, 11 Apr 2016 11:41:29 +0100
+Message-Id: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Armada AP806 system controller, amongst other things, provides a
-number of clocks for the platform: the CPU cluster clocks, whose
-frequencies are found by reading the Sample At Reset register, one
-fixed clock, and another clock derived from the fixed clock, which is
-the one used by most peripherals in AP806.
+The ARC SDP I2S clock can be programmed using a
+specific PLL.
 
-The AP806 is one of the two core HW blocks used in the Marvell 7K/8K
-SoCs.
+This patch has the goal of adding a clock driver
+that programs this PLL.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+At this moment the rate values are hardcoded in
+a table but in the future it would be ideal to
+use a function which determines the PLL values
+given the desired rate.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/clk/mvebu/Kconfig                   |   3 +
- drivers/clk/mvebu/Makefile                  |   1 +
- drivers/clk/mvebu/ap806-system-controller.c | 168 ++++++++++++++++++++++++++++
- 3 files changed, 172 insertions(+)
- create mode 100644 drivers/clk/mvebu/ap806-system-controller.c
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index eaee8f0..bf7ae00 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -29,6 +29,9 @@ config ARMADA_XP_CLK
- 	select MVEBU_CLK_COMMON
- 	select MVEBU_CLK_CPU
- 
-+config ARMADA_AP806_SYSCON
-+	bool
-+
- config DOVE_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 8866115..f4aa481 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
-+obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
- obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
- obj-$(CONFIG_ORION_CLK)		+= orion.o
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+Changes v3 -> v4:
+* Added binding document (as suggested by Stephen Boyd)
+* Minor code style fixes (as suggested by Stephen Boyd)
+* Use ioremap (as suggested by Stephen Boyd)
+* Implement round_rate (as suggested by Stephen Boyd)
+* Change to platform driver (as suggested by Stephen Boyd)
+* Use {readl/writel}_relaxed (as suggested by Vineet Gupta)
+
+Changes v2 -> v3:
+* Implemented recalc_rate
+
+Changes v1 -> v2:
+* Renamed folder to axs10x (as suggested by Alexey Brodkin)
+* Added more supported rates
+
+ .../devicetree/bindings/clock/i2s-pll-clock.txt    |  17 ++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axs10x/Makefile                        |   1 +
+ drivers/clk/axs10x/i2s_pll_clock.c                 | 217 +++++++++++++++++++++
+ 4 files changed, 236 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/i2s-pll-clock.txt
+ create mode 100644 drivers/clk/axs10x/Makefile
+ create mode 100644 drivers/clk/axs10x/i2s_pll_clock.c
+
+diff --git a/Documentation/devicetree/bindings/clock/i2s-pll-clock.txt b/Documentation/devicetree/bindings/clock/i2s-pll-clock.txt
 new file mode 100644
-index 0000000..ac9201c
+index 0000000..ff86a41
 --- /dev/null
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -0,0 +1,168 @@
++++ b/Documentation/devicetree/bindings/clock/i2s-pll-clock.txt
+@@ -0,0 +1,17 @@
++Binding for the AXS10X I2S PLL clock
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: shall be "snps,i2s-pll-clock"
++- #clock-cells: from common clock binding; Should always be set to 0.
++- reg : Address and length of the I2S PLL register set.
++
++Example:
++	clock@0x100a0 {
++		compatible = "snps,i2s-pll-clock";
++		reg = <0x100a0 0x10>;
++		#clock-cells = <0>;
++	};
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d6..2ca62dc6 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -84,3 +84,4 @@ obj-$(CONFIG_X86)			+= x86/
+ obj-$(CONFIG_ARCH_ZX)			+= zte/
+ obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
+ obj-$(CONFIG_H8300)		+= h8300/
++obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+diff --git a/drivers/clk/axs10x/Makefile b/drivers/clk/axs10x/Makefile
+new file mode 100644
+index 0000000..01996b8
+--- /dev/null
++++ b/drivers/clk/axs10x/Makefile
+@@ -0,0 +1 @@
++obj-y += i2s_pll_clock.o
+diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
+new file mode 100644
+index 0000000..3ba4e2f
+--- /dev/null
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -0,0 +1,217 @@
 +/*
-+ * Marvell Armada AP806 System Controller
++ * Synopsys AXS10X SDP I2S PLL clock driver
 + *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
++ * Copyright (C) 2016 Synopsys
 + *
 + * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
++ * License version 2. This program is licensed "as is" without any
 + * warranty of any kind, whether express or implied.
 + */
 +
-+#define pr_fmt(fmt) "ap806-system-controller: " fmt
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
 +#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#include <linux/module.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/device.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/of.h>
 +
-+#define AP806_SAR_REG			0x400
-+#define AP806_SAR_CLKFREQ_MODE_MASK	0x1f
++/* FPGA Version Info */
++#define FPGA_VER_INFO	0xE0011230
++#define FPGA_VER_27M	0x000FBED9
 +
-+#define AP806_CLK_NUM 			4
++/* PLL registers addresses */
++#define PLL_IDIV_REG	0x0
++#define PLL_FBDIV_REG	0x4
++#define PLL_ODIV0_REG	0x8
++#define PLL_ODIV1_REG	0xC
 +
-+static struct clk *ap806_clks[AP806_CLK_NUM];
-+
-+static struct clk_onecell_data ap806_clk_data = {
-+	.clks = ap806_clks,
-+	.clk_num = AP806_CLK_NUM,
++struct i2s_pll_cfg {
++	unsigned int rate;
++	unsigned int idiv;
++	unsigned int fbdiv;
++	unsigned int odiv0;
++	unsigned int odiv1;
 +};
 +
-+static int ap806_syscon_clk_probe(struct platform_device *pdev)
++static const struct i2s_pll_cfg i2s_pll_cfg_27m[] = {
++	/* 27 Mhz */
++	{ 1024000, 0x104, 0x451, 0x10E38, 0x2000 },
++	{ 1411200, 0x104, 0x596, 0x10D35, 0x2000 },
++	{ 1536000, 0x208, 0xA28, 0x10B2C, 0x2000 },
++	{ 2048000, 0x82, 0x451, 0x10E38, 0x2000 },
++	{ 2822400, 0x82, 0x596, 0x10D35, 0x2000 },
++	{ 3072000, 0x104, 0xA28, 0x10B2C, 0x2000 },
++	{ 2116800, 0x82, 0x3CF, 0x10C30, 0x2000 },
++	{ 2304000, 0x104, 0x79E, 0x10B2C, 0x2000 },
++	{ 0, 0, 0, 0, 0 },
++};
++
++static const struct i2s_pll_cfg i2s_pll_cfg_28m[] = {
++	/* 28.224 Mhz */
++	{ 1024000, 0x82, 0x105, 0x107DF, 0x2000 },
++	{ 1411200, 0x28A, 0x1, 0x10001, 0x2000 },
++	{ 1536000, 0xA28, 0x187, 0x10042, 0x2000 },
++	{ 2048000, 0x41, 0x105, 0x107DF, 0x2000 },
++	{ 2822400, 0x145, 0x1, 0x10001, 0x2000 },
++	{ 3072000, 0x514, 0x187, 0x10042, 0x2000 },
++	{ 2116800, 0x514, 0x42, 0x10001, 0x2000 },
++	{ 2304000, 0x619, 0x82, 0x10001, 0x2000 },
++	{ 0, 0, 0, 0, 0 },
++};
++
++struct i2s_pll_clk {
++	void __iomem *base;
++	struct clk_hw hw;
++	unsigned int ref_clk;
++	const struct i2s_pll_cfg *pll_cfg;
++};
++
++static inline void i2s_pll_write(struct i2s_pll_clk *clk, unsigned int reg,
++		unsigned int val)
 +{
-+	unsigned int freq_mode, cpuclk_freq;
-+	const char *name, *fixedclk_name;
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *regmap;
-+	u32 reg;
-+	int ret;
-+
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap)) {
-+		dev_err(&pdev->dev, "cannot get regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	ret = regmap_read(regmap, AP806_SAR_REG, &reg);
-+	if (ret) {
-+		dev_err(&pdev->dev, "cannot read from regmap\n");
-+		return ret;
-+	}
-+
-+	freq_mode = reg & AP806_SAR_CLKFREQ_MODE_MASK;
-+	switch(freq_mode) {
-+	case 0x0 ... 0x5:
-+		cpuclk_freq = 2000;
-+		break;
-+	case 0x6 ... 0xB:
-+		cpuclk_freq = 1800;
-+		break;
-+	case 0xC ... 0x11:
-+		cpuclk_freq = 1600;
-+		break;
-+	case 0x12 ... 0x16:
-+		cpuclk_freq = 1400;
-+		break;
-+	case 0x17 ... 0x19:
-+		cpuclk_freq = 1300;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "invalid SAR value\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Convert to hertz */
-+	cpuclk_freq *= 1000 * 1000;
-+
-+	/* CPU clocks depend on the Sample At Reset configuration */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      0, &name);
-+	ap806_clks[0] = clk_register_fixed_rate(&pdev->dev, name, NULL,
-+						0, cpuclk_freq);
-+	if (IS_ERR(ap806_clks[0])) {
-+		ret = PTR_ERR(ap806_clks[0]);
-+		goto fail0;
-+	}
-+
-+	of_property_read_string_index(np, "clock-output-names",
-+				      1, &name);
-+	ap806_clks[1] = clk_register_fixed_rate(&pdev->dev, name, NULL, 0,
-+						cpuclk_freq);
-+	if (IS_ERR(ap806_clks[1])) {
-+		ret = PTR_ERR(ap806_clks[1]);
-+		goto fail1;
-+	}
-+
-+	/* Fixed clock is always 1200 Mhz */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      2, &fixedclk_name);
-+	ap806_clks[2] = clk_register_fixed_rate(&pdev->dev, fixedclk_name, NULL, 0,
-+						1200 * 1000 * 1000);
-+	if (IS_ERR(ap806_clks[2])) {
-+		ret = PTR_ERR(ap806_clks[2]);
-+		goto fail2;
-+	}
-+
-+	/* MSS Clock is fixed clock divided by 6 */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      3, &name);
-+	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
-+						  0, 1, 6);
-+	if (IS_ERR(ap806_clks[3])) {
-+		ret = PTR_ERR(ap806_clks[3]);
-+		goto fail3;
-+	}
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
-+	if (ret)
-+		goto fail_clk_add;
-+
-+	return 0;
-+
-+fail_clk_add:
-+	clk_unregister_fixed_factor(ap806_clks[3]);
-+fail3:
-+	clk_unregister_fixed_rate(ap806_clks[2]);
-+fail2:
-+	clk_unregister_fixed_rate(ap806_clks[1]);
-+fail1:
-+	clk_unregister_fixed_rate(ap806_clks[0]);
-+fail0:
-+	return ret;
++	writel_relaxed(val, clk->base + reg);
 +}
 +
-+static int ap806_syscon_clk_remove(struct platform_device *pdev)
++static inline unsigned int i2s_pll_read(struct i2s_pll_clk *clk,
++		unsigned int reg)
++{
++	return readl_relaxed(clk->base + reg);
++}
++
++static inline struct i2s_pll_clk *to_i2s_pll_clk(struct clk_hw *hw)
++{
++	return container_of(hw, struct i2s_pll_clk, hw);
++}
++
++static unsigned int i2s_pll_get_value(unsigned int val)
++{
++	return (val & 0x3F) + ((val >> 6) & 0x3F);
++}
++
++static unsigned long i2s_pll_recalc_rate(struct clk_hw *hw,
++			unsigned long parent_rate)
++{
++	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
++	unsigned int idiv, fbdiv, odiv;
++
++	idiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_IDIV_REG));
++	fbdiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_FBDIV_REG));
++	odiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_ODIV0_REG));
++
++	return ((clk->ref_clk / idiv) * fbdiv) / odiv;
++}
++
++static long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *prate)
++{
++	const struct i2s_pll_cfg *pll_cfg = to_i2s_pll_clk(hw)->pll_cfg;
++	int i;
++
++	for (i = 0; pll_cfg[i].rate != 0; i++)
++		if (pll_cfg[i].rate == rate)
++			return rate;
++
++	return -EINVAL;
++}
++
++static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long parent_rate)
++{
++	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
++	const struct i2s_pll_cfg *pll_cfg = clk->pll_cfg;
++	int i;
++
++	for (i = 0; pll_cfg[i].rate != 0; i++) {
++		if (pll_cfg[i].rate == rate) {
++			i2s_pll_write(clk, PLL_IDIV_REG, pll_cfg[i].idiv);
++			i2s_pll_write(clk, PLL_FBDIV_REG, pll_cfg[i].fbdiv);
++			i2s_pll_write(clk, PLL_ODIV0_REG, pll_cfg[i].odiv0);
++			i2s_pll_write(clk, PLL_ODIV1_REG, pll_cfg[i].odiv1);
++			return 0;
++		}
++	}
++
++	pr_err("%s: invalid rate=%ld, parent_rate=%ld\n", __func__,
++			rate, parent_rate);
++	return -EINVAL;
++}
++
++static const struct clk_ops i2s_pll_ops = {
++	.recalc_rate = i2s_pll_recalc_rate,
++	.round_rate = i2s_pll_round_rate,
++	.set_rate = i2s_pll_set_rate,
++};
++
++static int i2s_pll_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *node = dev->of_node;
++	const char *clk_name;
++	struct clk *clk;
++	struct i2s_pll_clk *pll_clk;
++	struct clk_init_data init;
++	struct resource *mem;
++
++	if (!node)
++		return -ENODEV;
++
++	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
++	if (!pll_clk)
++		return -ENOMEM;
++
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	pll_clk->base = devm_ioremap_resource(dev, mem);
++	if (IS_ERR(pll_clk->base))
++		return PTR_ERR(pll_clk->base);
++
++	clk_name = node->name;
++	init.name = clk_name;
++	init.ops = &i2s_pll_ops;
++	init.num_parents = 0;
++	pll_clk->hw.init = &init;
++
++	clk = clk_register(NULL, &pll_clk->hw);
++	if (IS_ERR(clk)) {
++		dev_err(dev, "failed to register %s div clock (%ld)\n",
++				clk_name, PTR_ERR(clk));
++		return PTR_ERR(clk);
++	}
++
++	if (readl((void *)FPGA_VER_INFO) <= FPGA_VER_27M) {
++		pll_clk->ref_clk = 27000000;
++		pll_clk->pll_cfg = i2s_pll_cfg_27m;
++	} else {
++		pll_clk->ref_clk = 28224000;
++		pll_clk->pll_cfg = i2s_pll_cfg_28m;
++	}
++
++	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++
++static int i2s_pll_clk_remove(struct platform_device *pdev)
 +{
 +	of_clk_del_provider(pdev->dev.of_node);
-+	clk_unregister_fixed_factor(ap806_clks[3]);
-+	clk_unregister_fixed_rate(ap806_clks[2]);
-+	clk_unregister_fixed_rate(ap806_clks[1]);
-+	clk_unregister_fixed_rate(ap806_clks[0]);
-+
 +	return 0;
 +}
 +
-+static const struct of_device_id ap806_syscon_of_match[] = {
-+        { .compatible = "marvell,ap806-system-controller", },
-+        {},
++static const struct of_device_id i2s_pll_clk_id[] = {
++	{ .compatible = "snps,i2s-pll-clock", },
++	{ },
 +};
-+MODULE_DEVICE_TABLE(of, armada8k_pcie_of_match);
++MODULE_DEVICE_TABLE(of, i2s_pll_clk_id);
 +
-+static struct platform_driver ap806_syscon_driver = {
-+	.probe = ap806_syscon_clk_probe,
-+	.remove = ap806_syscon_clk_remove,
-+	.driver		= {
-+		.name	= "marvell-ap806-system-controller",
-+		.of_match_table = ap806_syscon_of_match,
++static struct platform_driver i2s_pll_clk_driver = {
++	.driver = {
++		.name = "i2s-pll-clock",
++		.of_match_table = of_match_ptr(i2s_pll_clk_id),
 +	},
++	.probe = i2s_pll_clk_probe,
++	.remove = i2s_pll_clk_remove,
 +};
++module_platform_driver(i2s_pll_clk_driver);
 +
-+module_platform_driver(ap806_syscon_driver);
-+
-+MODULE_DESCRIPTION("Marvell AP806 System Controller driver");
-+MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
-+MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Jose Abreu <joabreu@synopsys.com>");
++MODULE_DESCRIPTION("Synopsys AXS10X SDP I2S PLL Clock Driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.6.4
+1.9.1
