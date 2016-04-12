@@ -1,127 +1,74 @@
-Return-Path: <lars.persson@axis.com>
-From: Lars Persson <lars.persson@axis.com>
-To: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: [PATCH v6 1/2] clk: add device tree binding for Artpec-6 clock controller
-Date: Mon,  4 Apr 2016 11:23:22 +0200
-Message-Id: <3d38a3e4b2595c5bb3003d0b02200506c414d4da.1459761338.git.larper@axis.com>
-In-Reply-To: <cover.1459761337.git.larper@axis.com>
-References: <cover.1459761337.git.larper@axis.com>
-In-Reply-To: <cover.1459761337.git.larper@axis.com>
-References: <cover.1459761337.git.larper@axis.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Finlye Xiao <finley.xiao@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, wxt@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com, zhangqing@rock-chips.com, xxx@rock-chips.com, huangtao@rock-chips.com
+Subject: Re: [PATCH v1] clk: Add clk_composite_set_rate_and_parent
+Date: Tue, 12 Apr 2016 07:04:21 +0200
+Message-ID: <3986787.PS6VzOpSAJ@phil>
+In-Reply-To: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com>
+References: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree documentation for the main clock controller in the
-Artpec-6 SoC.
+Hi Finley,
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Lars Persson <larper@axis.com>
----
- .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
- include/dt-bindings/clock/axis,artpec6-clkctrl.h   | 38 ++++++++++++++++++++
- 2 files changed, 79 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
- create mode 100644 include/dt-bindings/clock/axis,artpec6-clkctrl.h
+Am Montag, 11. April 2016, 09:54:12 schrieb Finlye Xiao:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+> 
+> Some of Rockchip's clocks should consider the priority of .set_parent
+> and .set_rate to prevent a too large temporary clock rate.
+> 
+> For example, the gpu clock can be parented to cpll(750MHz) and
+> usbphy_480m(480MHz), 375MHz comes from cpll and the div is set
+> to 2, 480MHz comes from usbphy_480m and the div is set to 1.
+> 
+> From the code, when change rate from 480MHz to 375MHz, it changes
+> the gpu's parent from USBPHY_480M to cpll first(.set_parent), but the
+> div value is still 1 and the gpu's rate will be 750MHz at the moment,
+> then it changes the div value from 1 to 2(.set_rate) and the gpu's
+> rate will be changed to 375MHz(480MHZ->750MHz->375MHz), here temporary
+> rate is 750MHz, the voltage which supply for 480MHz certainly can not
+> supply for 750MHz, so the gpu will crash.
 
-diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
-new file mode 100644
-index 0000000..9ba9bd0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/artpec6.txt
-@@ -0,0 +1,41 @@
-+* Clock bindings for Axis ARTPEC-6 chip
-+
-+The bindings are based on the clock provider binding in
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+External clocks:
-+----------------
-+
-+There are two external inputs to the main clock controller which should be
-+provided using the common clock bindings.
-+- "sys_refclk": External 50 Mhz oscillator (required)
-+- "i2s_refclk": Alternate audio reference clock (optional).
-+
-+Main clock controller
-+---------------------
-+
-+Required properties:
-+- #clock-cells: Should be <1>
-+  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
-+- compatible: Should be "axis,artpec6-clkctrl"
-+- reg: Must contain the base address and length of the system controller
-+- clocks:  Must contain a phandle entry for each clock in clock-names
-+- clock-names: Must include the external oscillator ("sys_refclk"). Optional
-+  ones are the audio reference clock ("i2s_refclk") and the audio fractional
-+  dividers ("frac_clk0" and "frac_clk1").
-+
-+Examples:
-+
-+ext_clk: ext_clk {
-+	#clock-cells = <0>;
-+	compatible = "fixed-clock";
-+	clock-frequency = <50000000>;
-+};
-+
-+clkctrl: clkctrl {
-+	#clock-cells = <1>;
-+	compatible = "axis,artpec6-clkctrl";
-+	reg = <0xf8000000 0x48>;
-+	clocks = <&ext_clk>;
-+	clock-names = "sys_refclk";
-+};
-diff --git a/include/dt-bindings/clock/axis,artpec6-clkctrl.h b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
-new file mode 100644
-index 0000000..f9f04dc
---- /dev/null
-+++ b/include/dt-bindings/clock/axis,artpec6-clkctrl.h
-@@ -0,0 +1,38 @@
-+/*
-+ * ARTPEC-6 clock controller indexes
-+ *
-+ * Copyright 2016 Axis Comunications AB.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
-+#define DT_BINDINGS_CLK_ARTPEC6_CLKCTRL_H
-+
-+#define ARTPEC6_CLK_CPU			0
-+#define ARTPEC6_CLK_CPU_PERIPH		1
-+#define ARTPEC6_CLK_NAND_CLKA		2
-+#define ARTPEC6_CLK_NAND_CLKB		3
-+#define ARTPEC6_CLK_ETH_ACLK		4
-+#define ARTPEC6_CLK_DMA_ACLK		5
-+#define ARTPEC6_CLK_PTP_REF		6
-+#define ARTPEC6_CLK_SD_PCLK		7
-+#define ARTPEC6_CLK_SD_IMCLK		8
-+#define ARTPEC6_CLK_I2S_HST		9
-+#define ARTPEC6_CLK_I2S0_CLK		10
-+#define ARTPEC6_CLK_I2S1_CLK		11
-+#define ARTPEC6_CLK_UART_PCLK		12
-+#define ARTPEC6_CLK_UART_REFCLK		13
-+#define ARTPEC6_CLK_I2C			14
-+#define ARTPEC6_CLK_SPI_PCLK		15
-+#define ARTPEC6_CLK_SPI_SSPCLK		16
-+#define ARTPEC6_CLK_SYS_TIMER		17
-+#define ARTPEC6_CLK_FRACDIV_IN		18
-+#define ARTPEC6_CLK_DBG_PCLK		19
-+
-+/* This must be the highest clock index plus one. */
-+#define ARTPEC6_CLK_NUMCLOCKS		20
-+
-+#endif
--- 
-2.1.4
+We did talk about this internally and while we refined the actual code 
+change, it seems I forgot to look at the commit message itself.
+
+This behaviour (and the wish to not overflow a target clock rate) should be 
+the same on all socs, so the commit message is quite a bit to Rockchip 
+specific. I think I would go with something like:
+
+----------- 8< ------------
+When changing the clock-rate, currently a new parent is set first and a 
+divider adapted thereafter. This may result in the clock-rate overflowing
+its target rate for a short time if the new parent has a higher rate than
+the old parent.
+
+While this often doesn't produce negative effects, it can affect components
+in a voltage-scaling environment, like the GPU on the rk3399 socs, where the
+voltage than simply is to low for the temporarily to high clock rate.
+
+For general clock hirarchies this may need more extensive adaptions to
+the common clock-framework, but at least for composite clocks having
+both parent and rate settings it is easy to create a short-term solution to
+make sure the clock-rate does not overflow the target.
+----------- 8< ------------
+
+But of course feel free to extend or change that as you wish ;-) .
+
+
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+
+I remember having clocks not overflow their target rate came up in some ELC 
+talk last week (probably in Stephens Qualcomm-kernel-talk) and a general 
+solution might need some changes closer to the core.
+
+But at least for composite clocks where we can control the rate+parent 
+process easily, Finley's change is a nice low-hanging fruit which at least 
+improves behaviour for those clock-types in the short term, so
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+Heiko
