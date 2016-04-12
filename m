@@ -1,46 +1,101 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 00/30] ARM: OMAP2+: hwmod module clock type support
-To: Tony Lindgren <tony@atomide.com>
-References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
- <20160411173518.GA5995@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <paul@pwsan.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <570CFE50.5010709@ti.com>
-Date: Tue, 12 Apr 2016 16:55:28 +0300
-MIME-Version: 1.0
-In-Reply-To: <20160411173518.GA5995@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.132]:51734 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbcDLIqj (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2016 04:46:39 -0400
+From: Finlye Xiao <finley.xiao@rock-chips.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com,
+	wxt@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com,
+	zhangqing@rock-chips.com, xxx@rock-chips.com,
+	huangtao@rock-chips.com, Finley Xiao <finley.xiao@rock-chips.com>
+Subject: [PATCH v2] clk: Add clk_composite_set_rate_and_parent
+Date: Tue, 12 Apr 2016 16:43:39 +0800
+Message-Id: <1460450619-1118-1-git-send-email-finley.xiao@rock-chips.com>
+In-Reply-To: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com>
+References: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/11/2016 08:40 PM, Tony Lindgren wrote:
-> Hi,
->
-> Nice to see this moving along :)
->
-> * Tero Kristo <t-kristo@ti.com> [160411 01:20]:
->>
->> The ordering on this set is kind of tricky to avoid any boot issues,
->> and it still currently causes a boot breakage between the DTS data
->> introduction and removal of hwmod data; this generates duplicate
->> entries for clocks which is prone to cause issues (both DT and hwmod
->> have the same entries in place under the hwmod data is removed.) I
->> didn't quite figure out a good way to avoid this, and could use some
->> guidance here. Shall we squash the DT + hwmod data patches together?
->> This avoids the boot breakage but creates pretty large patches. Also,
->> AMx3xx data needs to be grouped together as part of their data is
->> re-used commonly by both SoCs.
->
-> How about use clocks from dts if clocks property is defined? Otherwise
-> fall back to the old static data. Then drop the static data later on
-> with follow up patches.
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-The underlying issue is the hardcoded names of hwmod clocks within hwmod 
-data. I think I figured out a fix for this, I am adding a few patches to 
-this series to lookup main_clk based on the hwmod name itself. This 
-allows re-directing the main_clk to the DT module clock in case one is 
-available for the hwmod. The bisect issues seem to be gone with this 
-also, I need to cleanup the patches a bit and re-post.
+When changing the clock-rate, currently a new parent is set first and a
+divider adapted thereafter. This may result in the clock-rate overflowing
+its target rate for a short time if the new parent has a higher rate than
+the old parent.
 
--Tero
+While this often doesn't produce negative effects, it can affect components
+in a voltage-scaling environment, like the GPU on the rk3399 socs, where
+the voltage than simply is to low for the temporarily to high clock rate.
+
+For general clock hirarchies this may need more extensive adaptions to
+the common clock-framework, but at least for composite clocks having
+both parent and rate settings it is easy to create a short-term solution to
+make sure the clock-rate does not overflow the target.
+
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+v1->v2:
+- change the commit message
+
+ drivers/clk/clk-composite.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 1f903e1f8..4d4b5ab 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -151,6 +151,33 @@ static int clk_composite_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return rate_ops->set_rate(rate_hw, rate, parent_rate);
+ }
+ 
++static int clk_composite_set_rate_and_parent(struct clk_hw *hw,
++					     unsigned long rate,
++					     unsigned long parent_rate,
++					     u8 index)
++{
++	struct clk_composite *composite = to_clk_composite(hw);
++	const struct clk_ops *rate_ops = composite->rate_ops;
++	const struct clk_ops *mux_ops = composite->mux_ops;
++	struct clk_hw *rate_hw = composite->rate_hw;
++	struct clk_hw *mux_hw = composite->mux_hw;
++	unsigned long temp_rate;
++
++	__clk_hw_set_clk(rate_hw, hw);
++	__clk_hw_set_clk(mux_hw, hw);
++
++	temp_rate = rate_ops->recalc_rate(rate_hw, parent_rate);
++	if (temp_rate > rate) {
++		rate_ops->set_rate(rate_hw, rate, parent_rate);
++		mux_ops->set_parent(mux_hw, index);
++	} else {
++		mux_ops->set_parent(mux_hw, index);
++		rate_ops->set_rate(rate_hw, rate, parent_rate);
++	}
++
++	return 0;
++}
++
+ static int clk_composite_is_enabled(struct clk_hw *hw)
+ {
+ 	struct clk_composite *composite = to_clk_composite(hw);
+@@ -250,6 +277,12 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 		composite->rate_ops = rate_ops;
+ 	}
+ 
++	if (mux_hw && mux_ops && rate_hw && rate_ops) {
++		if (mux_ops->set_parent && rate_ops->set_rate)
++			clk_composite_ops->set_rate_and_parent =
++			clk_composite_set_rate_and_parent;
++	}
++
+ 	if (gate_hw && gate_ops) {
+ 		if (!gate_ops->is_enabled || !gate_ops->enable ||
+ 		    !gate_ops->disable) {
+-- 
+1.9.1
+
+
