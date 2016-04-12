@@ -1,73 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36488 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752811AbcDVQkp (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:45 -0400
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
-	t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
-	nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v6 0/7] ARM: dts: DRA7: Add dt nodes for PWMSS
-Date: Fri, 22 Apr 2016 11:40:31 -0500
-Message-Id: <1461343238-29274-1-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 12 Apr 2016 13:03:50 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 02/46] backlight: pwm_bl: remove useless call to
+ pwm_set_period()
+Message-ID: <20160412110350.GH18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-3-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LZFKeWUZP29EKQNE"
+In-Reply-To: <1459368249-13241-3-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for PWM for DRA7. The IP is the same as the
-one present in AM33XX and AM437XX.
 
-However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
-and eQEP.
+--LZFKeWUZP29EKQNE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The following are the biggest changes from v5 to v6:
-* Created two new bindings to allow ECAP and PWM to grab their functional
-clock from DT rather than depending on PWMSS parent.
-* Pull in a couple of patches from the "Correct PWM bindings" series. This
-makes it a bit easier to understand.
+On Wed, Mar 30, 2016 at 10:03:25PM +0200, Boris Brezillon wrote:
+> The PWM period will be set when calling pwm_config. Remove this useless
+> call to pwm_set_period(), which might mess up with the internal PWM state.
+>=20
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/video/backlight/pwm_bl.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
->From the two patchsets a handful of patches have already been pulled in by
-maintainers and have already made it to linux-next. Therefore, this
-patch series is built ontop of the latest linux-next.
+Applied, thanks.
 
-Tested on:
-AM335x, AM437x and X15 + lcd w/backlight
+Thierry
 
-This series has been verified to be backwards compatible with old dtbs.
+--LZFKeWUZP29EKQNE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Franklin S Cooper Jr (6):
-  clk: ti: am335x/am4372: Add tbclk to pwm node
-  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
-  ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
-  pwms: pwm-ti*: Get the clock from the PWMSS parent when using old
-    bindings
-  ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
-  ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Vignesh R (1):
-  ARM: dts: DRA7: Add dt nodes for PWMSS
+iQIcBAABCAAGBQJXDNYWAAoJEN0jrNd/PrOhi/wQALBmuyKE4RytME0ICIXFzQsQ
+jGXlqKggBvhkFVyrU+QtjfimQZjUhgRSntTt1KajJATlQ0lXrZvLIQUgBH4hQZkr
+TBSN8zXMJGj7HOcHLa+lgOVQFcGYUIDU1rBW9SnI2thj0IQn3Zaya2KTDKizoGKT
+dgSREYXCwtPaf7s8Paqe6T0jkrWfUc4Y/GA+H8uNpTo7FVf/n7KNaCTUzBPwekqE
+UTD41WhqxgpfJaanIyWyspVyk7P3YKwPip++wpHTTXLM0MfQThliq2t7e/PxkT1C
+rGe6rTdMmmwUy7BULhWBzntaTTnJtlodLkaKr0I/n0nhi8whqBVSj+JH6KPdivCB
+tYSf8V5tA9Dl7yA4E8Jw0kvxvQGpFzDzCiwF4dxV5nysKy4wyrOdznAOeA4gZMje
+z9g4XYPATKxkge2WCROg96iE5WlX4FWV3PyK5fhANgFD2lWLYL9S2g6z43rXjkRY
+CzQopq6dn7WvIa4IigxbppZMzrRxGs1ZGWSlqU3RRiGqSAl4s5snSsZBZnjLIaiw
+p5Fc15lG9MBkck/V5d8R7LwqqKYYmKCfTjOIXDNIhbFr3AKl+OrIx69fNJ8fVPh+
+z1eiYWmkP5hOXUVFZFZuwp4ErzP32Zmk7ntPZ/1IkHXaVg1UCHqmM9AmXWSJWxXc
+rU52OTaDF3TxRqKcXwAb
+=iDpn
+-----END PGP SIGNATURE-----
 
- .../devicetree/bindings/pwm/pwm-tiecap.txt         | 24 ++++--
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 28 ++++---
- .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 15 +++-
- arch/arm/boot/dts/am33xx.dtsi                      | 36 ++++++---
- arch/arm/boot/dts/am4372.dtsi                      | 61 +++++++++++----
- arch/arm/boot/dts/da850.dtsi                       | 15 ++--
- arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
- .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
- .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 ---------------
- .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 --------------------
- arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
- arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 -------------
- drivers/clk/ti/clk-33xx.c                          |  3 +
- drivers/clk/ti/clk-43xx.c                          |  6 ++
- drivers/pwm/pwm-tiecap.c                           |  7 ++
- drivers/pwm/pwm-tiehrpwm.c                         |  7 ++
- 16 files changed, 242 insertions(+), 279 deletions(-)
-
--- 
-2.7.0
-
+--LZFKeWUZP29EKQNE--
