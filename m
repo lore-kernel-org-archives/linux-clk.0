@@ -1,209 +1,142 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34840 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752811AbcDVQkx (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:53 -0400
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
-	t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
-	nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v6 5/7] ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
-Date: Fri, 22 Apr 2016 11:40:36 -0500
-Message-Id: <1461343238-29274-6-git-send-email-fcooper@ti.com>
-In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
-References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 12 Apr 2016 15:15:03 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
+Message-ID: <20160412131503.GR18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412113912.GK18882@ulmo.ba.sec>
+ <20160412150627.7084665d@bbrezillon>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TDVcAd+kFgbLxwBe"
+In-Reply-To: <20160412150627.7084665d@bbrezillon>
 List-ID: <linux-clk.vger.kernel.org>
 
-Previous patches switched the ECAP and EPWM to use the new bindings.
-These bindings explicitly adds the various required clocks via DT rather
-than depending on hwmod.
 
-Therefore, it is safe to remove the hwmod entries since they are no longer
-needed.
+--TDVcAd+kFgbLxwBe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
----
- Documentation/devicetree/bindings/pwm/pwm-tiecap.txt   | 3 ---
- Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 3 ---
- arch/arm/boot/dts/am33xx.dtsi                          | 6 ------
- arch/arm/boot/dts/am4372.dtsi                          | 9 ---------
- 4 files changed, 21 deletions(-)
+On Tue, Apr 12, 2016 at 03:06:27PM +0200, Boris Brezillon wrote:
+> On Tue, 12 Apr 2016 13:39:12 +0200
+> Thierry Reding <thierry.reding@gmail.com> wrote:
+>=20
+> > On Wed, Mar 30, 2016 at 10:03:28PM +0200, Boris Brezillon wrote:
+> > > Currently the PWM core mixes the current PWM state with the per-platf=
+orm
+> > > reference config (specified through the PWM lookup table, DT definiti=
+on or
+> > > directly hardcoded in PWM drivers).
+> > >=20
+> > > Create a pwm_args struct to store this reference config, so that PWM =
+users
+> > > can differentiate the current config from the reference one.
+> > >=20
+> > > Patch all places where pwm->args should be initialized. We keep the
+> > > pwm_set_polarity/period() calls until all PWM users are patched to
+> > > use pwm_args instead of pwm_get_period/polarity().
+> >=20
+> > Perhaps a helper would be useful? Something like:
+> >=20
+> > 	static inline void
+> > 	pwm_apply_args(struct pwm_device *pwm, const struct pwm_args *args)
+> > 	{
+> > 		pwm_set_duty_cycle(pwm, args->duty_cycle);
+> > 		pwm_set_period(pwm, args->period);
+> > 	}
+> >=20
+> > ? That would make it slightly easier to get rid of it again after all
+> > clients have been converted.
+> >=20
+> > With the exception of pwm-clps711x all of these args are set at of_xlate
+> > time (for DT) or from the lookup table in pwm_get() (for non-DT), so it
+> > might even be possible to move this call to the core, so that removal of
+> > it will be a one-liner.
+>=20
+> Okay, I think I misunderstood your suggestion. I thought you wanted
+> this helper to set the reference config, but you actually want to apply
+> a new state based on the PWM reference values.
+>=20
+> Except that pwm_args does not contain all the required information to
+> apply a full config (args->duty_cycle and args->enable do not exist).
+>=20
+> This being said, in my v6 I moved the content of
+> pwm_regulator_adjust_pwm_config() (patch 27) into a generic helper
+> (pwm_adjust_config()). This helper is doing pretty much what you're
+> suggesting here (but again, I'm not sure I correctly understood your
+> suggestion :-/).
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-index 5c7a116..39277b6 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-@@ -10,8 +10,6 @@ Required properties:
- - reg: physical base address and size of the registers map.
- 
- Optional properties:
--- ti,hwmods: Name of the hwmod associated to the ECAP:
--  "ecap<x>", <x> being the 0-based instance number from the HW spec
- - clocks: Handle to the ECAP's functional clock.
- - clock-names: Must be set to "fck".
- 
-@@ -21,7 +19,6 @@ ecap0: ecap@0 { /* ECAP on am33xx */
- 	compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
- 	reg = <0x48300100 0x80>;
--	ti,hwmods = "ecap0";
- 	clocks = <&l4ls_gclk>;
- 	clock-names = "fck";
- };
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-index a82e249..ac1eae6 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-@@ -10,8 +10,6 @@ Required properties:
- - reg: physical base address and size of the registers map.
- 
- Optional properties:
--- ti,hwmods: Name of the hwmod associated to the EHRPWM:
--  "ehrpwm<x>", <x> being the 0-based instance number from the HW spec
- - clocks: Handle to the PWM's time-base and functional clock.
- - clock-names: Must be set to "tbclk" and "fck".
- 
-@@ -23,7 +21,6 @@ ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
- 	reg = <0x48300200 0x100>;
- 	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
- 	clock-names = "tbclk", "fck";
--	ti,hwmods = "ehrpwm0";
- };
- 
- ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
-diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
-index 999ba2f..2661acc 100644
---- a/arch/arm/boot/dts/am33xx.dtsi
-+++ b/arch/arm/boot/dts/am33xx.dtsi
-@@ -687,7 +687,6 @@
- 				clock-names = "fck";
- 				interrupts = <31>;
- 				interrupt-names = "ecap0";
--				ti,hwmods = "ecap0";
- 				status = "disabled";
- 			};
- 
-@@ -696,7 +695,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48300200 0x80>;
--				ti,hwmods = "ehrpwm0";
- 				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -723,7 +721,6 @@
- 				clock-names = "fck";
- 				interrupts = <47>;
- 				interrupt-names = "ecap1";
--				ti,hwmods = "ecap1";
- 				status = "disabled";
- 			};
- 
-@@ -732,7 +729,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48302200 0x80>;
--				ti,hwmods = "ehrpwm1";
- 				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -759,7 +755,6 @@
- 				clock-names = "fck";
- 				interrupts = <61>;
- 				interrupt-names = "ecap2";
--				ti,hwmods = "ecap2";
- 				status = "disabled";
- 			};
- 
-@@ -768,7 +763,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48304200 0x80>;
--				ti,hwmods = "ehrpwm2";
- 				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-index e858460..cfdd4b7 100644
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -677,7 +677,6 @@
- 					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48300100 0x80>;
--				ti,hwmods = "ecap0";
- 				clocks = <&l4ls_gclk>;
- 				clock-names = "fck";
- 				status = "disabled";
-@@ -689,7 +688,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48300200 0x80>;
--				ti,hwmods = "ehrpwm0";
- 				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -711,7 +709,6 @@
- 					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48302100 0x80>;
--				ti,hwmods = "ecap1";
- 				clocks = <&l4ls_gclk>;
- 				clock-names = "fck";
- 				status = "disabled";
-@@ -723,7 +720,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48302200 0x80>;
--				ti,hwmods = "ehrpwm1";
- 				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -747,7 +743,6 @@
- 				reg = <0x48304100 0x80>;
- 				clocks = <&l4ls_gclk>;
- 				clock-names = "fck";
--				ti,hwmods = "ecap2";
- 				status = "disabled";
- 			};
- 
-@@ -757,7 +752,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48304200 0x80>;
--				ti,hwmods = "ehrpwm2";
- 				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -779,7 +773,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48306200 0x80>;
--				ti,hwmods = "ehrpwm3";
- 				clocks = <&ehrpwm3_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -801,7 +794,6 @@
- 					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48308200 0x80>;
--				ti,hwmods = "ehrpwm4";
- 				clocks = <&ehrpwm4_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
- 				status = "disabled";
-@@ -825,7 +817,6 @@
- 				reg = <0x4830a200 0x80>;
- 				clocks = <&ehrpwm5_tbclk>, <&l4ls_gclk>;
- 				clock-names = "tbclk", "fck";
--				ti,hwmods = "ehrpwm5";
- 				status = "disabled";
- 			};
- 		};
--- 
-2.7.0
+I'm not suggesting that pwm_apply_args() apply any state. I think we
+both agreed earlier that the initial state (represented by pwm_args) was
+never to be automatically applied.
 
+What I was suggesting is that we move all the calls to pwm_set_period()
+and pwm_set_duty_cycle() into a central location to make it easier to
+remove them later in the series. This is really only temporary, so I
+don't mind if we leave the calls sprinkled all over the place. At least
+that way I hope we'll avoid confusion about what we're talking about =3D)
+
+Thierry
+
+--TDVcAd+kFgbLxwBe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXDPTXAAoJEN0jrNd/PrOh43wP/RW8nWeST0v0826zi4V45N1E
++TYv38nqsVYDmlhydRpEmUUzDp+i8P+jXS+FD48OsEByyvLzF6NOdtbD7H2no8zb
+7o4G2twqZSwmNTKGcVVnDnvxqsTLRbB/zsSGqPO9NJ3Zu0wBS+0Xg5Vjqk6PmIRR
+LSmzUQc5Cd6Mvb9aQqois5iJ0ivNQlB2YlJ8DYUXfPakj0cc5DpQg1D71c+jCsVL
+REicaT6lu64/oaO2Jkth+9sGtJ3Z4mCoKCRtiAUKSLFojHnhX+ZbPS1U+vgip5UD
+5h3NPaZytj2T/8TdmNceNF2uzpSq5+pc8N37CFpIxcmvhgb3DU24dVsOJyEW5PAk
+QzYA5LDTmAQMsWDSDcoU1pUbxdfIRrIJ6q9kUgIX+aPIcKY8FIJ08XnX5k05Eyve
+4qr29sV/0csHazKsdL94LhfxpmP87DNaLZP3CBXQt8R5PkYFpFY4tAVsYyiRdV0M
+mo9yGfddFafGvqJbLSi19GhXW7tGoFsItMJB843opLZ77mE3VgpLHMCCr6MRGgjK
+ZWWETRUpY2iF72dZc5eJH2cTacw4eAhkkwmi8xHy2aS2tvvzwUnMSagOF1S0NdSP
+lAKl9Y1DcwSrlYNuDkeKIcMULMqC74RB+qM8kdpLiiH08xsBGEKftUt7NGeRg/nx
+DCr+t7SdbH+cClDjpBxu
+=AuFt
+-----END PGP SIGNATURE-----
+
+--TDVcAd+kFgbLxwBe--
