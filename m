@@ -1,300 +1,108 @@
-Return-Path: <keguang.zhang@gmail.com>
-Return-Path: <keguang.zhang@gmail.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-To: linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: [PATCH V2 2/7] cpufreq: Loongson1: Update cpufreq of Loongson1B
-Date: Fri,  8 Apr 2016 19:42:56 +0800
-Message-Id: <1460115779-13141-2-git-send-email-keguang.zhang@gmail.com>
-In-Reply-To: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
-References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 12 Apr 2016 16:25:09 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 02/46] backlight: pwm_bl: remove useless call to
+ pwm_set_period()
+Message-ID: <20160412142509.GA25006@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-3-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412110350.GH18882@ulmo.ba.sec>
+ <20160412141653.GJ8094@x1>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+In-Reply-To: <20160412141653.GJ8094@x1>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-- Rename the file to loongson1-cpufreq.c
-- Use kcalloc() instead of kzalloc()
-- Use devm_kzalloc() instead of global structure
-- Use dev_get_platdata() to access the platform_data field
-  instead of referencing it directly
-- Remove superfluous error messages
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+On Tue, Apr 12, 2016 at 03:16:53PM +0100, Lee Jones wrote:
+> On Tue, 12 Apr 2016, Thierry Reding wrote:
+>=20
+> > On Wed, Mar 30, 2016 at 10:03:25PM +0200, Boris Brezillon wrote:
+> > > The PWM period will be set when calling pwm_config. Remove this usele=
+ss
+> > > call to pwm_set_period(), which might mess up with the internal PWM s=
+tate.
+> > >=20
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > Acked-by: Lee Jones <lee.jones@linaro.org>
+> > > ---
+> > >  drivers/video/backlight/pwm_bl.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> >=20
+> > Applied, thanks.
+>=20
+> Applied?
 
----
-V2:
-   Regenerate the patch to make it review-able.
----
- drivers/cpufreq/Makefile                           |   2 +-
- .../{ls1x-cpufreq.c => loongson1-cpufreq.c}        | 114 ++++++++++-----------
- 2 files changed, 58 insertions(+), 58 deletions(-)
- rename drivers/cpufreq/{ls1x-cpufreq.c => loongson1-cpufreq.c} (65%)
+You Acked it, so I assumed you were fine with me taking it through the
+PWM tree to take care of the dependencies.
 
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 9e63fb1..bebe9c8 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -100,7 +100,7 @@ obj-$(CONFIG_CRIS_MACH_ARTPEC3)		+= cris-artpec3-cpufreq.o
- obj-$(CONFIG_ETRAXFS)			+= cris-etraxfs-cpufreq.o
- obj-$(CONFIG_IA64_ACPI_CPUFREQ)		+= ia64-acpi-cpufreq.o
- obj-$(CONFIG_LOONGSON2_CPUFREQ)		+= loongson2_cpufreq.o
--obj-$(CONFIG_LOONGSON1_CPUFREQ)		+= ls1x-cpufreq.o
-+obj-$(CONFIG_LOONGSON1_CPUFREQ)		+= loongson1-cpufreq.o
- obj-$(CONFIG_SH_CPU_FREQ)		+= sh-cpufreq.o
- obj-$(CONFIG_SPARC_US2E_CPUFREQ)	+= sparc-us2e-cpufreq.o
- obj-$(CONFIG_SPARC_US3_CPUFREQ)		+= sparc-us3-cpufreq.o
-diff --git a/drivers/cpufreq/ls1x-cpufreq.c b/drivers/cpufreq/loongson1-cpufreq.c
-similarity index 65%
-rename from drivers/cpufreq/ls1x-cpufreq.c
-rename to drivers/cpufreq/loongson1-cpufreq.c
-index 262581b..0117820 100644
---- a/drivers/cpufreq/ls1x-cpufreq.c
-+++ b/drivers/cpufreq/loongson1-cpufreq.c
-@@ -1,7 +1,7 @@
- /*
-  * CPU Frequency Scaling for Loongson 1 SoC
-  *
-- * Copyright (C) 2014 Zhang, Keguang <keguang.zhang@gmail.com>
-+ * Copyright (C) 2014-2016 Zhang, Keguang <keguang.zhang@gmail.com>
-  *
-  * This file is licensed under the terms of the GNU General Public
-  * License version 2. This program is licensed "as is" without any
-@@ -20,7 +20,7 @@
- #include <cpufreq.h>
- #include <loongson1.h>
- 
--static struct {
-+struct ls1x_cpufreq {
- 	struct device *dev;
- 	struct clk *clk;	/* CPU clk */
- 	struct clk *mux_clk;	/* MUX of CPU clk */
-@@ -28,7 +28,9 @@ static struct {
- 	struct clk *osc_clk;	/* OSC clk */
- 	unsigned int max_freq;
- 	unsigned int min_freq;
--} ls1x_cpufreq;
-+};
-+
-+static struct ls1x_cpufreq *cpufreq;
- 
- static int ls1x_cpufreq_notifier(struct notifier_block *nb,
- 				 unsigned long val, void *data)
-@@ -46,6 +48,7 @@ static struct notifier_block ls1x_cpufreq_notifier_block = {
- static int ls1x_cpufreq_target(struct cpufreq_policy *policy,
- 			       unsigned int index)
- {
-+	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 	unsigned int old_freq, new_freq;
- 
- 	old_freq = policy->cur;
-@@ -60,53 +63,49 @@ static int ls1x_cpufreq_target(struct cpufreq_policy *policy,
- 	 *  - Reparent CPU clk back to CPU DIV clk
- 	 */
- 
--	dev_dbg(ls1x_cpufreq.dev, "%u KHz --> %u KHz\n", old_freq, new_freq);
--	clk_set_parent(policy->clk, ls1x_cpufreq.osc_clk);
-+	clk_set_parent(policy->clk, cpufreq->osc_clk);
- 	__raw_writel(__raw_readl(LS1X_CLK_PLL_DIV) | RST_CPU_EN | RST_CPU,
- 		     LS1X_CLK_PLL_DIV);
- 	__raw_writel(__raw_readl(LS1X_CLK_PLL_DIV) & ~(RST_CPU_EN | RST_CPU),
- 		     LS1X_CLK_PLL_DIV);
--	clk_set_rate(ls1x_cpufreq.mux_clk, new_freq * 1000);
--	clk_set_parent(policy->clk, ls1x_cpufreq.mux_clk);
-+	clk_set_rate(cpufreq->mux_clk, new_freq * 1000);
-+	clk_set_parent(policy->clk, cpufreq->mux_clk);
-+	dev_dbg(cpu_dev, "%u KHz --> %u KHz\n", old_freq, new_freq);
- 
- 	return 0;
- }
- 
- static int ls1x_cpufreq_init(struct cpufreq_policy *policy)
- {
-+	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 	struct cpufreq_frequency_table *freq_tbl;
- 	unsigned int pll_freq, freq;
- 	int steps, i, ret;
- 
--	pll_freq = clk_get_rate(ls1x_cpufreq.pll_clk) / 1000;
-+	pll_freq = clk_get_rate(cpufreq->pll_clk) / 1000;
- 
- 	steps = 1 << DIV_CPU_WIDTH;
--	freq_tbl = kzalloc(sizeof(*freq_tbl) * steps, GFP_KERNEL);
--	if (!freq_tbl) {
--		dev_err(ls1x_cpufreq.dev,
--			"failed to alloc cpufreq_frequency_table\n");
--		ret = -ENOMEM;
--		goto out;
--	}
-+	freq_tbl = kcalloc(steps, sizeof(*freq_tbl), GFP_KERNEL);
-+	if (!freq_tbl)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < (steps - 1); i++) {
- 		freq = pll_freq / (i + 1);
--		if ((freq < ls1x_cpufreq.min_freq) ||
--		    (freq > ls1x_cpufreq.max_freq))
-+		if ((freq < cpufreq->min_freq) || (freq > cpufreq->max_freq))
- 			freq_tbl[i].frequency = CPUFREQ_ENTRY_INVALID;
- 		else
- 			freq_tbl[i].frequency = freq;
--		dev_dbg(ls1x_cpufreq.dev,
-+		dev_dbg(cpu_dev,
- 			"cpufreq table: index %d: frequency %d\n", i,
- 			freq_tbl[i].frequency);
- 	}
- 	freq_tbl[i].frequency = CPUFREQ_TABLE_END;
- 
--	policy->clk = ls1x_cpufreq.clk;
-+	policy->clk = cpufreq->clk;
- 	ret = cpufreq_generic_init(policy, freq_tbl, 0);
- 	if (ret)
- 		kfree(freq_tbl);
--out:
-+
- 	return ret;
- }
- 
-@@ -138,85 +137,86 @@ static int ls1x_cpufreq_remove(struct platform_device *pdev)
- 
- static int ls1x_cpufreq_probe(struct platform_device *pdev)
- {
--	struct plat_ls1x_cpufreq *pdata = pdev->dev.platform_data;
-+	struct plat_ls1x_cpufreq *pdata = dev_get_platdata(&pdev->dev);
- 	struct clk *clk;
- 	int ret;
- 
--	if (!pdata || !pdata->clk_name || !pdata->osc_clk_name)
-+	if (!pdata || !pdata->clk_name || !pdata->osc_clk_name) {
-+		dev_err(&pdev->dev, "platform data missing\n");
- 		return -EINVAL;
-+	}
- 
--	ls1x_cpufreq.dev = &pdev->dev;
-+	cpufreq =
-+	    devm_kzalloc(&pdev->dev, sizeof(struct ls1x_cpufreq), GFP_KERNEL);
-+	if (!cpufreq) {
-+		return -ENOMEM;
-+	}
-+
-+	cpufreq->dev = &pdev->dev;
- 
- 	clk = devm_clk_get(&pdev->dev, pdata->clk_name);
- 	if (IS_ERR(clk)) {
--		dev_err(ls1x_cpufreq.dev, "unable to get %s clock\n",
-+		dev_err(&pdev->dev, "unable to get %s clock\n",
- 			pdata->clk_name);
--		ret = PTR_ERR(clk);
--		goto out;
-+		return PTR_ERR(clk);
- 	}
--	ls1x_cpufreq.clk = clk;
-+	cpufreq->clk = clk;
- 
- 	clk = clk_get_parent(clk);
- 	if (IS_ERR(clk)) {
--		dev_err(ls1x_cpufreq.dev, "unable to get parent of %s clock\n",
--			__clk_get_name(ls1x_cpufreq.clk));
--		ret = PTR_ERR(clk);
--		goto out;
-+		dev_err(&pdev->dev, "unable to get parent of %s clock\n",
-+			__clk_get_name(cpufreq->clk));
-+		return PTR_ERR(clk);
- 	}
--	ls1x_cpufreq.mux_clk = clk;
-+	cpufreq->mux_clk = clk;
- 
- 	clk = clk_get_parent(clk);
- 	if (IS_ERR(clk)) {
--		dev_err(ls1x_cpufreq.dev, "unable to get parent of %s clock\n",
--			__clk_get_name(ls1x_cpufreq.mux_clk));
--		ret = PTR_ERR(clk);
--		goto out;
-+		dev_err(&pdev->dev, "unable to get parent of %s clock\n",
-+			__clk_get_name(cpufreq->mux_clk));
-+		return PTR_ERR(clk);
- 	}
--	ls1x_cpufreq.pll_clk = clk;
-+	cpufreq->pll_clk = clk;
- 
- 	clk = devm_clk_get(&pdev->dev, pdata->osc_clk_name);
- 	if (IS_ERR(clk)) {
--		dev_err(ls1x_cpufreq.dev, "unable to get %s clock\n",
-+		dev_err(&pdev->dev, "unable to get %s clock\n",
- 			pdata->osc_clk_name);
--		ret = PTR_ERR(clk);
--		goto out;
-+		return PTR_ERR(clk);
- 	}
--	ls1x_cpufreq.osc_clk = clk;
-+	cpufreq->osc_clk = clk;
- 
--	ls1x_cpufreq.max_freq = pdata->max_freq;
--	ls1x_cpufreq.min_freq = pdata->min_freq;
-+	cpufreq->max_freq = pdata->max_freq;
-+	cpufreq->min_freq = pdata->min_freq;
- 
- 	ret = cpufreq_register_driver(&ls1x_cpufreq_driver);
- 	if (ret) {
--		dev_err(ls1x_cpufreq.dev,
--			"failed to register cpufreq driver: %d\n", ret);
--		goto out;
-+		dev_err(&pdev->dev,
-+			"failed to register CPUFreq driver: %d\n", ret);
-+		return ret;
- 	}
- 
- 	ret = cpufreq_register_notifier(&ls1x_cpufreq_notifier_block,
- 					CPUFREQ_TRANSITION_NOTIFIER);
- 
--	if (!ret)
--		goto out;
--
--	dev_err(ls1x_cpufreq.dev, "failed to register cpufreq notifier: %d\n",
--		ret);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register CPUFreq notifier: %d\n", ret);
-+		cpufreq_unregister_driver(&ls1x_cpufreq_driver);
-+	}
- 
--	cpufreq_unregister_driver(&ls1x_cpufreq_driver);
--out:
- 	return ret;
- }
- 
- static struct platform_driver ls1x_cpufreq_platdrv = {
--	.driver = {
-+	.probe	= ls1x_cpufreq_probe,
-+	.remove	= ls1x_cpufreq_remove,
-+	.driver	= {
- 		.name	= "ls1x-cpufreq",
- 	},
--	.probe		= ls1x_cpufreq_probe,
--	.remove		= ls1x_cpufreq_remove,
- };
- 
- module_platform_driver(ls1x_cpufreq_platdrv);
- 
- MODULE_AUTHOR("Kelvin Cheung <keguang.zhang@gmail.com>");
--MODULE_DESCRIPTION("Loongson 1 CPUFreq driver");
-+MODULE_DESCRIPTION("Loongson1 CPUFreq driver");
- MODULE_LICENSE("GPL");
--- 
-1.9.1
+Did I assume wrongly?
+
+Thierry
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXDQVCAAoJEN0jrNd/PrOhO+sQAIcwHY4cYUR6sTtIxCo+Uou4
+i+Kuc1PlVOg+nbjWKFt5fFgMPE0F7MLYXS7CqwOMZ0iPyR+9kuWXJG+TxjbQiQGv
+HpSirq5pUiCGPfRaHrLmdSWa4U5T1iKEAuh3Vld8czk49n3Dnj1fUVI80QkxRx2G
+4JoNuACtNWMlJyJ1ZkAoka4GDT7OebN1BTOSotPNAArUoQpQubKm7HEcycreqkCK
+F7btmSUexRfEloxATYnAuqaMRnSur/WA4FgTeDenIsZnQf4fHEtYe4wou3yCfJCm
+ESKcjFc/knCBWrCswm5jI1kRrk4I5O7Me1rEeRWWQdf1x5IVKRZyq68PA2o74LgD
+em16YvdYaaM2jMjiJ4TDueo6g97UC9mHKTLM6dTtqgdaodJWtu2FHXya37oda7nx
+wsfpK8KUdguLkt6cJqptQx4KYdACm5QFDYW+vJyeL12QSisXmZ8sxKFGPO/dxb/t
+YIw3W4WniASa4pBx6ZrOCTIJOqMv2eZqbJW3XjK+XpLv8o7zYovXYL+CgXPXCwXW
+ZrQsJrqK9Uaz20U4+7NFDX5F1d2PyIJYiZ7XrGxFlk2e59maGpQg7Z/Nbra7L/ui
+asd0pSLdkFDghkrSgmQvHF4yek/09FNNSTpoDa3MBifUEwfdy1MONB1orHaN+6n1
+9KLxLpBo4dslwwYODbl/
+=JTlp
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
