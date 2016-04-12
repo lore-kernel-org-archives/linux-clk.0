@@ -1,60 +1,60 @@
-Return-Path: <keguang.zhang@gmail.com>
-Return-Path: <keguang.zhang@gmail.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
+Return-Path: <Jose.Abreu@synopsys.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 To: linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
+	devicetree@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: [PATCH 7/7] MAINTAINERS: add Loongson1 architecture entry
-Date: Wed,  6 Apr 2016 20:09:37 +0800
-Message-Id: <1459944577-6423-8-git-send-email-keguang.zhang@gmail.com>
-In-Reply-To: <1459944577-6423-1-git-send-email-keguang.zhang@gmail.com>
-References: <1459944577-6423-1-git-send-email-keguang.zhang@gmail.com>
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com, CARLOS.PALMINHA@synopsys.com,
+	Vineet.Gupta1@synopsys.com, Alexey.Brodkin@synopsys.com,
+	Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: [PATCH 0/2 v5] Add AXS10X I2S PLL clock driver
+Date: Tue, 12 Apr 2016 10:14:21 +0100
+Message-Id: <cover.1460451903.git.joabreu@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kelvin Cheung <keguang.zhang@gmail.com>
+The ARC SDP I2S clock can be programmed using a
+specific PLL.
 
-This patch adds Loongson1 architecture entry.
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This patch series has the goal of adding a clock driver
+that programs this PLL.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 03e00c7..f6032a5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7271,6 +7271,15 @@ S:	Supported
- F:	Documentation/mips/
- F:	arch/mips/
- 
-+MIPS/LOONGSON1 ARCHITECTURE
-+M:	Keguang Zhang <keguang.zhang@gmail.com>
-+L:	linux-mips@linux-mips.org
-+S:	Maintained
-+F:	arch/mips/loongson32/
-+F:	arch/mips/include/asm/mach-loongson32/
-+F:	drivers/*/*loongson1*
-+F:	drivers/*/*/*loongson1*
-+
- MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
- L:	linux-media@vger.kernel.org
+----
+
+Changes v4 -> v5:
+* Documentation update (as suggested by Alexey Brodkin)
+* Changed compatible string to "snps,axs10x-i2s-pll-clock" (as suggested by Alexey Brodkin)
+* Added DT bindings
+
+Changes v3 -> v4:
+* Added binding document (as suggested by Stephen Boyd)
+* Minor code style fixes (as suggested by Stephen Boyd)
+* Use ioremap (as suggested by Stephen Boyd)
+* Implement round_rate (as suggested by Stephen Boyd)
+* Change to platform driver (as suggested by Stephen Boyd)
+* Use {readl/writel}_relaxed (as suggested by Vineet Gupta)
+
+Changes v2 -> v3:
+* Implemented recalc_rate
+
+Changes v1 -> v2:
+* Renamed folder to axs10x (as suggested by Alexey Brodkin)
+* Added more supported rates
+
+Jose Abreu (2):
+  clk/axs10x: Add I2S PLL clock driver
+  arc: axs10x: Add DT bindings for I2S PLL Clock
+
+ .../bindings/clock/axs10x-i2s-pll-clock.txt        |  17 ++
+ arch/arc/boot/dts/axs10x_mb.dtsi                   |   6 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axs10x/Makefile                        |   1 +
+ drivers/clk/axs10x/i2s_pll_clock.c                 | 217 +++++++++++++++++++++
+ 5 files changed, 242 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
+ create mode 100644 drivers/clk/axs10x/Makefile
+ create mode 100644 drivers/clk/axs10x/i2s_pll_clock.c
+
 -- 
 1.9.1
