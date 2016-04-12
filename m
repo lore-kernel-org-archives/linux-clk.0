@@ -1,153 +1,93 @@
-Return-Path: <pchiu@nvidia.com>
-From: Penny Chiu <pchiu@nvidia.com>
-To: <swarren@wwwdotorg.org>, <thierry.reding@gmail.com>, <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>, <rjw@rjwysocki.net>,
-	<viresh.kumar@linaro.org>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Penny
- Chiu <pchiu@nvidia.com>
-Subject: [PATCH 03/11] clk: tegra: Add DFLL DVCO reset control for Tegra210
-Date: Fri, 22 Apr 2016 18:31:03 +0800
-Message-ID: <1461321071-6431-4-git-send-email-pchiu@nvidia.com>
-In-Reply-To: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
-Return-Path: pchiu@nvidia.com
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 12 Apr 2016 13:08:09 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop messing with the
+ pwm->period field
+Message-ID: <20160412110809.GI18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2xeD/fx0+7k8I/QN"
+In-Reply-To: <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DVCO present in the DFLL IP block has a separate reset line,
-exposed via the CAR IP block.  This reset line is asserted upon SoC
-reset.  Unless something (such as the DFLL driver) deasserts this
-line, the DVCO will not oscillate, although reads and writes to the
-DFLL IP block will complete.
 
-Signed-off-by: Penny Chiu <pchiu@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c         | 68 ++++++++++++++++++++++++++++++++
- include/dt-bindings/reset/tegra210-car.h | 12 ++++++
- 2 files changed, 80 insertions(+)
- create mode 100644 include/dt-bindings/reset/tegra210-car.h
+--2xeD/fx0+7k8I/QN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index d3709b1..3d70b38 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -24,6 +24,7 @@
- #include <linux/export.h>
- #include <linux/clk/tegra.h>
- #include <dt-bindings/clock/tegra210-car.h>
-+#include <dt-bindings/reset/tegra210-car.h>
- 
- #include "clk.h"
- #include "clk-id.h"
-@@ -39,6 +40,9 @@
- #define CLK_SOURCE_CSITE 0x1d4
- #define CLK_SOURCE_EMC 0x19c
- 
-+#define RST_DFLL_DVCO 0x2f4
-+#define DVFS_DFLL_RESET_SHIFT 0
-+
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
- #define PLLC_MISC0 0x88
-@@ -2781,6 +2785,68 @@ static void __init tegra210_clock_apply_init_table(void)
- }
- 
- /**
-+ * tegra210_car_barrier - wait for pending writes to the CAR to complete
-+ *
-+ * Wait for any outstanding writes to the CAR MMIO space from this CPU
-+ * to complete before continuing execution.  No return value.
-+ */
-+static void tegra210_car_barrier(void)
-+{
-+	readl_relaxed(clk_base + RST_DFLL_DVCO);
-+}
-+
-+/**
-+ * tegra210_clock_assert_dfll_dvco_reset - assert the DFLL's DVCO reset
-+ *
-+ * Assert the reset line of the DFLL's DVCO.  No return value.
-+ */
-+static void tegra210_clock_assert_dfll_dvco_reset(void)
-+{
-+	u32 v;
-+
-+	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
-+	v |= (1 << DVFS_DFLL_RESET_SHIFT);
-+	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
-+	tegra210_car_barrier();
-+}
-+
-+/**
-+ * tegra210_clock_deassert_dfll_dvco_reset - deassert the DFLL's DVCO reset
-+ *
-+ * Deassert the reset line of the DFLL's DVCO, allowing the DVCO to
-+ * operate.  No return value.
-+ */
-+static void tegra210_clock_deassert_dfll_dvco_reset(void)
-+{
-+	u32 v;
-+
-+	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
-+	v &= ~(1 << DVFS_DFLL_RESET_SHIFT);
-+	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
-+	tegra210_car_barrier();
-+}
-+
-+static int tegra210_reset_assert(unsigned long id)
-+{
-+	if (id == TEGRA210_RST_DFLL_DVCO)
-+		tegra210_clock_assert_dfll_dvco_reset();
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int tegra210_reset_deassert(unsigned long id)
-+{
-+	if (id == TEGRA210_RST_DFLL_DVCO)
-+		tegra210_clock_deassert_dfll_dvco_reset();
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+/**
-  * tegra210_clock_init - Tegra210-specific clock initialization
-  * @np: struct device_node * of the DT node for the SoC CAR IP block
-  *
-@@ -2844,6 +2910,8 @@ static void __init tegra210_clock_init(struct device_node *np)
- 
- 	tegra_super_clk_gen5_init(clk_base, pmc_base, tegra210_clks,
- 				  &pll_x_params);
-+	tegra_init_special_resets(1, tegra210_reset_assert,
-+				tegra210_reset_deassert);
- 	tegra_add_of_provider(np);
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
- 
-diff --git a/include/dt-bindings/reset/tegra210-car.h b/include/dt-bindings/reset/tegra210-car.h
-new file mode 100644
-index 0000000..a8632af
---- /dev/null
-+++ b/include/dt-bindings/reset/tegra210-car.h
-@@ -0,0 +1,12 @@
-+/*
-+ * This header provides Tegra210-specific constants for binding
-+ * nvidia,tegra210-car.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_TEGRA210_CAR_H
-+#define _DT_BINDINGS_RESET_TEGRA210_CAR_H
-+
-+#define TEGRA210_RESET(x)		(7 * 32 + (x))
-+#define TEGRA210_RST_DFLL_DVCO		TEGRA210_RESET(0)
-+
-+#endif	/* _DT_BINDINGS_RESET_TEGRA210_CAR_H */
--- 
-2.8.1
+On Wed, Mar 30, 2016 at 10:03:26PM +0200, Boris Brezillon wrote:
+> pwm->period field is not supposed to be changed by PWM users. The only
+> ones authorized to change it are the PWM core and PWM drivers.
+>=20
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/video/backlight/lm3630a_bl.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Applied, thanks.
+
+Thierry
+
+--2xeD/fx0+7k8I/QN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXDNcZAAoJEN0jrNd/PrOhTYQQAJIra7IMWwqrg+lUp7EqOQZY
+eV/VGRUmo6g3HLR3dTRbwKUjKeOyq9hqA+tvfaM+XsB1/2Ts2hVQZLs/XfC7/WgE
+3D0UifQLJgh0NwAg0LBYe0DIbTHKtNBsiga91l6LQV50hZWJeDXlgyY9y+kAnZEP
+FTIZbgfnCfI6yuHMf8RFIOFEOnr+6pNXK3C47kFky1V9VoPTqS7rjtJ6uyu7HSYw
+gtJWDXlu9UceaCWP8VUI6xaAxoh5II+oFzUUePTrssff1feTueIMNRGr4e4jY8e8
+Sp97XG/YMUY06CYQNsPC7EEnL4moGDbavsegDYOl0IgdKGP14soC++Vf5jwYMZ/p
+hIxv771iBUD0nhXzxMyL+mXenEnNqFhAn5GaJuFv3NpIRbDwhxageXibLRlGfUDJ
+G9nJywOwN4JIhBslQFFuelx+lLhWRVOdIArviNFYy+RcgyMcQ5MHVfPaJA56Z36V
+D/axa/U7ONgs4atxdcNXHhDxiGd3ts4/2YPlSFieP7AE6fyToKwvBTzLLKaXxiNG
+F1PrDU+ybLuiTJOXYu7dH7/vA+X2sbMxeIqm14wI9Kp5usguogRbayx/pBFmRHVy
+qs+Jz3p01xbvfTEpevyF/aWMSa6nmv+njc1kFfUXrv858Y3ztkmF8pYhyVkvQV1+
+MKYEQnJf9T0KJwmjgGKM
+=BxVW
+-----END PGP SIGNATURE-----
+
+--2xeD/fx0+7k8I/QN--
