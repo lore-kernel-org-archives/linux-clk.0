@@ -1,56 +1,89 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] rockchip clock changes for 4.7 part 3 - some more fixes
-Date: Fri, 29 Apr 2016 00:06 +0200
-Message-ID: <3990329.NB1U7jJjZj@diego>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 12 Apr 2016 15:06:27 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
+ <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
+ <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
+ Vetter <daniel.vetter@intel.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
+ Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
+Message-ID: <20160412150627.7084665d@bbrezillon>
+In-Reply-To: <20160412113912.GK18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
+	<20160412113912.GK18882@ulmo.ba.sec>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+On Tue, 12 Apr 2016 13:39:12 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-some more fixes for the new rk3399 have come up addressing small errors
-found in the manual during bringup of the soc, so please pull.
+> On Wed, Mar 30, 2016 at 10:03:28PM +0200, Boris Brezillon wrote:
+> > Currently the PWM core mixes the current PWM state with the per-platform
+> > reference config (specified through the PWM lookup table, DT definition or
+> > directly hardcoded in PWM drivers).
+> > 
+> > Create a pwm_args struct to store this reference config, so that PWM users
+> > can differentiate the current config from the reference one.
+> > 
+> > Patch all places where pwm->args should be initialized. We keep the
+> > pwm_set_polarity/period() calls until all PWM users are patched to
+> > use pwm_args instead of pwm_get_period/polarity().
+> 
+> Perhaps a helper would be useful? Something like:
+> 
+> 	static inline void
+> 	pwm_apply_args(struct pwm_device *pwm, const struct pwm_args *args)
+> 	{
+> 		pwm_set_duty_cycle(pwm, args->duty_cycle);
+> 		pwm_set_period(pwm, args->period);
+> 	}
+> 
+> ? That would make it slightly easier to get rid of it again after all
+> clients have been converted.
+> 
+> With the exception of pwm-clps711x all of these args are set at of_xlate
+> time (for DT) or from the lookup table in pwm_get() (for non-DT), so it
+> might even be possible to move this call to the core, so that removal of
+> it will be a one-liner.
 
+Okay, I think I misunderstood your suggestion. I thought you wanted
+this helper to set the reference config, but you actually want to apply
+a new state based on the PWM reference values.
 
-Thanks
-Heiko
+Except that pwm_args does not contain all the required information to
+apply a full config (args->duty_cycle and args->enable do not exist).
 
-The following changes since commit 03ae1747869437a8e4d0d4e79d4c88c25c6df39c:
+This being said, in my v6 I moved the content of
+pwm_regulator_adjust_pwm_config() (patch 27) into a generic helper
+(pwm_adjust_config()). This helper is doing pretty much what you're
+suggesting here (but again, I'm not sure I correctly understood your
+suggestion :-/).
 
-  clk: rockchip: fix checkpatch warning in core code (2016-04-20 09:53:39 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.7-rockchip-clk3
-
-for you to fetch changes up to fd8bc829336a24b770247eb893111bcb8f1ddedb:
-
-  clk: rockchip: fix the rk3399 cifout clock (2016-04-25 22:54:51 +0200)
-
-----------------------------------------------------------------
-A spelling fix and a bunch of rk3399 clock fixes.
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      clk: rockchip: fix of spelling mistake on unsuccessful in pll clock type
-
-Heiko Stuebner (1):
-      Merge branch 'v4.7-shared/clkids' into v4.7-clk/next
-
-Xing Zheng (8):
-      clk: rockchip: fix the gate bit for i2c4 and i2c8 on rk3399
-      clk: rockchip: add general gpu soft-reset on rk3399
-      clk: rockchip: rename rga clock-id on rk3399
-      clk: rockchip: export some necessary rk3399 clock ids
-      clk: rockchip: assign more necessary rk3399 clock ids
-      clk: rockchip: add some frequencies on the rk3399 PLL table
-      clk: rockchip: drop unnecessary CLK_IGNORE_UNUSED flags from rk3399
-      clk: rockchip: fix the rk3399 cifout clock
-
- drivers/clk/rockchip/clk-pll.c         |   4 +-
- drivers/clk/rockchip/clk-rk3399.c      | 344 +++++++++++++++++----------------
- include/dt-bindings/clock/rk3399-cru.h |   5 +-
- 3 files changed, 183 insertions(+), 170 deletions(-)
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
