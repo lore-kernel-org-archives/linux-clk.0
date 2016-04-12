@@ -1,74 +1,60 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 13 Apr 2016 18:01:22 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew
- Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
- Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell
- CP110 system controller
-Message-ID: <20160413180122.4f997a9a@free-electrons.com>
-In-Reply-To: <20160328194756.GA28967@rob-hp-laptop>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160328194756.GA28967@rob-hp-laptop>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 12 Apr 2016 17:23:36 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: tegra: Fix pllre Tegra210 and add pll_re_out1
+Message-ID: <20160412152336.GF25160@ulmo.ba.sec>
+References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XStn23h1fwudRqtG"
+In-Reply-To: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
 
-On Mon, 28 Mar 2016 14:47:56 -0500, Rob Herring wrote:
+--XStn23h1fwudRqtG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > + - reg: register area of the CP110 system controller 0
-> > + - #clock-cells: must be set to 2
-> > + - core-clock-output-names must be set to:
-> > +    "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
-> > + - gatable-clock-indices must be set to:
-> > +	<0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
-> > +	<9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
-> > +	<22>, <23>, <24>, <25>, <26>
-> 
-> You aren't skipping very many spots. I'd just fill the unused names in 
-> with "none" or something.
-> 
-> > + - gatable-clock-output-names must be set to:
-> > +	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
-> > +	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "cpm-pcie_x10",
-> > +	"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata", "cpm-sata-usb",
-> > +	"cpm-gop-macro", "cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150",
-> > +	"cpm-eip197"
+On Mon, Mar 21, 2016 at 03:58:52PM -0400, Rhyland Klein wrote:
+> Use a new Tegra210 version of the pll_register_pllre function to
+> allow setting the proper settings for the m and n div fields.
+>=20
+> Additionally define PLL_RE_OUT1 on Tegra210.
 
-In fact, the more I think of it, the less I find encoding the clock
-output names in the DT to be useful for such a driver. For generic
-clock drivers, it makes complete sense, but here the driver is really
-tied to the specific system controller of that SoC, so the clock names
-will not change.
+It'd be nice to specify what that additional clock is used for. No need
+to repost for that, I can add it when applying.
 
-In addition, those gatable clocks are not independent from each other:
-many of them are parent from others (this wasn't encoded into the
-driver until now, because I didn't had this info until now). So the
-driver will anyway have to have a lot of knowledge about which clock is
-child/parent of which one. Which means the driver is anyway really
-tied to that specific system controller.
+Thierry
 
-Does it still make sense to encode the clock names in the DT in such a
-case, or should the driver be providing the clock names?
+--XStn23h1fwudRqtG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(I don't have a strong opinion either way, I'm just asking what is the
-preference of the DT and clock maintainers on the matter.).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Thanks!
+iQIcBAABCAAGBQJXDRL3AAoJEN0jrNd/PrOhJbEP/RJpLVn9zWjB/rtjdCKpyGam
+Xl21CWpu0q3nn5g0C7VSH4k8SAAKf+K3XvZT2L4tJfBDWncaFji/Py/J5DGrwrEL
+CvVWPH+XJvtteUJKh88+5CkINwXGCbdiIAY2/jRcBPS86WcXVKTwecXUabb5HUoD
+oMGMfi3eT+9irEsTcXvpPhmGajH/cfEMR8rqPAdFEjcq6HtciMcVXZvX3xD27Bho
+1JG3NcutOw6yUB1L4zQfCheZuTQ84rSLgKbSD1MQMbpF+Aj28ooQkWCOyGM2vOdX
+pNPg8SDu/Dz9tkh9VecgHm35A+1fsF+J5DOzZr2wc8TkXESXvWrChdOmCeTqvJQb
+6W3R91StCcz5njyFJ+nuloJaQCarZwg6ZBmjhU1nfQhOzvFeqMlgF5pOwYIEDVp8
+aU8pljGU4AkdL1S6G44mxQix+5kT3vXMbFK4ar2ojeg1eMjMkD1mN3Bx1Ay8N3a9
+uwJsKRjkrB9vCo274iQHbDbEbne2zWyDcmCOEpOPh/z7Ke7GCs//0uvWtURkbE7+
+UUEN6Gfqjrn/CLXxZSEacxp1UDqw8Pt3+x3SSPueZdCbrnAmBJnNZ3wEpIHwwYW1
+ex/izWjZZsQUnz9S85WNTMUecDgD09rT5k3UCUMsp6KmKn2TGa1al7q//TgmWzju
+75zA9fZOEQp/I88Ff2G2
+=4d7T
+-----END PGP SIGNATURE-----
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+--XStn23h1fwudRqtG--
