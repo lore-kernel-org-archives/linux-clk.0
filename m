@@ -1,41 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:49:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH 2/2] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Message-ID: <20160415234903.GA12052@codeaurora.org>
-References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
- <1458590333-8898-2-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458590333-8898-2-git-send-email-rklein@nvidia.com>
+Return-Path: <Jose.Abreu@synopsys.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com, CARLOS.PALMINHA@synopsys.com,
+	Vineet.Gupta1@synopsys.com, Alexey.Brodkin@synopsys.com,
+	Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: [PATCH 2/2 v5] arc: axs10x: Add DT bindings for I2S PLL Clock
+Date: Tue, 12 Apr 2016 10:14:23 +0100
+Message-Id: <2e7f7ffb48ea246cd10f2a9b36f74254c699ba49.1460451903.git.joabreu@synopsys.com>
+In-Reply-To: <cover.1460451903.git.joabreu@synopsys.com>
+References: <cover.1460451903.git.joabreu@synopsys.com>
+In-Reply-To: <cover.1460451903.git.joabreu@synopsys.com>
+References: <cover.1460451903.git.joabreu@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/21, Rhyland Klein wrote:
-> +static int clk_pllu_enable(struct clk_hw *hw)
-> +{
-> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
-> +	struct clk *osc = __clk_lookup("osc");
+Add device tree bindings for AXS10X I2S PLL Clock driver.
 
-Is there any way to _not_ use __clk_lookup() here? That function
-is on my kill list, mostly because it can't handle probe defer
-and is a hacky way to circumvent regular clk_get().
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+---
 
-> +	unsigned long flags, input_rate;
-> +	unsigned int i;
-> +	int ret = 0;
-> +	u32 val;
-> +
-> +	if (!osc) {
+This patch was only introduced in v5.
 
+ arch/arc/boot/dts/axs10x_mb.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
+index ab5d570..227b215 100644
+--- a/arch/arc/boot/dts/axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+@@ -16,6 +16,12 @@
+ 		ranges = <0x00000000 0xe0000000 0x10000000>;
+ 		interrupt-parent = <&mb_intc>;
+ 
++		i2sclk: i2sclk@100a0 {
++			compatible = "snps,axs10x-i2s-pll-clock";
++			reg = <0x100a0 0x10>;
++			#clock-cells = <0>;
++		};
++
+ 		clocks {
+ 			i2cclk: i2cclk {
+ 				compatible = "fixed-clock";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
