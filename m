@@ -1,28 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:54:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>, Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH 32/41] clk: palmas: Remove CLK_IS_ROOT
-Message-ID: <20160415235436.GJ12052@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-33-git-send-email-sboyd@codeaurora.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 12 Apr 2016 15:16:53 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 02/46] backlight: pwm_bl: remove useless call to
+ pwm_set_period()
+Message-ID: <20160412141653.GJ8094@x1>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-3-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412110350.GH18882@ulmo.ba.sec>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-33-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160412110350.GH18882@ulmo.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+On Tue, 12 Apr 2016, Thierry Reding wrote:
 
-Applied to clk-next
+> On Wed, Mar 30, 2016 at 10:03:25PM +0200, Boris Brezillon wrote:
+> > The PWM period will be set when calling pwm_config. Remove this useless
+> > call to pwm_set_period(), which might mess up with the internal PWM state.
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >  drivers/video/backlight/pwm_bl.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> Applied, thanks.
+
+Applied?
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
