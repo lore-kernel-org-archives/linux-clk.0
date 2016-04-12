@@ -1,81 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:26553 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753007AbcD1IXu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2016 04:23:50 -0400
-Subject: Re: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
- <CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
- <5721B47D.9030206@de.bosch.com>
- <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Oleksij Rempel <linux@rempel-privat.de>,
-	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <5721C890.7030803@de.bosch.com>
-Date: Thu, 28 Apr 2016 10:23:44 +0200
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 12 Apr 2016 13:51:55 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 16/46] pwm: move the enabled/disabled info into
+ pwm_state
+Message-ID: <20160412115155.GN18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-17-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ztcJpsdPpsnnlAp8"
+In-Reply-To: <1459368249-13241-17-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
 
-On 28.04.2016 10:07, Geert Uytterhoeven wrote:
-> Hi Dirk,
->
-> On Thu, Apr 28, 2016 at 8:58 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->> On 28.04.2016 08:52, Geert Uytterhoeven wrote:
->>> On Thu, Apr 28, 2016 at 8:08 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->>>> @@ -46,7 +48,8 @@ Examples
->>>>
->>>>           cpg: clock-controller@e6150000 {
->>>>                   compatible = "renesas,r8a7795-cpg-mssr";
->>>> -               reg = <0 0xe6150000 0 0x1000>;
->>>> +               reg = <0 0xe6150000 0 0x1000>,
->>>> +                     <0 0xe6160060 0 0x4>;
->>>
->>>
->>> The MODEMR register is not part of the CPG block, but of the RST block.
->>> So IMHO it doesn't belong in the clock-controller node.
->>
->> Ok, fine.
->>
->> So we agree hat this ugly hard coded register address stuff has to be
->> removed and replaced by a device tree based solution. Correct?
->
-> Yes we agree.
->
->>> BTW, I still prefer something like
->>> "[PATCH 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap"
->>> (http://www.spinics.net/lists/linux-sh/msg44757.html).
->>
->> What's the status of this? I see there a date "1 Sep 2015" ;)
->
-> We were considering alternative solutions, cfr. "[PATCH/RFC 0/6] boot-mode-reg:
-> Add core" (http://www.spinics.net/lists/linux-sh/msg45969.html).
-> To avoid delaying upstream r8a7795, we settled for the ugly hard coded
-> register access as an interim solution.
->
->> Is this available in any testing tree we could try?
->
-> It used to be part of older renesas-drivers releases.
+--ztcJpsdPpsnnlAp8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 30, 2016 at 10:03:39PM +0200, Boris Brezillon wrote:
+[...]
+> @@ -145,7 +146,11 @@ static inline void pwm_get_state(const struct pwm_de=
+vice *pwm,
+> =20
+>  static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+>  {
+> -	return test_bit(PWMF_ENABLED, &pwm->flags);
+> +	struct pwm_state pstate;
 
-Would it be possible to add them again then, now?
+No need for the p prefix, in my opinion.
 
+Thierry
 
-Best regards
+--ztcJpsdPpsnnlAp8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Dirk
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAABCAAGBQJXDOFbAAoJEN0jrNd/PrOhsToP/1uhEhMZpq9YKlTiLiibDzYV
+zrFHNUSyfTcQw558pV4nyn6M+I2lfMYSEEsAhcxQQbZBY1adaijQfv3lnwQiBQ8C
+4D6KR/Y8fT/r0/JXx4MuXPHx4D0/CSobFXiv2Oi3FGGG4ZvsGunkVxXq/Sad0EQp
+xFE1wUzT0zSYZNP3eoeP35kgVo5431m0eSgNxaqbPM8qEkX8iuwz/GZncEymJeO5
+1P1teQy9lo48s6DkT1M4NEIKGgWH0EU4J14DYYO3h+aQ+mkalX11ZZTlhxr5drli
+tGM/QhY/TRD3Rc9CEO5d9Fxu6Xn90GsG1oEwg64tDafO/9372A6tFTzYvCMqnYqf
+6ezYLCrdWu2r2IIjYaeXzUnEyBcoRkNg1qNa0Vk6TbpehsWFNIYrTAejTKCXQqwB
+sPqYwe6xpNCbsTckkxJPpSnvZfFe57rOIxDxO1ZWNW6Bn1ZjDwsU0TauRxxlTr83
+BwcGdrySQVgLuhw0pqu4xuQVd5bRI8SB0S9NJXfkR9KLaTI/ZsIB556GZbAsIVbh
+2aLkvqvOTNqIKUFV10p+lsH8aYEOreyXRLgjtGorSdViYLy3dzmjhtHD5yUy4K7X
+7mY6B5GLv6D3o1N0dfaiz5CWYZ9RDmdFwcSxq2KP9jrZT8HRSO9is2lsDjEbA6nv
+1xjYbH/4MybBBst/ECXX
+=af3Z
+-----END PGP SIGNATURE-----
 
-
-
+--ztcJpsdPpsnnlAp8--
