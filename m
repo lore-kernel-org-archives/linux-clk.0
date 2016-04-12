@@ -1,91 +1,83 @@
-Return-Path: <dongas86@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 12 Apr 2016 14:04:12 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
+ <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
+ <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
+ Vetter <daniel.vetter@intel.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
+ Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
+Message-ID: <20160412140412.42704302@bbrezillon>
+In-Reply-To: <20160412113912.GK18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
+	<20160412113912.GK18882@ulmo.ba.sec>
 MIME-Version: 1.0
-In-Reply-To: <20160426012341.GB8870@tiger>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
-	<20160421034520.GA19965@shlinux2.ap.freescale.net>
-	<20160426012341.GB8870@tiger>
-Date: Tue, 26 Apr 2016 13:51:13 +0800
-Message-ID: <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-From: Dong Aisheng <dongas86@gmail.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mingo@redhat.com, tglx@linutronix.de
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+On Tue, 12 Apr 2016 13:39:12 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-On Tue, Apr 26, 2016 at 9:23 AM, Shawn Guo <shawnguo@kernel.org> wrote:
-> On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
->> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
->> > If a clock gets enabled early during boot time, it can lead to a PLL
->> > startup. The wait_lock function makes sure that the PLL is really
->> > stareted up before it gets used. However, the function sleeps which
->> > leads to scheduling and an error:
->> > bad: scheduling from the idle thread!
->> > ...
->> >
->> > Use udelay in case IRQ's are still disabled.
->> >
->> > Signed-off-by: Stefan Agner <stefan@agner.ch>
->> > ---
->> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
->> >  1 file changed, 4 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
->> > index c05c43d..b5ff561 100644
->> > --- a/drivers/clk/imx/clk-pllv3.c
->> > +++ b/drivers/clk/imx/clk-pllv3.c
->> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
->> >                     break;
->> >             if (time_after(jiffies, timeout))
->> >                     break;
->> > -           usleep_range(50, 500);
->> > +           if (unlikely(irqs_disabled()))
->>
->> This causes a bit confusion that clk_pllv3_prepare is sleepable.
->> But this line indicates it's possible to be called in irq context.
->> Although it's only happened during kernel boot phase where irq is
->> still not enabled.
->> It seems schedule_debug() somehow did not catch it during early boot
->> phase. Maybe schedule guys can help explain.
->>
->> My question is if it's really worthy to introduce this confusion
->> to fix the issue since the delay is minor?
->
-> I do not understand why it's confusing.  The code already obviously
-> indicates this is a special handling for cases where irq is still not
-> enabled, rather than for irq context.
->
+> On Wed, Mar 30, 2016 at 10:03:28PM +0200, Boris Brezillon wrote:
+> > Currently the PWM core mixes the current PWM state with the per-platform
+> > reference config (specified through the PWM lookup table, DT definition or
+> > directly hardcoded in PWM drivers).
+> > 
+> > Create a pwm_args struct to store this reference config, so that PWM users
+> > can differentiate the current config from the reference one.
+> > 
+> > Patch all places where pwm->args should be initialized. We keep the
+> > pwm_set_polarity/period() calls until all PWM users are patched to
+> > use pwm_args instead of pwm_get_period/polarity().
+> 
+> Perhaps a helper would be useful? Something like:
+> 
+> 	static inline void
+> 	pwm_apply_args(struct pwm_device *pwm, const struct pwm_args *args)
+> 	{
+> 		pwm_set_duty_cycle(pwm, args->duty_cycle);
+> 		pwm_set_period(pwm, args->period);
+> 	}
+> 
+> ? That would make it slightly easier to get rid of it again after all
+> clients have been converted.
 
-The code itself has nothing telling it's a special handling for the
-case where irq is
-still not enabled.
-Even it tells, it may still cause confusing by adding complexity in
-clk_pllv3_prepare()
-which actually should be called in non-atomic context as it could sleep.
+Sure. I'll add this helper.
 
-> The patch is to fix the "bad: scheduling from the idle thread!" warning
-> rather than minimize the delay.  Do you have an opinion on how to fix
-> the warning?
->
+> 
+> With the exception of pwm-clps711x all of these args are set at of_xlate
+> time (for DT) or from the lookup table in pwm_get() (for non-DT), so it
+> might even be possible to move this call to the core, so that removal of
+> it will be a one-liner.
 
-I just wonder maybe we could simply just using udelay(50) instead of
-usleep_range(50, 500) to eliminate the confusing since it's minor cast.
-What do you think of it?
+Not sure I get that one. Some drivers are implementing their own
+->of_xlate() method, how would you get rid of this pwm_apply_args() in
+those custom implementations?
 
->> Furthermore, shouldn't it be udelay(500)?
->
-> 500 is for the worst case of sleep, and 50 is good enough for delay.
->
-
-Yes, you''re right.
-We have a loop, so 50ns one time should be good.
-
-> Shawn
-
-Regards
-Dong Aisheng
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
