@@ -1,63 +1,74 @@
-Return-Path: <kernel@martin.sperl.org>
-Content-Type: text/plain; charset=windows-1252
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: clk: bcm2835: what is the best way to limit the selection of parent clocks in the device-tree
-From: Martin Sperl <kernel@martin.sperl.org>
-In-Reply-To: <571F4F78.6000504@i2se.com>
-Date: Tue, 26 Apr 2016 13:41:23 +0200
-Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Eric Anholt <eric@anholt.net>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-Id: <D5D977DF-E565-4354-9212-BEE5177C6AE3@martin.sperl.org>
-References: <571DCED0.9010008@martin.sperl.org> <571F4F78.6000504@i2se.com>
-To: Stefan Wahren <stefan.wahren@i2se.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Wed, 13 Apr 2016 18:01:22 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew
+ Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+ Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell
+ CP110 system controller
+Message-ID: <20160413180122.4f997a9a@free-electrons.com>
+In-Reply-To: <20160328194756.GA28967@rob-hp-laptop>
+References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160328194756.GA28967@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
-> On 26.04.2016, at 13:22, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+On Mon, 28 Mar 2016 14:47:56 -0500, Rob Herring wrote:
+
+> > + - reg: register area of the CP110 system controller 0
+> > + - #clock-cells: must be set to 2
+> > + - core-clock-output-names must be set to:
+> > +    "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
+> > + - gatable-clock-indices must be set to:
+> > +	<0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
+> > +	<9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
+> > +	<22>, <23>, <24>, <25>, <26>
 > 
-> Hi Martin,
+> You aren't skipping very many spots. I'd just fill the unused names in 
+> with "none" or something.
 > 
-> Am 25.04.2016 um 10:01 schrieb Martin Sperl:
->> Hi!
->> 
->> On the raspberry pi the pcm (and other) clock has multiple parent
->> clocks that the driver may select from to get the "best fit" clock.
->> 
->> This list of parents of valid for each clock is hard-coded in the driver.
->> 
->> But this "standard" list of parents includes some clocks that are
->> independently controlled by the firmware with - unfortunately for
->> now - no notification of changes going back to the linux kernel.
->> This is mostly needed for powermanagement and ARM clock
->> modifications as well as to avoid overheating.
->> 
->> So how is the best way to define those parent clocks one wants to
->> use for an individual clock?
-> 
-> since the device tree should describe the hardware this should be kept
-> in the driver. So we can't get into trouble if the firmware change it's
-> behavior.
+> > + - gatable-clock-output-names must be set to:
+> > +	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+> > +	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "cpm-pcie_x10",
+> > +	"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata", "cpm-sata-usb",
+> > +	"cpm-gop-macro", "cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150",
+> > +	"cpm-eip197"
 
-I am just thinking about the way that different groups want to use
-for example i2s may want to use different parents than pwm.
+In fact, the more I think of it, the less I find encoding the clock
+output names in the DT to be useful for such a driver. For generic
+clock drivers, it makes complete sense, but here the driver is really
+tied to the specific system controller of that SoC, so the clock names
+will not change.
 
-My concern is that people will have to compile the kernel separately
-to reach their personal preference. And to some extend this
-is also describing the device connected: different DAC may have
-different preferences (with regards to noise) - and that then 
-describes the hardware (or at least the intent of the HW designer).
+In addition, those gatable clocks are not independent from each other:
+many of them are parent from others (this wasn't encoded into the
+driver until now, because I didn't had this info until now). So the
+driver will anyway have to have a lot of knowledge about which clock is
+child/parent of which one. Which means the driver is anyway really
+tied to that specific system controller.
 
-So I wonder how we can achive this?
+Does it still make sense to encode the clock names in the DT in such a
+case, or should the driver be providing the clock names?
 
-Along a similar line is the configuration of the higher order mash
-clock options (fractional divider with noise spreading).
+(I don't have a strong opinion either way, I'm just asking what is the
+preference of the DT and clock maintainers on the matter.).
 
-Making all these policies go inside the driver may not be intended,
-as it would not apply to all DAC equally...
+Thanks!
 
-Martin
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
