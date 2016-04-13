@@ -1,45 +1,31 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34661 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752167AbcDATDd (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2016 15:03:33 -0400
-Subject: Re: [v7, 4/5] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-To: Yangbo Lu <yangbo.lu@nxp.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
- <1459480051-3701-5-git-send-email-yangbo.lu@nxp.com>
-Cc: Rob Herring <robh+dt@kernel.org>, scott.wood@nxp.com,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	ulf.hansson@linaro.org,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <56FEC601.7020800@codeaurora.org>
-Date: Fri, 1 Apr 2016 12:03:29 -0700
+Return-Path: <tony@atomide.com>
+Date: Wed, 13 Apr 2016 12:07:49 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] ARM: dts: am43xx: add support for clkout1 clock
+Message-ID: <20160413190749.GV5995@atomide.com>
+References: <1458158097-21137-1-git-send-email-t-kristo@ti.com>
+ <1458158097-21137-4-git-send-email-t-kristo@ti.com>
+ <20160412210538.GB5995@atomide.com>
+ <570E4103.2060301@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1459480051-3701-5-git-send-email-yangbo.lu@nxp.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <570E4103.2060301@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/31/2016 08:07 PM, Yangbo Lu wrote:
->  drivers/clk/clk-qoriq.c                                       | 3 +--
->
+* Tero Kristo <t-kristo@ti.com> [160413 05:53]:
+> On 04/13/2016 12:05 AM, Tony Lindgren wrote:
+> >* Tero Kristo <t-kristo@ti.com> [160316 12:55]:
+> >>clkout1 clock node and its generation tree was missing. Add this based
+> >>on the data on TRM and PRCM functional spec.
+> >
+> >Can I pick this one separately?
+> 
+> Yes it has no dependencies towards the other patches.
 
-For clk part:
+OK applying into omap-for-v4.7/dt thanks.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Tony
