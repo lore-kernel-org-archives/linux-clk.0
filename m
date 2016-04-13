@@ -1,64 +1,66 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 13:52:56 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lucas Stach <dev@lynxeye.de>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: tegra30: init PLL_C to sane rate
-Message-ID: <20160422115256.GE9047@ulmo.ba.sec>
-References: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 13 Apr 2016 15:20:24 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] i.MX clock updates for 4.7
+Message-ID: <20160413072001.GM28903@tiger>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
-In-Reply-To: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike, Stephen,
 
---2hMgfIw2X+zgXrFs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please pull the following i.MX clock updates I queued for 4.7, and keep
+the branch stable.  Thanks.
 
-On Mon, Feb 29, 2016 at 09:46:06PM +0100, Lucas Stach wrote:
-> If the bootloader does not touch PLL_C it will stay in its reset
-> state, failing to lock when enabled. This leads to consumers of
-> this clock to fail probing. Fix this by always programming the
-> PLL with a sane rate, which allows it to lock, at startup.
->=20
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> ---
->  drivers/clk/tegra/clk-tegra30.c | 1 +
->  1 file changed, 1 insertion(+)
+Shawn
 
-Applied, thanks.
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
-Thierry
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
 
---2hMgfIw2X+zgXrFs
-Content-Type: application/pgp-signature; name="signature.asc"
+are available in the git repository at:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.7
 
-iQIcBAABCAAGBQJXGhCYAAoJEN0jrNd/PrOhk/sP/in6/uiEWphltc/ty8OlxU5d
-NAg6O5vrUjupB8nyoucizdcC7WAtBT0D+m3PXY40w3WM4n4gM41GyhkYWQ29sigM
-3YmIevGXu0n46WiEJNYC5b5fKIW2TvkNy1KCgithrsxtAu9DOR7UW7NEJK5+yImI
-z8gN1VkMicd0SHYC2Cc+DwJekK0uEe6Ytco2L8Pw8Ia+7s+HwvFN667KZsFscHkP
-fvxOJW0b61EcHnyJsD7pKz2g978H5SNzpw0zmXQZNppcSrzNHk9XwBYBuXTidfSM
-Bm/aAMmiOpvoLzyPjpgmk7Gzd7SbSVgIwN62z2AB6/MKkZvLPmgubwyJeeVkxL0B
-EeBWB6hV9iwMSl95DwiGPGx8shxDPl0FquQlHFUaoViZUKsM8yEZwUSoQ6lxFdtN
-BP1DdMcJYJqg8icp5iXH7rFxqjUz0GCnBzQ/pFvKWSISEme4ixVsMyUFXkYVtkRe
-7RAubsVV0+o6n3TAS1Xsbmhqpox+HFiWsJXZMn8o7Bl/5gz8PcWmNrdKyOObO6d3
-holO+JJ00Cj1nxSgE88DQoyJimtE7b6ux7wJm9JpBj9zokkG2tXgRSweYdrAp4tp
-cKpJPBZtm4xoKUkvKvaeLCY+23o58pEwhCQIYn7etUK3p1Mw9NcwyHdOuhSSBXgh
-YP6PhXchw0ZBS0ndnZ8v
-=zb+A
------END PGP SIGNATURE-----
+for you to fetch changes up to 69c542e8022ca53c5fee664548163809eb1777c3:
 
---2hMgfIw2X+zgXrFs--
+  clk: imx: vf610: fix whitespace in vf610-clock.h (2016-04-12 09:31:08 +0800)
+
+----------------------------------------------------------------
+The i.MX clock update for 4.7:
+ - Register SAI clk as shared clocks to support SAI audio on i.MX6SX
+ - Add the missing ckil clock for i.MX7
+ - Update clk-gate2 and vf610 clock driver to prepare for suspend
+   support on VF610
+ - Fix DCU clock configurations and add TCON ipg clock to support DRM
+   display on VF610
+
+----------------------------------------------------------------
+Fabio Estevam (1):
+      clk: imx6sx: Register SAI clocks as shared clocks
+
+Gary Bisson (1):
+      clk: imx: add ckil clock for i.MX7
+
+Shawn Guo (1):
+      clk: imx: vf610: fix whitespace in vf610-clock.h
+
+Stefan Agner (6):
+      clk: imx: clk-gate2: allow custom gate configuration
+      clk: imx: vf610: leave DDR clock on
+      clk: imx: vf610: add WKPU unit
+      clk: imx: vf610: add suspend/resume support
+      clk: imx: vf610: fix DCU clock tree
+      clk: imx: vf610: add TCON ipg clock
+
+ drivers/clk/imx/clk-gate2.c             |  7 ++--
+ drivers/clk/imx/clk-imx6sx.c            | 10 +++---
+ drivers/clk/imx/clk-imx7d.c             |  3 +-
+ drivers/clk/imx/clk-vf610.c             | 60 +++++++++++++++++++++++++++++++--
+ drivers/clk/imx/clk.h                   | 13 +++++--
+ include/dt-bindings/clock/imx7d-clock.h |  3 +-
+ include/dt-bindings/clock/vf610-clock.h |  8 +++--
+ 7 files changed, 89 insertions(+), 15 deletions(-)
