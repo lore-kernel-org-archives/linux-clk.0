@@ -1,63 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.138]:45661 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932446AbcDTLLq (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2016 07:11:46 -0400
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org, heiko@sntech.de
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-	elaine.zhang@rock-chips.com, jay.xu@rock-chips.com,
-	dianders@chromium.org, Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH 5/6] clk: rockchip: rk3399: fix the cifout clock
-Date: Wed, 20 Apr 2016 19:11:32 +0800
-Message-Id: <1461150692-29751-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
-References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 13 Apr 2016 09:26:13 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop messing with the
+ pwm->period field
+Message-ID: <20160413082613.GM8094@x1>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412110809.GI18882@ulmo.ba.sec>
+ <20160412141613.GI8094@x1>
+ <20160412142608.GB25006@ulmo.ba.sec>
+ <20160413082511.GL8094@x1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160413082511.GL8094@x1>
 List-ID: <linux-clk.vger.kernel.org>
 
-The cifout clock is incorrect due to the manual error, we need to
-fix it.
+On Wed, 13 Apr 2016, Lee Jones wrote:
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+> On Tue, 12 Apr 2016, Thierry Reding wrote:
+> 
+> > On Tue, Apr 12, 2016 at 03:16:13PM +0100, Lee Jones wrote:
+> > > On Tue, 12 Apr 2016, Thierry Reding wrote:
+> > > 
+> > > > On Wed, Mar 30, 2016 at 10:03:26PM +0200, Boris Brezillon wrote:
+> > > > > pwm->period field is not supposed to be changed by PWM users. The only
+> > > > > ones authorized to change it are the PWM core and PWM drivers.
+> > > > > 
+> > > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > > > ---
+> > > > >  drivers/video/backlight/lm3630a_bl.c | 3 +--
+> > > > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > > 
+> > > > Applied, thanks.
+> > > 
+> > > Applied?
+> > 
+> > You didn't specifically Ack this one, but I presumed that since the
+> > change is essentially the same as for pwm-backlight, and this is another
+> > prerequisite for the remainder of the series it should go in through the
+> > PWM tree as well.
+> 
+> If you're taking Backlight patches through a !Backlight tree, you're
+> going to have to send out a pull-request.  There are no conflicts
+> currently, so I won't use it right away, but I need it in my arsenal
+> if they do occur.
 
- drivers/clk/rockchip/clk-rk3399.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+... also, don't forget to change the subject line to make the
+rest of the patches in Backlight.  The subject description needs to
+start with an uppercase char.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 1da4fe1..e81cc85 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -158,7 +158,7 @@ PNAME(mux_dclk_vop0_p)			= { "dclk_vop0_div",
- PNAME(mux_dclk_vop1_p)			= { "dclk_vop1_div",
- 					    "dclk_vop1_frac" };
- 
--PNAME(mux_clk_cif_p)			= { "clk_cifout_div", "xin24m" };
-+PNAME(mux_clk_cif_p)				= { "clk_cifout_src", "xin24m" };
- 
- PNAME(mux_pll_src_24m_usbphy480m_p)	= { "xin24m", "clk_usbphy_480m" };
- PNAME(mux_pll_src_24m_pciephy_p)	= { "xin24m", "clk_pciephy_ref100m" };
-@@ -1254,11 +1254,12 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(27), 6, GFLAGS),
- 
- 	/* cif */
--	COMPOSITE(0, "clk_cifout_div", mux_pll_src_cpll_gpll_npll_p, 0,
--			RK3399_CLKSEL_CON(56), 6, 2, MFLAGS, 0, 5, DFLAGS,
-+	COMPOSITE_NODIV(0, "clk_cifout_src", mux_pll_src_cpll_gpll_npll_p, 0,
-+			RK3399_CLKSEL_CON(56), 6, 2, MFLAGS,
- 			RK3399_CLKGATE_CON(10), 7, GFLAGS),
--	MUX(SCLK_CIF_OUT, "clk_cifout", mux_clk_cif_p, CLK_SET_RATE_PARENT,
--			RK3399_CLKSEL_CON(56), 5, 1, MFLAGS),
-+
-+	COMPOSITE_NOGATE(SCLK_CIF_OUT, "clk_cifout", mux_clk_cif_p, 0,
-+			 RK3399_CLKSEL_CON(56), 5, 1, MFLAGS, 0, 5, DFLAGS),
- 
- 	/* gic */
- 	COMPOSITE(ACLK_GIC_PRE, "aclk_gic_pre", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
 -- 
-1.7.9.5
-
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
