@@ -1,107 +1,67 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 7 Apr 2016 23:54:31 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Liam Girdwood
- <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>,
- lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck
- <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
- <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
- linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Stephen
- Barber <smbarber@chromium.org>
-Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
-Message-ID: <20160407235431.788dc24a@bbrezillon>
-In-Reply-To: <20160330212410.GX2350@sirena.org.uk>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
-	<20160330212410.GX2350@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Enable clocks for CMU_CCORE and
+ CMU_FSYS0 blocks
+To: Tomasz Figa <tomasz.figa@gmail.com>, Alim Akhtar <alim.akhtar@samsung.com>
+References: <1460459243-27120-1-git-send-email-alim.akhtar@samsung.com>
+ <CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <570E2123.1000107@samsung.com>
+Date: Wed, 13 Apr 2016 12:36:19 +0200
+MIME-version: 1.0
+In-reply-to: 
+ <CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mark,
-
-On Wed, 30 Mar 2016 14:24:10 -0700
-Mark Brown <broonie@kernel.org> wrote:
-
-> On Wed, Mar 30, 2016 at 10:03:53PM +0200, Boris Brezillon wrote:
-> > The continuous PWM voltage regulator is caching the voltage value in
-> > the ->volt_uV field. While most of the time this value should reflect the
-> > real voltage, sometime it can be sightly different if the PWM device
-> > rounded the set_duty_cycle request.
-> > Moreover, this value is not valid until someone has modified the regulator
-> > output.
+On 04/13/2016 08:26 AM, Tomasz Figa wrote:
+>> > @@ -205,7 +206,11 @@ static struct samsung_cmu_info topc_cmu_info __initdata = {
+>> >
+>> >  static void __init exynos7_clk_topc_init(struct device_node *np)
+>> >  {
+>> > +       struct clk *clk;
+>> > +
+>> >         samsung_cmu_register_one(np, &topc_cmu_info);
+>> > +       clk = __clk_lookup("aclk_ccore_133");
+>> > +       clk_prepare_enable(clk);
+>
+> Shouldn't this be rather done before calling
+> samsung_cmu_register_one()? I don't remember exactly, but wouldn't
+> clock registration trigger reading back current (mux, div) values from
+> registers?
 > 
-> Acked-by: Mark Brown <broonie@kernel.org>
+> Also, do we have any guarantees on order of initialization of
+> particular CMUs? I believe this will happen in order of DT nodes and
+> so would be not any kind of guarantee at all.
 
-Actually this patch introduces a bug (reported by Stephen):
+If these clocks need to be kept enabled perhaps it's better to just set
+CLK_IS_CRITICAL flag for them? Patches adding this flag are already in
+clk-next branch in the clk git tree. This way the clocks would get 
+enabled within the clk_register() call.
 
-"
-I applied your patch series [PATCH v5 00/46] pwm: add support for
-atomic update and found a null pointer dereference when probing a
-pwm-regulator at boot. See the below stack trace:
+The CMU registration order is enforced by listing input clocks to each
+CMU in DT. However, I wouldn't be concerned much about it in context 
+of this patch. We are enabling here clocks which belong to same CMU.
+samsung_cmu_register_one() needs to be called first for subsequent 
+__clk_lookup() calls to work.
 
-[ 4.282374] [<ffffffc000399088>] pwm_regulator_get_voltage+0x78/0xa0
-[ 4.289344] [<ffffffc000390740>] regulator_attr_is_visible+0x7c/0x264
-[ 4.296408] [<ffffffc0001f75a0>] internal_create_group+0x14c/0x280
-[ 4.303184] [<ffffffc0001f76e8>] sysfs_create_group+0x14/0x1c
-[ 4.309483] [<ffffffc0001f77c8>] sysfs_create_groups+0x30/0x78
-[ 4.315881] [<ffffffc00043631c>] device_add+0x224/0x4d8
-[ 4.321609] [<ffffffc0004365ec>] device_register+0x1c/0x28
-[ 4.327623] [<ffffffc0003952a4>] regulator_register+0x2e4/0xc14
-[ 4.334112] [<ffffffc000396844>] devm_regulator_register+0x54/0x94
-[ 4.340887] [<ffffffc000399328>] pwm_regulator_probe+0x278/0x2b8
-[ 4.347473] [<ffffffc000439fe4>] platform_drv_probe+0x58/0xa4
-[ 4.353772] [<ffffffc0004387a8>] driver_probe_device+0x114/0x2ac
-[ 4.360358] [<ffffffc0004389a4>] __driver_attach+0x64/0x90
-[ 4.366371] [<ffffffc000436f50>] bus_for_each_dev+0x74/0x90
-[ 4.372478] [<ffffffc000438bd4>] driver_attach+0x20/0x28
-[ 4.378299] [<ffffffc00043778c>] bus_add_driver+0xe8/0x1e0
-[ 4.384312] [<ffffffc00043959c>] driver_register+0x98/0xe4
-[ 4.390326] [<ffffffc00043aa04>] __platform_driver_register+0x48/0x50
-[ 4.397388] [<ffffffc000cb2710>] pwm_regulator_driver_init+0x18/0x20
-[ 4.404356] [<ffffffc000c8ca7c>] do_one_initcall+0xf8/0x180
-[ 4.410466] [<ffffffc000c8cc58>] kernel_init_freeable+0x154/0x1f4
-[ 4.417148] [<ffffffc000929cf4>] kernel_init+0x10/0xf8
-[ 4.422782] [<ffffffc000084450>] ret_from_fork+0x10/0x40
+Perhaps related bits need to be set manually in CMU registers before
+registering a clock provider for the CMU, to fulfil the requirements.
 
-It looks like the root cause is that regulator_attr_is_visible will
-try to get the voltage, but at this point in regulator_register,
-rdev->constraints is still null. So
-pwm_duty_cycle_percentage_to_voltage will dereference a null
-rdev->constraints pointer.
-"
+Anyway, summary of the $subject patch seems not precise enough:
 
-The problem is that we need to know the min and max voltage constraints
-to calculate the current voltage. ->get_voltage() is called when the
-sysfs attributes are created (part of device registration), and
-set_machine_constraints() is called after device_register(), thus
-leading to the NULL pointer dereference.
+"This patch enables clocks for CMU_CCORE and CMU_FSYS0 blocks. This is
+required before accessing registers of these blocks."
 
-Is there any reason for calling set_machine_constraints() after
-device_register() in regulator_register()?
+We need to enable selected clocks (i.e. access the CMU's registers)
+before accessing this CMU's registers? 
 
-Best Regards,
-
-Boris
+--
+Regards, 
+Sylwester
