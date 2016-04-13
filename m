@@ -1,103 +1,80 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 15:23:25 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Penny Chiu <pchiu@nvidia.com>, swarren@wwwdotorg.org, gnurou@gmail.com,
-	pdeschrijver@nvidia.com, pgaikwad@nvidia.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] arm64: tegra: Add clock properties on cpu0 for
- Tegra210
-Message-ID: <20160422132325.GN9047@ulmo.ba.sec>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
- <571A0E95.9040203@nvidia.com>
+Return-Path: <tomasz.figa@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="E0h0CbphJD8hN+Gf"
-In-Reply-To: <571A0E95.9040203@nvidia.com>
+In-Reply-To: <570E2123.1000107@samsung.com>
+References: <1460459243-27120-1-git-send-email-alim.akhtar@samsung.com>
+	<CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
+	<570E2123.1000107@samsung.com>
+Date: Wed, 13 Apr 2016 14:31:31 +0300
+Message-ID: <CA+Ln22Gf+aXnOzj-qYeNq5-MO8b+tjxrp0KPtG7Q2ceStk4ERA@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Enable clocks for CMU_CCORE and
+ CMU_FSYS0 blocks
+From: Tomasz Figa <tomasz.figa@gmail.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Thomas Abraham <thomas.ab@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+2016-04-13 13:36 GMT+03:00 Sylwester Nawrocki <s.nawrocki@samsung.com>:
+> On 04/13/2016 08:26 AM, Tomasz Figa wrote:
+>>> > @@ -205,7 +206,11 @@ static struct samsung_cmu_info topc_cmu_info __initdata = {
+>>> >
+>>> >  static void __init exynos7_clk_topc_init(struct device_node *np)
+>>> >  {
+>>> > +       struct clk *clk;
+>>> > +
+>>> >         samsung_cmu_register_one(np, &topc_cmu_info);
+>>> > +       clk = __clk_lookup("aclk_ccore_133");
+>>> > +       clk_prepare_enable(clk);
+>>
+>> Shouldn't this be rather done before calling
+>> samsung_cmu_register_one()? I don't remember exactly, but wouldn't
+>> clock registration trigger reading back current (mux, div) values from
+>> registers?
+>>
+>> Also, do we have any guarantees on order of initialization of
+>> particular CMUs? I believe this will happen in order of DT nodes and
+>> so would be not any kind of guarantee at all.
+>
+> If these clocks need to be kept enabled perhaps it's better to just set
+> CLK_IS_CRITICAL flag for them? Patches adding this flag are already in
+> clk-next branch in the clk git tree. This way the clocks would get
+> enabled within the clk_register() call.
+>
 
---E0h0CbphJD8hN+Gf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oh, I didn't know about this. Sounds like a good idea. :)
 
-On Fri, Apr 22, 2016 at 12:44:21PM +0100, Jon Hunter wrote:
-> Hi Penny,
->=20
-> On 22/04/16 11:31, Penny Chiu wrote:
-> > Add clocks, clock-names, and clock-latency into cpu0 node.
-> > These properties will be used by cpufreq driver.
-> >=20
-> > Signed-off-by: Penny Chiu <pchiu@nvidia.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra210.dtsi
-> > index 204d9cd..1a85857 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > @@ -782,6 +782,12 @@
-> >  			device_type =3D "cpu";
-> >  			compatible =3D "arm,cortex-a57";
-> >  			reg =3D <0>;
-> > +			clocks =3D <&tegra_car TEGRA210_CLK_CCLK_G>,
-> > +				 <&tegra_car TEGRA210_CLK_PLL_X>,
-> > +				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
-> > +				 <&dfll>;
-> > +			clock-names =3D "cpu_g", "pll_x", "pll_p", "dfll";
-> > +			clock-latency =3D <300000>;
-> >  		};
-> > =20
-> >  		cpu@1 {
-> >=20
->=20
-> Can you include a patch with this series to update the binding
-> documentation for the nvidia,tegra124-cpufreq.txt? I think that although
-> there is no specific nvidia,tegra210-cpufreq compatible string the
-> documentation should state that both tegra124 and tegra210 are supported
-> so it is clear.
->=20
-> Also I see the above binding no longer includes the "cpu_lp" for
-> tegra210 which I understand we don't use here. However, the binding
-> documentation should reflect this. Having said that, looking at the
-> driver it appears the "cpu_lp" clock is not even used for tegra124. I
-> wonder if we should drop this from the binding documentation and the
-> tegra124.dtsi altogether?
->=20
-> What about the "vdd-cpu-supply" property? Don't we need this?
+> The CMU registration order is enforced by listing input clocks to each
+> CMU in DT.
 
-For some reason that seems to have moved into the clock@70110000 node.
+Ah, right, I recall now, I even reviewed relevant patch. Thanks for
+refreshing my memory.
 
-Thierry
+> However, I wouldn't be concerned much about it in context
+> of this patch. We are enabling here clocks which belong to same CMU.
+> samsung_cmu_register_one() needs to be called first for subsequent
+> __clk_lookup() calls to work.
 
---E0h0CbphJD8hN+Gf
-Content-Type: application/pgp-signature; name="signature.asc"
+I thought a clock from another CMU has to be enabled for the CPU to be
+able to access the CMU being registered.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+>
+> Perhaps related bits need to be set manually in CMU registers before
+> registering a clock provider for the CMU, to fulfil the requirements.
+>
+> Anyway, summary of the $subject patch seems not precise enough:
+>
+> "This patch enables clocks for CMU_CCORE and CMU_FSYS0 blocks. This is
+> required before accessing registers of these blocks."
+>
+> We need to enable selected clocks (i.e. access the CMU's registers)
+> before accessing this CMU's registers?
 
-iQIcBAABCAAGBQJXGiXNAAoJEN0jrNd/PrOhBk4P/jb2b73ahmJWWLCMhTVdj6WL
-0PW8QbXi8+uy8EsFYFtbjiEIDtMH9EozmpkGtIxypzZ0KDfbnxaOQczEkEFRDBMn
-rVVKANIozpXLe4rU8a8719GxeEitg8+gwmzz3G8nFPMwtmb7rfPjl1P0ZW5d5Bqh
-BpL1q0gQFWG5t8lGUF5QO21WFbxcQQ8G1d7PzE9IARcwgQpxiy9GrsPthxTI649K
-TZRiR//NpYxU6meh1x98Wfw9noJRI5dAbIWNQjKwTjUGeD4gezBEDQhllAJeiIHE
-9ULFuWRZr+/xspD9wnv6E+/STMZQ9t8XOXzBWQpXyyjYzvTSz5N9d1A4XvfRAyJD
-5wcZ4wwn5JjOlwuklE6XyJiwSKDxHezFvO5HbmLkDcqwX2++NkYWjXz6z7ONm4cV
-OXgLHFQSSkTp0v566xsxoU1vAC5p2fZZmn7xwA9zoYxOffATik5jY+bm6YCh5k1Z
-T85ee/gxRFe5cDDiPB1GoUkqbFQJ479oWufpK+MaIFDEnn/J08/OizfXAkXIl0nd
-qiwCkZ3BK1xVDMP48UjnIq4gkTfuFAg0FkLwjShbU6G5CMo2FFc2rJUbZSsi7JC0
-ZDiksOsdcxQPHCuB5tWkHVfQXfMZcD1zRTme/Hb7WER5Yj8RhD8QzdeTX/ch/caa
-J9309qUY43TvAJNaDAjO
-=6WzJ
------END PGP SIGNATURE-----
+Yeah, maybe the explanation could be a bit more precise.
 
---E0h0CbphJD8hN+Gf--
+Best regards,
+Tomasz
