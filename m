@@ -8,98 +8,119 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-clk@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] clk: renesas: Provide Kconfig symbols for CPG/MSSR and CPG/MSTP support
-Date: Wed, 13 Apr 2016 16:44:15 +0200
-Message-Id: <1460558657-10128-2-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev()
+Date: Wed, 13 Apr 2016 16:44:17 +0200
+Message-Id: <1460558657-10128-4-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
 References: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the decision whether to build the renesas-cpg-mssr and
-clk-mstp drivers is handled by Makefile logic.  However, the rcar-sysc
-driver will need to know whether CPG/MSSR and/or CPG/MSTP support are
-available or not.
+The R-Car SYSC PM Domain driver has to power manage devices in power
+areas using clocks. To reuse code and to share knowledge of clocks
+suitable for power management, this is ideally done through the existing
+cpg_mssr_attach_dev() and cpg_mssr_detach_dev() callbacks.
 
-To avoid having to duplicate this logic, move it to Kconfig. Provide
-non-visible CLK_RENESAS_CPG_MSSR and CLK_RENESAS_CPG_MSTP Kconfig
-symbols, which can be used by both Makefiles and C code.
+Hence these callbacks can no longer rely on their "domain" parameter
+pointing to the CPG/MSSR Clock Domain. To handle this, keep a pointer to
+the clock domain in a static variable. cpg_mssr_attach_dev() has to
+support probe deferral, as the R-Car SYSC PM Domain may be initialized,
+and devices may be added to it, before the CPG/MSSR Clock Domain is
+initialized.
+
+Dummy callbacks are provided for the case where CPG/MSTP support is not
+included, so the rcar-sysc driver won't have to care about this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - New.
----
- drivers/clk/Kconfig          |  1 +
- drivers/clk/renesas/Kconfig  | 16 ++++++++++++++++
- drivers/clk/renesas/Makefile | 26 ++++++++++++++------------
- 3 files changed, 31 insertions(+), 12 deletions(-)
- create mode 100644 drivers/clk/renesas/Kconfig
+The probe deferral path was tested by initializing the renesas,fcpv
+driver from an arch_initcall.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33421d8b63b..c45554957499ea60 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -201,6 +201,7 @@ source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
-+source "drivers/clk/renesas/Kconfig"
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
- source "drivers/clk/ti/Kconfig"
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-new file mode 100644
-index 0000000000000000..2115ce410cfb4bc9
---- /dev/null
-+++ b/drivers/clk/renesas/Kconfig
-@@ -0,0 +1,16 @@
-+config CLK_RENESAS_CPG_MSSR
-+	bool
-+	default y if ARCH_R8A7795
+v2:
+  - Provide dummy callbacks if CPG/MSSR support is not included.
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 18 ++++++++++++------
+ include/linux/clk/renesas.h            |  7 +++++++
+ 2 files changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 703bdb157528eecb..1f2dc3629f0e02a0 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/clk/renesas.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/mod_devicetable.h>
+@@ -388,6 +389,8 @@ struct cpg_mssr_clk_domain {
+ 	unsigned int core_pm_clks[0];
+ };
+ 
++static struct cpg_mssr_clk_domain *cpg_mssr_clk_domain;
 +
-+config CLK_RENESAS_CPG_MSTP
-+	bool
-+	default y if ARCH_R7S72100
-+	default y if ARCH_R8A73A4
-+	default y if ARCH_R8A7740
-+	default y if ARCH_R8A7778
-+	default y if ARCH_R8A7779
-+	default y if ARCH_R8A7790
-+	default y if ARCH_R8A7791
-+	default y if ARCH_R8A7793
-+	default y if ARCH_R8A7794
-+	default y if ARCH_SH73A0
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 7e2579b303267d8b..ead8bb8435249493 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -1,13 +1,15 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7795)		+= renesas-cpg-mssr.o \
--					   r8a7795-cpg-mssr.o clk-div6.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
+ static bool cpg_mssr_is_pm_clk(const struct of_phandle_args *clkspec,
+ 			       struct cpg_mssr_clk_domain *pd)
+ {
+@@ -411,17 +414,20 @@ static bool cpg_mssr_is_pm_clk(const struct of_phandle_args *clkspec,
+ 	}
+ }
+ 
+-static int cpg_mssr_attach_dev(struct generic_pm_domain *genpd,
+-			       struct device *dev)
++int cpg_mssr_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+-	struct cpg_mssr_clk_domain *pd =
+-		container_of(genpd, struct cpg_mssr_clk_domain, genpd);
++	struct cpg_mssr_clk_domain *pd = cpg_mssr_clk_domain;
+ 	struct device_node *np = dev->of_node;
+ 	struct of_phandle_args clkspec;
+ 	struct clk *clk;
+ 	int i = 0;
+ 	int error;
+ 
++	if (!pd) {
++		dev_dbg(dev, "CPG/MSSR clock domain not yet available\n");
++		return -EPROBE_DEFER;
++	}
 +
-+obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
-+obj-$(CONFIG_CLK_RENESAS_CPG_MSTP)	+= clk-mstp.o
+ 	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+ 					   &clkspec)) {
+ 		if (cpg_mssr_is_pm_clk(&clkspec, pd))
+@@ -461,8 +467,7 @@ fail_put:
+ 	return error;
+ }
+ 
+-static void cpg_mssr_detach_dev(struct generic_pm_domain *genpd,
+-				struct device *dev)
++void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+ 	if (!list_empty(&dev->power.subsys_data->clock_list))
+ 		pm_clk_destroy(dev);
+@@ -491,6 +496,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 	pm_genpd_init(genpd, &simple_qos_governor, false);
+ 	genpd->attach_dev = cpg_mssr_attach_dev;
+ 	genpd->detach_dev = cpg_mssr_detach_dev;
++	cpg_mssr_clk_domain = pd;
+ 
+ 	of_genpd_add_provider_simple(np, genpd);
+ 	return 0;
+diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
+index ab57a298a3740c5c..ba6fa4148515e5c9 100644
+--- a/include/linux/clk/renesas.h
++++ b/include/linux/clk/renesas.h
+@@ -33,4 +33,11 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev);
+ #define cpg_mstp_detach_dev	NULL
+ #endif
+ 
++#ifdef CONFIG_CLK_RENESAS_CPG_MSSR
++int cpg_mssr_attach_dev(struct generic_pm_domain *unused, struct device *dev);
++void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
++#else
++#define cpg_mssr_attach_dev	NULL
++#define cpg_mssr_detach_dev	NULL
++#endif
+ #endif
 -- 
 1.9.1
