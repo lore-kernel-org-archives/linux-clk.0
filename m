@@ -1,57 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41904 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754715AbcDYRjc (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2016 13:39:32 -0400
-Date: Mon, 25 Apr 2016 18:39:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Message-ID: <20160425173911.GQ3217@sirena.org.uk>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
- <1461590448-47685-5-git-send-email-w.egorov@phytec.de>
+Return-Path: <tony@atomide.com>
+Date: Wed, 13 Apr 2016 08:49:29 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Rob Herring <robh@kernel.org>, linux-omap@vger.kernel.org,
+	paul@pwsan.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 00/30] ARM: OMAP2+: hwmod module clock type support
+Message-ID: <20160413154928.GS5995@atomide.com>
+References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+ <20160412145819.GA25032@rob-hp-laptop>
+ <20160412155829.GM5995@atomide.com>
+ <570DEE66.8030706@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XJ4udkfvZE/9uKZk"
-In-Reply-To: <1461590448-47685-5-git-send-email-w.egorov@phytec.de>
-Subject: Re: [PATCH v3 4/8] regulator: rk808: Migrate to regulator core's
- simplified DT parsing code
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <570DEE66.8030706@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+* Tero Kristo <t-kristo@ti.com> [160413 00:00]:
+> On 04/12/2016 06:58 PM, Tony Lindgren wrote:
+> >
+> >Yes Tero please check those, we need to support the old behavior too.
+> >Sounds like you figured that out how to do that alreadey by generating
+> >the clock name for the built-in data.
+> 
+> Some of the old clock nodes are being dropped by this series, namely the
+> timer ones, and they are getting merged to the new timerX_mod_ck nodes.
+> 
+> The reason for this is the behavior of the clock driver itself; it assumes
+> it gets a clock handle for which it can do clk_set_parent (for setting
+> proper source clock to get correct time-base), but normal _mod_ck nodes do
+> not support this. So, what happens for example for omap4 is following:
 
---XJ4udkfvZE/9uKZk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+OK
 
-On Mon, Apr 25, 2016 at 03:20:44PM +0200, Wadim Egorov wrote:
-> A common simplified DT parsing code for regulators was introduced in
-> commit a0c7b164ad11 ("regulator: of: Provide simplified DT parsing
-> method")
+> These clocks are then directly referenced by hwmod. The reason for having
+> two registers under the new timer node is that in some hardwares (like
+> AM33xx), the register address for the gate and mux component are different.
+> 
+> Anyway, compatibility will be broken once the hwmod_data changes go in for
+> individual SoCs, as the clkctrl portion is going to be dropped, and the
+> hwmod has no chance to work with old DT data. If this is not acceptable,
+> then the whole exercise becomes moot as we need to move the data someplace
+> else within the kernel, and forget about the transition to DT.
 
-This doesn't apply against current code, please check and resend.
+Yeah if have hwmod lookup the clkctrl clock based on the generated
+clock name, it can still find the clock. But naturally if the clocks
+are not defined, hwmod won't find them for an old dtb.
 
---XJ4udkfvZE/9uKZk
-Content-Type: application/pgp-signature; name="signature.asc"
+If we want to avoid that, the clkctrl data would have be built in
+for each SoC in the clock driver, and we'd still need to provide the
+DT bindings for them. We do have the TI clock bindings tagged as
+unstable and defining clocks for SoCs is the dts files is pretty much
+the standard.. Probably the best we can do is to things in phases where
+we drop the hwmod data only later on.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Regards,
 
-iQEcBAEBCAAGBQJXHlY9AAoJECTWi3JdVIfQtIIIAIcIQZNiiFuP2HZh1cEP+78I
-qkiWJVI68xyQNROExsH6e7Bk/N99mteR/aIAHcntuVnMGopJu+tz7tydZdRsHSVr
-ivvvZosoGnQVK+97qu7o75CIR2eC5nv4Bb9B1eZaYymR3mR77PnPjfCMnZsoCxKR
-9Qo+m0lGxWv+9Lcf7o63SqDvree93Rht9re8ziqUcGy6dfm+W019J25wn9E2LUdZ
-tlnUwBhSkW0QQKE8J98crWboqRvK12THKOtzCdxQM5Po78fwBOR9+4aWzGPShokH
-gDcDodCElbZILaoMGnoT7LRZdZ2DNZSfxgl+ZnMOynW+cLeWdnsAa8J1BeUlHag=
-=uieL
------END PGP SIGNATURE-----
-
---XJ4udkfvZE/9uKZk--
+Tony
