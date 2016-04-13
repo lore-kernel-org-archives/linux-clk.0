@@ -1,40 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:36015 "EHLO
-	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932358AbcDKOAT (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2016 10:00:19 -0400
-Received: by mail-wm0-f49.google.com with SMTP id v188so87703951wme.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Apr 2016 07:00:13 -0700 (PDT)
-Subject: Re: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
- <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
- <20160402005045.GX18567@codeaurora.org> <5701210A.4060807@baylibre.com>
- <20160407233113.GI18567@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <570BADE3.8080201@baylibre.com>
-Date: Mon, 11 Apr 2016 16:00:03 +0200
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 13 Apr 2016 09:25:11 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop messing with the
+ pwm->period field
+Message-ID: <20160413082511.GL8094@x1>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412110809.GI18882@ulmo.ba.sec>
+ <20160412141613.GI8094@x1>
+ <20160412142608.GB25006@ulmo.ba.sec>
 MIME-Version: 1.0
-In-Reply-To: <20160407233113.GI18567@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160412142608.GB25006@ulmo.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/08/2016 01:31 AM, Stephen Boyd wrote:
-> On 04/03, Neil Armstrong wrote:
->> On 04/02/2016 02:50 AM, Stephen Boyd wrote:
+On Tue, 12 Apr 2016, Thierry Reding wrote:
+
+> On Tue, Apr 12, 2016 at 03:16:13PM +0100, Lee Jones wrote:
+> > On Tue, 12 Apr 2016, Thierry Reding wrote:
+> > 
+> > > On Wed, Mar 30, 2016 at 10:03:26PM +0200, Boris Brezillon wrote:
+> > > > pwm->period field is not supposed to be changed by PWM users. The only
+> > > > ones authorized to change it are the PWM core and PWM drivers.
+> > > > 
+> > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > > ---
+> > > >  drivers/video/backlight/lm3630a_bl.c | 3 +--
+> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > Applied, thanks.
+> > 
+> > Applied?
 > 
-> Ok. I was hoping that we could make simple-mfd look to see if
-> there's a syscon and then attach it to the parent device, but it
-> seems that simple-mfd is not actually a driver and it might not
-> even make a parent device for the children nodes?
-> 
+> You didn't specifically Ack this one, but I presumed that since the
+> change is essentially the same as for pwm-backlight, and this is another
+> prerequisite for the remainder of the series it should go in through the
+> PWM tree as well.
 
-It seems so, I will look at the device hierarchy next week.
-Syscon is only used by these syscon_node_to_regmap() or similar calls, and they are the only APIs available.
+If you're taking Backlight patches through a !Backlight tree, you're
+going to have to send out a pull-request.  There are no conflicts
+currently, so I won't use it right away, but I need it in my arsenal
+if they do occur.
 
-This call is at least used by clk-mtk, nxp and at91 clocks, is there a plan for these to change to another API ?
-
-Neil
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
