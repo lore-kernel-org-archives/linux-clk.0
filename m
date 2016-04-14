@@ -1,98 +1,116 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 4 Apr 2016 14:24:50 -0700
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh@kernel.org>, yassinjaffer@gmail.com,
-	dev@linux-sunxi.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Reinder de Haan <patchesrdh@mveas.com>,
-	Jens Kuske <jenskuske@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
- clock driver for sun[457]i
-Message-ID: <20160404212450.GP4227@lukather>
-References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
- <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
- <20160319235905.GA16539@rob-hp-laptop>
- <20160402011436.GA18567@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="l3ej7W/Jb2pB3qL2"
-In-Reply-To: <20160402011436.GA18567@codeaurora.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 22/24] pwm: update documentation
+Date: Thu, 14 Apr 2016 21:17:42 +0200
+Message-Id: <1460661464-11216-23-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Update the PWM subsystem documentation to reflect the atomic PWM changes.
 
---l3ej7W/Jb2pB3qL2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ Documentation/pwm.txt | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-Hi Stephen
-
-On Fri, Apr 01, 2016 at 06:14:36PM -0700, Stephen Boyd wrote:
-> On 03/19, Rob Herring wrote:
-> > On Thu, Mar 17, 2016 at 07:43:42PM +1100, yassinjaffer@gmail.com wrote:
-> > > From: Yassin Jaffer <yassinjaffer@gmail.com>
-> > >=20
-> > > This patch adds a composite clock type consisting of
-> > > a clock gate, mux, configurable dividers, and a reset control.
-> > >=20
-> > > Signed-off-by: Yassin Jaffer <yassinjaffer@gmail.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
-> >=20
-> > I wish someone would just add all the sunxi clocks in one pass instead=
-=20
-> > of one by one.
-> >=20
-> > Acked-by: Rob Herring <robh@kernel.org>
->=20
-> Me too!
-
-I understand, but it's probably not going to happen. The clock tree is
-massive, and obviously you have to multiply that by the number of SoCs
-we have.
-
-And to be honest, I don't really see the point of merging clock
-drivers that have never been tested, and might be massively broken,
-especially now that we have this ABI requirement for the DT, and we
-can't adjust the binding when we actually start using that clock.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---l3ej7W/Jb2pB3qL2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXAtuiAAoJEBx+YmzsjxAguXQQALPz/C2eYgvsBZHnW3isuHrQ
-Rqf006TV5j2tRV+Rjh26qMrCQMhAPAJJAT3PirSqZaGFzSK7c6U8E92XSIM3+jAf
-/reHDaKF4WtJUDN5ZGuuAQXNN9pLmsQJQxWnHXibVHvS7LEdG7Ytjft8vPFIAVgE
-oHl9TOEtsM+oB/1FbAv3Zcz8Lm6tHDF84A5zcjyAYoB7e26cAR/rvwmB0jP7y9iT
-+NpM+ddUnvH3zS/tBt1BoZ0ASfXjV1vqEWmOvxGFRSl0RtXL7P63hz6BjbS1AjHk
-toi5sYPmesCy4y/9oFfLrFdr9zg0EcvnHSztfjfzqNVgltuNYWpqM5xOfQS4gwdc
-E8gU7zs3K/1KINSZkvtAAeNasg5UhF24CiNaVejl5zTJVd6BuDJ02Cnk7aSLtM/h
-bnsRQudw2TP+/FVnO4Hvfhzov8yqkOJYhO4Q9H1aOCvVxMih3O9KbZd6W11bgV3r
-chv6OqnOZn5gPTGZZUHzmn2xpIHYuk1hCXpiZumRthk2JVH8H1EKto7mlgAgtirq
-N/ASFPlzv1muE5KW9Yy7nKGxDxmC/TGhvf1LiuYU6WSDu3fLfI/TFkpwcU21UMnD
-vAri50c/XZ+voBQqug250eqNMPX8HzLzealLr+vz+0A9QvieJMrh6Qzf/K4+XFh5
-uRSMs6I3FGppyNmrMODY
-=OTS+
------END PGP SIGNATURE-----
-
---l3ej7W/Jb2pB3qL2--
+diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
+index ca895fd..789b27c 100644
+--- a/Documentation/pwm.txt
++++ b/Documentation/pwm.txt
+@@ -42,9 +42,26 @@ variants of these functions, devm_pwm_get() and devm_pwm_put(), also exist.
+ 
+ After being requested, a PWM has to be configured using:
+ 
+-int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns);
++int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
+ 
+-To start/stop toggling the PWM output use pwm_enable()/pwm_disable().
++This API controls both the PWM period/duty_cycle config and the
++enable/disable state.
++
++The pwm_config(), pwm_enable() and pwm_disable() functions are just wrappers
++around pwm_apply_state() and should not be used if the user wants to change
++several parameter at once. For example, if you see pwm_config() and
++pwm_{enable,disable}() calls in the same function, this probably means you
++should switch to pwm_apply_state().
++
++The PWM user API also allows one to query the PWM state with pwm_get_state().
++
++In addition to the PWM state, the PWM API also exposes PWM arguments, which
++are the reference PWM config one should use on this PWM.
++PWM arguments are usually platform-specific and allows the PWM user to only
++care about dutycycle relatively to the full period (like, duty = 50% of the
++period). struct pwm_args contains 2 fields (period and polarity) and should
++be used to set the initial PWM config (usually done in the probe function
++of the PWM user). PWM arguments are retrieved with pwm_get_args().
+ 
+ Using PWMs with the sysfs interface
+ -----------------------------------
+@@ -105,6 +122,15 @@ goes low for the remainder of the period. Conversely, a signal with inversed
+ polarity starts low for the duration of the duty cycle and goes high for the
+ remainder of the period.
+ 
++Drivers are encouraged to implement ->apply() instead of the legacy
++->enable(), ->disable() and ->config() methods. Doing that should provide
++atomicity in the PWM config workflow, which is required when the PWM controls
++a critical device (like a regulator).
++
++The implementation of ->get_state() (a method used to retrieve initial PWM
++state) is also encouraged for the same reason: letting the PWM user know
++about the current PWM state would allow him to avoid glitches.
++
+ Locking
+ -------
+ 
+-- 
+2.5.0
