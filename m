@@ -1,63 +1,91 @@
-Return-Path: <robh@kernel.org>
-Date: Wed, 13 Apr 2016 12:35:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	CARLOS.PALMINHA@synopsys.com, Vineet.Gupta1@synopsys.com,
-	Alexey.Brodkin@synopsys.com
-Subject: Re: [PATCH 1/2 v5] clk/axs10x: Add I2S PLL clock driver
-Message-ID: <20160413173538.GA21769@rob-hp-laptop>
-References: <cover.1460451903.git.joabreu@synopsys.com>
- <faab7d0fa8f93a815fc1114c7b752eddcdc2cfca.1460451903.git.joabreu@synopsys.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 24/24] pwm: add information about polarity, duty cycle and period to debugfs
+Date: Thu, 14 Apr 2016 21:17:44 +0200
+Message-Id: <1460661464-11216-25-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <faab7d0fa8f93a815fc1114c7b752eddcdc2cfca.1460451903.git.joabreu@synopsys.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 12, 2016 at 10:14:22AM +0100, Jose Abreu wrote:
-> The ARC SDP I2S clock can be programmed using a
-> specific PLL.
-> 
-> This patch has the goal of adding a clock driver
-> that programs this PLL.
-> 
-> At this moment the rate values are hardcoded in
-> a table but in the future it would be ideal to
-> use a function which determines the PLL values
-> given the desired rate.
-> 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> ---
-> 
-> Changes v4 -> v5:
-> * Documentation update (as suggested by Alexey Brodkin)
-> * Changed compatible string to "snps,axs10x-i2s-pll-clock" (as suggested by Alexey Brodkin)
-> 
-> Changes v3 -> v4:
-> * Added binding document (as suggested by Stephen Boyd)
-> * Minor code style fixes (as suggested by Stephen Boyd)
-> * Use ioremap (as suggested by Stephen Boyd)
-> * Implement round_rate (as suggested by Stephen Boyd)
-> * Change to platform driver (as suggested by Stephen Boyd)
-> * Use {readl/writel}_relaxed (as suggested by Vineet Gupta)
-> 
-> Changes v2 -> v3:
-> * Implemented recalc_rate
-> 
-> Changes v1 -> v2:
-> * Renamed folder to axs10x (as suggested by Alexey Brodkin)
-> * Added more supported rates
-> 
->  .../bindings/clock/axs10x-i2s-pll-clock.txt        |  17 ++
+From: Heiko Stübner <heiko@sntech.de>
 
-Acked-by: Rob Herring <robh@kernel.org>
+The pwm-states make it possible to also output the polarity, duty cycle
+and period information in the debugfs pwm summary-outout.
+This makes it easier to gather overview information about pwms without
+needing to walk through the sysfs attributes of every pwm.
 
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/axs10x/Makefile                        |   1 +
->  drivers/clk/axs10x/i2s_pll_clock.c                 | 217 +++++++++++++++++++++
->  4 files changed, 236 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
->  create mode 100644 drivers/clk/axs10x/Makefile
->  create mode 100644 drivers/clk/axs10x/i2s_pll_clock.c
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index aefffcf..9f4e97e 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -959,6 +959,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+ 		if (state.enabled)
+ 			seq_puts(s, " enabled");
+ 
++		seq_printf(s, " period:%uns", state.period);
++		seq_printf(s, " duty:%uns", state.duty_cycle);
++		seq_printf(s, " polarity:%s",
++			   state.polarity ? "inverse" : "normal");
++
+ 		seq_puts(s, "\n");
+ 	}
+ }
+-- 
+2.5.0
