@@ -1,80 +1,90 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 15 Apr 2016 07:54:23 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>
-Message-ID: <20160415065423.GA3217@sirena.org.uk>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
- <1460661464-11216-8-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Shunli
+ Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v7 1/9] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Thu, 14 Apr 2016 16:11:46 +0800
+Message-ID: <1460621514-65191-2-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-In-Reply-To: <1460661464-11216-8-git-send-email-boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v5 07/24] regulator: pwm: use pwm_get_args() where
- appropriate
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+---
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
 
-On Thu, Apr 14, 2016 at 09:17:27PM +0200, Boris Brezillon wrote:
-> The PWM framework has clarified the concept of reference PWM config
-> (the platform dependent config retrieved from the DT or the PWM
-> lookup table) and real PWM state.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXEJAeAAoJECTWi3JdVIfQhesH/j5qysMtUM7juetg1a9iQOtA
-YVlbntwpGuluvdw4m2RGmZdCqf8YA86HsLKSyjEGOSlGAtvA27i91X7YC8pqPwLO
-rQoTKlxjWo0VU7/NQ6CLu5xu+N8/+hGjXKq0aPRwjYFGjQkvB7Zuds/fbv6M9/G0
-5VKsZ/1GjGM0/VVTcpdtNqPmYSy+qO1bJcspJiG3TFYVpAJj96n5GSIGFWgM2WzZ
-d/xtM+XRmWwrH1ki+qWGGWiNCKzWfAlS5B1ApapKK5isa96QRyb3vjldnZLXYV1l
-M3+0mh5F/9+lFc0Oz/LS/6wVyrF67PGVNgrk5PmsWpNuyZ541CbKaRmx3FVzC1w=
-=sjtw
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 16f7d33..d94302e 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -199,6 +199,7 @@ config COMMON_CLK_PXA
+ 
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..dc224e6
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,23 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
++
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
++
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+-- 
+1.9.1
