@@ -1,98 +1,84 @@
-Return-Path: <manabian@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1460661464-11216-3-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1460661464-11216-3-git-send-email-boris.brezillon@free-electrons.com>
-Date: Thu, 14 Apr 2016 21:24:47 +0200
-Message-ID: <CAGhQ9VyyWgcCZ3UoT7u8+YRdMouUuOO_7sE+-bM+JGSYhsNTrQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/24] pwm: use pwm_get/set_xxx() helpers where appropriate
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>, Stephen Barber <smbarber@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	bjorn.andersson@linaro.org,
+	zhang.chunyan@linaro.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v8 0/3] Add initial support for RPM clocks
+Date: Thu, 14 Apr 2016 17:34:46 +0300
+Message-Id: <1460644489-11310-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14 April 2016 at 21:17, Boris Brezillon
-<boris.brezillon@free-electrons.com> wrote:
-> Use pwm_get/set_xxx() helpers instead of directly accessing the pwm->xxx
-> field. Doing that will ease adaptation of the PWM framework to support
-> atomic update.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
-> Patch generated with the following coccinelle script:
->
-> --->8---
-> virtual patch
->
-> @@
-> struct pwm_device *p;
-> expression e;
-> @@
-> (
-> -(p)->polarity = e;
-> +pwm_set_polarity(p, e);
-> |
-> -(p)->polarity
-> +pwm_get_polarity(p)
-> |
-> -(p)->period = e;
-> +pwm_set_period(p, e);
-> |
-> -(p)->period
-> +pwm_get_period(p)
-> |
-> -(p)->duty_cycle = e;
-> +pwm_set_duty_cycle(p, e);
-> |
-> -(p)->duty_cycle
-> +pwm_get_duty_cycle(p)
-> )
-> --->8---
-> ---
->  drivers/pwm/pwm-crc.c          | 2 +-
->  drivers/pwm/pwm-lpc18xx-sct.c  | 2 +-
+This patchset adds initial support for the clocks controlled by
+the RPM (Resource Power Manager) processor on Qualcomm platforms.
 
-> diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-> index 9861fed..19dc64c 100644
-> --- a/drivers/pwm/pwm-lpc18xx-sct.c
-> +++ b/drivers/pwm/pwm-lpc18xx-sct.c
-> @@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
->                            LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
->                            LPC18XX_PWM_EVSTATEMSK_ALL);
->
-> -       if (pwm->polarity == PWM_POLARITY_NORMAL) {
-> +       if (pwm_get_polarity(pwm) == PWM_POLARITY_NORMAL) {
->                 set_event = lpc18xx_pwm->period_event;
->                 clear_event = lpc18xx_data->duty_event;
->                 res_action = LPC18XX_PWM_RES_SET;
+The RPM is a dedicated hardware engine for managing the shared
+SoC resources in order to keep the lowest power profile. It
+communicates with other hardware subsystems via shared memory
+and accepts clock requests, aggregates the requests and turns
+the clocks on/off or scales them on demand.
 
-For the lpc18xx-sct part:
-Acked-by: Joachim Eastwood <manabian@gmail.com>
+Changes since v7 (https://lkml.org/lkml/2016/2/23/542)
+* Add handoff support.
+* Remove smd-rpm XO clocks until clk deferring is supported and
+  switch msm8916 back to fixed factor XO.
+
+Changes since v6 (https://lkml.org/lkml/2015/12/15/279)
+* Remove header files and exported ops.
+* Add support for active only RPM clocks.
+
+Changes since v5 (https://lkml.org/lkml/2015/12/3/376)
+* Drop all DT patches as they are already picked.
+* Fix dependencies in Kconfig.
+* Minor changes.
+
+Changes since v4 (https://lkml.org/lkml/2015/11/19/309)
+* Re-organize code into two separate drivers:
+  - clk-smd-rpm for RPM over SMD based clocks like msm8916
+  - clk-rpm for RPM based clocks like apq8064
+* Drop the patches that are already merged.
+* Added the extra compatible string to docs and example.
+
+Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
+* Drop some of the patches as now we handle both scenarios -
+  RPMCC enabled or disabled.
+* Addressed more comments from Stephen. Thanks again!
+
+Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
+* Addressed various comments from Stephen. Thanks!
+* Added sleep sets support.
+* Added a mutex in the RPM driver.
+* Support both scenarios - RPMCC enabled or disabled.
+* Make RPMCC more generic in order to support other SMD RPM
+  based platforms.
+
+Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
+* Changed the driver name to clk-smd-rpm, also build it only
+  when it is needed - suggested by Srini and Bjorn.
+* More detailed binding example.
+* Minor changes.
 
 
-regards,
-Joachim Eastwood
+Georgi Djakov (3):
+  clk: qcom: Add support for SMD-RPM Clocks
+  clk: qcom: Add support for RPM Clocks
+  arm64: dts: qcom: msm8916: Use fixed factor xo clock
+
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |    2 +-
+ drivers/clk/qcom/Kconfig                           |   29 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rpm.c                         |  503 +++++++++++++++++
+ drivers/clk/qcom/clk-smd-rpm.c                     |  578 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |   69 +++
+ 7 files changed, 1219 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 drivers/clk/qcom/clk-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
