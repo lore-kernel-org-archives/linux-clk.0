@@ -1,81 +1,132 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 27 Apr 2016 15:24:54 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, tglx@linutronix.de,
 	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-Message-ID: <20160427072454.GJ30692@tiger>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
- <1461663072.7839.17.camel@pengutronix.de>
- <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
- <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger>
- <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 07/24] regulator: pwm: use pwm_get_args() where appropriate
+Date: Thu, 14 Apr 2016 21:17:27 +0200
+Message-Id: <1460661464-11216-8-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 27, 2016 at 10:57:21AM +0800, Dong Aisheng wrote:
-> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
-> > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
-> >> Shawn,
-> >> What's your suggestion?
-> >
-> > I think this needs more discussion, and I just dropped Stefan's patch
-> > from my tree.
-> >
-> > We need to firstly understand why this is happening.  The .prepare hook
-> > is defined to be non-atomic context, and so that we call sleep function
-> > in there.  We did everything right.  Why are we getting the warning?  If
-> > I'm correct, this warning only happens on i.MX7D.  Why is that?
-> >
-> 
-> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
-> time init, the irq is still not enabled. It fixes the issue indirectly.
-> See:
-> asmlinkage __visible void __init start_kernel(void)
-> {
->         /*
->          * Set up the scheduler prior starting any interrupts (such as the
->          * timer interrupt). Full topology setup happens at smp_init()
->          * time - but meanwhile we still have a functioning scheduler.
->          */
->         sched_init();
->         .............
->         time_init();
->         ..............
->         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
->         early_boot_irqs_disabled = false;
->         local_irq_enable();
-> }
-> 
-> The issue can only happen when PLL enable causes a schedule during
-> imx_clock_init().
-> Not all PLL has this issue.
-> The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
-> which requires more delay time and cause usleep.
-> Because clk framework does not support MX7D clock types (operation requires
-> parents on), we simply enable all clocks in imx7d_clocks_init().
-> 
-> If apply my this patch series:
-> https://lkml.org/lkml/2016/4/20/199
-> The issue can also be gone.
+The PWM framework has clarified the concept of reference PWM config
+(the platform dependent config retrieved from the DT or the PWM
+lookup table) and real PWM state.
 
-Thanks for the info.  It sounds like that we are fixing the problem in
-the wrong place, i.e. clk_pllv3_prepare().  The function does nothing
-wrong, since the .prepare hook is defined to be one that can sleep.  If
-we see sleep warning in a context calling clk_prepare(), that probably
-means we shouldn't make the function call from that context.
+Use pwm_get_args() when the PWM user wants to retrieve this reference
+config and not the current state.
 
-Shawn
+This is part of the rework allowing the PWM framework to support
+hardware readout and expose real PWM state even when the PWM has
+just been requested (before the user calls pwm_config/enable/disable()).
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/regulator/pwm-regulator.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 4689d62..ffdb895 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -59,16 +59,16 @@ static int pwm_regulator_set_voltage_sel(struct regulator_dev *rdev,
+ 					 unsigned selector)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+-	unsigned int pwm_reg_period;
++	struct pwm_args pargs;
+ 	int dutycycle;
+ 	int ret;
+ 
+-	pwm_reg_period = pwm_get_period(drvdata->pwm);
++	pwm_get_args(drvdata->pwm, &pargs);
+ 
+-	dutycycle = (pwm_reg_period *
++	dutycycle = (pargs.period *
+ 		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
+ 
+-	ret = pwm_config(drvdata->pwm, dutycycle, pwm_reg_period);
++	ret = pwm_config(drvdata->pwm, dutycycle, pargs.period);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+@@ -138,13 +138,15 @@ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+ 	unsigned int ramp_delay = rdev->constraints->ramp_delay;
+-	unsigned int period = pwm_get_period(drvdata->pwm);
++	struct pwm_args pargs;
+ 	int duty_cycle;
+ 	int ret;
+ 
++	pwm_get_args(drvdata->pwm, &pargs);
+ 	duty_cycle = pwm_voltage_to_duty_cycle_percentage(rdev, min_uV);
+ 
+-	ret = pwm_config(drvdata->pwm, (period / 100) * duty_cycle, period);
++	ret = pwm_config(drvdata->pwm, (pargs.period / 100) * duty_cycle,
++			 pargs.period);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+@@ -281,6 +283,12 @@ static int pwm_regulator_probe(struct platform_device *pdev)
+ 		return PTR_ERR(drvdata->pwm);
+ 	}
+ 
++	/*
++	 * FIXME: pwm_apply_args() should be removed when switching to the
++	 * atomic PWM API.
++	 */
++	pwm_apply_args(drvdata->pwm);
++
+ 	regulator = devm_regulator_register(&pdev->dev,
+ 					    &drvdata->desc, &config);
+ 	if (IS_ERR(regulator)) {
+-- 
+2.5.0
