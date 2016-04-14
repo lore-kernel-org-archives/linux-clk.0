@@ -1,233 +1,217 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 13/13] clk: qcom: Migrate to clk_hw based registration and OF APIs
-Date: Thu, 21 Apr 2016 15:22:04 -0700
-Message-Id: <1461277324-27185-14-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 18/24] pwm: introduce the pwm_state concept
+Date: Thu, 14 Apr 2016 21:17:38 +0200
+Message-Id: <1460661464-11216-19-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/clk-regmap.c   |  5 ++--
- drivers/clk/qcom/clk-regmap.h   |  3 +--
- drivers/clk/qcom/common.c       | 58 +++++++++++++++++++++++------------------
- drivers/clk/qcom/gcc-msm8996.c  |  9 +++----
- drivers/clk/qcom/mmcc-msm8996.c |  9 +++----
- 5 files changed, 43 insertions(+), 41 deletions(-)
+The PWM state, represented by its period, duty_cycle and polarity,
+is currently directly stored in the PWM device.
+Declare a pwm_state structure embedding those field so that we can later
+use this struct to atomically update all the PWM parameters at once.
 
-diff --git a/drivers/clk/qcom/clk-regmap.c b/drivers/clk/qcom/clk-regmap.c
-index a58ba39a900c..1c856d330733 100644
---- a/drivers/clk/qcom/clk-regmap.c
-+++ b/drivers/clk/qcom/clk-regmap.c
-@@ -101,14 +101,13 @@ EXPORT_SYMBOL_GPL(clk_disable_regmap);
-  * clk_regmap struct via this function so that the regmap is initialized
-  * and so that the clock is registered with the common clock framework.
-  */
--struct clk *devm_clk_register_regmap(struct device *dev,
--				     struct clk_regmap *rclk)
-+int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk)
- {
- 	if (dev && dev_get_regmap(dev, NULL))
- 		rclk->regmap = dev_get_regmap(dev, NULL);
- 	else if (dev && dev->parent)
- 		rclk->regmap = dev_get_regmap(dev->parent, NULL);
+All pwm_get_xxx() helpers are now implemented as wrappers around
+pwm_get_state().
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c  |  8 ++++----
+ include/linux/pwm.h | 54 +++++++++++++++++++++++++++++++++++++++++------------
+ 2 files changed, 46 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 26c3cf5..59bcece 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 		pwm->chip = chip;
+ 		pwm->pwm = chip->base + i;
+ 		pwm->hwpwm = i;
+-		pwm->polarity = polarity;
++		pwm->state.polarity = polarity;
  
--	return devm_clk_register(dev, &rclk->hw);
-+	return devm_clk_hw_register(dev, &rclk->hw);
- }
- EXPORT_SYMBOL_GPL(devm_clk_register_regmap);
-diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
-index 491a63d537df..90d95cd11ec6 100644
---- a/drivers/clk/qcom/clk-regmap.h
-+++ b/drivers/clk/qcom/clk-regmap.h
-@@ -39,7 +39,6 @@ struct clk_regmap {
- int clk_is_enabled_regmap(struct clk_hw *hw);
- int clk_enable_regmap(struct clk_hw *hw);
- void clk_disable_regmap(struct clk_hw *hw);
--struct clk *
--devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
-+int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
- 
- #endif
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index f7c226ab4307..fffcbaf0fba7 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -27,8 +27,8 @@
- 
- struct qcom_cc {
- 	struct qcom_reset_controller reset;
--	struct clk_onecell_data data;
--	struct clk *clks[];
-+	struct clk_regmap **rclks;
-+	size_t num_rclks;
- };
- 
- const
-@@ -102,8 +102,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 	struct device_node *clocks_node;
- 	struct clk_fixed_factor *factor;
- 	struct clk_fixed_rate *fixed;
--	struct clk *clk;
- 	struct clk_init_data init_data = { };
-+	int ret;
- 
- 	clocks_node = of_find_node_by_path("/clocks");
- 	if (clocks_node)
-@@ -121,9 +121,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 		init_data.name = path;
- 		init_data.ops = &clk_fixed_rate_ops;
- 
--		clk = devm_clk_register(dev, &fixed->hw);
--		if (IS_ERR(clk))
--			return PTR_ERR(clk);
-+		ret = devm_clk_hw_register(dev, &fixed->hw);
-+		if (ret)
-+			return ret;
+ 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
  	}
- 	of_node_put(node);
+@@ -446,8 +446,8 @@ int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
+ 	if (err)
+ 		return err;
  
-@@ -141,9 +141,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 		init_data.flags = 0;
- 		init_data.ops = &clk_fixed_factor_ops;
- 
--		clk = devm_clk_register(dev, &factor->hw);
--		if (IS_ERR(clk))
--			return PTR_ERR(clk);
-+		ret = devm_clk_hw_register(dev, &factor->hw);
-+		if (ret)
-+			return ret;
- 	}
+-	pwm->duty_cycle = duty_ns;
+-	pwm->period = period_ns;
++	pwm->state.duty_cycle = duty_ns;
++	pwm->state.period = period_ns;
  
  	return 0;
-@@ -174,42 +174,48 @@ int qcom_cc_register_sleep_clk(struct device *dev)
  }
- EXPORT_SYMBOL_GPL(qcom_cc_register_sleep_clk);
+@@ -480,7 +480,7 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
+ 	if (err)
+ 		return err;
  
-+static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
-+					 void *data)
+-	pwm->polarity = polarity;
++	pwm->state.polarity = polarity;
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 2f500a5..3022c05 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -97,6 +97,18 @@ enum {
+ 	PWMF_EXPORTED = 1 << 2,
+ };
+ 
++/*
++ * struct pwm_state - state of a PWM channel
++ * @period: PWM period (in nanoseconds)
++ * @duty_cycle: PWM duty cycle (in nanoseconds)
++ * @polarity: PWM polarity
++ */
++struct pwm_state {
++	unsigned int period;
++	unsigned int duty_cycle;
++	enum pwm_polarity polarity;
++};
++
+ /**
+  * struct pwm_device - PWM channel object
+  * @label: name of the PWM device
+@@ -105,10 +117,8 @@ enum {
+  * @pwm: global index of the PWM device
+  * @chip: PWM chip providing this PWM device
+  * @chip_data: chip-private data associated with the PWM device
+- * @period: period of the PWM signal (in nanoseconds)
+- * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
+- * @polarity: polarity of the PWM signal
+  * @args: PWM arguments
++ * @state: curent PWM channel state
+  */
+ struct pwm_device {
+ 	const char *label;
+@@ -118,13 +128,21 @@ struct pwm_device {
+ 	struct pwm_chip *chip;
+ 	void *chip_data;
+ 
+-	unsigned int period;
+-	unsigned int duty_cycle;
+-	enum pwm_polarity polarity;
+-
+ 	struct pwm_args args;
++	struct pwm_state state;
+ };
+ 
++/**
++ * pwm_get_state() - retrieve the current PWM state
++ * @pwm: PWM device
++ * @state: state to fill with the current PWM state
++ */
++static inline void pwm_get_state(const struct pwm_device *pwm,
++				 struct pwm_state *state)
 +{
-+	struct qcom_cc *cc = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= cc->num_rclks) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return cc->rclks[idx] ? &cc->rclks[idx]->hw : ERR_PTR(-ENOENT);
++	*state = pwm->state;
 +}
 +
- int qcom_cc_really_probe(struct platform_device *pdev,
- 			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
  {
- 	int i, ret;
- 	struct device *dev = &pdev->dev;
--	struct clk *clk;
--	struct clk_onecell_data *data;
--	struct clk **clks;
- 	struct qcom_reset_controller *reset;
- 	struct qcom_cc *cc;
- 	struct gdsc_desc *scd;
- 	size_t num_clks = desc->num_clks;
- 	struct clk_regmap **rclks = desc->clks;
+ 	return test_bit(PWMF_ENABLED, &pwm->flags);
+@@ -133,23 +151,31 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
+ {
+ 	if (pwm)
+-		pwm->period = period;
++		pwm->state.period = period;
+ }
  
--	cc = devm_kzalloc(dev, sizeof(*cc) + sizeof(*clks) * num_clks,
--			  GFP_KERNEL);
-+	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
- 	if (!cc)
- 		return -ENOMEM;
- 
--	clks = cc->clks;
--	data = &cc->data;
--	data->clks = clks;
--	data->clk_num = num_clks;
-+	cc->rclks = rclks;
-+	cc->num_rclks = num_clks;
- 
- 	for (i = 0; i < num_clks; i++) {
--		if (!rclks[i]) {
--			clks[i] = ERR_PTR(-ENOENT);
-+		if (!rclks[i])
- 			continue;
--		}
--		clk = devm_clk_register_regmap(dev, rclks[i]);
--		if (IS_ERR(clk))
--			return PTR_ERR(clk);
--		clks[i] = clk;
+ static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
+ {
+-	return pwm ? pwm->period : 0;
++	struct pwm_state state;
 +
-+		ret = devm_clk_register_regmap(dev, rclks[i]);
-+		if (ret)
-+			return ret;
- 	}
++	pwm_get_state(pwm, &state);
++
++	return state.period;
+ }
  
--	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get, data);
-+	ret = of_clk_add_hw_provider(dev->of_node, qcom_cc_clk_hw_get, cc);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index c9b96f318d9c..7a6fd069ba5d 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -3463,9 +3463,8 @@ MODULE_DEVICE_TABLE(of, gcc_msm8996_match_table);
- 
- static int gcc_msm8996_probe(struct platform_device *pdev)
+ static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
  {
--	struct clk *clk;
- 	struct device *dev = &pdev->dev;
--	int i;
-+	int i, ret;
- 	struct regmap *regmap;
+ 	if (pwm)
+-		pwm->duty_cycle = duty;
++		pwm->state.duty_cycle = duty;
+ }
  
- 	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
-@@ -3479,9 +3478,9 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
- 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
- 
- 	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
--		clk = devm_clk_register(dev, gcc_msm8996_hws[i]);
--		if (IS_ERR(clk))
--			return PTR_ERR(clk);
-+		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 6df7ff36b416..e21f76817827 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -3337,9 +3337,8 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8996_match_table);
- 
- static int mmcc_msm8996_probe(struct platform_device *pdev)
+ static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
  {
--	struct clk *clk;
- 	struct device *dev = &pdev->dev;
--	int i;
-+	int i, ret;
- 	struct regmap *regmap;
+-	return pwm ? pwm->duty_cycle : 0;
++	struct pwm_state state;
++
++	pwm_get_state(pwm, &state);
++
++	return state.duty_cycle;
+ }
  
- 	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
-@@ -3352,9 +3351,9 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
- 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+ /*
+@@ -159,7 +185,11 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity);
  
- 	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
--		clk = devm_clk_register(dev, mmcc_msm8996_hws[i]);
--		if (IS_ERR(clk))
--			return PTR_ERR(clk);
-+		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
-+		if (ret)
-+			return ret;
- 	}
+ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
+ {
+-	return pwm ? pwm->polarity : PWM_POLARITY_NORMAL;
++	struct pwm_state state;
++
++	pwm_get_state(pwm, &state);
++
++	return state.polarity;
+ }
  
- 	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
+ static inline void pwm_get_args(const struct pwm_device *pwm,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
