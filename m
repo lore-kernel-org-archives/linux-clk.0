@@ -1,75 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:38:58 -0700
-From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
-	"CARLOS.PALMINHA@synopsys.com" <CARLOS.PALMINHA@synopsys.com>,
-	"Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-Message-ID: <20160415233858.GA4690@codeaurora.org>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
- <1460393270.5119.20.camel@synopsys.com>
- <20160411220320.GB14441@codeaurora.org>
- <1460722116.3025.40.camel@synopsys.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 03/28] ARM: OMAP2+: omap_device: create clock alias purely from DT data
+Date: Thu, 14 Apr 2016 14:07:52 +0300
+Message-ID: <1460632097-25727-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1460722116.3025.40.camel@synopsys.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/15, Alexey Brodkin wrote:
-> Hi Stephen,
-> 
-> On Mon, 2016-04-11 at 15:03 -0700, sboyd@codeaurora.org wrote:
-> > On 04/11, Alexey Brodkin wrote:
-> > > 
-> > > On Mon, 2016-04-11 at 11:41 +0100, Jose Abreu wrote:
-> > > > 
-> > > > + * warranty of any kind, whether express or implied.
-> > > > + */
-> > > > +
-> > > > +#include <linux/platform_device.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/clk-provider.h>
-> > > > +#include <linux/err.h>
-> > > > +#include <linux/device.h>
-> > > "linux/platform_device.h" includes "linux/device.h" so you may make this list of headers
-> > > a little bit shorter.
-> > > 
-> > > > 
-> > > > +#include <linux/of_address.h>
-> > > > +#include <linux/slab.h>
-> > > > +#include <linux/of.h>
-> > > "linux/of_address.h" already includes "linux/of.h".
-> > It's ok to include things twice. In fact, its better to avoid any
-> > implicit includes so that if we ever want to remove includes from
-> > other headers we can do so without disturbing this driver.
-> 
-> IMHO approach with minimal amount of headers is nice just because
-> it's easier to check if everything is in place. I mean attempt to compile
-> will immediately reveal a missing header.
-> 
-> So that's what I do - I remove as many inclusions as I may until stuff compiles.
+This avoids the need to add most of the clock aliases under
+drivers/clk/ti/clk-xyz.c files.
 
-Please don't. People try to break header includes cycles by
-moving things in one header to another header, and then those
-changes may need to fix random drivers because they are now
-missing an implicit include they were relying on, etc.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/omap_device.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-> 
-> But with approach of explicit inclusion it's much easier to include
-> much more headers than really needed. The only way to figure out if header is really
-> required is to manually check all used functions in the current source
-> which is way too unreliable and probably nobody will do it ever anyways.
-> And that's how we'll get more stale and pointless inclusions.
-
-Sounds like a job for a script!
-
+diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+index f7ff3b9..b32d7c8 100644
+--- a/arch/arm/mach-omap2/omap_device.c
++++ b/arch/arm/mach-omap2/omap_device.c
+@@ -63,7 +63,22 @@ static void _add_clkdev(struct omap_device *od, const char *clk_alias,
+ 		return;
+ 	}
+ 
+-	rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev), clk_name, NULL);
++	r = clk_get_sys(NULL, clk_name);
++
++	if (IS_ERR(r) && of_have_populated_dt()) {
++		struct of_phandle_args clkspec;
++
++		clkspec.np = of_find_node_by_name(NULL, clk_name);
++
++		r = of_clk_get_from_provider(&clkspec);
++
++		rc = clk_register_clkdev(r, clk_alias,
++					 dev_name(&od->pdev->dev));
++	} else {
++		rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev),
++				   clk_name, NULL);
++	}
++
+ 	if (rc) {
+ 		if (rc == -ENODEV || rc == -ENOMEM)
+ 			dev_err(&od->pdev->dev,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
