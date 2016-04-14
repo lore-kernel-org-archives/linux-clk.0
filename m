@@ -1,105 +1,98 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 29 Apr 2016 18:49:33 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clocks additions for 4.7
-Message-ID: <20160429164933.GA8913@lukather>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+In-Reply-To: <1460661464-11216-3-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1460661464-11216-3-git-send-email-boris.brezillon@free-electrons.com>
+Date: Thu, 14 Apr 2016 21:24:47 +0200
+Message-ID: <CAGhQ9VyyWgcCZ3UoT7u8+YRdMouUuOO_7sE+-bM+JGSYhsNTrQ@mail.gmail.com>
+Subject: Re: [PATCH v5 02/24] pwm: use pwm_get/set_xxx() helpers where appropriate
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>, Stephen Barber <smbarber@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 14 April 2016 at 21:17, Boris Brezillon
+<boris.brezillon@free-electrons.com> wrote:
+> Use pwm_get/set_xxx() helpers instead of directly accessing the pwm->xxx
+> field. Doing that will ease adaptation of the PWM framework to support
+> atomic update.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+> Patch generated with the following coccinelle script:
+>
+> --->8---
+> virtual patch
+>
+> @@
+> struct pwm_device *p;
+> expression e;
+> @@
+> (
+> -(p)->polarity = e;
+> +pwm_set_polarity(p, e);
+> |
+> -(p)->polarity
+> +pwm_get_polarity(p)
+> |
+> -(p)->period = e;
+> +pwm_set_period(p, e);
+> |
+> -(p)->period
+> +pwm_get_period(p)
+> |
+> -(p)->duty_cycle = e;
+> +pwm_set_duty_cycle(p, e);
+> |
+> -(p)->duty_cycle
+> +pwm_get_duty_cycle(p)
+> )
+> --->8---
+> ---
+>  drivers/pwm/pwm-crc.c          | 2 +-
+>  drivers/pwm/pwm-lpc18xx-sct.c  | 2 +-
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
+> index 9861fed..19dc64c 100644
+> --- a/drivers/pwm/pwm-lpc18xx-sct.c
+> +++ b/drivers/pwm/pwm-lpc18xx-sct.c
+> @@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+>                            LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
+>                            LPC18XX_PWM_EVSTATEMSK_ALL);
+>
+> -       if (pwm->polarity == PWM_POLARITY_NORMAL) {
+> +       if (pwm_get_polarity(pwm) == PWM_POLARITY_NORMAL) {
+>                 set_event = lpc18xx_pwm->period_event;
+>                 clear_event = lpc18xx_data->duty_event;
+>                 res_action = LPC18XX_PWM_RES_SET;
 
-Hi Mike, Stephen,
+For the lpc18xx-sct part:
+Acked-by: Joachim Eastwood <manabian@gmail.com>
 
-Please pull the following tag for the next merge window.
 
-Thanks!
-Maxime
-
-The following changes since commit 92a39d9043ba5ff98adb1c31491f00c7bea5466e:
-
-  clk: composite: Add unregister function (2016-04-21 14:43:28 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
-nxi-clocks-for-4.7
-
-for you to fetch changes up to ff2bb89335daec6053b5ac778369f7f72b931142:
-
-  clk: sunxi: Let divs clocks read the base factor clock name from devicetr=
-ee (2016-04-25 10:57:45 +0200)
-
-----------------------------------------------------------------
-Allwinner clocks additions for 4.7
-
-As usual, a bunch of clocks patches for 4.7, mostly fixes and cleanups, and
-display-related clocks.
-
-----------------------------------------------------------------
-Andrea Venturi (1):
-      clk: sunxi: mod1 clock should modify it's parent
-
-Jean-Francois Moine (1):
-      clk: sunxi: Add sun6i/8i display support
-
-Jens Kuske (1):
-      clk: sunxi: Let divs clocks read the base factor clock name from devi=
-cetree
-
-Maxime Ripard (3):
-      dt-bindings: clk: sun5i: add DRAM gates compatible
-      clk: sunxi: Add PLL3 clock
-      clk: sunxi: Add TCON channel1 clock
-
-Vaishali Thakkar (1):
-      clk: sunxi: Use resource_size
-
- Documentation/devicetree/bindings/clock/sunxi.txt |   4 +
- drivers/clk/sunxi/Makefile                        |   2 +
- drivers/clk/sunxi/clk-a10-mod1.c                  |   2 +-
- drivers/clk/sunxi/clk-sun4i-pll3.c                |  98 +++++++
- drivers/clk/sunxi/clk-sun4i-tcon-ch1.c            | 300 ++++++++++++++++++=
-++++
- drivers/clk/sunxi/clk-sun9i-mmc.c                 |   2 +-
- drivers/clk/sunxi/clk-sunxi.c                     |  79 +++++-
- 7 files changed, 474 insertions(+), 13 deletions(-)
- create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
- create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXI5CdAAoJEBx+YmzsjxAg7EYQAIsq8zVbzFqV9vMQtfFDxT7x
-Mh6TRlx0HCvIRxLG9BZkBbcTiPr07211P/mf1+2OvXxwEUK4TIWD31Oh1FJpzvWo
-GUuXayOx9mDxjrjxPCTmBb4FBkwZEmM2UC3ZqYOvN/frmkoISLtMXmXkVm3S8ZAN
-XyZ8uBmInokiQN+liG63IPlpMMwi68EFLPWJu4/3IGh4p0zhhRGGRX0k8E+fwqr7
-bkKqeFJ9bmME/6KRxqgbCK39xI2YStT1v6PVXobu4SqXha0Omqj2q5CQXFyHJFH3
-2B9hYJ3ou1U5IdKkOTzh4ij4IZR2wvdGvMlL9Uv63DpAPgQkuHn057K9pujmku6J
-sC1md5wXtiRYJ4+vucpUunMsymJC+wTqzXwq4chzDZ/P6tuH9/b3LOcv+pA7C/qq
-k1Qi1kD9Zqo8uT3Y/hTmHSF1Tm5fhUWNV4SYb38fjVGU/WxtBFKradeYlObOK1TQ
-nv5/gqwlZN90dqVURoczE09cAci7NJYHhgg373/DbZOtB7TtPnDXPJV86OWlTWd5
-I6iyfertgOR/dGEiH4ExMfBtH3bT7xJCHe30qW7Hr5aQrqdpax7lkQgUkysGOTzm
-PSQHOxUOQ3vAY+ygevXCqfYB/bSq57rEz7NohZcPraHob8BxRTFiLCZ77RS476Lj
-TSml1mv0WgW1Q+ZeadWX
-=+GLK
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+regards,
+Joachim Eastwood
