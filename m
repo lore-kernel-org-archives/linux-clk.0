@@ -1,72 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v7 1/9] clk: ti: am335x/am4372: Add tbclk to pwm node
-To: Franklin S Cooper Jr <fcooper@ti.com>, <thierry.reding@gmail.com>,
-	<robh+dt@kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
-	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <vigneshr@ti.com>, <nsekhar@ti.com>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
- <1461710209-6563-2-git-send-email-fcooper@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <5720B51E.6050106@ti.com>
-Date: Wed, 27 Apr 2016 15:48:30 +0300
-MIME-Version: 1.0
-In-Reply-To: <1461710209-6563-2-git-send-email-fcooper@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v5 1/5] clk: unconditionally recurse into clk/mvebu/
+Date: Thu, 14 Apr 2016 17:33:29 +0200
+Message-Id: <1460648013-31320-2-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27/04/16 01:36, Franklin S Cooper Jr wrote:
-> Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
-> to the time-based clk.
->
-> Do not remove similar entries for ehrpwm node. Later patches will switch
-> from using ehrpwm node name to pwm. But to maintain ABI compatibility we
-> shouldn't remove the old entries.
->
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+The drivers/clk/mvebu directory is only being built when
+CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
+platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
+we need to recurse into this directory regardless of the value of
+CONFIG_PLAT_ORION.
 
-I don't like adding new clock aliases to the list as I am trying to get 
-rid of them, but in this case we can't avoid it I believe. Thus,
+Since all files in drivers/clk/mvebu/ are already conditionally
+compiled depending on various Kconfig options, we can recurse
+unconditionally into drivers/clk/mvebu without any other change.
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   drivers/clk/ti/clk-33xx.c | 3 +++
->   drivers/clk/ti/clk-43xx.c | 6 ++++++
->   2 files changed, 9 insertions(+)
->
-> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-> index ef2ec64..0e47d95 100644
-> --- a/drivers/clk/ti/clk-33xx.c
-> +++ b/drivers/clk/ti/clk-33xx.c
-> @@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
->   	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
->   	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
->   	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
-> +	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-> +	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-> +	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
->   	{ .node_name = NULL },
->   };
->
-> diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-> index 097fc90..7255aa8 100644
-> --- a/drivers/clk/ti/clk-43xx.c
-> +++ b/drivers/clk/ti/clk-43xx.c
-> @@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
->   	DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
->   	DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
->   	DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
-> +	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-> +	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-> +	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
-> +	DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
-> +	DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
-> +	DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
->   	{ .node_name = NULL },
->   };
->
->
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d69..f9ad66e 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -61,7 +61,7 @@ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+= mmp/
+ endif
+-obj-$(CONFIG_PLAT_ORION)		+= mvebu/
++obj-y					+= mvebu/
+ obj-$(CONFIG_ARCH_MESON)		+= meson/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+-- 
+2.6.4
