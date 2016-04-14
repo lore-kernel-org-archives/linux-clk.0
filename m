@@ -1,58 +1,61 @@
-Return-Path: <robh@kernel.org>
-Date: Wed, 27 Apr 2016 21:37:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 04/11] drm: sun4i: Add DT bindings documentation
-Message-ID: <20160428023730.GA1514@rob-hp-laptop>
-References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
- <1461590572-4027-5-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461590572-4027-5-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:19201 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753144AbcDNLc1 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2016 07:32:27 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O5M00KWJG20GX20@mailout2.w1.samsung.com> for
+ linux-clk@vger.kernel.org; Thu, 14 Apr 2016 12:32:24 +0100 (BST)
+Subject: Re: Programming a clock in the device tree
+To: Peter Rosin <peda@lysator.liu.se>
+References: <570ED310.3020604@lysator.liu.se>
+Cc: linux-clk@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <570F7FB4.9010504@samsung.com>
+Date: Thu, 14 Apr 2016 13:32:04 +0200
+MIME-version: 1.0
+In-reply-to: <570ED310.3020604@lysator.liu.se>
+Content-type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 25, 2016 at 03:22:45PM +0200, Maxime Ripard wrote:
-> The display pipeline of the Allwinner A10 is involving several loosely
-> coupled components.
+On 04/14/2016 01:15 AM, Peter Rosin wrote:
+> Hi!
 > 
-> Add a documentation for the bindings.
+> I'm trying to connect (in a device tree) a programmable clock
+> to a device that does not expect the clock to need any
+> programming.
 > 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt           | 258 +++++++++++++++++++++
->  1 file changed, 258 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> I can hack this and add a clk_set_rate at the appropriate point
+> in the driver for the clk consumer, but I was expecting to see
+> some way of just adding a device tree node to get this done for
+> me.
+> 
+> It just feels wrong to add this hack to the driver as the
+> programmable clock might be needed for more than one device and
+> the decisions by one driver might conflict with other needs (the
+> driver in question can use a variety of clock rates, so the rate
+> it should request is policy not belonging in a driver).
+> 
+> Adding a device tree frequency property to the driver in question
+> is also a possibility, but that would need code duplication for
+> other clock consumers as well, when someone wants to use those
+> drivers in the way I'm now trying to use this driver.
+> 
+> I.e. I expected to see a driver, just like the fixed clock
+> driver, but that programs a parent clock instead of just
+> representing a fixed oscillator. Is there such a thing? If not,
+> what is it that I'm not seeing? Because I just can't believe that
+> I'm the first person to need this...
 
-> +The display engine pipeline (and its entry point, since it can be
-> +either directly the backend or the frontend) is represented as an
-> +extra node.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun5i-a13-display-engine
-> +
-> +  - allwinner,pipelines: list of phandle to the display engine
-> +    frontends available.
+How about using assigned-{clocks, clock-parents, clock-rates}
+properties in the clock provider node? Wouldn't it help in your
+case? Documentation can be found in Documentation/devicetree/
+bindings/clock/clock-bindings.txt
 
 
-> +display-engine {
-> +	compatible = "allwinner,sun5i-a13-display-engine";
-> +	pipelines = <&fe0>;
-
-Missing allwinner prefix.
-
-Otherwise,
-
-Acked-by: Rob Herring <robh@kernel.org>
+-- 
+Regards,
+Sylwester
