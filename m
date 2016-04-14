@@ -1,76 +1,31 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Wed, 6 Apr 2016 07:26:53 -0700
-From: Vinod Koul <vinod.koul@intel.com>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH V1 3/7] dmaengine: Loongson1: add Loongson1 dmaengine
- driver
-Message-ID: <20160406142652.GC27292@vkoul-mobl.iind.intel.com>
-References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
- <1459946095-7637-4-git-send-email-keguang.zhang@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459946095-7637-4-git-send-email-keguang.zhang@gmail.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
+ FSYS0} blocks clock
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
+References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+Cc: thomas.ab@samsung.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ sboyd@codeaurora.org, mturquette@baylibre.com, tomasz.figa@gmail.com
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <570F4BE0.1010102@samsung.com>
+Date: Thu, 14 Apr 2016 09:50:56 +0200
+MIME-version: 1.0
+In-reply-to: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 06, 2016 at 08:34:51PM +0800, Keguang Zhang wrote:
-> @@ -527,6 +527,15 @@ config ZX_DMA
->  	help
->  	  Support the DMA engine for ZTE ZX296702 platform devices.
->  
-> +config DMA_LOONGSON1
+On 04/14/2016 06:42 AM, Alim Akhtar wrote:
+> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
+> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
+> blocks registers. Let these clocks to be enabled all the time.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-The kconfig and makefile is sorted alphabetically, pls arrage these entries
-accordingly
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> +
-> +		/*memorize the physical address of descriptor */
-
-bad comment style
-
-
-> +	/*allocate DMA descriptors */
-
-here and other places too :(
-
-> +static enum dma_status ls1x_dma_tx_status(struct dma_chan *chan,
-> +					  dma_cookie_t cookie,
-> +					  struct dma_tx_state *txstate)
-> +{
-> +	struct ls1x_dma_chan *dma_chan = to_ls1x_dma_chan(chan);
-> +	struct ls1x_dma_desc *dma_desc = dma_chan->dma_desc;
-> +	struct virt_dma_desc *vdesc;
-> +	enum dma_status status;
-> +	unsigned int residue = 0;
-> +	unsigned long flags;
-> +
-> +	status = dma_cookie_status(chan, cookie, txstate);
-> +	if ((status == DMA_COMPLETE) || !txstate)
-> +		return status;
-> +
-> +	spin_lock_irqsave(&dma_chan->vchan.lock, flags);
-> +
-> +	vdesc = vchan_find_desc(&dma_chan->vchan, cookie);
-> +	if (vdesc)
-> +		/* not yet processed */
-> +		residue = ls1x_dma_desc_residue(to_ls1x_dma_desc(vdesc), 0);
-
-If your usage queries reside repeatedly, then it might make sense to store
-the size which is residue here
-
--- 
-~Vinod
+Best regards,
+Krzysztof
