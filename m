@@ -1,44 +1,30 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Apr 2016 18:25:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/5] clk: unconditionally recurse into clk/mvebu/
-Message-ID: <20160402012558.GC18567@codeaurora.org>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1459070777-18049-2-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Finlye Xiao <finley.xiao@rock-chips.com>, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, wxt@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com, zhangqing@rock-chips.com, xxx@rock-chips.com, huangtao@rock-chips.com
+Subject: Re: [PATCH v1] clk: Add clk_composite_set_rate_and_parent
+Date: Thu, 14 Apr 2016 06:56:08 +0200
+Message-ID: <4176514.rpsd1Fqbyv@diego>
+In-Reply-To: <20160414004331.GK14441@codeaurora.org>
+References: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com> <3986787.PS6VzOpSAJ@phil> <20160414004331.GK14441@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459070777-18049-2-git-send-email-thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/27, Thomas Petazzoni wrote:
-> The drivers/clk/mvebu directory is only being built when
-> CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
-> platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
-> we need to recurse into this directory regardless of the value of
-> CONFIG_PLAT_ORION.
+Am Mittwoch, 13. April 2016, 17:43:31 schrieb Stephen Boyd:
+> On 04/12, Heiko Stuebner wrote:
+> > I remember having clocks not overflow their target rate came up in some
+> > ELC
+> > talk last week (probably in Stephens Qualcomm-kernel-talk) and a general
+> > solution might need some changes closer to the core.
 > 
-> Since all files in drivers/clk/mvebu/ are already conditionally
-> compiled depending on various Kconfig options, we can recurse
-> unconditionally into drivers/clk/mvebu without any other change.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
+> Yep. It's on the list. Hopefully coordinated clk rate changes
+> will help here. Composite clks are sort of already coordinated
+> rates in a minor form though.
 
-Applied to clk-next
+Which is why I hope we can land this (meaning v2 from tuesday) in the 
+meantime, as it fixes an issue we're seeing on the rk3399 and shouldn't affect 
+any part of the core clock-framework ;-) .
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Heiko
