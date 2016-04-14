@@ -1,102 +1,85 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 13 Apr 2016 17:33:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Greg Ungerer <gerg@uclinux.org>, Ryan Mallon <rmallon@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Steven Miao <realmz6@gmail.com>, Simon Horman <horms@verge.net.au>,
+	Wan ZongShun <mcuos.com@gmail.com>, Rich Felker <dalias@libc.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	adi-buildroot-devel@lists.sourceforge.net,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-m68k@lists.linux-m68k.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+Message-ID: <20160414003341.GH14441@codeaurora.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160408003328.GA14441@codeaurora.org>
+ <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160413180122.4f997a9a@free-electrons.com>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160328194756.GA28967@rob-hp-laptop>
-	<20160413180122.4f997a9a@free-electrons.com>
-Date: Thu, 14 Apr 2016 21:19:54 +0200
-Message-ID: <CAMuHMdVYtXEZF0+G3W+Q8cDcBFB55s1ru6N6J3tgFy9BcGZiXw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell CP110
- system controller
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Bonsoir Thomas,
+On 04/08, Masahiro Yamada wrote:
+> 
+> 
+> This makes our driver programming life easier.
+> 
+> 
+> For example, let's see drivers/tty/serial/8250/8250_of.c
+> 
+> 
+> The "clock-frequency" DT property takes precedence over "clocks" property.
+> So, it is valid to probe the driver with a NULL pointer for info->clk.
+> 
+> 
+>         if (of_property_read_u32(np, "clock-frequency", &clk)) {
+> 
+>                 /* Get clk rate through clk driver if present */
+>                 info->clk = devm_clk_get(&ofdev->dev, NULL);
+>                 if (IS_ERR(info->clk)) {
+>                         dev_warn(&ofdev->dev,
+>                                 "clk or clock-frequency not defined\n");
+>                         return PTR_ERR(info->clk);
+>                 }
+> 
+>                 ret = clk_prepare_enable(info->clk);
+>                 if (ret < 0)
+>                         return ret;
+> 
+>                 clk = clk_get_rate(info->clk);
+>         }
+> 
+> 
+> As a result, we need to make sure the clk pointer is valid
+> before calling clk_disable_unprepare().
+> 
+> 
+> If we could support pointer checking in callees, we would be able to
+> clean-up lots of clock consumers.
+> 
+> 
 
-On Wed, Apr 13, 2016 at 6:01 PM, Thomas Petazzoni
-<thomas.petazzoni@free-electrons.com> wrote:
-> On Mon, 28 Mar 2016 14:47:56 -0500, Rob Herring wrote:
->
->> > + - reg: register area of the CP110 system controller 0
->> > + - #clock-cells: must be set to 2
->> > + - core-clock-output-names must be set to:
->> > +    "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
->> > + - gatable-clock-indices must be set to:
->> > +   <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
->> > +   <9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
->> > +   <22>, <23>, <24>, <25>, <26>
->>
->> You aren't skipping very many spots. I'd just fill the unused names in
->> with "none" or something.
->>
->> > + - gatable-clock-output-names must be set to:
->> > +   "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
->> > +   "cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "cpm-pcie_x10",
->> > +   "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata", "cpm-sata-usb",
->> > +   "cpm-gop-macro", "cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150",
->> > +   "cpm-eip197"
->
-> In fact, the more I think of it, the less I find encoding the clock
-> output names in the DT to be useful for such a driver. For generic
-> clock drivers, it makes complete sense, but here the driver is really
-> tied to the specific system controller of that SoC, so the clock names
-> will not change.
->
-> In addition, those gatable clocks are not independent from each other:
-> many of them are parent from others (this wasn't encoded into the
-> driver until now, because I didn't had this info until now). So the
-> driver will anyway have to have a lot of knowledge about which clock is
-> child/parent of which one. Which means the driver is anyway really
-> tied to that specific system controller.
->
-> Does it still make sense to encode the clock names in the DT in such a
-> case, or should the driver be providing the clock names?
->
-> (I don't have a strong opinion either way, I'm just asking what is the
-> preference of the DT and clock maintainers on the matter.).
+I'm not sure if you meant to use that example for the error
+pointer case? It bails out if clk_get() returns an error pointer.
 
->From my experience with clock drivers for Renesas SoCs, life is much easier
-when handling all of this (clock names, parents, ...) in C. The same is true
-BTW for PM Domains.
+I'm all for a no-op in clk_disable()/unprepare() when the pointer
+is NULL. But when it's an error pointer the driver should be
+handling it and bail out before it would ever call enable/prepare
+on it or disable/unprepare.
 
-The clock controllers of r8a7791 and r8a7795 are very similar, and could
-be handled similarly.
-Compare the DT hierarchy for CPG and MSTP/MSSR in
-arch/arm/boot/dts/r8a7791.dtsi and arch/arm64/boot/dts/renesas/r8a7795.dtsi.
-
-Binding definitions are
-    include/dt-bindings/clock/r8a7791-clock.h
-vs
-    include/dt-bindings/clock/r8a7795-cpg-mssr.h
-
-Corresponding drivers are
-    drivers/clk/renesas/clk-rcar-gen2.c
-    drivers/clk/renesas/clk-mstp.c
-vs.
-    drivers/clk/renesas/r8a7795-cpg-mssr.c
-    drivers/clk/renesas/renesas-cpg-mssr.c
-    drivers/clk/renesas/renesas-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
