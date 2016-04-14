@@ -1,46 +1,133 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	bjorn.andersson@linaro.org,
-	zhang.chunyan@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v8 3/3] arm64: dts: qcom: msm8916: Use fixed factor xo clock
-Date: Thu, 14 Apr 2016 17:34:49 +0300
-Message-Id: <1460644489-11310-4-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1460644489-11310-1-git-send-email-georgi.djakov@linaro.org>
-References: <1460644489-11310-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 13/28] clk: ti: am43xx: transition to usage of ti_clk_get
+Date: Thu, 14 Apr 2016 14:08:02 +0300
+Message-ID: <1460632097-25727-14-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The rpmcc driver is providing the XO clock, which is the parent of almost
-all clocks. But during boot, this driver may probe later and leave most of
-the clocks without parent. The common clock framework currently reports
-invalid rate for orphan clocks and this may confuse drivers.
+Cleanup any unnecessary DT_CLK() alias entries from the AM43xx clock file.
+Also, use ti_clk_get where necessary.
 
-To resolve this, use fixed clocks registration until we have some support
-to deal with the this issue. Removing the generic rpmcc compatible is
-enough to switch back to fixed factor XO clock.
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/ti/clk-43xx.c |   88 ++-------------------------------------------
+ 1 file changed, 2 insertions(+), 86 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 96812007850e..0054a3264ef0 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -552,7 +552,7 @@
- 				qcom,smd-channels = "rpm_requests";
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 097fc90..eefa62b 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -23,92 +23,8 @@
+ #include "clock.h"
  
- 				rpmcc: qcom,rpmcc {
--					compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
-+					compatible = "qcom,rpmcc-msm8916";
- 					#clock-cells = <1>;
- 				};
+ static struct ti_dt_clk am43xx_clks[] = {
+-	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
+-	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
+-	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
+-	DT_CLK(NULL, "virt_24000000_ck", "virt_24000000_ck"),
+-	DT_CLK(NULL, "virt_25000000_ck", "virt_25000000_ck"),
+-	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
+-	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "tclkin_ck", "tclkin_ck"),
+-	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
+-	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
+-	DT_CLK(NULL, "dpll_core_m4_ck", "dpll_core_m4_ck"),
+-	DT_CLK(NULL, "dpll_core_m5_ck", "dpll_core_m5_ck"),
+-	DT_CLK(NULL, "dpll_core_m6_ck", "dpll_core_m6_ck"),
+-	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
+-	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_ck", "dpll_ddr_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m2_ck", "dpll_ddr_m2_ck"),
+-	DT_CLK(NULL, "dpll_disp_ck", "dpll_disp_ck"),
+-	DT_CLK(NULL, "dpll_disp_m2_ck", "dpll_disp_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_wkupdm_ck", "dpll_per_m2_div4_wkupdm_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_ck", "dpll_per_m2_div4_ck"),
+-	DT_CLK(NULL, "adc_tsc_fck", "adc_tsc_fck"),
+-	DT_CLK(NULL, "clkdiv32k_ck", "clkdiv32k_ck"),
+-	DT_CLK(NULL, "clkdiv32k_ick", "clkdiv32k_ick"),
+-	DT_CLK(NULL, "dcan0_fck", "dcan0_fck"),
+-	DT_CLK(NULL, "dcan1_fck", "dcan1_fck"),
+-	DT_CLK(NULL, "pruss_ocp_gclk", "pruss_ocp_gclk"),
+-	DT_CLK(NULL, "mcasp0_fck", "mcasp0_fck"),
+-	DT_CLK(NULL, "mcasp1_fck", "mcasp1_fck"),
+-	DT_CLK(NULL, "smartreflex0_fck", "smartreflex0_fck"),
+-	DT_CLK(NULL, "smartreflex1_fck", "smartreflex1_fck"),
+-	DT_CLK(NULL, "sha0_fck", "sha0_fck"),
+-	DT_CLK(NULL, "aes0_fck", "aes0_fck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
+-	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
+-	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
+-	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
+-	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
+-	DT_CLK(NULL, "wdt1_fck", "wdt1_fck"),
+-	DT_CLK(NULL, "l3_gclk", "l3_gclk"),
+-	DT_CLK(NULL, "dpll_core_m4_div2_ck", "dpll_core_m4_div2_ck"),
+-	DT_CLK(NULL, "l4hs_gclk", "l4hs_gclk"),
+-	DT_CLK(NULL, "l3s_gclk", "l3s_gclk"),
+-	DT_CLK(NULL, "l4ls_gclk", "l4ls_gclk"),
+-	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
+-	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
+-	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
+-	DT_CLK(NULL, "dpll_clksel_mac_clk", "dpll_clksel_mac_clk"),
+-	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
+-	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
+-	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
+-	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
+-	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
+-	DT_CLK(NULL, "gpio4_dbclk", "gpio4_dbclk"),
+-	DT_CLK(NULL, "gpio5_dbclk", "gpio5_dbclk"),
+-	DT_CLK(NULL, "mmc_clk", "mmc_clk"),
+-	DT_CLK(NULL, "gfx_fclk_clksel_ck", "gfx_fclk_clksel_ck"),
+-	DT_CLK(NULL, "gfx_fck_div_ck", "gfx_fck_div_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "sysclk_div", "sysclk_div"),
+-	DT_CLK(NULL, "disp_clk", "disp_clk"),
+-	DT_CLK(NULL, "clk_32k_mosc_ck", "clk_32k_mosc_ck"),
+-	DT_CLK(NULL, "clk_32k_tpm_ck", "clk_32k_tpm_ck"),
+-	DT_CLK(NULL, "dpll_extdev_ck", "dpll_extdev_ck"),
+-	DT_CLK(NULL, "dpll_extdev_m2_ck", "dpll_extdev_m2_ck"),
+-	DT_CLK(NULL, "mux_synctimer32k_ck", "mux_synctimer32k_ck"),
+-	DT_CLK(NULL, "synctimer_32kclk", "synctimer_32kclk"),
+-	DT_CLK(NULL, "timer8_fck", "timer8_fck"),
+-	DT_CLK(NULL, "timer9_fck", "timer9_fck"),
+-	DT_CLK(NULL, "timer10_fck", "timer10_fck"),
+-	DT_CLK(NULL, "timer11_fck", "timer11_fck"),
+-	DT_CLK(NULL, "cpsw_50m_clkdiv", "cpsw_50m_clkdiv"),
+-	DT_CLK(NULL, "cpsw_5m_clkdiv", "cpsw_5m_clkdiv"),
+-	DT_CLK(NULL, "dpll_ddr_x2_ck", "dpll_ddr_x2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m4_ck", "dpll_ddr_m4_ck"),
+-	DT_CLK(NULL, "dpll_per_clkdcoldo", "dpll_per_clkdcoldo"),
+-	DT_CLK(NULL, "dll_aging_clk_div", "dll_aging_clk_div"),
+-	DT_CLK(NULL, "div_core_25m_ck", "div_core_25m_ck"),
+-	DT_CLK(NULL, "func_12m_clk", "func_12m_clk"),
+-	DT_CLK(NULL, "vtp_clk_div", "vtp_clk_div"),
+-	DT_CLK(NULL, "usbphy_32khz_clkmux", "usbphy_32khz_clkmux"),
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+@@ -136,8 +52,8 @@ int __init am43xx_dt_clk_init(void)
+ 	 * By selecting dpll_core_m5_ck as the clocksource fixes this issue.
+ 	 * In AM335x dpll_core_m5_ck is the default clocksource.
+ 	 */
+-	clk1 = clk_get_sys(NULL, "cpsw_cpts_rft_clk");
+-	clk2 = clk_get_sys(NULL, "dpll_core_m5_ck");
++	clk1 = ti_clk_get("cpsw_cpts_rft_clk");
++	clk2 = ti_clk_get("dpll_core_m5_ck");
+ 	clk_set_parent(clk1, clk2);
  
+ 	return 0;
+-- 
+1.7.9.5
