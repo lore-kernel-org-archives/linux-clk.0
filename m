@@ -1,196 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:32542 "EHLO
-	conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752389AbcDNBtu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2016 21:49:50 -0400
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 07/28] ARM: OMAP2+: timer: change order of hwmod data handling
+Date: Thu, 14 Apr 2016 14:07:56 +0300
+Message-ID: <1460632097-25727-8-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20160414003341.GH14441@codeaurora.org>
-References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
-	<20160408003328.GA14441@codeaurora.org>
-	<CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
-	<20160414003341.GH14441@codeaurora.org>
-Date: Thu, 14 Apr 2016 10:49:43 +0900
-Message-ID: <CAK7LNARbzRLq_NGWJ8CFBBf6w4cVGCNh45fo6JO=+F7FACBSxA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
- NULL or error
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>,
-	linux-sh@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Greg Ungerer <gerg@uclinux.org>, linux-clk@vger.kernel.org,
-	Russell King <linux@arm.linux.org.uk>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Wan ZongShun <mcuos.com@gmail.com>,
-	Steven Miao <realmz6@gmail.com>,
-	adi-buildroot-devel@lists.sourceforge.net,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	linux-m68k@lists.linux-m68k.org, Simon Horman <horms@verge.net.au>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	John Crispin <blogic@openwrt.org>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+With the introduction of hwmod module clocks, the name of the hwmod
+main clk may not be available before hwmod setup, as hwmod setup
+may lookup the main clock dynamically based on the hwmod name.
+Thus, change the order of hwmod setup and main clock handling for
+the timer code, to make sure the main clock is going to be
+available.
 
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/timer.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-2016-04-14 9:33 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 04/08, Masahiro Yamada wrote:
->>
->>
->> This makes our driver programming life easier.
->>
->>
->> For example, let's see drivers/tty/serial/8250/8250_of.c
->>
->>
->> The "clock-frequency" DT property takes precedence over "clocks" property.
->> So, it is valid to probe the driver with a NULL pointer for info->clk.
->>
->>
->>         if (of_property_read_u32(np, "clock-frequency", &clk)) {
->>
->>                 /* Get clk rate through clk driver if present */
->>                 info->clk = devm_clk_get(&ofdev->dev, NULL);
->>                 if (IS_ERR(info->clk)) {
->>                         dev_warn(&ofdev->dev,
->>                                 "clk or clock-frequency not defined\n");
->>                         return PTR_ERR(info->clk);
->>                 }
->>
->>                 ret = clk_prepare_enable(info->clk);
->>                 if (ret < 0)
->>                         return ret;
->>
->>                 clk = clk_get_rate(info->clk);
->>         }
->>
->>
->> As a result, we need to make sure the clk pointer is valid
->> before calling clk_disable_unprepare().
->>
->>
->> If we could support pointer checking in callees, we would be able to
->> clean-up lots of clock consumers.
->>
->>
->
-> I'm not sure if you meant to use that example for the error
-> pointer case? It bails out if clk_get() returns an error pointer.
->
-> I'm all for a no-op in clk_disable()/unprepare() when the pointer
-> is NULL. But when it's an error pointer the driver should be
-> handling it and bail out before it would ever call enable/prepare
-> on it or disable/unprepare.
-
-
-
-Let me explain my original idea.
-
-We do various initialization in a probe method,
-so we (OK, I) sometimes want to split init code
-into some helper function(s) like this:
-
-
-static int foo_clk_init(struct platform_device *pdev,
-                        struct foo_priv *priv)
-{
-        int ret;
-
-        priv->clk = devm_clk_get(&pdev->dev, NULL);     /* case 1 */
-        if (IS_ERR(priv->clk)) {
-                 dev_err(&pdev->dev, "falied to get clk\n");
-                 return PTR_ERR(priv->clk);
-        }
-
-        ret = clk_prepare_enable(priv->clk);          /* case 2 */
-        if (ret < 0) {
-                 dev_err(&pdev->dev, "falied to enable clk\n");
-                 return ret;
-        }
-
-        priv->clk_rate = clk_get_rate(priv->clk);    /* case 3 */
-        if (!priv->clk_rate) {
-                  dev_err(&pdev->dev, "clk rate should not be zero\n");
-                  return -EINVAL;
-        }
-
-
-        [ do something ]
-
-        return 0;
-}
-
-
-static int foo_probe(struct platform_device *pdev)
-{
-        [memory allocation, OF parse, various init.... ]
-
-        ret = foo_clk_init(pdev, priv);
-        if (ret < 0)
-                goto err;
-
-        ret = foo_blahblah_init(pdev, priv)          /* case 4 */
-        ir (ret < 0)
-                goto err;
-
-        [  more initialization ... ]
-
-        return 0;
-err:
-        clk_disable_unprepare(priv->clk);
-
-        return ret;
-}
-
-
-There are some failure paths in this example.
-
- [1] If case 1 fails, priv->clk contains an error pointer.
-     We should not do clk_disable_unprepare().
- [2] If case 2 fails, priv->clk contains a valid pointer,
-     but we should not do clk_disable_unprepare().
- [3] If case 3 fails, priv->clk contains a valid pointer,
-     and we should do clk_disable_unprepare().
- [4] If case 4 fails, priv->clk contains a valid pointer,
-     and we should do clk_disable_unprepare().
-
-
-My difficulty is that [1]-[3] are contained in one helper function.
-(A real example is drivers/i2c/busses/i2c-uniphier.c)
-
-
-If foo_clk_init() fails for reason [1],
-I want clk_disable_unprepare() to just return.
-(This is my original intention of this patch.)
-
-If foo_clk_init() fails for reason [3],
-I want clk_disable_unprepare() to do its job.
-
-
-OK, now I notice another problem in my code;
-if foo_clk_init() fails for reason [2],
-clk_disable() WARN's due to zero enable_count.
-
-if (WARN_ON(core->enable_count == 0))
-         return;
-
-
-
-Perhaps, I got screwed up by splitting clock init stuff
-into a helper function.
-
-
-
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 08e08db..77fb4e1 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -290,6 +290,8 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
+ 	if (!timer->io_base)
+ 		return -ENXIO;
+ 
++	omap_hwmod_setup_one(oh_name);
++
+ 	/* After the dmtimer is using hwmod these clocks won't be needed */
+ 	timer->fclk = ti_clk_get(omap_hwmod_get_main_clk(oh));
+ 	if (IS_ERR(timer->fclk))
+@@ -304,7 +306,6 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
+ 
+ 	clk_put(src);
+ 
+-	omap_hwmod_setup_one(oh_name);
+ 	omap_hwmod_enable(oh);
+ 	__omap_dm_timer_init_regs(timer);
+ 
 -- 
-Best Regards
-Masahiro Yamada
+1.7.9.5
