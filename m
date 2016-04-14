@@ -1,54 +1,57 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net, geert+renesas@glider.be, sjoerd.simons@collabora.co.uk, treding@nvidia.com, public_timo.s@silentcreek.de
-Subject: [PATCH 0/6] Add RK818 PMIC support
-Date: Fri, 15 Apr 2016 11:16:24 +0200
-Message-Id: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 13 Apr 2016 17:40:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Greg Ungerer <gerg@uclinux.org>, Ryan Mallon <rmallon@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Steven Miao <realmz6@gmail.com>, Simon Horman <horms@verge.net.au>,
+	Wan ZongShun <mcuos.com@gmail.com>, Rich Felker <dalias@libc.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	adi-buildroot-devel@lists.sourceforge.net,
+	Russell King <linux@arm.linux.org.uk>, linux-m68k@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	John Crispin <blogic@openwrt.org>,
+	Haavard Skinnemoen <hskinnemoen@gmail.com>,
+	Hans-Christian Egtvedt <egtvedt@samfundet.no>,
+	Paul Walmsley <paul@pwsan.com>, Tony Lindgren <tony@atomide.com>,
+	linux-omap@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+Message-ID: <20160414004050.GJ14441@codeaurora.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160408003328.GA14441@codeaurora.org>
+ <20160408100600.GI1668@linux-mips.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160408100600.GI1668@linux-mips.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 04/08, Ralf Baechle wrote:
+> 
+> While your argument makes perfect sense, Many clk_disable implementations
+> are already doing similar checks, for example:
+> 
+> arch/arm/mach-davinci/clock.c:
+> 
+[...]
+> 
+> So should we go and weed out these checks?
 
-I just renamed now the RK808 mfd and regulator drivers.
-
-Patch 4 is a cosmetic patch for the regulator driver.
-
-Unfortunately I have no hardware with a RK808 PMIC, so I can not test this part.
-
-Regards,
-Wadim
-
-
-Changes since RFC:
-* split up in more patches: renaming + adding new driver
-* renamed rk808.c driver -> rk8xx.c
-* renamed rk808-regulator.c driver -> rk8xx-regulator.c
-
-Wadim Egorov (6):
-  mfd: RK808: Make RK808 generic, rename rk808.c to rk8xx.c
-  mfd: RK808: Add RK818 support
-  regulator: rk808: Make rk808 generic, rename rk808-regulator.c
-  regulator: rk8xx: Migrate to regulator core's simplified DT parsing
-    code
-  regulator: rk8xx: Add regulator driver for RK818
-  mfd: dt-bindings: Add RK818 device tree bindings document
-
- Documentation/devicetree/bindings/mfd/rk808.txt    |  37 +-
- arch/arm/configs/multi_v7_defconfig                |   4 +-
- drivers/clk/Kconfig                                |   2 +-
- drivers/mfd/Kconfig                                |   6 +-
- drivers/mfd/Makefile                               |   2 +-
- drivers/mfd/rk808.c                                | 276 -------------
- drivers/mfd/rk8xx.c                                | 436 ++++++++++++++++++++
- drivers/regulator/Kconfig                          |   6 +-
- drivers/regulator/Makefile                         |   2 +-
- .../{rk808-regulator.c => rk8xx-regulator.c}       | 451 ++++++++++++---------
- drivers/rtc/Kconfig                                |   2 +-
- include/linux/mfd/rk808.h                          | 183 ++++++++-
- 12 files changed, 906 insertions(+), 501 deletions(-)
- delete mode 100644 drivers/mfd/rk808.c
- create mode 100644 drivers/mfd/rk8xx.c
- rename drivers/regulator/{rk808-regulator.c => rk8xx-regulator.c} (57%)
+Yes, it would be nice to at least make the differing
+implementations of the clk API consistent. Of course, we should
+really put our efforts towards getting rid of the non-CCF
+implementations instead so that there's less confusion overall.
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
