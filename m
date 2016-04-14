@@ -1,80 +1,128 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-Date: Mon, 4 Apr 2016 10:57:20 +0100
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <broonie@kernel.org>, <wsa@the-dreams.de>
-Subject: Re: Handling clocks on external busses
-Message-ID: <20160404095720.GJ31814@localhost.localdomain>
-References: <20151124173718.GK18889@ck-lbox>
- <20151202125855.GB6058@localhost.localdomain>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, James
+ Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v7 5/9] reset: mediatek: Add MT2701 reset controller dt-binding file
+Date: Thu, 14 Apr 2016 16:11:50 +0800
+Message-ID: <1460621514-65191-6-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151202125855.GB6058@localhost.localdomain>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 02, 2015 at 12:58:55PM +0000, Charles Keepax wrote:
-> On Tue, Nov 24, 2015 at 05:37:18PM +0000, Charles Keepax wrote:
-> > Hi,
-> > 
-> > When a clock driver is controlling a clock that is controlled
-> > over I2C / SPI, we need to perform a write on that bus to enable
-> > the clock. However, such busses often have their own clocks that
-> > must be enabled. Since all clock prepares are controlled under
-> > one large mutex this easily causes deadlock. The device is
-> > waiting for the I2C / SPI write to complete and the I2C / SPI
-> > driver is waiting for the clock prepare lock to be released so it
-> > can enable its own clock.
-> > 
-> > I have had a bit of a search and it seems the only really advice
-> > kicking about is that all I2C / SPI drivers should leave the
-> > clock prepared all the time. Is that intended to be the long term
-> > solution, should I treat not leaving the clock prepared as a bug?
-> > 
-> > Thanks,
-> > Charles
-> 
-> Adding a few more people for visibility.
-> 
-> So after a bit more digging it seems this has been mitigated slightly
-> as a lot of SPI driver have been updated to execute transfers in
-> thread rather than from a worker thread and it seems the clock
-> framework lets you re-enter the locked sections if called from the
-> same thread.
-> 
-> I am looking at moving some (in mainline) clocking code into an actual
-> clocking driver (for a SPI/I2C audio CODEC) but I am rather nervous
-> about this causing problems for customers with random deadlocks.
-> 
-> I guess the naive solution looks like individual locks per clock, but
-> from what I have been able to google it looks like there are some
-> challenges with that approach, does anyone have any links to previous
-> discussions on that? And any suggestions on how I might approach
-> this?
-> 
-> Thanks,
-> Charles
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Hi guys,
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
 
-Still struggling with this, basically the issue is that I need to
-add a clock DT binding so a clock source can be user controlled.
-But I can't find anyway to control a clock
-that is behind a SPI interface reliably. Yes if the SPI transfer
-gets executed in thread things work because of the re-entrant
-clock locking, but when that doesn't happen and the SPI core punts
-this to its worker thread things lock up. I also tried using
-async SPI calls, which technically violates the requirement then
-the clock is prepared before prepare returns although in our case
-this doesn't really matter, but even that can potentially cause
-issues as you have a potential mutex inversion (between the SPI
-bus lock and the clock prepare lock).
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
 
-How would we feel about just adding the clock binding at the
-moment and parsing it manually to set the clock source? Then we
-could add a proper clock driver once the locking is fixed in the
-clock framework.
-
-Thanks,
-Charles
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
+new file mode 100644
+index 0000000..aaf0305
+--- /dev/null
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
++
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
++
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
++
++/* HIFSYS resets */
++#define MT2701_HIFSYS_UHOST0_RST		3
++#define MT2701_HIFSYS_UHOST1_RST		4
++#define MT2701_HIFSYS_UPHY0_RST			21
++#define MT2701_HIFSYS_UPHY1_RST			22
++#define MT2701_HIFSYS_PCIE0_RST			24
++#define MT2701_HIFSYS_PCIE1_RST			25
++#define MT2701_HIFSYS_PCIE2_RST			26
++
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
+-- 
+1.9.1
