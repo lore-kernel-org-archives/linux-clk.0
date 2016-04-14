@@ -1,26 +1,31 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 4 Apr 2016 17:22:54 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
 	Mark Brown <broonie@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
 	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
 	Jacek Anaszewski <j.anaszewski@samsung.com>,
 	linux-leds@vger.kernel.org,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
 	Joachim Eastwood <manabian@gmail.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
 	linux-fbdev@vger.kernel.org,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -28,87 +33,77 @@ Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-pwm@vger.kernel.org,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Kukjin Kim <kgene@kernel.org>,
 	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
 	Daniel Vetter <daniel.vetter@intel.com>,
 	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	Hartley Sweeten <hsweeten@visionengravers.com>,
 	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 32/46] pwm: deprecate pwm_config(), pwm_enable() and
- pwm_disable()
-Message-ID: <20160404152254.GB17856@ulmo>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-33-git-send-email-boris.brezillon@free-electrons.com>
- <20160331173858.GB39098@dtor-ws>
- <20160331205454.630734ab@bbrezillon>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
-In-Reply-To: <20160331205454.630734ab@bbrezillon>
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 09/24] backlight: pwm_bl: use pwm_get_args() where appropriate
+Date: Thu, 14 Apr 2016 21:17:29 +0200
+Message-Id: <1460661464-11216-10-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The PWM framework has clarified the concept of reference PWM config
+(the platform dependent config retrieved from the DT or the PWM
+lookup table) and real PWM state.
 
---kORqDWCi7qDJ0mEj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use pwm_get_args() when the PWM user wants to retrieve this reference
+config and not the current state.
 
-On Thu, Mar 31, 2016 at 08:54:54PM +0200, Boris Brezillon wrote:
-> Hi Dmitry,
->=20
-> On Thu, 31 Mar 2016 10:38:58 -0700
-> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->=20
-> > Hi Boris,
-> >=20
-> > On Wed, Mar 30, 2016 at 10:03:55PM +0200, Boris Brezillon wrote:
-> > > Prefix those function as deprecated to encourage all existing users to
-> > > switch to pwm_apply_state().
-> >=20
-> > Why not keep at least some of them as wrappers where we do not need to
-> > chnage several parameters at once? It is much easier to have a driver
-> > do:
-> >=20
-> > 	error =3D pwm_enable(pwm);
-> > 	if (error)
-> > 		...
-> >=20
-> > rather than declaring the state variable, fectch it, adjust and then
-> > apply.
->=20
-> True. Actually deprecating the non-atomic API was not my primary goal.
-> Thierry would you mind if we keep both APIs around?
+This is part of the rework allowing the PWM framework to support
+hardware readout and expose real PWM state even when the PWM has
+just been requested (before the user calls pwm_config/enable/disable()).
 
-I'm fine with keeping these around, though purely as shortcuts. If users
-need to modify two parameters at once (e.g. duty cycle and enable) then
-they should be converted to use the atomic API, otherwise there'd be
-little point in introduce it.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/video/backlight/pwm_bl.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Thierry
-
---kORqDWCi7qDJ0mEj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXAobOAAoJEN0jrNd/PrOhbMEP/2DnMXfDO3dPUupPXHVnApG7
-P03B4P1PaX5ZZlgEfqr3Wb4Z7gTVW2ZDjCJTN8iMV9ZKhMZr9w8iU2XXTDylE/2/
-bmfVYYWOkGfU/pWfrAlxg/9IohVMK8K1XpGPOv9ODo0RZrlMcziUtx2X78IRJBym
-+LhBMoWNXQuFCGScUdTBLqo4UMy4U7dEbMJdi8m3eAfn6Ox/u3W7LQDRYvkJhXmJ
-LwzEkBhXEWEAaWUaebfAa6xEdWvcTH8PV5muwi7KZszCJqrNbPT3xc2nkOJJAG4E
-xoEgOhMYaw6a1Cwt/hwjvzsXrMj7JMA2CLkZtkgv1ceLALG+O8Yo8+TiZI1Xu7yM
-0yv+A9FqV8B/h+ou13DLoqk78559Dy7HhVegEn/C3Gu8QlGLX3Nuh+HfXfYqr+mE
-Cj04NZz+PKWTZJO4ROGMAyue8HgNtTqwv6Emfd4+rN41YeVaB/ERIEXXU+QnhBZJ
-lhoqi5hXa9Cm+/JNSJQiBDNt8GWoxy/CadmAT9wslfX0ZLWHWirKiebgc4zbFmI4
-YVZgJRC4KLOITYfYwcaf7MtztW7MEGUqkoo2zVfwTcMzvDwIaGTc7rslB9irKKmi
-5T8emrW3eAYOWamLKnv4jrMVr1Agrn1AxG496vqS0Mg9iXHi6syZzwe9MqHhshhv
-UYUxq1mR6q8f+fGL7SFN
-=twQ2
------END PGP SIGNATURE-----
-
---kORqDWCi7qDJ0mEj--
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index a33a290..b2b366b 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -201,6 +201,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct pwm_bl_data *pb;
+ 	int initial_blank = FB_BLANK_UNBLANK;
++	struct pwm_args pargs;
+ 	int ret;
+ 
+ 	if (!data) {
+@@ -307,12 +308,19 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	dev_dbg(&pdev->dev, "got pwm for backlight\n");
+ 
+ 	/*
++	 * FIXME: pwm_apply_args() should be removed when switching to
++	 * the atomic PWM API.
++	 */
++	pwm_apply_args(pb->pwm);
++
++	/*
+ 	 * The DT case will set the pwm_period_ns field to 0 and store the
+ 	 * period, parsed from the DT, in the PWM device. For the non-DT case,
+ 	 * set the period from platform data if it has not already been set
+ 	 * via the PWM lookup table.
+ 	 */
+-	pb->period = pwm_get_period(pb->pwm);
++	pwm_get_args(pb->pwm, &pargs);
++	pb->period = pargs.period;
+ 	if (!pb->period && (data->pwm_period_ns > 0))
+ 		pb->period = data->pwm_period_ns;
+ 
+-- 
+2.5.0
