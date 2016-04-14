@@ -1,89 +1,230 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 12 Apr 2016 15:06:27 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
-Message-ID: <20160412150627.7084665d@bbrezillon>
-In-Reply-To: <20160412113912.GK18882@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
-	<20160412113912.GK18882@ulmo.ba.sec>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v7 2/9] dt-bindings: ARM: Mediatek: Document bindings for MT2701
+Date: Thu, 14 Apr 2016 16:11:47 +0800
+Message-ID: <1460621514-65191-3-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Apr 2016 13:39:12 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
+This patch adds the binding documentation for apmixedsys, bdpsys,
+ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+vdecsys for Mediatek MT2701.
 
-> On Wed, Mar 30, 2016 at 10:03:28PM +0200, Boris Brezillon wrote:
-> > Currently the PWM core mixes the current PWM state with the per-platform
-> > reference config (specified through the PWM lookup table, DT definition or
-> > directly hardcoded in PWM drivers).
-> > 
-> > Create a pwm_args struct to store this reference config, so that PWM users
-> > can differentiate the current config from the reference one.
-> > 
-> > Patch all places where pwm->args should be initialized. We keep the
-> > pwm_set_polarity/period() calls until all PWM users are patched to
-> > use pwm_args instead of pwm_get_period/polarity().
-> 
-> Perhaps a helper would be useful? Something like:
-> 
-> 	static inline void
-> 	pwm_apply_args(struct pwm_device *pwm, const struct pwm_args *args)
-> 	{
-> 		pwm_set_duty_cycle(pwm, args->duty_cycle);
-> 		pwm_set_period(pwm, args->period);
-> 	}
-> 
-> ? That would make it slightly easier to get rid of it again after all
-> clients have been converted.
-> 
-> With the exception of pwm-clps711x all of these args are set at of_xlate
-> time (for DT) or from the lookup table in pwm_get() (for non-DT), so it
-> might even be possible to move this call to the core, so that removal of
-> it will be a one-liner.
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
+ 10 files changed, 82 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
 
-Okay, I think I misunderstood your suggestion. I thought you wanted
-this helper to set the reference config, but you actually want to apply
-a new state based on the PWM reference values.
-
-Except that pwm_args does not contain all the required information to
-apply a full config (args->duty_cycle and args->enable do not exist).
-
-This being said, in my v6 I moved the content of
-pwm_regulator_adjust_pwm_config() (patch 27) into a generic helper
-(pwm_adjust_config()). This helper is doing pretty much what you're
-suggesting here (but again, I'm not sure I correctly understood your
-suggestion :-/).
-
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index 936166f..cb0054a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -5,7 +5,8 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8173-apmixedsys"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+new file mode 100644
+index 0000000..4137196
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+@@ -0,0 +1,22 @@
++Mediatek bdpsys controller
++============================
++
++The Mediatek bdpsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-bdpsys", "syscon"
++- #clock-cells: Must be 1
++
++The bdpsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++bdpsys: clock-controller@1c000000 {
++	compatible = "mediatek,mt2701-bdpsys", "syscon";
++	reg = <0 0x1c000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+new file mode 100644
+index 0000000..768f3a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+@@ -0,0 +1,22 @@
++Mediatek ethsys controller
++============================
++
++The Mediatek ethsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-ethsys", "syscon"
++- #clock-cells: Must be 1
++
++The ethsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++ethsys: clock-controller@1b000000 {
++	compatible = "mediatek,mt2701-ethsys", "syscon";
++	reg = <0 0x1b000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+new file mode 100644
+index 0000000..beed7b5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+@@ -0,0 +1,24 @@
++Mediatek hifsys controller
++============================
++
++The Mediatek hifsys controller provides various clocks and reset
++outputs to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-hifsys", "syscon"
++- #clock-cells: Must be 1
++
++The hifsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++hifsys: clock-controller@1a000000 {
++	compatible = "mediatek,mt2701-hifsys", "syscon";
++	reg = <0 0x1a000000 0 0x1000>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index b1f2ce1..f6a9166 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -5,7 +5,8 @@ The Mediatek imgsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index aaf8d14..1620ec2 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -6,7 +6,8 @@ outputs to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 4385946..67dd2e4 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -5,7 +5,8 @@ The Mediatek mmsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+index 2f6ff86..e494366 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+@@ -6,7 +6,8 @@ outputs to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-pericfg", "syscon"
+ 	- "mediatek,mt8135-pericfg", "syscon"
+ 	- "mediatek,mt8173-pericfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index f9e9179..9f2fe78 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -5,7 +5,8 @@ The Mediatek topckgen controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8173-topckgen"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index 1faacf1..2440f73 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -5,7 +5,8 @@ The Mediatek vdecsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
+ - #clock-cells: Must be 1
+ 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.9.1
