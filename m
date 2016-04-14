@@ -1,55 +1,48 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 11 Apr 2016 09:22:11 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH V2 2/7] cpufreq: Loongson1: Update cpufreq of Loongson1B
-Message-ID: <20160411035211.GA16238@vireshk-i7>
-References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
- <1460115779-13141-2-git-send-email-keguang.zhang@gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 00/28] ARM: OMAP2+: hwmod module clock type support
+Date: Thu, 14 Apr 2016 14:07:49 +0300
+Message-ID: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460115779-13141-2-git-send-email-keguang.zhang@gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08-04-16, 19:42, Keguang Zhang wrote:
-> From: Kelvin Cheung <keguang.zhang@gmail.com>
-> 
-> - Rename the file to loongson1-cpufreq.c
-> - Use kcalloc() instead of kzalloc()
-> - Use devm_kzalloc() instead of global structure
-> - Use dev_get_platdata() to access the platform_data field
->   instead of referencing it directly
-> - Remove superfluous error messages
+Hi,
 
-Its much better now, in the sense that I can see what you have done.
-And see you have done a lot.
+v2 contains following changes in comparison to v1:
 
-That's not how you are supposed to send the patches, sorry.
+- Patch ordering changed a bit, clk/ti, mach-omap2, dts patches are now
+  mostly grouped together, with the exception of the introduction of
+  clock helper API, which is needed by everything else. Please note
+  that the ordering must be preserved between mach-omap2/clk-driver/dts
+  to avoid boot problems.
+- Dropped hwmod data removal patches for now, this allows booting with
+  either new or old DTS data.
+- Fixed a typo in the hwmod clock driver timeout handling, the comparison
+  for timeout against ktime_us_delta was wrong causing too short
+  timeouts, this was apparent with cpuidle enabled on OMAP4
+- Added patch #6 to fetch hwmod main clock based on the hwmod name itself,
+  if found, ignore main_clk / clkctrl setup for the hwmod
+- Added patch #7 to fix issue in omap2 timer caused by patch #6, with
+  dynamic parsing of main clock, the hwmod must be setup before attempting
+  to access main_clk.
 
-You need to break this patch into multiple patches, each targeting a
-particular fix.
+Boot tested on am335x-evm, am335x-evmsk, am3517-evm, am37x-evm, am437x-sk,
+am437x-gp-evm, am57xx-evm, omap3-beagle-xm, omap3-beagle, am335x-boneblack,
+am335x-bone, omap3-crane, dra72x-ev, dra7xx-evm, ldp3430, omap4-panda-es,
+omap4-panda, omap2430-sdp, omap3430-sdp, omap4-sdp-es23plus, omap5-uevm.
 
-And I have no idea now, what change you have done to make it work for
-Loongson1B. Which of the above changes does that?
+Suspend-resume tested on omap3-beagle, omap4-panda-es.
 
-And please, just send out a separate cpufreq series and don't send
-everything in a single patchset that covers DMA, cpufreq, clk, etc..
+Cpuidle tested on omap4-panda-es. For some reason cpuidle is not functional
+for me on omap3-beagle, even on plain 4.6-rc2.
 
--- 
-viresh
+Branch pushed at:
+tree: https://github.com/t-kristo/linux-pm.git
+branch: 4.6-rc2-hwmod-clks-v2
+
+-Tero
