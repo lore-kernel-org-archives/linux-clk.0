@@ -1,123 +1,230 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:59759 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755359AbcDJQz6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 12:55:58 -0400
-Date: Sun, 10 Apr 2016 18:55:47 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
-Message-Id: <20160410185547.2829e5f3aee51d50ee454a91@free.fr>
-In-Reply-To: <20160410095322.GZ4227@lukather>
-References: <cover.1459358017.git.moinejf@free.fr>
-	<8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
-	<20160410095322.GZ4227@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: linux-clk-owner@vger.kernel.org
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 01/24] pwm: introduce the pwm_args concept
+Date: Thu, 14 Apr 2016 21:17:21 +0200
+Message-Id: <1460661464-11216-2-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 10 Apr 2016 02:53:22 -0700
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Currently the PWM core mixes the current PWM state with the per-platform
+reference config (specified through the PWM lookup table, DT definition or
+directly hardcoded in PWM drivers).
 
-> Hi,
-> 
-> On Wed, Mar 30, 2016 at 06:57:16PM +0200, Jean-Francois Moine wrote:
-> > Add the PLL type which is used by the sun8i family for audio.
-> > 
-> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> > ---
-> >  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
-> >  drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++++++++
-> >  2 files changed, 49 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> > index ff93aee..917d4aa 100644
-> > --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> > +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> > @@ -10,6 +10,7 @@ Required properties:
-> >  	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
-> >  	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
-> >  	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-> > +	"allwinner,sun8i-pll2-clk" - for the audio PLL clock
-> 
-> You should mention the name of the first SoC that introduced it.
+Create a pwm_args struct to store this reference config, so that PWM users
+can differentiate the current config from the reference one.
 
-As I know only the pll2 of the H3, is it OK for
-	"allwinner,sun8i-h3-pll2-clk"
-?
+Patch all places where pwm->args should be initialized. We keep the
+pwm_set_polarity/period() calls until all PWM users are patched to
+use pwm_args instead of pwm_get_period/polarity().
 
-> >  	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
-> >  	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
-> >  	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
-> > diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> > index 270f2a9..7386141 100644
-> > --- a/drivers/clk/sunxi/clk-sunxi.c
-> > +++ b/drivers/clk/sunxi/clk-sunxi.c
-> > @@ -1130,6 +1130,54 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
-> >  	       sun6i_pll6_clk_setup);
-> >  
-> >  /*
-> > + * sun8i pll2
-> > + *
-> > + * rate = parent_rate / (m + 1) * (n + 1) / (p + 1);
-> 
->                          ^ I'm guessing it's a "*" instead?
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c         | 22 +++++++++++++++-------
+ drivers/pwm/pwm-clps711x.c |  2 +-
+ drivers/pwm/pwm-pxa.c      |  2 +-
+ include/linux/pwm.h        | 32 ++++++++++++++++++++++++++++++++
+ 4 files changed, 49 insertions(+), 9 deletions(-)
 
-No, 'm' is a divider, as 'p'.
-
-> > + */
-> > +static void sun8i_pll2_factors(struct factors_request *req)
-> > +{
-> > +	unsigned long n, m;
-> > +
-> > +	/* set p = 4 so that pll2 = pll2x8 / 8 */
-> > +	req->p = 4 - 1;
-> > +	rational_best_approximation(req->rate,
-> > +				req->parent_rate / 4,
-> > +				1 << 7, 1 << 5, &n, &m);
-> > +	req->rate = req->parent_rate / m * n / 4;
-> > +	req->m = m - 1;
-> > +	req->n = n - 1;
-> > +}
-> > +
-> > +static void sun8i_pll2_recalc(struct factors_request *req)
-> > +{
-> > +	req->rate = req->parent_rate / (req->m + 1) * (req->n + 1) /
-> > +						(req->p + 1);
-> > +}
-> > +
-> > +static const struct clk_factors_config sun8i_pll2_config = {
-> > +	.mshift = 0,
-> > +	.mwidth = 5,
-> > +	.nshift = 8,
-> > +	.nwidth = 7,
-> > +	.pshift = 16,
-> > +	.pwidth = 4,
-> > +};
-> > +
-> > +static const struct factors_data sun8i_pll2_data __initconst = {
-> > +	.enable = 31,
-> > +	.table = &sun8i_pll2_config,
-> > +	.getter = sun8i_pll2_factors,
-> > +	.recalc = sun8i_pll2_recalc,
-> > +};
-> > +
-> > +static void __init sun8i_pll2_setup(struct device_node *node)
-> > +{
-> > +	sunxi_factors_clk_setup(node, &sun8i_pll2_data);
-> > +}
-> > +CLK_OF_DECLARE(sun8i_pll2, "allwinner,sun8i-pll2-clk",
-> > +	       sun8i_pll2_setup);
-> 
-> How do you plan on supporting the multiple pll2 output?
-
-Using fixed-clocks in the DTS if needed.
-
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 7c330ff..ac89529 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -128,6 +128,14 @@ static int pwm_device_request(struct pwm_device *pwm, const char *label)
+ 	set_bit(PWMF_REQUESTED, &pwm->flags);
+ 	pwm->label = label;
+ 
++	/*
++	 * FIXME: this should be removed as soon as all PWM users are
++	 * properly making use of pwm_args to initialize the PWM device.
++	 * If we don't get rid of it, then PWM state and hardware can be
++	 * desynchronized.
++	 */
++	pwm_apply_args(pwm);
++
+ 	return 0;
+ }
+ 
+@@ -146,12 +154,12 @@ of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 	if (IS_ERR(pwm))
+ 		return pwm;
+ 
+-	pwm_set_period(pwm, args->args[1]);
++	pwm->args.period = args->args[1];
+ 
+ 	if (args->args[2] & PWM_POLARITY_INVERTED)
+-		pwm_set_polarity(pwm, PWM_POLARITY_INVERSED);
++		pwm->args.polarity = PWM_POLARITY_INVERSED;
+ 	else
+-		pwm_set_polarity(pwm, PWM_POLARITY_NORMAL);
++		pwm->args.polarity = PWM_POLARITY_NORMAL;
+ 
+ 	return pwm;
+ }
+@@ -172,7 +180,7 @@ of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 	if (IS_ERR(pwm))
+ 		return pwm;
+ 
+-	pwm_set_period(pwm, args->args[1]);
++	pwm->args.period = args->args[1];
+ 
+ 	return pwm;
+ }
+@@ -736,13 +744,13 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
+ 	if (!chip)
+ 		goto out;
+ 
++	pwm->args.period = chosen->period;
++	pwm->args.polarity = chosen->polarity;
++
+ 	pwm = pwm_request_from_chip(chip, chosen->index, con_id ?: dev_id);
+ 	if (IS_ERR(pwm))
+ 		goto out;
+ 
+-	pwm_set_period(pwm, chosen->period);
+-	pwm_set_polarity(pwm, chosen->polarity);
+-
+ out:
+ 	mutex_unlock(&pwm_lookup_lock);
+ 	return pwm;
+diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+index a80c108..7d33542 100644
+--- a/drivers/pwm/pwm-clps711x.c
++++ b/drivers/pwm/pwm-clps711x.c
+@@ -60,7 +60,7 @@ static int clps711x_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 		return -EINVAL;
+ 
+ 	/* Store constant period value */
+-	pwm_set_period(pwm, DIV_ROUND_CLOSEST(NSEC_PER_SEC, freq));
++	pwm->args.period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, freq);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
+index cb2f702..58b709f 100644
+--- a/drivers/pwm/pwm-pxa.c
++++ b/drivers/pwm/pwm-pxa.c
+@@ -160,7 +160,7 @@ pxa_pwm_of_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 	if (IS_ERR(pwm))
+ 		return pwm;
+ 
+-	pwm_set_period(pwm, args->args[0]);
++	pwm->args.period = args->args[0];
+ 
+ 	return pwm;
+ }
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 6555f01..c8859b7 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -74,6 +74,23 @@ enum pwm_polarity {
+ 	PWM_POLARITY_INVERSED,
+ };
+ 
++/**
++ * struct pwm_args - PWM arguments
++ * @period: reference period
++ * @polarity: reference polarity
++ *
++ * This structure describes board-dependent arguments attached to a PWM
++ * device. Those arguments are usually retrieved from the PWM lookup table or
++ * DT definition.
++ * This should not be confused with the PWM state: PWM args don't represent
++ * the current PWM state, but the configuration the PWM user plans to use
++ * on this PWM device.
++ */
++struct pwm_args {
++	unsigned int period;
++	enum pwm_polarity polarity;
++};
++
+ enum {
+ 	PWMF_REQUESTED = 1 << 0,
+ 	PWMF_ENABLED = 1 << 1,
+@@ -91,6 +108,7 @@ enum {
+  * @period: period of the PWM signal (in nanoseconds)
+  * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
+  * @polarity: polarity of the PWM signal
++ * @args: PWM arguments
+  */
+ struct pwm_device {
+ 	const char *label;
+@@ -103,6 +121,8 @@ struct pwm_device {
+ 	unsigned int period;
+ 	unsigned int duty_cycle;
+ 	enum pwm_polarity polarity;
++
++	struct pwm_args args;
+ };
+ 
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+@@ -142,6 +162,18 @@ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
+ 	return pwm ? pwm->polarity : PWM_POLARITY_NORMAL;
+ }
+ 
++static inline void pwm_get_args(const struct pwm_device *pwm,
++				struct pwm_args *args)
++{
++	*args = pwm->args;
++}
++
++static inline void pwm_apply_args(struct pwm_device *pwm)
++{
++	pwm_set_period(pwm, pwm->args.period);
++	pwm_set_polarity(pwm, pwm->args.polarity);
++}
++
+ /**
+  * struct pwm_ops - PWM controller operations
+  * @request: optional hook for requesting a PWM
 -- 
-Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+2.5.0
