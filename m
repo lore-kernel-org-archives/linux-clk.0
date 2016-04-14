@@ -1,40 +1,46 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	sjan@baylibre.com,
-	ahaslam@baylibre.com,
-	abailon@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 5/5] MAINTAINERS: Add Neil Armstrong as maintainers of schrodinger clock
-Date: Fri,  1 Apr 2016 13:37:15 +0200
-Message-Id: <1459510635-8204-6-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
-References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 21/28] clk: ti: am33xx: fix timer3/6 init time setup for module clocks
+Date: Thu, 14 Apr 2016 14:08:10 +0300
+Message-ID: <1460632097-25727-22-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+timer*_fck are going to be renamed as timer*_mod_ck:s. Fix the init
+time configuration of timer3/timer6 to take this into account, and
+lookup for the module clock in case the lookup for fck fails.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- MAINTAINERS | 6 ++++++
+ drivers/clk/ti/clk-33xx.c |    6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 378ebff..598d85e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10183,6 +10183,12 @@ S:	Maintained
- F:	drivers/media/i2c/ov2659.c
- F:	include/media/i2c/ov2659.h
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index 43847bc..2343a22 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -66,9 +66,15 @@ int __init am33xx_dt_clk_init(void)
  
-+SCHRODINGER CLOCK
-+M:	Neil Armstrong <narmstrong@baylibre.com>
-+L:	linux-clk@vger.kernel.org
-+S:	Maintained
-+F:	drivers/clk/clk-schrodinger.c
+ 	clk1 = ti_clk_get("sys_clkin_ck");
+ 	clk2 = ti_clk_get("timer3_fck");
++	if (IS_ERR(clk2))
++		clk2 = ti_clk_get("timer3_mod_ck");
 +
- SILICON MOTION SM712 FRAME BUFFER DRIVER
- M:	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
- M:	Teddy Wang <teddy.wang@siliconmotion.com>
+ 	clk_set_parent(clk2, clk1);
+ 
+ 	clk2 = ti_clk_get("timer6_fck");
++	if (IS_ERR(clk2))
++		clk2 = ti_clk_get("timer6_mod_ck");
++
+ 	clk_set_parent(clk2, clk1);
+ 	/*
+ 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
 -- 
-1.9.1
+1.7.9.5
