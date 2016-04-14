@@ -1,46 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 18 Apr 2016 11:53:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH 1/5] clk: qoriq: add __init attribute
-Message-ID: <20160418185339.GC15324@codeaurora.org>
-References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
- <1460991338-9845-2-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
+Date: Thu, 14 Apr 2016 16:11:52 +0800
+Message-ID: <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460991338-9845-2-git-send-email-Julia.Lawall@lip6.fr>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/18, Julia Lawall wrote:
-> Add __init attribute on a function that is only called from other __init
-> functions and that is not inlined, at least with gcc version 4.8.4 on an
-> x86 machine with allyesconfig.  Currently, the function is put in the
-> .text.unlikely segment.  Declaring it as __init will cause it to be put in
-> the .init.text and to disappear after initialization.
-> 
-> The result of objdump -x on the function before the change is as follows:
-> 
-> 0000000000000000 l     F .text.unlikely 0000000000000071 sysclk_from_fixed.constprop.5
-> 
-> And after the change it is as follows:
-> 
-> 0000000000000480 l     F .init.text	000000000000006c sysclk_from_fixed.constprop.5
-> 
-> Done with the help of Coccinelle.  The semantic patch checks for local
-> static non-init functions that are called from an __init function and are
-> not called from any other function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+Some system clocks should be turned on by default on MT2701.
+This patch enable these clocks when related clocks have
+been registered.
 
-Applied to clk-next
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt2701.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 9542e47..90294e7 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -671,6 +671,21 @@ static const struct mtk_gate top_clks[] __initconst = {
+ 		28),
+ };
+ 
++static struct clk_onecell_data *top_clk_data __initdata;
++static struct clk_onecell_data *pll_clk_data __initdata;
++
++static void __init mtk_clk_enable_critical(void)
++{
++	if (!top_clk_data || !pll_clk_data)
++		return;
++
++	clk_prepare_enable(pll_clk_data->clks[CLK_APMIXED_ARMPLL]);
++	clk_prepare_enable(top_clk_data->clks[CLK_TOP_AXI_SEL]);
++	clk_prepare_enable(top_clk_data->clks[CLK_TOP_MEM_SEL]);
++	clk_prepare_enable(top_clk_data->clks[CLK_TOP_DDRPHYCFG_SEL]);
++	clk_prepare_enable(top_clk_data->clks[CLK_TOP_RTC_SEL]);
++}
++
+ static void __init mtk_topckgen_init(struct device_node *node)
+ {
+ 	struct clk_onecell_data *clk_data;
+@@ -683,7 +698,7 @@ static void __init mtk_topckgen_init(struct device_node *node)
+ 		return;
+ 	}
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
++	top_clk_data = clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
+ 
+ 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+ 								clk_data);
+@@ -704,6 +719,8 @@ static void __init mtk_topckgen_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_clk_enable_critical();
+ }
+ CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
+ 
+@@ -1297,7 +1314,7 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR);
++	pll_clk_data = clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR);
+ 	if (!clk_data)
+ 		return;
+ 
+@@ -1308,6 +1325,8 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_clk_enable_critical();
+ }
+ CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+ 							mtk_apmixedsys_init);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
