@@ -1,60 +1,63 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 2/2] clk: bcm2835: use CLK_ENABLE_HAND_OFF instead of CLK_IS_CRITICAL
-Date: Fri, 29 Apr 2016 17:42:36 +0000
-Message-Id: <1461951756-16804-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
-References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <akurz@blala.de>
+From: Alexander Kurz <akurz@blala.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Reynes <tremyfr@gmail.com>, Alexander Kurz <akurz@blala.de>
+Subject: [PATCH 1/2] ARM: dts: imx35: restore existing used clock enumeration
+Date: Thu, 14 Apr 2016 23:30:49 +0200
+Message-Id: <1460669450-11729-1-git-send-email-akurz@blala.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+A new element got inserted into enum mx35_clks with commit 3713e3f5e927
+("clk: imx35: define two clocks for rtc"). This insertion shifted most
+nummerical clock assignments to a new nummerical value which in turn
+rendered most hardcoded nummeric values in imx35.dtsi incorrect.
 
-The use of CLK_IS_CRITICAL is just a stop-gap to avoid unpreparing
-essential PLLs that may result stopping the system without intention.
+Restore the existing order by moving the newly introduced clock to the
+end of the enum. Update the dts documentation accordingly.
 
-This moves to use CLK_ENABLE_HAND_OFF instead of CLK_IS_CRITICAL,
-so that clocks (and their parents) may get released
-if there is a driver that claims (and then later releases) a
-specific clock.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-
---
-Note that this requires the following patches applied:
-* clk: introduce CLK_ENABLE_HAND_OFF flag
-* clk: per-user clk prepare & enable ref counts
+Signed-off-by: Alexander Kurz <akurz@blala.de>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/clock/imx35-clock.txt | 1 +
+ drivers/clk/imx/clk-imx35.c                             | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 03b7f01..6303c3a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1251,12 +1251,12 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
- 	}
+diff --git a/Documentation/devicetree/bindings/clock/imx35-clock.txt b/Documentation/devicetree/bindings/clock/imx35-clock.txt
+index a703564..f497832 100644
+--- a/Documentation/devicetree/bindings/clock/imx35-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx35-clock.txt
+@@ -94,6 +94,7 @@ clocks and IDs.
+ 	csi_sel			79
+ 	iim_gate		80
+ 	gpu2d_gate		81
++	ckli_gate		82
  
--	/* if the clock is running, then enable CRITICAL */
-+	/* if the clock is running, then enable CLK_ENABLE_HAND_OFF */
- 	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
- 		dev_dbg(cprman->dev,
--			"found firmware enabled clock %s - enabling critical\n",
-+			"found firmware enabled clock %s - enabling hand off\n",
- 			data->name);
--		init.flags |= CLK_IS_CRITICAL;
-+		init.flags |= CLK_ENABLE_HAND_OFF;
- 	}
+ Examples:
  
- 	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index a71d24c..b0978d3 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -66,7 +66,7 @@ static const char *std_sel[] = {"ppll", "arm"};
+ static const char *ipg_per_sel[] = {"ahb_per_div", "arm_per_div"};
+ 
+ enum mx35_clks {
+-	ckih, ckil, mpll, ppll, mpll_075, arm, hsp, hsp_div, hsp_sel, ahb, ipg,
++	ckih, mpll, ppll, mpll_075, arm, hsp, hsp_div, hsp_sel, ahb, ipg,
+ 	arm_per_div, ahb_per_div, ipg_per, uart_sel, uart_div, esdhc_sel,
+ 	esdhc1_div, esdhc2_div, esdhc3_div, spdif_sel, spdif_div_pre,
+ 	spdif_div_post, ssi_sel, ssi1_div_pre, ssi1_div_post, ssi2_div_pre,
+@@ -79,7 +79,7 @@ enum mx35_clks {
+ 	rtc_gate, rtic_gate, scc_gate, sdma_gate, spba_gate, spdif_gate,
+ 	ssi1_gate, ssi2_gate, uart1_gate, uart2_gate, uart3_gate, usbotg_gate,
+ 	wdog_gate, max_gate, admux_gate, csi_gate, csi_div, csi_sel, iim_gate,
+-	gpu2d_gate, clk_max
++	gpu2d_gate, ckil, clk_max
+ };
+ 
+ static struct clk *clk[clk_max];
 -- 
 2.1.4
