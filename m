@@ -1,234 +1,144 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 10/28] clk: ti: omap2: transition to usage of ti_clk_get
-Date: Thu, 14 Apr 2016 14:07:59 +0300
-Message-ID: <1460632097-25727-11-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 19/24] pwm: move the enabled/disabled info into pwm_state
+Date: Thu, 14 Apr 2016 21:17:39 +0200
+Message-Id: <1460661464-11216-20-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Cleanup any unnecessary DT_CLK() alias entries from OMAP2 clock file.
-Also, use ti_clk_get where necessary.
+Prepare the transition to PWM atomic update by moving the enabled/disabled
+state into the pwm_state struct. This way we can easily update the whole
+PWM state by copying the new state in the ->state field.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/clk/ti/clk-2xxx.c |  151 ++-------------------------------------------
- 1 file changed, 4 insertions(+), 147 deletions(-)
+ drivers/pwm/core.c  | 13 +++++++++----
+ include/linux/pwm.h | 11 ++++++++---
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/ti/clk-2xxx.c b/drivers/clk/ti/clk-2xxx.c
-index 657c4fe..0b9d7fa 100644
---- a/drivers/clk/ti/clk-2xxx.c
-+++ b/drivers/clk/ti/clk-2xxx.c
-@@ -22,126 +22,22 @@
- #include "clock.h"
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 59bcece..c2759bc 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -499,10 +499,10 @@ int pwm_enable(struct pwm_device *pwm)
+ 	if (!pwm)
+ 		return -EINVAL;
  
- static struct ti_dt_clk omap2xxx_clks[] = {
--	DT_CLK(NULL, "func_32k_ck", "func_32k_ck"),
--	DT_CLK(NULL, "secure_32k_ck", "secure_32k_ck"),
--	DT_CLK(NULL, "virt_12m_ck", "virt_12m_ck"),
--	DT_CLK(NULL, "virt_13m_ck", "virt_13m_ck"),
--	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
--	DT_CLK(NULL, "virt_26m_ck", "virt_26m_ck"),
--	DT_CLK(NULL, "aplls_clkin_ck", "aplls_clkin_ck"),
--	DT_CLK(NULL, "aplls_clkin_x2_ck", "aplls_clkin_x2_ck"),
--	DT_CLK(NULL, "osc_ck", "osc_ck"),
--	DT_CLK(NULL, "sys_ck", "sys_ck"),
--	DT_CLK(NULL, "alt_ck", "alt_ck"),
--	DT_CLK(NULL, "mcbsp_clks", "mcbsp_clks"),
--	DT_CLK(NULL, "dpll_ck", "dpll_ck"),
--	DT_CLK(NULL, "apll96_ck", "apll96_ck"),
--	DT_CLK(NULL, "apll54_ck", "apll54_ck"),
--	DT_CLK(NULL, "func_54m_ck", "func_54m_ck"),
--	DT_CLK(NULL, "core_ck", "core_ck"),
--	DT_CLK(NULL, "func_96m_ck", "func_96m_ck"),
--	DT_CLK(NULL, "func_48m_ck", "func_48m_ck"),
--	DT_CLK(NULL, "func_12m_ck", "func_12m_ck"),
--	DT_CLK(NULL, "sys_clkout_src", "sys_clkout_src"),
--	DT_CLK(NULL, "sys_clkout", "sys_clkout"),
--	DT_CLK(NULL, "emul_ck", "emul_ck"),
--	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
--	DT_CLK(NULL, "dsp_fck", "dsp_fck"),
--	DT_CLK(NULL, "gfx_3d_fck", "gfx_3d_fck"),
--	DT_CLK(NULL, "gfx_2d_fck", "gfx_2d_fck"),
--	DT_CLK(NULL, "gfx_ick", "gfx_ick"),
- 	DT_CLK("omapdss_dss", "ick", "dss_ick"),
--	DT_CLK(NULL, "dss_ick", "dss_ick"),
--	DT_CLK(NULL, "dss1_fck", "dss1_fck"),
--	DT_CLK(NULL, "dss2_fck", "dss2_fck"),
--	DT_CLK(NULL, "dss_54m_fck", "dss_54m_fck"),
--	DT_CLK(NULL, "core_l3_ck", "core_l3_ck"),
- 	DT_CLK(NULL, "ssi_fck", "ssi_ssr_sst_fck"),
--	DT_CLK(NULL, "usb_l4_ick", "usb_l4_ick"),
--	DT_CLK(NULL, "l4_ck", "l4_ck"),
--	DT_CLK(NULL, "ssi_l4_ick", "ssi_l4_ick"),
--	DT_CLK(NULL, "gpt1_ick", "gpt1_ick"),
--	DT_CLK(NULL, "gpt1_fck", "gpt1_fck"),
--	DT_CLK(NULL, "gpt2_ick", "gpt2_ick"),
--	DT_CLK(NULL, "gpt2_fck", "gpt2_fck"),
--	DT_CLK(NULL, "gpt3_ick", "gpt3_ick"),
--	DT_CLK(NULL, "gpt3_fck", "gpt3_fck"),
--	DT_CLK(NULL, "gpt4_ick", "gpt4_ick"),
--	DT_CLK(NULL, "gpt4_fck", "gpt4_fck"),
--	DT_CLK(NULL, "gpt5_ick", "gpt5_ick"),
--	DT_CLK(NULL, "gpt5_fck", "gpt5_fck"),
--	DT_CLK(NULL, "gpt6_ick", "gpt6_ick"),
--	DT_CLK(NULL, "gpt6_fck", "gpt6_fck"),
--	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
--	DT_CLK(NULL, "gpt7_fck", "gpt7_fck"),
--	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
--	DT_CLK(NULL, "gpt8_fck", "gpt8_fck"),
--	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
--	DT_CLK(NULL, "gpt9_fck", "gpt9_fck"),
--	DT_CLK(NULL, "gpt10_ick", "gpt10_ick"),
--	DT_CLK(NULL, "gpt10_fck", "gpt10_fck"),
--	DT_CLK(NULL, "gpt11_ick", "gpt11_ick"),
--	DT_CLK(NULL, "gpt11_fck", "gpt11_fck"),
--	DT_CLK(NULL, "gpt12_ick", "gpt12_ick"),
--	DT_CLK(NULL, "gpt12_fck", "gpt12_fck"),
- 	DT_CLK("omap-mcbsp.1", "ick", "mcbsp1_ick"),
--	DT_CLK(NULL, "mcbsp1_ick", "mcbsp1_ick"),
--	DT_CLK(NULL, "mcbsp1_fck", "mcbsp1_fck"),
- 	DT_CLK("omap-mcbsp.2", "ick", "mcbsp2_ick"),
--	DT_CLK(NULL, "mcbsp2_ick", "mcbsp2_ick"),
--	DT_CLK(NULL, "mcbsp2_fck", "mcbsp2_fck"),
- 	DT_CLK("omap2_mcspi.1", "ick", "mcspi1_ick"),
--	DT_CLK(NULL, "mcspi1_ick", "mcspi1_ick"),
--	DT_CLK(NULL, "mcspi1_fck", "mcspi1_fck"),
- 	DT_CLK("omap2_mcspi.2", "ick", "mcspi2_ick"),
--	DT_CLK(NULL, "mcspi2_ick", "mcspi2_ick"),
--	DT_CLK(NULL, "mcspi2_fck", "mcspi2_fck"),
--	DT_CLK(NULL, "uart1_ick", "uart1_ick"),
--	DT_CLK(NULL, "uart1_fck", "uart1_fck"),
--	DT_CLK(NULL, "uart2_ick", "uart2_ick"),
--	DT_CLK(NULL, "uart2_fck", "uart2_fck"),
--	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart3_fck", "uart3_fck"),
--	DT_CLK(NULL, "gpios_ick", "gpios_ick"),
--	DT_CLK(NULL, "gpios_fck", "gpios_fck"),
- 	DT_CLK("omap_wdt", "ick", "mpu_wdt_ick"),
--	DT_CLK(NULL, "mpu_wdt_ick", "mpu_wdt_ick"),
--	DT_CLK(NULL, "mpu_wdt_fck", "mpu_wdt_fck"),
--	DT_CLK(NULL, "sync_32k_ick", "sync_32k_ick"),
--	DT_CLK(NULL, "wdt1_ick", "wdt1_ick"),
--	DT_CLK(NULL, "omapctrl_ick", "omapctrl_ick"),
- 	DT_CLK("omap24xxcam", "fck", "cam_fck"),
--	DT_CLK(NULL, "cam_fck", "cam_fck"),
- 	DT_CLK("omap24xxcam", "ick", "cam_ick"),
--	DT_CLK(NULL, "cam_ick", "cam_ick"),
--	DT_CLK(NULL, "mailboxes_ick", "mailboxes_ick"),
--	DT_CLK(NULL, "wdt4_ick", "wdt4_ick"),
--	DT_CLK(NULL, "wdt4_fck", "wdt4_fck"),
--	DT_CLK(NULL, "mspro_ick", "mspro_ick"),
--	DT_CLK(NULL, "mspro_fck", "mspro_fck"),
--	DT_CLK(NULL, "fac_ick", "fac_ick"),
--	DT_CLK(NULL, "fac_fck", "fac_fck"),
- 	DT_CLK("omap_hdq.0", "ick", "hdq_ick"),
--	DT_CLK(NULL, "hdq_ick", "hdq_ick"),
- 	DT_CLK("omap_hdq.0", "fck", "hdq_fck"),
--	DT_CLK(NULL, "hdq_fck", "hdq_fck"),
- 	DT_CLK("omap_i2c.1", "ick", "i2c1_ick"),
--	DT_CLK(NULL, "i2c1_ick", "i2c1_ick"),
- 	DT_CLK("omap_i2c.2", "ick", "i2c2_ick"),
--	DT_CLK(NULL, "i2c2_ick", "i2c2_ick"),
--	DT_CLK(NULL, "gpmc_fck", "gpmc_fck"),
--	DT_CLK(NULL, "sdma_fck", "sdma_fck"),
--	DT_CLK(NULL, "sdma_ick", "sdma_ick"),
--	DT_CLK(NULL, "sdrc_ick", "sdrc_ick"),
--	DT_CLK(NULL, "des_ick", "des_ick"),
- 	DT_CLK("omap-sham", "ick", "sha_ick"),
--	DT_CLK(NULL, "sha_ick", "sha_ick"),
- 	DT_CLK("omap_rng", "ick", "rng_ick"),
--	DT_CLK(NULL, "rng_ick", "rng_ick"),
- 	DT_CLK("omap-aes", "ick", "aes_ick"),
--	DT_CLK(NULL, "aes_ick", "aes_ick"),
--	DT_CLK(NULL, "pka_ick", "pka_ick"),
--	DT_CLK(NULL, "usb_fck", "usb_fck"),
- 	DT_CLK(NULL, "timer_32k_ck", "func_32k_ck"),
- 	DT_CLK(NULL, "timer_sys_ck", "sys_ck"),
- 	DT_CLK(NULL, "timer_ext_ck", "alt_ck"),
-@@ -149,62 +45,23 @@ static struct ti_dt_clk omap2xxx_clks[] = {
- };
+-	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
++	if (!pwm_is_enabled(pwm)) {
+ 		err = pwm->chip->ops->enable(pwm->chip, pwm);
+-		if (err)
+-			clear_bit(PWMF_ENABLED, &pwm->flags);
++		if (!err)
++			pwm->state.enabled = true;
+ 	}
  
- static struct ti_dt_clk omap2420_clks[] = {
--	DT_CLK(NULL, "sys_clkout2_src", "sys_clkout2_src"),
--	DT_CLK(NULL, "sys_clkout2", "sys_clkout2"),
--	DT_CLK(NULL, "dsp_ick", "dsp_ick"),
--	DT_CLK(NULL, "iva1_ifck", "iva1_ifck"),
--	DT_CLK(NULL, "iva1_mpu_int_ifck", "iva1_mpu_int_ifck"),
--	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
--	DT_CLK(NULL, "wdt3_fck", "wdt3_fck"),
- 	DT_CLK("mmci-omap.0", "ick", "mmc_ick"),
--	DT_CLK(NULL, "mmc_ick", "mmc_ick"),
- 	DT_CLK("mmci-omap.0", "fck", "mmc_fck"),
--	DT_CLK(NULL, "mmc_fck", "mmc_fck"),
--	DT_CLK(NULL, "eac_ick", "eac_ick"),
--	DT_CLK(NULL, "eac_fck", "eac_fck"),
--	DT_CLK(NULL, "i2c1_fck", "i2c1_fck"),
--	DT_CLK(NULL, "i2c2_fck", "i2c2_fck"),
--	DT_CLK(NULL, "vlynq_ick", "vlynq_ick"),
--	DT_CLK(NULL, "vlynq_fck", "vlynq_fck"),
- 	DT_CLK("musb-hdrc", "fck", "osc_ck"),
- 	{ .node_name = NULL },
- };
- 
- static struct ti_dt_clk omap2430_clks[] = {
- 	DT_CLK("twl", "fck", "osc_ck"),
--	DT_CLK(NULL, "iva2_1_ick", "iva2_1_ick"),
--	DT_CLK(NULL, "mdm_ick", "mdm_ick"),
--	DT_CLK(NULL, "mdm_osc_ck", "mdm_osc_ck"),
- 	DT_CLK("omap-mcbsp.3", "ick", "mcbsp3_ick"),
--	DT_CLK(NULL, "mcbsp3_ick", "mcbsp3_ick"),
--	DT_CLK(NULL, "mcbsp3_fck", "mcbsp3_fck"),
- 	DT_CLK("omap-mcbsp.4", "ick", "mcbsp4_ick"),
--	DT_CLK(NULL, "mcbsp4_ick", "mcbsp4_ick"),
--	DT_CLK(NULL, "mcbsp4_fck", "mcbsp4_fck"),
- 	DT_CLK("omap-mcbsp.5", "ick", "mcbsp5_ick"),
--	DT_CLK(NULL, "mcbsp5_ick", "mcbsp5_ick"),
--	DT_CLK(NULL, "mcbsp5_fck", "mcbsp5_fck"),
- 	DT_CLK("omap2_mcspi.3", "ick", "mcspi3_ick"),
--	DT_CLK(NULL, "mcspi3_ick", "mcspi3_ick"),
--	DT_CLK(NULL, "mcspi3_fck", "mcspi3_fck"),
--	DT_CLK(NULL, "icr_ick", "icr_ick"),
--	DT_CLK(NULL, "i2chs1_fck", "i2chs1_fck"),
--	DT_CLK(NULL, "i2chs2_fck", "i2chs2_fck"),
- 	DT_CLK("musb-omap2430", "ick", "usbhs_ick"),
--	DT_CLK(NULL, "usbhs_ick", "usbhs_ick"),
- 	DT_CLK("omap_hsmmc.0", "ick", "mmchs1_ick"),
--	DT_CLK(NULL, "mmchs1_ick", "mmchs1_ick"),
--	DT_CLK(NULL, "mmchs1_fck", "mmchs1_fck"),
- 	DT_CLK("omap_hsmmc.1", "ick", "mmchs2_ick"),
--	DT_CLK(NULL, "mmchs2_ick", "mmchs2_ick"),
--	DT_CLK(NULL, "mmchs2_fck", "mmchs2_fck"),
--	DT_CLK(NULL, "gpio5_ick", "gpio5_ick"),
--	DT_CLK(NULL, "gpio5_fck", "gpio5_fck"),
--	DT_CLK(NULL, "mdm_intc_ick", "mdm_intc_ick"),
- 	DT_CLK("omap_hsmmc.0", "mmchsdb_fck", "mmchsdb1_fck"),
--	DT_CLK(NULL, "mmchsdb1_fck", "mmchsdb1_fck"),
- 	DT_CLK("omap_hsmmc.1", "mmchsdb_fck", "mmchsdb2_fck"),
--	DT_CLK(NULL, "mmchsdb2_fck", "mmchsdb2_fck"),
- 	{ .node_name = NULL },
- };
- 
-@@ -239,10 +96,10 @@ static int __init omap2xxx_dt_clk_init(int soc_type)
- 				     ARRAY_SIZE(enable_init_clks));
- 
- 	pr_info("Clocking rate (Crystal/DPLL/MPU): %ld.%01ld/%ld/%ld MHz\n",
--		(clk_get_rate(clk_get_sys(NULL, "sys_ck")) / 1000000),
--		(clk_get_rate(clk_get_sys(NULL, "sys_ck")) / 100000) % 10,
--		(clk_get_rate(clk_get_sys(NULL, "dpll_ck")) / 1000000),
--		(clk_get_rate(clk_get_sys(NULL, "mpu_ck")) / 1000000));
-+		(clk_get_rate(ti_clk_get("sys_ck")) / 1000000),
-+		(clk_get_rate(ti_clk_get("sys_ck")) / 100000) % 10,
-+		(clk_get_rate(ti_clk_get("dpll_ck")) / 1000000),
-+		(clk_get_rate(ti_clk_get("mpu_ck")) / 1000000));
- 
- 	return 0;
+ 	return err;
+@@ -515,8 +515,13 @@ EXPORT_SYMBOL_GPL(pwm_enable);
+  */
+ void pwm_disable(struct pwm_device *pwm)
+ {
+-	if (pwm && test_and_clear_bit(PWMF_ENABLED, &pwm->flags))
++	if (!pwm)
++		return;
++
++	if (pwm_is_enabled(pwm)) {
+ 		pwm->chip->ops->disable(pwm->chip, pwm);
++		pwm->state.enabled = false;
++	}
  }
+ EXPORT_SYMBOL_GPL(pwm_disable);
+ 
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 3022c05..7bfeacf 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -93,8 +93,7 @@ struct pwm_args {
+ 
+ enum {
+ 	PWMF_REQUESTED = 1 << 0,
+-	PWMF_ENABLED = 1 << 1,
+-	PWMF_EXPORTED = 1 << 2,
++	PWMF_EXPORTED = 1 << 1,
+ };
+ 
+ /*
+@@ -102,11 +101,13 @@ enum {
+  * @period: PWM period (in nanoseconds)
+  * @duty_cycle: PWM duty cycle (in nanoseconds)
+  * @polarity: PWM polarity
++ * @enabled: PWM enabled status
+  */
+ struct pwm_state {
+ 	unsigned int period;
+ 	unsigned int duty_cycle;
+ 	enum pwm_polarity polarity;
++	bool enabled;
+ };
+ 
+ /**
+@@ -145,7 +146,11 @@ static inline void pwm_get_state(const struct pwm_device *pwm,
+ 
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+ {
+-	return test_bit(PWMF_ENABLED, &pwm->flags);
++	struct pwm_state state;
++
++	pwm_get_state(pwm, &state);
++
++	return state.enabled;
+ }
+ 
+ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
 -- 
-1.7.9.5
+2.5.0
