@@ -1,54 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:40209 "EHLO
-	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752585AbcDAWZ6 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2016 18:25:58 -0400
-Message-ID: <1459549543.32510.28.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Yangbo Lu <yangbo.lu@nxp.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Jochen Friedrich <jochen@scram.de>, scott.wood@nxp.com,
-	Rob Herring <robh+dt@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Date: Fri, 01 Apr 2016 17:25:43 -0500
-In-Reply-To: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [v7, 0/5] Fix eSDHC host version register bug
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160413180122.4f997a9a@free-electrons.com>
+References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160328194756.GA28967@rob-hp-laptop>
+	<20160413180122.4f997a9a@free-electrons.com>
+Date: Thu, 14 Apr 2016 21:19:54 +0200
+Message-ID: <CAMuHMdVYtXEZF0+G3W+Q8cDcBFB55s1ru6N6J3tgFy9BcGZiXw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell CP110
+ system controller
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-04-01 at 11:07 +0800, Yangbo Lu wrote:
-> This patchset is used to fix a host version register bug in the T4240-R1.0
-> -R2.0
-> eSDHC controller. To get the SoC version and revision, it's needed to add
-> the
-> GUTS driver to access the global utilities registers.
-> 
-> So, the first three patches are to add the GUTS driver.
-> The following two patches are to enable GUTS driver support to get SVR in
-> eSDHC
-> driver and fix host version for T4240.
-> 
-> Yangbo Lu (5):
->   ARM64: dts: ls2080a: add device configuration node
->   soc: fsl: add GUTS driver for QorIQ platforms
->   dt: move guts devicetree doc out of powerpc directory
->   powerpc/fsl: move mpc85xx.h to include/linux/fsl
->   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Bonsoir Thomas,
 
-Acked-by: Scott Wood <oss@buserror.net>
+On Wed, Apr 13, 2016 at 6:01 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
+> On Mon, 28 Mar 2016 14:47:56 -0500, Rob Herring wrote:
+>
+>> > + - reg: register area of the CP110 system controller 0
+>> > + - #clock-cells: must be set to 2
+>> > + - core-clock-output-names must be set to:
+>> > +    "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
+>> > + - gatable-clock-indices must be set to:
+>> > +   <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
+>> > +   <9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
+>> > +   <22>, <23>, <24>, <25>, <26>
+>>
+>> You aren't skipping very many spots. I'd just fill the unused names in
+>> with "none" or something.
+>>
+>> > + - gatable-clock-output-names must be set to:
+>> > +   "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+>> > +   "cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "cpm-pcie_x10",
+>> > +   "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata", "cpm-sata-usb",
+>> > +   "cpm-gop-macro", "cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150",
+>> > +   "cpm-eip197"
+>
+> In fact, the more I think of it, the less I find encoding the clock
+> output names in the DT to be useful for such a driver. For generic
+> clock drivers, it makes complete sense, but here the driver is really
+> tied to the specific system controller of that SoC, so the clock names
+> will not change.
+>
+> In addition, those gatable clocks are not independent from each other:
+> many of them are parent from others (this wasn't encoded into the
+> driver until now, because I didn't had this info until now). So the
+> driver will anyway have to have a lot of knowledge about which clock is
+> child/parent of which one. Which means the driver is anyway really
+> tied to that specific system controller.
+>
+> Does it still make sense to encode the clock names in the DT in such a
+> case, or should the driver be providing the clock names?
+>
+> (I don't have a strong opinion either way, I'm just asking what is the
+> preference of the DT and clock maintainers on the matter.).
 
--Scott
+>From my experience with clock drivers for Renesas SoCs, life is much easier
+when handling all of this (clock names, parents, ...) in C. The same is true
+BTW for PM Domains.
 
+The clock controllers of r8a7791 and r8a7795 are very similar, and could
+be handled similarly.
+Compare the DT hierarchy for CPG and MSTP/MSSR in
+arch/arm/boot/dts/r8a7791.dtsi and arch/arm64/boot/dts/renesas/r8a7795.dtsi.
+
+Binding definitions are
+    include/dt-bindings/clock/r8a7791-clock.h
+vs
+    include/dt-bindings/clock/r8a7795-cpg-mssr.h
+
+Corresponding drivers are
+    drivers/clk/renesas/clk-rcar-gen2.c
+    drivers/clk/renesas/clk-mstp.c
+vs.
+    drivers/clk/renesas/r8a7795-cpg-mssr.c
+    drivers/clk/renesas/renesas-cpg-mssr.c
+    drivers/clk/renesas/renesas-cpg-mssr.h
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
