@@ -1,624 +1,489 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	bjorn.andersson@linaro.org,
-	zhang.chunyan@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v8 2/3] clk: qcom: Add support for RPM Clocks
-Date: Thu, 14 Apr 2016 17:34:48 +0300
-Message-Id: <1460644489-11310-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1460644489-11310-1-git-send-email-georgi.djakov@linaro.org>
-References: <1460644489-11310-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 23/28] clk: ti: add support for omap4 module clocks
+Date: Thu, 14 Apr 2016 14:08:12 +0300
+Message-ID: <1460632097-25727-24-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds initial support for clocks controlled by the Resource
-Power Manager (RPM) processor on some Qualcomm SoCs, which use
-the qcom_rpm driver to communicate with RPM.
-Such platforms are apq8064 and msm8960.
+Previously, hwmod core has been used for controlling the hwmod level
+clocks. This has certain drawbacks, like being unable to share the
+clocks for multiple users, missing usecounting and generally being
+totally incompatible with common clock framework.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Add support for new clock type under the TI clock driver, which will
+be used to convert all the existing hwmdo clocks to. This helps to
+get rid of the clock related hwmod data from kernel and instead
+parsing this from DT.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |    1 +
- drivers/clk/qcom/Kconfig                           |   13 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-rpm.c                         |  503 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             |   24 +
- 5 files changed, 542 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-rpm.c
+ drivers/clk/ti/Makefile   |    3 +-
+ drivers/clk/ti/clkt_mod.c |  414 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/ti.h    |    2 +
+ 3 files changed, 418 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/ti/clkt_mod.c
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index e3e13226d798..87d3714b956a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -11,6 +11,7 @@ Required properties :
-                compatible "qcom,rpmcc" should be also included.
- 
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
-+			"qcom,rpmcc-apq8064", "qcom,rpmcc"
- 
- - #clock-cells : shall contain 1
- 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index eb1946b95fb2..b94edf04fa67 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -12,6 +12,19 @@ config COMMON_CLK_QCOM
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
- 
-+config QCOM_CLK_RPM
-+	tristate "RPM based Clock Controller"
-+	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-+	select QCOM_RPMCC
-+	help
-+	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-+	  managing the shared SoC resources in order to keep the lowest power
-+	  profile. It communicates with other hardware subsystems via shared
-+	  memory and accepts clock requests, aggregates the requests and turns
-+	  the clocks on/off or scales them on demand.
-+	  Say Y if you want to support the clocks exposed by the RPM on
-+	  platforms such as apq8064, msm8660, msm8960 etc.
-+
- config QCOM_CLK_SMD_RPM
- 	tristate "RPM over SMD based Clock Controller"
- 	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index b51625f56d4c..d6fd6e9e98a7 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -26,4 +26,5 @@ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
+index 0deac98..15886ef 100644
+--- a/drivers/clk/ti/Makefile
++++ b/drivers/clk/ti/Makefile
+@@ -3,7 +3,8 @@ ifeq ($(CONFIG_ARCH_OMAP2PLUS), y)
+ obj-y					+= clk.o autoidle.o clockdomain.o
+ clk-common				= dpll.o composite.o divider.o gate.o \
+ 					  fixed-factor.o mux.o apll.o \
+-					  clkt_dpll.o clkt_iclk.o clkt_dflt.o
++					  clkt_dpll.o clkt_iclk.o clkt_dflt.o \
++					  clkt_mod.o
+ obj-$(CONFIG_SOC_AM33XX)		+= $(clk-common) clk-33xx.o dpll3xxx.o
+ obj-$(CONFIG_SOC_TI81XX)		+= $(clk-common) fapll.o clk-814x.o clk-816x.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= $(clk-common) interface.o clk-2xxx.o
+diff --git a/drivers/clk/ti/clkt_mod.c b/drivers/clk/ti/clkt_mod.c
 new file mode 100644
-index 000000000000..05cf83c2ca83
+index 0000000..a201cc6
 --- /dev/null
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -0,0 +1,503 @@
++++ b/drivers/clk/ti/clkt_mod.c
+@@ -0,0 +1,414 @@
 +/*
-+ * Copyright (c) 2016, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ * OMAP hardware module clock support
 + *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
++ * Copyright (C) 2015 Texas Instruments, Inc.
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * Tero Kristo <t-kristo@ti.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
 + */
 +
 +#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/mfd/qcom_rpm.h>
++#include <linux/slab.h>
 +#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
++#include <linux/of_address.h>
++#include <linux/clk/ti.h>
++#include <linux/delay.h>
++#include "clock.h"
 +
-+#include <dt-bindings/mfd/qcom-rpm.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
++#undef pr_fmt
++#define pr_fmt(fmt) "%s: " fmt, __func__
 +
-+#define QCOM_RPM_MISC_CLK_TYPE				0x306b6c63
-+#define QCOM_RPM_SCALING_ENABLE_ID			0x2
++#define NO_IDLEST			0x1
 +
-+#define DEFINE_CLK_RPM(_platform, _name, _active, r_id)			      \
-+	static struct clk_rpm _platform##_##_active;			      \
-+	static struct clk_rpm _platform##_##_name = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.peer = &_platform##_##_active,				      \
-+		.rate = INT_MAX,					      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_ops,				      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "pxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	};								      \
-+	static struct clk_rpm _platform##_##_active = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.peer = &_platform##_##_name,				      \
-+		.active_only = true,					      \
-+		.rate = INT_MAX,					      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_ops,				      \
-+			.name = #_active,				      \
-+			.parent_names = (const char *[]){ "pxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
++#define OMAP4_MODULEMODE_MASK		0x3
 +
-+#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
-+	static struct clk_rpm _platform##_##_active;			      \
-+	static struct clk_rpm _platform##_##_name = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.active_only = true,					      \
-+		.peer = &_platform##_##_active,				      \
-+		.rate = (r),						      \
-+		.branch = true,						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_branch_ops,			      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "pxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	};								      \
-+	static struct clk_rpm _platform##_##_active = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.peer = &_platform##_##_name,				      \
-+		.rate = (r),						      \
-+		.branch = true,						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_branch_ops,			      \
-+			.name = #_active,				      \
-+			.parent_names = (const char *[]){ "pxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
++#define MODULEMODE_HWCTRL		0x1
++#define MODULEMODE_SWCTRL		0x2
 +
-+#define DEFINE_CLK_RPM_CXO_BRANCH(_platform, _name, _active, r_id, r)	      \
-+	static struct clk_rpm _platform##_##_active;			      \
-+	static struct clk_rpm _platform##_##_name = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.peer = &_platform##_##_active,				      \
-+		.rate = (r),						      \
-+		.branch = true,						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_branch_ops,			      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "cxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	};								      \
-+	static struct clk_rpm _platform##_##_active = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.active_only = true,					      \
-+		.peer = &_platform##_##_name,				      \
-+		.rate = (r),						      \
-+		.branch = true,						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_branch_ops,			      \
-+			.name = #_active,				      \
-+			.parent_names = (const char *[]){ "cxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
++#define OMAP4_IDLEST_MASK		(0x3 << 16)
++#define OMAP4_IDLEST_SHIFT		16
 +
-+#define to_clk_rpm(_hw) container_of(_hw, struct clk_rpm, hw)
++#define CLKCTRL_IDLEST_FUNCTIONAL	0x0
++#define CLKCTRL_IDLEST_INTERFACE_IDLE	0x2
++#define CLKCTRL_IDLEST_DISABLED		0x3
 +
-+struct clk_rpm {
-+	const int rpm_clk_id;
-+	const bool active_only;
-+	unsigned long rate;
-+	bool enabled;
-+	bool branch;
-+	struct clk_rpm *peer;
-+	struct clk_hw hw;
-+	struct qcom_rpm *rpm;
++/* These timeouts are in us */
++#define OMAP4_MAX_MODULE_READY_TIME	2000
++#define OMAP4_MAX_MODULE_DISABLE_TIME	5000
++
++static bool _early_timeout = true;
++
++union omap4_timeout {
++	u32 cycles;
++	ktime_t start;
 +};
 +
-+struct rpm_cc {
-+	struct qcom_rpm *rpm;
-+	struct clk_onecell_data data;
-+	struct clk *clks[];
-+};
-+
-+struct rpm_clk_desc {
-+	struct clk_rpm **clks;
-+	size_t num_clks;
-+};
-+
-+static DEFINE_MUTEX(rpm_clk_lock);
-+
-+static int clk_rpm_handoff(struct clk_rpm *r)
++static u32 _omap4_idlest(u32 val)
 +{
-+	int ret;
-+	u32 value = INT_MAX;
++	val &= OMAP4_IDLEST_MASK;
++	val >>= OMAP4_IDLEST_SHIFT;
 +
-+	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			     r->rpm_clk_id, &value, 1);
-+	if (ret)
-+		return ret;
-+	ret = qcom_rpm_write(r->rpm, QCOM_RPM_SLEEP_STATE,
-+			     r->rpm_clk_id, &value, 1);
-+	if (ret)
-+		return ret;
++	return val;
++}
++
++static bool _omap4_is_idle(u32 val)
++{
++	val = _omap4_idlest(val);
++
++	return val == CLKCTRL_IDLEST_DISABLED;
++}
++
++static bool _omap4_is_ready(u32 val)
++{
++	val = _omap4_idlest(val);
++
++	return val == CLKCTRL_IDLEST_FUNCTIONAL ||
++	       val == CLKCTRL_IDLEST_INTERFACE_IDLE;
++}
++
++static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
++{
++	if (unlikely(_early_timeout)) {
++		if (time->cycles++ < timeout) {
++			udelay(1);
++			return false;
++		}
++	} else {
++		if (!ktime_to_ns(time->start)) {
++			time->start = ktime_get();
++			return false;
++		}
++
++		if (ktime_us_delta(ktime_get(), time->start) < timeout) {
++			cpu_relax();
++			return false;
++		}
++	}
++
++	return true;
++}
++
++static int __init _omap4_disable_early_timeout(void)
++{
++	_early_timeout = false;
++
++	return 0;
++}
++arch_initcall(_omap4_disable_early_timeout);
++
++static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	u32 val;
++	int ret;
++	union omap4_timeout timeout = { 0 };
++
++	if (!clk->enable_bit)
++		return 0;
++
++	if (clk->clkdm) {
++		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
++		if (ret) {
++			WARN(1,
++			     "%s: could not enable %s's clockdomain %s: %d\n",
++			     __func__, clk_hw_get_name(hw),
++			     clk->clkdm_name, ret);
++			return ret;
++		}
++	}
++
++	val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
++
++	val &= ~OMAP4_MODULEMODE_MASK;
++	val |= clk->enable_bit;
++
++	ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
++
++	if (clk->flags & NO_IDLEST)
++		return 0;
++
++	/* Wait until module is enabled */
++	while (!_omap4_is_ready(ti_clk_ll_ops->clk_readl(clk->enable_reg))) {
++		if (_omap4_is_timeout(&timeout, OMAP4_MAX_MODULE_READY_TIME)) {
++			pr_err("%s: failed to enable\n", clk_hw_get_name(hw));
++			return -EBUSY;
++		}
++	}
 +
 +	return 0;
 +}
 +
-+static int clk_rpm_set_rate_active(struct clk_rpm *r, unsigned long rate)
++static void _omap4_hwmod_clk_disable(struct clk_hw *hw)
 +{
-+	u32 value = DIV_ROUND_UP(rate, 1000); /* to kHz */
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	u32 val;
++	union omap4_timeout timeout = { 0 };
 +
-+	return qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			      r->rpm_clk_id, &value, 1);
++	if (!clk->enable_bit)
++		return;
++
++	val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
++
++	val &= ~OMAP4_MODULEMODE_MASK;
++
++	ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
++
++	if (clk->flags & NO_IDLEST)
++		return;
++
++	/* Wait until module is disabled */
++	while (!_omap4_is_idle(ti_clk_ll_ops->clk_readl(clk->enable_reg))) {
++		if (_omap4_is_timeout(&timeout,
++				      OMAP4_MAX_MODULE_DISABLE_TIME)) {
++			pr_err("%s: failed to disable\n", clk_hw_get_name(hw));
++			break;
++		}
++	}
++
++	if (clk->clkdm)
++		ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
 +}
 +
-+static int clk_rpm_set_rate_sleep(struct clk_rpm *r, unsigned long rate)
++static int _omap4_hwmod_clk_is_enabled(struct clk_hw *hw)
 +{
-+	u32 value = DIV_ROUND_UP(rate, 1000); /* to kHz */
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	u32 val;
 +
-+	return qcom_rpm_write(r->rpm, QCOM_RPM_SLEEP_STATE,
-+			      r->rpm_clk_id, &value, 1);
++	val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
++
++	if (val & clk->enable_bit)
++		return 1;
++
++	return 0;
 +}
 +
-+static void to_active_sleep(struct clk_rpm *r, unsigned long rate,
-+			    unsigned long *active, unsigned long *sleep)
-+{
-+	*active = rate;
-+
-+	/*
-+	 * Active-only clocks don't care what the rate is during sleep. So,
-+	 * they vote for zero.
-+	 */
-+	if (r->active_only)
-+		*sleep = 0;
-+	else
-+		*sleep = *active;
-+}
-+
-+static int clk_rpm_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	struct clk_rpm *peer = r->peer;
-+	unsigned long this_rate = 0, this_sleep_rate = 0;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	unsigned long active_rate, sleep_rate;
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	/* Don't send requests to the RPM if the rate has not been set. */
-+	if (!r->rate)
-+		goto out;
-+
-+	to_active_sleep(r, r->rate, &this_rate, &this_sleep_rate);
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate,
-+				&peer_rate, &peer_sleep_rate);
-+
-+	active_rate = max(this_rate, peer_rate);
-+
-+	if (r->branch)
-+		active_rate = !!active_rate;
-+
-+	ret = clk_rpm_set_rate_active(r, active_rate);
-+	if (ret)
-+		goto out;
-+
-+	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
-+	if (r->branch)
-+		sleep_rate = !!sleep_rate;
-+
-+	ret = clk_rpm_set_rate_sleep(r, sleep_rate);
-+	if (ret)
-+		/* Undo the active set vote and restore it */
-+		ret = clk_rpm_set_rate_active(r, peer_rate);
-+
-+out:
-+	if (!ret)
-+		r->enabled = true;
-+
-+	mutex_unlock(&rpm_clk_lock);
-+
-+	return ret;
-+}
-+
-+static void clk_rpm_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	struct clk_rpm *peer = r->peer;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	unsigned long active_rate, sleep_rate;
-+	int ret;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (!r->rate)
-+		goto out;
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate, &peer_rate,
-+				&peer_sleep_rate);
-+
-+	active_rate = r->branch ? !!peer_rate : peer_rate;
-+	ret = clk_rpm_set_rate_active(r, active_rate);
-+	if (ret)
-+		goto out;
-+
-+	sleep_rate = r->branch ? !!peer_sleep_rate : peer_sleep_rate;
-+	ret = clk_rpm_set_rate_sleep(r, sleep_rate);
-+	if (ret)
-+		goto out;
-+
-+	r->enabled = false;
-+
-+out:
-+	mutex_unlock(&rpm_clk_lock);
-+}
-+
-+static int clk_rpm_set_rate(struct clk_hw *hw,
-+			    unsigned long rate, unsigned long parent_rate)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	struct clk_rpm *peer = r->peer;
-+	unsigned long active_rate, sleep_rate;
-+	unsigned long this_rate = 0, this_sleep_rate = 0;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (!r->enabled)
-+		goto out;
-+
-+	to_active_sleep(r, rate, &this_rate, &this_sleep_rate);
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate,
-+				&peer_rate, &peer_sleep_rate);
-+
-+	active_rate = max(this_rate, peer_rate);
-+	ret = clk_rpm_set_rate_active(r, active_rate);
-+	if (ret)
-+		goto out;
-+
-+	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
-+	ret = clk_rpm_set_rate_sleep(r, sleep_rate);
-+	if (ret)
-+		goto out;
-+
-+	r->rate = rate;
-+
-+out:
-+	mutex_unlock(&rpm_clk_lock);
-+
-+	return ret;
-+}
-+
-+static long clk_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate is requested.
-+	 */
-+	return rate;
-+}
-+
-+static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate was set.
-+	 */
-+	return r->rate;
-+}
-+
-+static const struct clk_ops clk_rpm_ops = {
-+	.prepare	= clk_rpm_prepare,
-+	.unprepare	= clk_rpm_unprepare,
-+	.set_rate	= clk_rpm_set_rate,
-+	.round_rate	= clk_rpm_round_rate,
-+	.recalc_rate	= clk_rpm_recalc_rate,
++static const struct clk_ops omap4_module_clk_ops = {
++	.enable		= _omap4_hwmod_clk_enable,
++	.disable	= _omap4_hwmod_clk_disable,
++	.is_enabled	= _omap4_hwmod_clk_is_enabled,
 +};
 +
-+static const struct clk_ops clk_rpm_branch_ops = {
-+	.prepare	= clk_rpm_prepare,
-+	.unprepare	= clk_rpm_unprepare,
-+	.round_rate	= clk_rpm_round_rate,
-+	.recalc_rate	= clk_rpm_recalc_rate,
-+};
-+
-+/* apq8064 */
-+DEFINE_CLK_RPM_PXO_BRANCH(apq8064, pxo, pxo_a_clk, QCOM_RPM_PXO_CLK, 27000000);
-+DEFINE_CLK_RPM_CXO_BRANCH(apq8064, cxo, cxo_a_clk, QCOM_RPM_CXO_CLK, 19200000);
-+DEFINE_CLK_RPM(apq8064, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-+DEFINE_CLK_RPM(apq8064, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-+DEFINE_CLK_RPM(apq8064, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-+DEFINE_CLK_RPM(apq8064, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-+DEFINE_CLK_RPM(apq8064, qdss_clk, qdss_a_clk, QCOM_RPM_QDSS_CLK);
-+
-+static struct clk_rpm *apq8064_clks[] = {
-+	[RPM_PXO_CLK] = &apq8064_pxo,
-+	[RPM_PXO_A_CLK] = &apq8064_pxo_a_clk,
-+	[RPM_CXO_CLK] = &apq8064_cxo,
-+	[RPM_CXO_A_CLK] = &apq8064_cxo_a_clk,
-+	[RPM_APPS_FABRIC_CLK] = &apq8064_afab_clk,
-+	[RPM_APPS_FABRIC_A_CLK] = &apq8064_afab_a_clk,
-+	[RPM_CFPB_CLK] = &apq8064_cfpb_clk,
-+	[RPM_CFPB_A_CLK] = &apq8064_cfpb_a_clk,
-+	[RPM_DAYTONA_FABRIC_CLK] = &apq8064_daytona_clk,
-+	[RPM_DAYTONA_FABRIC_A_CLK] = &apq8064_daytona_a_clk,
-+	[RPM_EBI1_CLK] = &apq8064_ebi1_clk,
-+	[RPM_EBI1_A_CLK] = &apq8064_ebi1_a_clk,
-+	[RPM_MM_FABRIC_CLK] = &apq8064_mmfab_clk,
-+	[RPM_MM_FABRIC_A_CLK] = &apq8064_mmfab_a_clk,
-+	[RPM_MMFPB_CLK] = &apq8064_mmfpb_clk,
-+	[RPM_MMFPB_A_CLK] = &apq8064_mmfpb_a_clk,
-+	[RPM_SYS_FABRIC_CLK] = &apq8064_sfab_clk,
-+	[RPM_SYS_FABRIC_A_CLK] = &apq8064_sfab_a_clk,
-+	[RPM_SFPB_CLK] = &apq8064_sfpb_clk,
-+	[RPM_SFPB_A_CLK] = &apq8064_sfpb_a_clk,
-+	[RPM_QDSS_CLK] = &apq8064_qdss_clk,
-+	[RPM_QDSS_A_CLK] = &apq8064_qdss_a_clk,
-+};
-+
-+static const struct rpm_clk_desc rpm_clk_apq8064 = {
-+	.clks = apq8064_clks,
-+	.num_clks = ARRAY_SIZE(apq8064_clks),
-+};
-+
-+static const struct of_device_id rpm_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
-+
-+static int rpm_clk_probe(struct platform_device *pdev)
++static void __init _of_ti_hwmod_clk_setup(struct device_node *node,
++					  u8 modulemode, u8 flags)
 +{
-+	struct clk **clks;
++	const char *parent_name;
++	void __iomem *reg;
++	u8 enable_bit;
++	struct clk_hw_omap *clk_hw;
++	struct clk_init_data init = { NULL };
 +	struct clk *clk;
-+	struct rpm_cc *rcc;
-+	struct clk_onecell_data *data;
-+	int ret;
-+	size_t num_clks, i;
-+	struct qcom_rpm *rpm;
-+	struct clk_rpm **rpm_clks;
-+	const struct rpm_clk_desc *desc;
 +
-+	rpm = dev_get_drvdata(pdev->dev.parent);
-+	if (!rpm) {
-+		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
-+		return -ENODEV;
++	reg = ti_clk_get_reg_addr(node, 0);
++	if (IS_ERR(reg))
++		return;
++
++	parent_name = of_clk_get_parent_name(node, 0);
++	if (!parent_name) {
++		pr_err("%s must have 1 parent\n", node->name);
++		return;
 +	}
 +
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
++	enable_bit = modulemode;
 +
-+	rpm_clks = desc->clks;
-+	num_clks = desc->num_clks;
++	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
 +
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
-+			   GFP_KERNEL);
-+	if (!rcc)
-+		return -ENOMEM;
++	clk_hw->flags = flags;
 +
-+	clks = rcc->clks;
-+	data = &rcc->data;
-+	data->clks = clks;
-+	data->clk_num = num_clks;
++	clk_hw->enable_reg = reg;
++	clk_hw->enable_bit = enable_bit;
 +
-+	for (i = 0; i < num_clks; i++) {
-+		if (!rpm_clks[i]) {
-+			clks[i] = ERR_PTR(-ENOENT);
-+			continue;
-+		}
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = 0;
 +
-+		rpm_clks[i]->rpm = rpm;
++	init.ops = &omap4_module_clk_ops;
++	clk_hw->hw.init = &init;
++	init.name = node->name;
 +
-+		ret = clk_rpm_handoff(rpm_clks[i]);
-+		if (ret)
-+			goto err;
-+	}
++	clk = clk_register(NULL, &clk_hw->hw);
 +
-+	for (i = 0; i < num_clks; i++) {
-+		if (!rpm_clks[i]) {
-+			clks[i] = ERR_PTR(-ENOENT);
-+			continue;
-+		}
++	if (!IS_ERR(clk))
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
 +
-+		clk = devm_clk_register(&pdev->dev, &rpm_clks[i]->hw);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
-+			goto err;
-+		}
++static void __init of_ti_omap4_hwmod_clk_setup(struct device_node *node)
++{
++	_of_ti_hwmod_clk_setup(node, 0, 0);
++}
 +
-+		clks[i] = clk;
-+	}
++CLK_OF_DECLARE(ti_omap4_hwmod_clk, "ti,omap4-mod-clock",
++	       of_ti_omap4_hwmod_clk_setup);
 +
-+	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-+				  data);
-+	if (ret)
++static void __init of_ti_omap4_hwmod_hw_clk_setup(struct device_node *node)
++{
++	_of_ti_hwmod_clk_setup(node, MODULEMODE_HWCTRL, 0);
++}
++
++CLK_OF_DECLARE(ti_omap4_hwmod_hw_clk, "ti,omap4-hw-mod-clock",
++	       of_ti_omap4_hwmod_hw_clk_setup);
++
++static void __init of_ti_omap4_hwmod_sw_clk_setup(struct device_node *node)
++{
++	_of_ti_hwmod_clk_setup(node, MODULEMODE_SWCTRL, 0);
++}
++
++CLK_OF_DECLARE(ti_omap4_hwmod_sw_clk, "ti,omap4-sw-mod-clock",
++	       of_ti_omap4_hwmod_sw_clk_setup);
++
++static void __init
++of_ti_omap4_hwmod_sw_no_idlest_clk_setup(struct device_node *node)
++{
++	_of_ti_hwmod_clk_setup(node, MODULEMODE_SWCTRL, NO_IDLEST);
++}
++
++CLK_OF_DECLARE(ti_omap4_hwmod_sw_no_idlest_clk,
++	       "ti,omap4-sw-no-idlest-mod-clock",
++	       of_ti_omap4_hwmod_sw_no_idlest_clk_setup);
++
++static u8 _omap4_mux_mod_get_parent(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct clk_hw *mux_hw = clk->mux;
++
++	__clk_hw_set_clk(mux_hw, hw);
++
++	return ti_clk_mux_get_parent(mux_hw);
++}
++
++static int _omap4_mux_mod_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct clk_hw *mux_hw = clk->mux;
++
++	__clk_hw_set_clk(mux_hw, hw);
++
++	return ti_clk_mux_set_parent(mux_hw, index);
++}
++
++static int _omap4_mux_mod_determine_rate(struct clk_hw *hw,
++					 struct clk_rate_request *req)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct clk_hw *mux_hw = clk->mux;
++
++	__clk_hw_set_clk(mux_hw, hw);
++
++	return __clk_mux_determine_rate(mux_hw, req);
++}
++
++static const struct clk_ops omap4_mux_module_clk_ops = {
++	.enable		= _omap4_hwmod_clk_enable,
++	.disable	= _omap4_hwmod_clk_disable,
++	.is_enabled	= _omap4_hwmod_clk_is_enabled,
++	.get_parent	= _omap4_mux_mod_get_parent,
++	.set_parent	= _omap4_mux_mod_set_parent,
++	.determine_rate	= _omap4_mux_mod_determine_rate,
++};
++
++static void __init _of_ti_omap4_hwmod_mux_clk_setup(struct device_node *node,
++						    u8 modulemode)
++{
++	struct clk_hw_omap *gate;
++	struct clk_mux *mux;
++	int num_parents;
++	const char **parent_names = NULL;
++	u32 val;
++	void __iomem *reg;
++	struct clk *clk;
++	struct clk_init_data init = { NULL };
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++
++	if (!mux || !gate)
 +		goto err;
 +
-+	return 0;
++	gate->mux = &mux->hw;
++
++	if (!of_property_read_u32(node, "ti,bit-shift", &val))
++		mux->shift = val;
++
++	if (of_property_read_bool(node, "ti,index-starts-at-one"))
++		mux->flags |= CLK_MUX_INDEX_ONE;
++
++	num_parents = of_clk_get_parent_count(node);
++
++	if (num_parents < 2) {
++		pr_err("%s: must have parents\n", node->name);
++		goto err;
++	}
++
++	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
++	if (!parent_names)
++		goto err;
++
++	of_clk_parent_fill(node, parent_names, num_parents);
++
++	reg = ti_clk_get_reg_addr(node, 0);
++
++	if (IS_ERR(reg))
++		goto err;
++
++	gate->enable_bit = modulemode;
++	gate->enable_reg = reg;
++
++	reg = ti_clk_get_reg_addr(node, 1);
++
++	if (IS_ERR(reg))
++		goto err;
++
++	mux->reg = reg;
++
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++	init.flags = 0;
++
++	init.ops = &omap4_mux_module_clk_ops;
++	gate->hw.init = &init;
++	init.name = node->name;
++
++	clk = clk_register(NULL, &gate->hw);
++
++	if (!IS_ERR(clk)) {
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++		goto cleanup;
++	}
 +err:
-+	dev_err(&pdev->dev, "Error registering RPM Clock driver (%d)\n", ret);
-+	return ret;
++	kfree(gate);
++	kfree(mux);
++
++cleanup:
++	kfree(parent_names);
 +}
 +
-+static int rpm_clk_remove(struct platform_device *pdev)
++static void __init of_ti_omap4_hwmod_mux_clk_setup(struct device_node *node)
 +{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	return 0;
++	_of_ti_omap4_hwmod_mux_clk_setup(node, 0);
 +}
 +
-+static struct platform_driver rpm_clk_driver = {
-+	.driver = {
-+		.name = "qcom-clk-rpm",
-+		.of_match_table = rpm_clk_match_table,
-+	},
-+	.probe = rpm_clk_probe,
-+	.remove = rpm_clk_remove,
-+};
++CLK_OF_DECLARE(ti_omap4_mux_hwmod_clk, "ti,omap4-mux-mod-clock",
++	       of_ti_omap4_hwmod_mux_clk_setup);
 +
-+static int __init rpm_clk_init(void)
++static void __init of_ti_omap4_hwmod_sw_mux_clk_setup(struct device_node *node)
 +{
-+	return platform_driver_register(&rpm_clk_driver);
++	_of_ti_omap4_hwmod_mux_clk_setup(node, MODULEMODE_SWCTRL);
 +}
-+core_initcall(rpm_clk_init);
 +
-+static void __exit rpm_clk_exit(void)
++CLK_OF_DECLARE(ti_omap4_mux_hwmod_sw_clk, "ti,omap4-sw-mux-mod-clock",
++	       of_ti_omap4_hwmod_sw_mux_clk_setup);
++
++static void __init of_ti_omap4_hwmod_hw_mux_clk_setup(struct device_node *node)
 +{
-+	platform_driver_unregister(&rpm_clk_driver);
++	_of_ti_omap4_hwmod_mux_clk_setup(node, MODULEMODE_HWCTRL);
 +}
-+module_exit(rpm_clk_exit);
 +
-+MODULE_DESCRIPTION("Qualcomm RPM Clock Controller Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-clk-rpm");
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 9fae52dfe35a..5924cdb71336 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -14,6 +14,30 @@
- #ifndef _DT_BINDINGS_CLK_MSM_RPMCC_H
- #define _DT_BINDINGS_CLK_MSM_RPMCC_H
- 
-+/* apq8064 */
-+#define RPM_PXO_CLK				0
-+#define RPM_PXO_A_CLK				1
-+#define RPM_CXO_CLK				2
-+#define RPM_CXO_A_CLK				3
-+#define RPM_APPS_FABRIC_CLK			4
-+#define RPM_APPS_FABRIC_A_CLK			5
-+#define RPM_CFPB_CLK				6
-+#define RPM_CFPB_A_CLK				7
-+#define RPM_QDSS_CLK				8
-+#define RPM_QDSS_A_CLK				9
-+#define RPM_DAYTONA_FABRIC_CLK			10
-+#define RPM_DAYTONA_FABRIC_A_CLK		11
-+#define RPM_EBI1_CLK				12
-+#define RPM_EBI1_A_CLK				13
-+#define RPM_MM_FABRIC_CLK			14
-+#define RPM_MM_FABRIC_A_CLK			15
-+#define RPM_MMFPB_CLK				16
-+#define RPM_MMFPB_A_CLK				17
-+#define RPM_SYS_FABRIC_CLK			18
-+#define RPM_SYS_FABRIC_A_CLK			19
-+#define RPM_SFPB_CLK				20
-+#define RPM_SFPB_A_CLK				21
-+
- /* msm8916 */
- #define RPM_SMD_XO_CLK_SRC				0
- #define RPM_SMD_XO_A_CLK_SRC			1
++CLK_OF_DECLARE(ti_omap4_mux_hwmod_hw_clk, "ti,omap4-hw-mux-mod-clock",
++	       of_ti_omap4_hwmod_hw_mux_clk_setup);
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 1451291..4ba364e 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -127,6 +127,7 @@ struct clk_hw_omap_ops {
+  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
+  * @flags: see "struct clk.flags possibilities" above
+  * @clksel_reg: for clksel clks, register va containing src/divisor select
++ * @mux: for module clocks, pointer to the optional mux component
+  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
+  * @clkdm_name: clockdomain name that this clock is contained in
+  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
+@@ -141,6 +142,7 @@ struct clk_hw_omap {
+ 	u8			enable_bit;
+ 	u8			flags;
+ 	void __iomem		*clksel_reg;
++	struct clk_hw		*mux;
+ 	struct dpll_data	*dpll_data;
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+-- 
+1.7.9.5
