@@ -1,61 +1,39 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,  linux-clk@vger.kernel.org,  sjan@baylibre.com,  ahaslam@baylibre.com,  abailon@baylibre.com
-Subject: Re: [PATCH 4/5] dt-bindings: clock: add schrodinger clock bindings
-References: <1459510635-8204-1-git-send-email-narmstrong@baylibre.com>
-	<1459510635-8204-5-git-send-email-narmstrong@baylibre.com>
-	<20160401161840.23150.64514@quark.deferred.io>
-Date: Fri, 01 Apr 2016 11:27:25 -0700
-In-Reply-To: <20160401161840.23150.64514@quark.deferred.io> (Michael
-	Turquette's message of "Fri, 01 Apr 2016 09:18:40 -0700")
-Message-ID: <7hh9flnq0i.fsf@baylibre.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 02/28] clk: ti: dpll: use ti_clk_get to fetch ref/bypass clocks
+Date: Thu, 14 Apr 2016 14:07:51 +0300
+Message-ID: <1460632097-25727-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Michael Turquette <mturquette@baylibre.com> writes:
+This allows getting rid of the DT_CLK() aliases under drivers/clk/ti.
 
-> Quoting Neil Armstrong (2016-04-01 04:37:14)
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  .../devicetree/bindings/clock/schrodinger.txt          | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/schrodinger.txt
->> 
->> diff --git a/Documentation/devicetree/bindings/clock/schrodinger.txt b/Documentation/devicetree/bindings/clock/schrodinger.txt
->> new file mode 100644
->> index 0000000..ecb1a51
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/schrodinger.txt
->> @@ -0,0 +1,18 @@
->> +Binding for schrodinger Quantum clock sources.
->> +
->> +This binding uses the common clock binding[1].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Required properties:
->> +- compatible : shall be "schrodinger-clock".
->> +- #clock-cells : from common clock binding; shall be set to 0.
->> +
->> +Optional properties:
->> +- clock-output-names : From common clock binding.
->> +
->> +Example:
->> +       cat {
->> +               compatible = "schrodinger-clock";
->> +               #clock-cells = <0>;
->
-> I know it is out of scope for this series, but I wonder what would
-> constitute a valid status property for the cat node? Should we propose
-> adding "dead" and "alive" values to the status property in ePAPR?
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/dpll.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-IMO, "dead" and "alive" could probably be mapped onto "ok" and
-"disabled" without too much confusion.
-
-However, with this series, we will clearly need to add support for
-status = "both".;
-
-Kevin
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 3bc9959..0042fc2 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -220,8 +220,8 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
+ 	if (dpll->num_parents < 2)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	clk_ref = clk_get_sys(NULL, dpll->parents[0]);
+-	clk_bypass = clk_get_sys(NULL, dpll->parents[1]);
++	clk_ref = ti_clk_get(dpll->parents[0]);
++	clk_bypass = ti_clk_get(dpll->parents[1]);
+ 
+ 	if (IS_ERR_OR_NULL(clk_ref) || IS_ERR_OR_NULL(clk_bypass))
+ 		return ERR_PTR(-EAGAIN);
+-- 
+1.7.9.5
