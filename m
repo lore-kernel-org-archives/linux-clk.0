@@ -1,265 +1,129 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:36701 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752087AbcDRKBq (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 06:01:46 -0400
-Received: by mail-wm0-f41.google.com with SMTP id v188so111503000wme.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2016 03:01:45 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
-Date: Mon, 18 Apr 2016 12:01:35 +0200
-Message-Id: <1460973696-5977-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
-References: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v5 4/5] dt-bindings: arm: add DT binding for Marvell CP110 system controller
+Date: Thu, 14 Apr 2016 17:33:32 +0200
+Message-Id: <1460648013-31320-5-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Oxford Semiconductor OXNAS SoC Family Standard Clocks support.
+This commit adds the DT binding documentation for the Marvell CP110
+system controller, which is part of the CP110 HW block, itself used in
+the Marvell Armada 7K and 8K SoCs.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/Kconfig     |   6 ++
- drivers/clk/Makefile    |   1 +
- drivers/clk/clk-oxnas.c | 198 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 205 insertions(+)
- create mode 100644 drivers/clk/clk-oxnas.c
+ .../arm/marvell/cp110-system-controller0.txt       | 83 ++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..f87c027 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -197,6 +197,12 @@ config COMMON_CLK_PXA
- 	---help---
- 	  Support for the Marvell PXA SoC.
- 
-+config COMMON_CLK_OXNAS
-+	bool "Clock driver for the OXNAS SoC Family"
-+	select MFD_SYSCON
-+	---help---
-+	  Support for the OXNAS SoC Family clocks.
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 46869d6..627da26 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
-+obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
 new file mode 100644
-index 0000000..d57bb48
+index 0000000..30c5469
 --- /dev/null
-+++ b/drivers/clk/clk-oxnas.c
-@@ -0,0 +1,198 @@
-+/*
-+ * Copyright (C) 2010 Broadcom
-+ * Copyright (C) 2012 Stephen Warren
-+ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -0,0 +1,83 @@
++Marvell Armada CP110 System Controller 0
++========================================
 +
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/stringify.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
++The CP110 is one of the two core HW blocks of the Marvell Armada 7K/8K
++SoCs. It contains two sets of system control registers, System
++Controller 0 and System Controller 1. This Device Tree binding allows
++to describe the first system controller, which provides registers to
++configure various aspects of the SoC.
 +
-+/* Standard regmap gate clocks */
-+struct clk_oxnas {
-+	struct clk_hw hw;
-+	signed char bit;
-+	struct regmap *regmap;
-+};
++The Device Tree node representing this System Controller 0 provides a
++number of clocks:
 +
-+/* Regmap offsets */
-+#define CLK_STAT_REGOFFSET	0x24
-+#define CLK_SET_REGOFFSET	0x2c
-+#define CLK_CLR_REGOFFSET	0x30
++ - a set of core clocks
++ - a set of gatable clocks
 +
-+static inline struct clk_oxnas *to_clk_oxnas(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct clk_oxnas, hw);
-+}
++Those clocks can be referenced by other Device Tree nodes using two
++cells:
++ - The first cell must be 0 or 1. 0 for the core clocks and 1 for the
++   gatable clocks.
++ - The second cell identifies the particular core clock or gatable
++   clocks.
 +
-+static int oxnas_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
-+	int ret;
-+	unsigned int val;
++The following clocks are available:
++ - Core clocks
++   - 0 0	APLL
++   - 0 1	PPv2 core
++   - 0 2	EIP
++   - 0 3	Core
++   - 0 4	NAND core
++ - Gatable clocks
++   - 1 0	Audio
++   - 1 1	Comm Unit
++   - 1 2	NAND
++   - 1 3	PPv2
++   - 1 4	SDIO
++   - 1 5	MG Domain
++   - 1 6	MG Core
++   - 1 7	XOR1
++   - 1 8	XOR0
++   - 1 9	GOP DP
++   - 1 11	PCIe x1 0
++   - 1 12	PCIe x1 1
++   - 1 13	PCIe x4
++   - 1 14	PCIe / XOR
++   - 1 15	SATA
++   - 1 16	SATA USB
++   - 1 17	Main
++   - 1 18	SD/MMC
++   - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
++   - 1 22	USB3H0
++   - 1 23	USB3H1
++   - 1 24	USB3 Device
++   - 1 25	EIP150
++   - 1 26	EIP197
 +
-+	ret = regmap_read(std->regmap, CLK_STAT_REGOFFSET, &val);
-+	if (ret < 0)
-+		return ret;
++Required properties:
 +
-+	return val & BIT(std->bit);
-+}
++ - compatible: must be:
++     "marvell,cp110-system-controller0", "syscon";
++ - reg: register area of the CP110 system controller 0
++ - #clock-cells: must be set to 2
++ - core-clock-output-names must be set to:
++	"cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
++ - gate-clock-output-names must be set to:
++	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
++	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
++	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
++	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
++	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
 +
-+static int oxnas_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
++Example:
 +
-+	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
-+
-+	return 0;
-+}
-+
-+static void oxnas_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_oxnas *std = to_clk_oxnas(hw);
-+
-+	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
-+}
-+
-+static const struct clk_ops oxnas_clk_ops = {
-+	.enable = oxnas_clk_enable,
-+	.disable = oxnas_clk_disable,
-+	.is_enabled = oxnas_clk_is_enabled,
-+};
-+
-+static const char *const oxnas_clk_parents[] = {
-+	"oscillator",
-+};
-+
-+static const char *const eth_parents[] = {
-+	"gmacclk",
-+};
-+
-+#define DECLARE_STD_CLKP(__clk, __parent)			\
-+static const struct clk_init_data clk_##__clk##_init = {	\
-+	.name = __stringify(__clk),				\
-+	.ops = &oxnas_clk_ops,					\
-+	.parent_names = __parent,				\
-+	.num_parents = ARRAY_SIZE(__parent),			\
-+}
-+
-+#define DECLARE_STD_CLK(__clk) DECLARE_STD_CLKP(__clk, oxnas_clk_parents)
-+
-+/* Hardware Bit - Clock association */
-+struct clk_oxnas_init_data {
-+	unsigned long bit;
-+	const struct clk_init_data *clk_init;
-+};
-+
-+/* Clk init data declaration */
-+DECLARE_STD_CLK(leon);
-+DECLARE_STD_CLK(dma_sgdma);
-+DECLARE_STD_CLK(cipher);
-+DECLARE_STD_CLK(sata);
-+DECLARE_STD_CLK(audio);
-+DECLARE_STD_CLK(usbmph);
-+DECLARE_STD_CLKP(etha, eth_parents);
-+DECLARE_STD_CLK(pciea);
-+DECLARE_STD_CLK(nand);
-+
-+/* Table index is clock indice */
-+static const struct clk_oxnas_init_data clk_oxnas_init[] = {
-+	[0] = {0, &clk_leon_init},
-+	[1] = {1, &clk_dma_sgdma_init},
-+	[2] = {2, &clk_cipher_init},
-+	/* Skip & Do not touch to DDR clock */
-+	[3] = {4, &clk_sata_init},
-+	[4] = {5, &clk_audio_init},
-+	[5] = {6, &clk_usbmph_init},
-+	[6] = {7, &clk_etha_init},
-+	[7] = {8, &clk_pciea_init},
-+	[8] = {9, &clk_nand_init},
-+};
-+
-+struct clk_oxnas_data {
-+	struct clk_oxnas clk_oxnas[ARRAY_SIZE(clk_oxnas_init)];
-+	struct clk_onecell_data onecell_data[ARRAY_SIZE(clk_oxnas_init)];
-+	struct clk *clks[ARRAY_SIZE(clk_oxnas_init)];
-+};
-+
-+static int oxnas_stdclk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct clk_oxnas_data *clk_oxnas;
-+	struct regmap *regmap;
-+	int i;
-+
-+	clk_oxnas = devm_kzalloc(&pdev->dev, sizeof(*clk_oxnas), GFP_KERNEL);
-+	if (!clk_oxnas)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (!regmap) {
-+		dev_err(&pdev->dev, "failed to have parent regmap\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
-+		struct clk_oxnas *_clk;
-+
-+		if (!clk_oxnas_init[i].clk_init)
-+			continue;
-+
-+		_clk = &clk_oxnas->clk_oxnas[i];
-+		_clk->bit = clk_oxnas_init[i].bit;
-+		_clk->hw.init = clk_oxnas_init[i].clk_init;
-+		_clk->regmap = regmap;
-+
-+		clk_oxnas->clks[i] =
-+			devm_clk_register(&pdev->dev, &_clk->hw);
-+		if (WARN_ON(IS_ERR(clk_oxnas->clks[i])))
-+			return PTR_ERR(clk_oxnas->clks[i]);
-+	}
-+
-+	clk_oxnas->onecell_data->clks = clk_oxnas->clks;
-+	clk_oxnas->onecell_data->clk_num = ARRAY_SIZE(clk_oxnas_init);
-+
-+	return of_clk_add_provider(np, of_clk_src_onecell_get,
-+				   clk_oxnas->onecell_data);
-+}
-+
-+static int oxnas_stdclk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id oxnas_stdclk_dt_ids[] = {
-+	{ .compatible = "oxsemi,ox810se-stdclk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
-+
-+static struct platform_driver oxnas_stdclk_driver = {
-+	.probe = oxnas_stdclk_probe,
-+	.remove = oxnas_stdclk_remove,
-+	.driver	= {
-+		.name = "oxnas-stdclk",
-+		.of_match_table = oxnas_stdclk_dt_ids,
-+	},
-+};
-+
-+module_platform_driver(oxnas_stdclk_driver);
++	cpm_syscon0: system-controller@440000 {
++		compatible = "marvell,cp110-system-controller0", "syscon";
++		reg = <0x440000 0x1000>;
++		#clock-cells = <2>;
++		core-clock-output-names = "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core";
++		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
++			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
++			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
++			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
++			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
++	};
 -- 
-1.9.1
-
+2.6.4
