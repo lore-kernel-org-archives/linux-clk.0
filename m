@@ -1,478 +1,196 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v5 5/5] clk: mvebu: new driver for Armada CP110 system controller
-Date: Thu, 14 Apr 2016 17:33:33 +0200
-Message-Id: <1460648013-31320-6-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:32542 "EHLO
+	conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752389AbcDNBtu (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2016 21:49:50 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160414003341.GH14441@codeaurora.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+	<20160408003328.GA14441@codeaurora.org>
+	<CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
+	<20160414003341.GH14441@codeaurora.org>
+Date: Thu, 14 Apr 2016 10:49:43 +0900
+Message-ID: <CAK7LNARbzRLq_NGWJ8CFBBf6w4cVGCNh45fo6JO=+F7FACBSxA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>,
+	linux-sh@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Greg Ungerer <gerg@uclinux.org>, linux-clk@vger.kernel.org,
+	Russell King <linux@arm.linux.org.uk>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Wan ZongShun <mcuos.com@gmail.com>,
+	Steven Miao <realmz6@gmail.com>,
+	adi-buildroot-devel@lists.sourceforge.net,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	linux-m68k@lists.linux-m68k.org, Simon Horman <horms@verge.net.au>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	John Crispin <blogic@openwrt.org>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Armada CP110 system controller provides, amongst other things, a
-number of clocks for the platform: a small number of core clocks, and
-then a number of gatable clocks, derived from some of the core
-clocks. Those clocks are configured via registers of the CP110 System
-Controller.
+Hi Stephen,
 
-The CP110 is the other core HW block (next to the AP806) used in the
-Marvel Armada 7K and 8K SoCs.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/mvebu/Kconfig                   |   3 +
- drivers/clk/mvebu/Makefile                  |   1 +
- drivers/clk/mvebu/cp110-system-controller.c | 399 ++++++++++++++++++++++++++++
- 3 files changed, 403 insertions(+)
- create mode 100644 drivers/clk/mvebu/cp110-system-controller.c
+2016-04-14 9:33 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 04/08, Masahiro Yamada wrote:
+>>
+>>
+>> This makes our driver programming life easier.
+>>
+>>
+>> For example, let's see drivers/tty/serial/8250/8250_of.c
+>>
+>>
+>> The "clock-frequency" DT property takes precedence over "clocks" property.
+>> So, it is valid to probe the driver with a NULL pointer for info->clk.
+>>
+>>
+>>         if (of_property_read_u32(np, "clock-frequency", &clk)) {
+>>
+>>                 /* Get clk rate through clk driver if present */
+>>                 info->clk = devm_clk_get(&ofdev->dev, NULL);
+>>                 if (IS_ERR(info->clk)) {
+>>                         dev_warn(&ofdev->dev,
+>>                                 "clk or clock-frequency not defined\n");
+>>                         return PTR_ERR(info->clk);
+>>                 }
+>>
+>>                 ret = clk_prepare_enable(info->clk);
+>>                 if (ret < 0)
+>>                         return ret;
+>>
+>>                 clk = clk_get_rate(info->clk);
+>>         }
+>>
+>>
+>> As a result, we need to make sure the clk pointer is valid
+>> before calling clk_disable_unprepare().
+>>
+>>
+>> If we could support pointer checking in callees, we would be able to
+>> clean-up lots of clock consumers.
+>>
+>>
+>
+> I'm not sure if you meant to use that example for the error
+> pointer case? It bails out if clk_get() returns an error pointer.
+>
+> I'm all for a no-op in clk_disable()/unprepare() when the pointer
+> is NULL. But when it's an error pointer the driver should be
+> handling it and bail out before it would ever call enable/prepare
+> on it or disable/unprepare.
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index bf7ae00..3165da7 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -32,6 +32,9 @@ config ARMADA_XP_CLK
- config ARMADA_AP806_SYSCON
- 	bool
- 
-+config ARMADA_CP110_SYSCON
-+	bool
-+
- config DOVE_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index f4aa481..7172ef6 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
- obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
-+obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
- obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
- obj-$(CONFIG_ORION_CLK)		+= orion.o
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-new file mode 100644
-index 0000000..f45e7ca
---- /dev/null
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -0,0 +1,399 @@
-+/*
-+ * Marvell Armada CP110 System Controller
-+ *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+/*
-+ * CP110 has 5 core clocks:
-+ *
-+ *  - APLL		(1 Ghz)
-+ *    - PPv2 core	(1/3 APLL)
-+ *    - EIP		(1/2 APLL)
-+ *      - Core		(1/2 EIP)
-+ *
-+ *  - NAND clock, which is either:
-+ *    - Equal to the core clock
-+ *    - 2/5 APLL
-+ *
-+ * CP110 has 32 gatable clocks, for the various peripherals in the
-+ * IP. They have fairly complicated parent/child relationships.
-+ */
-+
-+#define pr_fmt(fmt) "cp110-system-controller: " fmt
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#define CP110_PM_CLOCK_GATING_REG	0x220
-+#define CP110_NAND_FLASH_CLK_CTRL_REG	0x700
-+#define    NF_CLOCK_SEL_400_MASK	BIT(0)
-+
-+enum {
-+	CP110_CLK_TYPE_CORE,
-+	CP110_CLK_TYPE_GATABLE,
-+};
-+
-+#define CP110_MAX_CORE_CLOCKS		5
-+#define CP110_MAX_GATABLE_CLOCKS	32
-+
-+#define CP110_CLK_NUM \
-+	(CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS)
-+
-+#define CP110_CORE_APLL			0
-+#define CP110_CORE_PPV2			1
-+#define CP110_CORE_EIP			2
-+#define CP110_CORE_CORE			3
-+#define CP110_CORE_NAND			4
-+
-+/* A number of gatable clocks need special handling */
-+#define CP110_GATE_AUDIO		0
-+#define CP110_GATE_COMM_UNIT		1
-+#define CP110_GATE_NAND			2
-+#define CP110_GATE_PPV2			3
-+#define CP110_GATE_SDIO			4
-+#define CP110_GATE_XOR1			7
-+#define CP110_GATE_XOR0			8
-+#define CP110_GATE_PCIE_X1_0		11
-+#define CP110_GATE_PCIE_X1_1		12
-+#define CP110_GATE_PCIE_X4		13
-+#define CP110_GATE_PCIE_XOR		14
-+#define CP110_GATE_SATA			15
-+#define CP110_GATE_SATA_USB		16
-+#define CP110_GATE_MAIN			17
-+#define CP110_GATE_SDMMC		18
-+#define CP110_GATE_SLOW_IO		21
-+#define CP110_GATE_USB3H0		22
-+#define CP110_GATE_USB3H1		23
-+#define CP110_GATE_USB3DEV		24
-+#define CP110_GATE_EIP150		25
-+#define CP110_GATE_EIP197		26
-+
-+static struct clk *cp110_clks[CP110_CLK_NUM];
-+
-+static struct clk_onecell_data cp110_clk_data = {
-+	.clks = cp110_clks,
-+	.clk_num = CP110_CLK_NUM,
-+};
-+
-+struct cp110_gate_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u8 bit_idx;
-+};
-+
-+#define to_cp110_gate_clk(clk) container_of(clk, struct cp110_gate_clk, hw)
-+
-+static int cp110_gate_enable(struct clk_hw *hw)
-+{
-+	struct cp110_gate_clk *gate = to_cp110_gate_clk(hw);
-+
-+	regmap_update_bits(gate->regmap, CP110_PM_CLOCK_GATING_REG,
-+			   BIT(gate->bit_idx), BIT(gate->bit_idx));
-+
-+	return 0;
-+}
-+
-+static void cp110_gate_disable(struct clk_hw *hw)
-+{
-+	struct cp110_gate_clk *gate = to_cp110_gate_clk(hw);
-+	regmap_update_bits(gate->regmap, CP110_PM_CLOCK_GATING_REG,
-+			   BIT(gate->bit_idx), 0);
-+}
-+
-+static int cp110_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct cp110_gate_clk *gate = to_cp110_gate_clk(hw);
-+	u32 val;
-+
-+	regmap_read(gate->regmap, CP110_PM_CLOCK_GATING_REG, &val);
-+
-+	return val & BIT(gate->bit_idx);
-+}
-+
-+static const struct clk_ops cp110_gate_ops = {
-+	.enable = cp110_gate_enable,
-+	.disable = cp110_gate_disable,
-+	.is_enabled = cp110_gate_is_enabled,
-+};
-+
-+static struct clk *cp110_register_gate(const char *name, const char *parent_name,
-+				       struct regmap *regmap, u8 bit_idx)
-+{
-+	struct cp110_gate_clk *gate;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &cp110_gate_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	gate->regmap = regmap;
-+	gate->bit_idx = bit_idx;
-+	gate->hw.init = &init;
-+
-+	clk = clk_register(NULL, &gate->hw);
-+	if (IS_ERR(clk))
-+		kfree(gate);
-+
-+	return clk;
-+}
-+
-+static void cp110_unregister_gate(struct clk *clk)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = __clk_get_hw(clk);
-+	if (!hw)
-+		return;
-+
-+	clk_unregister(clk);
-+	kfree(to_cp110_gate_clk(hw));
-+}
-+
-+static struct clk *cp110_of_clk_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct clk_onecell_data *clk_data = data;
-+	unsigned int type = clkspec->args[0];
-+	unsigned int idx = clkspec->args[1];
-+
-+	if (type == CP110_CLK_TYPE_CORE) {
-+		if (idx > CP110_MAX_CORE_CLOCKS)
-+			return ERR_PTR(-EINVAL);
-+		return clk_data->clks[idx];
-+	} else if (type == CP110_CLK_TYPE_GATABLE) {
-+		if (idx > CP110_MAX_GATABLE_CLOCKS)
-+			return ERR_PTR(-EINVAL);
-+		return clk_data->clks[CP110_MAX_CORE_CLOCKS + idx];
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static int cp110_syscon_clk_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	struct device_node *np = pdev->dev.of_node;
-+	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
-+	struct clk *clk;
-+	u32 nand_clk_ctrl;
-+	int i, ret;
-+
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	ret = regmap_read(regmap, CP110_NAND_FLASH_CLK_CTRL_REG,
-+			  &nand_clk_ctrl);
-+	if (ret)
-+		return ret;
-+
-+        /* Register the APLL which is the root of the clk tree */
-+	of_property_read_string_index(np, "core-clock-output-names",
-+                                      CP110_CORE_APLL, &apll_name);
-+        clk = clk_register_fixed_rate(NULL, apll_name, NULL, 0,
-+				      1000 * 1000 * 1000);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto fail0;
-+	}
-+
-+	cp110_clks[CP110_CORE_APLL] = clk;
-+
-+        /* PPv2 is APLL/3 */
-+	of_property_read_string_index(np, "core-clock-output-names",
-+				      CP110_CORE_PPV2, &ppv2_name);
-+	clk = clk_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto fail1;
-+	}
-+
-+	cp110_clks[CP110_CORE_PPV2] = clk;
-+
-+        /* EIP clock is APLL/2 */
-+	of_property_read_string_index(np, "core-clock-output-names",
-+				      CP110_CORE_EIP, &eip_name);
-+	clk = clk_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto fail2;
-+	}
-+
-+	cp110_clks[CP110_CORE_EIP] = clk;
-+
-+        /* Core clock is EIP/2 */
-+	of_property_read_string_index(np, "core-clock-output-names",
-+				      CP110_CORE_CORE, &core_name);
-+	clk = clk_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto fail3;
-+	}
-+
-+	cp110_clks[CP110_CORE_CORE] = clk;
-+
-+	/* NAND can be either APLL/2.5 or core clock */
-+	of_property_read_string_index(np, "core-clock-output-names",
-+				      CP110_CORE_NAND, &nand_name);
-+	if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
-+		clk = clk_register_fixed_factor(NULL, nand_name,
-+						apll_name, 0, 2, 5);
-+	else
-+		clk = clk_register_fixed_factor(NULL, nand_name,
-+						core_name, 0, 1, 1);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto fail4;
-+	}
-+
-+	cp110_clks[CP110_CORE_NAND] = clk;
-+
-+	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
-+		const char *parent, *name;
-+		int ret;
-+
-+		ret = of_property_read_string_index(np, "gate-clock-output-names",
-+						    i, &name);
-+		/* Reached the end of the list? */
-+		if (ret < 0)
-+			break;
-+
-+		if (!strcmp(name, "none"))
-+			continue;
-+
-+		switch(i) {
-+		case CP110_GATE_AUDIO:
-+		case CP110_GATE_COMM_UNIT:
-+		case CP110_GATE_EIP150:
-+		case CP110_GATE_EIP197:
-+		case CP110_GATE_SLOW_IO:
-+			of_property_read_string_index(np, "gate-clock-output-names",
-+						      CP110_GATE_MAIN, &parent);
-+			break;
-+		case CP110_GATE_NAND:
-+			parent = nand_name;
-+			break;
-+		case CP110_GATE_PPV2:
-+			parent = ppv2_name;
-+			break;
-+		case CP110_GATE_SDIO:
-+			of_property_read_string_index(np, "gate-clock-output-names",
-+						      CP110_GATE_SDMMC, &parent);
-+			break;
-+		case CP110_GATE_XOR1:
-+		case CP110_GATE_XOR0:
-+		case CP110_GATE_PCIE_X1_0:
-+		case CP110_GATE_PCIE_X1_1:
-+		case CP110_GATE_PCIE_X4:
-+			of_property_read_string_index(np, "gate-clock-output-names",
-+						      CP110_GATE_PCIE_XOR, &parent);
-+			break;
-+		case CP110_GATE_SATA:
-+		case CP110_GATE_USB3H0:
-+		case CP110_GATE_USB3H1:
-+		case CP110_GATE_USB3DEV:
-+			of_property_read_string_index(np, "gate-clock-output-names",
-+						      CP110_GATE_SATA_USB, &parent);
-+			break;
-+		default:
-+			parent = core_name;
-+			break;
-+		}
-+
-+		clk = cp110_register_gate(name, parent, regmap, i);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
-+			goto fail_gate;
-+		}
-+
-+		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
-+	}
-+
-+	ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
-+	if (ret)
-+		goto fail_clk_add;
-+
-+	return 0;
-+
-+fail_clk_add:
-+fail_gate:
-+	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
-+		clk = cp110_clks[CP110_MAX_CORE_CLOCKS + i];
-+
-+		if (clk)
-+			cp110_unregister_gate(clk);
-+	}
-+
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
-+fail4:
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
-+fail3:
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
-+fail2:
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
-+fail1:
-+	clk_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
-+fail0:
-+	return ret;
-+}
-+
-+static int cp110_syscon_clk_remove(struct platform_device *pdev)
-+{
-+	int i;
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
-+		struct clk *clk = cp110_clks[CP110_MAX_CORE_CLOCKS + i];
-+
-+		if (clk)
-+			cp110_unregister_gate(clk);
-+	}
-+
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
-+	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
-+	clk_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id cp110_syscon_of_match[] = {
-+        { .compatible = "marvell,cp110-system-controller0", },
-+        {},
-+};
-+MODULE_DEVICE_TABLE(of, armada8k_pcie_of_match);
-+
-+static struct platform_driver cp110_syscon_driver = {
-+	.probe = cp110_syscon_clk_probe,
-+	.remove = cp110_syscon_clk_remove,
-+	.driver		= {
-+		.name	= "marvell-cp110-system-controller0",
-+		.of_match_table = cp110_syscon_of_match,
-+	},
-+};
-+
-+module_platform_driver(cp110_syscon_driver);
-+
-+MODULE_DESCRIPTION("Marvell CP110 System Controller 0 driver");
-+MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
-+MODULE_LICENSE("GPL");
+
+
+Let me explain my original idea.
+
+We do various initialization in a probe method,
+so we (OK, I) sometimes want to split init code
+into some helper function(s) like this:
+
+
+static int foo_clk_init(struct platform_device *pdev,
+                        struct foo_priv *priv)
+{
+        int ret;
+
+        priv->clk = devm_clk_get(&pdev->dev, NULL);     /* case 1 */
+        if (IS_ERR(priv->clk)) {
+                 dev_err(&pdev->dev, "falied to get clk\n");
+                 return PTR_ERR(priv->clk);
+        }
+
+        ret = clk_prepare_enable(priv->clk);          /* case 2 */
+        if (ret < 0) {
+                 dev_err(&pdev->dev, "falied to enable clk\n");
+                 return ret;
+        }
+
+        priv->clk_rate = clk_get_rate(priv->clk);    /* case 3 */
+        if (!priv->clk_rate) {
+                  dev_err(&pdev->dev, "clk rate should not be zero\n");
+                  return -EINVAL;
+        }
+
+
+        [ do something ]
+
+        return 0;
+}
+
+
+static int foo_probe(struct platform_device *pdev)
+{
+        [memory allocation, OF parse, various init.... ]
+
+        ret = foo_clk_init(pdev, priv);
+        if (ret < 0)
+                goto err;
+
+        ret = foo_blahblah_init(pdev, priv)          /* case 4 */
+        ir (ret < 0)
+                goto err;
+
+        [  more initialization ... ]
+
+        return 0;
+err:
+        clk_disable_unprepare(priv->clk);
+
+        return ret;
+}
+
+
+There are some failure paths in this example.
+
+ [1] If case 1 fails, priv->clk contains an error pointer.
+     We should not do clk_disable_unprepare().
+ [2] If case 2 fails, priv->clk contains a valid pointer,
+     but we should not do clk_disable_unprepare().
+ [3] If case 3 fails, priv->clk contains a valid pointer,
+     and we should do clk_disable_unprepare().
+ [4] If case 4 fails, priv->clk contains a valid pointer,
+     and we should do clk_disable_unprepare().
+
+
+My difficulty is that [1]-[3] are contained in one helper function.
+(A real example is drivers/i2c/busses/i2c-uniphier.c)
+
+
+If foo_clk_init() fails for reason [1],
+I want clk_disable_unprepare() to just return.
+(This is my original intention of this patch.)
+
+If foo_clk_init() fails for reason [3],
+I want clk_disable_unprepare() to do its job.
+
+
+OK, now I notice another problem in my code;
+if foo_clk_init() fails for reason [2],
+clk_disable() WARN's due to zero enable_count.
+
+if (WARN_ON(core->enable_count == 0))
+         return;
+
+
+
+Perhaps, I got screwed up by splitting clock init stuff
+into a helper function.
+
+
+
 -- 
-2.6.4
+Best Regards
+Masahiro Yamada
