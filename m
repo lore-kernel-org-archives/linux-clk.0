@@ -1,656 +1,146 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 21/24] pwm: add the core infrastructure to allow atomic update
-Date: Thu, 14 Apr 2016 21:17:41 +0200
-Message-Id: <1460661464-11216-22-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 11/28] clk: ti: am33xx: transition to usage of ti_clk_get
+Date: Thu, 14 Apr 2016 14:08:00 +0300
+Message-ID: <1460632097-25727-12-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an ->apply() method to the pwm_ops struct to allow PWM drivers to
-implement atomic update.
-This method will be preferred over the ->enable(), ->disable() and
-->config() methods if available.
+Cleanup any unnecessary DT_CLK() alias entries from the AM33xx clock file.
+Also, use ti_clk_get where necessary.
 
-Add the pwm_apply_state() function to the PWM user API.
-
-Note that the pwm_apply_state() does not guarantee the atomicity of the
-update operation, it all depends on the availability and implementation
-of the ->apply() method.
-
-pwm_enable/disable/set_polarity/config() are now implemented as wrappers
-around the pwm_apply_state() function.
-
-pwm_adjust_config() is allowing smooth handover between the bootloader
-and the kernel. This function tries to adapt the current PWM state to
-the PWM arguments coming from a PWM lookup table or a DT definition
-without changing the duty_cycle/period proportion.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/pwm/core.c  | 186 +++++++++++++++++++++++-------------
- include/linux/pwm.h | 269 +++++++++++++++++++++++++++++++++++-----------------
- 2 files changed, 302 insertions(+), 153 deletions(-)
+ drivers/clk/ti/clk-33xx.c |   92 ++++-----------------------------------------
+ 1 file changed, 7 insertions(+), 85 deletions(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 0e7f687..112a696 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -226,6 +226,19 @@ void *pwm_get_chip_data(struct pwm_device *pwm)
- }
- EXPORT_SYMBOL_GPL(pwm_get_chip_data);
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index ef2ec64..43847bc 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -23,88 +23,10 @@
+ #include "clock.h"
  
-+static bool pwm_ops_check(const struct pwm_ops *ops)
-+{
-+	/* driver supports legacy, non-atomic operation */
-+	if (ops->config && ops->enable && ops->disable)
-+		return true;
-+
-+	/* driver supports atomic operation */
-+	if (ops->apply)
-+		return true;
-+
-+	return false;
-+}
-+
- /**
-  * pwmchip_add_with_polarity() - register a new PWM chip
-  * @chip: the PWM chip to add
-@@ -244,8 +257,10 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 	unsigned int i;
- 	int ret;
+ static struct ti_dt_clk am33xx_clks[] = {
+-	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
+-	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
+-	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
+-	DT_CLK(NULL, "virt_24000000_ck", "virt_24000000_ck"),
+-	DT_CLK(NULL, "virt_25000000_ck", "virt_25000000_ck"),
+-	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
+-	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "tclkin_ck", "tclkin_ck"),
+-	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
+-	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
+-	DT_CLK(NULL, "dpll_core_m4_ck", "dpll_core_m4_ck"),
+-	DT_CLK(NULL, "dpll_core_m5_ck", "dpll_core_m5_ck"),
+-	DT_CLK(NULL, "dpll_core_m6_ck", "dpll_core_m6_ck"),
+-	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
+-	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_ck", "dpll_ddr_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m2_ck", "dpll_ddr_m2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m2_div2_ck", "dpll_ddr_m2_div2_ck"),
+-	DT_CLK(NULL, "dpll_disp_ck", "dpll_disp_ck"),
+-	DT_CLK(NULL, "dpll_disp_m2_ck", "dpll_disp_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_wkupdm_ck", "dpll_per_m2_div4_wkupdm_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_ck", "dpll_per_m2_div4_ck"),
+-	DT_CLK(NULL, "adc_tsc_fck", "adc_tsc_fck"),
+-	DT_CLK(NULL, "cefuse_fck", "cefuse_fck"),
+-	DT_CLK(NULL, "clkdiv32k_ck", "clkdiv32k_ck"),
+-	DT_CLK(NULL, "clkdiv32k_ick", "clkdiv32k_ick"),
+-	DT_CLK(NULL, "dcan0_fck", "dcan0_fck"),
+-	DT_CLK("481cc000.d_can", NULL, "dcan0_fck"),
+-	DT_CLK(NULL, "dcan1_fck", "dcan1_fck"),
+-	DT_CLK("481d0000.d_can", NULL, "dcan1_fck"),
+-	DT_CLK(NULL, "pruss_ocp_gclk", "pruss_ocp_gclk"),
+-	DT_CLK(NULL, "mcasp0_fck", "mcasp0_fck"),
+-	DT_CLK(NULL, "mcasp1_fck", "mcasp1_fck"),
+-	DT_CLK(NULL, "mmu_fck", "mmu_fck"),
+-	DT_CLK(NULL, "smartreflex0_fck", "smartreflex0_fck"),
+-	DT_CLK(NULL, "smartreflex1_fck", "smartreflex1_fck"),
+-	DT_CLK(NULL, "sha0_fck", "sha0_fck"),
+-	DT_CLK(NULL, "aes0_fck", "aes0_fck"),
+-	DT_CLK(NULL, "rng_fck", "rng_fck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
+-	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
+-	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
+-	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
+-	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
+-	DT_CLK(NULL, "usbotg_fck", "usbotg_fck"),
+-	DT_CLK(NULL, "ieee5000_fck", "ieee5000_fck"),
+-	DT_CLK(NULL, "wdt1_fck", "wdt1_fck"),
+-	DT_CLK(NULL, "l4_rtc_gclk", "l4_rtc_gclk"),
+-	DT_CLK(NULL, "l3_gclk", "l3_gclk"),
+-	DT_CLK(NULL, "dpll_core_m4_div2_ck", "dpll_core_m4_div2_ck"),
+-	DT_CLK(NULL, "l4hs_gclk", "l4hs_gclk"),
+-	DT_CLK(NULL, "l3s_gclk", "l3s_gclk"),
+-	DT_CLK(NULL, "l4fw_gclk", "l4fw_gclk"),
+-	DT_CLK(NULL, "l4ls_gclk", "l4ls_gclk"),
+-	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
+-	DT_CLK(NULL, "sysclk_div_ck", "sysclk_div_ck"),
+-	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
+-	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
+-	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
+-	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
+-	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
+-	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
+-	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
+-	DT_CLK(NULL, "lcd_gclk", "lcd_gclk"),
+-	DT_CLK(NULL, "mmc_clk", "mmc_clk"),
+-	DT_CLK(NULL, "gfx_fclk_clksel_ck", "gfx_fclk_clksel_ck"),
+-	DT_CLK(NULL, "gfx_fck_div_ck", "gfx_fck_div_ck"),
+-	DT_CLK(NULL, "sysclkout_pre_ck", "sysclkout_pre_ck"),
+-	DT_CLK(NULL, "clkout2_div_ck", "clkout2_div_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "dbg_sysclk_ck", "dbg_sysclk_ck"),
+-	DT_CLK(NULL, "dbg_clka_ck", "dbg_clka_ck"),
+-	DT_CLK(NULL, "stm_pmd_clock_mux_ck", "stm_pmd_clock_mux_ck"),
+-	DT_CLK(NULL, "trace_pmd_clk_mux_ck", "trace_pmd_clk_mux_ck"),
+-	DT_CLK(NULL, "stm_clk_div_ck", "stm_clk_div_ck"),
+-	DT_CLK(NULL, "trace_clk_div_ck", "trace_clk_div_ck"),
+-	DT_CLK(NULL, "clkout2_ck", "clkout2_ck"),
++	DT_CLK("481cc000.d_can", NULL, "dcan0_fck"),
++	DT_CLK("481d0000.d_can", NULL, "dcan1_fck"),
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+@@ -142,11 +64,11 @@ int __init am33xx_dt_clk_init(void)
+ 	 *    oscillator clock.
+ 	 */
  
--	if (!chip || !chip->dev || !chip->ops || !chip->ops->config ||
--	    !chip->ops->enable || !chip->ops->disable || !chip->npwm)
-+	if (!chip || !chip->dev || !chip->ops || !chip->npwm)
-+		return -EINVAL;
-+
-+	if (!pwm_ops_check(chip->ops))
- 		return -EINVAL;
+-	clk1 = clk_get_sys(NULL, "sys_clkin_ck");
+-	clk2 = clk_get_sys(NULL, "timer3_fck");
++	clk1 = ti_clk_get("sys_clkin_ck");
++	clk2 = ti_clk_get("timer3_fck");
+ 	clk_set_parent(clk2, clk1);
  
- 	mutex_lock(&pwm_lock);
-@@ -431,102 +446,137 @@ void pwm_free(struct pwm_device *pwm)
- EXPORT_SYMBOL_GPL(pwm_free);
- 
- /**
-- * pwm_config() - change a PWM device configuration
-+ * pwm_apply_state() - atomically apply a new state to a PWM device
-  * @pwm: PWM device
-- * @duty_ns: "on" time (in nanoseconds)
-- * @period_ns: duration (in nanoseconds) of one cycle
-- *
-- * Returns: 0 on success or a negative error code on failure.
-+ * @state: new state to apply. This can be adjusted by the PWM driver
-+ *	   if the requested config is not achievable, for example,
-+ *	   ->duty_cycle and ->period might be approximated.
-  */
--int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
-+int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
- {
- 	int err;
- 
--	if (!pwm || duty_ns < 0 || period_ns <= 0 || duty_ns > period_ns)
-+	if (!pwm)
- 		return -EINVAL;
- 
--	err = pwm->chip->ops->config(pwm->chip, pwm, duty_ns, period_ns);
--	if (err)
--		return err;
--
--	pwm->state.duty_cycle = duty_ns;
--	pwm->state.period = period_ns;
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(pwm_config);
-+	if (!memcmp(state, &pwm->state, sizeof(*state)))
-+		return 0;
- 
--/**
-- * pwm_set_polarity() - configure the polarity of a PWM signal
-- * @pwm: PWM device
-- * @polarity: new polarity of the PWM signal
-- *
-- * Note that the polarity cannot be configured while the PWM device is
-- * enabled.
-- *
-- * Returns: 0 on success or a negative error code on failure.
-- */
--int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
--{
--	int err;
-+	if (pwm->chip->ops->apply) {
-+		err = pwm->chip->ops->apply(pwm->chip, pwm, state);
-+		if (err)
-+			return err;
- 
--	if (!pwm || !pwm->chip->ops)
--		return -EINVAL;
-+		pwm->state = *state;
-+	} else {
-+		/*
-+		 * FIXME: restore the initial state in case of error.
-+		 */
-+		if (state->polarity != pwm->state.polarity) {
-+			if (!pwm->chip->ops->set_polarity)
-+				return -ENOTSUPP;
-+
-+			/*
-+			 * Changing the polarity of a running PWM is
-+			 * only allowed when the PWM driver implements
-+			 * ->apply().
-+			 */
-+			if (pwm->state.enabled) {
-+				pwm->chip->ops->disable(pwm->chip, pwm);
-+				pwm->state.enabled = false;
-+			}
-+
-+			err = pwm->chip->ops->set_polarity(pwm->chip, pwm,
-+							   state->polarity);
-+			if (err)
-+				return err;
-+
-+			pwm->state.polarity = state->polarity;
-+		}
- 
--	if (!pwm->chip->ops->set_polarity)
--		return -ENOSYS;
-+		if (state->period != pwm->state.period ||
-+		    state->duty_cycle != pwm->state.duty_cycle) {
-+			err = pwm->chip->ops->config(pwm->chip, pwm,
-+						     state->duty_cycle,
-+						     state->period);
-+			if (err)
-+				return err;
- 
--	if (pwm_is_enabled(pwm))
--		return -EBUSY;
-+			pwm->state.duty_cycle = state->duty_cycle;
-+			pwm->state.period = state->period;
-+		}
- 
--	err = pwm->chip->ops->set_polarity(pwm->chip, pwm, polarity);
--	if (err)
--		return err;
-+		if (state->enabled != pwm->state.enabled) {
-+			if (state->enabled) {
-+				err = pwm->chip->ops->enable(pwm->chip, pwm);
-+				if (err)
-+					return err;
-+			} else {
-+				pwm->chip->ops->disable(pwm->chip, pwm);
-+			}
- 
--	pwm->state.polarity = polarity;
-+			pwm->state.enabled = state->enabled;
-+		}
-+	}
+-	clk2 = clk_get_sys(NULL, "timer6_fck");
++	clk2 = ti_clk_get("timer6_fck");
+ 	clk_set_parent(clk2, clk1);
+ 	/*
+ 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
+@@ -155,8 +77,8 @@ int __init am33xx_dt_clk_init(void)
+ 	 * not expected by any use-case, so change WDT1 clock source to PRCM
+ 	 * 32KHz clock.
+ 	 */
+-	clk1 = clk_get_sys(NULL, "wdt1_fck");
+-	clk2 = clk_get_sys(NULL, "clkdiv32k_ick");
++	clk1 = ti_clk_get("wdt1_fck");
++	clk2 = ti_clk_get("clkdiv32k_ick");
+ 	clk_set_parent(clk1, clk2);
  
  	return 0;
- }
--EXPORT_SYMBOL_GPL(pwm_set_polarity);
-+EXPORT_SYMBOL_GPL(pwm_apply_state);
- 
- /**
-- * pwm_enable() - start a PWM output toggling
-+ * pwm_adjust_config() - adjust the current PWM config to the PWM arguments
-  * @pwm: PWM device
-  *
-- * Returns: 0 on success or a negative error code on failure.
-+ * This function will adjust the PWM config to the PWM arguments provided
-+ * by the DT or PWM lookup table. This is particularly useful to adapt
-+ * the bootloader config to the Linux one.
-  */
--int pwm_enable(struct pwm_device *pwm)
-+int pwm_adjust_config(struct pwm_device *pwm)
- {
--	int err = 0;
-+	struct pwm_state state;
-+	struct pwm_args pargs;
- 
--	if (!pwm)
--		return -EINVAL;
-+	pwm_get_args(pwm, &pargs);
-+	pwm_get_state(pwm, &state);
-+
-+	/*
-+	 * if the current period is zero this either means the PWM driver
-+	 * does not support initial state retrieval or the PWM was not
-+	 * configured.
-+	 * In any case, we setup the new period and poloarity, and assign a
-+	 * duty_cycle of 0.
-+	 */
-+	if (!state.period) {
-+		state.duty_cycle = 0;
-+		state.period = pargs.period;
-+		state.polarity = pargs.polarity;
- 
--	if (!pwm_is_enabled(pwm)) {
--		err = pwm->chip->ops->enable(pwm->chip, pwm);
--		if (!err)
--			pwm->state.enabled = true;
-+		return pwm_apply_state(pwm, &state);
- 	}
- 
--	return err;
--}
--EXPORT_SYMBOL_GPL(pwm_enable);
-+	/*
-+	 * Adjust the PWM dutycycle/period based on the period value provided
-+	 * in PWM args.
-+	 */
-+	if (pargs.period != state.period) {
-+		u64 dutycycle = (u64)state.duty_cycle * pargs.period;
- 
--/**
-- * pwm_disable() - stop a PWM output toggling
-- * @pwm: PWM device
-- */
--void pwm_disable(struct pwm_device *pwm)
--{
--	if (!pwm)
--		return;
-+		do_div(dutycycle, state.period);
-+		state.duty_cycle = dutycycle;
-+		state.period = pargs.period;
-+	}
- 
--	if (pwm_is_enabled(pwm)) {
--		pwm->chip->ops->disable(pwm->chip, pwm);
--		pwm->state.enabled = false;
-+	/*
-+	 * If the polarity changed, we should also change the dutycycle value.
-+	 */
-+	if (pargs.polarity != state.polarity) {
-+		state.polarity = pargs.polarity;
-+		state.duty_cycle = state.period - state.duty_cycle;
- 	}
-+
-+	return pwm_apply_state(pwm, &state);
- }
--EXPORT_SYMBOL_GPL(pwm_disable);
-+EXPORT_SYMBOL_GPL(pwm_adjust_config);
- 
- static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
- {
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 73ca679..2ec9200 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -5,59 +5,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- 
--struct pwm_device;
- struct seq_file;
--
--#if IS_ENABLED(CONFIG_PWM)
--/*
-- * pwm_request - request a PWM device
-- */
--struct pwm_device *pwm_request(int pwm_id, const char *label);
--
--/*
-- * pwm_free - free a PWM device
-- */
--void pwm_free(struct pwm_device *pwm);
--
--/*
-- * pwm_config - change a PWM device configuration
-- */
--int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns);
--
--/*
-- * pwm_enable - start a PWM output toggling
-- */
--int pwm_enable(struct pwm_device *pwm);
--
--/*
-- * pwm_disable - stop a PWM output toggling
-- */
--void pwm_disable(struct pwm_device *pwm);
--#else
--static inline struct pwm_device *pwm_request(int pwm_id, const char *label)
--{
--	return ERR_PTR(-ENODEV);
--}
--
--static inline void pwm_free(struct pwm_device *pwm)
--{
--}
--
--static inline int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
--{
--	return -EINVAL;
--}
--
--static inline int pwm_enable(struct pwm_device *pwm)
--{
--	return -EINVAL;
--}
--
--static inline void pwm_disable(struct pwm_device *pwm)
--{
--}
--#endif
--
- struct pwm_chip;
- 
- /**
-@@ -183,11 +131,6 @@ static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
- 	return state.duty_cycle;
- }
- 
--/*
-- * pwm_set_polarity - configure the polarity of a PWM signal
-- */
--int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity);
--
- static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
-@@ -203,34 +146,6 @@ static inline void pwm_get_args(const struct pwm_device *pwm,
- 	*args = pwm->args;
- }
- 
--static inline void pwm_apply_args(struct pwm_device *pwm)
--{
--	/*
--	 * PWM users calling pwm_apply_args() expect to have a fresh config
--	 * where the polarity and period are set according to pwm_args info.
--	 * The problem is, polarity can only be changed when the PWM is
--	 * disabled.
--	 *
--	 * PWM drivers supporting hardware readout may declare the PWM device
--	 * as enabled, and prevent polarity setting, which changes from the
--	 * existing behavior, where all PWM devices are declared as disabled
--	 * at startup (even if they are actually enabled), thus authorizing
--	 * polarity setting.
--	 *
--	 * Instead of setting ->enabled to false, we call pwm_disable()
--	 * before pwm_set_polarity() to ensure that everything is configured
--	 * as expected, and the PWM is really disabled when the user request
--	 * it.
--	 *
--	 * Note that PWM users requiring a smooth handover between the
--	 * bootloader and the kernel (like critical regulators controlled by
--	 * PWM devices) will have to switch to the atomic API and avoid calling
--	 * pwm_apply_args().
--	 */
--	pwm_disable(pwm);
--	pwm_set_polarity(pwm, pwm->args.polarity);
--}
--
- /**
-  * struct pwm_ops - PWM controller operations
-  * @request: optional hook for requesting a PWM
-@@ -239,6 +154,10 @@ static inline void pwm_apply_args(struct pwm_device *pwm)
-  * @set_polarity: configure the polarity of this PWM
-  * @enable: enable PWM output toggling
-  * @disable: disable PWM output toggling
-+ * @apply: atomically apply a new PWM config. The state argument
-+ *	   should be adjusted with the real hardware config (if the
-+ *	   approximate the period or duty_cycle value, state should
-+ *	   reflect it)
-  * @get_state: get the current PWM state. This function is only
-  *	       called once per PWM device when the PWM chip is
-  *	       registered.
-@@ -254,6 +173,8 @@ struct pwm_ops {
- 			    enum pwm_polarity polarity);
- 	int (*enable)(struct pwm_chip *chip, struct pwm_device *pwm);
- 	void (*disable)(struct pwm_chip *chip, struct pwm_device *pwm);
-+	int (*apply)(struct pwm_chip *chip, struct pwm_device *pwm,
-+		     struct pwm_state *state);
- 	void (*get_state)(struct pwm_chip *chip, struct pwm_device *pwm,
- 			  struct pwm_state *state);
- #ifdef CONFIG_DEBUG_FS
-@@ -291,6 +212,115 @@ struct pwm_chip {
- };
- 
- #if IS_ENABLED(CONFIG_PWM)
-+/* PWM user APIs */
-+struct pwm_device *pwm_request(int pwm_id, const char *label);
-+void pwm_free(struct pwm_device *pwm);
-+int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
-+int pwm_adjust_config(struct pwm_device *pwm);
-+
-+/**
-+ * pwm_config() - change a PWM device configuration
-+ * @pwm: PWM device
-+ * @duty_ns: "on" time (in nanoseconds)
-+ * @period_ns: duration (in nanoseconds) of one cycle
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-+			     int period_ns)
-+{
-+	struct pwm_state state;
-+
-+	if (!pwm)
-+		return -EINVAL;
-+
-+	pwm_get_state(pwm, &state);
-+	if (state.duty_cycle == duty_ns && state.period == period_ns)
-+		return 0;
-+
-+	state.duty_cycle = duty_ns;
-+	state.period = period_ns;
-+	return pwm_apply_state(pwm, &state);
-+}
-+
-+/**
-+ * pwm_set_polarity() - configure the polarity of a PWM signal
-+ * @pwm: PWM device
-+ * @polarity: new polarity of the PWM signal
-+ *
-+ * Note that the polarity cannot be configured while the PWM device is
-+ * enabled.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static inline int pwm_set_polarity(struct pwm_device *pwm,
-+				   enum pwm_polarity polarity)
-+{
-+	struct pwm_state state;
-+
-+	if (!pwm)
-+		return -EINVAL;
-+
-+	pwm_get_state(pwm, &state);
-+	if (state.polarity == polarity)
-+		return 0;
-+
-+	/*
-+	 * Changing the polarity of a running PWM without adjusting the
-+	 * dutycycle/period value is a bit risky (can introduce glitches).
-+	 * Return -EBUSY in this case.
-+	 * Note that this is allowed when using pwm_apply_state() because
-+	 * the user specifies all the parameters.
-+	 */
-+	if (state.enabled)
-+		return -EBUSY;
-+
-+	state.polarity = polarity;
-+	return pwm_apply_state(pwm, &state);
-+}
-+
-+/**
-+ * pwm_enable() - start a PWM output toggling
-+ * @pwm: PWM device
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static inline int pwm_enable(struct pwm_device *pwm)
-+{
-+	struct pwm_state state;
-+
-+	if (!pwm)
-+		return -EINVAL;
-+
-+	pwm_get_state(pwm, &state);
-+	if (state.enabled)
-+		return 0;
-+
-+	state.enabled = true;
-+	return pwm_apply_state(pwm, &state);
-+}
-+
-+/**
-+ * pwm_disable() - stop a PWM output toggling
-+ * @pwm: PWM device
-+ */
-+static inline void pwm_disable(struct pwm_device *pwm)
-+{
-+	struct pwm_state state;
-+
-+	if (!pwm)
-+		return;
-+
-+	pwm_get_state(pwm, &state);
-+	if (!state.enabled)
-+		return;
-+
-+	state.enabled = false;
-+	pwm_apply_state(pwm, &state);
-+}
-+
-+
-+/* PWM provider APIs */
- int pwm_set_chip_data(struct pwm_device *pwm, void *data);
- void *pwm_get_chip_data(struct pwm_device *pwm);
- 
-@@ -316,6 +346,47 @@ void devm_pwm_put(struct device *dev, struct pwm_device *pwm);
- 
- bool pwm_can_sleep(struct pwm_device *pwm);
- #else
-+static inline struct pwm_device *pwm_request(int pwm_id, const char *label)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
-+static inline void pwm_free(struct pwm_device *pwm)
-+{
-+}
-+
-+static inline int pwm_apply_state(struct pwm_device *pwm,
-+				  const struct pwm_state *state)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pwm_adjust_config(struct pwm_device *pwm)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-+			     int period_ns)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int pwm_set_polarity(struct pwm_device *pwm,
-+				   enum pwm_polarity polarity)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pwm_enable(struct pwm_device *pwm)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline void pwm_disable(struct pwm_device *pwm)
-+{
-+}
-+
- static inline int pwm_set_chip_data(struct pwm_device *pwm, void *data)
- {
- 	return -EINVAL;
-@@ -387,6 +458,34 @@ static inline bool pwm_can_sleep(struct pwm_device *pwm)
- }
- #endif
- 
-+static inline void pwm_apply_args(struct pwm_device *pwm)
-+{
-+	/*
-+	 * PWM users calling pwm_apply_args() expect to have a fresh config
-+	 * where the polarity and period are set according to pwm_args info.
-+	 * The problem is, polarity can only be changed when the PWM is
-+	 * disabled.
-+	 *
-+	 * PWM drivers supporting hardware readout may declare the PWM device
-+	 * as enabled, and prevent polarity setting, which changes from the
-+	 * existing behavior, where all PWM devices are declared as disabled
-+	 * at startup (even if they are actually enabled), thus authorizing
-+	 * polarity setting.
-+	 *
-+	 * Instead of setting ->enabled to false, we call pwm_disable()
-+	 * before pwm_set_polarity() to ensure that everything is configured
-+	 * as expected, and the PWM is really disabled when the user request
-+	 * it.
-+	 *
-+	 * Note that PWM users requiring a smooth handover between the
-+	 * bootloader and the kernel (like critical regulators controlled by
-+	 * PWM devices) will have to switch to the atomic API and avoid calling
-+	 * pwm_apply_args().
-+	 */
-+	pwm_disable(pwm);
-+	pwm_set_polarity(pwm, pwm->args.polarity);
-+}
-+
- struct pwm_lookup {
- 	struct list_head list;
- 	const char *provider;
 -- 
-2.5.0
+1.7.9.5
