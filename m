@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 4/8] regulator: rk808: Migrate to regulator core's
- simplified DT parsing code
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
- <20160425173911.GQ3217@sirena.org.uk> <571F1CB4.10200@phytec.de>
- <2669414.IKg01zC8vG@diego>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-From: Wadim Egorov <w.egorov@phytec.de>
-Message-ID: <571F2AFE.2020006@phytec.de>
-Date: Tue, 26 Apr 2016 10:46:54 +0200
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 19/28] clk: ti: remove un-used definitions from public clk_hw_omap struct
+Date: Thu, 14 Apr 2016 14:08:08 +0300
+Message-ID: <1460632097-25727-20-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <2669414.IKg01zC8vG@diego>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Clksel support has been deprecated a while back, so remove these from
+the struct also.
 
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/linux/clk/ti.h |    4 ----
+ 1 file changed, 4 deletions(-)
 
-On 26.04.2016 10:17, Heiko Stübner wrote:
-> Am Dienstag, 26. April 2016, 09:45:56 schrieb Wadim Egorov:
->> On 25.04.2016 19:39, Mark Brown wrote:
->>> On Mon, Apr 25, 2016 at 03:20:44PM +0200, Wadim Egorov wrote:
->>>> A common simplified DT parsing code for regulators was introduced in
->>>> commit a0c7b164ad11 ("regulator: of: Provide simplified DT parsing
->>>> method")
->>> This doesn't apply against current code, please check and resend.
->> Hm, for me all patches apply to the current code.
->> This patch depends on the first rename patch. Maybe this is the problem?
-> which is the reason why renaming stuff makes everything just more complicated 
-> without providing additional value ;-) 
->
-> The first patch would go through the mfd-tree (if accepted by Lee and Acked by 
-> the other involved subsystem maintainers) which would then need a stable 
-> branch merged into the regulator tree - or after the first patch goes in you 
-> simply wait for a kernel release.
->
-> Normally I would expect the reasonable kernel developer to be able to simply 
-> read code, kconfig, docs stating the drivers being for rk808 and rk818 without 
-> getting "confused" by some structs mentioning the rk808.
->
->
-> Heiko
-I will drop the first patch and send a v4 later
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 210e946..1451291 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -127,8 +127,6 @@ struct clk_hw_omap_ops {
+  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
+  * @flags: see "struct clk.flags possibilities" above
+  * @clksel_reg: for clksel clks, register va containing src/divisor select
+- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
+- * @clksel: for clksel clks, pointer to struct clksel for this clock
+  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
+  * @clkdm_name: clockdomain name that this clock is contained in
+  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
+@@ -143,8 +141,6 @@ struct clk_hw_omap {
+ 	u8			enable_bit;
+ 	u8			flags;
+ 	void __iomem		*clksel_reg;
+-	u32			clksel_mask;
+-	const struct clksel	*clksel;
+ 	struct dpll_data	*dpll_data;
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+-- 
+1.7.9.5
