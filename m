@@ -1,194 +1,106 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
 	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 6/7] clk: rockchip: move pll rate-comparison into a callable function
-Date: Thu, 28 Apr 2016 15:11:14 +0200
-Message-Id: <1461849075-8310-7-git-send-email-heiko@sntech.de>
-In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v5 06/24] leds: pwm: use pwm_get_args() where appropriate
+Date: Thu, 14 Apr 2016 21:17:26 +0200
+Message-Id: <1460661464-11216-7-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The init callback in our pll clk_ops allows us to re-set the same rate
-of a pll with different parameters if these became updated with more
-suitable values over time.
+The PWM framework has clarified the concept of reference PWM config
+(the platform dependent config retrieved from the DT or the PWM
+lookup table) and real PWM state.
 
-The init mechanism is similar over all pll types with the exception of
-the comparison of old and new parameters. So move these out to callbable
-functions to allow us to fold the generic init-handling into one.
+Use pwm_get_args() when the PWM user wants to retrieve this reference
+config and not the current state.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+This is part of the rework allowing the PWM framework to support
+hardware readout and expose real PWM state even when the PWM has
+just been requested (before the user calls pwm_config/enable/disable()).
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/clk/rockchip/clk-pll.c | 91 ++++++++++++++++++++++++++++--------------
- 1 file changed, 61 insertions(+), 30 deletions(-)
+ drivers/leds/leds-pwm.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 081713c..5bd0545 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -36,6 +36,9 @@ struct rockchip_pll_data {
- 			   struct rockchip_pll_rate_table *rate);
- 	int (*set_params)(struct rockchip_clk_pll *pll,
- 			  const struct rockchip_pll_rate_table *rate);
-+	int (*compare_params)(struct rockchip_clk_pll *pll,
-+			const struct rockchip_pll_rate_table *rate,
-+			const struct rockchip_pll_rate_table *cur);
- };
- 
- struct rockchip_clk_pll {
-@@ -271,6 +274,25 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
- 	return ret;
- }
- 
-+static int rockchip_rk3036_pll_compare_params(struct rockchip_clk_pll *pll,
-+				const struct rockchip_pll_rate_table *rate,
-+				const struct rockchip_pll_rate_table *cur)
-+{
-+	const struct clk_hw *hw = &pll->hw;
-+
-+	pr_debug("%s: pll %s\n", __func__, clk_hw_get_name(hw));
-+	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		 cur->fbdiv, cur->postdiv1, cur->refdiv, cur->postdiv2,
-+		 cur->dsmpd, cur->frac);
-+	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		 rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2,
-+		 rate->dsmpd, rate->frac);
-+
-+	return (rate->fbdiv == cur->fbdiv && rate->postdiv1 == cur->postdiv1 &&
-+		rate->refdiv == cur->refdiv && rate->postdiv2 == cur->postdiv2 &&
-+		rate->dsmpd == cur->dsmpd && rate->frac == cur->frac);
-+}
-+
- static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 4783bac..a9145aa 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -91,6 +91,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 		       struct led_pwm *led, struct device_node *child)
  {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-@@ -316,19 +338,7 @@ static void rockchip_rk3036_pll_init(struct clk_hw *hw)
- 		return;
+ 	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
++	struct pwm_args pargs;
+ 	int ret;
  
- 	pll->data->get_params(pll, &cur);
--
--	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
--		 drate);
--	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
--		 cur.fbdiv, cur.postdiv1, cur.refdiv, cur.postdiv2,
--		 cur.dsmpd, cur.frac);
--	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
--		 rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2,
--		 rate->dsmpd, rate->frac);
--
--	if (rate->fbdiv != cur.fbdiv || rate->postdiv1 != cur.postdiv1 ||
--		rate->refdiv != cur.refdiv || rate->postdiv2 != cur.postdiv2 ||
--		rate->dsmpd != cur.dsmpd || rate->frac != cur.frac) {
-+	if (!pll->data->compare_params(pll, rate, &cur)) {
- 		struct clk *parent = clk_get_parent(hw->clk);
+ 	led_data->active_low = led->active_low;
+@@ -117,7 +118,15 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	else
+ 		led_data->cdev.brightness_set_blocking = led_pwm_set_blocking;
  
- 		if (!parent) {
-@@ -346,6 +356,7 @@ static void rockchip_rk3036_pll_init(struct clk_hw *hw)
- static const struct rockchip_pll_data rockchip_rk3036_pll_data = {
- 	.get_params = rockchip_rk3036_pll_get_params,
- 	.set_params = rockchip_rk3036_pll_set_params,
-+	.compare_params = rockchip_rk3036_pll_compare_params,
- };
- 
- static const struct clk_ops rockchip_rk3036_pll_clk_norate_ops = {
-@@ -487,6 +498,20 @@ static int rockchip_rk3066_pll_set_params(struct rockchip_clk_pll *pll,
- 	return ret;
- }
- 
-+static int rockchip_rk3066_pll_compare_params(struct rockchip_clk_pll *pll,
-+				const struct rockchip_pll_rate_table *rate,
-+				const struct rockchip_pll_rate_table *cur)
-+{
-+	const struct clk_hw *hw = &pll->hw;
+-	led_data->period = pwm_get_period(led_data->pwm);
++	/*
++	 * FIXME: pwm_apply_args() should be removed when switching to the
++	 * atomic PWM API.
++	 */
++	pwm_apply_args(led_data->pwm);
 +
-+	pr_debug("%s: pll %s: nr (%d:%d); no (%d:%d); nf(%d:%d), nb(%d:%d)\n",
-+		 __func__, clk_hw_get_name(hw), rate->nr, cur->nr,
-+		 rate->no, cur->no, rate->nf, cur->nf, rate->nb, cur->nb);
++	pwm_get_args(led_data->pwm, &pargs);
 +
-+	return (rate->nr == cur->nr && rate->no == cur->no &&
-+				 rate->nf == cur->nf && rate->nb == cur->nb);
-+}
-+
- static int rockchip_rk3066_pll_enable(struct clk_hw *hw)
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-@@ -533,11 +558,7 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
++	led_data->period = pargs.period;
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
+ 		led_data->period = led->pwm_period_ns;
  
- 	pll->data->get_params(pll, &cur);
- 
--	pr_debug("%s: pll %s@%lu: nr (%d:%d); no (%d:%d); nf(%d:%d), nb(%d:%d)\n",
--		 __func__, clk_hw_get_name(hw), drate, rate->nr, cur.nr,
--		 rate->no, cur.no, rate->nf, cur.nf, rate->nb, cur.nb);
--	if (rate->nr != cur.nr || rate->no != cur.no || rate->nf != cur.nf
--						     || rate->nb != cur.nb) {
-+	if (!pll->data->compare_params(pll, rate, &cur)) {
- 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
- 			 __func__, clk_hw_get_name(hw));
- 		pll->data->set_params(pll, rate);
-@@ -547,6 +568,7 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
- static const struct rockchip_pll_data rockchip_rk3066_pll_data = {
- 	.get_params = rockchip_rk3066_pll_get_params,
- 	.set_params = rockchip_rk3066_pll_set_params,
-+	.compare_params = rockchip_rk3066_pll_compare_params,
- };
- 
- static const struct clk_ops rockchip_rk3066_pll_clk_norate_ops = {
-@@ -717,6 +739,25 @@ static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
- 	return ret;
- }
- 
-+static int rockchip_rk3399_pll_compare_params(struct rockchip_clk_pll *pll,
-+				const struct rockchip_pll_rate_table *rate,
-+				const struct rockchip_pll_rate_table *cur)
-+{
-+	const struct clk_hw *hw = &pll->hw;
-+
-+	pr_debug("%s: pll %s: Hz\n", __func__, __clk_get_name(hw->clk));
-+	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		 cur->fbdiv, cur->postdiv1, cur->refdiv, cur->postdiv2,
-+		 cur->dsmpd, cur->frac);
-+	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		 rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2,
-+		 rate->dsmpd, rate->frac);
-+
-+	return (rate->fbdiv == cur->fbdiv && rate->postdiv1 == cur->postdiv1 &&
-+		rate->refdiv == cur->refdiv && rate->postdiv2 == cur->postdiv2 &&
-+		rate->dsmpd == cur->dsmpd && rate->frac == cur->frac);
-+}
-+
- static int rockchip_rk3399_pll_enable(struct clk_hw *hw)
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-@@ -763,18 +804,7 @@ static void rockchip_rk3399_pll_init(struct clk_hw *hw)
- 
- 	pll->data->get_params(pll, &cur);
- 
--	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
--		 drate);
--	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
--		 cur.fbdiv, cur.postdiv1, cur.refdiv, cur.postdiv2,
--		 cur.dsmpd, cur.frac);
--	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
--		 rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2,
--		 rate->dsmpd, rate->frac);
--
--	if (rate->fbdiv != cur.fbdiv || rate->postdiv1 != cur.postdiv1 ||
--		rate->refdiv != cur.refdiv || rate->postdiv2 != cur.postdiv2 ||
--		rate->dsmpd != cur.dsmpd || rate->frac != cur.frac) {
-+	if (!pll->data->compare_params(pll, rate, &cur)) {
- 		struct clk *parent = clk_get_parent(hw->clk);
- 
- 		if (!parent) {
-@@ -792,6 +822,7 @@ static void rockchip_rk3399_pll_init(struct clk_hw *hw)
- static const struct rockchip_pll_data rockchip_rk3399_pll_data = {
- 	.get_params = rockchip_rk3399_pll_get_params,
- 	.set_params = rockchip_rk3399_pll_set_params,
-+	.compare_params = rockchip_rk3399_pll_compare_params,
- };
- 
- static const struct clk_ops rockchip_rk3399_pll_clk_norate_ops = {
 -- 
-2.6.4
+2.5.0
