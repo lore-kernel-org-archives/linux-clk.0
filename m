@@ -1,36 +1,47 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1459946095-7637-6-git-send-email-keguang.zhang@gmail.com>
-References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
-	<1459946095-7637-6-git-send-email-keguang.zhang@gmail.com>
-Date: Wed, 6 Apr 2016 15:31:53 +0200
-Message-ID: <CACRpkdYGjz5n4Cw=cE45-KeWLZ1ZK82MMVEe5sYxkoCbNfZ-Yw@mail.gmail.com>
-Subject: Re: [PATCH V1 5/7] gpio: Loongson1: add Loongson1 GPIO driver
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Linux MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
+Cc: thomas.ab@samsung.com, k.kozlowski@samsung.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+ tomasz.figa@gmail.com
+Subject: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
+ FSYS0} blocks clock
+Date: Thu, 14 Apr 2016 10:12:52 +0530
+Message-id: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 6, 2016 at 2:34 PM, Keguang Zhang <keguang.zhang@gmail.com> wrote:
+This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
+clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
+blocks registers. Let these clocks to be enabled all the time.
 
-> From: Kelvin Cheung <keguang.zhang@gmail.com>
->
-> This patch adds GPIO driver for Loongson1B.
->
-> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Nice and pretty driver.
-Patch applied for v4.7.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index ad68d46..03a82da 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -146,7 +146,7 @@ static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+ 
+ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+ 	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
+-		ENABLE_ACLK_TOPC0, 4, 0, 0),
++		ENABLE_ACLK_TOPC0, 4, CLK_IS_CRITICAL, 0),
+ 
+ 	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+ 		ENABLE_ACLK_TOPC1, 20, 0, 0),
+@@ -539,7 +539,8 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+ 		ENABLE_SCLK_TOP1_FSYS11, 12, CLK_SET_RATE_PARENT, 0),
+ 
+ 	GATE(CLK_ACLK_FSYS0_200, "aclk_fsys0_200", "dout_aclk_fsys0_200",
+-		ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT, 0),
++		ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT |
++		CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
+ 		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
+ 
+-- 
+1.7.10.4
