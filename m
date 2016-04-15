@@ -1,41 +1,42 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v3 0/8] Add support for rk818
-Date: Mon, 25 Apr 2016 15:20:40 +0200
-Message-Id: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
+ FSYS0} blocks clock
+To: Alim Akhtar <alim.akhtar@samsung.com>
+References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+ <570F4BE0.1010102@samsung.com> <5710E082.2050303@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, thomas.ab@samsung.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+ tomasz.figa@gmail.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <5711180A.8030809@samsung.com>
+Date: Fri, 15 Apr 2016 18:34:18 +0200
+MIME-version: 1.0
+In-reply-to: <5710E082.2050303@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes since v2:
-- Split refactoring patch into 2 patches so this can be more easily reviewed
-- Added Acked-by from Mark Brown in patch 5
-- Added Acked-by from Rob Herring in patch 6
-- Added Acked-by from Stephen Boyd in patch 7
-- Added Acked-by from Alexandre Belloni in patch 8
+On 04/15/2016 02:37 PM, Alim Akhtar wrote:
+> On 04/14/2016 01:20 PM, Krzysztof Kozlowski wrote:
+>> > On 04/14/2016 06:42 AM, Alim Akhtar wrote:
+>>> >> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
+>>> >> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
+>>> >> blocks registers. Let these clocks to be enabled all the time.
+>>> >>
+>>> >> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> >> ---
+>>> >>   drivers/clk/samsung/clk-exynos7.c |    5 +++--
+>>> >>   1 file changed, 3 insertions(+), 2 deletions(-)
+>> >
+>> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> >
+> Thanks Krzysztof,
+> Sylwester, do you have any concern here?
 
-Wadim Egorov (8):
-  drivers: mfd: rk808: rename rk808 struct to rk8xx
-  mfd: RK808: Add RK818 support
-  regulator: rk808: remove linear range definitions with a single range
-  regulator: rk808: Migrate to regulator core's simplified DT parsing
-    code
-  regulator: rk808: Add regulator driver for RK818
-  mfd: dt-bindings: Add RK818 device tree bindings document
-  clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
-  rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
-
- Documentation/devicetree/bindings/mfd/rk808.txt |  37 +-
- drivers/clk/Kconfig                             |   4 +-
- drivers/clk/clk-rk808.c                         |  20 +-
- drivers/mfd/Kconfig                             |   4 +-
- drivers/mfd/rk808.c                             | 253 +++++++++++---
- drivers/regulator/Kconfig                       |   4 +-
- drivers/regulator/rk808-regulator.c             | 427 +++++++++++++-----------
- drivers/rtc/Kconfig                             |   4 +-
- drivers/rtc/rtc-rk808.c                         |  50 +--
- include/linux/mfd/rk808.h                       | 164 ++++++++-
- 10 files changed, 675 insertions(+), 292 deletions(-)
+I'm fine with the patch, if it fixes all the issues for you.
+I will apply it and will likely send it upstream after v4.7-rc1 release.
 
 -- 
-1.9.1
+Regards,
+Sylwester
