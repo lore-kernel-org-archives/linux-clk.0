@@ -1,99 +1,44 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [RESEND PATCH 3/8] clk: core: support clocks which requires parents on (part 1)
-Date: Wed, 20 Apr 2016 17:34:35 +0800
-Message-ID: <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <fengguang.wu@intel.com>
+Date: Fri, 15 Apr 2016 18:36:11 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@arm.linux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com,
+	javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net,
+	geert+renesas@glider.be, sjoerd.simons@collabora.co.uk,
+	treding@nvidia.com, public_timo.s@silentcreek.de
+Subject: Re: [PATCH 3/6] regulator: rk808: Make rk808 generic, rename
+ rk808-regulator.c
+Message-ID: <201604151850.X92LLQkG%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460711790-22646-4-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Freescale i.MX7D platform, all clocks operations, including
-enable/disable, rate change and re-parent, requires its parent
-clock on. Current clock core can not support it well.
-This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
-special case in clock core that enable its parent clock firstly for
-each operation and disable it later after operation complete.
+Hi Wadim,
 
-The patch part 1 fixes the possible disabling clocks while its parent
-is off during kernel booting phase in clk_disable_unused_subtree().
+[auto build test WARNING on regulator/for-next]
+[also build test WARNING on v4.6-rc3 next-20160414]
+[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
 
-Before the completion of kernel booting, clock tree is still not built
-completely, there may be a case that the child clock is on but its
-parent is off which could be caused by either HW initial reset state
-or bootloader initialization.
+url:    https://github.com/0day-ci/linux/commits/Wadim-Egorov/Add-RK818-PMIC-support/20160415-172610
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Taking bootloader as an example, we may enable all clocks in HW by default.
-And during kernel booting time, the parent clock could be disabled in its
-driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
-Because it's child clock is only enabled in HW while its SW usecount
-in clock tree is still 0, so clk_disable of parent clock will gate
-the parent clock in both HW and SW usecount ultimately. Then there will
-be a child clock is still on in HW but its parent is already off.
 
-Later in clk_disable_unused(), this clock disable accessing while its
-parent off will cause system hang due to the limitation of HW which
-must require its parent on.
+coccinelle warnings: (new ones prefixed by >>)
 
-This patch simply enables the parent clock first before disabling
-if flag CLK_OPS_PARENT_ON is set in clk_disable_unused_subtree().
-This is a simple solution and only affects booting time.
+>> drivers/regulator/rk8xx-regulator.c:617:3-8: No need to set .owner here. The core will do it.
 
-After kernel booting up the clock tree is already created, there will
-be no case that child is off but its parent is off.
-So no need do this checking for normal clk_disable() later.
+Please review and possibly fold the followup patch.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/clk.c            | 5 +++++
- include/linux/clk-provider.h | 2 ++
- 2 files changed, 7 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9f944d4..1f054d1a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		clk_disable_unused_subtree(child);
- 
-+	if (core->flags & CLK_OPS_PARENT_ON)
-+		clk_core_prepare_enable(core->parent);
-+
- 	flags = clk_enable_lock();
- 
- 	if (core->enable_count)
-@@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 
- unlock_out:
- 	clk_enable_unlock(flags);
-+	if (core->flags & CLK_OPS_PARENT_ON)
-+		clk_core_disable_unprepare(core->parent);
- }
- 
- static bool clk_ignore_unused;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 15628644..c878f9c 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -33,6 +33,8 @@
- #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
- #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
- #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
-+/* parents need on during gate/ungate, set rate and re-parent */
-+#define CLK_OPS_PARENT_ON	BIT(12)
- 
- struct clk;
- struct clk_hw;
--- 
-1.9.1
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
