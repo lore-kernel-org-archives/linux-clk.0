@@ -1,82 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:52726 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752780AbcD1VmD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 28 Apr 2016 17:42:03 -0400
-Subject: Re: [PATCH v7 4/9] pwm: pwm-tiecap: Update dt binding document to use
- proper unit address
-To: Rob Herring <robh@kernel.org>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
- <1461710209-6563-5-git-send-email-fcooper@ti.com>
- <20160428213122.GA27352@rob-hp-laptop>
-CC: <thierry.reding@gmail.com>, <tony@atomide.com>, <paul@pwsan.com>,
-	<t-kristo@ti.com>, <linux-pwm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <vigneshr@ti.com>, <nsekhar@ti.com>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-Message-ID: <5722838B.7070309@ti.com>
-Date: Thu, 28 Apr 2016 16:41:31 -0500
-MIME-Version: 1.0
-In-Reply-To: <20160428213122.GA27352@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v4.7
+Message-id: <57112304.3070500@samsung.com>
+Date: Fri, 15 Apr 2016 19:21:08 +0200
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
 
-On 04/28/2016 04:31 PM, Rob Herring wrote:
-> On Tue, Apr 26, 2016 at 05:36:44PM -0500, Franklin S Cooper Jr wrote:
->> Replace unit address from 0 to the proper physical address.
->>
->> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
->> ---
->>  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
->> index 788da6c..1b7eec5 100644
->> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
->> @@ -16,21 +16,21 @@ Optional properties:
->>  
->>  Example:
->>  
->> -ecap0: ecap@0 { /* ECAP on am33xx */
->> +ecap0: ecap@48300100 { /* ECAP on am33xx */
->>  	compatible = "ti,am33xx-ecap";
->>  	#pwm-cells = <3>;
->>  	reg = <0x48300100 0x80>;
->>  	ti,hwmods = "ecap0";
->>  };
->>  
->> -ecap0: ecap@0 { /* ECAP on am4372 */
->> +ecap0: ecap@48300100 { /* ECAP on am4372 */
->>  	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
->>  	#pwm-cells = <3>;
->>  	reg = <0x48300100 0x80>;
->>  	ti,hwmods = "ecap0";
->>  };
->>  
->> -ecap0: ecap@0 { /* ECAP on da850 */
->> +ecap0: ecap@1f06000 { /* ECAP on da850 */
->>  	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->>  	#pwm-cells = <3>;
->>  	reg = <0x306000 0x80>;
-> 
-> These still don't match.
-> 
-> Rob
+are available in the git repository at:
 
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-samsung
 
-I apologize you made a similar comment in the past but I misinterpreted
-it recently which is why I made the same mistake again. I'll fix it.
+for you to fetch changes up to 6466ee322749e7f440764df053ccccb2d15ab4de:
 
-Any issue with my response to your patch two comment for why I did
-things the way I did? If so I can fix it when I send my new rev.
+  Merge branch 'for-v4.7/clk/exynos542x' into for-v4.7/clk/next (2016-04-15 18:57:00 +0200)
 
-> 
->> -- 
->> 2.7.0
->>
+----------------------------------------------------------------
+
+This includes addition of some missing clock tree definitions
+(UART, MMC2 clocks) for exynos3250 SoC and exporting of IDs
+for exynos543x SoC AMBA AXI bus clocks needed for bus frequency
+scaling.
+
+----------------------------------------------------------------
+Chanwoo Choi (4):
+      dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
+      clk: samsung: exynos3250: Add MMC2 clock
+      dt-bindings: clock: Add the clock id for ACLK clock of Exynos542x SoC
+      clk: samsung: exynos542x: Add the clock id for ACLK
+
+Pankaj Dubey (1):
+      clk: samsung: exynos3250: Add UART2 clock
+
+Sylwester Nawrocki (1):
+      Merge branch 'for-v4.7/clk/exynos542x' into for-v4.7/clk/next
+
+ drivers/clk/samsung/clk-exynos3250.c   | 15 +++++++++++++++
+ drivers/clk/samsung/clk-exynos5420.c   | 77 +++++++++++++++++++++++++++++++++++++++++++++++------------------------------
+ include/dt-bindings/clock/exynos3250.h | 11 ++++++++++-
+ include/dt-bindings/clock/exynos5420.h | 24 +++++++++++++++++++++++-
+ 4 files changed, 95 insertions(+), 32 deletions(-)
+
+--
+Thanks, 
+Sylwester
