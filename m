@@ -1,202 +1,185 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Ungerer <gerg@uclinux.org>, Ryan Mallon <rmallon@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Steven Miao <realmz6@gmail.com>, Simon Horman <horms@verge.net.au>,
-        Wan ZongShun <mcuos.com@gmail.com>, Rich Felker <dalias@libc.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Russell King <linux@arm.linux.org.uk>, linux-m68k@lists.linux-m68k.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-        John Crispin <blogic@openwrt.org>
-Subject: [PATCH v2] clk: let clk_disable() return immediately if clk is NULL or error
-Date: Tue,  5 Apr 2016 10:51:23 +0900
-Message-Id: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net, geert+renesas@glider.be, sjoerd.simons@collabora.co.uk, treding@nvidia.com, public_timo.s@silentcreek.de
+Subject: [PATCH 3/6] regulator: rk808: Make rk808 generic, rename rk808-regulator.c
+Date: Fri, 15 Apr 2016 11:16:27 +0200
+Message-Id: <1460711790-22646-4-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
+References: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk_disable() in the common clock framework (drivers/clk/clk.c)
-returns immediately if a given clk is NULL or an error pointer.  It
-allows clock consumers to call clk_disable() without IS_ERR_OR_NULL
-checking if drivers are only used with the common clock framework.
+This patch just renames the rk808 driver so we can reuse this driver
+to add more regulator devices from the RK8XX PMIC family later.
 
-Unfortunately, NULL/error checking is missing from some of non-common
-clk_disable() implementations.  This prevents us from completely
-dropping NULL/error checking from callers.  Let's make it tree-wide
-consistent by adding IS_ERR_OR_NULL(clk) to all callees.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Greg Ungerer <gerg@uclinux.org>
-Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
 ---
+ arch/arm/configs/multi_v7_defconfig                |  2 +-
+ drivers/mfd/rk8xx.c                                |  4 +--
+ drivers/regulator/Kconfig                          |  4 +--
+ drivers/regulator/Makefile                         |  2 +-
+ .../{rk808-regulator.c => rk8xx-regulator.c}       | 36 +++++++++++-----------
+ 5 files changed, 24 insertions(+), 24 deletions(-)
+ rename drivers/regulator/{rk808-regulator.c => rk8xx-regulator.c} (95%)
 
-Stephen,
-
-This patch has been unapplied for a long time.
-
-Please let me know if there is something wrong with this patch.
-
-Thanks,
-
-
-Changes in v2:
-  - Rebase on Linux 4.6-rc1
-
- arch/arm/mach-ep93xx/clock.c     |  2 +-
- arch/arm/mach-mmp/clock.c        |  3 +++
- arch/arm/mach-sa1100/clock.c     | 15 ++++++++-------
- arch/arm/mach-w90x900/clock.c    |  3 +++
- arch/blackfin/mach-bf609/clock.c |  3 +++
- arch/m68k/coldfire/clk.c         |  4 ++++
- arch/mips/bcm63xx/clk.c          |  3 +++
- arch/mips/lantiq/clk.c           |  3 +++
- drivers/sh/clk/core.c            |  2 +-
- 9 files changed, 29 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
-index 39ef3b6..4e11f7d 100644
---- a/arch/arm/mach-ep93xx/clock.c
-+++ b/arch/arm/mach-ep93xx/clock.c
-@@ -293,7 +293,7 @@ void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index ca995e9..d774ba0 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -474,7 +474,7 @@ CONFIG_REGULATOR_AXP20X=m
+ CONFIG_REGULATOR_BCM590XX=y
+ CONFIG_REGULATOR_DA9210=y
+ CONFIG_REGULATOR_FAN53555=y
+-CONFIG_REGULATOR_RK808=y
++CONFIG_REGULATOR_RK8XX=y
+ CONFIG_REGULATOR_GPIO=y
+ CONFIG_MFD_SYSCON=y
+ CONFIG_POWER_RESET_SYSCON=y
+diff --git a/drivers/mfd/rk8xx.c b/drivers/mfd/rk8xx.c
+index 57fee1e..c7990fb 100644
+--- a/drivers/mfd/rk8xx.c
++++ b/drivers/mfd/rk8xx.c
+@@ -82,7 +82,7 @@ static struct resource rtc_resources[] = {
  
--	if (!clk)
-+	if (IS_ERR_OR_NULL(clk))
- 		return;
+ static const struct mfd_cell rk808s[] = {
+ 	{ .name = "rk808-clkout", },
+-	{ .name = "rk808-regulator", },
++	{ .name = "rk8xx-regulator", },
+ 	{
+ 		.name = "rk808-rtc",
+ 		.num_resources = ARRAY_SIZE(rtc_resources),
+@@ -92,7 +92,7 @@ static const struct mfd_cell rk808s[] = {
  
- 	spin_lock_irqsave(&clk_lock, flags);
-diff --git a/arch/arm/mach-mmp/clock.c b/arch/arm/mach-mmp/clock.c
-index ac6633d..39ad3896 100644
---- a/arch/arm/mach-mmp/clock.c
-+++ b/arch/arm/mach-mmp/clock.c
-@@ -67,6 +67,9 @@ void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
+ static const struct mfd_cell rk818s[] = {
+ 	{ .name = "rk808-clkout", },
+-	{ .name = "rk808-regulator", },
++	{ .name = "rk8xx-regulator", },
+ 	{
+ 		.name = "rk808-rtc",
+ 		.num_resources = ARRAY_SIZE(rtc_resources),
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index f834079..c5b525b 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -608,8 +608,8 @@ config REGULATOR_RC5T583
+ 	  through regulator interface. The device supports multiple DCDC/LDO
+ 	  outputs which can be controlled by i2c communication.
  
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
- 	WARN_ON(clk->enabled == 0);
+-config REGULATOR_RK808
+-	tristate "Rockchip RK808 Power regulators"
++config REGULATOR_RK8XX
++	tristate "Rockchip RK8XX Power regulators"
+ 	depends on MFD_RK8XX
+ 	help
+ 	  Select this option to enable the power regulator of ROCKCHIP
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 61bfbb9..5d6ffed 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -78,7 +78,7 @@ obj-$(CONFIG_REGULATOR_PBIAS) += pbias-regulator.o
+ obj-$(CONFIG_REGULATOR_PCAP) += pcap-regulator.o
+ obj-$(CONFIG_REGULATOR_PCF50633) += pcf50633-regulator.o
+ obj-$(CONFIG_REGULATOR_RC5T583)  += rc5t583-regulator.o
+-obj-$(CONFIG_REGULATOR_RK808)   += rk808-regulator.o
++obj-$(CONFIG_REGULATOR_RK8XX)   += rk8xx-regulator.o
+ obj-$(CONFIG_REGULATOR_RN5T618) += rn5t618-regulator.o
+ obj-$(CONFIG_REGULATOR_RT5033)	+= rt5033-regulator.o
+ obj-$(CONFIG_REGULATOR_S2MPA01) += s2mpa01.o
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk8xx-regulator.c
+similarity index 95%
+rename from drivers/regulator/rk808-regulator.c
+rename to drivers/regulator/rk8xx-regulator.c
+index d86a3dc..fc75957 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk8xx-regulator.c
+@@ -1,5 +1,5 @@
+ /*
+- * Regulator driver for Rockchip RK808
++ * Regulator driver for Rockchip's RK8XX PMIC family
+  *
+  * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
+  *
+@@ -523,7 +523,7 @@ static struct of_regulator_match rk808_reg_matches[] = {
+ 	[RK808_ID_SWITCH2]	= { .name = "SWITCH_REG2" },
+ };
  
- 	spin_lock_irqsave(&clocks_lock, flags);
-diff --git a/arch/arm/mach-sa1100/clock.c b/arch/arm/mach-sa1100/clock.c
-index cbf53bb..ea103fd 100644
---- a/arch/arm/mach-sa1100/clock.c
-+++ b/arch/arm/mach-sa1100/clock.c
-@@ -85,13 +85,14 @@ void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
- 
--	if (clk) {
--		WARN_ON(clk->enabled == 0);
--		spin_lock_irqsave(&clocks_lock, flags);
--		if (--clk->enabled == 0)
--			clk->ops->disable(clk);
--		spin_unlock_irqrestore(&clocks_lock, flags);
--	}
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
-+	WARN_ON(clk->enabled == 0);
-+	spin_lock_irqsave(&clocks_lock, flags);
-+	if (--clk->enabled == 0)
-+		clk->ops->disable(clk);
-+	spin_unlock_irqrestore(&clocks_lock, flags);
+-static int rk808_regulator_dt_parse_pdata(struct device *dev,
++static int rk8xx_regulator_dt_parse_pdata(struct device *dev,
+ 				   struct device *client_dev,
+ 				   struct regmap *map,
+ 				   struct rk808_regulator_data *pdata)
+@@ -566,12 +566,12 @@ dt_parse_end:
+ 	return ret;
  }
- EXPORT_SYMBOL(clk_disable);
  
-diff --git a/arch/arm/mach-w90x900/clock.c b/arch/arm/mach-w90x900/clock.c
-index 2c371ff..90ec250 100644
---- a/arch/arm/mach-w90x900/clock.c
-+++ b/arch/arm/mach-w90x900/clock.c
-@@ -46,6 +46,9 @@ void clk_disable(struct clk *clk)
+-static int rk808_regulator_probe(struct platform_device *pdev)
++static int rk8xx_regulator_probe(struct platform_device *pdev)
  {
- 	unsigned long flags;
+-	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+-	struct i2c_client *client = rk808->i2c;
++	struct rk808 *rk8xx = dev_get_drvdata(pdev->dev.parent);
++	struct i2c_client *client = rk8xx->i2c;
+ 	struct regulator_config config = {};
+-	struct regulator_dev *rk808_rdev;
++	struct regulator_dev *rk8xx_rdev;
+ 	struct rk808_regulator_data *pdata;
+ 	int ret, i;
  
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
- 	WARN_ON(clk->enabled == 0);
+@@ -579,8 +579,8 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ 	if (!pdata)
+ 		return -ENOMEM;
  
- 	spin_lock_irqsave(&clocks_lock, flags);
-diff --git a/arch/blackfin/mach-bf609/clock.c b/arch/blackfin/mach-bf609/clock.c
-index 3783058..fed8015 100644
---- a/arch/blackfin/mach-bf609/clock.c
-+++ b/arch/blackfin/mach-bf609/clock.c
-@@ -97,6 +97,9 @@ EXPORT_SYMBOL(clk_enable);
+-	ret = rk808_regulator_dt_parse_pdata(&pdev->dev, &client->dev,
+-					     rk808->regmap, pdata);
++	ret = rk8xx_regulator_dt_parse_pdata(&pdev->dev, &client->dev,
++					     rk8xx->regmap, pdata);
+ 	if (ret < 0)
+ 		return ret;
  
- void clk_disable(struct clk *clk)
- {
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
- 	if (clk->ops && clk->ops->disable)
- 		clk->ops->disable(clk);
+@@ -594,34 +594,34 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ 
+ 		config.dev = &client->dev;
+ 		config.driver_data = pdata;
+-		config.regmap = rk808->regmap;
++		config.regmap = rk8xx->regmap;
+ 		config.of_node = rk808_reg_matches[i].of_node;
+ 		config.init_data = rk808_reg_matches[i].init_data;
+ 
+-		rk808_rdev = devm_regulator_register(&pdev->dev,
++		rk8xx_rdev = devm_regulator_register(&pdev->dev,
+ 						     &rk808_reg[i], &config);
+-		if (IS_ERR(rk808_rdev)) {
++		if (IS_ERR(rk8xx_rdev)) {
+ 			dev_err(&client->dev,
+ 				"failed to register %d regulator\n", i);
+-			return PTR_ERR(rk808_rdev);
++			return PTR_ERR(rk8xx_rdev);
+ 		}
+ 	}
+ 
+ 	return 0;
  }
-diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c
-index fddfdcc..eb0e8c1 100644
---- a/arch/m68k/coldfire/clk.c
-+++ b/arch/m68k/coldfire/clk.c
-@@ -101,6 +101,10 @@ EXPORT_SYMBOL(clk_enable);
- void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
-+
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
- 	spin_lock_irqsave(&clk_lock, flags);
- 	if ((--clk->enabled == 0) && clk->clk_ops)
- 		clk->clk_ops->disable(clk);
-diff --git a/arch/mips/bcm63xx/clk.c b/arch/mips/bcm63xx/clk.c
-index 6375652..d6a39bf 100644
---- a/arch/mips/bcm63xx/clk.c
-+++ b/arch/mips/bcm63xx/clk.c
-@@ -326,6 +326,9 @@ EXPORT_SYMBOL(clk_enable);
  
- void clk_disable(struct clk *clk)
- {
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
- 	mutex_lock(&clocks_mutex);
- 	clk_disable_unlocked(clk);
- 	mutex_unlock(&clocks_mutex);
-diff --git a/arch/mips/lantiq/clk.c b/arch/mips/lantiq/clk.c
-index a0706fd..c8d87b1 100644
---- a/arch/mips/lantiq/clk.c
-+++ b/arch/mips/lantiq/clk.c
-@@ -130,6 +130,9 @@ EXPORT_SYMBOL(clk_enable);
+-static struct platform_driver rk808_regulator_driver = {
+-	.probe = rk808_regulator_probe,
++static struct platform_driver rk8xx_regulator_driver = {
++	.probe = rk8xx_regulator_probe,
+ 	.driver = {
+-		.name = "rk808-regulator",
++		.name = "rk8xx-regulator",
+ 		.owner = THIS_MODULE,
+ 	},
+ };
  
- void clk_disable(struct clk *clk)
- {
-+	if (IS_ERR_OR_NULL(clk))
-+		return;
-+
- 	if (unlikely(!clk_good(clk)))
- 		return;
+-module_platform_driver(rk808_regulator_driver);
++module_platform_driver(rk8xx_regulator_driver);
  
-diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
-index 92863e3..9978fa4 100644
---- a/drivers/sh/clk/core.c
-+++ b/drivers/sh/clk/core.c
-@@ -252,7 +252,7 @@ void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
- 
--	if (!clk)
-+	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
- 	spin_lock_irqsave(&clock_lock, flags);
+-MODULE_DESCRIPTION("regulator driver for the rk808 series PMICs");
++MODULE_DESCRIPTION("regulator driver for the rk8xx series PMICs");
+ MODULE_AUTHOR("Chris Zhong<zyw@rock-chips.com>");
+ MODULE_AUTHOR("Zhang Qing<zhangqing@rock-chips.com>");
+ MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:rk808-regulator");
++MODULE_ALIAS("platform:rk8xx-regulator");
 -- 
 1.9.1
