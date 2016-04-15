@@ -1,136 +1,215 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36560 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751212AbcDBKpx (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2016 06:45:53 -0400
-Received: by mail-lf0-f48.google.com with SMTP id g184so30704088lfb.3
-        for <linux-clk@vger.kernel.org>; Sat, 02 Apr 2016 03:45:52 -0700 (PDT)
-Subject: Re: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
- <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
- <20160402005045.GX18567@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <56FFA2D5.4060603@baylibre.com>
-Date: Sat, 2 Apr 2016 12:45:41 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160402005045.GX18567@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net, geert+renesas@glider.be, sjoerd.simons@collabora.co.uk, treding@nvidia.com, public_timo.s@silentcreek.de
+Subject: [PATCH 5/6] regulator: rk8xx: Add regulator driver for RK818
+Date: Fri, 15 Apr 2016 11:16:29 +0200
+Message-Id: <1460711790-22646-6-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
+References: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/02/2016 02:50 AM, Stephen Boyd wrote:
->> +
->> +/* Bit - Name association */
->> +static const struct clk_init_data *clk_oxnas_init[] = {
->> +	[0] = &clk_leon_init,
->> +	[1] = &clk_dma_sgdma_init,
->> +	[2] = &clk_cipher_init,
->> +	[3] = NULL,		/* Do not touch to DDR clock */
-> 
-> Why do we have this here then? The dt binding has different
-> numbers, so having this array with a hole in it seems fragile
-> when we're using the order of this array to map to the clk
-> indices.
+Add support for the rk818 regulator. The regulator module consists
+of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
+power OTG and HDMI5V.
 
-Hi Stephen,
+The output voltages are configurable and are meant to supply power
+to the main processor and other components.
 
-I skipped the DDR clock since it must be touched in any case, I could have introduced a read-only clock....
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+ drivers/regulator/rk8xx-regulator.c | 139 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 134 insertions(+), 5 deletions(-)
 
-I already posted an arm-soc dts pull request with the DTSI using the bindings indices.
-Here the array indice is the register bit index, maybe I can order by bindings indice and add the hardware bit in an intermediate structure ?
-
->> +	clk_oxnas = devm_kzalloc(&pdev->dev,
->> +				 sizeof(*clk_oxnas)*ARRAY_SIZE(clk_oxnas_init),
->> +				 GFP_KERNEL);
-> 
-> devm_kcalloc()?
-> 
->> +	if (!clk_oxnas)
->> +		return -ENOMEM;
->> +
->> +	clks = devm_kzalloc(&pdev->dev,
->> +			    sizeof(*clks)*ARRAY_SIZE(clk_oxnas_init),
->> +			    GFP_KERNEL);
-> 
-> devm_kcalloc()? This can be one smaller because DDR is never
-> touched?
-
-Sure
-> 
->> +	if (!clks)
->> +		return -ENOMEM;
->> +
->> +	onecell_data = devm_kzalloc(&pdev->dev, sizeof(*onecell_data),
->> +				     GFP_KERNEL);
-> 
-> Maybe we should have one structure that we allocate all at once?
-> 
->> +	if (!onecell_data)
->> +		return -ENOMEM;
->> +
->> +	regmap = syscon_node_to_regmap(of_get_parent(np));
-> 
-> Can we use dev_get_regmap(&pdev->dev.parent) here instead? I'd
-> prefer device APIs over DT APIs here. 
-
-Ok
-
->> +	if (!regmap) {
->> +		dev_err(&pdev->dev, "failed to have parent regmap\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
->> +		struct clk_oxnas *_clk;
->> +
->> +		if (!clk_oxnas_init[i])
->> +			continue;
->> +
->> +		_clk = &clk_oxnas[i];
->> +		_clk->bit = i;
-> 
-> Ah I see now, the order is used to encode bit offset. The comment
-> above the init data array could be expanded a bit then please.
-Sure it need clarifications !
-
-> 
->> +		_clk->hw.init = clk_oxnas_init[i];
->> +		_clk->regmap = regmap;
->> +
->> +		clks[clks_count] = devm_clk_register(&pdev->dev, &_clk->hw);
->> +		if (WARN_ON(IS_ERR(clks[clks_count])))
->> +			return PTR_ERR(clks[clks_count]);
->> +
->> +		++clks_count;
->> +	}
->> +
->> +	onecell_data->clks = clks;
->> +	onecell_data->clk_num = clks_count;
->> +
->> +	return of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
->> +}
->> +
->> +static const struct of_device_id oxnas_stdclk_dt_ids[] = {
->> +	{ .compatible = "oxsemi,ox810se-stdclk" },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
->> +
->> +static struct platform_driver oxnas_stdclk_driver = {
->> +	.probe = oxnas_stdclk_probe,
->> +	.remove = oxnas_stdclk_remove,
->> +	.driver	= {
->> +		.name = "oxnas-stdclk",
->> +		.of_match_table = of_match_ptr(oxnas_stdclk_dt_ids),
-> 
-> You can drop of_match_ptr() here, it will just lead to unused
-> variable warnings.
-
-OK, thanks for the review, I hope the next post will go throught 4.7 !
-
-Regards,
-Neil
-
+diff --git a/drivers/regulator/rk8xx-regulator.c b/drivers/regulator/rk8xx-regulator.c
+index 4a29726..57f2c72 100644
+--- a/drivers/regulator/rk8xx-regulator.c
++++ b/drivers/regulator/rk8xx-regulator.c
+@@ -6,6 +6,10 @@
+  * Author: Chris Zhong <zyw@rock-chips.com>
+  * Author: Zhang Qing <zhangqing@rock-chips.com>
+  *
++ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
++ *
++ * Author: Wadim Egorov <w.egorov@phytec.de>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -32,6 +36,12 @@
+ #define RK808_BUCK4_VSEL_MASK	0xf
+ #define RK808_LDO_VSEL_MASK	0x1f
+ 
++#define RK818_BUCK_VSEL_MASK		0x3f
++#define RK818_BUCK4_VSEL_MASK		0x1f
++#define RK818_LDO_VSEL_MASK		0x1f
++#define RK818_LDO3_ON_VSEL_MASK		0xf
++#define RK818_BOOST_ON_VSEL_MASK	0xe0
++
+ /* Ramp rate definitions for buck1 / buck2 only */
+ #define RK808_RAMP_RATE_OFFSET		3
+ #define RK808_RAMP_RATE_MASK		(3 << RK808_RAMP_RATE_OFFSET)
+@@ -454,6 +464,108 @@ static const struct regulator_desc rk808_reg[] = {
+ 		RK808_DCDC_EN_REG, BIT(6)),
+ };
+ 
++static const struct regulator_desc rk818_reg[] = {
++	{
++		.name = "DCDC_REG1",
++		.supply_name = "vcc1",
++		.of_match = of_match_ptr("DCDC_REG1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_DCDC1,
++		.ops = &rk808_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 712500,
++		.uV_step = 12500,
++		.n_voltages = 64,
++		.vsel_reg = RK818_BUCK1_ON_VSEL_REG,
++		.vsel_mask = RK818_BUCK_VSEL_MASK,
++		.enable_reg = RK818_DCDC_EN_REG,
++		.enable_mask = BIT(0),
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG2",
++		.supply_name = "vcc2",
++		.of_match = of_match_ptr("DCDC_REG2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_DCDC2,
++		.ops = &rk808_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 712500,
++		.uV_step = 12500,
++		.n_voltages = 64,
++		.vsel_reg = RK818_BUCK2_ON_VSEL_REG,
++		.vsel_mask = RK818_BUCK_VSEL_MASK,
++		.enable_reg = RK818_DCDC_EN_REG,
++		.enable_mask = BIT(1),
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG3",
++		.supply_name = "vcc3",
++		.of_match = of_match_ptr("DCDC_REG3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_DCDC3,
++		.ops = &rk808_switch_ops,
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 1,
++		.enable_reg = RK818_DCDC_EN_REG,
++		.enable_mask = BIT(2),
++		.owner = THIS_MODULE,
++	},
++	RK8XX_DESC(RK818_ID_DCDC4, "DCDC_REG4", "vcc4", 1800, 3600, 100,
++		RK818_BUCK4_ON_VSEL_REG, RK818_BUCK4_VSEL_MASK,
++		RK818_DCDC_EN_REG, BIT(3), 0),
++	RK8XX_DESC(RK818_ID_BOOST, "DCDC_BOOST", "boost", 4700, 5400, 100,
++		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_BOOST_ON_VSEL_MASK,
++		RK818_DCDC_EN_REG, BIT(4), 0),
++	RK8XX_DESC(RK818_ID_LDO1, "LDO_REG1", "vcc6", 1800, 3400, 100,
++		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(0), 400),
++	RK8XX_DESC(RK818_ID_LDO2, "LDO_REG2", "vcc6", 1800, 3400, 100,
++		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(1), 400),
++	{
++		.name = "LDO_REG3",
++		.supply_name = "vcc7",
++		.of_match = of_match_ptr("LDO_REG3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_LDO3,
++		.ops = &rk808_reg_ops_ranges,
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 16,
++		.linear_ranges = rk808_ldo3_voltage_ranges,
++		.n_linear_ranges = ARRAY_SIZE(rk808_ldo3_voltage_ranges),
++		.vsel_reg = RK818_LDO3_ON_VSEL_REG,
++		.vsel_mask = RK818_LDO3_ON_VSEL_MASK,
++		.enable_reg = RK818_LDO_EN_REG,
++		.enable_mask = BIT(2),
++		.enable_time = 400,
++		.owner = THIS_MODULE,
++	},
++	RK8XX_DESC(RK818_ID_LDO4, "LDO_REG4", "vcc8", 1800, 3400, 100,
++		RK818_LDO4_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(3), 400),
++	RK8XX_DESC(RK818_ID_LDO5, "LDO_REG5", "vcc7", 1800, 3400, 100,
++		RK818_LDO5_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(4), 400),
++	RK8XX_DESC(RK818_ID_LDO6, "LDO_REG6", "vcc8", 800, 2500, 100,
++		RK818_LDO6_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(5), 400),
++	RK8XX_DESC(RK818_ID_LDO7, "LDO_REG7", "vcc7", 800, 2500, 100,
++		RK818_LDO7_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(6), 400),
++	RK8XX_DESC(RK818_ID_LDO8, "LDO_REG8", "vcc8", 1800, 3400, 100,
++		RK818_LDO8_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(7), 400),
++	RK8XX_DESC(RK818_ID_LDO9, "LDO_REG9", "vcc9", 1800, 3400, 100,
++		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_LDO_VSEL_MASK,
++		RK818_DCDC_EN_REG, BIT(5), 400),
++	RK8XX_DESC_SWITCH(RK818_ID_SWITCH, "SWITCH_REG", "vcc9",
++		RK818_DCDC_EN_REG, BIT(6)),
++	RK8XX_DESC_SWITCH(RK818_ID_HDMI_SWITCH, "HDMI_SWITCH", "h_5v",
++		RK818_H5V_EN_REG, BIT(0)),
++	RK8XX_DESC_SWITCH(RK818_ID_OTG_SWITCH, "OTG_SWITCH", "usb",
++		RK818_DCDC_EN_REG, BIT(7)),
++};
++
+ static int rk8xx_regulator_dt_parse_pdata(struct device *dev,
+ 				   struct device *client_dev,
+ 				   struct regmap *map,
+@@ -499,7 +611,8 @@ static int rk8xx_regulator_probe(struct platform_device *pdev)
+ 	struct regulator_config config = {};
+ 	struct regulator_dev *rk8xx_rdev;
+ 	struct rk808_regulator_data *pdata;
+-	int ret, i;
++	const struct regulator_desc *regulators;
++	int ret, i, nregulators;
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+@@ -512,14 +625,29 @@ static int rk8xx_regulator_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, pdata);
+ 
++	switch (rk8xx->variant) {
++	case RK808_ID:
++		regulators = rk808_reg;
++		nregulators = RK808_NUM_REGULATORS;
++		break;
++	case RK818_ID:
++		regulators = rk818_reg;
++		nregulators = RK818_NUM_REGULATORS;
++		break;
++	default:
++		dev_err(&client->dev, "unsupported RK8XX ID %lu\n",
++			rk8xx->variant);
++		return -EINVAL;
++	}
++
+ 	config.dev = &client->dev;
+ 	config.driver_data = pdata;
+ 	config.regmap = rk8xx->regmap;
+ 
+ 	/* Instantiate the regulators */
+-	for (i = 0; i < RK808_NUM_REGULATORS; i++) {
++	for (i = 0; i < nregulators; i++) {
+ 		rk8xx_rdev = devm_regulator_register(&pdev->dev,
+-						     &rk808_reg[i], &config);
++						     &regulators[i], &config);
+ 		if (IS_ERR(rk8xx_rdev)) {
+ 			dev_err(&client->dev,
+ 				"failed to register %d regulator\n", i);
+@@ -541,7 +669,8 @@ static struct platform_driver rk8xx_regulator_driver = {
+ module_platform_driver(rk8xx_regulator_driver);
+ 
+ MODULE_DESCRIPTION("regulator driver for the rk8xx series PMICs");
+-MODULE_AUTHOR("Chris Zhong<zyw@rock-chips.com>");
+-MODULE_AUTHOR("Zhang Qing<zhangqing@rock-chips.com>");
++MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
++MODULE_AUTHOR("Zhang Qing <zhangqing@rock-chips.com>");
++MODULE_AUTHOR("Wadim Egorov <w.egorov@phytec.de>");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:rk8xx-regulator");
+-- 
+1.9.1
