@@ -1,52 +1,45 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: renesas: Clock Domain fixes
-Date: Tue, 26 Apr 2016 10:33 +0300
-Message-ID: <1849807.IPH4zQTRa3@avalon>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 15:15:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Finlye Xiao <finley.xiao@rock-chips.com>
+Cc: mturquette@baylibre.com, heiko@sntech.de, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com,
+	wxt@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com,
+	zhangqing@rock-chips.com, xxx@rock-chips.com,
+	huangtao@rock-chips.com
+Subject: Re: [PATCH v2] clk: Add clk_composite_set_rate_and_parent
+Message-ID: <20160415221528.GO14441@codeaurora.org>
+References: <1460339652-63498-1-git-send-email-finley.xiao@rock-chips.com>
+ <1460450619-1118-1-git-send-email-finley.xiao@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460450619-1118-1-git-send-email-finley.xiao@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On 04/12, Finlye Xiao wrote:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+> 
+> When changing the clock-rate, currently a new parent is set first and a
+> divider adapted thereafter. This may result in the clock-rate overflowing
+> its target rate for a short time if the new parent has a higher rate than
+> the old parent.
+> 
+> While this often doesn't produce negative effects, it can affect components
+> in a voltage-scaling environment, like the GPU on the rk3399 socs, where
+> the voltage than simply is to low for the temporarily to high clock rate.
+> 
+> For general clock hirarchies this may need more extensive adaptions to
+> the common clock-framework, but at least for composite clocks having
+> both parent and rate settings it is easy to create a short-term solution to
+> make sure the clock-rate does not overflow the target.
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-Thank you for the patches.
-
-For the whole series,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-On Tuesday 26 Apr 2016 09:09:38 Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
-> Clock Domains:
->   1. Postpone calls to pm_genpd_init(), as all local setup of the
->      generic_pm_domain structure should have been completed before
->      calling pm_genpd_init(),
->   2. Use always-on governor for Clock Domains, to prevent their status
->      from being shown as "off-0" in
->      /sys/kernel/debug/pm_genpd/pm_genpd_summary.
-> 
-> I plan to queue these up with other clock updates in
-> clk-renesas-for-v4.7, and send a pull request later.
-> 
-> Thanks for your comments!
-> 
-> Geert Uytterhoeven (4):
->   clk: renesas: mstp: Postpone call to pm_genpd_init()
->   clk: renesas: mstp: Use always-on governor for Clock Domain
->   clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
->   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
-> 
->  drivers/clk/renesas/clk-mstp.c         | 3 +--
->  drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
->  2 files changed, 2 insertions(+), 3 deletions(-)
+Applied to clk-next
 
 -- 
-Regards,
-
-Laurent Pinchart
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
