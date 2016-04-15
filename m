@@ -1,68 +1,27 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V2] clk: bcm2835: mark enabled pll_dividers as critical
-Date: Tue, 26 Apr 2016 08:56:29 +0000
-Message-Id: <1461660989-11846-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 16:54:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Alexander Shiyan <shc_work@mail.ru>
+Subject: Re: [PATCH 25/41] clk: clps711x: Remove CLK_IS_ROOT
+Message-ID: <20160415235425.GG12052@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-26-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456858826-28541-26-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Alexander Shiyan <shc_work@mail.ru>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-The bcm2835 firmware enables several clocks and plls before
-booting the linux kernel.
+Applied to clk-next
 
-These plls should never get disabled as it may result in a
-stopped system clock and more.
-
-So during probing we check if the pll_divider is enabled
-and if it is then mark that pll_divider as critical.
-As a consequence this will also enable the corresponding parent pll.
-
-Here the list of pll_div that are marked as critical:
-[    2.022437] bcm2835-clk 20101000.cprman: found enabled pll_div plla_core - marking it as critical
-[    2.031640] bcm2835-clk 20101000.cprman: found enabled pll_div pllb_arm - marking it as critical
-[    2.040966] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_core0 - marking it as critical
-[    2.050351] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_per - marking it as critical
-[    2.059427] bcm2835-clk 20101000.cprman: found enabled pll_div plld_core - marking it as critical
-[    2.068590] bcm2835-clk 20101000.cprman: found enabled pll_div plld_per - marking it as critical
-[    2.077724] bcm2835-clk 20101000.cprman: found enabled pll_div pllh_pix - marking it as critical
-
-Changelog:
-  V1 -> V2: apply to pll_dividers instead of clocks
-            use CLK_IS_CRITICAL flag instead of prepare/enable manually
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 6479283c..7f6838f 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1086,6 +1086,15 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
- 	divider->cprman = cprman;
- 	divider->data = data;
- 
-+	/* if the pll-divider is running, then mark is as critical */
-+	if ((cprman_read(cprman, data->a2w_reg) &
-+	     A2W_PLL_CHANNEL_DISABLE) == 0) {
-+		dev_info(cprman->dev,
-+			 "found enabled pll_div %s - marking it as critical\n",
-+			 data->name);
-+		init.flags |= CLK_IS_CRITICAL;
-+	}
-+
- 	clk = devm_clk_register(cprman->dev, &divider->div.hw);
- 	if (IS_ERR(clk))
- 		return clk;
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
