@@ -1,47 +1,28 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 19/28] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Thu, 14 Apr 2016 14:08:08 +0300
-Message-ID: <1460632097-25727-20-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 16:54:36 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>, Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH 32/41] clk: palmas: Remove CLK_IS_ROOT
+Message-ID: <20160415235436.GJ12052@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-33-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456858826-28541-33-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- include/linux/clk/ti.h |    4 ----
- 1 file changed, 4 deletions(-)
+Applied to clk-next
 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 210e946..1451291 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -127,8 +127,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -143,8 +141,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
