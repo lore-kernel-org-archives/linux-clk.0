@@ -1,23 +1,35 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, elaine.zhang@rock-chips.com, jay.xu@rock-chips.com, dianders@chromium.org
-Subject: Re: [PATCH 6/6] clk: rockchip: rk3399: fix the gate bit for i2c4 and i2c8
-Date: Mon, 25 Apr 2016 23:03:02 +0200
-Message-ID: <33993376.YljBNjpY9Q@diego>
-In-Reply-To: <1461150730-29787-1-git-send-email-zhengxing@rock-chips.com>
-References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com> <1461150730-29787-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 15:23:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.7
+Message-ID: <20160415222358.GP14441@codeaurora.org>
+References: <57112304.3070500@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <57112304.3070500@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 20. April 2016, 19:12:10 schrieb Xing Zheng:
-> The gate bits of the i2c4 and i2c8 are incorrect due to the manual
-> error, we need to fix them.
+On 04/15, Sylwester Nawrocki wrote:
+> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 > 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+>   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-samsung
+> 
+> for you to fetch changes up to 6466ee322749e7f440764df053ccccb2d15ab4de:
+> 
+>   Merge branch 'for-v4.7/clk/exynos542x' into for-v4.7/clk/next (2016-04-15 18:57:00 +0200)
 
-applied to my clk-branch for v4.7
+Thanks. Pulled.
 
-Thanks
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
