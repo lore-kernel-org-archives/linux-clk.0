@@ -1,40 +1,27 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 22/30] ARM: AM33xx: fix module_wait_ready without clkctrl register
-Date: Mon, 11 Apr 2016 11:19:13 +0300
-Message-ID: <1460362761-4842-23-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
-References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 16:54:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Jun Nie <jun.nie@linaro.org>
+Subject: Re: [PATCH 23/41] clk: zte: Remove CLK_IS_ROOT
+Message-ID: <20160415235423.GF12052@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-24-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456858826-28541-24-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-If the module has no clkctrl register defined, module_wait_ready should
-not try to access this. This can potentially cause an illegal register
-access, and result in bad idle reporting also.
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
+> 
+> Cc: Jun Nie <jun.nie@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/cm33xx.c |    3 +++
- 1 file changed, 3 insertions(+)
+Applied to clk-next
 
-diff --git a/arch/arm/mach-omap2/cm33xx.c b/arch/arm/mach-omap2/cm33xx.c
-index 7b181f9..c073fb5 100644
---- a/arch/arm/mach-omap2/cm33xx.c
-+++ b/arch/arm/mach-omap2/cm33xx.c
-@@ -220,6 +220,9 @@ static int am33xx_cm_wait_module_ready(u8 part, s16 inst, u16 clkctrl_offs,
- {
- 	int i = 0;
- 
-+	if (!clkctrl_offs)
-+		return 0;
-+
- 	omap_test_timeout(_is_module_ready(inst, clkctrl_offs),
- 			  MAX_MODULE_READY_TIME, i);
- 
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
