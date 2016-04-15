@@ -1,63 +1,28 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 16/24] ARM: explicitly apply PWM config extracted from
- pwm_args
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-References: 
- <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
- <1460661464-11216-17-git-send-email-boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
- Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
- Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
- Joachim Eastwood <manabian@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
- Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>,
- Jani Nikula <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Hartley Sweeten <hsweeten@visionengravers.com>,
- Ryan Mallon <rmallon@gmail.com>, Alexander Shiyan <shc_work@mail.ru>,
- Milo Kim <milo.kim@ti.com>, Doug Anderson <dianders@google.com>,
- Caesar Wang <wxt@rock-chips.com>, Stephen Barber <smbarber@chromium.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5710A38D.3050202@samsung.com>
-Date: Fri, 15 Apr 2016 10:17:17 +0200
-MIME-version: 1.0
-In-reply-to: 
- <1460661464-11216-17-git-send-email-boris.brezillon@free-electrons.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 16:54:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>
+Subject: Re: [PATCH 14/41] clk: sirf: Remove CLK_IS_ROOT
+Message-ID: <20160415235417.GD12052@codeaurora.org>
+References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
+ <1456858826-28541-15-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1456858826-28541-15-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/14/2016 09:17 PM, Boris Brezillon wrote:
-> Call pwm_apply_args() just after requesting the PWM device so that the
-> polarity and period are initialized according to the information provided
-> in pwm_args.
+On 03/01, Stephen Boyd wrote:
+> This flag is a no-op now. Remove usage of the flag.
 > 
-> This is an intermediate state, and pwm_apply_args() should be dropped as
-> soon as the atomic PWM infrastructure is in place and the driver makes
-> use of it.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Guo Zeng <Guo.Zeng@csr.com>
+> Cc: Barry Song <Baohua.Song@csr.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Applied to clk-next
 
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
