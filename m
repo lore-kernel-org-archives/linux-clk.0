@@ -1,90 +1,41 @@
-Return-Path: <pchiu@nvidia.com>
-From: Penny Chiu <pchiu@nvidia.com>
-To: <swarren@wwwdotorg.org>, <thierry.reding@gmail.com>, <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>, <rjw@rjwysocki.net>,
-	<viresh.kumar@linaro.org>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Penny
- Chiu <pchiu@nvidia.com>
-Subject: [PATCH 09/11] arm64: tegra: Add DFLL clock node on Jetson TX1
-Date: Fri, 22 Apr 2016 18:31:09 +0800
-Message-ID: <1461321071-6431-10-git-send-email-pchiu@nvidia.com>
-In-Reply-To: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
-Return-Path: pchiu@nvidia.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 16:49:03 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH 2/2] clk: tegra: Initialize UTMIPLL when enabling PLLU
+Message-ID: <20160415234903.GA12052@codeaurora.org>
+References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
+ <1458590333-8898-2-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1458590333-8898-2-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DFLL clock device-tree node for Tegra210 DFLL IP block.
+On 03/21, Rhyland Klein wrote:
+> +static int clk_pllu_enable(struct clk_hw *hw)
+> +{
+> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +	struct clk *osc = __clk_lookup("osc");
 
-Signed-off-by: Penny Chiu <pchiu@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 16 ++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 15 +++++++++++++++
- 2 files changed, 31 insertions(+)
+Is there any way to _not_ use __clk_lookup() here? That function
+is on my kill list, mostly because it can't handle probe defer
+and is a hacky way to circumvent regular clk_get().
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index 9d02db2..5cf07f2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -43,6 +43,22 @@
- 		};
- 	};
- 
-+	dfll: clock@70110000 {
-+		status = "okay";
-+
-+		reg = <0x0 0x70110000 0x0 0x400>;
-+		vdd-cpu-supply = <&cpu_ovr_reg>;
-+		nvidia,pwm-to-pmic;
-+		nvidia,init-uv = <1000000>;
-+		nvidia,align-step-uv = <19200>; /* 19.2mv */
-+		nvidia,sample-rate = <25000>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,cf = <6>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+	};
-+
- 	pwm_dfll: pwm@70110000 {
- 		compatible = "nvidia,tegra210-dfll-pwm";
- 		reg = <0x0 0x70110000 0x0 0x400>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ba0462e..204d9cd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/memory/tegra210-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/tegra210-car.h>
- 
- / {
- 	compatible = "nvidia,tegra210";
-@@ -684,6 +685,20 @@
- 		status = "disabled";
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra210-dfll";
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA210_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA210_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		status = "disabled";
-+	};
-+
- 	usb@7d000000 {
- 		compatible = "nvidia,tegra210-ehci", "nvidia,tegra30-ehci", "usb-ehci";
- 		reg = <0x0 0x7d000000 0x0 0x4000>;
+> +	unsigned long flags, input_rate;
+> +	unsigned int i;
+> +	int ret = 0;
+> +	u32 val;
+> +
+> +	if (!osc) {
+
 -- 
-2.8.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
