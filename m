@@ -1,103 +1,170 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 01/28] clk: ti: add ti_clk_get helper API
-Date: Thu, 14 Apr 2016 14:07:50 +0300
-Message-ID: <1460632097-25727-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160414172838.GS4005@lukather>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
+ <20160317104042.GK30977@lukather> <CAEzqOZvoMrvf-3=Tfi7MK9ZTm1EtJre5gsBdz=2wZ+D+hj056A@mail.gmail.com>
+ <20160414172838.GS4005@lukather>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Date: Sat, 16 Apr 2016 23:59:40 +0800
+Message-ID: <CAEzqOZs44zZiu9e2Uae7ovT0=-o2rOCX+g2pJ6D0Rej2J2D3Ww@mail.gmail.com>
+Subject: Re: [PATCH v4 02/13] clk: sunxi: add ahb1 clock for A83T
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The API can be used to fetch directly DT clocks based on name. Using
-this new API allows getting rid of most of the DT_CLK() entries under
-drivers/clk/ti.
+Hello Maxime,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk.c   |   35 +++++++++++++++++++++++++++++------
- include/linux/clk/ti.h |    2 ++
- 2 files changed, 31 insertions(+), 6 deletions(-)
+On Fri, Apr 15, 2016 at 1:28 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Mon, Apr 04, 2016 at 11:07:29AM +0800, Vishnu Patekar wrote:
+>> Hello Maxime,
+>>
+>> On Thu, Mar 17, 2016 at 6:40 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > On Thu, Mar 17, 2016 at 12:04:25AM +0800, Vishnu Patekar wrote:
+>> >> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+>> >> clock index 0b1x is PLL6.
+>> >>
+>> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> >> Acked-by: Chen-Yu Tsai <wens@csie.org>
+>> >> Acked-by: Rob Herring <robh@kernel.org>
+>> >> ---
+>> >>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>> >>  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
+>> >>  2 files changed, 77 insertions(+)
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+>> >> index 834436f..cba9fe55 100644
+>> >> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+>> >> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+>> >> @@ -30,6 +30,7 @@ Required properties:
+>> >>       "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
+>> >>       "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
+>> >>       "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
+>> >> +     "allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
+>> >>       "allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+>> >>       "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+>> >>       "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+>> >> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+>> >> index 91de0a0..a7aab65 100644
+>> >> --- a/drivers/clk/sunxi/clk-sunxi.c
+>> >> +++ b/drivers/clk/sunxi/clk-sunxi.c
+>> >> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
+>> >>       req->rate >>= req->p;
+>> >>  }
+>> >>
+>> >> +#define SUN8I_A83T_AHB1_PARENT_PLL6  2
+>> >> +/**
+>> >> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
+>> >> + * AHB rate is calculated as follows
+>> >> + * rate = parent_rate >> p
+>> >> + *
+>> >> + * if parent is pll6, then
+>> >> + * parent_rate = pll6 rate / (m + 1)
+>> >> + */
+>> >> +
+>> >> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
+>> >> +{
+>> >> +     u8 div, calcp, calcm = 1;
+>> >> +
+>> >> +     /*
+>> >> +      * clock can only divide, so we will never be able to achieve
+>> >> +      * frequencies higher than the parent frequency
+>> >> +      */
+>> >> +     if (req->parent_rate && req->rate > req->parent_rate)
+>> >> +             req->rate = req->parent_rate;
+>> >> +
+>> >> +     div = DIV_ROUND_UP(req->parent_rate, req->rate);
+>> >> +
+>> >> +     /* calculate pre-divider if parent is pll6 */
+>> >> +     if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
+>> >> +             if (div < 4)
+>> >> +                     calcp = 0;
+>> >> +             else if (div / 2 < 4)
+>> >> +                     calcp = 1;
+>> >> +             else if (div / 4 < 4)
+>> >> +                     calcp = 2;
+>> >> +             else
+>> >> +                     calcp = 3;
+>> >> +
+>> >> +             calcm = DIV_ROUND_UP(div, 1 << calcp);
+>> >> +     } else {
+>> >> +             calcp = __roundup_pow_of_two(div);
+>> >> +             calcp = calcp > 3 ? 3 : calcp;
+>> >> +     }
+>> >> +
+>> >> +     req->rate = (req->parent_rate / calcm) >> calcp;
+>> >> +     req->p = calcp;
+>> >> +     req->m = calcm - 1;
+>> >> +}
+>> >> +
+>> >> +/**
+>> >> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
+>> >> +*                     parent index
+>> >> +*/
+>> >> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
+>> >> +{
+>> >> +     req->rate = req->parent_rate;
+>> >> +
+>> >> +/* apply pre-divider first if parent is pll6 */
+>> >
+>> > The comment indentation is wrong
+>> >
+>> >> +     if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
+>> >
+>> > And this is not the right define you're using.
+>> >
+>> > I still believe that duplicating the same logic just because of
+>> > different dividers is not the way to go.
+>> >
+>> > You could solve that easily by adding a table for the muxes, and
+>> > associate it with parents and dividers, that you could store in
+>> > clk_factors.
+>>
+>> I've similar solution (please ignore a83 specific functions those will
+>> be common for a31 and a83t).
+>> https://github.com/vishnupatekar/linux/commit/f7de5b48d886a672b1f6db112fbfd5d2c9849afa
+>>
+>> is it aligned to what you're saying?
+>
+> Yep. I'd even go a step further, and allow to have directly the core
+> deal with the pre-divider.
+>
+> I guess in your prediv table you could have the index, and either the
+> offset and width of the divider (if it's a variable one), or its fixed
+> value.
+That's good idea, index with shift and width will do as prediv can be variable.
+>
+> The generic function would then be able to deal with the rate
+> adjustments, and you wouldn't need to be able to have anything related
+> to the parent index in the clock specific functions anymore.
+>
+> Does that make sense?
+Adjusting rate in generic clk_factors_recalc_rate, with prediv shift
+and width is straight forward, and we can remove recalc function
+itself, currently it's used only for a31 ahb1.
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 5fcf247..3dcf97e 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -68,6 +68,33 @@ static u32 clk_memmap_readl(void __iomem *reg)
- }
- 
- /**
-+ * ti_clk_get - lookup a TI clock handle
-+ * @name: clock to find
-+ *
-+ * Searches for a TI clock handle. Will first attempt to search for a
-+ * clock based on a DT node name, but if this fails, will revert to
-+ * looking up a clock alias. Returns the pointer to the clock handle,
-+ * or ERR_PTR in failure.
-+ */
-+struct clk *ti_clk_get(const char *name)
-+{
-+	struct of_phandle_args clkspec;
-+	struct device_node *node;
-+	struct clk *clk;
-+
-+	if (of_have_populated_dt()) {
-+		node = of_find_node_by_name(NULL, name);
-+		clkspec.np = node;
-+		clk = of_clk_get_from_provider(&clkspec);
-+
-+		if (!IS_ERR(clk))
-+			return clk;
-+	}
-+
-+	return clk_get(NULL, name);
-+}
-+
-+/**
-  * ti_clk_setup_ll_ops - setup low level clock operations
-  * @ops: low level clock ops descriptor
-  *
-@@ -102,14 +129,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
- void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- {
- 	struct ti_dt_clk *c;
--	struct device_node *node;
- 	struct clk *clk;
--	struct of_phandle_args clkspec;
- 
- 	for (c = oclks; c->node_name != NULL; c++) {
--		node = of_find_node_by_name(NULL, c->node_name);
--		clkspec.np = node;
--		clk = of_clk_get_from_provider(&clkspec);
-+		clk = ti_clk_get(c->node_name);
- 
- 		if (!IS_ERR(clk)) {
- 			c->lk.clk = clk;
-@@ -446,7 +469,7 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
- 	int i;
- 
- 	for (i = 0; i < num_clocks; i++) {
--		init_clk = clk_get(NULL, clk_names[i]);
-+		init_clk = ti_clk_get(clk_names[i]);
- 		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
- 			 clk_names[i]))
- 			continue;
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index dc5164a..210e946 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -292,6 +292,8 @@ struct ti_clk_features {
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
- 
-+struct clk *ti_clk_get(const char *name);
-+
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
- 
- #ifdef CONFIG_ATAGS
--- 
-1.7.9.5
+I'm doubtful about getter, In sun6i_get_ahb1_factors we still need to
+pass req->prediv_width instead of req->parent_index.
+
+I'll send separate patch for this prediv handling.
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
