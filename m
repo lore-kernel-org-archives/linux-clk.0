@@ -1,26 +1,32 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:54:42 -0700
+Date: Fri, 15 Apr 2016 18:00:53 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Chris Zhong <zyw@rock-chips.com>
-Subject: Re: [PATCH 35/41] clk: rk808: Remove CLK_IS_ROOT
-Message-ID: <20160415235442.GL12052@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-36-git-send-email-sboyd@codeaurora.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160416010052.GR26353@codeaurora.org>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-36-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1454107764-19876-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
+On 01/29, Stefan Agner wrote:
+> If a clock gets enabled early during boot time, it can lead to a PLL
+> startup. The wait_lock function makes sure that the PLL is really
+> stareted up before it gets used. However, the function sleeps which
+> leads to scheduling and an error:
+> bad: scheduling from the idle thread!
+> ...
 > 
-> Cc: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> Use udelay in case IRQ's are still disabled.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Applied to clk-next
+This is really old. Shawn, are you picking these up? I'm removing
+these from my queue for now.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
