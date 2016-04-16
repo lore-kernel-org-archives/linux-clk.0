@@ -1,125 +1,57 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Sun, 17 Apr 2016 17:39:08 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
- <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
- linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Hartley Sweeten
- <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Alexander
- Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Doug Anderson
- <dianders@google.com>, Caesar Wang <wxt@rock-chips.com>, Stephen Barber
- <smbarber@chromium.org>
-Subject: Re: [PATCH v5 13/24] input: misc: max8997: explicitly apply PWM
- config extracted from pwm_args
-Message-ID: <20160417173908.3554ddda@bbrezillon>
-In-Reply-To: <20160417124548.GE33215@dtor-ws>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1460661464-11216-14-git-send-email-boris.brezillon@free-electrons.com>
-	<20160417124548.GE33215@dtor-ws>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Apr 2016 17:04:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>,
+	linux-sh@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Greg Ungerer <gerg@uclinux.org>, linux-clk@vger.kernel.org,
+	Russell King <linux@arm.linux.org.uk>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Wan ZongShun <mcuos.com@gmail.com>, Steven Miao <realmz6@gmail.com>,
+	adi-buildroot-devel@lists.sourceforge.net,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	linux-m68k@lists.linux-m68k.org, Simon Horman <horms@verge.net.au>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	John Crispin <blogic@openwrt.org>,
+	Eric Miao <eric.y.miao@gmail.com>, Ryan Mallon <rmallon@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+Message-ID: <20160416000443.GA26353@codeaurora.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160408003328.GA14441@codeaurora.org>
+ <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
+ <20160414003341.GH14441@codeaurora.org>
+ <CAK7LNARbzRLq_NGWJ8CFBBf6w4cVGCNh45fo6JO=+F7FACBSxA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNARbzRLq_NGWJ8CFBBf6w4cVGCNh45fo6JO=+F7FACBSxA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dmitry,
-
-On Sun, 17 Apr 2016 05:45:48 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-
-> On Thu, Apr 14, 2016 at 09:17:33PM +0200, Boris Brezillon wrote:
-> > Call pwm_apply_args() just after requesting the PWM device so that the
-> > polarity and period are initialized according to the information provided
-> > in pwm_args.
-> > 
-> > This is an intermediate state, and pwm_apply_args() should be dropped as
-> > soon as the atomic PWM infrastructure is in place and the driver makes
-> > use of it.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> >  drivers/input/misc/max8997_haptic.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/input/misc/max8997_haptic.c b/drivers/input/misc/max8997_haptic.c
-> > index a806ba3..bf17f65 100644
-> > --- a/drivers/input/misc/max8997_haptic.c
-> > +++ b/drivers/input/misc/max8997_haptic.c
-> > @@ -304,6 +304,12 @@ static int max8997_haptic_probe(struct platform_device *pdev)
-> >  				error);
-> >  			goto err_free_mem;
-> >  		}
-> > +
-> > +		/*
-> > +		 * FIXME: pwm_apply_args() should be removed when switching to
-> > +		 * the atomic PWM API.
-> > +		 */
-> > +		pwm_apply_args(chip->pwm);
+On 04/14, Masahiro Yamada wrote:
 > 
-> I do not understand. We did not fetch/modify any args, what are we
-> applying and why? Especially since we saying we want to remove this
-> later.
+> OK, now I notice another problem in my code;
+> if foo_clk_init() fails for reason [2],
+> clk_disable() WARN's due to zero enable_count.
+> 
+> if (WARN_ON(core->enable_count == 0))
+>          return;
+> 
+> 
+> 
+> Perhaps, I got screwed up by splitting clock init stuff
+> into a helper function.
 
-This is part of the process to allow some PWM users to retrieve the
-current PWM state instead of blindly applying a new config. This is
-particularly useful when one want a smooth handover between the
-bootloader and the kernel, and we have a real case here with a critical
-regulator (controlling the DDR voltage) controlled by a PWM device:
-the bootloader setup the PWM to 1.2V, and we want the kernel to
-retrieve the current PWM config and adjust the duty_cycle according to
-the PWM arguments provided by the DT definition.
-
-So, now let's switch to the actual reason for calling pwm_apply_args()
-directly from PWM users code. The operations done in pwm_apply_args()
-were previously done by the core when the user was requesting the PWM.
-Those operations consisted in initializing the PWM period and polarity
-to the values specified in the DT or PWM lookup table (what we call
-pwm_args).
-This is working fine as long as we don't care about the initial PWM
-state, but as explained above, that may no longer be the case. That's
-why we want PWM users to explicitly state that they don't care about the
-initial PWM state and want to apply the default state instead: 
-period = pwm_args.period and polarity = pwm_args.polarity.
-
-Once all PWM users have been patched to explicitly call
-pwm_apply_args(), we'll be able to remove this call from the core
-(patch 17), and let PWM drivers implement ->get_state() to provide
-hardware readout (patch 20).
-
-PWM users that are interested in adjusting existing PWM config to the
-polarity and period specified in pwm_args will be able to do so instead
-of calling pwm_apply_args(). And for those who just don't care about
-initial state, they should just call pwm_apply_state() with the initial
-state they expect instead of pwm_apply_args(), which is only partially
-describing the PWM config (PWM args don't specify whether the PWM
-should be disabled or enabled, and what duty_cycle to use).
-
-Hope this clarifies a bit the situation.
-
-Best Regards,
-
-Boris
+Yep! Can't we just split the enable/disable out into another
+function separate from the clk_get/put part? That would make
+things more symmetric and avoid this problem.
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
