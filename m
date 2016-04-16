@@ -1,97 +1,180 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 26 Apr 2016 11:14:19 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai
- <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Daniel Vetter
- <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan
- <alex@nextthing.co>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 05/11] drm: Add Allwinner A10 Display Engine support
-Message-ID: <20160426111419.63db18d4@bbrezillon>
-In-Reply-To: <1461590572-4027-6-git-send-email-maxime.ripard@free-electrons.com>
-References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1461590572-4027-6-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:40983 "EHLO
+	conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751680AbcDPRtr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 16 Apr 2016 13:49:47 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Date: Sun, 17 Apr 2016 02:49:40 +0900
+Message-ID: <CAK7LNATcVwx1q0Nb2WMSpqW3LcoRkZx3RgpMjmbt2EmffJnFvg@mail.gmail.com>
+Subject: [Question] reset controlling
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+Hi.
 
-On Mon, 25 Apr 2016 15:22:46 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-> The Allwinner A10 and subsequent SoCs share the same display pipeline, with
-> variations in the number of controllers (1 or 2), or the presence or not of
-> some output (HDMI, TV, VGA) or not.
-> 
-> Add a driver with a limited set of features for now, and we will hopefully
-> support all of them eventually
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+I have wondered how to handle reset signals for my SoCs.
 
-Just 2 comments below. Once addressed you can add my
 
-Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-> ---
+I notice reset controllers are less supported in Linux than clock controllers.
 
-[...]
 
-> +
-> +static int sun4i_drv_connector_plug_all(struct drm_device *drm)
-> +{
-> +	struct drm_connector *connector, *failed;
-> +	int ret;
-> +
-> +	mutex_lock(&drm->mode_config.mutex);
-> +	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
-> +		ret = drm_connector_register(connector);
-> +		if (ret) {
-> +			failed = connector;
-> +			goto err;
-> +		}
-> +	}
-> +	mutex_unlock(&drm->mode_config.mutex);
-> +	return 0;
-> +
-> +err:
-> +	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
-> +		if (failed == connector)
-> +			break;
-> +
-> +		drm_connector_unregister(connector);
-> +	}
-> +	mutex_unlock(&drm->mode_config.mutex);
-> +
-> +	return ret;
-> +}
 
-You can use the generic drm_connector_register_all() to do that.
+I grepped "clk_register" and "reset_controller_register".
 
-[...]
+I know this does not give us the precise number of
+clk/reset providers, but I think it is enough for a rough estimate.
 
-> +
-> +static void sun4i_drv_unbind(struct device *dev)
-> +{
-> +	struct drm_device *drm = dev_get_drvdata(dev);
-> +
+masahiro@grover:~/workspace/linux$ git grep clk_register | wc
+   3520   18014  308516
+masahiro@grover:~/workspace/linux$ git grep reset_controller_register | wc
+     31     107    2462
 
-And you probably miss a call to drm_connector_unregister_all() here.
 
-> +	drm_dev_unregister(drm);
-> +	drm_kms_helper_poll_fini(drm);
-> +	sun4i_framebuffer_free(drm);
-> +	drm_vblank_cleanup(drm);
-> +	drm_dev_unref(drm);
-> +}
+Looks like we support 100 times as many clock providers as
+reset providers.
+
+In other words, 99% of SoCs support clock controllers,
+but not reset controllers.
+
+But, I think most of hardware blocks
+have reset signals as well as clocks.
+At least, it is true on my SoCs.
+
+
+Similar tendency for consumers.
+
+I grepped "clk_get" and "reset_control_get".
+
+
+masahiro@grover:~/workspace/linux$ git grep clk_get | wc
+   3362   16486  256820
+masahiro@grover:~/workspace/linux$ git grep reset_control_get | wc
+    142     732   12481
+
+
+Most of drivers support controlling clock signals,
+but do not care about reset signals.
+
+
+
+So, how can we explain this fact?
+
+What are recommended strategies for reset signals?
+
+I came up with some options as follows:
+
+
+[1] Reset signals should be de-asserted in a firmware (boot-loader)
+    for all the hardware blocks.  Linux kernel need not touch them at all.
+
+[2] We should really make effort to support more reset drivers,
+    like we do for clock drivers.
+
+[3] We can (ab)use clock-gate drivers for controlling reset signals.
+
+
+
+At first, I chose [3] for my SoCs
+with the analogy clk_enable/clk_disable to
+reset_control_deassert/reset_control_assert.
+(and also because the reset sub-system does not support tree-topology
+or enable-count.)
+
+Reset signals are sometimes cascaded.
+For example, the UART blocks on my SoCs have a reset for the whole of
+UART blocks
+besides per-channel reset signals.
+
+                     |---(UART ch0 reset)---> UART0
+                     |
+----(UART reset)-----|---(UART ch1 reset)---> UART1
+                     |
+                     |---(UART ch2 reset)---> UART2
+
+I found this works well with clk-gate drivers.
+Even reset_control_reset() can be implemented
+with clk_disable() followed by clk_enable().
+
+
+
+Having said that, I hesitate to distort my device trees.
+
+In order to make a reset signal look like a clock,
+we need to describe DT as follows
+
+clkrstctrl: clkrstctrl {
+        compatible = "foo-clock-and-reset-controller";
+        #clock-cells = <1>;
+}
+
+uart {
+         clock-names = "clock", "reset";
+         clocks = <&clkctrl 0>, <&rstctrl 0>;
+}
+
+
+instead of
+
+
+clkctrl: clkctrl {
+        compatible = "foo-clock-controller";
+        #clock-cells = <1>;
+}
+
+rstctrl: rstctrl {
+        compatible = "foo-reset-controller";
+        #reset-cells = <1>;
+}
+
+uart {
+         clocks = <&clkctrl 0>;
+         resets = <&rstctrl 0>;
+}
+
+
+
+The first DT fragment seems weird if we consider the concept of device tree;
+as a hardware description language, DT should reflect the hardware
+representation.  Clocks and resets are different things.
+So, DT should not be compromised by the fact that reset driver support
+is poor in Linux.
+
+
+
+
+Next, I thought about [2].
+It should not be so hard to implement a reset provider.
+
+But, as I mentioned above, most of drivers handle clocks,
+but not resets.
+
+Is it worthwhile to patch drivers around
+with reset_control_get_optional()?
+Hmm...
+
+
+
+
+[1] would be the easiest and I think makes sense to some extent
+because controlling clock signals seems enough from the
+power-management perspective.
+
+
+
+Any idea?
+
 
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best Regards
+Masahiro Yamada
