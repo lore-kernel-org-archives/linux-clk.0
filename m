@@ -1,29 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 17:06:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Add 16bit register access for clk-divider.
-Message-ID: <20160416000635.GB26353@codeaurora.org>
-References: <1460618263-30967-1-git-send-email-ysato@users.sourceforge.jp>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sun, 17 Apr 2016 11:47:19 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH V1 6/7] MIPS: Loongson1B: Some updates/fixes for LS1B
+Message-ID: <20160417184719.GD391@tuxbot>
+References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
+ <1459946095-7637-7-git-send-email-keguang.zhang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460618263-30967-1-git-send-email-ysato@users.sourceforge.jp>
+In-Reply-To: <1459946095-7637-7-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/14, Yoshinori Sato wrote:
-> Some SoC use 16bit-word register. And required 16bit-word access.
-> This changes add 16-bit access mode.
+On Wed 06 Apr 05:34 PDT 2016, Keguang Zhang wrote:
+
+> From: Kelvin Cheung <keguang.zhang@gmail.com>
 > 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> - Add DMA device
+> - Add NAND device
+> - Add GPIO device
+> - Add LED device
+> - Update the defconfig and rename it to loongson1b_defconfig
+> - Fix ioremap size
+> - Other minor fixes
 
-Please implement a custom divider for your hardware instead of
-adding this support to the core. You can call functions such as
-divider_recalc_rate(), divider_round_rate(), and
-divider_get_val() to get the appropriate register values and then
-have the readw/writew in your custom driver instead.
+You should split this into a series of patches, at least to get all the
+non-functional (renames and BIT usage) into a separate patch. That
+way it's much easier to review your functional changes and to later
+debug any issues introduced.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Bjorn
