@@ -1,69 +1,88 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] clk: renesas: R-Car SYSC PM Domain Preparation
-Date: Fri, 15 Apr 2016 00:41:51 +0300
-Message-ID: <17611769.DL9pQePO0U@avalon>
-In-Reply-To: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
-References: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <dmitry.torokhov@gmail.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Date: Sun, 17 Apr 2016 05:45:48 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>,
+	Doug Anderson <dianders@google.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Stephen Barber <smbarber@chromium.org>
+Subject: Re: [PATCH v5 13/24] input: misc: max8997: explicitly apply PWM
+ config extracted from pwm_args
+Message-ID: <20160417124548.GE33215@dtor-ws>
+References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1460661464-11216-14-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460661464-11216-14-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On Thu, Apr 14, 2016 at 09:17:33PM +0200, Boris Brezillon wrote:
+> Call pwm_apply_args() just after requesting the PWM device so that the
+> polarity and period are initialized according to the information provided
+> in pwm_args.
+> 
+> This is an intermediate state, and pwm_apply_args() should be dropped as
+> soon as the atomic PWM infrastructure is in place and the driver makes
+> use of it.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/input/misc/max8997_haptic.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/input/misc/max8997_haptic.c b/drivers/input/misc/max8997_haptic.c
+> index a806ba3..bf17f65 100644
+> --- a/drivers/input/misc/max8997_haptic.c
+> +++ b/drivers/input/misc/max8997_haptic.c
+> @@ -304,6 +304,12 @@ static int max8997_haptic_probe(struct platform_device *pdev)
+>  				error);
+>  			goto err_free_mem;
+>  		}
+> +
+> +		/*
+> +		 * FIXME: pwm_apply_args() should be removed when switching to
+> +		 * the atomic PWM API.
+> +		 */
+> +		pwm_apply_args(chip->pwm);
 
-Thank you for the patches.
+I do not understand. We did not fetch/modify any args, what are we
+applying and why? Especially since we saying we want to remove this
+later.
 
-In the long term we could try to move the power domain handling code from the 
-CPG drivers to the SYSC driver, after all platforms are switched to the MSSR 
-driver. For now this looks good to me, so, for the whole series,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-On Wednesday 13 Apr 2016 16:44:14 Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen, Simon, Magnus,
-> 
-> This patch series prepares the Renesas CPG/MSSR and CPG/MSTP drivers for
-> the advent of R-Car SYSC PM Domains.
-> 
-> Support for the latter will be introduced in 3 patch series:
->   1. "[PATCH v5 0/7] PM / Domains: Add DT bindings for the R-Car System
->       Controller",
->   2. "[PATCH v5 00/11] soc: renesas: Add R-Car SYSC PM Domain Support",
->   3. "[PATCH v5 00/12] ARM/arm64: dts: rcar: Add SYSC PM domains".
-> 
-> This patch series is against the pull request I've sent earlier today
-> ("[git pull] clk: renesas: Updates for v4.7").
-> 
-> Changes compared to v1:
->   - Drop cleanups that are already included in the pull request,
->   - Provide Kconfig symbols for CPG/MSSR and CPG/MSTP support,
->   - Provide dummy attach/detach_dev callbacks, so the rcar-sysc driver
->     won't have to care about support being included or not.
-> 
-> As this series is a hard dependency for the second R-Car SYSC series, I
-> think it's best that I just queue this series in my clk-renesas-for-v4.7
-> branch, and ask both Mike/Stephen and Simon to pull from it.
-> Would that be OK for you?
-> 
-> Thanks!
-> 
-> Geert Uytterhoeven (3):
->   clk: renesas: Provide Kconfig symbols for CPG/MSSR and CPG/MSTP
->     support
->   clk: renesas: mstp: Provide dummy attach/detach_dev callbacks
->   clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev()
-> 
->  drivers/clk/Kconfig                    |  1 +
->  drivers/clk/renesas/Kconfig            | 16 ++++++++++++++++
->  drivers/clk/renesas/Makefile           | 26 ++++++++++++++------------
->  drivers/clk/renesas/renesas-cpg-mssr.c | 18 ++++++++++++------
->  include/linux/clk/renesas.h            | 12 ++++++++++++
->  5 files changed, 55 insertions(+), 18 deletions(-)
->  create mode 100644 drivers/clk/renesas/Kconfig
+Thanks.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Dmitry
