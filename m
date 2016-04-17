@@ -1,60 +1,153 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org
-Cc: mturquette@baylibre.com, CARLOS.PALMINHA@synopsys.com,
-	Vineet.Gupta1@synopsys.com, Alexey.Brodkin@synopsys.com,
-	Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: [PATCH 0/2 v5] Add AXS10X I2S PLL clock driver
-Date: Tue, 12 Apr 2016 10:14:21 +0100
-Message-Id: <cover.1460451903.git.joabreu@synopsys.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:36073 "EHLO
+	conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbcDQIRO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 17 Apr 2016 04:17:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <5910310.IeFB0QAt6Q@wuerfel>
+References: <CAK7LNATcVwx1q0Nb2WMSpqW3LcoRkZx3RgpMjmbt2EmffJnFvg@mail.gmail.com>
+	<5910310.IeFB0QAt6Q@wuerfel>
+Date: Sun, 17 Apr 2016 17:16:58 +0900
+Message-ID: <CAK7LNARJo-xDkkwZ0qA+DaKmQ0SixxGytNSKWBZMZ_N_6eWWow@mail.gmail.com>
+Subject: Re: [Question] reset controlling
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Olof Johansson <olof@lixom.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The ARC SDP I2S clock can be programmed using a
-specific PLL.
+Hi Arnd.
 
-This patch series has the goal of adding a clock driver
-that programs this PLL.
+2016-04-17 4:23 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
 
-----
+> Better count the files:
+>
+> $ git grep -wl clk_register | wc -l
+> 179
+>
+> $ git grep -wl reset_controller_register | wc -l
+> 25
+>
+> This is more like seven times as many, which seems about right.
 
-Changes v4 -> v5:
-* Documentation update (as suggested by Alexey Brodkin)
-* Changed compatible string to "snps,axs10x-i2s-pll-clock" (as suggested by Alexey Brodkin)
-* Added DT bindings
+Ah, right.  I exaggerated too much.
 
-Changes v3 -> v4:
-* Added binding document (as suggested by Stephen Boyd)
-* Minor code style fixes (as suggested by Stephen Boyd)
-* Use ioremap (as suggested by Stephen Boyd)
-* Implement round_rate (as suggested by Stephen Boyd)
-* Change to platform driver (as suggested by Stephen Boyd)
-* Use {readl/writel}_relaxed (as suggested by Vineet Gupta)
 
-Changes v2 -> v3:
-* Implemented recalc_rate
 
-Changes v1 -> v2:
-* Renamed folder to axs10x (as suggested by Alexey Brodkin)
-* Added more supported rates
+>> Reset signals are sometimes cascaded.
+>> For example, the UART blocks on my SoCs have a reset for the whole of
+>> UART blocks
+>> besides per-channel reset signals.
+>>
+>>                      |---(UART ch0 reset)---> UART0
+>>                      |
+>> ----(UART reset)-----|---(UART ch1 reset)---> UART1
+>>                      |
+>>                      |---(UART ch2 reset)---> UART2
+>>
+>> I found this works well with clk-gate drivers.
+>> Even reset_control_reset() can be implemented
+>> with clk_disable() followed by clk_enable().
+>>
+>
+> Interesting. My feeling from your description is that this is something
+> that should be added to the reset controller subsystem. It has probably
+> not been a serious issue for anyone else, but it's also likely that you
+> are not the only one that would benefit from having support for nested
+> resets in the API.
 
-Jose Abreu (2):
-  clk/axs10x: Add I2S PLL clock driver
-  arc: axs10x: Add DT bindings for I2S PLL Clock
+I want reset sub-system to support (1) nesting,  (2) enable_count.
 
- .../bindings/clock/axs10x-i2s-pll-clock.txt        |  17 ++
- arch/arc/boot/dts/axs10x_mb.dtsi                   |   6 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/axs10x/Makefile                        |   1 +
- drivers/clk/axs10x/i2s_pll_clock.c                 | 217 +++++++++++++++++++++
- 5 files changed, 242 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
- create mode 100644 drivers/clk/axs10x/Makefile
- create mode 100644 drivers/clk/axs10x/i2s_pll_clock.c
+To get these two features supported, the reset frame-work
+would be similar implementation to the clock subsystem.
+(In other words, we would duplicate effort
+between clock and reset.)
+
+Moreover, it is very common to control resets and clocks
+from one hardware block.
+
+So, I am looking for some idea that perhaps can unify the clock
+and reset subsystems.
+
+
+I found some SoCs implement reset drivers in drivers/clk.
+
+
+masahiro@grover:~/workspace/linux/drivers/clk$ git grep
+reset_controller_register
+mediatek/reset.c:       ret = reset_controller_register(&data->rcdev);
+mmp/reset.c:    reset_controller_register(&unit->rcdev);
+qcom/common.c:  ret = reset_controller_register(&reset->rcdev);
+rockchip/softrst.c:     ret = reset_controller_register(&softrst->rcdev);
+sirf/clk-atlas7.c:      reset_controller_register(&atlas7_rst_ctlr);
+sunxi/clk-a10-ve.c:     err = reset_controller_register(&reset_data->rcdev);
+sunxi/clk-sun9i-mmc.c:  ret = reset_controller_register(&data->rcdev);
+sunxi/clk-usb.c:        reset_controller_register(&reset_data->rcdev);
+tegra/clk.c:    reset_controller_register(&rst_ctlr);
+
+
+I asked about this in the following thread.
+https://lkml.org/lkml/2015/11/10/724
+
+
+
+>> Next, I thought about [2].
+>> It should not be so hard to implement a reset provider.
+>>
+>> But, as I mentioned above, most of drivers handle clocks,
+>> but not resets.
+>>
+>> Is it worthwhile to patch drivers around
+>> with reset_control_get_optional()?
+>> Hmm...
+>
+> I think it is. All of the 'generic' drivers for devices that are
+> licensed from e.g. designware or ARM will sooner or later get it,
+> and devices that are vendor specific are even easier to change
+> as needed.
+
+We can do that if needed.
+
+I guess most of drivers would do similar things;
+call devm_reset_control_get() && reset_control_deassert() in their
+probe methods,
+and reset_control_assert() in their remove methods.
+
+I am wondering if we can do that somewhat automatically,
+like the driver model framework automatically sets the pinctrl state
+to "default"
+(and low-level drivers are still able to change pinctrl state for the case
+where multiple pinctrl states are supported.)
+
+
+Another idea might be,
+we can support "hogging" in DT just for de-asserting reset signals,
+
+
+reset_ctrl: reset_ctrl {
+        .compatible = "foo-reset-controller";
+         #reset-cells = <1>;
+
+         uart_deassert {   /* deassert UART reset automatically */
+                reset-hog;
+                resets = <0>;   /* index for UART reset line */
+                deassert;
+         };
+
+         i2c_deassert {   /* deassert I2C reset automatically */
+                reset-hog;
+                resets = <1>;   /* index for I2C reset line */
+                deassert;
+         };
+};
+
 
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
