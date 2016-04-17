@@ -1,40 +1,103 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 0/2] clk: bcm2835: use CLK_IS_CRITICAL/CLK_ENABLE_HAND_OFF
-Date: Fri, 29 Apr 2016 17:42:34 +0000
-Message-Id: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34553 "EHLO
+	mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673AbcDQNgm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 17 Apr 2016 09:36:42 -0400
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+Date: Sun, 17 Apr 2016 16:34:11 +0300
+Message-Id: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+clk_get_rate() takes a mutex, hence cannot be used while IRQ's been
+disabled. Replace it with a locked version.
 
-The bcm2835 firmware enables several clocks and plls before
-booting the linux kernel, when these later are claimed by a driver
-(temporarily) and then released, then the corresponding plls are
-disabled, which result in a crashed system.
+[    3.430853] [<c0850fcc>] (dump_stack) from [<c00411f8>] (__schedule_bug+0x50/0x64)
+[    3.431079] [<c00411f8>] (__schedule_bug) from [<c08553a8>] (__schedule+0x5c8/0x688)
+[    3.431453] [<c08553a8>] (__schedule) from [<c08558f4>] (schedule_preempt_disabled+0x24/0x34)
+[    3.431835] [<c08558f4>] (schedule_preempt_disabled) from [<c0856f24>] (__mutex_lock_slowpath+0xbc/0x170)
+[    3.432204] [<c0856f24>] (__mutex_lock_slowpath) from [<c0857024>] (mutex_lock+0x4c/0x50)
+[    3.432427] [<c0857024>] (mutex_lock) from [<c0610368>] (clk_prepare_lock+0x88/0xfc)
+[    3.432800] [<c0610368>] (clk_prepare_lock) from [<c0611034>] (clk_get_rate+0xc/0x60)
+[    3.433177] [<c0611034>] (clk_get_rate) from [<c034f10c>] (tegra_pmc_enter_suspend_mode+0x188/0x20c)
+[    3.433580] [<c034f10c>] (tegra_pmc_enter_suspend_mode) from [<c0020d48>] (tegra_idle_lp2_last+0xc/0x40)
+[    3.433795] [<c0020d48>] (tegra_idle_lp2_last) from [<c0021e1c>] (tegra20_idle_lp2_coupled+0x118/0x1fc)
+[    3.434171] [<c0021e1c>] (tegra20_idle_lp2_coupled) from [<c055ec24>] (cpuidle_enter_state+0x3c/0x160)
+[    3.434551] [<c055ec24>] (cpuidle_enter_state) from [<c0560ce8>] (cpuidle_enter_state_coupled+0x3dc/0x3f4)
+[    3.434959] [<c0560ce8>] (cpuidle_enter_state_coupled) from [<c0055f1c>] (cpu_startup_entry+0x240/0x288)
+[    3.435340] [<c0055f1c>] (cpu_startup_entry) from [<c0b29c84>] (start_kernel+0x3b4/0x3c0)
+[    3.435557] [<c0b29c84>] (start_kernel) from [<00008074>] (0x8074)
 
-Ideally we want to use CLK_ENABLE_HAND_OFF to mark those already
-enabled clocks, but as CLK_ENABLE_HAND_OFF is not merged
-yet this patchset takes a 2 setp approach:
-In the first patch it first makes use of the - already in
-clk-next - CLK_IS_CRITICAL.
-The second patch will change the use to CLK_ENABLE_HAND_OFF,
-which can get applied when the HAND_OFF patch-set goes in.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra-pmc.c | 9 +++++++++
+ drivers/soc/tegra/pmc.c           | 2 +-
+ include/linux/clk/tegra.h         | 2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-Martin Sperl (2):
-  clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
-  clk: bcm2835: use CLK_ENABLE_HAND_OFF instead of CLK_IS_CRITICAL
+diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+index 91377ab..1ccf414 100644
+--- a/drivers/clk/tegra/clk-tegra-pmc.c
++++ b/drivers/clk/tegra/clk-tegra-pmc.c
+@@ -78,6 +78,8 @@ static struct pmc_clk_init_data pmc_clks[] = {
+ 	PMC_CLK(3, 22, 18),
+ };
+ 
++static struct clk_hw *pclk_hw;
++
+ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+ 				struct tegra_clk *tegra_clks)
+ {
+@@ -112,6 +114,9 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+ 		clk_register_clkdev(clk, data->dev_name, data->gate_name);
+ 	}
+ 
++	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
++	pclk_hw = __clk_get_hw(*dt_clk);
++
+ 	/* blink */
+ 	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
+ 	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
+@@ -129,3 +134,7 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+ 	*dt_clk = clk;
+ }
+ 
++unsigned long tegra_pmc_get_pclk_rate(void)
++{
++	return clk_hw_get_rate(pclk_hw);
++}
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 08966c2..6752714 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -638,7 +638,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+ 		break;
+ 
+ 	case TEGRA_SUSPEND_LP2:
+-		rate = clk_get_rate(pmc->clk);
++		rate = tegra_pmc_get_pclk_rate();
+ 		break;
+ 
+ 	default:
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index 57bf7aa..717d71d 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -121,4 +121,6 @@ static inline void tegra_cpu_clock_resume(void)
+ }
+ #endif
+ 
++unsigned long tegra_pmc_get_pclk_rate(void);
++
+ #endif /* __LINUX_CLK_TEGRA_H_ */
+-- 
+2.8.1
 
- drivers/clk/bcm/clk-bcm2835.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
---
-2.1.4
