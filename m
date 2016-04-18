@@ -1,86 +1,55 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <Vineet.Gupta1@synopsys.com>
+Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
+To: Jose Abreu <Jose.Abreu@synopsys.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
+ <20160415234631.GB4690@codeaurora.org> <5714B763.8010109@synopsys.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-snps-arc@lists.infradead.org>, <CARLOS.PALMINHA@synopsys.com>,
+	<Alexey.Brodkin@synopsys.com>, <mturquette@baylibre.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Message-ID: <5714C9BA.8040004@synopsys.com>
+Date: Mon, 18 Apr 2016 17:19:14 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 27 Apr 2016 00:26:49 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Dong Aisheng <dongas86@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, mingo@redhat.com,
- kernel@pengutronix.de, tglx@linutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-In-Reply-To: <20160427072454.GJ30692@tiger>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
- <1461663072.7839.17.camel@pengutronix.de>
- <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
- <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger>
- <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
- <20160427072454.GJ30692@tiger>
-Message-ID: <9caa5658ccaf6ad43b3a2f07606f944e@agner.ch>
+In-Reply-To: <5714B763.8010109@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-04-27 00:24, Shawn Guo wrote:
-> On Wed, Apr 27, 2016 at 10:57:21AM +0800, Dong Aisheng wrote:
->> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
->> > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
->> >> Shawn,
->> >> What's your suggestion?
->> >
->> > I think this needs more discussion, and I just dropped Stefan's patch
->> > from my tree.
->> >
->> > We need to firstly understand why this is happening.  The .prepare hook
->> > is defined to be non-atomic context, and so that we call sleep function
->> > in there.  We did everything right.  Why are we getting the warning?  If
->> > I'm correct, this warning only happens on i.MX7D.  Why is that?
->> >
->>
->> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
->> time init, the irq is still not enabled. It fixes the issue indirectly.
->> See:
->> asmlinkage __visible void __init start_kernel(void)
->> {
->>         /*
->>          * Set up the scheduler prior starting any interrupts (such as the
->>          * timer interrupt). Full topology setup happens at smp_init()
->>          * time - but meanwhile we still have a functioning scheduler.
->>          */
->>         sched_init();
->>         .............
->>         time_init();
->>         ..............
->>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
->>         early_boot_irqs_disabled = false;
->>         local_irq_enable();
->> }
->>
->> The issue can only happen when PLL enable causes a schedule during
->> imx_clock_init().
->> Not all PLL has this issue.
->> The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
->> which requires more delay time and cause usleep.
->> Because clk framework does not support MX7D clock types (operation requires
->> parents on), we simply enable all clocks in imx7d_clocks_init().
->>
->> If apply my this patch series:
->> https://lkml.org/lkml/2016/4/20/199
->> The issue can also be gone.
+On Monday 18 April 2016 04:00 PM, Jose Abreu wrote:
+>>> +	if (readl((void *)FPGA_VER_INFO) <= FPGA_VER_27M) {
+>> > Please don't readl directly from addresses. I think I mentioned
+>> > that before and didn't get back to you when you replied asking
+>> > for other solutions. I still think a proper DT is in order
+>> > instead of doing this check for ref_clk.
+> I think that the DT approach would be better but I also think that using two DT
+> files with only one change between them is not viable. I can see some alternatives:
+>     1) Pass the region of FPGA version in reg field of DT so that writel is not
+> directly used;
+>     2) Create a dummy parent clock driver that reads from FPGA version register
+> and returns the rate;
+>     3) Last resort: Use two DT files for each FPGA version.
 > 
-> Thanks for the info.  It sounds like that we are fixing the problem in
-> the wrong place, i.e. clk_pllv3_prepare().  The function does nothing
-> wrong, since the .prepare hook is defined to be one that can sleep.  If
-> we see sleep warning in a context calling clk_prepare(), that probably
-> means we shouldn't make the function call from that context.
+> @Vineet, @Alexey: Can you give some suggestions?
 > 
+> Some background:
+> We are expecting a new firmware release for the AXS board that will change the
+> reference clock value of the I2S PLL from 27MHz to 28.224MHz. Due to this change
+> the dividers of this PLL will change. Right now I am directly reading from the
+> FPGA version register but Stephen suggested to use a DT approach so that this
+> rate is declared as parent clock. This would be a good solution but would
+> require the usage of two different DT files (one for the current firmware and
+> another for the new firmware), which I think is not ideal. What is your opinion?
+> Some other solutions are listed above.
 
-According to the stack trace in the answer to Stephens question the call
-comes from imx7d_clocks_init. I doubt we can avoid that those clocks get
-enabled there...
+Consider this my ignorance of clk drivers, what exactly is the problem with that
+readl() for FPGA ver. Having 2 versions of DT is annoyance for sure, but the
+bigger headache is that it still won't help cases of users mixing and matching
+boards and DT. IMO this runtime check is pretty nice and will support both types
+of boards with exact same code/DT !
 
---
-Stefan
+FWIW, both solutions #1 and #3 seem to imply a different DT - no ?
+
+And I really don't see how #2 makes things more elegant/abstracted w.r.t clk
+framework ?
+
+So I prefer what you had before.
+-Vineet
