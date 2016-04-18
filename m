@@ -1,166 +1,265 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 5/7] clk: rockchip: generalize pll set-rate operation
-Date: Thu, 28 Apr 2016 15:11:13 +0200
-Message-Id: <1461849075-8310-6-git-send-email-heiko@sntech.de>
-In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:36701 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752087AbcDRKBq (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 06:01:46 -0400
+Received: by mail-wm0-f41.google.com with SMTP id v188so111503000wme.1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2016 03:01:45 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v2 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
+Date: Mon, 18 Apr 2016 12:01:35 +0200
+Message-Id: <1460973696-5977-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
+References: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The currently pll-specific set_rate operations are now identical,
-and with the actual register access already being abstracted away
-will also stay that way.
+Add Oxford Semiconductor OXNAS SoC Family Standard Clocks support.
 
-Therefore merge them into one function used by each PLL.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/rockchip/clk-pll.c | 86 +++++++++++-------------------------------
- 1 file changed, 23 insertions(+), 63 deletions(-)
+ drivers/clk/Kconfig     |   6 ++
+ drivers/clk/Makefile    |   1 +
+ drivers/clk/clk-oxnas.c | 198 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 205 insertions(+)
+ create mode 100644 drivers/clk/clk-oxnas.c
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 2c30f52..081713c 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -94,6 +94,26 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
- 	return rate_table[i - 1].rate;
- }
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 16f7d33..f87c027 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -197,6 +197,12 @@ config COMMON_CLK_PXA
+ 	---help---
+ 	  Support for the Marvell PXA SoC.
  
-+static int rockchip_pll_set_rate(struct clk_hw *hw, unsigned long drate,
-+				 unsigned long prate)
++config COMMON_CLK_OXNAS
++	bool "Clock driver for the OXNAS SoC Family"
++	select MFD_SYSCON
++	---help---
++	  Support for the OXNAS SoC Family clocks.
++
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d6..627da26 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -33,6 +33,7 @@ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+ obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
++obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
+ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+new file mode 100644
+index 0000000..d57bb48
+--- /dev/null
++++ b/drivers/clk/clk-oxnas.c
+@@ -0,0 +1,198 @@
++/*
++ * Copyright (C) 2010 Broadcom
++ * Copyright (C) 2012 Stephen Warren
++ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/stringify.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++
++/* Standard regmap gate clocks */
++struct clk_oxnas {
++	struct clk_hw hw;
++	signed char bit;
++	struct regmap *regmap;
++};
++
++/* Regmap offsets */
++#define CLK_STAT_REGOFFSET	0x24
++#define CLK_SET_REGOFFSET	0x2c
++#define CLK_CLR_REGOFFSET	0x30
++
++static inline struct clk_oxnas *to_clk_oxnas(struct clk_hw *hw)
 +{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	const struct rockchip_pll_rate_table *rate;
++	return container_of(hw, struct clk_oxnas, hw);
++}
 +
-+	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
-+		 __func__, clk_hw_get_name(hw), drate, prate);
++static int oxnas_clk_is_enabled(struct clk_hw *hw)
++{
++	struct clk_oxnas *std = to_clk_oxnas(hw);
++	int ret;
++	unsigned int val;
 +
-+	/* Get required rate settings from table */
-+	rate = rockchip_get_pll_settings(pll, drate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-+			drate, clk_hw_get_name(hw));
++	ret = regmap_read(std->regmap, CLK_STAT_REGOFFSET, &val);
++	if (ret < 0)
++		return ret;
++
++	return val & BIT(std->bit);
++}
++
++static int oxnas_clk_enable(struct clk_hw *hw)
++{
++	struct clk_oxnas *std = to_clk_oxnas(hw);
++
++	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
++
++	return 0;
++}
++
++static void oxnas_clk_disable(struct clk_hw *hw)
++{
++	struct clk_oxnas *std = to_clk_oxnas(hw);
++
++	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
++}
++
++static const struct clk_ops oxnas_clk_ops = {
++	.enable = oxnas_clk_enable,
++	.disable = oxnas_clk_disable,
++	.is_enabled = oxnas_clk_is_enabled,
++};
++
++static const char *const oxnas_clk_parents[] = {
++	"oscillator",
++};
++
++static const char *const eth_parents[] = {
++	"gmacclk",
++};
++
++#define DECLARE_STD_CLKP(__clk, __parent)			\
++static const struct clk_init_data clk_##__clk##_init = {	\
++	.name = __stringify(__clk),				\
++	.ops = &oxnas_clk_ops,					\
++	.parent_names = __parent,				\
++	.num_parents = ARRAY_SIZE(__parent),			\
++}
++
++#define DECLARE_STD_CLK(__clk) DECLARE_STD_CLKP(__clk, oxnas_clk_parents)
++
++/* Hardware Bit - Clock association */
++struct clk_oxnas_init_data {
++	unsigned long bit;
++	const struct clk_init_data *clk_init;
++};
++
++/* Clk init data declaration */
++DECLARE_STD_CLK(leon);
++DECLARE_STD_CLK(dma_sgdma);
++DECLARE_STD_CLK(cipher);
++DECLARE_STD_CLK(sata);
++DECLARE_STD_CLK(audio);
++DECLARE_STD_CLK(usbmph);
++DECLARE_STD_CLKP(etha, eth_parents);
++DECLARE_STD_CLK(pciea);
++DECLARE_STD_CLK(nand);
++
++/* Table index is clock indice */
++static const struct clk_oxnas_init_data clk_oxnas_init[] = {
++	[0] = {0, &clk_leon_init},
++	[1] = {1, &clk_dma_sgdma_init},
++	[2] = {2, &clk_cipher_init},
++	/* Skip & Do not touch to DDR clock */
++	[3] = {4, &clk_sata_init},
++	[4] = {5, &clk_audio_init},
++	[5] = {6, &clk_usbmph_init},
++	[6] = {7, &clk_etha_init},
++	[7] = {8, &clk_pciea_init},
++	[8] = {9, &clk_nand_init},
++};
++
++struct clk_oxnas_data {
++	struct clk_oxnas clk_oxnas[ARRAY_SIZE(clk_oxnas_init)];
++	struct clk_onecell_data onecell_data[ARRAY_SIZE(clk_oxnas_init)];
++	struct clk *clks[ARRAY_SIZE(clk_oxnas_init)];
++};
++
++static int oxnas_stdclk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct clk_oxnas_data *clk_oxnas;
++	struct regmap *regmap;
++	int i;
++
++	clk_oxnas = devm_kzalloc(&pdev->dev, sizeof(*clk_oxnas), GFP_KERNEL);
++	if (!clk_oxnas)
++		return -ENOMEM;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (!regmap) {
++		dev_err(&pdev->dev, "failed to have parent regmap\n");
 +		return -EINVAL;
 +	}
 +
-+	return pll->data->set_params(pll, rate);
++	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
++		struct clk_oxnas *_clk;
++
++		if (!clk_oxnas_init[i].clk_init)
++			continue;
++
++		_clk = &clk_oxnas->clk_oxnas[i];
++		_clk->bit = clk_oxnas_init[i].bit;
++		_clk->hw.init = clk_oxnas_init[i].clk_init;
++		_clk->regmap = regmap;
++
++		clk_oxnas->clks[i] =
++			devm_clk_register(&pdev->dev, &_clk->hw);
++		if (WARN_ON(IS_ERR(clk_oxnas->clks[i])))
++			return PTR_ERR(clk_oxnas->clks[i]);
++	}
++
++	clk_oxnas->onecell_data->clks = clk_oxnas->clks;
++	clk_oxnas->onecell_data->clk_num = ARRAY_SIZE(clk_oxnas_init);
++
++	return of_clk_add_provider(np, of_clk_src_onecell_get,
++				   clk_oxnas->onecell_data);
 +}
 +
- /*
-  * Wait for the pll to reach the locked state.
-  * The calling set_rate function is responsible for making sure the
-@@ -251,26 +271,6 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
- 	return ret;
- }
- 
--static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
--					unsigned long prate)
--{
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate;
--
--	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), drate, prate);
--
--	/* Get required rate settings from table */
--	rate = rockchip_get_pll_settings(pll, drate);
--	if (!rate) {
--		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, __clk_get_name(hw->clk));
--		return -EINVAL;
--	}
--
--	return pll->data->set_params(pll, rate);
--}
--
- static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-@@ -358,7 +358,7 @@ static const struct clk_ops rockchip_rk3036_pll_clk_norate_ops = {
- static const struct clk_ops rockchip_rk3036_pll_clk_ops = {
- 	.recalc_rate = rockchip_rk3036_pll_recalc_rate,
- 	.round_rate = rockchip_pll_round_rate,
--	.set_rate = rockchip_rk3036_pll_set_rate,
-+	.set_rate = rockchip_pll_set_rate,
- 	.enable = rockchip_rk3036_pll_enable,
- 	.disable = rockchip_rk3036_pll_disable,
- 	.is_enabled = rockchip_rk3036_pll_is_enabled,
-@@ -487,26 +487,6 @@ static int rockchip_rk3066_pll_set_params(struct rockchip_clk_pll *pll,
- 	return ret;
- }
- 
--static int rockchip_rk3066_pll_set_rate(struct clk_hw *hw, unsigned long drate,
--					unsigned long prate)
--{
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate;
--
--	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
--		 __func__, clk_hw_get_name(hw), drate, prate);
--
--	/* Get required rate settings from table */
--	rate = rockchip_get_pll_settings(pll, drate);
--	if (!rate) {
--		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, clk_hw_get_name(hw));
--		return -EINVAL;
--	}
--
--	return pll->data->set_params(pll, rate);
--}
--
- static int rockchip_rk3066_pll_enable(struct clk_hw *hw)
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-@@ -579,7 +559,7 @@ static const struct clk_ops rockchip_rk3066_pll_clk_norate_ops = {
- static const struct clk_ops rockchip_rk3066_pll_clk_ops = {
- 	.recalc_rate = rockchip_rk3066_pll_recalc_rate,
- 	.round_rate = rockchip_pll_round_rate,
--	.set_rate = rockchip_rk3066_pll_set_rate,
-+	.set_rate = rockchip_pll_set_rate,
- 	.enable = rockchip_rk3066_pll_enable,
- 	.disable = rockchip_rk3066_pll_disable,
- 	.is_enabled = rockchip_rk3066_pll_is_enabled,
-@@ -737,26 +717,6 @@ static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
- 	return ret;
- }
- 
--static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned long drate,
--					unsigned long prate)
--{
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate;
--
--	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), drate, prate);
--
--	/* Get required rate settings from table */
--	rate = rockchip_get_pll_settings(pll, drate);
--	if (!rate) {
--		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, __clk_get_name(hw->clk));
--		return -EINVAL;
--	}
--
--	return pll->data->set_params(pll, rate);
--}
--
- static int rockchip_rk3399_pll_enable(struct clk_hw *hw)
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-@@ -844,7 +804,7 @@ static const struct clk_ops rockchip_rk3399_pll_clk_norate_ops = {
- static const struct clk_ops rockchip_rk3399_pll_clk_ops = {
- 	.recalc_rate = rockchip_rk3399_pll_recalc_rate,
- 	.round_rate = rockchip_pll_round_rate,
--	.set_rate = rockchip_rk3399_pll_set_rate,
-+	.set_rate = rockchip_pll_set_rate,
- 	.enable = rockchip_rk3399_pll_enable,
- 	.disable = rockchip_rk3399_pll_disable,
- 	.is_enabled = rockchip_rk3399_pll_is_enabled,
++static int oxnas_stdclk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++
++	return 0;
++}
++
++static const struct of_device_id oxnas_stdclk_dt_ids[] = {
++	{ .compatible = "oxsemi,ox810se-stdclk" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
++
++static struct platform_driver oxnas_stdclk_driver = {
++	.probe = oxnas_stdclk_probe,
++	.remove = oxnas_stdclk_remove,
++	.driver	= {
++		.name = "oxnas-stdclk",
++		.of_match_table = oxnas_stdclk_dt_ids,
++	},
++};
++
++module_platform_driver(oxnas_stdclk_driver);
 -- 
-2.6.4
+1.9.1
+
