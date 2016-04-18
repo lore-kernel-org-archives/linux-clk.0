@@ -1,60 +1,35 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Thu, 21 Apr 2016 16:35:06 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org,
-	lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it,
-	dianders@chromium.org, zyw@rock-chips.com
-Subject: Re: [PATCH v2 7/7] rtc: Kconfig: Name RK818 in Kconfig for
- RTC_DRV_RK808
-Message-ID: <20160421143506.GB29844@piout.net>
-References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
- <1461244361-45686-8-git-send-email-w.egorov@phytec.de>
+Return-Path: <robh@kernel.org>
+Date: Mon, 18 Apr 2016 12:16:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alexander Kurz <akurz@blala.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Philippe Reynes <tremyfr@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: imx35: restore existing used clock
+ enumeration
+Message-ID: <20160418171654.GA25910@rob-hp-laptop>
+References: <1460669450-11729-1-git-send-email-akurz@blala.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461244361-45686-8-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1460669450-11729-1-git-send-email-akurz@blala.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21/04/2016 at 15:12:41 +0200, Wadim Egorov wrote :
-> The RK808 and RK818 PMICs are using a similar register map.
-> We can reuse the rtc driver for the RK818 PMIC. So let's add
-> the RK818 in the Kconfig description.
+On Thu, Apr 14, 2016 at 11:30:49PM +0200, Alexander Kurz wrote:
+> A new element got inserted into enum mx35_clks with commit 3713e3f5e927
+> ("clk: imx35: define two clocks for rtc"). This insertion shifted most
+> nummerical clock assignments to a new nummerical value which in turn
+> rendered most hardcoded nummeric values in imx35.dtsi incorrect.
 > 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-
+> Restore the existing order by moving the newly introduced clock to the
+> end of the enum. Update the dts documentation accordingly.
+> 
+> Signed-off-by: Alexander Kurz <akurz@blala.de>
 > ---
->  drivers/rtc/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 3e84315..acc2651 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -324,11 +324,11 @@ config RTC_DRV_MAX77686
->  	  will be called rtc-max77686.
->  
->  config RTC_DRV_RK808
-> -	tristate "Rockchip RK808 RTC"
-> +	tristate "Rockchip RK808/RK818 RTC"
->  	depends on MFD_RK808
->  	help
->  	  If you say yes here you will get support for the
-> -	  RTC of RK808 PMIC.
-> +	  RTC of RK808 and RK818 PMIC.
->  
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rk808-rtc.
-> -- 
-> 1.9.1
-> 
+>  Documentation/devicetree/bindings/clock/imx35-clock.txt | 1 +
+>  drivers/clk/imx/clk-imx35.c                             | 4 ++--
+>  2 files changed, 3 insertions(+), 2 deletions(-)
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Acked-by: Rob Herring <robh@kernel.org>
