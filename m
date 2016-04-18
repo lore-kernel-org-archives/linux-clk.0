@@ -1,25 +1,61 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: Wadim Egorov <w.egorov@phytec.de>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, lee.jones@linaro.org, mark.rutland@arm.com, a.zummo@towertech.it, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, dianders@chromium.org, robh+dt@kernel.org, alexandre.belloni@free-electrons.com, broonie@kernel.org, galak@codeaurora.org, zyw@rock-chips.com
-Subject: Re: [PATCH v4 1/7] regulator: rk808: Add rk808_reg_ops_ranges for LDO3
-Date: Wed, 27 Apr 2016 23:54:36 +0200
-Message-ID: <1574567.Qm9YHLQrGG@diego>
-In-Reply-To: <1461682450-22173-2-git-send-email-w.egorov@phytec.de>
-References: <1461682450-22173-1-git-send-email-w.egorov@phytec.de> <1461682450-22173-2-git-send-email-w.egorov@phytec.de>
+Return-Path: <peter.ujfalusi@ti.com>
+Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for selecting
+ system clocks by ID
+To: Mark Brown <broonie@kernel.org>
+References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
+ <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
+ <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
+ <20160216134233.GN18327@sirena.org.uk>
+ <20160216191346.2278.725@quark.deferred.io> <56C42BAF.3050900@ti.com>
+ <20160217120759.GO7544@sirena.org.uk> <56C4CF8B.5010005@ti.com>
+CC: <alsa-devel@alsa-project.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Jyri Sarha <jsarha@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Kristo, Tero"
+	<t-kristo@ti.com>, <linux-clk@vger.kernel.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <5715025C.7070108@ti.com>
+Date: Mon, 18 Apr 2016 18:50:52 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <56C4CF8B.5010005@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 26. April 2016, 16:54:04 schrieb Wadim Egorov:
-> LDO_REG3 descriptor is using linear_ranges.
-> Add and use proper ops for LDO_REG3.
+On 02/17/2016 09:52 PM, Peter Ujfalusi wrote:
+> On 02/17/2016 02:07 PM, Mark Brown wrote:
+>> On Wed, Feb 17, 2016 at 10:13:35AM +0200, Peter Ujfalusi wrote:
+>>
+>>> With this change we don't need to write custom machine drivers for setup not
+>>> using sysclk_id == 0.
+>>> I do think this is reasonable change by itself.
+>>
+>>> However I do think that the current simple-card is flawed regarding to clock
+>>> selection and the change Jyri and me are proposing is reasonable.
+>>
+>> But you define a new ABI to specify it in the process, I'd rather fix
+>> the flaws by using the common clock ABI than extend any device stuff.
+>> If it didn't define a new ABI I'd probably not worry about it but one of
+>> the issues we have with DT is that we do end up making ABIs every time
+>> we put something in DT.
 > 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> I understand. This should have been supported by simple-card since the
+> beginning. When we tried to move all boards to use simple-card, we hit the
+> wall by not being able to select and configure other sysclk_id than 0.
+> I don't want to create yet another simple card which handles only sysclk_id 1 ;)
+> On the other hand this ABI is backwards compatible since if it is missing it
+> will default to the configuration we right now have regarding to sysclk_dir
+> and sysclk_id.
+> 
+> I will look at the CCF implementation for McASP first then for aic3x.
 
-I'm to late to the party judging by Mark's "Aplied" message, but just to 
-confirm, this patch sucessfully fixes the issue on veyron-devices reported 
-yesterday.
+The first issue with converting the McASP to use CCF internally for clock
+selection, muxing and rate configuration is that the daVinci platform does not
+use CCF at all. Given that the davinci-mcasp driver is used by daVinci, we
+need to have non CCF way supported in ASoC...
 
-
-Heiko
+-- 
+Péter
