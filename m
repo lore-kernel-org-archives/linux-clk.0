@@ -1,49 +1,193 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
-Date: Tue, 26 Apr 2016 09:09:40 +0200
-Message-Id: <1461654582-668-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:35540
+	"EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752680AbcDRPKp (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 11:10:45 -0400
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-ide@vger.kernel.org,
+	Josh Triplett <josh@joshtriplett.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH 0/5] add __init attribute
+Date: Mon, 18 Apr 2016 16:55:33 +0200
+Message-Id: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As a pure Clock Domain does not have the concept of powering the domain
-itself, the CPG/MSTP driver does not provide power_off() and power_on()
-callbacks.
-However, the genpd core may still perform a dummy power down, causing
-/sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
-status being "off-0".
+Add __init attribute on a function that is only called from other __init
+functions and that is not inlined.
 
-Use the always-on governor to make sure the domain is never powered
-down, and always shows up as "on" in pm_genpd_summary.
+The complete semantic patch used to detect the need for this change is
+below (http://coccinelle.lip6.fr/).  This semantic patch checks for local
+static non-init functions that are called from an __init function and are
+not called from any other function.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-mstp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+<smpl>
+@initialize:ocaml@
+@@
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 969fbb61ab07b9b8..5093a250650dad6d 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -319,7 +319,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 	pd->flags = GENPD_FLAG_PM_CLK;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
--	pm_genpd_init(pd, &simple_qos_governor, false);
-+	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
- 
- 	of_genpd_add_provider_simple(np, pd);
+let itbl = Hashtbl.create 101
+let ltbl = Hashtbl.create 101
+let thefile = ref ""
+
+let hashadd t k =
+  let cell =
+    try Hashtbl.find t k
+    with Not_found ->
+      let cell = ref 0 in
+      Hashtbl.add t k cell;
+      cell in
+  cell := !cell + 1
+
+let hashget t k = try !(Hashtbl.find t k) with Not_found -> 0
+
+let seen  = ref []
+
+@script:ocaml@
+@@
+
+(let file = List.hd (Coccilib.files()) in
+thefile := file;
+let file =
+    try List.hd(List.tl (Str.split (Str.regexp "/linux-next/") file))
+    with _ -> file in
+let ofile = "/var/julia/linux-next/" ^
+      (Filename.chop_extension file) ^ ".o" in
+if not(Sys.file_exists ofile)
+then Coccilib.exit());
+
+Hashtbl.clear itbl;
+Hashtbl.clear ltbl;
+seen := []
+
+@r@
+identifier f;
+@@
+
+__init f(...) { ... }
+
+@script:ocaml@
+f << r.f;
+@@
+
+Hashtbl.add itbl f ()
+
+@s disable optional_attributes@
+identifier f;
+@@
+
+static f(...) { ... }
+
+@script:ocaml@
+f << s.f;
+@@
+
+Hashtbl.add ltbl f ()
+
+@t exists@
+identifier f,g;
+position p;
+@@
+
+__init f(...) { ... when any
+   g@p(...)
+   ... when any
  }
--- 
-1.9.1
+
+@script:ocaml@
+g << t.g;
+_p << t.p;
+@@
+
+if not (Hashtbl.mem ltbl g) || Hashtbl.mem itbl g
+then Coccilib.include_match false
+
+@ok1 disable optional_attributes exists@
+identifier f,t.g;
+@@
+
+f(...) { ... when any
+   g
+   ... when any
+ }
+
+@ok2 disable optional_attributes exists@
+identifier i,j,fld,t.g;
+@@
+
+struct i j = { .fld = g, };
+
+@ok3 disable optional_attributes exists@
+identifier t.g;
+declarer d;
+@@
+
+d(...,g,...);
+
+@ok4 disable optional_attributes exists@
+identifier t.g;
+expression e;
+@@
+
+(
+e(...,g,...)
+|
+e(...,&g,...)
+|
+e = &g
+|
+e = g
+)
+
+@script:ocaml depends on !ok1 && !ok2 && !ok3 && !ok4@
+g << t.g;
+@@
+
+let file = !thefile in
+let file =
+    try List.hd(List.tl (Str.split (Str.regexp "/linux-next/") file))
+    with _ -> file in
+if not(List.mem (g,file) !seen)
+then
+  begin
+    seen := (g,file) :: !seen;
+    let ofile = "/var/julia/linux-next/" ^
+      (Filename.chop_extension file) ^ ".o" in
+    if Sys.file_exists ofile
+    then
+      let l =
+	Common.cmd_to_list
+	  (Printf.sprintf
+	     "objdump -x %s | grep -w %s | grep -w F | grep .text.unlikely"
+	     ofile g) in
+      match l with
+	[] -> Coccilib.include_match false
+      | _ ->
+	  Printf.printf "Info for %s %s\n" file g;
+	  List.iter
+	    (function l -> Printf.printf "%s\n" l)
+	    l;
+	  Printf.printf "\n"; flush stdout
+    else Coccilib.include_match false
+  end
+else Coccilib.include_match false
+
+@depends on !ok1 && !ok2 && !ok3 && !ok4@
+identifier t.g;
+@@
+
+- g
++__init g
+ (...) { ... }
+</smpl>
+
+---
+
+ drivers/clk/clk-qoriq.c         |    3 ++-
+ drivers/clocksource/mtk_timer.c |    2 +-
+ drivers/ide/cmd640.c            |    2 +-
+ drivers/net/arcnet/com90xx.c    |    2 +-
+ drivers/tty/rocket.c            |    3 ++-
+ 5 files changed, 7 insertions(+), 5 deletions(-)
