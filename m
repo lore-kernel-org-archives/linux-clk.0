@@ -1,49 +1,54 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 17 Apr 2016 11:47:19 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH V1 6/7] MIPS: Loongson1B: Some updates/fixes for LS1B
-Message-ID: <20160417184719.GD391@tuxbot>
-References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
- <1459946095-7637-7-git-send-email-keguang.zhang@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459946095-7637-7-git-send-email-keguang.zhang@gmail.com>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>
+Subject: [PATCH 1/5] clk: qoriq: add __init attribute
+Date: Mon, 18 Apr 2016 16:55:34 +0200
+Message-Id: <1460991338-9845-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed 06 Apr 05:34 PDT 2016, Keguang Zhang wrote:
+Add __init attribute on a function that is only called from other __init
+functions and that is not inlined, at least with gcc version 4.8.4 on an
+x86 machine with allyesconfig.  Currently, the function is put in the
+.text.unlikely segment.  Declaring it as __init will cause it to be put in
+the .init.text and to disappear after initialization.
 
-> From: Kelvin Cheung <keguang.zhang@gmail.com>
-> 
-> - Add DMA device
-> - Add NAND device
-> - Add GPIO device
-> - Add LED device
-> - Update the defconfig and rename it to loongson1b_defconfig
-> - Fix ioremap size
-> - Other minor fixes
+The result of objdump -x on the function before the change is as follows:
 
-You should split this into a series of patches, at least to get all the
-non-functional (renames and BIT usage) into a separate patch. That
-way it's much easier to review your functional changes and to later
-debug any issues introduced.
+0000000000000000 l     F .text.unlikely 0000000000000071 sysclk_from_fixed.constprop.5
 
-Regards,
-Bjorn
+And after the change it is as follows:
+
+0000000000000480 l     F .init.text	000000000000006c sysclk_from_fixed.constprop.5
+
+Done with the help of Coccinelle.  The semantic patch checks for local
+static non-init functions that are called from an __init function and are
+not called from any other function.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/clk-qoriq.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 7bc1c45..5c11b58 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -869,7 +869,8 @@ static void __init core_mux_init(struct device_node *np)
+ 	}
+ }
+ 
+-static struct clk *sysclk_from_fixed(struct device_node *node, const char *name)
++static struct clk __init
++*sysclk_from_fixed(struct device_node *node, const char *name)
+ {
+ 	u32 rate;
+ 
