@@ -1,82 +1,35 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 25 Apr 2016 15:27:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: fix member type of struct clk_hw_onecell_data
-Message-ID: <20160425222702.GC29990@codeaurora.org>
-References: <1461552642-10732-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461552642-10732-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
+References: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
+Date: Mon, 18 Apr 2016 13:32:08 +0200
+Message-ID: <CAMuHMdU3G=33wEnyDQu8Z0D=-hz6MhRU9CyxZfJJGDzz3ke7NA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] clk: renesas: R-Car SYSC PM Domain Preparation
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/25, Masahiro Yamada wrote:
-> We cannot assign any value to an array type variable.  So,
-> 
->   hw_data->hws = kcalloc(hw_data->num, sizeof(struct clk_hw *),
->                          GFP_KERNEL);
-> 
-> fails with "invalid use of flexible array member" error.
+On Wed, Apr 13, 2016 at 4:44 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Geert Uytterhoeven (3):
 
-That's good. We don't want assignment to the hws member of this
-structure to happen from an allocation like kcalloc.
+In case his silly typo wasn't obvious: the subject should have been
+"[PATCH v2 0/3] clk: renesas: R-Car SYSC PM Domain Preparation".
+(i.e. "0/3" i.s.o. "0/4").
 
-> 
-> There are two ways to fix this issue.
-> 
-> [1] Make it a double-pointer
->   struct clk_hw_onecell_data {
->           size_t num;
->           struct clk_hw **hws;
->   };
-> 
-> This works as struct clk_onecell_data does.
+Gr{oetje,eeting}s,
 
-True we could go back to the old style with two allocations.
+                        Geert
 
-> 
-> [2] Make it a zero-sized array
->   struct clk_hw_onecell_data {
->           size_t num;
->           struct clk_hw *hws[0];
->   };
-> 
-> This allows one-shot memory allocation like this:
-> 
->   hw_data = kmalloc(sizeof(*hw_data) + clk_num * sizeof(struct clk_hw *),
->                     GFP_KERNEL);
-> 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Good, that was possible before this patch wasn't it?
-
-> This commit adopts [2] because it looks like Stephen's intention
-> (he moved hws[] to the bottom of struct clk_hw_onecell_data).
-> 
-> Fixes: 0861e5b8cf80 ("clk: Add clk_hw OF clk providers")
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-
-> 
->  include/linux/clk-provider.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index fd2ccd5..1850e25 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -769,7 +769,7 @@ struct clk_onecell_data {
->  
->  struct clk_hw_onecell_data {
->  	size_t num;
-> -	struct clk_hw *hws[];
-> +	struct clk_hw *hws[0];
-
-I'm totally lost now. Isn't a flex array with [] or with [0] the
-same? The latter being a GCC extension while the former being a
-C99 standard?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
