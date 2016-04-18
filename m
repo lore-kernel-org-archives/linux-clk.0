@@ -1,56 +1,39 @@
-Return-Path: <s.nawrocki@samsung.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for v4.7
-Message-id: <57112304.3070500@samsung.com>
-Date: Fri, 15 Apr 2016 19:21:08 +0200
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
+Return-Path: <sboyd@codeaurora.org>
+Date: Sun, 17 Apr 2016 21:56:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kelvin Cheung <keguang.zhang@gmail.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH V2 1/7] clk: Loongson1: Update clocks of Loongson1B
+Message-ID: <20160418045641.GB15324@codeaurora.org>
+References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
+ <CAJhJPsWoN3sZwwUS27XduhV=mGVO5eDwRa-ieanAWwvNByUHHA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAJhJPsWoN3sZwwUS27XduhV=mGVO5eDwRa-ieanAWwvNByUHHA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+On 04/16, Kelvin Cheung wrote:
+> Dear Stephen,
+> Could you check this patch?
+> Thanks!
+> 
+> 2016-04-08 19:42 GMT+08:00 Keguang Zhang <keguang.zhang@gmail.com>:
+> 
+> > From: Kelvin Cheung <keguang.zhang@gmail.com>
+> >
+> > - Rename the file to clk-loongson1.c
+> > - Add AC97, DMA and NAND clock
+> > - Update clock names
+> > - Remove superfluous error messages
+> >
+> > Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+> >
+> > ---
 
-  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-samsung
-
-for you to fetch changes up to 6466ee322749e7f440764df053ccccb2d15ab4de:
-
-  Merge branch 'for-v4.7/clk/exynos542x' into for-v4.7/clk/next (2016-04-15 18:57:00 +0200)
-
-----------------------------------------------------------------
-
-This includes addition of some missing clock tree definitions
-(UART, MMC2 clocks) for exynos3250 SoC and exporting of IDs
-for exynos543x SoC AMBA AXI bus clocks needed for bus frequency
-scaling.
-
-----------------------------------------------------------------
-Chanwoo Choi (4):
-      dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
-      clk: samsung: exynos3250: Add MMC2 clock
-      dt-bindings: clock: Add the clock id for ACLK clock of Exynos542x SoC
-      clk: samsung: exynos542x: Add the clock id for ACLK
-
-Pankaj Dubey (1):
-      clk: samsung: exynos3250: Add UART2 clock
-
-Sylwester Nawrocki (1):
-      Merge branch 'for-v4.7/clk/exynos542x' into for-v4.7/clk/next
-
- drivers/clk/samsung/clk-exynos3250.c   | 15 +++++++++++++++
- drivers/clk/samsung/clk-exynos5420.c   | 77 +++++++++++++++++++++++++++++++++++++++++++++++------------------------------
- include/dt-bindings/clock/exynos3250.h | 11 ++++++++++-
- include/dt-bindings/clock/exynos5420.h | 24 +++++++++++++++++++++++-
- 4 files changed, 95 insertions(+), 32 deletions(-)
-
---
-Thanks, 
-Sylwester
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
