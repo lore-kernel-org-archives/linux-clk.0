@@ -1,53 +1,95 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 12 Apr 2016 09:42:19 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, paul@pwsan.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 00/30] ARM: OMAP2+: hwmod module clock type support
-Message-ID: <20160412164219.GS5995@atomide.com>
-References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
- <20160411173518.GA5995@atomide.com>
- <570CFE50.5010709@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.131]:55444 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752575AbcDRPOo (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 11:14:44 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Olof Johansson <olof@lixom.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Subject: Re: [Question] reset controlling
+Date: Mon, 18 Apr 2016 17:13:57 +0200
+Message-ID: <4342692.6LEQF6clJv@wuerfel>
+In-Reply-To: <CAK7LNARJo-xDkkwZ0qA+DaKmQ0SixxGytNSKWBZMZ_N_6eWWow@mail.gmail.com>
+References: <CAK7LNATcVwx1q0Nb2WMSpqW3LcoRkZx3RgpMjmbt2EmffJnFvg@mail.gmail.com> <5910310.IeFB0QAt6Q@wuerfel> <CAK7LNARJo-xDkkwZ0qA+DaKmQ0SixxGytNSKWBZMZ_N_6eWWow@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <570CFE50.5010709@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160412 06:56]:
-> On 04/11/2016 08:40 PM, Tony Lindgren wrote:
-> >Hi,
-> >
-> >Nice to see this moving along :)
-> >
-> >* Tero Kristo <t-kristo@ti.com> [160411 01:20]:
+On Sunday 17 April 2016 17:16:58 Masahiro Yamada wrote:
+> 2016-04-17 4:23 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> >> Reset signals are sometimes cascaded.
+> >> For example, the UART blocks on my SoCs have a reset for the whole of
+> >> UART blocks
+> >> besides per-channel reset signals.
 > >>
-> >>The ordering on this set is kind of tricky to avoid any boot issues,
-> >>and it still currently causes a boot breakage between the DTS data
-> >>introduction and removal of hwmod data; this generates duplicate
-> >>entries for clocks which is prone to cause issues (both DT and hwmod
-> >>have the same entries in place under the hwmod data is removed.) I
-> >>didn't quite figure out a good way to avoid this, and could use some
-> >>guidance here. Shall we squash the DT + hwmod data patches together?
-> >>This avoids the boot breakage but creates pretty large patches. Also,
-> >>AMx3xx data needs to be grouped together as part of their data is
-> >>re-used commonly by both SoCs.
+> >>                      |---(UART ch0 reset)---> UART0
+> >>                      |
+> >> ----(UART reset)-----|---(UART ch1 reset)---> UART1
+> >>                      |
+> >>                      |---(UART ch2 reset)---> UART2
+> >>
+> >> I found this works well with clk-gate drivers.
+> >> Even reset_control_reset() can be implemented
+> >> with clk_disable() followed by clk_enable().
+> >>
 > >
-> >How about use clocks from dts if clocks property is defined? Otherwise
-> >fall back to the old static data. Then drop the static data later on
-> >with follow up patches.
+> > Interesting. My feeling from your description is that this is something
+> > that should be added to the reset controller subsystem. It has probably
+> > not been a serious issue for anyone else, but it's also likely that you
+> > are not the only one that would benefit from having support for nested
+> > resets in the API.
 > 
-> The underlying issue is the hardcoded names of hwmod clocks within hwmod
-> data. I think I figured out a fix for this, I am adding a few patches to
-> this series to lookup main_clk based on the hwmod name itself. This allows
-> re-directing the main_clk to the DT module clock in case one is available
-> for the hwmod. The bisect issues seem to be gone with this also, I need to
-> cleanup the patches a bit and re-post.
+> I want reset sub-system to support (1) nesting,  (2) enable_count.
+> 
+> To get these two features supported, the reset frame-work
+> would be similar implementation to the clock subsystem.
+> (In other words, we would duplicate effort
+> between clock and reset.)
+> 
+> Moreover, it is very common to control resets and clocks
+> from one hardware block.
+> 
+> So, I am looking for some idea that perhaps can unify the clock
+> and reset subsystems.
 
-OK yes generated names sounds like a good solution to support the
-old way of doing things.
+If you find parts of the code that could be shared, we can probably
+split those out into a file in lib/*.c and have that used by both
+subsystems and potentially others as well.
 
-Regards,
+> I found some SoCs implement reset drivers in drivers/clk.
+> 
+> 
+> masahiro@grover:~/workspace/linux/drivers/clk$ git grep
+> reset_controller_register
+> mediatek/reset.c:       ret = reset_controller_register(&data->rcdev);
+> mmp/reset.c:    reset_controller_register(&unit->rcdev);
+> qcom/common.c:  ret = reset_controller_register(&reset->rcdev);
+> rockchip/softrst.c:     ret = reset_controller_register(&softrst->rcdev);
+> sirf/clk-atlas7.c:      reset_controller_register(&atlas7_rst_ctlr);
+> sunxi/clk-a10-ve.c:     err = reset_controller_register(&reset_data->rcdev);
+> sunxi/clk-sun9i-mmc.c:  ret = reset_controller_register(&data->rcdev);
+> sunxi/clk-usb.c:        reset_controller_register(&reset_data->rcdev);
+> tegra/clk.c:    reset_controller_register(&rst_ctlr);
 
-Tony
+I think these are all the ones that have a shared hardware block doing
+both clocks and resets. My guess is that most other hardware does it
+differently.
+
+> I asked about this in the following thread.
+> https://lkml.org/lkml/2015/11/10/724
+
+Your hardware seems to be in a third category, which is not uncommon
+either: you have clocks, resets and additional registers all in a
+single block without a structure around them.
+
+You can handle this with purely syscon based abstraction, or you
+can have a driver for the combined device that registers itself
+to multiple subsystems in addition to being a syscon.
+
+	Arnd
