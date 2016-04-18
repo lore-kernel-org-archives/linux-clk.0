@@ -1,81 +1,32 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 18 Apr 2016 12:39:49 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Alexander Kurz <akurz@blala.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philippe Reynes <tremyfr@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: imx35: restore existing used clock
+ enumeration
+Message-ID: <20160418043949.GV28903@tiger>
+References: <1460669450-11729-1-git-send-email-akurz@blala.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 27 Apr 2016 00:34:07 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, mingo@redhat.com,
- kernel@pengutronix.de, tglx@linutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-In-Reply-To: <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
- <1461663072.7839.17.camel@pengutronix.de>
- <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
- <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger>
- <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
-Message-ID: <bc975a1c9b40ee72b05d6e540ae4f4d8@agner.ch>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460669450-11729-1-git-send-email-akurz@blala.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-04-26 19:57, Dong Aisheng wrote:
-> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
->> On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
->>> Shawn,
->>> What's your suggestion?
->>
->> I think this needs more discussion, and I just dropped Stefan's patch
->> from my tree.
->>
->> We need to firstly understand why this is happening.  The .prepare hook
->> is defined to be non-atomic context, and so that we call sleep function
->> in there.  We did everything right.  Why are we getting the warning?  If
->> I'm correct, this warning only happens on i.MX7D.  Why is that?
->>
+On Thu, Apr 14, 2016 at 11:30:49PM +0200, Alexander Kurz wrote:
+> A new element got inserted into enum mx35_clks with commit 3713e3f5e927
+> ("clk: imx35: define two clocks for rtc"). This insertion shifted most
+> nummerical clock assignments to a new nummerical value which in turn
+> rendered most hardcoded nummeric values in imx35.dtsi incorrect.
 > 
-> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
-> time init, the irq is still not enabled. It fixes the issue indirectly.
-> See:
-> asmlinkage __visible void __init start_kernel(void)
-> {
->         /*
->          * Set up the scheduler prior starting any interrupts (such as the
->          * timer interrupt). Full topology setup happens at smp_init()
->          * time - but meanwhile we still have a functioning scheduler.
->          */
->         sched_init();
->         .............
->         time_init();
->         ..............
->         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
->         early_boot_irqs_disabled = false;
->         local_irq_enable();
-> }
+> Restore the existing order by moving the newly introduced clock to the
+> end of the enum. Update the dts documentation accordingly.
 > 
-> The issue can only happen when PLL enable causes a schedule during
-> imx_clock_init().
-> Not all PLL has this issue.
-> The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
-> which requires more delay time and cause usleep.
-> Because clk framework does not support MX7D clock types (operation requires
-> parents on), we simply enable all clocks in imx7d_clocks_init().
-> 
-> If apply my this patch series:
-> https://lkml.org/lkml/2016/4/20/199
-> The issue can also be gone.
+> Signed-off-by: Alexander Kurz <akurz@blala.de>
 
-Oh ok, it does make sense to enable as few clocks as possible.
+Applied as a fix and Cc-ed stable, thanks.
 
-However, even if we do not enable lots of clocks at that time, and this
-helps to avoid the problem for now, it could still be that
-someone/something requests a clock early during boot, leading to a PLL
-enable... Shouldn't we make sure that those base clocks can be enabled
-even during early boot..?
-
---
-Stefan
+Shawn
