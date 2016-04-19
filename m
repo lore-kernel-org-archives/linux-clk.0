@@ -1,67 +1,85 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 26 Apr 2016 09:23:41 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>, kernel@pengutronix.de,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-Message-ID: <20160426012341.GB8870@tiger>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
+Return-Path: <Jose.Abreu@synopsys.com>
+Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
+ <20160415234631.GB4690@codeaurora.org> <5714B763.8010109@synopsys.com>
+ <5714C9BA.8040004@synopsys.com>
+CC: Jose Abreu <Jose.Abreu@synopsys.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-snps-arc@lists.infradead.org>,
+	<CARLOS.PALMINHA@synopsys.com>, <Alexey.Brodkin@synopsys.com>,
+	<mturquette@baylibre.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <5715F6AC.7090501@synopsys.com>
+Date: Tue, 19 Apr 2016 10:13:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160421034520.GA19965@shlinux2.ap.freescale.net>
+In-Reply-To: <5714C9BA.8040004@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
-> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
-> > If a clock gets enabled early during boot time, it can lead to a PLL
-> > startup. The wait_lock function makes sure that the PLL is really
-> > stareted up before it gets used. However, the function sleeps which
-> > leads to scheduling and an error:
-> > bad: scheduling from the idle thread!
-> > ...
-> > 
-> > Use udelay in case IRQ's are still disabled.
-> > 
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> > index c05c43d..b5ff561 100644
-> > --- a/drivers/clk/imx/clk-pllv3.c
-> > +++ b/drivers/clk/imx/clk-pllv3.c
-> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
-> >  			break;
-> >  		if (time_after(jiffies, timeout))
-> >  			break;
-> > -		usleep_range(50, 500);
-> > +		if (unlikely(irqs_disabled()))
-> 
-> This causes a bit confusion that clk_pllv3_prepare is sleepable.
-> But this line indicates it's possible to be called in irq context.
-> Although it's only happened during kernel boot phase where irq is
-> still not enabled.
-> It seems schedule_debug() somehow did not catch it during early boot
-> phase. Maybe schedule guys can help explain.
-> 
-> My question is if it's really worthy to introduce this confusion
-> to fix the issue since the delay is minor?
+Hi Vineet,
 
-I do not understand why it's confusing.  The code already obviously
-indicates this is a special handling for cases where irq is still not
-enabled, rather than for irq context.
 
-The patch is to fix the "bad: scheduling from the idle thread!" warning
-rather than minimize the delay.  Do you have an opinion on how to fix
-the warning?
+On 18-04-2016 12:49, Vineet Gupta wrote:
+> On Monday 18 April 2016 04:00 PM, Jose Abreu wrote:
+>>>> +	if (readl((void *)FPGA_VER_INFO) <= FPGA_VER_27M) {
+>>>> Please don't readl directly from addresses. I think I mentioned
+>>>> that before and didn't get back to you when you replied asking
+>>>> for other solutions. I still think a proper DT is in order
+>>>> instead of doing this check for ref_clk.
+>> I think that the DT approach would be better but I also think that using two DT
+>> files with only one change between them is not viable. I can see some alternatives:
+>>     1) Pass the region of FPGA version in reg field of DT so that writel is not
+>> directly used;
+>>     2) Create a dummy parent clock driver that reads from FPGA version register
+>> and returns the rate;
+>>     3) Last resort: Use two DT files for each FPGA version.
+>>
+>> @Vineet, @Alexey: Can you give some suggestions?
+>>
+>> Some background:
+>> We are expecting a new firmware release for the AXS board that will change the
+>> reference clock value of the I2S PLL from 27MHz to 28.224MHz. Due to this change
+>> the dividers of this PLL will change. Right now I am directly reading from the
+>> FPGA version register but Stephen suggested to use a DT approach so that this
+>> rate is declared as parent clock. This would be a good solution but would
+>> require the usage of two different DT files (one for the current firmware and
+>> another for the new firmware), which I think is not ideal. What is your opinion?
+>> Some other solutions are listed above.
+> Consider this my ignorance of clk drivers, what exactly is the problem with that
+> readl() for FPGA ver. Having 2 versions of DT is annoyance for sure, but the
+> bigger headache is that it still won't help cases of users mixing and matching
+> boards and DT. IMO this runtime check is pretty nice and will support both types
+> of boards with exact same code/DT !
+>
+> FWIW, both solutions #1 and #3 seem to imply a different DT - no ?
 
-> Furthermore, shouldn't it be udelay(500)?
+Solution 1 only requires that the FPGA version register is declared in the DT,
+something like this:
+    i2s_clock@100a0 {
+        compatible = "snps,axs10x-i2s-pll-clock";
+        reg = <0x100a0 0x10 0x11230 0x04>;
+        #clock-cells = <0>;
+    };
 
-500 is for the worst case of sleep, and 50 is good enough for delay.
+And then the region is io-remapped. This solution would discard the direct readl
+from the address and would still be compatible with the different firmwares
+using the same DT.
 
-Shawn
+Solution 3 is the alternative that Stephen suggested which requires two
+different DT's.
+
+>
+> And I really don't see how #2 makes things more elegant/abstracted w.r.t clk
+> framework ?
+
+Yes, solution 2 is more of a workaround and is not the best by far.
+
+>
+> So I prefer what you had before.
+> -Vineet
+
+@Stephen: can you give some input so that I can submit a v6?
+
+Best regards,
+Jose Miguel Abreu
