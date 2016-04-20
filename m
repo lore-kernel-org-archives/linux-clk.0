@@ -1,52 +1,99 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Apr 2016 18:14:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: yassinjaffer@gmail.com, dev@linux-sunxi.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Reinder de Haan <patchesrdh@mveas.com>,
-	Jens Kuske <jenskuske@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
- clock driver for sun[457]i
-Message-ID: <20160402011436.GA18567@codeaurora.org>
-References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
- <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
- <20160319235905.GA16539@rob-hp-laptop>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [RESEND PATCH 3/8] clk: core: support clocks which requires parents on (part 1)
+Date: Wed, 20 Apr 2016 17:34:35 +0800
+Message-ID: <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160319235905.GA16539@rob-hp-laptop>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/19, Rob Herring wrote:
-> On Thu, Mar 17, 2016 at 07:43:42PM +1100, yassinjaffer@gmail.com wrote:
-> > From: Yassin Jaffer <yassinjaffer@gmail.com>
-> > 
-> > This patch adds a composite clock type consisting of
-> > a clock gate, mux, configurable dividers, and a reset control.
-> > 
-> > Signed-off-by: Yassin Jaffer <yassinjaffer@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
-> 
-> I wish someone would just add all the sunxi clocks in one pass instead 
-> of one by one.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
+On Freescale i.MX7D platform, all clocks operations, including
+enable/disable, rate change and re-parent, requires its parent
+clock on. Current clock core can not support it well.
+This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
+special case in clock core that enable its parent clock firstly for
+each operation and disable it later after operation complete.
 
-Me too!
+The patch part 1 fixes the possible disabling clocks while its parent
+is off during kernel booting phase in clk_disable_unused_subtree().
 
+Before the completion of kernel booting, clock tree is still not built
+completely, there may be a case that the child clock is on but its
+parent is off which could be caused by either HW initial reset state
+or bootloader initialization.
+
+Taking bootloader as an example, we may enable all clocks in HW by default.
+And during kernel booting time, the parent clock could be disabled in its
+driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
+Because it's child clock is only enabled in HW while its SW usecount
+in clock tree is still 0, so clk_disable of parent clock will gate
+the parent clock in both HW and SW usecount ultimately. Then there will
+be a child clock is still on in HW but its parent is already off.
+
+Later in clk_disable_unused(), this clock disable accessing while its
+parent off will cause system hang due to the limitation of HW which
+must require its parent on.
+
+This patch simply enables the parent clock first before disabling
+if flag CLK_OPS_PARENT_ON is set in clk_disable_unused_subtree().
+This is a simple solution and only affects booting time.
+
+After kernel booting up the clock tree is already created, there will
+be no case that child is off but its parent is off.
+So no need do this checking for normal clk_disable() later.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c            | 5 +++++
+ include/linux/clk-provider.h | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9f944d4..1f054d1a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 	hlist_for_each_entry(child, &core->children, child_node)
+ 		clk_disable_unused_subtree(child);
+ 
++	if (core->flags & CLK_OPS_PARENT_ON)
++		clk_core_prepare_enable(core->parent);
++
+ 	flags = clk_enable_lock();
+ 
+ 	if (core->enable_count)
+@@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 
+ unlock_out:
+ 	clk_enable_unlock(flags);
++	if (core->flags & CLK_OPS_PARENT_ON)
++		clk_core_disable_unprepare(core->parent);
+ }
+ 
+ static bool clk_ignore_unused;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 15628644..c878f9c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -33,6 +33,8 @@
+ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
+ #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
+ #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
++/* parents need on during gate/ungate, set rate and re-parent */
++#define CLK_OPS_PARENT_ON	BIT(12)
+ 
+ struct clk;
+ struct clk_hw;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
