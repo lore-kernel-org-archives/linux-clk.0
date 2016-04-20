@@ -1,78 +1,73 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
- <netdev@vger.kernel.org>
-Subject: [v8, 0/7] Fix eSDHC host version register bug
-Date: Fri, 22 Apr 2016 14:27:37 +0800
-Message-ID: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [RESEND PATCH 8/8] clk: imx7d: only enable minimum required clocks
+Date: Wed, 20 Apr 2016 17:34:40 +0800
+Message-ID: <1461144880-8724-9-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
- scott.wood@nxp.com, Rob Herring <robh+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, Kumar
- Gala <galak@codeaurora.org>, leoyang.li@nxp.com, xiaobo.xie@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
-eSDHC controller. To get the SoC version and revision, it's needed to add the
-GUTS driver to access the global utilities registers.
+Formerly clk core does not support imx7d clock type well that all
+its clock operations requires the parent clock on.
+Therefore we enabled all clocks by default in clock driver
+initialization for other module clocks operate well.
 
-So, the first four patches are to add the GUTS driver.
-The following patches except the updating MAINTAINERS patch are to enable
-GUTS driver support to get SVR in eSDHC driver and fix host version for T4240.
+After patch 'clk: imx7d: using api with flag CLK_OPS_PARENT_ON',
+clk core can handle such clock type well, so we don't have to enable
+them all by default anymore. Instead, we only enable a minimum required
+set of clocks.
 
-Yangbo Lu (7):
-  Documentation: DT: update Freescale DCFG compatible
-  ARM64: dts: ls2080a: add device configuration node
-  soc: fsl: add GUTS driver for QorIQ platforms
-  dt: move guts devicetree doc out of powerpc directory
-  powerpc/fsl: move mpc85xx.h to include/linux/fsl
-  MAINTAINERS: add entry for Freescale SoC specific driver
-  mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
- Documentation/devicetree/bindings/arm/fsl.txt      |   2 +-
- .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
- MAINTAINERS                                        |  16 ++-
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
- arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
- drivers/clk/clk-qoriq.c                            |   3 +-
- drivers/i2c/busses/i2c-mpc.c                       |   2 +-
- drivers/iommu/fsl_pamu.c                           |   3 +-
- drivers/mmc/host/Kconfig                           |   1 +
- drivers/mmc/host/sdhci-of-esdhc.c                  |  23 ++++
- drivers/net/ethernet/freescale/gianfar.c           |   2 +-
- drivers/soc/Kconfig                                |   2 +-
- drivers/soc/fsl/Kconfig                            |   8 ++
- drivers/soc/fsl/Makefile                           |   1 +
- drivers/soc/fsl/guts.c                             | 119 +++++++++++++++++++
- include/linux/fsl/guts.h                           | 126 +++++++++++++--------
- .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
- 17 files changed, 263 insertions(+), 60 deletions(-)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
- create mode 100644 drivers/soc/fsl/Kconfig
- create mode 100644 drivers/soc/fsl/guts.c
- rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
-
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 980b2b8..18d23da 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -361,6 +361,14 @@ static const char *pll_enet_bypass_sel[] = { "pll_enet_main", "pll_enet_main_src
+ static const char *pll_audio_bypass_sel[] = { "pll_audio_main", "pll_audio_main_src", };
+ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_src", };
+ 
++static int const clks_init_on[] __initconst = {
++	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
++	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
++	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
++	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
++	IMX7D_AHB_CHANNEL_ROOT_CLK,
++};
++
+ static struct clk_onecell_data clk_data;
+ 
+ static struct clk ** const uart_clks[] __initconst = {
+@@ -846,14 +854,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+-	/* TO BE FIXED LATER
+-	 * Enable all clock to bring up imx7, otherwise system will be halt and block
+-	 * the other part upstream Because imx7d clock design changed, clock framework
+-	 * need do a little modify.
+-	 * Dong Aisheng is working on this. After that, this part need be changed.
+-	 */
+-	for (i = 0; i < IMX7D_CLK_END; i++)
+-		clk_prepare_enable(clks[i]);
++	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
++		clk_prepare_enable(clks[clks_init_on[i]]);
+ 
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
