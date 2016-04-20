@@ -1,39 +1,53 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 02/28] clk: ti: dpll: use ti_clk_get to fetch ref/bypass clocks
-Date: Thu, 14 Apr 2016 14:07:51 +0300
-Message-ID: <1460632097-25727-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH] clk: hisilicon: Remove CLK_IS_ROOT
+Date: Tue, 19 Apr 2016 18:22:46 -0700
+Message-Id: <1461115366-21562-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This allows getting rid of the DT_CLK() aliases under drivers/clk/ti.
+This flag is a no-op now (see commit 47b0eeb3dc8a "clk: Deprecate
+CLK_IS_ROOT", 2016-02-02) so remove it.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Cc: Jiancheng Xue <xuejiancheng@huawei.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/ti/dpll.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/hisilicon/clk-hi3519.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 3bc9959..0042fc2 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -220,8 +220,8 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
- 	if (dpll->num_parents < 2)
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+index ee9df821201c..cb7dfe678a05 100644
+--- a/drivers/clk/hisilicon/clk-hi3519.c
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -38,15 +38,15 @@
+ #define HI3519_NR_CLKS		128
  
--	clk_ref = clk_get_sys(NULL, dpll->parents[0]);
--	clk_bypass = clk_get_sys(NULL, dpll->parents[1]);
-+	clk_ref = ti_clk_get(dpll->parents[0]);
-+	clk_bypass = ti_clk_get(dpll->parents[1]);
+ static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
+-	{ HI3519_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
+-	{ HI3519_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
+-	{ HI3519_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
+-	{ HI3519_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
+-	{ HI3519_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
+-	{ HI3519_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
+-	{ HI3519_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
+-	{ HI3519_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
+-	{ HI3519_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
++	{ HI3519_FIXED_24M, "24m", NULL, 0, 24000000, },
++	{ HI3519_FIXED_50M, "50m", NULL, 0, 50000000, },
++	{ HI3519_FIXED_75M, "75m", NULL, 0, 75000000, },
++	{ HI3519_FIXED_125M, "125m", NULL, 0, 125000000, },
++	{ HI3519_FIXED_150M, "150m", NULL, 0, 150000000, },
++	{ HI3519_FIXED_200M, "200m", NULL, 0, 200000000, },
++	{ HI3519_FIXED_250M, "250m", NULL, 0, 250000000, },
++	{ HI3519_FIXED_300M, "300m", NULL, 0, 300000000, },
++	{ HI3519_FIXED_400M, "400m", NULL, 0, 400000000, },
+ };
  
- 	if (IS_ERR_OR_NULL(clk_ref) || IS_ERR_OR_NULL(clk_bypass))
- 		return ERR_PTR(-EAGAIN);
+ static const char *const fmc_mux_p[] = {
 -- 
-1.7.9.5
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
