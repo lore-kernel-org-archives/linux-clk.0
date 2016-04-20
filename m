@@ -1,106 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v7 2/9] ARM: dts: am437x: Add missing compatibles to PWM
- binding documents
-To: Rob Herring <robh@kernel.org>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
- <1461710209-6563-3-git-send-email-fcooper@ti.com>
- <20160428210716.GA12508@rob-hp-laptop>
-CC: <thierry.reding@gmail.com>, <tony@atomide.com>, <paul@pwsan.com>,
-	<t-kristo@ti.com>, <linux-pwm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <vigneshr@ti.com>, <nsekhar@ti.com>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-Message-ID: <57227C9F.6080705@ti.com>
-Date: Thu, 28 Apr 2016 16:11:59 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:50020 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750767AbcDTSkx (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2016 14:40:53 -0400
+Date: Wed, 20 Apr 2016 11:40:44 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: Add Oxford Semiconductor OXNAS Standard
+ Clocks
+Message-ID: <20160420184044.GJ15324@codeaurora.org>
+References: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
+ <1460973696-5977-2-git-send-email-narmstrong@baylibre.com>
+ <20160419212944.GF15324@codeaurora.org>
+ <57174151.8040806@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20160428210716.GA12508@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <57174151.8040806@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Rob,
-On 04/28/2016 04:07 PM, Rob Herring wrote:
-> On Tue, Apr 26, 2016 at 05:36:42PM -0500, Franklin S Cooper Jr wrote:
->> There are several SOC specific compatibles for ECAP, EHRPWM and PWMMS
->> that are in use but aren't properly documented. Therefore, fix this
->> by adding the compatibles to the appropriate binding documents.
->>
->> While at it make minor corrections to the binding document.
->>
->> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
->> ---
->>  .../devicetree/bindings/pwm/pwm-tiecap.txt          | 12 ++++++++++--
->>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt        | 12 ++++++++++--
->>  .../devicetree/bindings/pwm/pwm-tipwmss.txt         | 21 +++++++++++++++++++--
->>  3 files changed, 39 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
->> index fb81179..788da6c 100644
->> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
->> @@ -2,8 +2,9 @@ TI SOC ECAP based APWM controller
->>  
->>  Required properties:
->>  - compatible: Must be "ti,<soc>-ecap".
->> -  for am33xx - compatible = "ti,am33xx-ecap";
->> -  for da850  - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->> +  for am33xx  - compatible = "ti,am33xx-ecap";
->> +  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
->> +  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->>    the cells format. The PWM channel index ranges from 0 to 4. The only third
->>    cell flag supported by this binding is PWM_POLARITY_INVERTED.
->> @@ -22,6 +23,13 @@ ecap0: ecap@0 { /* ECAP on am33xx */
->>  	ti,hwmods = "ecap0";
->>  };
->>  
->> +ecap0: ecap@0 { /* ECAP on am4372 */
+On 04/20, Neil Armstrong wrote:
+> On 04/19/2016 11:29 PM, Stephen Boyd wrote:
+> > On 04/18, Neil Armstrong wrote:
+> >> +		struct clk_oxnas *_clk;
+> >> +
+> >> +		if (!clk_oxnas_init[i].clk_init)
+> >> +			continue;
+> > 
+> > New design is fine, really it's up to you, but then this check
+> > isn't needed anymore, right?
+> > 
 > 
-> The unit address is wrong.
-> 
->> +	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
->> +	#pwm-cells = <3>;
->> +	reg = <0x48300100 0x80>;
->> +	ti,hwmods = "ecap0";
->> +};
->> +
->>  ecap0: ecap@0 { /* ECAP on da850 */
->>  	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->>  	#pwm-cells = <3>;
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->> index 9c100b2..99b544f 100644
->> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
->> @@ -2,8 +2,9 @@ TI SOC EHRPWM based PWM controller
->>  
->>  Required properties:
->>  - compatible: Must be "ti,<soc>-ehrpwm".
->> -  for am33xx - compatible = "ti,am33xx-ehrpwm";
->> -  for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->> +  for am33xx  - compatible = "ti,am33xx-ehrpwm";
->> +  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
->> +  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
->>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
->>    the cells format. The only third cell flag supported by this binding is
->>    PWM_POLARITY_INVERTED.
->> @@ -22,6 +23,13 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
->>  	ti,hwmods = "ehrpwm0";
->>  };
->>  
->> +ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
-> 
-> ditto
-> 
-> Otherwise,
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
+> it's not needed for sure, but do I need to send a v3 to remove this ?
 > 
 
+No worries. I'll remove these two lines while applying.
 
-Yes, the unit address is wrong but it is wrong in several places. I
-added it like that to match what the other bindings are doing. However,
-patches 3 and 4 fixes these unit address problems for all the bindings
-all together to make things clear.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
