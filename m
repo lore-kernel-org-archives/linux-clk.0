@@ -1,49 +1,118 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [RESEND PATCH 5/8] clk: imx: re-order and concentrate the same type of clk api
+Date: Wed, 20 Apr 2016 17:34:37 +0800
+Message-ID: <1461144880-8724-6-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-Date: Wed, 27 Apr 2016 16:06:08 +0200
-Message-ID: <CAPDyKFofkVaXPO013rES6FYQrtWRRFWBOqSETaqT8Q7VisHuqA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] clk: renesas: Clock Domain fixes
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk@vger.kernel.org,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->         Hi Mike, Stephen,
->
-> This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
-> Clock Domains:
->   1. Postpone calls to pm_genpd_init(), as all local setup of the
->      generic_pm_domain structure should have been completed before
->      calling pm_genpd_init(),
->   2. Use always-on governor for Clock Domains, to prevent their status
->      from being shown as "off-0" in
->      /sys/kernel/debug/pm_genpd/pm_genpd_summary.
->
-> I plan to queue these up with other clock updates in
-> clk-renesas-for-v4.7, and send a pull request later.
->
-> Thanks for your comments!
->
-> Geert Uytterhoeven (4):
->   clk: renesas: mstp: Postpone call to pm_genpd_init()
->   clk: renesas: mstp: Use always-on governor for Clock Domain
->   clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
->   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
->
->  drivers/clk/renesas/clk-mstp.c         | 3 +--
->  drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
->  2 files changed, 2 insertions(+), 3 deletions(-)
+Re-order and concentrate the same type of clk api for better
+code maintenance.
 
-For the series:
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk.h | 58 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 508d0fa..df87d88 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -51,28 +51,6 @@ struct clk * imx_obtain_fixed_clock(
+ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
+ 
+-static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0x3, 0, &imx_ccm_lock, NULL);
+-}
+-
+-static inline struct clk *imx_clk_gate2_shared(const char *name,
+-		const char *parent, void __iomem *reg, u8 shift,
+-		unsigned int *share_count)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0x3, 0, &imx_ccm_lock, share_count);
+-}
+-
+-static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift, u8 cgr_val)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, cgr_val, 0, &imx_ccm_lock, NULL);
+-}
+-
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
+ 
+@@ -97,6 +75,13 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline struct clk *imx_clk_fixed_factor(const char *name,
++		const char *parent, unsigned int mult, unsigned int div)
++{
++	return clk_register_fixed_factor(NULL, name, parent,
++			CLK_SET_RATE_PARENT, mult, div);
++}
++
+ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift, u8 width)
+ {
+@@ -126,6 +111,28 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, NULL);
++}
++
++static inline struct clk *imx_clk_gate2_shared(const char *name,
++		const char *parent, void __iomem *reg, u8 shift,
++		unsigned int *share_count)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, share_count);
++}
++
++static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, u8 cgr_val)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, cgr_val, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+@@ -143,13 +150,6 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			&imx_ccm_lock);
+ }
+ 
+-static inline struct clk *imx_clk_fixed_factor(const char *name,
+-		const char *parent, unsigned int mult, unsigned int div)
+-{
+-	return clk_register_fixed_factor(NULL, name, parent,
+-			CLK_SET_RATE_PARENT, mult, div);
+-}
+-
+ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
+-- 
+1.9.1
