@@ -1,94 +1,146 @@
-Return-Path: <keguang.zhang@gmail.com>
-Return-Path: <keguang.zhang@gmail.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	jay.xu@rock-chips.com,
+	dianders@chromium.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: [PATCH 0/7] MIPS: Loongson1B: add NAND, DMA and GPIO support
-Date: Wed,  6 Apr 2016 20:09:30 +0800
-Message-Id: <1459944577-6423-1-git-send-email-keguang.zhang@gmail.com>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6] clk: rockchip: rk3399: update necessary critical clocks
+Date: Wed, 20 Apr 2016 19:06:52 +0800
+Message-Id: <1461150414-29638-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
+References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kelvin Cheung <keguang.zhang@gmail.com>
+We need to declare that we enable all NOCs which are critical
+clocks always and clearly and explicitly show that we have enabled
+them at clk_summary.
 
-This patchset is to add NAND, DMA and GPIO support for Loongson1B,
-and moreover, include some updates/fixes.
+We need to add some has been verified and required critical clocks
+in the development process.
 
-This applies on top of mips-for-linux-next.
+And the pclk_perilp1_noc is also add CLK_IGNORE_UNUSED flag.
 
-Thanks!
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-Kelvin Cheung (7):
-  clk: Loongson1: Update clocks of Loongson1B
-  cpufreq: Loongson1: Update cpufreq of Loongson1B
-  dmaengine: Loongson1: add Loongson1 dmaengine driver
-  mtd: nand: add Loongson1 NAND driver
-  gpio: Loongson1: add Loongson1 GPIO driver
-  MIPS: Loongson1B: Some updates/fixes for LS1B
-  MAINTAINERS: add Loongson1 architecture entry
+ drivers/clk/rockchip/clk-rk3399.c |   72 +++++++++++++++++++++++++++++++------
+ 1 file changed, 62 insertions(+), 10 deletions(-)
 
- MAINTAINERS                                       |   9 +
- arch/mips/Kconfig                                 |   2 +
- arch/mips/configs/loongson1b_defconfig            | 125 +++++
- arch/mips/configs/ls1b_defconfig                  | 110 -----
- arch/mips/include/asm/mach-loongson32/cpufreq.h   |   1 -
- arch/mips/include/asm/mach-loongson32/dma.h       |  25 +
- arch/mips/include/asm/mach-loongson32/irq.h       |   1 -
- arch/mips/include/asm/mach-loongson32/loongson1.h |   4 +-
- arch/mips/include/asm/mach-loongson32/nand.h      |  30 ++
- arch/mips/include/asm/mach-loongson32/platform.h  |  14 +-
- arch/mips/include/asm/mach-loongson32/regs-clk.h  |  24 +-
- arch/mips/include/asm/mach-loongson32/regs-mux.h  |  84 ++--
- arch/mips/include/asm/mach-loongson32/regs-pwm.h  |  12 +-
- arch/mips/loongson32/common/platform.c            | 105 ++++-
- arch/mips/loongson32/common/reset.c               |  13 +-
- arch/mips/loongson32/common/time.c                |  27 +-
- arch/mips/loongson32/ls1b/board.c                 |  67 ++-
- drivers/clk/Makefile                              |   2 +-
- drivers/clk/clk-loongson1.c                       | 163 +++++++
- drivers/clk/clk-ls1x.c                            | 162 -------
- drivers/cpufreq/Makefile                          |   2 +-
- drivers/cpufreq/loongson1-cpufreq.c               | 230 +++++++++
- drivers/cpufreq/ls1x-cpufreq.c                    | 222 ---------
- drivers/dma/Kconfig                               |   9 +
- drivers/dma/Makefile                              |   1 +
- drivers/dma/loongson1-dma.c                       | 546 ++++++++++++++++++++++
- drivers/gpio/Kconfig                              |   7 +
- drivers/gpio/Makefile                             |   1 +
- drivers/gpio/gpio-loongson1.c                     | 102 ++++
- drivers/mtd/nand/Kconfig                          |   8 +
- drivers/mtd/nand/Makefile                         |   1 +
- drivers/mtd/nand/loongson1_nand.c                 | 522 +++++++++++++++++++++
- 32 files changed, 2041 insertions(+), 590 deletions(-)
- create mode 100644 arch/mips/configs/loongson1b_defconfig
- delete mode 100644 arch/mips/configs/ls1b_defconfig
- create mode 100644 arch/mips/include/asm/mach-loongson32/dma.h
- create mode 100644 arch/mips/include/asm/mach-loongson32/nand.h
- create mode 100644 drivers/clk/clk-loongson1.c
- delete mode 100644 drivers/clk/clk-ls1x.c
- create mode 100644 drivers/cpufreq/loongson1-cpufreq.c
- delete mode 100644 drivers/cpufreq/ls1x-cpufreq.c
- create mode 100644 drivers/dma/loongson1-dma.c
- create mode 100644 drivers/gpio/gpio-loongson1.c
- create mode 100644 drivers/mtd/nand/loongson1_nand.c
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 232ea68..1da4fe1 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1043,7 +1043,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	GATE(PCLK_SPI2, "pclk_spi2", "pclk_perilp1", 0, RK3399_CLKGATE_CON(23), 12, GFLAGS),
+ 	GATE(PCLK_SPI4, "pclk_spi4", "pclk_perilp1", 0, RK3399_CLKGATE_CON(23), 13, GFLAGS),
+ 	GATE(PCLK_PERIHP_GRF, "pclk_perilp_sgrf", "pclk_perilp1", 0, RK3399_CLKGATE_CON(24), 13, GFLAGS),
+-	GATE(0, "pclk_perilp1_noc", "pclk_perilp1", 0, RK3399_CLKGATE_CON(25), 10, GFLAGS),
++	GATE(0, "pclk_perilp1_noc", "pclk_perilp1", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(25), 10, GFLAGS),
+ 
+ 	/* saradc */
+ 	COMPOSITE_NOMUX(SCLK_SARADC, "clk_saradc", "xin24m", 0,
+@@ -1464,33 +1464,85 @@ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+ };
+ 
+ static const char *const rk3399_cru_critical_clocks[] __initconst = {
+-	"aclk_cci_pre",
++	/*
++	 * We need to declare that we enable all NOCs which are critical clocks
++	 * always and clearly and explicitly show that we have enabled them at
++	 * clk_summary.
++	 */
++	"aclk_usb3_noc",
++	"aclk_gmac_noc",
++	"pclk_gmac_noc",
++	"pclk_center_main_noc",
++	"aclk_cci_noc0",
++	"aclk_cci_noc1",
++	"clk_dbg_noc",
++	"hclk_vcodec_noc",
++	"aclk_vcodec_noc",
++	"hclk_vdu_noc",
++	"aclk_vdu_noc",
++	"hclk_iep_noc",
++	"aclk_iep_noc",
++	"hclk_rga_noc",
++	"aclk_rga_noc",
++	"aclk_center_main_noc",
++	"aclk_center_peri_noc",
++	"aclk_perihp_noc",
++	"hclk_perihp_noc",
++	"pclk_perihp_noc",
++	"hclk_sdmmc_noc",
++	"aclk_emmc_noc",
++	"aclk_perilp0_noc",
++	"hclk_perilp0_noc",
++	"hclk_m0_perilp_noc",
++	"hclk_perilp1_noc",
++	"hclk_sdio_noc",
++	"hclk_sdioaudio_noc",
++	"pclk_perilp1_noc",
++	"aclk_vio_noc",
++	"aclk_hdcp_noc",
++	"hclk_hdcp_noc",
++	"pclk_hdcp_noc",
++	"pclk_edp_noc",
++	"aclk_vop0_noc",
++	"hclk_vop0_noc",
++	"aclk_vop1_noc",
++	"hclk_vop1_noc",
++	"aclk_isp0_noc",
++	"hclk_isp0_noc",
++	"aclk_isp1_noc",
++	"hclk_isp1_noc",
++	"aclk_gic_noc",
++
++	/* other critical clocks */
+ 	"pclk_perilp0",
+ 	"pclk_perilp0",
+ 	"hclk_perilp0",
+-	"hclk_perilp0_noc",
+ 	"pclk_perilp1",
+-	"pclk_perilp1_noc",
+ 	"pclk_perihp",
+-	"pclk_perihp_noc",
+ 	"hclk_perihp",
+ 	"aclk_perihp",
+-	"aclk_perihp_noc",
+ 	"aclk_perilp0",
+-	"aclk_perilp0_noc",
+ 	"hclk_perilp1",
+-	"hclk_perilp1_noc",
+-	"aclk_dmac0_perilp",
+-	"gpll_hclk_perilp1_src",
++	"aclk_dmac1_perilp",
+ 	"gpll_aclk_perilp0_src",
+ 	"gpll_aclk_perihp_src",
+ };
+ 
+ static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
++	/*
++	 * We need to declare that we enable all NOCs which are critical clocks
++	 * always and clearly and explicitly show that we have enabled them at
++	 * clk_summary.
++	 */
++	"pclk_noc_pmu",
++	"hclk_noc_pmu",
++
++	/* other critical clocks */
+ 	"ppll",
+ 	"pclk_pmu_src",
+ 	"fclk_cm0s_src_pmu",
+ 	"clk_timer_src_pmu",
++	"pclk_rkpwm_pmu",
+ };
+ 
+ static void __init rk3399_clk_init(struct device_node *np)
 -- 
-1.9.1
+1.7.9.5
