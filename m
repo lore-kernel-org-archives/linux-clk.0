@@ -1,153 +1,51 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 12 Apr 2016 15:26:44 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 15/46] pwm: introduce the pwm_state concept
-Message-ID: <20160412152644.45ff517a@bbrezillon>
-In-Reply-To: <20160412131118.GQ18882@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-16-git-send-email-boris.brezillon@free-electrons.com>
-	<20160412114904.GM18882@ulmo.ba.sec>
-	<20160412141718.5fe4cf24@bbrezillon>
-	<20160412122141.GP18882@ulmo.ba.sec>
-	<20160412144508.2ee181fe@bbrezillon>
-	<20160412131118.GQ18882@ulmo.ba.sec>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.137]:50722 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932079AbcDTLM0 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2016 07:12:26 -0400
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org, heiko@sntech.de
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+	elaine.zhang@rock-chips.com, jay.xu@rock-chips.com,
+	dianders@chromium.org, Xing Zheng <zhengxing@rock-chips.com>
+Subject: [PATCH 6/6] clk: rockchip: rk3399: fix the gate bit for i2c4 and i2c8
+Date: Wed, 20 Apr 2016 19:12:10 +0800
+Message-Id: <1461150730-29787-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
+References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Apr 2016 15:11:18 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
+The gate bits of the i2c4 and i2c8 are incorrect due to the manual
+error, we need to fix them.
 
-> On Tue, Apr 12, 2016 at 02:45:08PM +0200, Boris Brezillon wrote:
-> > On Tue, 12 Apr 2016 14:21:41 +0200
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > 
-> > > On Tue, Apr 12, 2016 at 02:17:18PM +0200, Boris Brezillon wrote:
-> > > > On Tue, 12 Apr 2016 13:49:04 +0200
-> > > > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > > 
-> > > > > On Wed, Mar 30, 2016 at 10:03:38PM +0200, Boris Brezillon wrote:
-> > > > > > The PWM state, represented by its period, duty_cycle and polarity,
-> > > > > > is currently directly stored in the PWM device.
-> > > > > > Declare a pwm_state structure embedding those field so that we can later
-> > > > > > use this struct to atomically update all the PWM parameters at once.
-> > > > > > 
-> > > > > > All pwm_get_xxx() helpers are now implemented as wrappers around
-> > > > > > pwm_get_state().
-> > > > > > 
-> > > > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > > > > ---
-> > > > > >  drivers/pwm/core.c  |  8 ++++----
-> > > > > >  include/linux/pwm.h | 54 +++++++++++++++++++++++++++++++++++++++++------------
-> > > > > >  2 files changed, 46 insertions(+), 16 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> > > > > > index 6433059..f3f91e7 100644
-> > > > > > --- a/drivers/pwm/core.c
-> > > > > > +++ b/drivers/pwm/core.c
-> > > > > > @@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
-> > > > > >  		pwm->chip = chip;
-> > > > > >  		pwm->pwm = chip->base + i;
-> > > > > >  		pwm->hwpwm = i;
-> > > > > > -		pwm->polarity = polarity;
-> > > > > > +		pwm->state.polarity = polarity;
-> > > > > 
-> > > > > Would this not more correctly be assigned to pwm->args.polarity? After
-> > > > > all this is setting up the "initial" state, much like DT or the lookup
-> > > > > tables would for duty cycle and period.
-> > > > 
-> > > > Yes, I wasn't sure about the pwm_add_with_polarity() meaning. To me,
-> > > > all the reference info should be extracted from DT, PWM lookup table or
-> > > > driver specific ->request() implementation, but I can definitely
-> > > > initialize the args.polarity here too.
-> > > > 
-> > > > Should I keep the pwm->state.polarity assignment (to set the initial
-> > > > polarity when the driver does not support hardware readout)?
-> > > 
-> > > Wouldn't this work automatically as part of the pwm_apply_args() helper
-> > > if we extended it with this setting?
-> > 
-> > Well, as you explained in you answer to patch 5, pwm_apply_args()
-> > should be called on a per-request basis (each time a PWM device is
-> > requested), while the initial polarity setting should only be applied
-> > when registering the PWM chip (and its devices). After that, the
-> > framework takes care of keeping the PWM state in sync with the hardware
-> > state.
-> > 
-> > Let's take a real (though a bit unusual) example. Say you have a single
-> > PWM device referenced by two different users. Only one user can be
-> > enabled at a time, but each of them has its own reference config
-> > (different polarity, different period).
-> > 
-> > User1 calls pwm_get() and applies its own polarity and period. Then
-> > user1 is unregistered and release the PWM device, leaving the polarity
-> > and period untouched.
-> > 
-> > User2 is registered and request the same PWM device, but user2 is
-> > smarter and tries to extract the current PWM state before adapting the
-> > config according to pwm_args. If you just reset pwm->state.polarity
-> > each time pwm_apply_args() is called (and you suggested to call it as
-> > part of the request procedure), then this means the PWM state is no
-> > longer in sync with the hardware state.
-> 
-> In that case neither will be the period or duty cycle. Essentially this
-> gets us back to square one where we need to decide how to handle current
-> state vs. initial arguments.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-That's not true. Now we clearly differentiate the reference config
-(content of pwm_args which is only a subset of what you'll find in
-pwm_state) and the PWM state (represented by pwm_state).
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-We should be safe as long as we keep those 2 elements as 2 orthogonal
-concepts:
-- pwm_args is supposed to give some hint to the PWM user to help him
-  configure it's PWM appropriately
-- pwm_state is here to reflect the real PWM state, and apply new
-  configs
-
-> 
-> But I don't think this is really going to be an issue because this is
-> all moot until we've moved over to the atomic API, at which point this
-> is all going to go away anyway.
-
-As stated in my answer to patch 5, I think I misunderstood your
-suggestion. pwm_apply_args() is supposed to adjust the PWM config to
-match the period and polarity specified in pwm_args, right?
-
-If that's the case, my question is, should we really call this function
-each time a new user requests a PWM instead of letting those users call
-the function on-demand (not all users want to adapt the current PWM
-config to the pwm_args, some may just want to apply a completely new
-config).
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index e81cc85..3c5ab39 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1411,11 +1411,11 @@ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+ 
+ 	COMPOSITE_NOMUX(SCLK_I2C4_PMU, "clk_i2c4_pmu", "ppll", 0,
+ 			RK3399_PMU_CLKSEL_CON(3), 0, 7, DFLAGS,
+-			RK3399_PMU_CLKGATE_CON(0), 11, GFLAGS),
++			RK3399_PMU_CLKGATE_CON(0), 10, GFLAGS),
+ 
+ 	COMPOSITE_NOMUX(SCLK_I2C8_PMU, "clk_i2c8_pmu", "ppll", 0,
+ 			RK3399_PMU_CLKSEL_CON(2), 8, 7, DFLAGS,
+-			RK3399_PMU_CLKGATE_CON(0), 10, GFLAGS),
++			RK3399_PMU_CLKGATE_CON(0), 11, GFLAGS),
+ 
+ 	DIV(0, "clk_32k_suspend_pmu", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3399_PMU_CLKSEL_CON(4), 0, 10, DFLAGS),
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.7.9.5
+
+
