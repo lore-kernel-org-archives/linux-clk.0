@@ -1,53 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.lysator.liu.se ([130.236.254.3]:42400 "EHLO
-	mail.lysator.liu.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754956AbcDMXWz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2016 19:22:55 -0400
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
-	by mail.lysator.liu.se (Postfix) with ESMTP id BD31740015
-	for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2016 01:15:30 +0200 (CEST)
-Received: from [192.168.0.125] (217-210-101-82-no95.business.telia.com [217.210.101.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mail.lysator.liu.se (Postfix) with ESMTPSA id 869E940011
-	for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2016 01:15:29 +0200 (CEST)
-To: linux-clk@vger.kernel.org
-From: Peter Rosin <peda@lysator.liu.se>
-Subject: Programming a clock in the device tree
-Message-ID: <570ED310.3020604@lysator.liu.se>
-Date: Thu, 14 Apr 2016 01:15:28 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	huangtao@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	jay.xu@rock-chips.com,
+	dianders@chromium.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/6] clk: rockchip: rk3399: add some frequencies on the PLL table
+Date: Wed, 20 Apr 2016 19:06:50 +0800
+Message-Id: <1461150414-29638-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
+References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi!
+This patch add some necessary frequencies for the RK3399 clock.
 
-I'm trying to connect (in a device tree) a programmable clock
-to a device that does not expect the clock to need any
-programming.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-I can hack this and add a clk_set_rate at the appropriate point
-in the driver for the clk consumer, but I was expecting to see
-some way of just adding a device tree node to get this done for
-me.
+ drivers/clk/rockchip/clk-rk3399.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-It just feels wrong to add this hack to the driver as the
-programmable clock might be needed for more than one device and
-the decisions by one driver might conflict with other needs (the
-driver in question can use a variety of clock rates, so the rate
-it should request is policy not belonging in a driver).
-
-Adding a device tree frequency property to the driver in question
-is also a possibility, but that would need code duplication for
-other clock consumers as well, when someone wants to use those
-drivers in the way I'm now trying to use this driver.
-
-I.e. I expected to see a driver, just like the fixed clock
-driver, but that programs a parent clock instead of just
-representing a fixed oscillator. Is there such a thing? If not,
-what is it that I'm not seeing? Because I just can't believe that
-I'm the first person to need this...
-
-Cheers,
-Peter
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 7ec84fd..0be3e10 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -92,13 +92,18 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE( 696000000, 1, 58, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 676000000, 3, 169, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 600000000, 1, 75, 3, 1, 1, 0),
+-	RK3036_PLL_RATE( 594000000, 2, 99, 2, 1, 1, 0),
++	RK3036_PLL_RATE( 594000000, 1, 99, 4, 1, 1, 0),
+ 	RK3036_PLL_RATE( 504000000, 1, 63, 3, 1, 1, 0),
+ 	RK3036_PLL_RATE( 500000000, 6, 250, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 408000000, 1, 68, 2, 2, 1, 0),
+ 	RK3036_PLL_RATE( 312000000, 1, 52, 2, 2, 1, 0),
++	RK3036_PLL_RATE( 297000000, 1, 99, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
++	RK3036_PLL_RATE( 148500000, 1, 99, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
++	RK3036_PLL_RATE(  74250000, 2, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE(  54000000, 1, 54, 6, 4, 1, 0),
++	RK3036_PLL_RATE(  27000000, 1, 27, 6, 4, 1, 0),
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -359,6 +364,8 @@ static struct rockchip_cpuclk_rate_table rk3399_cpuclkl_rates[] __initdata = {
+ 	RK3399_CPUCLKL_RATE( 600000000, 1, 3, 3),
+ 	RK3399_CPUCLKL_RATE( 408000000, 1, 2, 2),
+ 	RK3399_CPUCLKL_RATE( 312000000, 1, 1, 1),
++	RK3399_CPUCLKL_RATE( 216000000, 1, 1, 1),
++	RK3399_CPUCLKL_RATE(  96000000, 1, 1, 1),
+ };
+ 
+ static struct rockchip_cpuclk_rate_table rk3399_cpuclkb_rates[] __initdata = {
+@@ -381,6 +388,8 @@ static struct rockchip_cpuclk_rate_table rk3399_cpuclkb_rates[] __initdata = {
+ 	RK3399_CPUCLKB_RATE( 600000000, 1, 3, 3),
+ 	RK3399_CPUCLKB_RATE( 408000000, 1, 2, 2),
+ 	RK3399_CPUCLKB_RATE( 312000000, 1, 1, 1),
++	RK3399_CPUCLKB_RATE( 216000000, 1, 1, 1),
++	RK3399_CPUCLKB_RATE(  96000000, 1, 1, 1),
+ };
+ 
+ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+-- 
+1.7.9.5
