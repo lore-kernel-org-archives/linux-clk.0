@@ -1,61 +1,195 @@
-Return-Path: <jun.nie@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [RESEND PATCH 1/8] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
+Date: Wed, 20 Apr 2016 17:34:33 +0800
+Message-ID: <1461144880-8724-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <20160422223601.GV13149@codeaurora.org>
-References: <1461292356-26043-1-git-send-email-jun.nie@linaro.org>
-	<20160422223601.GV13149@codeaurora.org>
-Date: Mon, 25 Apr 2016 14:48:45 +0800
-Message-ID: <CABymUCPKfXgxATdvYcMO7bYiNumcV1cmk_A6jtndMHknSTaUyQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: Add is_enabled sanity check
-From: Jun Nie <jun.nie@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-04-23 6:36 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 04/22, Jun Nie wrote:
->> If .enable and .disable is implemented, we must implement .is_enabled
->> per document. Otherwise, clk_disable_unused_subtree will not disable
->> the unused clock if the .is_enabled is not implemented, unecessary
->> power consumption happens on the clock as a result.
->>
->> Signed-off-by: Jun Nie <jun.nie@linaro.org>
->> ---
->>  drivers/clk/clk.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index f13c3f4..5e63bee 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2526,6 +2526,10 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->>       int i, ret;
->>       struct clk_core *core;
->>
->> +     if (hw->init->ops->enable && !hw->init->ops->is_enabled)
->> +             pr_warn("Warning: %s %s must implement .is_enabled\n",
->> +                     __func__, hw->init->name);
->> +
->>       core = kzalloc(sizeof(*core), GFP_KERNEL);
->>       if (!core) {
->>               ret = -ENOMEM;
->
-> Please move this to the place we check for other clk ops sanity.
-Agree.
+This can be useful when clock core wants to enable/disable clocks.
+Then we don't have to convert the struct clk_core to struct clk to call
+clk_enable/clk_disable which is a bit un-align with exist using.
 
-> Also, any idea how many drivers are not implementing is_enabled
-> but are implementing enable/disable?
-With grep and manual search the result, more than 30 clk ops in less
-than 20 files miss the is_enabled callback.
-grep -rw -e ".enable" -e ".is_enabled" drivers/clk/ | sed '/\*/d' | sed '/(/d'
+And after introduce clk_core_{enable|disable}_lock, we can refine
+clk_enable and clk_disable a bit.
 
->
-> Also, why isn't prepare/unprepare as important?
-The table of  clock hardware characteristics in the Document does not
-say these two callback are mandatory in any case. Maybe some platform
-does not need to prepare clock in a thread context.
+As well as clk_core_{enable|disable}_lock, we also added
+clk_core_{prepare|unprepare}_lock and clk_core_prepare_enable/
+clk_core_unprepare_disable for clock core to easily use.
 
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c | 85 +++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 63 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9f77cc6..0f9f756 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -591,6 +591,13 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	clk_core_unprepare(core->parent);
+ }
+ 
++static void clk_core_unprepare_lock(struct clk_core *core)
++{
++	clk_prepare_lock();
++	clk_core_unprepare(core);
++	clk_prepare_unlock();
++}
++
+ /**
+  * clk_unprepare - undo preparation of a clock source
+  * @clk: the clk being unprepared
+@@ -607,9 +614,7 @@ void clk_unprepare(struct clk *clk)
+ 	if (IS_ERR_OR_NULL(clk))
+ 		return;
+ 
+-	clk_prepare_lock();
+-	clk_core_unprepare(clk->core);
+-	clk_prepare_unlock();
++	clk_core_unprepare_lock(clk->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_unprepare);
+ 
+@@ -645,6 +650,17 @@ static int clk_core_prepare(struct clk_core *core)
+ 	return 0;
+ }
+ 
++static int clk_core_prepare_lock(struct clk_core *core)
++{
++	int ret;
++
++	clk_prepare_lock();
++	ret = clk_core_prepare(core);
++	clk_prepare_unlock();
++
++	return ret;
++}
++
+ /**
+  * clk_prepare - prepare a clock source
+  * @clk: the clk being prepared
+@@ -659,16 +675,10 @@ static int clk_core_prepare(struct clk_core *core)
+  */
+ int clk_prepare(struct clk *clk)
+ {
+-	int ret;
+-
+ 	if (!clk)
+ 		return 0;
+ 
+-	clk_prepare_lock();
+-	ret = clk_core_prepare(clk->core);
+-	clk_prepare_unlock();
+-
+-	return ret;
++	return clk_core_prepare_lock(clk->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_prepare);
+ 
+@@ -698,6 +708,15 @@ static void clk_core_disable(struct clk_core *core)
+ 	clk_core_disable(core->parent);
+ }
+ 
++static void clk_core_disable_lock(struct clk_core *core)
++{
++	unsigned long flags;
++
++	flags = clk_enable_lock();
++	clk_core_disable(core);
++	clk_enable_unlock(flags);
++}
++
+ /**
+  * clk_disable - gate a clock
+  * @clk: the clk being gated
+@@ -712,14 +731,10 @@ static void clk_core_disable(struct clk_core *core)
+  */
+ void clk_disable(struct clk *clk)
+ {
+-	unsigned long flags;
+-
+ 	if (IS_ERR_OR_NULL(clk))
+ 		return;
+ 
+-	flags = clk_enable_lock();
+-	clk_core_disable(clk->core);
+-	clk_enable_unlock(flags);
++	clk_core_disable_lock(clk->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_disable);
+ 
+@@ -758,6 +773,18 @@ static int clk_core_enable(struct clk_core *core)
+ 	return 0;
+ }
+ 
++static int clk_core_enable_lock(struct clk_core *core)
++{
++	unsigned long flags;
++	int ret;
++
++	flags = clk_enable_lock();
++	ret = clk_core_enable(core);
++	clk_enable_unlock(flags);
++
++	return ret;
++}
++
+ /**
+  * clk_enable - ungate a clock
+  * @clk: the clk being ungated
+@@ -773,19 +800,33 @@ static int clk_core_enable(struct clk_core *core)
+  */
+ int clk_enable(struct clk *clk)
+ {
+-	unsigned long flags;
+-	int ret;
+-
+ 	if (!clk)
+ 		return 0;
+ 
+-	flags = clk_enable_lock();
+-	ret = clk_core_enable(clk->core);
+-	clk_enable_unlock(flags);
++	return clk_core_enable_lock(clk->core);
++}
++EXPORT_SYMBOL_GPL(clk_enable);
++
++static int clk_core_prepare_enable(struct clk_core *core)
++{
++	int ret;
++
++	ret = clk_core_prepare_lock(core);
++	if (ret)
++		return ret;
++
++	ret = clk_core_enable_lock(core);
++	if (ret)
++		clk_core_unprepare_lock(core);
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(clk_enable);
++
++static void clk_core_disable_unprepare(struct clk_core *core)
++{
++	clk_core_disable_lock(core);
++	clk_core_unprepare_lock(core);
++}
+ 
+ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 				      struct clk_rate_request *req)
+-- 
+1.9.1
