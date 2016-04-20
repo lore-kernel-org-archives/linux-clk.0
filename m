@@ -1,123 +1,140 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 03/24] clk: pwm: use pwm_get_args() where appropriate
-Date: Thu, 14 Apr 2016 21:17:23 +0200
-Message-Id: <1460661464-11216-4-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [RESEND PATCH 4/8] clk: core: support clocks which requires parents on (part 2)
+Date: Wed, 20 Apr 2016 17:34:36 +0800
+Message-ID: <1461144880-8724-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM framework has clarified the concept of reference PWM config
-(the platform dependent config retrieved from the DT or the PWM
-lookup table) and real PWM state.
+On Freescale i.MX7D platform, all clocks operations, including
+enable/disable, rate change and re-parent, requires its parent clock on.
+Current clock core can not support it well.
+This patch adding flag CLK_OPS_PARENT_ON to handle this special case in
+clock core that enable its parent clock firstly for each operation and
+disable it later after operation complete.
 
-Use pwm_get_args() when the PWM user wants to retrieve this reference
-config and not the current state.
+The patch part 2 fixes set clock rate and set parent while its parent
+is off. The most special case is for set_parent() operation which requires
+all parents including both old and new one to be enabled at the same time
+during the operation.
 
-This is part of the rework allowing the PWM framework to support
-hardware readout and expose real PWM state even when the PWM has
-just been requested (before the user calls pwm_config/enable/disable()).
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/clk-pwm.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/clk/clk.c | 45 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index 8830458..1630a1f 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -59,6 +59,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
- 	struct clk_init_data init;
- 	struct clk_pwm *clk_pwm;
- 	struct pwm_device *pwm;
-+	struct pwm_args pargs;
- 	const char *clk_name;
- 	struct clk *clk;
- 	int ret;
-@@ -71,22 +72,28 @@ static int clk_pwm_probe(struct platform_device *pdev)
- 	if (IS_ERR(pwm))
- 		return PTR_ERR(pwm);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1f054d1a..d6cef61 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1174,7 +1174,7 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	struct clk_core *old_parent = core->parent;
  
--	if (!pwm->period) {
-+	pwm_get_args(pwm, &pargs);
-+	if (!pargs.period) {
- 		dev_err(&pdev->dev, "invalid PWM period\n");
- 		return -EINVAL;
+ 	/*
+-	 * Migrate prepare state between parents and prevent race with
++	 * 1. Migrate prepare state between parents and prevent race with
+ 	 * clk_enable().
+ 	 *
+ 	 * If the clock is not prepared, then a race with
+@@ -1189,13 +1189,16 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	 * hardware and software states.
+ 	 *
+ 	 * See also: Comment for clk_set_parent() below.
++	 *
++	 * 2. enable parent clocks for CLK_OPS_PARENT_ON clock
+ 	 */
+-	if (core->prepare_count) {
+-		clk_core_prepare(parent);
+-		flags = clk_enable_lock();
+-		clk_core_enable(parent);
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
++	if (core->prepare_count || core->flags & CLK_OPS_PARENT_ON) {
++		clk_core_prepare_enable(parent);
++		if (core->prepare_count)
++			clk_core_enable_lock(core);
++		else
++			clk_core_prepare_enable(old_parent);
++
  	}
  
- 	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
--		clk_pwm->fixed_rate = NSEC_PER_SEC / pwm->period;
-+		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
+ 	/* update the clk tree topology */
+@@ -1210,18 +1213,16 @@ static void __clk_set_parent_after(struct clk_core *core,
+ 				   struct clk_core *parent,
+ 				   struct clk_core *old_parent)
+ {
+-	unsigned long flags;
+-
+ 	/*
+ 	 * Finish the migration of prepare state and undo the changes done
+ 	 * for preventing a race with clk_enable().
+ 	 */
+-	if (core->prepare_count) {
+-		flags = clk_enable_lock();
+-		clk_core_disable(core);
+-		clk_core_disable(old_parent);
+-		clk_enable_unlock(flags);
+-		clk_core_unprepare(old_parent);
++	if (core->prepare_count || core->flags & CLK_OPS_PARENT_ON) {
++		clk_core_disable_unprepare(old_parent);
++		if (core->prepare_count)
++			clk_core_disable_lock(core);
++		else
++			clk_core_disable_unprepare(parent);
+ 	}
+ }
  
--	if (pwm->period != NSEC_PER_SEC / clk_pwm->fixed_rate &&
--	    pwm->period != DIV_ROUND_UP(NSEC_PER_SEC, clk_pwm->fixed_rate)) {
-+	if (pargs.period != NSEC_PER_SEC / clk_pwm->fixed_rate &&
-+	    pargs.period != DIV_ROUND_UP(NSEC_PER_SEC, clk_pwm->fixed_rate)) {
- 		dev_err(&pdev->dev,
- 			"clock-frequency does not match PWM period\n");
- 		return -EINVAL;
+@@ -1468,13 +1469,17 @@ static void clk_change_rate(struct clk_core *core)
+ 	unsigned long best_parent_rate = 0;
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
++	struct clk_core *parent = NULL;
+ 
+ 	old_rate = core->rate;
+ 
+-	if (core->new_parent)
++	if (core->new_parent) {
++		parent = core->new_parent;
+ 		best_parent_rate = core->new_parent->rate;
+-	else if (core->parent)
++	} else if (core->parent) {
++		parent = core->parent;
+ 		best_parent_rate = core->parent->rate;
++	}
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+ 		unsigned long flags;
+@@ -1504,6 +1509,9 @@ static void clk_change_rate(struct clk_core *core)
+ 
+ 	trace_clk_set_rate(core, core->new_rate);
+ 
++	if (core->flags & CLK_OPS_PARENT_ON)
++		clk_core_prepare_enable(parent);
++
+ 	if (!skip_set_rate && core->ops->set_rate)
+ 		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
+ 
+@@ -1520,6 +1528,9 @@ static void clk_change_rate(struct clk_core *core)
+ 		clk_core_unprepare(core);
  	}
  
--	ret = pwm_config(pwm, (pwm->period + 1) >> 1, pwm->period);
-+	/*
-+	 * FIXME: pwm_apply_args() should be removed when switching to the
-+	 * atomic PWM API.
-+	 */
-+	pwm_apply_args(pwm);
-+	ret = pwm_config(pwm, (pargs.period + 1) >> 1, pargs.period);
- 	if (ret < 0)
- 		return ret;
++	if (core->flags & CLK_OPS_PARENT_ON)
++		clk_core_disable_unprepare(parent);
++
+ 	if (core->notifier_count && old_rate != core->rate)
+ 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
  
 -- 
-2.5.0
+1.9.1
