@@ -1,82 +1,266 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-To: Thierry Reding <thierry.reding@gmail.com>, Rhyland Klein
-	<rklein@nvidia.com>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
- <20160314160551.GA21898@ulmo.nvidia.com> <56E6E20C.6020807@nvidia.com>
- <56E7CA79.7060106@nvidia.com> <56F581BF.2070903@nvidia.com>
- <20160412152026.GE25160@ulmo.ba.sec>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <570D335E.9020202@nvidia.com>
-Date: Tue, 12 Apr 2016 18:41:50 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:54306 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751583AbcDUJIr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2016 05:08:47 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+	<suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <hermit.wangheming@hisilicon.com>,
+	<jiangheng@hisilicon.com>
+Subject: [PATCH v2] reset: hisilicon: add reset controller driver for hisilicon SOCs
+Date: Thu, 21 Apr 2016 16:56:13 +0800
+Message-ID: <1461228973-3056-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <20160412152026.GE25160@ulmo.ba.sec>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+In most of hisilicon SOCs, reset controller and clock provider are
+combined together as a block named CRG (Clock and Reset Generator).
+This patch mainly implements the reset function.
 
-On 12/04/16 16:20, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Mar 25, 2016 at 02:21:51PM -0400, Rhyland Klein wrote:
->> On 3/15/2016 4:40 AM, Jon Hunter wrote:
->>>
->>> On 14/03/16 16:08, Rhyland Klein wrote:
->>>> On 3/14/2016 12:05 PM, Thierry Reding wrote:
->>>>>> Old Signed by an unknown key
->>>>>
->>>>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
->>>>>> From: Bill Huang <bilhuang@nvidia.com>
->>>>>>
->>>>>> Add some SLCG (Second Level Clock Gating) override clocks to control
->>>>>> gating and un-gating their logics.
->>>>>>
->>>>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->>>>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->>>>>> ---
->>>>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
->>>>>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
->>>>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
->>>>>>  3 files changed, 123 insertions(+), 16 deletions(-)
->>>>>
->>>>> There's no rationale given here about why we need this. What will these
->>>>> second level clock gates be used for? Why do we need these (seemingly)
->>>>> duplicate clock entries.
->>>>>
->>>>
->>>> These are going to be used in the to-be posted patchset around
->>>> powergating. As of now they are unused, which is why I hadn't added them
->>>> previously. I just wanted to try to get this dependency in before the
->>>> powergate series was posted.
->>>
->>> Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
->>> Rhyland that we upstream them. Eventually we will use them but only
->>> after the core GenPD changes for Tegra are merged. From my perspective I
->>> was thinking it is better to reduce the changes between the chromeos
->>> 3.18 kernel and mainline. However, if you wish to wait until we need
->>> them I guess we can. Otherwise ...
->>>
->>> Acked-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> Cheers
->>> Jon
->>>
->>
->> Thierry do you think we should hold off on this until Jon's patches are
->> ready or merge this sooner?
-> 
-> Jon, I think it would make sense for you to pick this up into your tree
-> along with the rest of the patches that make use of them. Even if they
-> end up being applied to different trees I'd like to see all of the work
-> as a whole first.
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+Change log
+v2:
+-Changed definition of hisi_reset_init, making it return a pointer of struct
+ hisi_reset_controller.
+-Added hisi_reset_exit api used to free resources allocated by hisi_reset_init.
+-Removed DT cell size check in the .of_xlate callback which has been done in 
+ the core.
+v1:
+-This patch is abstracted from the patch https://lkml.org/lkml/2016/3/31/190
+ "[RESEND PATCH v10 2/6] clk: hisilicon: add CRG driver for hi3519 soc". I have
+ fixed issuess pointed by Stephen Boyd, including adding const specifier for
+ hisi_reset_ops definition and fixing the memory leak bugs. Because functions in
+ this patch will be used by many other hisilicon SOCs, I hope it can be merged
+ separately if it is OK. The whole CRG block driver including clock driver will
+ be submitted separately, too.
 
-Ok. That is fine with me.
+ drivers/clk/hisilicon/Kconfig  |   7 +++
+ drivers/clk/hisilicon/Makefile |   1 +
+ drivers/clk/hisilicon/reset.c  | 134 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h  |  36 +++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
 
-Cheers
-Jon
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index e434854..3cd349c 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -5,6 +5,13 @@ config COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
+ 
++config RESET_HISI
++	bool "HiSilicon Reset Controller Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	select RESET_CONTROLLER
++	help
++	  Build reset controller driver for HiSilicon device chipsets.
++
+ config STUB_CLK_HI6220
+ 	bool "Hi6220 Stub Clock Driver"
+ 	depends on COMMON_CLK_HI6220 && MAILBOX
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 74dba31..c037753 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
++obj-$(CONFIG_RESET_HISI)	+= reset.o
+ obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+new file mode 100644
+index 0000000..6aa49c2
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.c
+@@ -0,0 +1,134 @@
++/*
++ * Hisilicon Reset Controller Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include "reset.h"
++
++#define	HISI_RESET_BIT_MASK	0x1f
++#define	HISI_RESET_OFFSET_SHIFT	8
++#define	HISI_RESET_OFFSET_MASK	0xffff00
++
++struct hisi_reset_controller {
++	spinlock_t	lock;
++	void __iomem	*membase;
++	struct reset_controller_dev	rcdev;
++};
++
++
++#define to_hisi_reset_controller(rcdev)  \
++	container_of(rcdev, struct hisi_reset_controller, rcdev)
++
++static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
++			const struct of_phandle_args *reset_spec)
++{
++	u32 offset;
++	u8 bit;
++
++	offset = (reset_spec->args[0] << HISI_RESET_OFFSET_SHIFT)
++		& HISI_RESET_OFFSET_MASK;
++	bit = reset_spec->args[1] & HISI_RESET_BIT_MASK;
++
++	return (offset | bit);
++}
++
++static int hisi_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
++
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
++
++	spin_lock_irqsave(&rstc->lock, flags);
++
++	reg = readl(rstc->membase + offset);
++	writel(reg | BIT(bit), rstc->membase + offset);
++
++	spin_unlock_irqrestore(&rstc->lock, flags);
++
++	return 0;
++}
++
++static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
++
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
++
++	spin_lock_irqsave(&rstc->lock, flags);
++
++	reg = readl(rstc->membase + offset);
++	writel(reg & ~BIT(bit), rstc->membase + offset);
++
++	spin_unlock_irqrestore(&rstc->lock, flags);
++
++	return 0;
++}
++
++static const struct reset_control_ops hisi_reset_ops = {
++	.assert		= hisi_reset_assert,
++	.deassert	= hisi_reset_deassert,
++};
++
++struct hisi_reset_controller *hisi_reset_init(struct device_node *np)
++{
++	struct hisi_reset_controller *rstc;
++
++	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
++	if (!rstc)
++		return NULL;
++
++	rstc->membase = of_iomap(np, 0);
++	if (!rstc->membase) {
++		kfree(rstc);
++		return NULL;
++	}
++
++	spin_lock_init(&rstc->lock);
++
++	rstc->rcdev.owner = THIS_MODULE;
++	rstc->rcdev.ops = &hisi_reset_ops;
++	rstc->rcdev.of_node = np;
++	rstc->rcdev.of_reset_n_cells = 2;
++	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
++	reset_controller_register(&rstc->rcdev);
++
++	return rstc;
++}
++EXPORT_SYMBOL_GPL(hisi_reset_init);
++
++void hisi_reset_exit(struct hisi_reset_controller *rstc)
++{
++	reset_controller_unregister(&rstc->rcdev);
++	iounmap(rstc->membase);
++	kfree(rstc);
++}
++EXPORT_SYMBOL_GPL(hisi_reset_exit);
+diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+new file mode 100644
+index 0000000..677d773
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.h
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef	__HISI_RESET_H
++#define	__HISI_RESET_H
++
++struct device_node;
++struct hisi_reset_controller;
++
++#ifdef CONFIG_RESET_CONTROLLER
++struct hisi_reset_controller *hisi_reset_init(struct device_node *np);
++void hisi_reset_exit(struct hisi_reset_controller *rstc);
++#else
++static inline hisi_reset_controller *hisi_reset_init(struct device_node *np)
++{
++	return 0;
++}
++static inline void hisi_reset_exit(struct hisi_reset_controller *rstc)
++{}
++#endif
++
++#endif	/* __HISI_RESET_H */
+-- 
+1.9.1
+
