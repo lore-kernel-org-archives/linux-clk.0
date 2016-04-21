@@ -1,37 +1,200 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49088 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753209AbcDARIv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 1 Apr 2016 13:08:51 -0400
-Date: Fri, 1 Apr 2016 12:08:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: sunxi: Add sun8i PLL audio support
-Message-ID: <20160401170847.GA4480@rob-hp-laptop>
-References: <cover.1459358017.git.moinejf@free.fr>
- <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8ba2e0d78c70ea4c54fb25969956fc31674df612.1459358017.git.moinejf@free.fr>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 05/13] clk: divider: Add hw based registration APIs
+Date: Thu, 21 Apr 2016 15:21:56 -0700
+Message-Id: <1461277324-27185-6-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 30, 2016 at 06:57:16PM +0200, Jean-Francois Moine wrote:
-> Add the PLL type which is used by the sun8i family for audio.
-> 
-> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+Add registration APIs in the clk divider code to return struct
+clk_hw pointers instead of struct clk pointers. This way we hide
+the struct clk pointer from providers unless they need to use
+consumer facing APIs.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-divider.c    | 91 ++++++++++++++++++++++++++++++++++++++++----
+ include/linux/clk-provider.h | 10 +++++
+ 2 files changed, 93 insertions(+), 8 deletions(-)
 
-And the 1 by 1 sunxi clock bindings continue...
-
->  drivers/clk/sunxi/clk-sunxi.c                     | 48 +++++++++++++++++++++++
->  2 files changed, 49 insertions(+)
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 00e035b51c69..a0f55bc1ad3d 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -426,15 +426,16 @@ const struct clk_ops clk_divider_ro_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
+ 
+-static struct clk *_register_divider(struct device *dev, const char *name,
++static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock)
+ {
+ 	struct clk_divider *div;
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init;
++	int ret;
+ 
+ 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+ 		if (width + shift > 16) {
+@@ -467,12 +468,14 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	div->table = table;
+ 
+ 	/* register the clock */
+-	clk = clk_register(dev, &div->hw);
+-
+-	if (IS_ERR(clk))
++	hw = &div->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
+ 		kfree(div);
++		hw = ERR_PTR(ret);
++	}
+ 
+-	return clk;
++	return hw;
+ }
+ 
+ /**
+@@ -492,12 +495,39 @@ struct clk *clk_register_divider(struct device *dev, const char *name,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+ {
+-	return _register_divider(dev, name, parent_name, flags, reg, shift,
++	struct clk_hw *hw;
++
++	hw =  _register_divider(dev, name, parent_name, flags, reg, shift,
+ 			width, clk_divider_flags, NULL, lock);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_divider);
+ 
+ /**
++ * clk_hw_register_divider - register a divider clock with the clock framework
++ * @dev: device registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @reg: register address to adjust divider
++ * @shift: number of bits to shift the bitfield
++ * @width: width of the bitfield
++ * @clk_divider_flags: divider-specific flags for this clock
++ * @lock: shared register lock for this clock
++ */
++struct clk_hw *clk_hw_register_divider(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, spinlock_t *lock)
++{
++	return _register_divider(dev, name, parent_name, flags, reg, shift,
++			width, clk_divider_flags, NULL, lock);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_divider);
++
++/**
+  * clk_register_divider_table - register a table based divider clock with
+  * the clock framework
+  * @dev: device registering this clock
+@@ -517,11 +547,41 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock)
+ {
+-	return _register_divider(dev, name, parent_name, flags, reg, shift,
++	struct clk_hw *hw;
++
++	hw =  _register_divider(dev, name, parent_name, flags, reg, shift,
+ 			width, clk_divider_flags, table, lock);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_divider_table);
+ 
++/**
++ * clk_hw_register_divider_table - register a table based divider clock with
++ * the clock framework
++ * @dev: device registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @reg: register address to adjust divider
++ * @shift: number of bits to shift the bitfield
++ * @width: width of the bitfield
++ * @clk_divider_flags: divider-specific flags for this clock
++ * @table: array of divider/value pairs ending with a div set to 0
++ * @lock: shared register lock for this clock
++ */
++struct clk_hw *clk_hw_register_divider_table(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock)
++{
++	return _register_divider(dev, name, parent_name, flags, reg, shift,
++			width, clk_divider_flags, table, lock);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_divider_table);
++
+ void clk_unregister_divider(struct clk *clk)
+ {
+ 	struct clk_divider *div;
+@@ -537,3 +597,18 @@ void clk_unregister_divider(struct clk *clk)
+ 	kfree(div);
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister_divider);
++
++/**
++ * clk_hw_unregister_divider - unregister a clk divider
++ * @hw: hardware-specific clock data to unregister
++ */
++void clk_hw_unregister_divider(struct clk_hw *hw)
++{
++	struct clk_divider *div;
++
++	div = to_clk_divider(hw);
++
++	clk_hw_unregister(hw);
++	kfree(div);
++}
++EXPORT_SYMBOL_GPL(clk_hw_unregister_divider);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index bf8c8bb8c2cb..8885d0350596 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -407,12 +407,22 @@ struct clk *clk_register_divider(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock);
++struct clk_hw *clk_hw_register_divider(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, spinlock_t *lock);
+ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock);
++struct clk_hw *clk_hw_register_divider_table(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock);
+ void clk_unregister_divider(struct clk *clk);
++void clk_hw_unregister_divider(struct clk_hw *hw);
+ 
+ /**
+  * struct clk_mux - multiplexer clock
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
