@@ -1,56 +1,72 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 00/30] ARM: OMAP2+: hwmod module clock type support
-Date: Mon, 11 Apr 2016 11:18:51 +0300
-Message-ID: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH v2 00/13] clk_hw based clkdev/DT providers
+Date: Thu, 21 Apr 2016 15:21:51 -0700
+Message-Id: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+We've mostly split the clk API between consumers and providers
+along struct clk and struct clk_hw, but the registration and
+clkdev/DT code is still struct clk focused. This series
+lays the foundation for changing that design by making
+clk_register() return an int instead of a struct clk and
+clkdev/DT lookups take a struct clk_hw instead of a struct clk.
 
-This series transfers the hwmod clkctrl handling from the hwmod core
-under clock driver, the data is also transferred from hwmod data to
-devicetree. Done for most of the OMAP2+ platforms, except OMAP2 / OMAP3,
-where work is still under progress.
+After this series is applied, we can avoid using struct clk
+in provider drivers entirely, unless we want to use the consumer
+APIs. There are quite a few registration callers, so this change
+will require converting all of them. I plan to do that gradually
+over the coming weeks, but I've included a change to qcom
+platforms because I could easily test it and show how things
+will work.
 
-Major part of this set is also to add support function ti_clk_get, which
-when used, allows us to get rid of number of clock aliases under TI
-clock driver.
+The first patch is a cleanup to the clkdev APIs that I found
+while doing this work. I'd like to take that into clk-next
+with Russell's ack.
 
-The ordering on this set is kind of tricky to avoid any boot issues,
-and it still currently causes a boot breakage between the DTS data
-introduction and removal of hwmod data; this generates duplicate
-entries for clocks which is prone to cause issues (both DT and hwmod
-have the same entries in place under the hwmod data is removed.) I
-didn't quite figure out a good way to avoid this, and could use some
-guidance here. Shall we squash the DT + hwmod data patches together?
-This avoids the boot breakage but creates pretty large patches. Also,
-AMx3xx data needs to be grouped together as part of their data is
-re-used commonly by both SoCs.
+Cc: Russell King <linux@arm.linux.org.uk>
 
-Another issue with the set is with patch #18 which introduces the
-hwmod clock driver itself; the startup / shutdown latencies for
-clocks are tricky to handle within a spinlocked region (and really
-early boot also where ktime_get doesn't work yet) so I ended up
-writing a timeout function which uses alternate implementations
-for early vs. late boot. It doesn't look that neat but it works.
+Stephen Boyd (13):
+  clkdev: Remove clk_register_clkdevs()
+  clk: Add {devm_}clk_hw_{register,unregister}() APIs
+  clk: Add clk_hw OF clk providers
+  clkdev: Add clk_hw based registration APIs
+  clk: divider: Add hw based registration APIs
+  clk: gate: Add hw based registration APIs
+  clk: mux: Add hw based registration APIs
+  clk: fixed-factor: Add hw based registration APIs
+  clk: fractional-divider: Add hw based registration APIs
+  clk: composite: Add hw based registration APIs
+  clk: gpio: Add hw based registration APIs
+  clk: fixed-rate: Add hw based registration APIs
+  clk: qcom: Migrate to clk_hw based registration and OF APIs
 
-Set built on top of the DT warning fix set:
+ Documentation/driver-model/devres.txt |   1 +
+ drivers/clk/clk-composite.c           |  45 ++++++---
+ drivers/clk/clk-divider.c             |  91 ++++++++++++++++--
+ drivers/clk/clk-fixed-factor.c        |  42 +++++++--
+ drivers/clk/clk-fixed-rate.c          |  44 +++++++--
+ drivers/clk/clk-fractional-divider.c  |  40 +++++++-
+ drivers/clk/clk-gate.c                |  43 +++++++--
+ drivers/clk/clk-gpio.c                |  52 ++++++++---
+ drivers/clk/clk-mux.c                 |  57 ++++++++++--
+ drivers/clk/clk.c                     | 171 +++++++++++++++++++++++++++++++++-
+ drivers/clk/clkdev.c                  |  75 +++++++++++----
+ drivers/clk/qcom/clk-regmap.c         |   5 +-
+ drivers/clk/qcom/clk-regmap.h         |   3 +-
+ drivers/clk/qcom/common.c             |  58 ++++++------
+ drivers/clk/qcom/gcc-msm8996.c        |   9 +-
+ drivers/clk/qcom/mmcc-msm8996.c       |   9 +-
+ include/linux/clk-provider.h          |  93 ++++++++++++++++++
+ include/linux/clkdev.h                |   7 +-
+ 18 files changed, 716 insertions(+), 129 deletions(-)
 
-http://comments.gmane.org/gmane.linux.drivers.devicetree/162659
-
-Boot tested on following boards:
-am33xx-bone, am33xx-boneblack, am437x-gp-evm, am437x-sk-evm, am57xx-beagle,
-omap5-uevm, dra7-evm, dra72x-evm, omap4-panda-es, omap4430-sdp. Also,
-omap4 suspend-resume seems to be fine still after this set.
-
-Test branch pushed also:
-Tree: https://github.com/t-kristo/linux-pm.git
-Branch: 4.6-rc2-hwmod-clks-v1
-
--Tero
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
