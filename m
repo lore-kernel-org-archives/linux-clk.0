@@ -1,240 +1,159 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v3 5/8] regulator: rk808: Add regulator driver for RK818
-Date: Mon, 25 Apr 2016 15:20:45 +0200
-Message-Id: <1461590448-47685-6-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH v2 04/13] clkdev: Add clk_hw based registration APIs
+Date: Thu, 21 Apr 2016 15:21:55 -0700
+Message-Id: <1461277324-27185-5-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the rk818 regulator. The regulator module consists
-of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
-power OTG and HDMI5V.
+Now that we have a clk registration API that doesn't return
+struct clks, we need to have some way to hand out struct clks via
+the clk_get() APIs that doesn't involve associating struct clk
+pointers with a struct clk_lookup. Luckily, clkdev already
+operates on struct clk_hw pointers, except for the registration
+facing APIs where it converts struct clk pointers into struct
+clk_hw pointers almost immediately.
 
-The output voltages are configurable and are meant to supply power
-to the main processor and other components.
+Let's add clk_hw based registration APIs so that we can skip the
+conversion step and provide a way for clk provider drivers to
+operate exclusively on clk_hw structs. This way we clearly
+split the API between consumers and providers.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Mark Brown <broonie@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Changes since v2:
-- Added Acked-by
----
- drivers/regulator/Kconfig           |   4 +-
- drivers/regulator/rk808-regulator.c | 141 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 137 insertions(+), 8 deletions(-)
+ drivers/clk/clkdev.c   | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clkdev.h |  6 +++++
+ 2 files changed, 70 insertions(+)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index c77dc08..0efbcbf 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -609,11 +609,11 @@ config REGULATOR_RC5T583
- 	  outputs which can be controlled by i2c communication.
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index ae8e40a82d34..89cc700fbc37 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -301,6 +301,20 @@ clkdev_alloc(struct clk *clk, const char *con_id, const char *dev_fmt, ...)
+ }
+ EXPORT_SYMBOL(clkdev_alloc);
  
- config REGULATOR_RK808
--	tristate "Rockchip RK808 Power regulators"
-+	tristate "Rockchip RK808/RK818 Power regulators"
- 	depends on MFD_RK808
- 	help
- 	  Select this option to enable the power regulator of ROCKCHIP
--	  PMIC RK808.
-+	  PMIC RK808 and RK818.
- 	  This driver supports the control of different power rails of device
- 	  through regulator interface. The device supports multiple DCDC/LDO
- 	  outputs which can be controlled by i2c communication.
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index b30c906..db4c8ca 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -6,6 +6,10 @@
-  * Author: Chris Zhong <zyw@rock-chips.com>
-  * Author: Zhang Qing <zhangqing@rock-chips.com>
-  *
-+ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
++struct clk_lookup *
++clkdev_hw_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt, ...)
++{
++	struct clk_lookup *cl;
++	va_list ap;
++
++	va_start(ap, dev_fmt);
++	cl = vclkdev_alloc(hw, con_id, dev_fmt, ap);
++	va_end(ap);
++
++	return cl;
++}
++EXPORT_SYMBOL(clkdev_hw_alloc);
++
+ /**
+  * clkdev_create - allocate and add a clkdev lookup structure
+  * @clk: struct clk to associate with all clk_lookups
+@@ -324,6 +338,29 @@ struct clk_lookup *clkdev_create(struct clk *clk, const char *con_id,
+ }
+ EXPORT_SYMBOL_GPL(clkdev_create);
+ 
++/**
++ * clkdev_hw_create - allocate and add a clkdev lookup structure
++ * @hw: struct clk_hw to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_fmt: format string describing device name
 + *
-+ * Author: Wadim Egorov <w.egorov@phytec.de>
++ * Returns a clk_lookup structure, which can be later unregistered and
++ * freed.
++ */
++struct clk_lookup *clkdev_hw_create(struct clk_hw *hw, const char *con_id,
++	const char *dev_fmt, ...)
++{
++	struct clk_lookup *cl;
++	va_list ap;
++
++	va_start(ap, dev_fmt);
++	cl = vclkdev_create(hw, con_id, dev_fmt, ap);
++	va_end(ap);
++
++	return cl;
++}
++EXPORT_SYMBOL_GPL(clkdev_hw_create);
++
+ int clk_add_alias(const char *alias, const char *alias_dev_name,
+ 	const char *con_id, struct device *dev)
+ {
+@@ -402,3 +439,30 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
+ 	return cl ? 0 : -ENOMEM;
+ }
+ EXPORT_SYMBOL(clk_register_clkdev);
++
++/**
++ * clk_hw_register_clkdev - register one clock lookup for a struct clk_hw
++ * @hw: struct clk_hw to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
 + *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-  * version 2, as published by the Free Software Foundation.
-@@ -32,6 +36,12 @@
- #define RK808_BUCK4_VSEL_MASK	0xf
- #define RK808_LDO_VSEL_MASK	0x1f
- 
-+#define RK818_BUCK_VSEL_MASK		0x3f
-+#define RK818_BUCK4_VSEL_MASK		0x1f
-+#define RK818_LDO_VSEL_MASK		0x1f
-+#define RK818_LDO3_ON_VSEL_MASK		0xf
-+#define RK818_BOOST_ON_VSEL_MASK	0xe0
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ */
++int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
++	const char *dev_id)
++{
++	struct clk_lookup *cl;
 +
- /* Ramp rate definitions for buck1 / buck2 only */
- #define RK808_RAMP_RATE_OFFSET		3
- #define RK808_RAMP_RATE_MASK		(3 << RK808_RAMP_RATE_OFFSET)
-@@ -454,6 +464,108 @@ static const struct regulator_desc rk808_reg[] = {
- 		RK808_DCDC_EN_REG, BIT(6)),
- };
- 
-+static const struct regulator_desc rk818_reg[] = {
-+	{
-+		.name = "DCDC_REG1",
-+		.supply_name = "vcc1",
-+		.of_match = of_match_ptr("DCDC_REG1"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_DCDC1,
-+		.ops = &rk808_reg_ops,
-+		.type = REGULATOR_VOLTAGE,
-+		.min_uV = 712500,
-+		.uV_step = 12500,
-+		.n_voltages = 64,
-+		.vsel_reg = RK818_BUCK1_ON_VSEL_REG,
-+		.vsel_mask = RK818_BUCK_VSEL_MASK,
-+		.enable_reg = RK818_DCDC_EN_REG,
-+		.enable_mask = BIT(0),
-+		.owner = THIS_MODULE,
-+	}, {
-+		.name = "DCDC_REG2",
-+		.supply_name = "vcc2",
-+		.of_match = of_match_ptr("DCDC_REG2"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_DCDC2,
-+		.ops = &rk808_reg_ops,
-+		.type = REGULATOR_VOLTAGE,
-+		.min_uV = 712500,
-+		.uV_step = 12500,
-+		.n_voltages = 64,
-+		.vsel_reg = RK818_BUCK2_ON_VSEL_REG,
-+		.vsel_mask = RK818_BUCK_VSEL_MASK,
-+		.enable_reg = RK818_DCDC_EN_REG,
-+		.enable_mask = BIT(1),
-+		.owner = THIS_MODULE,
-+	}, {
-+		.name = "DCDC_REG3",
-+		.supply_name = "vcc3",
-+		.of_match = of_match_ptr("DCDC_REG3"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_DCDC3,
-+		.ops = &rk808_switch_ops,
-+		.type = REGULATOR_VOLTAGE,
-+		.n_voltages = 1,
-+		.enable_reg = RK818_DCDC_EN_REG,
-+		.enable_mask = BIT(2),
-+		.owner = THIS_MODULE,
-+	},
-+	RK8XX_DESC(RK818_ID_DCDC4, "DCDC_REG4", "vcc4", 1800, 3600, 100,
-+		RK818_BUCK4_ON_VSEL_REG, RK818_BUCK4_VSEL_MASK,
-+		RK818_DCDC_EN_REG, BIT(3), 0),
-+	RK8XX_DESC(RK818_ID_BOOST, "DCDC_BOOST", "boost", 4700, 5400, 100,
-+		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_BOOST_ON_VSEL_MASK,
-+		RK818_DCDC_EN_REG, BIT(4), 0),
-+	RK8XX_DESC(RK818_ID_LDO1, "LDO_REG1", "vcc6", 1800, 3400, 100,
-+		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(0), 400),
-+	RK8XX_DESC(RK818_ID_LDO2, "LDO_REG2", "vcc6", 1800, 3400, 100,
-+		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(1), 400),
-+	{
-+		.name = "LDO_REG3",
-+		.supply_name = "vcc7",
-+		.of_match = of_match_ptr("LDO_REG3"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_LDO3,
-+		.ops = &rk808_reg_ops_ranges,
-+		.type = REGULATOR_VOLTAGE,
-+		.n_voltages = 16,
-+		.linear_ranges = rk808_ldo3_voltage_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(rk808_ldo3_voltage_ranges),
-+		.vsel_reg = RK818_LDO3_ON_VSEL_REG,
-+		.vsel_mask = RK818_LDO3_ON_VSEL_MASK,
-+		.enable_reg = RK818_LDO_EN_REG,
-+		.enable_mask = BIT(2),
-+		.enable_time = 400,
-+		.owner = THIS_MODULE,
-+	},
-+	RK8XX_DESC(RK818_ID_LDO4, "LDO_REG4", "vcc8", 1800, 3400, 100,
-+		RK818_LDO4_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(3), 400),
-+	RK8XX_DESC(RK818_ID_LDO5, "LDO_REG5", "vcc7", 1800, 3400, 100,
-+		RK818_LDO5_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(4), 400),
-+	RK8XX_DESC(RK818_ID_LDO6, "LDO_REG6", "vcc8", 800, 2500, 100,
-+		RK818_LDO6_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(5), 400),
-+	RK8XX_DESC(RK818_ID_LDO7, "LDO_REG7", "vcc7", 800, 2500, 100,
-+		RK818_LDO7_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(6), 400),
-+	RK8XX_DESC(RK818_ID_LDO8, "LDO_REG8", "vcc8", 1800, 3400, 100,
-+		RK818_LDO8_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(7), 400),
-+	RK8XX_DESC(RK818_ID_LDO9, "LDO_REG9", "vcc9", 1800, 3400, 100,
-+		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_LDO_VSEL_MASK,
-+		RK818_DCDC_EN_REG, BIT(5), 400),
-+	RK8XX_DESC_SWITCH(RK818_ID_SWITCH, "SWITCH_REG", "vcc9",
-+		RK818_DCDC_EN_REG, BIT(6)),
-+	RK8XX_DESC_SWITCH(RK818_ID_HDMI_SWITCH, "HDMI_SWITCH", "h_5v",
-+		RK818_H5V_EN_REG, BIT(0)),
-+	RK8XX_DESC_SWITCH(RK818_ID_OTG_SWITCH, "OTG_SWITCH", "usb",
-+		RK818_DCDC_EN_REG, BIT(7)),
-+};
++	/*
++	 * Since dev_id can be NULL, and NULL is handled specially, we must
++	 * pass it as either a NULL format string, or with "%s".
++	 */
++	if (dev_id)
++		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
++	else
++		cl = __clk_register_clkdev(hw, con_id, NULL);
 +
- static int rk808_regulator_dt_parse_pdata(struct device *dev,
- 				   struct device *client_dev,
- 				   struct regmap *map,
-@@ -499,7 +611,8 @@ static int rk808_regulator_probe(struct platform_device *pdev)
- 	struct regulator_config config = {};
- 	struct regulator_dev *rk808_rdev;
- 	struct rk808_regulator_data *pdata;
--	int ret, i;
-+	const struct regulator_desc *regulators;
-+	int ret, i, nregulators;
++	return cl ? 0 : -ENOMEM;
++}
++EXPORT_SYMBOL(clk_hw_register_clkdev);
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index e6f8eb1d585f..2eabc862abdb 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -15,6 +15,7 @@
+ #include <asm/clkdev.h>
  
- 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -512,14 +625,29 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ struct clk;
++struct clk_hw;
+ struct device;
  
- 	platform_set_drvdata(pdev, pdata);
+ struct clk_lookup {
+@@ -34,17 +35,22 @@ struct clk_lookup {
  
-+	switch (rk8xx->variant) {
-+	case RK808_ID:
-+		regulators = rk808_reg;
-+		nregulators = RK808_NUM_REGULATORS;
-+		break;
-+	case RK818_ID:
-+		regulators = rk818_reg;
-+		nregulators = RK818_NUM_REGULATORS;
-+		break;
-+	default:
-+		dev_err(&client->dev, "unsupported RK8XX ID %lu\n",
-+			rk8xx->variant);
-+		return -EINVAL;
-+	}
-+
- 	config.dev = &client->dev;
- 	config.driver_data = pdata;
- 	config.regmap = rk8xx->regmap;
+ struct clk_lookup *clkdev_alloc(struct clk *clk, const char *con_id,
+ 	const char *dev_fmt, ...) __printf(3, 4);
++struct clk_lookup *clkdev_hw_alloc(struct clk_hw *hw, const char *con_id,
++	const char *dev_fmt, ...) __printf(3, 4);
  
- 	/* Instantiate the regulators */
--	for (i = 0; i < RK808_NUM_REGULATORS; i++) {
-+	for (i = 0; i < nregulators; i++) {
- 		rk808_rdev = devm_regulator_register(&pdev->dev,
--						     &rk808_reg[i], &config);
-+						     &regulators[i], &config);
- 		if (IS_ERR(rk808_rdev)) {
- 			dev_err(&client->dev,
- 				"failed to register %d regulator\n", i);
-@@ -540,8 +668,9 @@ static struct platform_driver rk808_regulator_driver = {
+ void clkdev_add(struct clk_lookup *cl);
+ void clkdev_drop(struct clk_lookup *cl);
  
- module_platform_driver(rk808_regulator_driver);
+ struct clk_lookup *clkdev_create(struct clk *clk, const char *con_id,
+ 	const char *dev_fmt, ...) __printf(3, 4);
++struct clk_lookup *clkdev_hw_create(struct clk_hw *hw, const char *con_id,
++	const char *dev_fmt, ...) __printf(3, 4);
  
--MODULE_DESCRIPTION("regulator driver for the rk808 series PMICs");
--MODULE_AUTHOR("Chris Zhong<zyw@rock-chips.com>");
--MODULE_AUTHOR("Zhang Qing<zhangqing@rock-chips.com>");
-+MODULE_DESCRIPTION("regulator driver for the rk8xx series PMICs");
-+MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
-+MODULE_AUTHOR("Zhang Qing <zhangqing@rock-chips.com>");
-+MODULE_AUTHOR("Wadim Egorov <w.egorov@phytec.de>");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:rk808-regulator");
+ void clkdev_add_table(struct clk_lookup *, size_t);
+ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ 
+ int clk_register_clkdev(struct clk *, const char *, const char *);
++int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ 
+ #ifdef CONFIG_COMMON_CLK
+ int __clk_get(struct clk *clk);
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
