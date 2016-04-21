@@ -1,495 +1,450 @@
-Return-Path: <pchiu@nvidia.com>
-From: Penny Chiu <pchiu@nvidia.com>
-To: <swarren@wwwdotorg.org>, <thierry.reding@gmail.com>, <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>, <rjw@rjwysocki.net>,
-	<viresh.kumar@linaro.org>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Penny
- Chiu <pchiu@nvidia.com>
-Subject: [PATCH 05/11] pwm: tegra-dfll: Add driver for Tegra DFLL PWM controller
-Date: Fri, 22 Apr 2016 18:31:05 +0800
-Message-ID: <1461321071-6431-6-git-send-email-pchiu@nvidia.com>
-In-Reply-To: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
-Return-Path: pchiu@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.phycore.de ([217.6.246.34]:44290 "EHLO root.phytec.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751520AbcDUNRf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 21 Apr 2016 09:17:35 -0400
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+	dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v2 1/7] drivers: mfd: rk808: rename rk808 struct to rk8xx
+Date: Thu, 21 Apr 2016 15:12:35 +0200
+Message-Id: <1461244361-45686-2-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra DFLL IP block controls off-chip PMIC via I2C bus or PWM
-signals. This driver exposes DFLL as a PWM controller to generate
-PWM signals to PWM regulator.
+This patch renames the rk808 struct. So it is more clear that this
+struct can be shared between all RK8XX related PMIC drivers.
 
-Tegra DFLL HW changes regulator voltage by adjusting PWM signals
-duty cycle automatically based on required DVCO frequency, so PWM
-regulator client doesn't need to change voltage by SW.
-
-In this driver, it only configs proper PWM rate in the driver
-initialization, and provides two APIs for clients to determine when
-to enable and disable generating PWM signals by setting related
-pinmux tristate.
-
-Signed-off-by: Penny Chiu <pchiu@nvidia.com>
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
 ---
- .../bindings/pwm/nvidia,tegra-dfll-pwm.txt         |  48 +++
- drivers/pwm/Kconfig                                |  10 +
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-tegra-dfll.c                       | 322 +++++++++++++++++++++
- include/soc/tegra/pwm-tegra-dfll.h                 |  27 ++
- 5 files changed, 408 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
- create mode 100644 drivers/pwm/pwm-tegra-dfll.c
- create mode 100644 include/soc/tegra/pwm-tegra-dfll.h
+ drivers/clk/clk-rk808.c             | 20 +++++++--------
+ drivers/mfd/rk808.c                 | 36 +++++++++++++-------------
+ drivers/regulator/rk808-regulator.c |  8 +++---
+ drivers/rtc/rtc-rk808.c             | 50 ++++++++++++++++++-------------------
+ include/linux/mfd/rk808.h           |  2 +-
+ 5 files changed, 58 insertions(+), 58 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
-new file mode 100644
-index 0000000..bd0d247
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
-@@ -0,0 +1,48 @@
-+Tegra SoC DFLL PWM controller
-+
-+Required properties:
-+- compatible: For Tegra210, must contain "nvidia,tegra210-dfll-pwm".
-+- reg: physical base address and length of the controller's registers
-+- #pwm-cells: should be 2. See pwm.txt in this directory for a description of
-+  the cells format.
-+- clock-names: Must include the "ref" entry.
-+- clocks: Must contain one entry, for the DFLL closed loop reference clock.
-+  See ../clocks/clock-bindings.txt for details.
-+- pwm-regulator: phandle to PWM regulator for using this PWM controller.
-+- pinctrl-names: Must contain two entries to enable and disable PWM signals
-+  output pinmux states.
-+- pinctrl-0: pinmux state to enable PWM signals output
-+- pinctrl-1: pinmux state to disable PWM signals output
-+
-+Example:
-+
-+	pinmux: pinmux@700008d4 {
-+		dvfs_pwm_active_state: dvfs_pwm_active {
-+			dvfs_pwm_pbb1 {
-+				nvidia,pins = "dvfs_pwm_pbb1";
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+		};
-+
-+		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
-+			dvfs_pwm_pbb1 {
-+				nvidia,pins = "dvfs_pwm_pbb1";
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+			};
-+		};
-+	};
-+
-+	pwm_dfll: pwm@70110000 {
-+		compatible = "nvidia,tegra210-dfll-pwm";
-+		reg = <0x0 0x70110000 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_DFLL_REF>;
-+		clock-names = "ref";
-+		#pwm-cells = <2>;
-+		pwm-regulator = <&cpu_ovr_reg>;
-+
-+		pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+		pinctrl-0 = <&dvfs_pwm_active_state>;
-+		pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+
-+		status = "okay";
-+	};
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index c182efc..dd67cad 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -382,6 +382,16 @@ config PWM_TEGRA
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-tegra.
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 0fee2f4..6df2e72 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -25,7 +25,7 @@
+ #define RK808_NR_OUTPUT 2
  
-+config PWM_TEGRA_DFLL
-+	tristate "NVIDIA Tegra DFLL PWM support"
-+	depends on ARCH_TEGRA
-+	help
-+	  PWM driver support for the Tegra DFLL module found on NVIDIA
-+	  Tegra SoCs.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm-tegra-dfll.
-+
- config  PWM_TIECAP
- 	tristate "ECAP PWM support"
- 	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index dd35bc1..22414cb 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
- obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
- obj-$(CONFIG_PWM_SUN4I)		+= pwm-sun4i.o
- obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
-+obj-$(CONFIG_PWM_TEGRA_DFLL)	+= pwm-tegra-dfll.o
- obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
- obj-$(CONFIG_PWM_TIEHRPWM)	+= pwm-tiehrpwm.o
- obj-$(CONFIG_PWM_TIPWMSS)	+= pwm-tipwmss.o
-diff --git a/drivers/pwm/pwm-tegra-dfll.c b/drivers/pwm/pwm-tegra-dfll.c
-new file mode 100644
-index 0000000..74d6b97
---- /dev/null
-+++ b/drivers/pwm/pwm-tegra-dfll.c
-@@ -0,0 +1,322 @@
-+/*
-+ * drivers/pwm/pwm-tegra-dfll.c
-+ *
-+ * Tegra DFLL PWM controller driver
-+ *
-+ * Copyright (c) 2016, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pwm.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <soc/tegra/pwm-tegra-dfll.h>
-+
-+/* DFLL_CTRL: DFLL control register */
-+#define DFLL_CTRL			0x00
-+
-+/* DFLL_OUTPUT_CFG: closed loop mode control registers */
-+#define DFLL_OUTPUT_CFG			0x20
-+#define OUT_MASK			0x3f
-+#define DFLL_OUTPUT_CFG_PWM_DELTA	(0x1 << 7)
-+#define DFLL_OUTPUT_CFG_PWM_ENABLE	(0x1 << 6)
-+#define DFLL_OUTPUT_CFG_PWM_DIV_SHIFT	0
-+#define DFLL_OUTPUT_CFG_PWM_DIV_MASK	\
-+		(OUT_MASK << DFLL_OUTPUT_CFG_PWM_DIV_SHIFT)
-+
-+/* MAX_DFLL_VOLTAGES: number of LUT entries in the DFLL IP block */
-+#define DFLL_MAX_VOLTAGES		33
-+
-+#define DFLL_OF_PWM_PERIOD_CELL		1
-+
-+/**
-+ * struct tegra_dfll_pwm_chip - DFLL PWM controller data
-+ * @pwm_pin: pinmux for PWM signals output
-+ * @pwm_enable_state: enabled states of pinmux for PWM signals output
-+ * @pwm_disable_state: disabled states of pinmux for PWM signals output
-+ * @mmio_base: mmio base for access DFLL registers
-+ * @ref_clk: referenced source clock
-+ * @pwm_rate: PWM rate for DFLL PWM output config register
-+ */
-+struct tegra_dfll_pwm_chip {
-+	struct pwm_chip		chip;
-+	struct device		*dev;
-+
-+	struct pinctrl		*pwm_pin;
-+	struct pinctrl_state	*pwm_enable_state;
-+	struct pinctrl_state	*pwm_disable_state;
-+
-+	void __iomem		*mmio_base;
-+	struct clk		*ref_clk;
-+
-+	unsigned long		ref_rate;
-+	unsigned long		pwm_rate;
-+};
-+
-+static struct tegra_dfll_pwm_chip *tdpc;
-+
-+/*
-+ * Register accessors
-+ */
-+static inline u32 pwm_readl(u32 offs)
-+{
-+	return __raw_readl(tdpc->mmio_base + offs);
-+}
-+
-+static inline void pwm_writel(u32 val, u32 offs)
-+{
-+	__raw_writel(val, tdpc->mmio_base + offs);
-+	pwm_readl(DFLL_CTRL);
-+}
-+
-+static int tegra_dfll_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
-+				int duty_ns, int period_ns)
-+{
-+	return 0;
-+}
-+
-+static int tegra_dfll_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	u32 val;
-+
-+	val = pwm_readl(DFLL_OUTPUT_CFG);
-+	val |= DFLL_OUTPUT_CFG_PWM_ENABLE;
-+	pwm_writel(val, DFLL_OUTPUT_CFG);
-+
-+	dev_info(tdpc->dev, "DFLL_PWM is enabled\n");
-+
-+	return 0;
-+}
-+
-+static void tegra_dfll_pwm_disable(struct pwm_chip *chip,
-+				   struct pwm_device *pwm)
-+{
-+	u32 val;
-+
-+	val = pwm_readl(DFLL_OUTPUT_CFG);
-+	val &= ~DFLL_OUTPUT_CFG_PWM_ENABLE;
-+	pwm_writel(val, DFLL_OUTPUT_CFG);
-+
-+	dev_info(tdpc->dev, "DFLL_PWM is disabled\n");
-+
-+	return 0;
-+}
-+
-+/**
-+ * tegra_dfll_pwm_output_enable - enable DFLL PWM signals output
-+ *
-+ * Enable DFLL PWM signals output by changing related pinmux state
-+ */
-+int tegra_dfll_pwm_output_enable(void)
-+{
-+	int ret;
-+
-+	ret = pinctrl_select_state(tdpc->pwm_pin, tdpc->pwm_enable_state);
-+	if (ret < 0) {
-+		dev_err(tdpc->dev, "setting enable state failed\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(tegra_dfll_pwm_output_enable);
-+
-+/**
-+ * tegra_dfll_pwm_output_disable - disable DFLL PWM signals output
-+ *
-+ * Disable DFLL PWM signals output by changing related pinmux state
-+ */
-+int tegra_dfll_pwm_output_disable(void)
-+{
-+	int ret;
-+
-+	ret = pinctrl_select_state(tdpc->pwm_pin, tdpc->pwm_disable_state);
-+	if (ret < 0) {
-+		dev_err(tdpc->dev, "setting enable state failed\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(tegra_dfll_pwm_output_disable);
-+
-+static const struct pwm_ops tegra_dfll_pwm_ops = {
-+	.config = tegra_dfll_pwm_config,
-+	.enable = tegra_dfll_pwm_enable,
-+	.disable = tegra_dfll_pwm_disable,
-+	.owner = THIS_MODULE,
-+};
-+
-+/**
-+ * dt_parse_pwm_regulator - parse PWM regulator from device-tree
-+ *
-+ * Parse DFLL PWM controller client to get and calcluate initialized
-+ * DFLL PWM rate.
-+ */
-+static int dt_parse_pwm_regulator(void)
-+{
-+	struct device_node *r_dn =
-+		of_parse_phandle(tdpc->dev->of_node, "pwm-regulator", 0);
-+	struct of_phandle_args args;
-+	unsigned long val;
-+	int ret;
-+
-+	/* pwm regulator device */
-+	if (!r_dn) {
-+		dev_err(tdpc->dev, "DT: missing pwm-regulator property\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_parse_phandle_with_args(r_dn, "pwms", "#pwm-cells", 0, &args);
-+	if (ret) {
-+		dev_err(tdpc->dev, "DT: failed to parse pwms property\n");
-+		return -EINVAL;
-+	}
-+	of_node_put(args.np);
-+
-+	if (args.args_count <= DFLL_OF_PWM_PERIOD_CELL) {
-+		dev_err(tdpc->dev, "DT: low #pwm-cells %d\n", args.args_count);
-+		return -EINVAL;
-+	}
-+
-+	/* convert pwm period in ns to DFLL pwm rate in Hz */
-+	val = args.args[DFLL_OF_PWM_PERIOD_CELL];
-+	val = (NSEC_PER_SEC / val) * (DFLL_MAX_VOLTAGES - 1);
-+	tdpc->pwm_rate = val;
-+	dev_info(tdpc->dev, "DFLL pwm-rate: %lu\n", val);
-+
-+	return 0;
-+}
-+
-+/**
-+ * tegra_dfll_pwm_init - init Tegra DFLL PWM controller
-+ *
-+ * Calculate the DIV value and write into DFLL register
-+ */
-+static int tegra_dfll_pwm_init(void)
-+{
-+	u32 div, val;
-+
-+	pwm_writel(0, DFLL_OUTPUT_CFG);
-+
-+	div = DIV_ROUND_UP(tdpc->ref_rate, tdpc->pwm_rate);
-+	val = (div << DFLL_OUTPUT_CFG_PWM_DIV_SHIFT) &
-+	      DFLL_OUTPUT_CFG_PWM_DIV_MASK;
-+	pwm_writel(val, DFLL_OUTPUT_CFG);
-+
-+	return 0;
-+}
-+
-+static int tegra_dfll_pwm_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	int ret;
-+
-+	tdpc = devm_kzalloc(&pdev->dev, sizeof(*tdpc), GFP_KERNEL);
-+	if (!tdpc)
-+		return -ENOMEM;
-+
-+	tdpc->dev = &pdev->dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	tdpc->mmio_base = devm_ioremap_resource(tdpc->dev, res);
-+	if (IS_ERR(tdpc->mmio_base))
-+		return PTR_ERR(tdpc->mmio_base);
-+
-+	platform_set_drvdata(pdev, tdpc);
-+
-+	tdpc->chip.dev = tdpc->dev;
-+	tdpc->chip.ops = &tegra_dfll_pwm_ops;
-+	tdpc->chip.base = -1;
-+	tdpc->chip.npwm = 1;
-+
-+	ret = pwmchip_add(&tdpc->chip);
-+	if (ret < 0) {
-+		dev_err(tdpc->dev, "pwmchip_add() failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	tdpc->ref_clk = devm_clk_get(tdpc->dev, "ref");
-+	if (IS_ERR(tdpc->ref_clk)) {
-+		dev_err(tdpc->dev, "DT: missing ref clock\n");
-+		return PTR_ERR(tdpc->ref_clk);
-+	}
-+
-+	tdpc->ref_rate = clk_get_rate(tdpc->ref_clk);
-+
-+	tdpc->pwm_pin = devm_pinctrl_get(tdpc->dev);
-+	if (IS_ERR(tdpc->pwm_pin)) {
-+		dev_err(tdpc->dev, "DT: missing pinctrl device\n");
-+		return PTR_ERR(tdpc->pwm_pin);
-+	}
-+
-+	tdpc->pwm_enable_state = pinctrl_lookup_state(tdpc->pwm_pin,
-+						"dvfs_pwm_enable");
-+	if (IS_ERR(tdpc->pwm_enable_state)) {
-+		dev_err(tdpc->dev, "DT: missing pwm enabled state\n");
-+		return PTR_ERR(tdpc->pwm_enable_state);
-+	}
-+
-+	tdpc->pwm_disable_state = pinctrl_lookup_state(tdpc->pwm_pin,
-+						"dvfs_pwm_disable");
-+	if (IS_ERR(tdpc->pwm_disable_state)) {
-+		dev_err(tdpc->dev, "DT: missing pwm disabled state\n");
-+		return PTR_ERR(tdpc->pwm_disable_state);
-+	}
-+
-+	ret = dt_parse_pwm_regulator();
-+	if (ret < 0) {
-+		dev_err(tdpc->dev, "failed to parse pwm regulator\n");
-+		return ret;
-+	}
-+
-+	ret = tegra_dfll_pwm_init();
-+	if (ret < 0) {
-+		dev_err(tdpc->dev, "failed to init DFLL pwm\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_dfll_pwm_remove(struct platform_device *pdev)
-+{
-+	return pwmchip_remove(&tdpc->chip);
-+}
-+
-+static const struct of_device_id tegra_dfll_pwm_of_match[] = {
-+	{ .compatible = "nvidia,tegra210-dfll-pwm" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, tegra_dfll_pwm_of_match);
-+
-+static struct platform_driver tegra_dfll_pwm_driver = {
-+	.driver = {
-+		.name = "tegra-dfll-pwm",
-+		.of_match_table = tegra_dfll_pwm_of_match,
-+	},
-+	.probe = tegra_dfll_pwm_probe,
-+	.remove = tegra_dfll_pwm_remove,
-+};
-+
-+module_platform_driver(tegra_dfll_pwm_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("NVIDIA Corporation");
-+MODULE_ALIAS("platform:tegra-dfll-pwm");
-diff --git a/include/soc/tegra/pwm-tegra-dfll.h b/include/soc/tegra/pwm-tegra-dfll.h
-new file mode 100644
-index 0000000..d34c6e8
---- /dev/null
-+++ b/include/soc/tegra/pwm-tegra-dfll.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2016 NVIDIA Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __SOC_TEGRA_PWM_TEGRA_DFLL_H__
-+#define __SOC_TEGRA_PWM_TEGRA_DFLL_H__
-+
-+#ifdef CONFIG_PWM_TEGRA_DFLL
-+int tegra_dfll_pwm_output_enable(void);
-+int tegra_dfll_pwm_output_disable(void);
-+#else
-+static inline int tegra_dfll_pwm_output_enable(void)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_dfll_pwm_output_disable(void)
-+{
-+	return -ENOTSUPP;
-+}
-+#endif
-+
-+#endif /* __SOC_TEGRA_PWM_TEGRA_DFLL_H__ */
+ struct rk808_clkout {
+-	struct rk808 *rk808;
++	struct rk8xx *rk8xx;
+ 	struct clk_onecell_data clk_data;
+ 	struct clk_hw		clkout1_hw;
+ 	struct clk_hw		clkout2_hw;
+@@ -42,9 +42,9 @@ static int rk808_clkout2_enable(struct clk_hw *hw, bool enable)
+ 	struct rk808_clkout *rk808_clkout = container_of(hw,
+ 							 struct rk808_clkout,
+ 							 clkout2_hw);
+-	struct rk808 *rk808 = rk808_clkout->rk808;
++	struct rk8xx *rk8xx = rk808_clkout->rk8xx;
+ 
+-	return regmap_update_bits(rk808->regmap, RK808_CLK32OUT_REG,
++	return regmap_update_bits(rk8xx->regmap, RK808_CLK32OUT_REG,
+ 				  CLK32KOUT2_EN, enable ? CLK32KOUT2_EN : 0);
+ }
+ 
+@@ -63,10 +63,10 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
+ 	struct rk808_clkout *rk808_clkout = container_of(hw,
+ 							 struct rk808_clkout,
+ 							 clkout2_hw);
+-	struct rk808 *rk808 = rk808_clkout->rk808;
++	struct rk8xx *rk8xx = rk808_clkout->rk8xx;
+ 	uint32_t val;
+ 
+-	int ret = regmap_read(rk808->regmap, RK808_CLK32OUT_REG, &val);
++	int ret = regmap_read(rk8xx->regmap, RK808_CLK32OUT_REG, &val);
+ 
+ 	if (ret < 0)
+ 		return ret;
+@@ -87,8 +87,8 @@ static const struct clk_ops rk808_clkout2_ops = {
+ 
+ static int rk808_clkout_probe(struct platform_device *pdev)
+ {
+-	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+-	struct i2c_client *client = rk808->i2c;
++	struct rk8xx *rk8xx = dev_get_drvdata(pdev->dev.parent);
++	struct i2c_client *client = rk8xx->i2c;
+ 	struct device_node *node = client->dev.of_node;
+ 	struct clk_init_data init = {};
+ 	struct clk **clk_table;
+@@ -99,7 +99,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
+ 	if (!rk808_clkout)
+ 		return -ENOMEM;
+ 
+-	rk808_clkout->rk808 = rk808;
++	rk808_clkout->rk8xx = rk8xx;
+ 
+ 	clk_table = devm_kcalloc(&client->dev, RK808_NR_OUTPUT,
+ 				 sizeof(struct clk *), GFP_KERNEL);
+@@ -144,8 +144,8 @@ static int rk808_clkout_probe(struct platform_device *pdev)
+ 
+ static int rk808_clkout_remove(struct platform_device *pdev)
+ {
+-	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+-	struct i2c_client *client = rk808->i2c;
++	struct rk8xx *rk8xx = dev_get_drvdata(pdev->dev.parent);
++	struct i2c_client *client = rk8xx->i2c;
+ 	struct device_node *node = client->dev.of_node;
+ 
+ 	of_clk_del_provider(node);
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 4b1e439..0386251 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -152,15 +152,15 @@ static struct i2c_client *rk808_i2c_client;
+ static void rk808_device_shutdown(void)
+ {
+ 	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
++	struct rk8xx *rk8xx = i2c_get_clientdata(rk808_i2c_client);
+ 
+-	if (!rk808) {
++	if (!rk8xx) {
+ 		dev_warn(&rk808_i2c_client->dev,
+ 			 "have no rk808, so do nothing here\n");
+ 		return;
+ 	}
+ 
+-	ret = regmap_update_bits(rk808->regmap,
++	ret = regmap_update_bits(rk8xx->regmap,
+ 				 RK808_DEVCTRL_REG,
+ 				 DEV_OFF_RST, DEV_OFF_RST);
+ 	if (ret)
+@@ -171,7 +171,7 @@ static int rk808_probe(struct i2c_client *client,
+ 		       const struct i2c_device_id *id)
+ {
+ 	struct device_node *np = client->dev.of_node;
+-	struct rk808 *rk808;
++	struct rk8xx *rk8xx;
+ 	int pm_off = 0;
+ 	int ret;
+ 	int i;
+@@ -181,18 +181,18 @@ static int rk808_probe(struct i2c_client *client,
+ 		return -EINVAL;
+ 	}
+ 
+-	rk808 = devm_kzalloc(&client->dev, sizeof(*rk808), GFP_KERNEL);
+-	if (!rk808)
++	rk8xx = devm_kzalloc(&client->dev, sizeof(*rk8xx), GFP_KERNEL);
++	if (!rk8xx)
+ 		return -ENOMEM;
+ 
+-	rk808->regmap = devm_regmap_init_i2c(client, &rk808_regmap_config);
+-	if (IS_ERR(rk808->regmap)) {
++	rk8xx->regmap = devm_regmap_init_i2c(client, &rk808_regmap_config);
++	if (IS_ERR(rk8xx->regmap)) {
+ 		dev_err(&client->dev, "regmap initialization failed\n");
+-		return PTR_ERR(rk808->regmap);
++		return PTR_ERR(rk8xx->regmap);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(pre_init_reg); i++) {
+-		ret = regmap_update_bits(rk808->regmap, pre_init_reg[i].addr,
++		ret = regmap_update_bits(rk8xx->regmap, pre_init_reg[i].addr,
+ 					 pre_init_reg[i].mask,
+ 					 pre_init_reg[i].value);
+ 		if (ret) {
+@@ -202,20 +202,20 @@ static int rk808_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
+-	ret = regmap_add_irq_chip(rk808->regmap, client->irq,
++	ret = regmap_add_irq_chip(rk8xx->regmap, client->irq,
+ 				  IRQF_ONESHOT, -1,
+-				  &rk808_irq_chip, &rk808->irq_data);
++				  &rk808_irq_chip, &rk8xx->irq_data);
+ 	if (ret) {
+ 		dev_err(&client->dev, "Failed to add irq_chip %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	rk808->i2c = client;
+-	i2c_set_clientdata(client, rk808);
++	rk8xx->i2c = client;
++	i2c_set_clientdata(client, rk8xx);
+ 
+ 	ret = mfd_add_devices(&client->dev, -1,
+ 			      rk808s, ARRAY_SIZE(rk808s),
+-			      NULL, 0, regmap_irq_get_domain(rk808->irq_data));
++			      NULL, 0, regmap_irq_get_domain(rk8xx->irq_data));
+ 	if (ret) {
+ 		dev_err(&client->dev, "failed to add MFD devices %d\n", ret);
+ 		goto err_irq;
+@@ -231,15 +231,15 @@ static int rk808_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ err_irq:
+-	regmap_del_irq_chip(client->irq, rk808->irq_data);
++	regmap_del_irq_chip(client->irq, rk8xx->irq_data);
+ 	return ret;
+ }
+ 
+ static int rk808_remove(struct i2c_client *client)
+ {
+-	struct rk808 *rk808 = i2c_get_clientdata(client);
++	struct rk8xx *rk8xx = i2c_get_clientdata(client);
+ 
+-	regmap_del_irq_chip(client->irq, rk808->irq_data);
++	regmap_del_irq_chip(client->irq, rk8xx->irq_data);
+ 	mfd_remove_devices(&client->dev);
+ 	pm_power_off = NULL;
+ 
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+index d86a3dc..37aaba9 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk808-regulator.c
+@@ -568,8 +568,8 @@ dt_parse_end:
+ 
+ static int rk808_regulator_probe(struct platform_device *pdev)
+ {
+-	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+-	struct i2c_client *client = rk808->i2c;
++	struct rk8xx *rk8xx = dev_get_drvdata(pdev->dev.parent);
++	struct i2c_client *client = rk8xx->i2c;
+ 	struct regulator_config config = {};
+ 	struct regulator_dev *rk808_rdev;
+ 	struct rk808_regulator_data *pdata;
+@@ -580,7 +580,7 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	ret = rk808_regulator_dt_parse_pdata(&pdev->dev, &client->dev,
+-					     rk808->regmap, pdata);
++					     rk8xx->regmap, pdata);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -594,7 +594,7 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ 
+ 		config.dev = &client->dev;
+ 		config.driver_data = pdata;
+-		config.regmap = rk808->regmap;
++		config.regmap = rk8xx->regmap;
+ 		config.of_node = rk808_reg_matches[i].of_node;
+ 		config.init_data = rk808_reg_matches[i].init_data;
+ 
+diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+index 35c9aad..b3fe5a8 100644
+--- a/drivers/rtc/rtc-rk808.c
++++ b/drivers/rtc/rtc-rk808.c
+@@ -51,7 +51,7 @@
+ #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
+ 
+ struct rk808_rtc {
+-	struct rk808 *rk808;
++	struct rk8xx *rk8xx;
+ 	struct rtc_device *rtc;
+ 	int irq;
+ };
+@@ -96,12 +96,12 @@ static void gregorian_to_rockchip(struct rtc_time *tm)
+ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct rk808_rtc *rk808_rtc = dev_get_drvdata(dev);
+-	struct rk808 *rk808 = rk808_rtc->rk808;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
+ 	u8 rtc_data[NUM_TIME_REGS];
+ 	int ret;
+ 
+ 	/* Force an update of the shadowed registers right now */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_CTRL_REG,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
+ 	if (ret) {
+@@ -115,7 +115,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
+ 	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
+ 	 */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_CTRL_REG,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+ 				 0);
+ 	if (ret) {
+@@ -123,7 +123,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
++	ret = regmap_bulk_read(rk8xx->regmap, RK808_SECONDS_REG,
+ 			       rtc_data, NUM_TIME_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
+@@ -149,7 +149,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct rk808_rtc *rk808_rtc = dev_get_drvdata(dev);
+-	struct rk808 *rk808 = rk808_rtc->rk808;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
+ 	u8 rtc_data[NUM_TIME_REGS];
+ 	int ret;
+ 
+@@ -166,7 +166,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	rtc_data[6] = bin2bcd(tm->tm_wday);
+ 
+ 	/* Stop RTC while updating the RTC registers */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_CTRL_REG,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M);
+ 	if (ret) {
+@@ -174,14 +174,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
++	ret = regmap_bulk_write(rk8xx->regmap, RK808_SECONDS_REG,
+ 				rtc_data, NUM_TIME_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
+ 		return ret;
+ 	}
+ 	/* Start RTC again */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_CTRL_REG,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to update RTC control: %d\n", ret);
+@@ -194,12 +194,12 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
+ 	struct rk808_rtc *rk808_rtc = dev_get_drvdata(dev);
+-	struct rk808 *rk808 = rk808_rtc->rk808;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
+ 	u8 alrm_data[NUM_ALARM_REGS];
+ 	uint32_t int_reg;
+ 	int ret;
+ 
+-	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
++	ret = regmap_bulk_read(rk8xx->regmap, RK808_ALARM_SECONDS_REG,
+ 			       alrm_data, NUM_ALARM_REGS);
+ 
+ 	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
+@@ -210,7 +210,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
+ 	rockchip_to_gregorian(&alrm->time);
+ 
+-	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
++	ret = regmap_read(rk8xx->regmap, RK808_RTC_INT_REG, &int_reg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
+ 		return ret;
+@@ -228,10 +228,10 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 
+ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+ {
+-	struct rk808 *rk808 = rk808_rtc->rk808;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_INT_REG,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
+ 
+ 	return ret;
+@@ -239,10 +239,10 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+ 
+ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+ {
+-	struct rk808 *rk808 = rk808_rtc->rk808;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_INT_REG,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+ 
+@@ -252,7 +252,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
+ 	struct rk808_rtc *rk808_rtc = dev_get_drvdata(dev);
+-	struct rk808 *rk808 = rk808_rtc->rk808;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
+ 	u8 alrm_data[NUM_ALARM_REGS];
+ 	int ret;
+ 
+@@ -274,7 +274,7 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
+ 	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
+ 
+-	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
++	ret = regmap_bulk_write(rk8xx->regmap, RK808_ALARM_SECONDS_REG,
+ 				alrm_data, NUM_ALARM_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bulk write: %d\n", ret);
+@@ -314,11 +314,11 @@ static int rk808_rtc_alarm_irq_enable(struct device *dev,
+ static irqreturn_t rk808_alarm_irq(int irq, void *data)
+ {
+ 	struct rk808_rtc *rk808_rtc = data;
+-	struct rk808 *rk808 = rk808_rtc->rk808;
+-	struct i2c_client *client = rk808->i2c;
++	struct rk8xx *rk8xx = rk808_rtc->rk8xx;
++	struct i2c_client *client = rk8xx->i2c;
+ 	int ret;
+ 
+-	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
++	ret = regmap_write(rk8xx->regmap, RK808_RTC_STATUS_REG,
+ 			   RTC_STATUS_MASK);
+ 	if (ret) {
+ 		dev_err(&client->dev,
+@@ -373,7 +373,7 @@ static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
+ 
+ static int rk808_rtc_probe(struct platform_device *pdev)
+ {
+-	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
++	struct rk8xx *rk8xx = dev_get_drvdata(pdev->dev.parent);
+ 	struct rk808_rtc *rk808_rtc;
+ 	struct rtc_time tm;
+ 	int ret;
+@@ -383,10 +383,10 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, rk808_rtc);
+-	rk808_rtc->rk808 = rk808;
++	rk808_rtc->rk8xx = rk8xx;
+ 
+ 	/* start rtc running by default, and use shadowed timer. */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk8xx->regmap, RK808_RTC_CTRL_REG,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M |
+ 				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
+ 				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
+@@ -396,7 +396,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
++	ret = regmap_write(rk8xx->regmap, RK808_RTC_STATUS_REG,
+ 			   RTC_STATUS_MASK);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index 441b6ee..117d79f 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -191,7 +191,7 @@ enum {
+ 	BOOST_ILMIN_250MA,
+ };
+ 
+-struct rk808 {
++struct rk8xx {
+ 	struct i2c_client *i2c;
+ 	struct regmap_irq_chip_data *irq_data;
+ 	struct regmap *regmap;
 -- 
-2.8.1
+1.9.1
+
