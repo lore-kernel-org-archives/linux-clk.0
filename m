@@ -1,36 +1,41 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 4/8] regulator: rk808: Migrate to regulator core's
- simplified DT parsing code
-To: Mark Brown <broonie@kernel.org>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
- <1461590448-47685-5-git-send-email-w.egorov@phytec.de>
- <20160425173911.GQ3217@sirena.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
+Return-Path: <w.egorov@phytec.de>
 From: Wadim Egorov <w.egorov@phytec.de>
-Message-ID: <571F1CB4.10200@phytec.de>
-Date: Tue, 26 Apr 2016 09:45:56 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160425173911.GQ3217@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v2 0/5] Add support for rk818
+Date: Thu, 21 Apr 2016 15:12:34 +0200
+Message-Id: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hopefully, this is the right approach now.
 
+Changes since v1:
+- dropped the renaming of the drivers
+- renamed the rk808 struct in mfd/rk808.h
 
-On 25.04.2016 19:39, Mark Brown wrote:
-> On Mon, Apr 25, 2016 at 03:20:44PM +0200, Wadim Egorov wrote:
->> A common simplified DT parsing code for regulators was introduced in
->> commit a0c7b164ad11 ("regulator: of: Provide simplified DT parsing
->> method")
-> This doesn't apply against current code, please check and resend.
+Patch 3 is a cosmetic patch for the regulator driver.
 
-Hm, for me all patches apply to the current code.
-This patch depends on the first rename patch. Maybe this is the problem?
+Wadim Egorov (7):
+  drivers: mfd: rk808: rename rk808 struct to rk8xx
+  mfd: RK808: Add RK818 support
+  regulator: rk808: Migrate to regulator core's simplified DT parsing
+    code
+  regulator: rk808: Add regulator driver for RK818
+  mfd: dt-bindings: Add RK818 device tree bindings document
+  clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
+  rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
+
+ Documentation/devicetree/bindings/mfd/rk808.txt |  37 ++-
+ drivers/clk/Kconfig                             |   4 +-
+ drivers/clk/clk-rk808.c                         |  20 +-
+ drivers/mfd/Kconfig                             |   4 +-
+ drivers/mfd/rk808.c                             | 253 +++++++++++---
+ drivers/regulator/Kconfig                       |   4 +-
+ drivers/regulator/rk808-regulator.c             | 425 +++++++++++++-----------
+ drivers/rtc/Kconfig                             |   4 +-
+ drivers/rtc/rtc-rk808.c                         |  50 +--
+ include/linux/mfd/rk808.h                       | 164 ++++++++-
+ 10 files changed, 674 insertions(+), 291 deletions(-)
+
+-- 
+1.9.1
