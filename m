@@ -1,157 +1,116 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:35674 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758423AbcDHNbr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2016 09:31:47 -0400
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 4/5] clk: tegra: dfll: Properly clean up on failure and removal
-Date: Fri,  8 Apr 2016 15:31:36 +0200
-Message-Id: <1460122297-14420-4-git-send-email-thierry.reding@gmail.com>
-In-Reply-To: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
-References: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 08/13] clk: fixed-factor: Add hw based registration APIs
+Date: Thu, 21 Apr 2016 15:21:59 -0700
+Message-Id: <1461277324-27185-9-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+Add registration APIs in the clk fixed-factor code to return
+struct clk_hw pointers instead of struct clk pointers. This way
+we hide the struct clk pointer from providers unless they need to
+use consumer facing APIs.
 
-Upon failure to probe the DFLL, the OPP table will not be cleaned up
-properly. Fix this and while at it make sure the OPP table will also be
-cleared upon driver removal.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/tegra/clk-dfll.h               |  2 ++
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 31 ++++++++++++++++++++++++++----
- drivers/clk/tegra/cvb.c                    | 16 +++++++++++++++
- drivers/clk/tegra/cvb.h                    |  3 +++
- 4 files changed, 48 insertions(+), 4 deletions(-)
+ drivers/clk/clk-fixed-factor.c | 42 +++++++++++++++++++++++++++++++++++-------
+ include/linux/clk-provider.h   |  4 ++++
+ 2 files changed, 39 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-index d192982b1f96..ed2ad888268f 100644
---- a/drivers/clk/tegra/clk-dfll.h
-+++ b/drivers/clk/tegra/clk-dfll.h
-@@ -25,6 +25,7 @@
- /**
-  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
-  * @dev: struct device * that holds the OPP table for the DFLL
-+ * @max_freq: maximum frequency supported on this SoC
-  * @cvb: CPU frequency table for this SoC
-  * @init_clock_trimmers: callback to initialize clock trimmers
-  * @set_clock_trimmers_high: callback to tune clock trimmers for high voltage
-@@ -32,6 +33,7 @@
-  */
- struct tegra_dfll_soc_data {
- 	struct device *dev;
-+	unsigned long max_freq;
- 	const struct cvb_table *cvb;
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 053448e2453d..75cd6c792cb8 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -68,13 +68,14 @@ const struct clk_ops clk_fixed_factor_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
  
- 	void (*init_clock_trimmers)(void);
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index c7ffd4fd2231..d052d9fa8230 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -84,7 +84,7 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
- 
- static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+-struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+-		const char *parent_name, unsigned long flags,
++struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
  {
--	int process_id, speedo_id, speedo_value;
-+	int process_id, speedo_id, speedo_value, err;
- 	struct tegra_dfll_soc_data *soc;
+ 	struct clk_fixed_factor *fix;
+ 	struct clk_init_data init;
+-	struct clk *clk;
++	struct clk_hw *hw;
++	int ret;
  
- 	process_id = tegra_sku_info.cpu_process_id;
-@@ -107,18 +107,41 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 	fix = kmalloc(sizeof(*fix), GFP_KERNEL);
+ 	if (!fix)
+@@ -91,12 +92,28 @@ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
  
-+	soc->max_freq = cpu_max_freq_table[speedo_id];
-+
- 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
- 					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
- 					   process_id, speedo_id, speedo_value,
--					   cpu_max_freq_table[speedo_id]);
-+					   soc->max_freq);
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
- 		return PTR_ERR(soc->cvb);
- 	}
- 
-+	err = tegra_dfll_register(pdev, soc);
-+	if (err < 0) {
-+		tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
-+		return err;
+-	clk = clk_register(dev, &fix->hw);
+-
+-	if (IS_ERR(clk))
++	hw = &fix->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
+ 		kfree(fix);
++		hw = ERR_PTR(ret);
 +	}
 +
-+	platform_set_drvdata(pdev, soc);
-+
-+	return 0;
++	return hw;
 +}
++EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
 +
-+static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
++struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		unsigned int mult, unsigned int div)
 +{
-+	struct tegra_dfll_soc_data *soc = platform_get_drvdata(pdev);
-+	int err;
-+
-+	err = tegra_dfll_unregister(pdev);
-+	if (err < 0)
-+		dev_err(&pdev->dev, "failed to unregister DFLL: %d\n", err);
-+
-+	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
++	struct clk_hw *hw;
  
--	return tegra_dfll_register(pdev, soc);
-+	return 0;
+-	return clk;
++	hw = clk_hw_register_fixed_factor(dev, name, parent_name, flags, mult,
++					  div);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
  }
+ EXPORT_SYMBOL_GPL(clk_register_fixed_factor);
  
- static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-@@ -134,7 +157,7 @@ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
- 
- static struct platform_driver tegra124_dfll_fcpu_driver = {
- 	.probe = tegra124_dfll_fcpu_probe,
--	.remove = tegra_dfll_unregister,
-+	.remove = tegra124_dfll_fcpu_remove,
- 	.driver = {
- 		.name = "tegra124-dfll",
- 		.of_match_table = tegra124_dfll_fcpu_of_match,
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index 7a099b18c368..624115e82ff9 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -130,3 +130,19 @@ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
- 
- 	return ERR_PTR(-EINVAL);
+@@ -113,6 +130,17 @@ void clk_unregister_fixed_factor(struct clk *clk)
  }
-+
-+void tegra_cvb_remove_opp_table(struct device *dev,
-+				const struct cvb_table *table,
-+				unsigned long max_freq)
+ EXPORT_SYMBOL_GPL(clk_unregister_fixed_factor);
+ 
++void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
 +{
-+	unsigned int i;
++	struct clk_fixed_factor *fix;
 +
-+	for (i = 0; i < MAX_DVFS_FREQS; i++) {
-+		const struct cvb_table_freq_entry *entry = &table->entries[i];
++	fix = to_clk_fixed_factor(hw);
 +
-+		if (!entry->freq || (entry->freq > max_freq))
-+			break;
-+
-+		dev_pm_opp_remove(dev, entry->freq);
-+	}
++	clk_hw_unregister(hw);
++	kfree(fix);
 +}
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index e6bf8581badd..c1f077993b2a 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -61,5 +61,8 @@ const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
- 			size_t count, int process_id, int speedo_id,
- 			int speedo_value, unsigned long max_freq);
-+void tegra_cvb_remove_opp_table(struct device *dev,
-+				const struct cvb_table *table,
-+				unsigned long max_freq);
++EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
++
+ #ifdef CONFIG_OF
+ /**
+  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index d690d99b9c1c..79ad1a8a6831 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -525,6 +525,10 @@ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_unregister_fixed_factor(struct clk *clk);
++struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		unsigned int mult, unsigned int div);
++void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
  
- #endif
+ /**
+  * struct clk_fractional_divider - adjustable fractional divider clock
 -- 
-2.8.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
