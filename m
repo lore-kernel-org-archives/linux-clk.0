@@ -1,57 +1,74 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 04/28] ARM: OMAP2+: hwmod: use new ti_clk_get API to search for clock handles
-Date: Thu, 14 Apr 2016 14:07:53 +0300
-Message-ID: <1460632097-25727-5-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Thu, 21 Apr 2016 11:45:20 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160421034520.GA19965@shlinux2.ap.freescale.net>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454107764-19876-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-The new API avoids the need to add clock aliases for most of the clocks,
-should use of it is preferred. Many of the existing clock aliases are
-only created because of hwmod data.
+On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
+> If a clock gets enabled early during boot time, it can lead to a PLL
+> startup. The wait_lock function makes sure that the PLL is really
+> stareted up before it gets used. However, the function sleeps which
+> leads to scheduling and an error:
+> bad: scheduling from the idle thread!
+> ...
+> 
+> Use udelay in case IRQ's are still disabled.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/clk/imx/clk-pllv3.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> index c05c43d..b5ff561 100644
+> --- a/drivers/clk/imx/clk-pllv3.c
+> +++ b/drivers/clk/imx/clk-pllv3.c
+> @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+>  			break;
+>  		if (time_after(jiffies, timeout))
+>  			break;
+> -		usleep_range(50, 500);
+> +		if (unlikely(irqs_disabled()))
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/omap_hwmod.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This causes a bit confusion that clk_pllv3_prepare is sleepable.
+But this line indicates it's possible to be called in irq context.
+Although it's only happened during kernel boot phase where irq is
+still not enabled.
+It seems schedule_debug() somehow did not catch it during early boot
+phase. Maybe schedule guys can help explain.
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index b6d62e4..c2f6811 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -786,7 +786,7 @@ static int _init_main_clk(struct omap_hwmod *oh)
- 	if (!oh->main_clk)
- 		return 0;
- 
--	oh->_clk = clk_get(NULL, oh->main_clk);
-+	oh->_clk = ti_clk_get(oh->main_clk);
- 	if (IS_ERR(oh->_clk)) {
- 		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
- 			oh->name, oh->main_clk);
-@@ -831,7 +831,7 @@ static int _init_interface_clks(struct omap_hwmod *oh)
- 		if (!os->clk)
- 			continue;
- 
--		c = clk_get(NULL, os->clk);
-+		c = ti_clk_get(os->clk);
- 		if (IS_ERR(c)) {
- 			pr_warn("omap_hwmod: %s: cannot clk_get interface_clk %s\n",
- 				oh->name, os->clk);
-@@ -868,7 +868,7 @@ static int _init_opt_clks(struct omap_hwmod *oh)
- 	int ret = 0;
- 
- 	for (i = oh->opt_clks_cnt, oc = oh->opt_clks; i > 0; i--, oc++) {
--		c = clk_get(NULL, oc->clk);
-+		c = ti_clk_get(oc->clk);
- 		if (IS_ERR(c)) {
- 			pr_warn("omap_hwmod: %s: cannot clk_get opt_clk %s\n",
- 				oh->name, oc->clk);
--- 
-1.7.9.5
+My question is if it's really worthy to introduce this confusion
+to fix the issue since the delay is minor?
+
+Furthermore, shouldn't it be udelay(500)?
+
+Shawn,
+What's your idea?
+
+Regards
+Dong Aisheng
+
+> +			udelay(50);
+> +		else
+> +			usleep_range(50, 500);
+>  	} while (1);
+>  
+>  	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
+> -- 
+> 2.7.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
