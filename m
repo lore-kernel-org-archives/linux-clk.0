@@ -1,84 +1,76 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	bjorn.andersson@linaro.org,
-	zhang.chunyan@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v8 0/3] Add initial support for RPM clocks
-Date: Thu, 14 Apr 2016 17:34:46 +0300
-Message-Id: <1460644489-11310-1-git-send-email-georgi.djakov@linaro.org>
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH v2 01/13] clkdev: Remove clk_register_clkdevs()
+Date: Thu, 21 Apr 2016 15:21:52 -0700
+Message-Id: <1461277324-27185-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the clocks controlled by
-the RPM (Resource Power Manager) processor on Qualcomm platforms.
+Now that we've converted the only caller over to another clkdev
+API, remove this one.
 
-The RPM is a dedicated hardware engine for managing the shared
-SoC resources in order to keep the lowest power profile. It
-communicates with other hardware subsystems via shared memory
-and accepts clock requests, aggregates the requests and turns
-the clocks on/off or scales them on demand.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clkdev.c   | 27 ---------------------------
+ include/linux/clkdev.h |  1 -
+ 2 files changed, 28 deletions(-)
 
-Changes since v7 (https://lkml.org/lkml/2016/2/23/542)
-* Add handoff support.
-* Remove smd-rpm XO clocks until clk deferring is supported and
-  switch msm8916 back to fixed factor XO.
-
-Changes since v6 (https://lkml.org/lkml/2015/12/15/279)
-* Remove header files and exported ops.
-* Add support for active only RPM clocks.
-
-Changes since v5 (https://lkml.org/lkml/2015/12/3/376)
-* Drop all DT patches as they are already picked.
-* Fix dependencies in Kconfig.
-* Minor changes.
-
-Changes since v4 (https://lkml.org/lkml/2015/11/19/309)
-* Re-organize code into two separate drivers:
-  - clk-smd-rpm for RPM over SMD based clocks like msm8916
-  - clk-rpm for RPM based clocks like apq8064
-* Drop the patches that are already merged.
-* Added the extra compatible string to docs and example.
-
-Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
-* Drop some of the patches as now we handle both scenarios -
-  RPMCC enabled or disabled.
-* Addressed more comments from Stephen. Thanks again!
-
-Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
-* Addressed various comments from Stephen. Thanks!
-* Added sleep sets support.
-* Added a mutex in the RPM driver.
-* Support both scenarios - RPMCC enabled or disabled.
-* Make RPMCC more generic in order to support other SMD RPM
-  based platforms.
-
-Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
-* Changed the driver name to clk-smd-rpm, also build it only
-  when it is needed - suggested by Srini and Bjorn.
-* More detailed binding example.
-* Minor changes.
-
-
-Georgi Djakov (3):
-  clk: qcom: Add support for SMD-RPM Clocks
-  clk: qcom: Add support for RPM Clocks
-  arm64: dts: qcom: msm8916: Use fixed factor xo clock
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |    2 +-
- drivers/clk/qcom/Kconfig                           |   29 +
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-rpm.c                         |  503 +++++++++++++++++
- drivers/clk/qcom/clk-smd-rpm.c                     |  578 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             |   69 +++
- 7 files changed, 1219 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 drivers/clk/qcom/clk-rpm.c
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
- create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index eb20b941154b..ae8e40a82d34 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -402,30 +402,3 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
+ 	return cl ? 0 : -ENOMEM;
+ }
+ EXPORT_SYMBOL(clk_register_clkdev);
+-
+-/**
+- * clk_register_clkdevs - register a set of clk_lookup for a struct clk
+- * @clk: struct clk to associate with all clk_lookups
+- * @cl: array of clk_lookup structures with con_id and dev_id pre-initialized
+- * @num: number of clk_lookup structures to register
+- *
+- * To make things easier for mass registration, we detect error clks
+- * from a previous clk_register() call, and return the error code for
+- * those.  This is to permit this function to be called immediately
+- * after clk_register().
+- */
+-int clk_register_clkdevs(struct clk *clk, struct clk_lookup *cl, size_t num)
+-{
+-	unsigned i;
+-
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
+-
+-	for (i = 0; i < num; i++, cl++) {
+-		cl->clk_hw = __clk_get_hw(clk);
+-		__clkdev_add(cl);
+-	}
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(clk_register_clkdevs);
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index c2c04f7cbe8a..e6f8eb1d585f 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -45,7 +45,6 @@ void clkdev_add_table(struct clk_lookup *, size_t);
+ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ 
+ int clk_register_clkdev(struct clk *, const char *, const char *);
+-int clk_register_clkdevs(struct clk *, struct clk_lookup *, size_t);
+ 
+ #ifdef CONFIG_COMMON_CLK
+ int __clk_get(struct clk *clk);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
