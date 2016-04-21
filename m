@@ -1,134 +1,56 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 28 Apr 2016 09:40:59 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	dri-devel@lists.freedesktop.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 05/11] drm: Add Allwinner A10 Display Engine support
-Message-ID: <20160428074059.GC17159@lukather>
-References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
- <1461590572-4027-6-git-send-email-maxime.ripard@free-electrons.com>
- <20160426111419.63db18d4@bbrezillon>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60248 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752140AbcDUQCj (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2016 12:02:39 -0400
+Date: Thu, 21 Apr 2016 17:02:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+Message-ID: <20160421160232.GU3217@sirena.org.uk>
+References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+ <1461244361-45686-5-git-send-email-w.egorov@phytec.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/3yNEOqWowh/8j+e"
-In-Reply-To: <20160426111419.63db18d4@bbrezillon>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fkX35UkdEibezs2J"
+In-Reply-To: <1461244361-45686-5-git-send-email-w.egorov@phytec.de>
+Subject: Re: [PATCH v2 4/7] regulator: rk808: Add regulator driver for RK818
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---/3yNEOqWowh/8j+e
+--fkX35UkdEibezs2J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Boris,
+On Thu, Apr 21, 2016 at 03:12:38PM +0200, Wadim Egorov wrote:
+> Add support for the rk818 regulator. The regulator module consists
+> of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
+> power OTG and HDMI5V.
 
-On Tue, Apr 26, 2016 at 11:14:19AM +0200, Boris Brezillon wrote:
-> Hi Maxime,
->=20
-> On Mon, 25 Apr 2016 15:22:46 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > The Allwinner A10 and subsequent SoCs share the same display pipeline, =
-with
-> > variations in the number of controllers (1 or 2), or the presence or no=
-t of
-> > some output (HDMI, TV, VGA) or not.
-> >=20
-> > Add a driver with a limited set of features for now, and we will hopefu=
-lly
-> > support all of them eventually
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->=20
-> Just 2 comments below. Once addressed you can add my
->=20
-> Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
->=20
-> > ---
->=20
-> [...]
->=20
-> > +
-> > +static int sun4i_drv_connector_plug_all(struct drm_device *drm)
-> > +{
-> > +	struct drm_connector *connector, *failed;
-> > +	int ret;
-> > +
-> > +	mutex_lock(&drm->mode_config.mutex);
-> > +	list_for_each_entry(connector, &drm->mode_config.connector_list, head=
-) {
-> > +		ret =3D drm_connector_register(connector);
-> > +		if (ret) {
-> > +			failed =3D connector;
-> > +			goto err;
-> > +		}
-> > +	}
-> > +	mutex_unlock(&drm->mode_config.mutex);
-> > +	return 0;
-> > +
-> > +err:
-> > +	list_for_each_entry(connector, &drm->mode_config.connector_list, head=
-) {
-> > +		if (failed =3D=3D connector)
-> > +			break;
-> > +
-> > +		drm_connector_unregister(connector);
-> > +	}
-> > +	mutex_unlock(&drm->mode_config.mutex);
-> > +
-> > +	return ret;
-> > +}
->=20
-> You can use the generic drm_connector_register_all() to do that.
->=20
-> [...]
->=20
-> > +
-> > +static void sun4i_drv_unbind(struct device *dev)
-> > +{
-> > +	struct drm_device *drm =3D dev_get_drvdata(dev);
-> > +
->=20
-> And you probably miss a call to drm_connector_unregister_all() here.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Thanks, I'll fix that.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---/3yNEOqWowh/8j+e
+--fkX35UkdEibezs2J
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJXIb6LAAoJEBx+YmzsjxAgOD0P+wVvB7asCFP8argdJLzfXZCh
-kNzdZwzvxWlXLTN4VSWXY5GGpUxmeP9XmvchxfjXSqWxIQru/6l38dPduIo9MJ/h
-BlsEEDXZLS5YCLruCmRcOiLC89oBjAGT5/PQgO+W1EB+3PDWCCxVH7dg7qyUHpF0
-6HQkrRMYz5gN7VkYHE5bdKr1CuDbKv2wquA9a9h3gCRN+TODm3v+eWRFrD4d40x0
-46Bo3cyEM3DNqhu/RPUmbnIKvRRGFzbsU1NuTa7aC3cy0OW6N+8YA4VscWb6i/Py
-n5rE1YS1QaLamLQJmxwAK7OcC2jWNM0za0GkAItHVcv5oEcD3wjn87EOUl35p2Ga
-hkOgdhNMuHzBhUMqDXKoyTbGpiChNCvJE3vOkVD5jIM/N6QxC5uxx+5VjU5QPRMW
-U9WDa4UmS7CdssJpon4GxHxPfeBPHQjSmAs4tFLHS9+n6v8NsV0HvByIpsAJXJHA
-ZWM8c8nRb/YQM0akm26S/9pB6lp2tZENVB8ggEylA8/t+IaW/9MSZgGljTWGXSfe
-YdATA0AwaZpxSsstYfJcoJjHX+9k1LfVuLGJaHVMtWOLoEFjcKeTyxHe71Td7Lfw
-f+8fHompEjNoPEQk0QDcheEVd9kNI4fQ2GRrLI8BuWx3qOCyq11LC8450q/T/HwW
-06QABT3jTRkRZm74NMD2
-=zbdR
+iQEcBAEBCAAGBQJXGPmXAAoJECTWi3JdVIfQ3w0H/A+ZTcyGxM8WpZfJGaJkczkE
+5tO4SaQOojezvfRrd9Y5q8PRYljPpjMTCzqoxD94FC2pplzKBVqsLWeaPeUNqr/K
+37FeCFl/8u2RjmkjD/Xav51ML44K1CzvYCndZJE3JfzmPhJy0mt6LO1imPKkhsf5
+nVIErqORwxkzYF/baLLlI8Rmiqk4BWMgsyMuL1l0xIvNb8yLfKo9olDQGI3PsU0s
+i7iXSiNgSbXTQ+BbCpADzT0i+VzCdpy5ELzgpejtQE5A2reUksuIprr8gsTuLiGS
+axev5G24loRMkgdVb36SAfn2ndDQ+gFMJjiw7oxkcBMmFwaDro3ju80fJznJzNY=
+=nc2X
 -----END PGP SIGNATURE-----
 
---/3yNEOqWowh/8j+e--
+--fkX35UkdEibezs2J--
