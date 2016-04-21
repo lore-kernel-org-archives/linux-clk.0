@@ -1,56 +1,154 @@
-Return-Path: <peter.ujfalusi@ti.com>
-Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: simple-card: Support for selecting
- system clocks by ID
-To: Stephen Boyd <sboyd@codeaurora.org>, Mark Brown <broonie@kernel.org>
-References: <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io> <56C42BAF.3050900@ti.com>
- <20160217120759.GO7544@sirena.org.uk> <56C4CF8B.5010005@ti.com>
- <5715025C.7070108@ti.com> <20160418162910.GG3217@sirena.org.uk>
- <20160421222911.GE13149@codeaurora.org>
-CC: <alsa-devel@alsa-project.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jyri Sarha
-	<jsarha@ti.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Kristo, Tero" <t-kristo@ti.com>, <linux-clk@vger.kernel.org>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <571A106B.8040301@ti.com>
-Date: Fri, 22 Apr 2016 14:52:11 +0300
-MIME-Version: 1.0
-In-Reply-To: <20160421222911.GE13149@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 07/13] clk: mux: Add hw based registration APIs
+Date: Thu, 21 Apr 2016 15:21:58 -0700
+Message-Id: <1461277324-27185-8-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22/16 01:29, Stephen Boyd wrote:
->>> The first issue with converting the McASP to use CCF internally for clock
->>> selection, muxing and rate configuration is that the daVinci platform does not
->>> use CCF at all. Given that the davinci-mcasp driver is used by daVinci, we
->>> need to have non CCF way supported in ASoC...
->>
->> Well, at least long term we do need daVinci converting to CCF - this is
->> going to continue to cause problems, devices not part of the SoC can and
->> do contain clocks and are going to end up being supported via the clock
->> API.
-> 
-> Does anyone here know what's involved in converting daVinci to
-> CCF? It doesn't look too far off from what is in the CCF today,
-> so I'm not sure what's blocking the transition.
+Add registration APIs in the clk mux code to return struct clk_hw
+pointers instead of struct clk pointers. This way we hide the
+struct clk pointer from providers unless they need to use
+consumer facing APIs.
 
-Not entirely sure, but most likely new clk driver(s) for daVinci under
-drivers/clk/ti/ new set of structures to describe the clocks if the ti_clk* is
-not applicable I guess for starter. Support for DT, non DT boots as most of
-daVinci is not booting with DT and most likely never will.
-It might help to have different daVinci boards for testing the transition. I
-only have OMAP-L138-evm. I don't think it is enough for testing an entire
-architecture for this big change...
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-mux.c        | 57 +++++++++++++++++++++++++++++++++++++++-----
+ include/linux/clk-provider.h | 11 +++++++++
+ 2 files changed, 62 insertions(+), 6 deletions(-)
 
-Tero might have better estimates on what is involved when switching an
-architecture to CCF from custom, but at least synchronized API - so we don't
-need to convert drivers at least.
-
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 252188fd8bcd..16a3d5717f4e 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -113,16 +113,17 @@ const struct clk_ops clk_mux_ro_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
+ 
+-struct clk *clk_register_mux_table(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
+ 		void __iomem *reg, u8 shift, u32 mask,
+ 		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+ {
+ 	struct clk_mux *mux;
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init;
+ 	u8 width = 0;
++	int ret;
+ 
+ 	if (clk_mux_flags & CLK_MUX_HIWORD_MASK) {
+ 		width = fls(mask) - ffs(mask) + 1;
+@@ -157,12 +158,31 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 	mux->table = table;
+ 	mux->hw.init = &init;
+ 
+-	clk = clk_register(dev, &mux->hw);
+-
+-	if (IS_ERR(clk))
++	hw = &mux->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
+ 		kfree(mux);
++		hw = ERR_PTR(ret);
++	}
+ 
+-	return clk;
++	return hw;
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_mux_table);
++
++struct clk *clk_register_mux_table(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags,
++		void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_mux_table(dev, name, parent_names, num_parents,
++				       flags, reg, shift, mask, clk_mux_flags,
++				       table, lock);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_mux_table);
+ 
+@@ -180,6 +200,20 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
+ }
+ EXPORT_SYMBOL_GPL(clk_register_mux);
+ 
++struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_mux_flags, spinlock_t *lock)
++{
++	u32 mask = BIT(width) - 1;
++
++	return clk_hw_register_mux_table(dev, name, parent_names, num_parents,
++				      flags, reg, shift, mask, clk_mux_flags,
++				      NULL, lock);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_mux);
++
+ void clk_unregister_mux(struct clk *clk)
+ {
+ 	struct clk_mux *mux;
+@@ -195,3 +229,14 @@ void clk_unregister_mux(struct clk *clk)
+ 	kfree(mux);
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister_mux);
++
++void clk_hw_unregister_mux(struct clk_hw *hw)
++{
++	struct clk_mux *mux;
++
++	mux = to_clk_mux(hw);
++
++	clk_hw_unregister(hw);
++	kfree(mux);
++}
++EXPORT_SYMBOL_GPL(clk_hw_unregister_mux);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index bf12050aadd5..d690d99b9c1c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -478,14 +478,25 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
+ 		unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_mux_flags, spinlock_t *lock);
++struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_mux_flags, spinlock_t *lock);
+ 
+ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
+ 		void __iomem *reg, u8 shift, u32 mask,
+ 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
++struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags,
++		void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
+ 
+ void clk_unregister_mux(struct clk *clk);
++void clk_hw_unregister_mux(struct clk_hw *hw);
+ 
+ void of_fixed_factor_clk_setup(struct device_node *node);
+ 
 -- 
-Péter
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
