@@ -1,27 +1,153 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:54:47 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 40/41] clk: wm831x: Remove CLK_IS_ROOT
-Message-ID: <20160415235447.GN12052@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-41-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-41-git-send-email-sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 10/13] clk: composite: Add hw based registration APIs
+Date: Thu, 21 Apr 2016 15:22:01 -0700
+Message-Id: <1461277324-27185-11-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+Add registration APIs in the clk composite code to return struct
+clk_hw pointers instead of struct clk pointers. This way we hide
+the struct clk pointer from providers unless they need to use
+consumer facing APIs.
 
-Applied to clk-next
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-composite.c  | 45 ++++++++++++++++++++++++++++++++------------
+ include/linux/clk-provider.h |  7 +++++++
+ 2 files changed, 40 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 1f903e1f86a2..463fadd5a68f 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -184,17 +184,18 @@ static void clk_composite_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
+ }
+ 
+-struct clk *clk_register_composite(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
+ 			const char * const *parent_names, int num_parents,
+ 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+ 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+ 			unsigned long flags)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init;
+ 	struct clk_composite *composite;
+ 	struct clk_ops *clk_composite_ops;
++	int ret;
+ 
+ 	composite = kzalloc(sizeof(*composite), GFP_KERNEL);
+ 	if (!composite)
+@@ -204,12 +205,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	init.flags = flags | CLK_IS_BASIC;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
++	hw = &composite->hw;
+ 
+ 	clk_composite_ops = &composite->ops;
+ 
+ 	if (mux_hw && mux_ops) {
+ 		if (!mux_ops->get_parent) {
+-			clk = ERR_PTR(-EINVAL);
++			hw = ERR_PTR(-EINVAL);
+ 			goto err;
+ 		}
+ 
+@@ -224,7 +226,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 
+ 	if (rate_hw && rate_ops) {
+ 		if (!rate_ops->recalc_rate) {
+-			clk = ERR_PTR(-EINVAL);
++			hw = ERR_PTR(-EINVAL);
+ 			goto err;
+ 		}
+ 		clk_composite_ops->recalc_rate = clk_composite_recalc_rate;
+@@ -253,7 +255,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	if (gate_hw && gate_ops) {
+ 		if (!gate_ops->is_enabled || !gate_ops->enable ||
+ 		    !gate_ops->disable) {
+-			clk = ERR_PTR(-EINVAL);
++			hw = ERR_PTR(-EINVAL);
+ 			goto err;
+ 		}
+ 
+@@ -267,22 +269,41 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	init.ops = clk_composite_ops;
+ 	composite->hw.init = &init;
+ 
+-	clk = clk_register(dev, &composite->hw);
+-	if (IS_ERR(clk))
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		hw = ERR_PTR(ret);
+ 		goto err;
++	}
+ 
+ 	if (composite->mux_hw)
+-		composite->mux_hw->clk = clk;
++		composite->mux_hw->clk = hw->clk;
+ 
+ 	if (composite->rate_hw)
+-		composite->rate_hw->clk = clk;
++		composite->rate_hw->clk = hw->clk;
+ 
+ 	if (composite->gate_hw)
+-		composite->gate_hw->clk = clk;
++		composite->gate_hw->clk = hw->clk;
+ 
+-	return clk;
++	return hw;
+ 
+ err:
+ 	kfree(composite);
+-	return clk;
++	return hw;
++}
++
++struct clk *clk_register_composite(struct device *dev, const char *name,
++			const char * const *parent_names, int num_parents,
++			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++			unsigned long flags)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
++			mux_hw, mux_ops, rate_hw, rate_ops, gate_hw, gate_ops,
++			flags);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index bcbaf6c95d52..456c3ced1ac9 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -638,6 +638,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+ 		unsigned long flags);
++struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
++		const char * const *parent_names, int num_parents,
++		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++		unsigned long flags);
++void clk_hw_unregister_composite(struct clk_hw *hw);
+ 
+ /***
+  * struct clk_gpio_gate - gpio gated clock
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
