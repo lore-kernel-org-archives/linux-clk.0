@@ -1,56 +1,109 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] clk: renesas: Clock Domain fixes
-Date: Tue, 26 Apr 2016 09:09:38 +0200
-Message-Id: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 09/13] clk: fractional-divider: Add hw based registration APIs
+Date: Thu, 21 Apr 2016 15:22:00 -0700
+Message-Id: <1461277324-27185-10-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Add registration APIs in the clk fractional divider code to
+return struct clk_hw pointers instead of struct clk pointers.
+This way we hide the struct clk pointer from providers unless
+they need to use consumer facing APIs.
 
-This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
-Clock Domains:
-  1. Postpone calls to pm_genpd_init(), as all local setup of the
-     generic_pm_domain structure should have been completed before
-     calling pm_genpd_init(),
-  2. Use always-on governor for Clock Domains, to prevent their status
-     from being shown as "off-0" in
-     /sys/kernel/debug/pm_genpd/pm_genpd_summary.
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-fractional-divider.c | 40 +++++++++++++++++++++++++++++++-----
+ include/linux/clk-provider.h         |  5 +++++
+ 2 files changed, 40 insertions(+), 5 deletions(-)
 
-I plan to queue these up with other clock updates in
-clk-renesas-for-v4.7, and send a pull request later.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  clk: renesas: mstp: Postpone call to pm_genpd_init()
-  clk: renesas: mstp: Use always-on governor for Clock Domain
-  clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
-  clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
-
- drivers/clk/renesas/clk-mstp.c         | 3 +--
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 1abcd76b4993..aab904618eb6 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -116,14 +116,15 @@ const struct clk_ops clk_fractional_divider_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_fractional_divider_ops);
+ 
+-struct clk *clk_register_fractional_divider(struct device *dev,
++struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+ {
+ 	struct clk_fractional_divider *fd;
+ 	struct clk_init_data init;
+-	struct clk *clk;
++	struct clk_hw *hw;
++	int ret;
+ 
+ 	fd = kzalloc(sizeof(*fd), GFP_KERNEL);
+ 	if (!fd)
+@@ -146,10 +147,39 @@ struct clk *clk_register_fractional_divider(struct device *dev,
+ 	fd->lock = lock;
+ 	fd->hw.init = &init;
+ 
+-	clk = clk_register(dev, &fd->hw);
+-	if (IS_ERR(clk))
++	hw = &fd->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
+ 		kfree(fd);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_fractional_divider);
+ 
+-	return clk;
++struct clk *clk_register_fractional_divider(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
++		u8 clk_divider_flags, spinlock_t *lock)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_fractional_divider(dev, name, parent_name, flags,
++			reg, mshift, mwidth, nshift, nwidth, clk_divider_flags,
++			lock);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_fractional_divider);
++
++void clk_hw_unregister_fractional_divider(struct clk_hw *hw)
++{
++	struct clk_fractional_divider *fd;
++
++	fd = to_clk_fd(hw);
++
++	clk_hw_unregister(hw);
++	kfree(fd);
++}
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 79ad1a8a6831..bcbaf6c95d52 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -563,6 +563,11 @@ struct clk *clk_register_fractional_divider(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock);
++struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
++		u8 clk_divider_flags, spinlock_t *lock);
++void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
+ 
+ /**
+  * struct clk_multiplier - adjustable multiplier clock
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
