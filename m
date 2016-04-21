@@ -1,108 +1,88 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 12 Apr 2016 16:25:09 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 02/46] backlight: pwm_bl: remove useless call to
- pwm_set_period()
-Message-ID: <20160412142509.GA25006@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-3-git-send-email-boris.brezillon@free-electrons.com>
- <20160412110350.GH18882@ulmo.ba.sec>
- <20160412141653.GJ8094@x1>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-In-Reply-To: <20160412141653.GJ8094@x1>
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v2 5/7] mfd: dt-bindings: Add RK818 device tree bindings document
+Date: Thu, 21 Apr 2016 15:12:39 +0200
+Message-Id: <1461244361-45686-6-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add device tree bindings documentation for Rockchip's RK818 PMIC.
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+ Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-On Tue, Apr 12, 2016 at 03:16:53PM +0100, Lee Jones wrote:
-> On Tue, 12 Apr 2016, Thierry Reding wrote:
->=20
-> > On Wed, Mar 30, 2016 at 10:03:25PM +0200, Boris Brezillon wrote:
-> > > The PWM period will be set when calling pwm_config. Remove this usele=
-ss
-> > > call to pwm_set_period(), which might mess up with the internal PWM s=
-tate.
-> > >=20
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > Acked-by: Lee Jones <lee.jones@linaro.org>
-> > > ---
-> > >  drivers/video/backlight/pwm_bl.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >=20
-> > Applied, thanks.
->=20
-> Applied?
-
-You Acked it, so I assumed you were fine with me taking it through the
-PWM tree to take care of the dependencies.
-
-Did I assume wrongly?
-
-Thierry
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDQVCAAoJEN0jrNd/PrOhO+sQAIcwHY4cYUR6sTtIxCo+Uou4
-i+Kuc1PlVOg+nbjWKFt5fFgMPE0F7MLYXS7CqwOMZ0iPyR+9kuWXJG+TxjbQiQGv
-HpSirq5pUiCGPfRaHrLmdSWa4U5T1iKEAuh3Vld8czk49n3Dnj1fUVI80QkxRx2G
-4JoNuACtNWMlJyJ1ZkAoka4GDT7OebN1BTOSotPNAArUoQpQubKm7HEcycreqkCK
-F7btmSUexRfEloxATYnAuqaMRnSur/WA4FgTeDenIsZnQf4fHEtYe4wou3yCfJCm
-ESKcjFc/knCBWrCswm5jI1kRrk4I5O7Me1rEeRWWQdf1x5IVKRZyq68PA2o74LgD
-em16YvdYaaM2jMjiJ4TDueo6g97UC9mHKTLM6dTtqgdaodJWtu2FHXya37oda7nx
-wsfpK8KUdguLkt6cJqptQx4KYdACm5QFDYW+vJyeL12QSisXmZ8sxKFGPO/dxb/t
-YIw3W4WniASa4pBx6ZrOCTIJOqMv2eZqbJW3XjK+XpLv8o7zYovXYL+CgXPXCwXW
-ZrQsJrqK9Uaz20U4+7NFDX5F1d2PyIJYiZ7XrGxFlk2e59maGpQg7Z/Nbra7L/ui
-asd0pSLdkFDghkrSgmQvHF4yek/09FNNSTpoDa3MBifUEwfdy1MONB1orHaN+6n1
-9KLxLpBo4dslwwYODbl/
-=JTlp
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 4ca6aab..9636ae8 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -1,7 +1,11 @@
+-RK808 Power Management Integrated Circuit
++RK8XX Power Management Integrated Circuit
++
++The rk8xx family current members:
++rk808
++rk818
+ 
+ Required properties:
+-- compatible: "rockchip,rk808"
++- compatible: "rockchip,rk808", "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+ - interrupts: the interrupt outputs of the controller.
+@@ -13,6 +17,8 @@ Optional properties:
+   default output clock name
+ - rockchip,system-power-controller: Telling whether or not this pmic is controlling
+   the system power.
++
++Optional RK808 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+ - vcc3-supply:  The input supply for DCDC_REG3
+@@ -29,7 +35,20 @@ Optional properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
+ 
+-Regulators: All the regulators of RK808 to be instantiated shall be
++Optional RK818 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- boost-supply: The input supply for DCDC_BOOST
++- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
++- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
++- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
++- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
++- h_5v-supply:  The input supply for HDMI_SWITCH
++- usb-supply:   The input supply for OTG_SWITCH
++
++Regulators: All the regulators of RK8XX to be instantiated shall be
+ listed in a child node named 'regulators'. Each regulator is represented
+ by a child node of the 'regulators' node.
+ 
+@@ -48,6 +67,18 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK818 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REG
++	- HDMI_SWITCH
++	- OTG_SWITCH
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
+-- 
+1.9.1
