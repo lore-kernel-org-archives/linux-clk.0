@@ -1,42 +1,172 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:48522 "EHLO theia.8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756998AbcDEKf3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 5 Apr 2016 06:35:29 -0400
-Date: Tue, 5 Apr 2016 12:35:26 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-	linux-mmc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	scott.wood@nxp.com, Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	ulf.hansson@linaro.org,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Subject: Re: [v7, 4/5] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Message-ID: <20160405103526.GG17838@8bytes.org>
-References: <1459480051-3701-1-git-send-email-yangbo.lu@nxp.com>
- <1459480051-3701-5-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459480051-3701-5-git-send-email-yangbo.lu@nxp.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 11/13] clk: gpio: Add hw based registration APIs
+Date: Thu, 21 Apr 2016 15:22:02 -0700
+Message-Id: <1461277324-27185-12-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 01, 2016 at 11:07:30AM +0800, Yangbo Lu wrote:
-> Move mpc85xx.h to include/linux/fsl and rename it to svr.h as
-> a common header file. It has been used for mpc85xx and it will
-> be used for ARM-based SoC as well.
-> 
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+Add registration APIs in the clk gpio code to return struct
+clk_hw pointers instead of struct clk pointers. This way we hide
+the struct clk pointer from providers unless they need to use
+consumer facing APIs.
 
-Acked-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-gpio.c       | 52 ++++++++++++++++++++++++++++++++++----------
+ include/linux/clk-provider.h |  8 +++++++
+ 2 files changed, 49 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 08f65acc5d57..86b245746a6b 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -94,13 +94,13 @@ const struct clk_ops clk_gpio_mux_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
+ 
+-static struct clk *clk_register_gpio(struct device *dev, const char *name,
++static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags,
+ 		const struct clk_ops *clk_gpio_ops)
+ {
+ 	struct clk_gpio *clk_gpio;
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init = {};
+ 	unsigned long gpio_flags;
+ 	int err;
+@@ -141,24 +141,26 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
+ 	clk_gpio->gpiod = gpio_to_desc(gpio);
+ 	clk_gpio->hw.init = &init;
+ 
++	hw = &clk_gpio->hw;
+ 	if (dev)
+-		clk = devm_clk_register(dev, &clk_gpio->hw);
++		err = devm_clk_hw_register(dev, hw);
+ 	else
+-		clk = clk_register(NULL, &clk_gpio->hw);
++		err = clk_hw_register(NULL, hw);
+ 
+-	if (!IS_ERR(clk))
+-		return clk;
++	if (!err)
++		return hw;
+ 
+ 	if (!dev) {
+ 		gpiod_put(clk_gpio->gpiod);
+ 		kfree(clk_gpio);
+ 	}
+ 
+-	return clk;
++	return ERR_PTR(err);
+ }
+ 
+ /**
+- * clk_register_gpio_gate - register a gpio clock gate with the clock framework
++ * clk_hw_register_gpio_gate - register a gpio clock gate with the clock
++ * framework
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+  * @parent_name: name of this clock's parent
+@@ -166,7 +168,7 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
+  * @active_low: true if gpio should be set to 0 to enable clock
+  * @flags: clock flags
+  */
+-struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags)
+ {
+@@ -175,10 +177,24 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 			(parent_name ? 1 : 0), gpio, active_low, flags,
+ 			&clk_gpio_gate_ops);
+ }
++EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
++
++struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
++		const char *parent_name, unsigned gpio, bool active_low,
++		unsigned long flags)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
++				       flags);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
++}
+ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+ 
+ /**
+- * clk_register_gpio_mux - register a gpio clock mux with the clock framework
++ * clk_hw_register_gpio_mux - register a gpio clock mux with the clock framework
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+  * @parent_names: names of this clock's parents
+@@ -187,7 +203,7 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+  * @active_low: true if gpio should be set to 0 to enable clock
+  * @flags: clock flags
+  */
+-struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags)
+ {
+@@ -199,6 +215,20 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+ 	return clk_register_gpio(dev, name, parent_names, num_parents,
+ 			gpio, active_low, flags, &clk_gpio_mux_ops);
+ }
++EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
++
++struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents, unsigned gpio,
++		bool active_low, unsigned long flags)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
++			gpio, active_low, flags);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
++}
+ EXPORT_SYMBOL_GPL(clk_register_gpio_mux);
+ 
+ static int gpio_clk_driver_probe(struct platform_device *pdev)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 456c3ced1ac9..6c36c5e8ccbe 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -667,6 +667,10 @@ extern const struct clk_ops clk_gpio_gate_ops;
+ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags);
++struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
++		const char *parent_name, unsigned gpio, bool active_low,
++		unsigned long flags);
++void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+ 
+ /**
+  * struct clk_gpio_mux - gpio controlled clock multiplexer
+@@ -682,6 +686,10 @@ extern const struct clk_ops clk_gpio_mux_ops;
+ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags);
++struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents, unsigned gpio,
++		bool active_low, unsigned long flags);
++void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
+ 
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
