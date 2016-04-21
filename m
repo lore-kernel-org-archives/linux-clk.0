@@ -1,132 +1,32 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 07/24] regulator: pwm: use pwm_get_args() where appropriate
-Date: Thu, 14 Apr 2016 21:17:27 +0200
-Message-Id: <1460661464-11216-8-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:51567 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751872AbcDUVUa (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2016 17:20:30 -0400
+Date: Thu, 21 Apr 2016 14:20:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: Add Oxford Semiconductor OXNAS Standard
+ Clocks
+Message-ID: <20160421212028.GA13149@codeaurora.org>
+References: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
+ <1460973696-5977-2-git-send-email-narmstrong@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460973696-5977-2-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM framework has clarified the concept of reference PWM config
-(the platform dependent config retrieved from the DT or the PWM
-lookup table) and real PWM state.
+On 04/18, Neil Armstrong wrote:
+> Add Oxford Semiconductor OXNAS SoC Family Standard Clocks support.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
 
-Use pwm_get_args() when the PWM user wants to retrieve this reference
-config and not the current state.
+Applied to clk-next + the two line removal discussed.
 
-This is part of the rework allowing the PWM framework to support
-hardware readout and expose real PWM state even when the PWM has
-just been requested (before the user calls pwm_config/enable/disable()).
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/regulator/pwm-regulator.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
-index 4689d62..ffdb895 100644
---- a/drivers/regulator/pwm-regulator.c
-+++ b/drivers/regulator/pwm-regulator.c
-@@ -59,16 +59,16 @@ static int pwm_regulator_set_voltage_sel(struct regulator_dev *rdev,
- 					 unsigned selector)
- {
- 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
--	unsigned int pwm_reg_period;
-+	struct pwm_args pargs;
- 	int dutycycle;
- 	int ret;
- 
--	pwm_reg_period = pwm_get_period(drvdata->pwm);
-+	pwm_get_args(drvdata->pwm, &pargs);
- 
--	dutycycle = (pwm_reg_period *
-+	dutycycle = (pargs.period *
- 		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
- 
--	ret = pwm_config(drvdata->pwm, dutycycle, pwm_reg_period);
-+	ret = pwm_config(drvdata->pwm, dutycycle, pargs.period);
- 	if (ret) {
- 		dev_err(&rdev->dev, "Failed to configure PWM\n");
- 		return ret;
-@@ -138,13 +138,15 @@ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
- {
- 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
- 	unsigned int ramp_delay = rdev->constraints->ramp_delay;
--	unsigned int period = pwm_get_period(drvdata->pwm);
-+	struct pwm_args pargs;
- 	int duty_cycle;
- 	int ret;
- 
-+	pwm_get_args(drvdata->pwm, &pargs);
- 	duty_cycle = pwm_voltage_to_duty_cycle_percentage(rdev, min_uV);
- 
--	ret = pwm_config(drvdata->pwm, (period / 100) * duty_cycle, period);
-+	ret = pwm_config(drvdata->pwm, (pargs.period / 100) * duty_cycle,
-+			 pargs.period);
- 	if (ret) {
- 		dev_err(&rdev->dev, "Failed to configure PWM\n");
- 		return ret;
-@@ -281,6 +283,12 @@ static int pwm_regulator_probe(struct platform_device *pdev)
- 		return PTR_ERR(drvdata->pwm);
- 	}
- 
-+	/*
-+	 * FIXME: pwm_apply_args() should be removed when switching to the
-+	 * atomic PWM API.
-+	 */
-+	pwm_apply_args(drvdata->pwm);
-+
- 	regulator = devm_regulator_register(&pdev->dev,
- 					    &drvdata->desc, &config);
- 	if (IS_ERR(regulator)) {
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
