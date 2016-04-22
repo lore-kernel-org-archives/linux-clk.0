@@ -1,66 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 21 Apr 2016 17:01:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Message-ID: <20160421160120.GT3217@sirena.org.uk>
-References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
- <1461244361-45686-4-git-send-email-w.egorov@phytec.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1on0062.outbound.protection.outlook.com ([157.56.110.62]:36530
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751067AbcDVGhU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 22 Apr 2016 02:37:20 -0400
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+	<netdev@vger.kernel.org>
+CC: <ulf.hansson@linaro.org>, <scott.wood@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Zhao Qiang <qiang.zhao@freescale.com>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
+	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v8, 1/7] Documentation: DT: update Freescale DCFG compatible
+Date: Fri, 22 Apr 2016 14:27:38 +0800
+Message-ID: <1461306464-19521-2-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
+References: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="x735uyZ2C9eR7U1j"
-In-Reply-To: <1461244361-45686-4-git-send-email-w.egorov@phytec.de>
-Subject: Re: [PATCH v2 3/7] regulator: rk808: Migrate to regulator core's
- simplified DT parsing code
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
+of 'fsl,ls1021a-dcfg' to include more chips.
 
---x735uyZ2C9eR7U1j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v8:
+	- Added this patch
+---
+ Documentation/devicetree/bindings/arm/fsl.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Apr 21, 2016 at 03:12:37PM +0200, Wadim Egorov wrote:
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 752a685..1d5f512 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -119,7 +119,7 @@ Freescale DCFG
+ configuration and status for the device. Such as setting the secondary
+ core start address and release the secondary core from holdoff and startup.
+   Required properties:
+-  - compatible: should be "fsl,ls1021a-dcfg"
++  - compatible: should be "fsl,<chip>-dcfg"
+   - reg : should contain base address and length of DCFG memory-mapped registers
+ 
+ Example:
+-- 
+2.1.0.27.g96db324
 
-> +static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
-> +{
-> +	unsigned int reg;
-> +	int sel = regulator_map_voltage_linear(rdev, uv, uv);
-> +
-> +	if (sel < 0)
-> +		return -EINVAL;
-> +
-> +	reg = rdev->desc->vsel_reg + RK808_SLP_REG_OFFSET;
-> +
-> +	return regmap_update_bits(rdev->regmap, reg,
-> +				  rdev->desc->vsel_mask,
-> +				  sel);
-> +}
-
-This is fine but is adding a new feature and not part of the refactoring
-that the changelog talked about so should be in a separate commit.
-
---x735uyZ2C9eR7U1j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXGPlKAAoJECTWi3JdVIfQqxcH/3zHYCsco7Um+vuiC3Tx+h+S
-6zDWfQtNVsxmf75m9fTYsY91t1ub/SNY8DGvEeCPRffvVHxLQBaaKyW0HcaBvdS3
-h2LOaXlJlTE5o3SnA/RVC7qM5OEGLU94oxa5x+j03MUbqMtm4ngDCe0LzFdGsq4a
-2kaUCx35X9Kdy6N2pHPGxF3A0v+gqSnQ35L/JfUqAy0KhjdN/y0G2pZpfuxhM6+U
-jniv0nasEatBpB6KZPSDqwjOMsNB9kPpBixRtTHksfPjZgCC8NqNT1eGEyJq8eOZ
-QWZr6Is7zpwT388PaDDfwdpd9K758Jv15EnXDb+IF0Zxz0Mp4Ds3hPEUKJBNbFE=
-=tDQJ
------END PGP SIGNATURE-----
-
---x735uyZ2C9eR7U1j--
