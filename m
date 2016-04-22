@@ -1,87 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33151 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754584AbcDVQkv (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:51 -0400
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
-	t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
-	nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v6 4/7] pwms: pwm-ti*: Get the clock from the PWMSS parent when using old bindings
-Date: Fri, 22 Apr 2016 11:40:35 -0500
-Message-Id: <1461343238-29274-5-git-send-email-fcooper@ti.com>
-In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
-References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jun.nie@linaro.org>
+Return-Path: <jun.nie@linaro.org>
+From: Jun Nie <jun.nie@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH] clk: Add is_enabled sanity check
+Date: Fri, 22 Apr 2016 10:32:36 +0800
+Message-Id: <1461292356-26043-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-When using the old eCAP and ePWM bindings for AM335x and AM437x the clock
-can be retrieved from the PWMSS parent. Newer bindings will insure that
-this clock is provided via device tree.
+If .enable and .disable is implemented, we must implement .is_enabled
+per document. Otherwise, clk_disable_unused_subtree will not disable
+the unused clock if the .is_enabled is not implemented, unecessary
+power consumption happens on the clock as a result.
 
-Therefore, update this driver to support the newer and older bindings. In
-the case of the older binding being used give a warning.
-
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
- drivers/pwm/pwm-tiecap.c   | 7 +++++++
- drivers/pwm/pwm-tiehrpwm.c | 7 +++++++
- 2 files changed, 14 insertions(+)
+ drivers/clk/clk.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
-index 616af76..a0833c8 100644
---- a/drivers/pwm/pwm-tiecap.c
-+++ b/drivers/pwm/pwm-tiecap.c
-@@ -195,6 +195,7 @@ static const struct pwm_ops ecap_pwm_ops = {
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f13c3f4..5e63bee 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2526,6 +2526,10 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	int i, ret;
+ 	struct clk_core *core;
  
- static const struct of_device_id ecap_of_match[] = {
-+	{ .compatible	= "ti,am3352-ecap" },
- 	{ .compatible	= "ti,am33xx-ecap" },
- 	{},
- };
-@@ -213,6 +214,12 @@ static int ecap_pwm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	clk = devm_clk_get(&pdev->dev, "fck");
++	if (hw->init->ops->enable && !hw->init->ops->is_enabled)
++		pr_warn("Warning: %s %s must implement .is_enabled\n",
++			__func__, hw->init->name);
 +
-+	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
-+		dev_warn(&pdev->dev, "Binding is obsolete.\n");
-+		clk = devm_clk_get(pdev->dev.parent, "fck");
-+	}
-+
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
- 		return PTR_ERR(clk);
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index 6a41e66..cee29a2 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -426,6 +426,7 @@ static const struct pwm_ops ehrpwm_pwm_ops = {
- };
- 
- static const struct of_device_id ehrpwm_of_match[] = {
-+	{ .compatible	= "ti,am3352-ehrpwm" },
- 	{ .compatible	= "ti,am33xx-ehrpwm" },
- 	{},
- };
-@@ -444,6 +445,12 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	clk = devm_clk_get(&pdev->dev, "fck");
-+
-+	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
-+		dev_warn(&pdev->dev, "Binding is obsolete.\n");
-+		clk = devm_clk_get(pdev->dev.parent, "fck");
-+	}
-+
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
- 		return PTR_ERR(clk);
+ 	core = kzalloc(sizeof(*core), GFP_KERNEL);
+ 	if (!core) {
+ 		ret = -ENOMEM;
 -- 
-2.7.0
-
+1.9.1
