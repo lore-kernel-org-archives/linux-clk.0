@@ -1,130 +1,209 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 13:12:45 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rhyland Klein <rklein@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-Message-ID: <20160422111245.GA9047@ulmo.ba.sec>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
- <20160314160551.GA21898@ulmo.nvidia.com>
- <56E6E20C.6020807@nvidia.com>
- <56E7CA79.7060106@nvidia.com>
- <56F581BF.2070903@nvidia.com>
- <20160412152026.GE25160@ulmo.ba.sec>
- <570D335E.9020202@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-In-Reply-To: <570D335E.9020202@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34840 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752811AbcDVQkx (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:53 -0400
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+	t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v6 5/7] ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
+Date: Fri, 22 Apr 2016 11:40:36 -0500
+Message-Id: <1461343238-29274-6-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Previous patches switched the ECAP and EPWM to use the new bindings.
+These bindings explicitly adds the various required clocks via DT rather
+than depending on hwmod.
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Therefore, it is safe to remove the hwmod entries since they are no longer
+needed.
 
-On Tue, Apr 12, 2016 at 06:41:50PM +0100, Jon Hunter wrote:
->=20
-> On 12/04/16 16:20, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Fri, Mar 25, 2016 at 02:21:51PM -0400, Rhyland Klein wrote:
-> >> On 3/15/2016 4:40 AM, Jon Hunter wrote:
-> >>>
-> >>> On 14/03/16 16:08, Rhyland Klein wrote:
-> >>>> On 3/14/2016 12:05 PM, Thierry Reding wrote:
-> >>>>>> Old Signed by an unknown key
-> >>>>>
-> >>>>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
-> >>>>>> From: Bill Huang <bilhuang@nvidia.com>
-> >>>>>>
-> >>>>>> Add some SLCG (Second Level Clock Gating) override clocks to contr=
-ol
-> >>>>>> gating and un-gating their logics.
-> >>>>>>
-> >>>>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> >>>>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> >>>>>> ---
-> >>>>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
-> >>>>>>  drivers/clk/tegra/clk-tegra210.c         | 91 +++++++++++++++++++=
-+++++++++++++
-> >>>>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
-> >>>>>>  3 files changed, 123 insertions(+), 16 deletions(-)
-> >>>>>
-> >>>>> There's no rationale given here about why we need this. What will t=
-hese
-> >>>>> second level clock gates be used for? Why do we need these (seeming=
-ly)
-> >>>>> duplicate clock entries.
-> >>>>>
-> >>>>
-> >>>> These are going to be used in the to-be posted patchset around
-> >>>> powergating. As of now they are unused, which is why I hadn't added =
-them
-> >>>> previously. I just wanted to try to get this dependency in before the
-> >>>> powergate series was posted.
-> >>>
-> >>> Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
-> >>> Rhyland that we upstream them. Eventually we will use them but only
-> >>> after the core GenPD changes for Tegra are merged. From my perspectiv=
-e I
-> >>> was thinking it is better to reduce the changes between the chromeos
-> >>> 3.18 kernel and mainline. However, if you wish to wait until we need
-> >>> them I guess we can. Otherwise ...
-> >>>
-> >>> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> >>>
-> >>> Cheers
-> >>> Jon
-> >>>
-> >>
-> >> Thierry do you think we should hold off on this until Jon's patches are
-> >> ready or merge this sooner?
-> >=20
-> > Jon, I think it would make sense for you to pick this up into your tree
-> > along with the rest of the patches that make use of them. Even if they
-> > end up being applied to different trees I'd like to see all of the work
-> > as a whole first.
->=20
-> Ok. That is fine with me.
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+---
+ Documentation/devicetree/bindings/pwm/pwm-tiecap.txt   | 3 ---
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 3 ---
+ arch/arm/boot/dts/am33xx.dtsi                          | 6 ------
+ arch/arm/boot/dts/am4372.dtsi                          | 9 ---------
+ 4 files changed, 21 deletions(-)
 
-I've had a brief discussion about this with Peter and it seems like
-these are only used to make sure that IP blocks don't hang during reset.
-If that's so I'm inclined to request this code to be hidden within the
-clock & reset driver to contain the knowledge to that driver where the
-workaround can be applied without having to make every driver (or at
-least the powergate driver) aware of this need.
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+index 5c7a116..39277b6 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+@@ -10,8 +10,6 @@ Required properties:
+ - reg: physical base address and size of the registers map.
+ 
+ Optional properties:
+-- ti,hwmods: Name of the hwmod associated to the ECAP:
+-  "ecap<x>", <x> being the 0-based instance number from the HW spec
+ - clocks: Handle to the ECAP's functional clock.
+ - clock-names: Must be set to "fck".
+ 
+@@ -21,7 +19,6 @@ ecap0: ecap@0 { /* ECAP on am33xx */
+ 	compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300100 0x80>;
+-	ti,hwmods = "ecap0";
+ 	clocks = <&l4ls_gclk>;
+ 	clock-names = "fck";
+ };
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index a82e249..ac1eae6 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -10,8 +10,6 @@ Required properties:
+ - reg: physical base address and size of the registers map.
+ 
+ Optional properties:
+-- ti,hwmods: Name of the hwmod associated to the EHRPWM:
+-  "ehrpwm<x>", <x> being the 0-based instance number from the HW spec
+ - clocks: Handle to the PWM's time-base and functional clock.
+ - clock-names: Must be set to "tbclk" and "fck".
+ 
+@@ -23,7 +21,6 @@ ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+ 	reg = <0x48300200 0x100>;
+ 	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
+ 	clock-names = "tbclk", "fck";
+-	ti,hwmods = "ehrpwm0";
+ };
+ 
+ ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index 999ba2f..2661acc 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -687,7 +687,6 @@
+ 				clock-names = "fck";
+ 				interrupts = <31>;
+ 				interrupt-names = "ecap0";
+-				ti,hwmods = "ecap0";
+ 				status = "disabled";
+ 			};
+ 
+@@ -696,7 +695,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+-				ti,hwmods = "ehrpwm0";
+ 				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -723,7 +721,6 @@
+ 				clock-names = "fck";
+ 				interrupts = <47>;
+ 				interrupt-names = "ecap1";
+-				ti,hwmods = "ecap1";
+ 				status = "disabled";
+ 			};
+ 
+@@ -732,7 +729,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+-				ti,hwmods = "ehrpwm1";
+ 				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -759,7 +755,6 @@
+ 				clock-names = "fck";
+ 				interrupts = <61>;
+ 				interrupt-names = "ecap2";
+-				ti,hwmods = "ecap2";
+ 				status = "disabled";
+ 			};
+ 
+@@ -768,7 +763,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+-				ti,hwmods = "ehrpwm2";
+ 				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index e858460..cfdd4b7 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -677,7 +677,6 @@
+ 					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300100 0x80>;
+-				ti,hwmods = "ecap0";
+ 				clocks = <&l4ls_gclk>;
+ 				clock-names = "fck";
+ 				status = "disabled";
+@@ -689,7 +688,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+-				ti,hwmods = "ehrpwm0";
+ 				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -711,7 +709,6 @@
+ 					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302100 0x80>;
+-				ti,hwmods = "ecap1";
+ 				clocks = <&l4ls_gclk>;
+ 				clock-names = "fck";
+ 				status = "disabled";
+@@ -723,7 +720,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+-				ti,hwmods = "ehrpwm1";
+ 				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -747,7 +743,6 @@
+ 				reg = <0x48304100 0x80>;
+ 				clocks = <&l4ls_gclk>;
+ 				clock-names = "fck";
+-				ti,hwmods = "ecap2";
+ 				status = "disabled";
+ 			};
+ 
+@@ -757,7 +752,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+-				ti,hwmods = "ehrpwm2";
+ 				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -779,7 +773,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48306200 0x80>;
+-				ti,hwmods = "ehrpwm3";
+ 				clocks = <&ehrpwm3_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -801,7 +794,6 @@
+ 					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48308200 0x80>;
+-				ti,hwmods = "ehrpwm4";
+ 				clocks = <&ehrpwm4_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+@@ -825,7 +817,6 @@
+ 				reg = <0x4830a200 0x80>;
+ 				clocks = <&ehrpwm5_tbclk>, <&l4ls_gclk>;
+ 				clock-names = "tbclk", "fck";
+-				ti,hwmods = "ehrpwm5";
+ 				status = "disabled";
+ 			};
+ 		};
+-- 
+2.7.0
 
-Thierry
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXGgcqAAoJEN0jrNd/PrOhx8AQAIIlnQbEFZYjGY75A2nPDRnq
-jBdj+Tes6umc45qU6KtQ3bR2bag9km18f+ZyG47K+XaqXFjlkXyjNj2ODmMqku54
-iC4/hVl/rBJTaV9oWziQyfO5HtwxdRB+7u0JtouVkS0P27iyfKA0RbKuGqYsPq7r
-4n45V2BRhVYaAM4kagOVeS6pTP7kyVw7LHt1P0njkgzV/QHGr8Vxhw2quJNUY6gK
-suKHkw2NI59jKuT+ugeRwmHtJ4kmw2p84YKRhfY4zZEv2QtkBRcQqoADjwrfnN9s
-YsGHmktutqnCsdWd/Q8sDM2DozH1YgOy8W/OA/WKSXYNk3lZyx2APeWCEw3zy2yz
-JgVoNjW++KxBNF8iza9FkjDmYkXM6bunvyxuLRIQMUwbf5GoSGjaedgaRNBT+yMa
-5ATczVJm+RdxwVQOIMHTI4H99all8XFeStM4yPU4QsYDPvb/2wWzT5C5dZH2AmQ8
-8pkHRj4Tr03i8po9XEnoKy2PoGJFmHF1SMpTBTPBYpDN5nNiAQQJPGXCmUx9Yno3
-RqKgrsGiIHnnCqsYzuewyw++ijjfStCVujeFpkgNgmhKokDpkmh4Fz6QftYs14s2
-z/5Dc41HFl/FpkMPhZPwhp68vqhR8Hxglg61Bo45HIGdp4v6ltmYxfIvzeQ3eJQi
-+kdT6hr/SXaTGJUKjqYl
-=9tmM
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
