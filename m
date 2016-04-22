@@ -1,121 +1,107 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	huangtao@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	jay.xu@rock-chips.com,
-	dianders@chromium.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 22 Apr 2016 16:14:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Binbin Zhou <zhoubb@lemote.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 1/6] clk: rockchip: rk3399: export some necessary clock IDs
-Date: Wed, 20 Apr 2016 19:06:49 +0800
-Message-Id: <1461150414-29638-2-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
-References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
+	linux-clk@vger.kernel.org, John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Chunbo Cui <cuicb@lemote.com>, Huacai Chen <chenhc@lemote.com>
+Subject: Re: [PATCH v3 5/8] MIPS: Loongson-1A: Workaround for pll register
+ can't be read
+Message-ID: <20160422231432.GE13149@codeaurora.org>
+References: <1456793296-17120-1-git-send-email-zhoubb@lemote.com>
+ <1456793296-17120-6-git-send-email-zhoubb@lemote.com>
+ <20160404072925.GD13706@linux-mips.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160404072925.GD13706@linux-mips.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We export some clock IDs for the reference drivers need them.
+On 04/04, Ralf Baechle wrote:
+> On Tue, Mar 01, 2016 at 08:48:13AM +0800, Binbin Zhou wrote:
+> > diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
+> > index 97d8c01..a5bb1eb 100644
+> > --- a/arch/mips/loongson32/common/platform.c
+> > +++ b/arch/mips/loongson32/common/platform.c
+> > @@ -63,9 +63,14 @@ struct platform_device ls1x_uart_pdev = {
+> >  
+> >  void __init ls1x_serial_setup(struct platform_device *pdev)
+> >  {
+> > -	struct clk *clk;
+> >  	struct plat_serial8250_port *p;
+> >  
+> > +#ifdef CONFIG_CPU_LOONGSON1A
+> > +	for (p = pdev->dev.platform_data; p->flags != 0; ++p)
+> > +		p->uartclk = ls1a_osc_clk * 2;
+> > +#else
+> > +	struct clk *clk;
+> > +
+> >  	clk = clk_get(&pdev->dev, pdev->name);
+> >  	if (IS_ERR(clk)) {
+> >  		pr_err("unable to get %s clock, err=%ld",
+> > @@ -76,6 +81,7 @@ void __init ls1x_serial_setup(struct platform_device *pdev)
+> >  
+> >  	for (p = pdev->dev.platform_data; p->flags != 0; ++p)
+> >  		p->uartclk = clk_get_rate(clk);
+> > +#endif
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+I don't understand this change. Does the framework not work well
+enough to tell us the uart clk rate?
 
- drivers/clk/rockchip/clk-rk3399.c      |   12 ++++++------
- include/dt-bindings/clock/rk3399-cru.h |    5 ++++-
- 2 files changed, 10 insertions(+), 7 deletions(-)
+> >  }
+> >  
+> >  /* CPUFreq */
+> > diff --git a/arch/mips/loongson32/common/time.c b/arch/mips/loongson32/common/time.c
+> > index 0996b02..bba1c84 100644
+> > --- a/arch/mips/loongson32/common/time.c
+> > +++ b/arch/mips/loongson32/common/time.c
+> > @@ -235,3 +235,19 @@ void __init plat_time_init(void)
+> >  	mips_hpt_frequency = clk_get_rate(clk) / 2;
+> >  #endif /* CONFIG_CEVT_CSRC_LS1X */
+> >  }
+> > +
+> > +#ifdef CONFIG_CPU_LOONGSON1A
+> > +unsigned int ls1a_osc_clk = 0, ls1a_cpu_mul = 0;
+> > +
+> > +static int __init get_cpu_clk(char *string)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index e8f040b..7ec84fd 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -554,7 +554,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(20), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 5, GFLAGS),
- 
--	MUX(0, "clk_rmii_src", mux_rmii_p, CLK_SET_RATE_PARENT,
-+	MUX(SCLK_RMII_SRC, "clk_rmii_src", mux_rmii_p, CLK_SET_RATE_PARENT,
- 			RK3399_CLKSEL_CON(19), 4, 1, MFLAGS),
- 	GATE(SCLK_MACREF_OUT, "clk_mac_refout", "clk_rmii_src", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(5), 6, GFLAGS),
-@@ -780,7 +780,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(16), 1, GFLAGS),
- 
- 	/* rga */
--	COMPOSITE(0, "clk_rga_core", mux_pll_src_cpll_gpll_npll_ppll_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(SCLK_RGA_CORE, "clk_rga_core", mux_pll_src_cpll_gpll_npll_ppll_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(4), 10, GFLAGS),
- 
-@@ -896,7 +896,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(17), 8, 3, MFLAGS, 0, 7, DFLAGS,
- 			RK3399_CLKGATE_CON(6), 2, GFLAGS),
- 
--	COMPOSITE_NOMUX(0, "clk_pciephy_ref100m", "npll", CLK_IGNORE_UNUSED,
-+	COMPOSITE_NOMUX(SCLK_PCIEPHY_REF100M, "clk_pciephy_ref100m", "npll", CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(18), 11, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(12), 6, GFLAGS),
- 	MUX(SCLK_PCIEPHY_REF, "clk_pciephy_ref", mux_pll_src_24m_pciephy_p, CLK_SET_RATE_PARENT,
-@@ -1191,10 +1191,10 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(10), 15, GFLAGS),
- 
- 	/* isp */
--	COMPOSITE(0, "aclk_isp0", mux_pll_src_cpll_gpll_ppll_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(ACLK_ISP0, "aclk_isp0", mux_pll_src_cpll_gpll_ppll_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(53), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(12), 8, GFLAGS),
--	COMPOSITE_NOMUX(0, "hclk_isp0", "aclk_isp0", 0,
-+	COMPOSITE_NOMUX(HCLK_ISP0, "hclk_isp0", "aclk_isp0", 0,
- 			RK3399_CLKSEL_CON(53), 8, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(12), 9, GFLAGS),
- 
-@@ -1217,7 +1217,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	COMPOSITE(ACLK_ISP1, "aclk_isp1", mux_pll_src_cpll_gpll_ppll_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(54), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(12), 10, GFLAGS),
--	COMPOSITE_NOMUX(0, "hclk_isp1", "aclk_isp1", 0,
-+	COMPOSITE_NOMUX(HCLK_ISP1, "hclk_isp1", "aclk_isp1", 0,
- 			RK3399_CLKSEL_CON(54), 8, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(12), 11, GFLAGS),
- 
-diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
-index f60fe6e..50a44cf 100644
---- a/include/dt-bindings/clock/rk3399-cru.h
-+++ b/include/dt-bindings/clock/rk3399-cru.h
-@@ -72,7 +72,7 @@
- #define SCLK_MACREF_OUT			106
- #define SCLK_VOP0_PWM			107
- #define SCLK_VOP1_PWM			108
--#define SCLK_RGA			109
-+#define SCLK_RGA_CORE			109
- #define SCLK_ISP0			110
- #define SCLK_ISP1			111
- #define SCLK_HDMI_CEC			112
-@@ -129,6 +129,8 @@
- #define SCLK_DPHY_TX0_CFG		163
- #define SCLK_DPHY_TX1RX1_CFG		164
- #define SCLK_DPHY_RX0_CFG		165
-+#define SCLK_RMII_SRC			166
-+#define SCLK_PCIEPHY_REF100M		167
- 
- #define DCLK_VOP0			180
- #define DCLK_VOP1			181
-@@ -671,6 +673,7 @@
- #define SRST_P_EDP_CTRL			285
- 
- /* cru_softrst_con18 */
-+#define SRST_A_GPU			288
- #define SRST_A_GPU_NOC			289
- #define SRST_A_GPU_GRF			290
- #define SRST_PVTM_GPU			291
+Maybe name this function loongson_get_cpu_clk()?
+
+> > diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
+> > index d4c6198..18326fb 100644
+> > --- a/drivers/clk/clk-ls1x.c
+> > +++ b/drivers/clk/clk-ls1x.c
+> > @@ -32,6 +32,14 @@ static void ls1x_pll_clk_disable(struct clk_hw *hw)
+> >  static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+> >  					  unsigned long parent_rate)
+> >  {
+> > +#ifdef CONFIG_CPU_LOONGSON1A
+> > +	/* workaround, loongson 1A pll register can't be read,
+> > +	 * on gateway board, multi is set to 11 */
+> > +	if (ls1a_osc_clk != 0 && ls1a_cpu_mul != 0)
+> > +		return ls1a_osc_clk * ls1a_cpu_mul;
+> > +	else
+> > +		return 33333333 * 8;
+> > +#else
+> >  	u32 pll, rate;
+> >  
+> >  	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
+> > @@ -40,6 +48,7 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+> >  	rate >>= 1;
+> >  
+> >  	return rate;
+> > +#endif
+> >  }
+> >  
+> >  static const struct clk_ops ls1x_pll_clk_ops = {
+> > @@ -107,7 +116,8 @@ void __init ls1x_clk_init(void)
+
+Any reason we can't pass the rates to this function?
+
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
