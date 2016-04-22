@@ -1,50 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Apr 2016 18:08:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] bcm2835 clk changes for 4.6 maybe
-Message-ID: <20160402010848.GZ18567@codeaurora.org>
-References: <1458265130-30734-1-git-send-email-eric@anholt.net>
- <20160329233923.GR18567@codeaurora.org>
- <877fgk5z1t.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <877fgk5z1t.fsf@eliezer.anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36488 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752811AbcDVQkp (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:45 -0400
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+	t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v6 0/7] ARM: dts: DRA7: Add dt nodes for PWMSS
+Date: Fri, 22 Apr 2016 11:40:31 -0500
+Message-Id: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/29, Eric Anholt wrote:
-> Stephen Boyd <sboyd@codeaurora.org> writes:
-> 
-> > On 03/17, Eric Anholt wrote:
-> >> This is late, so feel free to drop it, but I figured I'd send it to
-> >> you in case you were still open to merges.  I've pounded on it a bit
-> >> today (modesets to all sorts of resolutions on HDMI, used it for
-> >> testing the DPI panel support that I'm hoping to have for 4.7, and did
-> >> a whole lot of browsing of clk_summary as I debugged DPI), and kbuild
-> >> test robot came back clean, so I'm pretty happy with it.
-> >> 
-> >> The following changes since commit 4d3ac6662452060721599a3392bc2f524af984cb:
-> >> 
-> >>   clk: bcm2835: fix check of error code returned by devm_ioremap_resource() (2016-03-15 18:14:11 -0700)
-> >> 
-> >> are available in the git repository at:
-> >> 
-> >>   git@github.com:anholt/linux.git tags/bcm2835-clk-next-2016-03-17
-> >
-> > Please make sure to use a proper URL here. I don't have access to
-> > git@github.com, but I can fetch this from
-> > git://github.com/anholt/linux.git. The tag and the contents match
-> > so I'm fairly confident all is well.
-> 
-> Yeah, it should have been https://github.com/anholt/linux -- sorry about
-> that!
+This patch series adds support for PWM for DRA7. The IP is the same as the
+one present in AM33XX and AM437XX.
 
-Ok. Pulled towards 4.7.
+However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
+and eQEP.
+
+The following are the biggest changes from v5 to v6:
+* Created two new bindings to allow ECAP and PWM to grab their functional
+clock from DT rather than depending on PWMSS parent.
+* Pull in a couple of patches from the "Correct PWM bindings" series. This
+makes it a bit easier to understand.
+
+>From the two patchsets a handful of patches have already been pulled in by
+maintainers and have already made it to linux-next. Therefore, this
+patch series is built ontop of the latest linux-next.
+
+Tested on:
+AM335x, AM437x and X15 + lcd w/backlight
+
+This series has been verified to be backwards compatible with old dtbs.
+
+Franklin S Cooper Jr (6):
+  clk: ti: am335x/am4372: Add tbclk to pwm node
+  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+  ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
+  pwms: pwm-ti*: Get the clock from the PWMSS parent when using old
+    bindings
+  ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
+  ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
+
+Vignesh R (1):
+  ARM: dts: DRA7: Add dt nodes for PWMSS
+
+ .../devicetree/bindings/pwm/pwm-tiecap.txt         | 24 ++++--
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 28 ++++---
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 15 +++-
+ arch/arm/boot/dts/am33xx.dtsi                      | 36 ++++++---
+ arch/arm/boot/dts/am4372.dtsi                      | 61 +++++++++++----
+ arch/arm/boot/dts/da850.dtsi                       | 15 ++--
+ arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
+ .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
+ .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 ---------------
+ .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 --------------------
+ arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
+ arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 -------------
+ drivers/clk/ti/clk-33xx.c                          |  3 +
+ drivers/clk/ti/clk-43xx.c                          |  6 ++
+ drivers/pwm/pwm-tiecap.c                           |  7 ++
+ drivers/pwm/pwm-tiehrpwm.c                         |  7 ++
+ 16 files changed, 242 insertions(+), 279 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
+
