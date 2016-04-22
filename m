@@ -1,94 +1,96 @@
-Return-Path: <kernel@martin.sperl.org>
-References: <1461660989-11846-1-git-send-email-kernel@martin.sperl.org> <8737q8dv5f.fsf@eliezer.anholt.net>
-Mime-Version: 1.0 (1.0)
-In-Reply-To: <8737q8dv5f.fsf@eliezer.anholt.net>
-Content-Type: text/plain;
-	charset=us-ascii
-Message-Id: <BC74AA10-C36C-4643-B979-0617D222D605@martin.sperl.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-From: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V2] clk: bcm2835: mark enabled pll_dividers as critical
-Date: Tue, 26 Apr 2016 23:07:53 +0200
-To: Eric Anholt <eric@anholt.net>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v7 1/9] clk: mediatek: Refine the makefile to support
+ multiple clock drivers
+To: James Liao <jamesjj.liao@mediatek.com>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1460621514-65191-2-git-send-email-jamesjj.liao@mediatek.com>
+Cc: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>,
+ Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+ srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <5719E8B9.4030908@gmail.com>
+Date: Fri, 22 Apr 2016 11:02:49 +0200
+MIME-Version: 1.0
+In-Reply-To: <1460621514-65191-2-git-send-email-jamesjj.liao@mediatek.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
 
+On 14/04/16 10:11, James Liao wrote:
+> Add a Kconfig to define clock configuration for each SoC, and
+> modify the Makefile to build drivers that only selected in config.
+>
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Tested-by: John Crispin <blogic@openwrt.org>
+> ---
 
-Sent from my iPad
-> On 26.04.2016, at 21:31, Eric Anholt <eric@anholt.net> wrote:
->=20
-> kernel@martin.sperl.org writes:
->=20
->> From: Martin Sperl <kernel@martin.sperl.org>
->>=20
->> The bcm2835 firmware enables several clocks and plls before
->> booting the linux kernel.
->>=20
->> These plls should never get disabled as it may result in a
->> stopped system clock and more.
->>=20
->> So during probing we check if the pll_divider is enabled
->> and if it is then mark that pll_divider as critical.
->> As a consequence this will also enable the corresponding parent pll.
->>=20
->> Here the list of pll_div that are marked as critical:
->> [    2.022437] bcm2835-clk 20101000.cprman: found enabled pll_div plla_co=
-re - marking it as critical
->> [    2.031640] bcm2835-clk 20101000.cprman: found enabled pll_div pllb_ar=
-m - marking it as critical
->> [    2.040966] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_co=
-re0 - marking it as critical
->> [    2.050351] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_pe=
-r - marking it as critical
->> [    2.059427] bcm2835-clk 20101000.cprman: found enabled pll_div plld_co=
-re - marking it as critical
->> [    2.068590] bcm2835-clk 20101000.cprman: found enabled pll_div plld_pe=
-r - marking it as critical
->> [    2.077724] bcm2835-clk 20101000.cprman: found enabled pll_div pllh_pi=
-x - marking it as critical
->=20
-> Yeah, pllh_pix isn't critical, though.  We want it to get turned off
-> when the driver asks to disable its clock, or we're going to just waste
-> a pile of power.
->=20
-> I'm sending out a patch that marks the VPU clock as critical (it's the
-> also AXI bus, so it certainly is critical), which should solve your
-> aux_uart clock disabling problem, I think.
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-The problem is that it also fails on the pcm clock alone when pllc or=20
-plld_per are used as parent, but it is fine when osc is used...
-
-This started to show during the steps towards migration of=20
-downstream to use the new driver -PCM was the only clock that was=20
-referred in the dt to use the new clock driver while all others were=20
-using fixed clocks.
-
-So as far as I can see this is a bigger problem and making all=20
-running pll_div Critical makes it work fine.
-
-We potentially could mask pllh as non-critical, but even then
-the parent selector could choose pllh-per and then release it
-and then the hdmi would stop working... E.g if we would request a
-PCM clock rate of  290039- then Pllh_aux would be ideal with=20
-a divider of 2 and on releasing it it would stop the pllh (assuming
-no KMS)
-
-There was this other approach proposed by Michael some time ago
-that might be the better solution, but then I guess it had its own
-drawbacks, which may not make it applicable in our situation.
-
-Critical seems the right choice, but we would need a means
-that would allow us to remove the critical flag when first requesting
-the clock for some clocks - maybe via dt - so that when KMS is
-enabled the critical flag for pllh_aux is removed.
-
-As an alternative: maybe set the flag to use in case the pll-div
-is enabled in the pll_div_data structure. That way we can
-make some decisions on a per pll-div basis...
-
-Martin=
+>   drivers/clk/Kconfig           |  1 +
+>   drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+>   drivers/clk/mediatek/Makefile |  6 +++---
+>   3 files changed, 27 insertions(+), 3 deletions(-)
+>   create mode 100644 drivers/clk/mediatek/Kconfig
+>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 16f7d33..d94302e 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -199,6 +199,7 @@ config COMMON_CLK_PXA
+>
+>   source "drivers/clk/bcm/Kconfig"
+>   source "drivers/clk/hisilicon/Kconfig"
+> +source "drivers/clk/mediatek/Kconfig"
+>   source "drivers/clk/mvebu/Kconfig"
+>   source "drivers/clk/qcom/Kconfig"
+>   source "drivers/clk/samsung/Kconfig"
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> new file mode 100644
+> index 0000000..dc224e6
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -0,0 +1,23 @@
+> +#
+> +# MediaTek SoC drivers
+> +#
+> +config COMMON_CLK_MEDIATEK
+> +	bool
+> +	---help---
+> +	  Mediatek SoCs' clock support.
+> +
+> +config COMMON_CLK_MT8135
+> +	bool "Clock driver for Mediatek MT8135"
+> +	depends on COMMON_CLK
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	---help---
+> +	  This driver supports Mediatek MT8135 clocks.
+> +
+> +config COMMON_CLK_MT8173
+> +	bool "Clock driver for Mediatek MT8173"
+> +	depends on COMMON_CLK
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	---help---
+> +	  This driver supports Mediatek MT8173 clocks.
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 95fdfac..32e7222 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -1,4 +1,4 @@
+> -obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+>   obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+> -obj-y += clk-mt8135.o
+> -obj-y += clk-mt8173.o
+> +obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
+> +obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+>
