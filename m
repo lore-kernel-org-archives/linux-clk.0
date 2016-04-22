@@ -1,66 +1,60 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Mon, 11 Apr 2016 17:59:38 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>, Andrew
- Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
- Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell
- CP110 system controller
-Message-ID: <20160411175938.4b46df6e@free-electrons.com>
-In-Reply-To: <20160328194756.GA28967@rob-hp-laptop>
-References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20160328194756.GA28967@rob-hp-laptop>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.tricorecenter.de ([217.6.246.34]:44793 "EHLO
+	root.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753656AbcDVJDd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 22 Apr 2016 05:03:33 -0400
+Subject: Re: [PATCH v2 3/7] regulator: rk808: Migrate to regulator core's
+ simplified DT parsing code
+To: Mark Brown <broonie@kernel.org>
+References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+ <1461244361-45686-4-git-send-email-w.egorov@phytec.de>
+ <20160421160120.GT3217@sirena.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+From: Wadim Egorov <w.egorov@phytec.de>
+Message-ID: <5719E8CD.1070304@phytec.de>
+Date: Fri, 22 Apr 2016 11:03:09 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20160421160120.GT3217@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
 
-On Mon, 28 Mar 2016 14:47:56 -0500, Rob Herring wrote:
 
-> > +Required properties:
-> > +
-> > + - compatible: must be:
-> > +     "marvell,cp110-system-controller0", "syscon";
-> 
-> This block is really the same across SoCs? 
+On 21.04.2016 18:01, Mark Brown wrote:
+> On Thu, Apr 21, 2016 at 03:12:37PM +0200, Wadim Egorov wrote:
+>
+>> +static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
+>> +{
+>> +	unsigned int reg;
+>> +	int sel = regulator_map_voltage_linear(rdev, uv, uv);
+>> +
+>> +	if (sel < 0)
+>> +		return -EINVAL;
+>> +
+>> +	reg = rdev->desc->vsel_reg + RK808_SLP_REG_OFFSET;
+>> +
+>> +	return regmap_update_bits(rdev->regmap, reg,
+>> +				  rdev->desc->vsel_mask,
+>> +				  sel);
+>> +}
+> This is fine but is adding a new feature and not part of the refactoring
+> that the changelog talked about so should be in a separate commit.
 
-As per my knowledge, it is the same across 7020, 7040, 8020 and 8040,
-where the CP part is named CP110. My understanding is that in future
-SoCs, when the CP part will change, the CP part will have a different
-name, i.e CP115 or 120 or something (these are invented names, I have
-no idea how Marvell will name the future CPs).
+This is not really a new feature.
+rk808_set_suspend_voltage() was using regulator_map_voltage_linear_range().
+I have just renamed the function to rk808_set_suspend_voltage_range()
+and added an ops struct for ranges.
+Yes, I have also added rk808_set_suspend_voltage(), but this is just a split
+for the two types of ops that the driver needs now.
+This was needed, because the driver used only linear ranges.
+IMO it should be a part of the refactoring.
 
-So I believe cp110-system-controller0 properly uniquely identifies this
-IP block.
-
-> > + - reg: register area of the CP110 system controller 0
-> > + - #clock-cells: must be set to 2
-> > + - core-clock-output-names must be set to:
-> > +    "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
-> > + - gatable-clock-indices must be set to:
-> > +	<0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>,
-> > +	<9>, <11>, <12>, <13>, <14>, <15>, <16>, <18>,
-> > +	<22>, <23>, <24>, <25>, <26>
-> 
-> You aren't skipping very many spots. I'd just fill the unused names in 
-> with "none" or something.
-
-and then remove the gatable-clock-indices property altogether?
-
-Thanks for the review!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
