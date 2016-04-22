@@ -1,29 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 22 Apr 2016 15:58:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 10/13] clk: composite: Add hw based registration APIs
-Message-ID: <20160422225831.GA13149@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
- <1461277324-27185-11-git-send-email-sboyd@codeaurora.org>
+Return-Path: <pchiu@nvidia.com>
+From: Penny Chiu <pchiu@nvidia.com>
+To: <swarren@wwwdotorg.org>, <thierry.reding@gmail.com>, <gnurou@gmail.com>,
+	<pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>, <rjw@rjwysocki.net>,
+	<viresh.kumar@linaro.org>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Penny
+ Chiu <pchiu@nvidia.com>
+Subject: [PATCH 07/11] cpufreq: tegra124: Add Tegra210 support
+Date: Fri, 22 Apr 2016 18:31:07 +0800
+Message-ID: <1461321071-6431-8-git-send-email-pchiu@nvidia.com>
+In-Reply-To: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+Return-Path: pchiu@nvidia.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461277324-27185-11-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/21, Stephen Boyd wrote:
-> Add registration APIs in the clk composite code to return struct
-> clk_hw pointers instead of struct clk pointers. This way we hide
-> the struct clk pointer from providers unless they need to use
-> consumer facing APIs.
-> 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+Add tegra210 support in tegra124 cpufreq driver.
 
-Applied to clk-next
+Signed-off-by: Penny Chiu <pchiu@nvidia.com>
+---
+ drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 20bcceb..c891e6e 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -188,7 +188,8 @@ static int __init tegra_cpufreq_init(void)
+ 	int ret;
+ 	struct platform_device *pdev;
+ 
+-	if (!of_machine_is_compatible("nvidia,tegra124"))
++	if (!of_machine_is_compatible("nvidia,tegra124") &&
++	    !of_machine_is_compatible("nvidia,tegra210"))
+ 		return -ENODEV;
+ 
+ 	/*
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
