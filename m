@@ -1,46 +1,31 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Mon, 25 Apr 2016 15:44:38 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Ian Campbell
- <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark
- Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>
-Cc: Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Yehuda
- Yitschak <yehuday@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Hanna
- Hawa <hannah@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Gregory
- Clement <gregory.clement@free-electrons.com>,
- linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v5 0/5] clk: mvebu: clock drivers for Marvell Armada
- 7K/8K
-Message-ID: <20160425154438.07cca521@free-electrons.com>
-In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <robh@kernel.org>
+Date: Fri, 22 Apr 2016 15:25:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+	dianders@chromium.org, zyw@rock-chips.com
+Subject: Re: [PATCH v2 5/7] mfd: dt-bindings: Add RK818 device tree bindings
+ document
+Message-ID: <20160422202550.GA10437@rob-hp-laptop>
+References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+ <1461244361-45686-6-git-send-email-w.egorov@phytec.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461244361-45686-6-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen, Michael,
+On Thu, Apr 21, 2016 at 03:12:39PM +0200, Wadim Egorov wrote:
+> Add device tree bindings documentation for Rockchip's RK818 PMIC.
+> 
+> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> ---
+>  Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
+>  1 file changed, 34 insertions(+), 3 deletions(-)
 
-On Thu, 14 Apr 2016 17:33:28 +0200, Thomas Petazzoni wrote:
-
->   clk: mvebu: new driver for Armada AP806 system controller
->   dt-bindings: arm: add DT binding for Marvell CP110 system controller
->   clk: mvebu: new driver for Armada CP110 system controller
-
-Do you have any comments on those three patches? Rob Herring gave his
-Acked-by on the DT binding for both drivers and as you can imagine,
-those drivers are essential to making this new platform work in
-mainline.
-
-Do not hesitate to let me know if anything still needs some
-adaptations/changes in the clock drivers.
-
-Thanks!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Acked-by: Rob Herring <robh@kernel.org>
