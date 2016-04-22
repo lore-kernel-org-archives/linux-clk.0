@@ -1,29 +1,79 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 15:53:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joe Perches <joe@perches.com>
-Cc: Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: dflt: remove redundant unlikely
-Message-ID: <20160415225321.GA14441@codeaurora.org>
-References: <1459880937-22349-1-git-send-email-s-anna@ti.com>
- <1459891815.6715.15.camel@perches.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+ t-kristo@ti.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
+ vigneshr@ti.com, nsekhar@ti.com
+Subject: [PATCH v6 1/7] clk: ti: am335x/am4372: Add tbclk to pwm node
+Date: Fri, 22 Apr 2016 11:40:32 -0500
+Message-Id: <1461343238-29274-2-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459891815.6715.15.camel@perches.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/05, Joe Perches wrote:
-> 
-> There are several of these:
-[...]
-> 
-> Maybe a new checkpatch test like:
+Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
+to the time-based clk.
 
-Looks good to me.
+Do not remove similar entries for ehrpwm node. Later patches will switch
+from using ehrpwm node name to pwm. But to maintain ABI compatibility we
+shouldn't remove the old entries.
+
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/ti/clk-33xx.c | 3 +++
+ drivers/clk/ti/clk-43xx.c | 6 ++++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index ef2ec64..0e47d95 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
++	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 097fc90..7255aa8 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
+ 	DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
+ 	DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
+ 	DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
++	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
++	DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
++	DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
++	DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
+ 	{ .node_name = NULL },
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
