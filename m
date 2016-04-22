@@ -1,97 +1,87 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 12 Apr 2016 13:01:52 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 01/46] pwm: rcar: make use of pwm_is_enabled()
-Message-ID: <20160412110152.GG18882@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-2-git-send-email-boris.brezillon@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JbKQpFqZXJ2T76Sg"
-In-Reply-To: <1459368249-13241-2-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33151 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754584AbcDVQkv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:51 -0400
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+	t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v6 4/7] pwms: pwm-ti*: Get the clock from the PWMSS parent when using old bindings
+Date: Fri, 22 Apr 2016 11:40:35 -0500
+Message-Id: <1461343238-29274-5-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+When using the old eCAP and ePWM bindings for AM335x and AM437x the clock
+can be retrieved from the PWMSS parent. Newer bindings will insure that
+this clock is provided via device tree.
 
---JbKQpFqZXJ2T76Sg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Therefore, update this driver to support the newer and older bindings. In
+the case of the older binding being used give a warning.
 
-On Wed, Mar 30, 2016 at 10:03:24PM +0200, Boris Brezillon wrote:
-> Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced a
-> new function to test whether a PWM device is enabled or not without
-> manipulating PWM internal fields.
-> Hiding this is necessary if we want to smoothly move to the atomic PWM
-> config approach without impacting PWM drivers.
-> Fix this driver to use pwm_is_enabled() instead of directly accessing the
-> ->flags field.
->=20
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->  drivers/pwm/pwm-rcar.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+---
+ drivers/pwm/pwm-tiecap.c   | 7 +++++++
+ drivers/pwm/pwm-tiehrpwm.c | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
-Applied, thanks.
+diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
+index 616af76..a0833c8 100644
+--- a/drivers/pwm/pwm-tiecap.c
++++ b/drivers/pwm/pwm-tiecap.c
+@@ -195,6 +195,7 @@ static const struct pwm_ops ecap_pwm_ops = {
+ };
+ 
+ static const struct of_device_id ecap_of_match[] = {
++	{ .compatible	= "ti,am3352-ecap" },
+ 	{ .compatible	= "ti,am33xx-ecap" },
+ 	{},
+ };
+@@ -213,6 +214,12 @@ static int ecap_pwm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	clk = devm_clk_get(&pdev->dev, "fck");
++
++	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
++		dev_warn(&pdev->dev, "Binding is obsolete.\n");
++		clk = devm_clk_get(pdev->dev.parent, "fck");
++	}
++
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "failed to get clock\n");
+ 		return PTR_ERR(clk);
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index 6a41e66..cee29a2 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -426,6 +426,7 @@ static const struct pwm_ops ehrpwm_pwm_ops = {
+ };
+ 
+ static const struct of_device_id ehrpwm_of_match[] = {
++	{ .compatible	= "ti,am3352-ehrpwm" },
+ 	{ .compatible	= "ti,am33xx-ehrpwm" },
+ 	{},
+ };
+@@ -444,6 +445,12 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	clk = devm_clk_get(&pdev->dev, "fck");
++
++	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
++		dev_warn(&pdev->dev, "Binding is obsolete.\n");
++		clk = devm_clk_get(pdev->dev.parent, "fck");
++	}
++
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "failed to get clock\n");
+ 		return PTR_ERR(clk);
+-- 
+2.7.0
 
-Thierry
-
---JbKQpFqZXJ2T76Sg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDNWfAAoJEN0jrNd/PrOhoj8QAK4UAz8ugmWPS9xJCHiJvCsZ
-cz4yyDzOQVaVTNHNEruFT+v1XMvaogalyvNxUR0z8fXpRzAj9vZyGm3VXD2CJcam
-/FvxqFKAodcSy5PjYSLoD/0bpeYpAiILFhxPTkKGFaR8vRnvY8HL7BWWM8ReXly+
-m+bPRy/JtAMpsFfYTgNGtXV101lkn8ZIvhJSCNwDwCWHAPN1q/c+XxikTuonrKiX
-p0f9SB74YUtq7gh5HE1vfrSFs2ozDXFDBfEbgTk9vfEL2O0E2gUkVF8yyLWHGUSu
-lfQB/A65nYFzn8tAqd97/RzMXeHMB9u+/FI7bwfvxK+hnRys3sxaS/5knlSe+Nzc
-EAnnoG0VEibaNctVC5ACumPP5eqS9ejMVYmenKiq7TyAM/3DhI4ZISsm/NUrmkke
-HhWUJs8U38hUK9pVHp94i63vQzLX9MWsAHXxXuTeCgkPgkklou+87nnPpcW3PWbq
-m6Bgpqijcx1OAW4ooJMpt4vls578/yFbguAGJzdm3QbB9jKMa/w4iGbuRfYiCowL
-cHLWFPSIGZrX3SXVfVNqSAHIhA1Jkaj1Ipku8+mz+SI/ai5Iitcnwe9QMBX1ttIh
-lQ5RaQmxpp6U0cxZno9Tb1lI7GEmxa0MaZnU2wmgcbDYleyg1Hp0W0eVVeIKcFi+
-5NcgYEiaLV56dufi0Vhm
-=gjRe
------END PGP SIGNATURE-----
-
---JbKQpFqZXJ2T76Sg--
