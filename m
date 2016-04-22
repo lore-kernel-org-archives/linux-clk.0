@@ -1,320 +1,406 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net, geert+renesas@glider.be, sjoerd.simons@collabora.co.uk, treding@nvidia.com, public_timo.s@silentcreek.de
-Subject: [PATCH 1/6] mfd: RK808: Make RK808 generic, rename rk808.c to rk8xx.c
-Date: Fri, 15 Apr 2016 11:16:25 +0200
-Message-Id: <1460711790-22646-2-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
-References: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+ t-kristo@ti.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
+ vigneshr@ti.com, nsekhar@ti.com
+Subject: [PATCH v6 3/7] ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM
+ bindings
+Date: Fri, 22 Apr 2016 11:40:34 -0500
+Message-Id: <1461343238-29274-4-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Basically this patch just renames the RK808 driver so we can use this driver
-for more than one RK8XX PMIC later.
+Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
+provide the various required clocks.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+For AM437 and AM335x, add the required clocks explicitly to DT. The
+hwmod entries for ECAP and EPWM will be removed and this will prevent
+anything from breaking.
+
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 ---
- arch/arm/configs/multi_v7_defconfig |  2 +-
- drivers/clk/Kconfig                 |  2 +-
- drivers/mfd/Kconfig                 |  4 +-
- drivers/mfd/Makefile                |  2 +-
- drivers/mfd/{rk808.c => rk8xx.c}    | 88 ++++++++++++++++++-------------------
- drivers/regulator/Kconfig           |  2 +-
- drivers/rtc/Kconfig                 |  2 +-
- 7 files changed, 51 insertions(+), 51 deletions(-)
- rename drivers/mfd/{rk808.c => rk8xx.c} (73%)
+ .../devicetree/bindings/pwm/pwm-tiecap.txt         | 12 +++--
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 12 +++--
+ arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
+ arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
+ arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
+ 5 files changed, 95 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 2823490..ca995e9 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -454,7 +454,7 @@ CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX77693=y
- CONFIG_MFD_MAX8907=y
- CONFIG_MFD_MAX8997=y
--CONFIG_MFD_RK808=y
-+CONFIG_MFD_RK8XX=y
- CONFIG_MFD_PM8921_CORE=y
- CONFIG_MFD_QCOM_RPM=y
- CONFIG_MFD_SPMI_PMIC=y
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..c2fd078 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -50,7 +50,7 @@ config COMMON_CLK_MAX77802
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+index fb81179..5c7a116 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+@@ -2,8 +2,8 @@ TI SOC ECAP based APWM controller
  
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK808"
--	depends on MFD_RK808
-+	depends on MFD_RK8XX
- 	---help---
- 	  This driver supports RK808 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index eea61e3..dd585cb 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -813,8 +813,8 @@ config MFD_RC5T583
- 	  Additional drivers must be enabled in order to use the
- 	  different functionality of the device.
+ Required properties:
+ - compatible: Must be "ti,<soc>-ecap".
+-  for am33xx - compatible = "ti,am33xx-ecap";
+-  for da850  - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++  for am33xx - compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
++  for da850  - compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The PWM channel index ranges from 0 to 4. The only third
+   cell flag supported by this binding is PWM_POLARITY_INVERTED.
+@@ -12,18 +12,22 @@ Required properties:
+ Optional properties:
+ - ti,hwmods: Name of the hwmod associated to the ECAP:
+   "ecap<x>", <x> being the 0-based instance number from the HW spec
++- clocks: Handle to the ECAP's functional clock.
++- clock-names: Must be set to "fck".
  
--config MFD_RK808
--	tristate "Rockchip RK808 Power Management chip"
-+config MFD_RK8XX
-+	tristate "Rockchip RK8XX Power Management chip"
- 	depends on I2C && OF
- 	select MFD_CORE
- 	select REGMAP_I2C
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 5eaa6465d..dd9963f8 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -182,7 +182,7 @@ obj-$(CONFIG_MFD_INTEL_MSIC)	+= intel_msic.o
- obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
- obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
- obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
--obj-$(CONFIG_MFD_RK808)		+= rk808.o
-+obj-$(CONFIG_MFD_RK8XX)		+= rk8xx.o
- obj-$(CONFIG_MFD_RN5T618)	+= rn5t618.o
- obj-$(CONFIG_MFD_SEC_CORE)	+= sec-core.o sec-irq.o
- obj-$(CONFIG_MFD_SYSCON)	+= syscon.o
-diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk8xx.c
-similarity index 73%
-rename from drivers/mfd/rk808.c
-rename to drivers/mfd/rk8xx.c
-index 4b1e439..f68648e 100644
---- a/drivers/mfd/rk808.c
-+++ b/drivers/mfd/rk8xx.c
-@@ -1,5 +1,5 @@
- /*
-- * MFD core driver for Rockchip RK808
-+ * MFD core driver for Rockchip RK8XX
-  *
-  * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
-  *
-@@ -23,13 +23,13 @@
- #include <linux/module.h>
- #include <linux/regmap.h>
+ Example:
  
--struct rk808_reg_data {
-+struct rk8xx_reg_data {
- 	int addr;
- 	int mask;
- 	int value;
+ ecap0: ecap@0 { /* ECAP on am33xx */
+-	compatible = "ti,am33xx-ecap";
++	compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300100 0x80>;
+ 	ti,hwmods = "ecap0";
++	clocks = <&l4ls_gclk>;
++	clock-names = "fck";
  };
  
--static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
-+static bool rk8xx_is_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	/*
- 	 * Notes:
-@@ -62,7 +62,7 @@ static const struct regmap_config rk808_regmap_config = {
- 	.val_bits = 8,
- 	.max_register = RK808_IO_POL_REG,
- 	.cache_type = REGCACHE_RBTREE,
--	.volatile_reg = rk808_is_volatile_reg,
-+	.volatile_reg = rk8xx_is_volatile_reg,
+ ecap0: ecap@0 { /* ECAP on da850 */
+-	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++	compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+ 	reg = <0x306000 0x80>;
+ };
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 0f9ba50..a82e249 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -2,8 +2,8 @@ TI SOC EHRPWM based PWM controller
+ 
+ Required properties:
+ - compatible: Must be "ti,<soc>-ehrpwm".
+-  for am33xx - compatible = "ti,am33xx-ehrpwm";
+-  for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++  for am33xx - compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
++  for da850  - compatible = "ti,da850-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -12,18 +12,22 @@ Required properties:
+ Optional properties:
+ - ti,hwmods: Name of the hwmod associated to the EHRPWM:
+   "ehrpwm<x>", <x> being the 0-based instance number from the HW spec
++- clocks: Handle to the PWM's time-base and functional clock.
++- clock-names: Must be set to "tbclk" and "fck".
+ 
+ Example:
+ 
+ ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+-	compatible = "ti,am33xx-ehrpwm";
++	compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x100>;
++	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++	clock-names = "tbclk", "fck";
+ 	ti,hwmods = "ehrpwm0";
  };
  
- static struct resource rtc_resources[] = {
-@@ -83,7 +83,7 @@ static const struct mfd_cell rk808s[] = {
- 	},
+ ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
+-	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++	compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x300000 0x2000>;
  };
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index 52be48b..999ba2f 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -679,9 +679,12 @@
+ 				  0x48300200 0x48300200 0x80>; /* EHRPWM */
  
--static const struct rk808_reg_data pre_init_reg[] = {
-+static const struct rk8xx_reg_data pre_init_reg[] = {
- 	{ RK808_BUCK3_CONFIG_REG, BUCK_ILMIN_MASK,  BUCK_ILMIN_150MA },
- 	{ RK808_BUCK4_CONFIG_REG, BUCK_ILMIN_MASK,  BUCK_ILMIN_200MA },
- 	{ RK808_BOOST_CONFIG_REG, BOOST_ILMIN_MASK, BOOST_ILMIN_100MA },
-@@ -148,30 +148,30 @@ static struct regmap_irq_chip rk808_irq_chip = {
- 	.init_ack_masked = true,
- };
+ 			ecap0: ecap@48300100 {
+-				compatible = "ti,am33xx-ecap";
++				compatible = "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				interrupts = <31>;
+ 				interrupt-names = "ecap0";
+ 				ti,hwmods = "ecap0";
+@@ -689,10 +692,13 @@
+ 			};
  
--static struct i2c_client *rk808_i2c_client;
--static void rk808_device_shutdown(void)
-+static struct i2c_client *rk8xx_i2c_client;
-+static void rk8xx_device_shutdown(void)
- {
- 	int ret;
--	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
-+	struct rk808 *rk8xx = i2c_get_clientdata(rk8xx_i2c_client);
+ 			ehrpwm0: pwm@48300200 {
+-				compatible = "ti,am33xx-ehrpwm";
++				compatible = "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+ 				ti,hwmods = "ehrpwm0";
++				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -709,9 +715,12 @@
+ 				  0x48302200 0x48302200 0x80>; /* EHRPWM */
  
--	if (!rk808) {
--		dev_warn(&rk808_i2c_client->dev,
--			 "have no rk808, so do nothing here\n");
-+	if (!rk8xx) {
-+		dev_warn(&rk8xx_i2c_client->dev,
-+			 "have no rk8xx, so do nothing here\n");
- 		return;
- 	}
+ 			ecap1: ecap@48302100 {
+-				compatible = "ti,am33xx-ecap";
++				compatible = "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				interrupts = <47>;
+ 				interrupt-names = "ecap1";
+ 				ti,hwmods = "ecap1";
+@@ -719,10 +728,13 @@
+ 			};
  
--	ret = regmap_update_bits(rk808->regmap,
-+	ret = regmap_update_bits(rk8xx->regmap,
- 				 RK808_DEVCTRL_REG,
- 				 DEV_OFF_RST, DEV_OFF_RST);
- 	if (ret)
--		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-+		dev_err(&rk8xx_i2c_client->dev, "power off error!\n");
- }
+ 			ehrpwm1: pwm@48302200 {
+-				compatible = "ti,am33xx-ehrpwm";
++				compatible = "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+ 				ti,hwmods = "ehrpwm1";
++				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -739,9 +751,12 @@
+ 				  0x48304200 0x48304200 0x80>; /* EHRPWM */
  
--static int rk808_probe(struct i2c_client *client,
-+static int rk8xx_probe(struct i2c_client *client,
- 		       const struct i2c_device_id *id)
- {
- 	struct device_node *np = client->dev.of_node;
--	struct rk808 *rk808;
-+	struct rk808 *rk8xx;
- 	int pm_off = 0;
- 	int ret;
- 	int i;
-@@ -181,18 +181,18 @@ static int rk808_probe(struct i2c_client *client,
- 		return -EINVAL;
- 	}
+ 			ecap2: ecap@48304100 {
+-				compatible = "ti,am33xx-ecap";
++				compatible = "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				interrupts = <61>;
+ 				interrupt-names = "ecap2";
+ 				ti,hwmods = "ecap2";
+@@ -749,10 +764,13 @@
+ 			};
  
--	rk808 = devm_kzalloc(&client->dev, sizeof(*rk808), GFP_KERNEL);
--	if (!rk808)
-+	rk8xx = devm_kzalloc(&client->dev, sizeof(*rk8xx), GFP_KERNEL);
-+	if (!rk8xx)
- 		return -ENOMEM;
+ 			ehrpwm2: pwm@48304200 {
+-				compatible = "ti,am33xx-ehrpwm";
++				compatible = "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+ 				ti,hwmods = "ehrpwm2";
++				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index 12fcde4..e858460 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -672,18 +672,26 @@
+ 			status = "disabled";
  
--	rk808->regmap = devm_regmap_init_i2c(client, &rk808_regmap_config);
--	if (IS_ERR(rk808->regmap)) {
-+	rk8xx->regmap = devm_regmap_init_i2c(client, &rk808_regmap_config);
-+	if (IS_ERR(rk8xx->regmap)) {
- 		dev_err(&client->dev, "regmap initialization failed\n");
--		return PTR_ERR(rk808->regmap);
-+		return PTR_ERR(rk8xx->regmap);
- 	}
+ 			ecap0: ecap@48300100 {
+-				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
++				compatible = "ti,am4372-ecap",
++					     "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300100 0x80>;
+ 				ti,hwmods = "ecap0";
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				status = "disabled";
+ 			};
  
- 	for (i = 0; i < ARRAY_SIZE(pre_init_reg); i++) {
--		ret = regmap_update_bits(rk808->regmap, pre_init_reg[i].addr,
-+		ret = regmap_update_bits(rk8xx->regmap, pre_init_reg[i].addr,
- 					 pre_init_reg[i].mask,
- 					 pre_init_reg[i].value);
- 		if (ret) {
-@@ -202,20 +202,20 @@ static int rk808_probe(struct i2c_client *client,
- 		}
- 	}
+ 			ehrpwm0: pwm@48300200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+ 				ti,hwmods = "ehrpwm0";
++				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -698,18 +706,26 @@
+ 			status = "disabled";
  
--	ret = regmap_add_irq_chip(rk808->regmap, client->irq,
-+	ret = regmap_add_irq_chip(rk8xx->regmap, client->irq,
- 				  IRQF_ONESHOT, -1,
--				  &rk808_irq_chip, &rk808->irq_data);
-+				  &rk808_irq_chip, &rk8xx->irq_data);
- 	if (ret) {
- 		dev_err(&client->dev, "Failed to add irq_chip %d\n", ret);
- 		return ret;
- 	}
+ 			ecap1: ecap@48302100 {
+-				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
++				compatible = "ti,am4372-ecap",
++					     "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302100 0x80>;
+ 				ti,hwmods = "ecap1";
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				status = "disabled";
+ 			};
  
--	rk808->i2c = client;
--	i2c_set_clientdata(client, rk808);
-+	rk8xx->i2c = client;
-+	i2c_set_clientdata(client, rk8xx);
+ 			ehrpwm1: pwm@48302200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+ 				ti,hwmods = "ehrpwm1";
++				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -724,18 +740,26 @@
+ 			status = "disabled";
  
- 	ret = mfd_add_devices(&client->dev, -1,
- 			      rk808s, ARRAY_SIZE(rk808s),
--			      NULL, 0, regmap_irq_get_domain(rk808->irq_data));
-+			      NULL, 0, regmap_irq_get_domain(rk8xx->irq_data));
- 	if (ret) {
- 		dev_err(&client->dev, "failed to add MFD devices %d\n", ret);
- 		goto err_irq;
-@@ -224,53 +224,53 @@ static int rk808_probe(struct i2c_client *client,
- 	pm_off = of_property_read_bool(np,
- 				"rockchip,system-power-controller");
- 	if (pm_off && !pm_power_off) {
--		rk808_i2c_client = client;
--		pm_power_off = rk808_device_shutdown;
-+		rk8xx_i2c_client = client;
-+		pm_power_off = rk8xx_device_shutdown;
- 	}
+ 			ecap2: ecap@48304100 {
+-				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
++				compatible = "ti,am4372-ecap",
++					     "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				ti,hwmods = "ecap2";
+ 				status = "disabled";
+ 			};
  
- 	return 0;
+ 			ehrpwm2: pwm@48304200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+ 				ti,hwmods = "ehrpwm2";
++				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -750,10 +774,14 @@
+ 			status = "disabled";
  
- err_irq:
--	regmap_del_irq_chip(client->irq, rk808->irq_data);
-+	regmap_del_irq_chip(client->irq, rk8xx->irq_data);
- 	return ret;
- }
+ 			ehrpwm3: pwm@48306200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48306200 0x80>;
+ 				ti,hwmods = "ehrpwm3";
++				clocks = <&ehrpwm3_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -768,10 +796,14 @@
+ 			status = "disabled";
  
--static int rk808_remove(struct i2c_client *client)
-+static int rk8xx_remove(struct i2c_client *client)
- {
--	struct rk808 *rk808 = i2c_get_clientdata(client);
-+	struct rk808 *rk8xx = i2c_get_clientdata(client);
+ 			ehrpwm4: pwm@48308200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48308200 0x80>;
+ 				ti,hwmods = "ehrpwm4";
++				clocks = <&ehrpwm4_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -786,9 +818,13 @@
+ 			status = "disabled";
  
--	regmap_del_irq_chip(client->irq, rk808->irq_data);
-+	regmap_del_irq_chip(client->irq, rk8xx->irq_data);
- 	mfd_remove_devices(&client->dev);
- 	pm_power_off = NULL;
- 
- 	return 0;
- }
- 
--static const struct of_device_id rk808_of_match[] = {
-+static const struct of_device_id rk8xx_of_match[] = {
- 	{ .compatible = "rockchip,rk808" },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, rk808_of_match);
-+MODULE_DEVICE_TABLE(of, rk8xx_of_match);
- 
--static const struct i2c_device_id rk808_ids[] = {
-+static const struct i2c_device_id rk8xx_ids[] = {
- 	{ "rk808" },
- 	{ },
- };
--MODULE_DEVICE_TABLE(i2c, rk808_ids);
-+MODULE_DEVICE_TABLE(i2c, rk8xx_ids);
- 
--static struct i2c_driver rk808_i2c_driver = {
-+static struct i2c_driver rk8xx_i2c_driver = {
- 	.driver = {
--		.name = "rk808",
--		.of_match_table = rk808_of_match,
-+		.name = "rk8xx",
-+		.of_match_table = rk8xx_of_match,
- 	},
--	.probe    = rk808_probe,
--	.remove   = rk808_remove,
--	.id_table = rk808_ids,
-+	.probe    = rk8xx_probe,
-+	.remove   = rk8xx_remove,
-+	.id_table = rk8xx_ids,
- };
- 
--module_i2c_driver(rk808_i2c_driver);
-+module_i2c_driver(rk8xx_i2c_driver);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
- MODULE_AUTHOR("Zhang Qing <zhangqing@rock-chips.com>");
--MODULE_DESCRIPTION("RK808 PMIC driver");
-+MODULE_DESCRIPTION("RK8XX PMIC driver");
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index c77dc08..f834079 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -610,7 +610,7 @@ config REGULATOR_RC5T583
- 
- config REGULATOR_RK808
- 	tristate "Rockchip RK808 Power regulators"
--	depends on MFD_RK808
-+	depends on MFD_RK8XX
- 	help
- 	  Select this option to enable the power regulator of ROCKCHIP
- 	  PMIC RK808.
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 3e84315..e7cadc3 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -325,7 +325,7 @@ config RTC_DRV_MAX77686
- 
- config RTC_DRV_RK808
- 	tristate "Rockchip RK808 RTC"
--	depends on MFD_RK808
-+	depends on MFD_RK8XX
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of RK808 PMIC.
+ 			ehrpwm5: pwm@4830a200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x4830a200 0x80>;
++				clocks = <&ehrpwm5_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				ti,hwmods = "ehrpwm5";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index c3910e2..28a1064 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -248,31 +248,36 @@
+ 			status = "disabled";
+ 		};
+ 		ehrpwm0: pwm@01f00000 {
+-			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++			compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm",
++				     "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x300000 0x2000>;
+ 			status = "disabled";
+ 		};
+ 		ehrpwm1: pwm@01f02000 {
+-			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++			compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm",
++				     "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x302000 0x2000>;
+ 			status = "disabled";
+ 		};
+ 		ecap0: ecap@01f06000 {
+-			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++			compatible = "ti,da850-ecap", "ti,am3352-ecap",
++				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x306000 0x80>;
+ 			status = "disabled";
+ 		};
+ 		ecap1: ecap@01f07000 {
+-			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++			compatible = "ti,da850-ecap", "ti,am3352-ecap",
++				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x307000 0x80>;
+ 			status = "disabled";
+ 		};
+ 		ecap2: ecap@01f08000 {
+-			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++			compatible = "ti,da850-ecap", "ti,am3352-ecap",
++				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x308000 0x80>;
+ 			status = "disabled";
 -- 
-1.9.1
+2.7.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
