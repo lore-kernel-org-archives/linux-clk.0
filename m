@@ -1,48 +1,29 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36687 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751515AbcDRKBp (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 06:01:45 -0400
-Received: by mail-wm0-f42.google.com with SMTP id v188so111502309wme.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2016 03:01:44 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 0/2] clk: Add Oxford Semiconductor OXNAS Clocks support
-Date: Mon, 18 Apr 2016 12:01:34 +0200
-Message-Id: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 22 Apr 2016 15:58:31 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 10/13] clk: composite: Add hw based registration APIs
+Message-ID: <20160422225831.GA13149@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+ <1461277324-27185-11-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461277324-27185-11-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset includes support for the standard clocks controller for the
-Oxford Semiconductor OXNAS SoC Family.
+On 04/21, Stephen Boyd wrote:
+> Add registration APIs in the clk composite code to return struct
+> clk_hw pointers instead of struct clk pointers. This way we hide
+> the struct clk pointer from providers unless they need to use
+> consumer facing APIs.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Changes since v1 clk patchset :
-- Add text to Kconfig
-- Clean indice-clk table
-- Add single struct to have a single kzalloc
-
-v1 clk patchset: http://lkml.kernel.org/r/1459520791-13269-1-git-send-email-narmstrong@baylibre.com
-
-It was originally posted part of a platform patchset available here :
-http://lkml.kernel.org/r/1458838215-23314-1-git-send-email-narmstrong@baylibre.com
-
-Changes this v3 patchset :
-- Get rid of PLX Technology, replace by Oxford Semiconductor
-
-Neil Armstrong (2):
-  clk: Add Oxford Semiconductor OXNAS Standard Clocks
-  dt-bindings: Add Oxford Semiconductor OXNAS Standard Clocks bindings
-
- .../devicetree/bindings/clock/oxnas,stdclk.txt     |  35 ++++
- drivers/clk/Kconfig                                |   6 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-oxnas.c                            | 198 +++++++++++++++++++++
- 4 files changed, 240 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
- create mode 100644 drivers/clk/clk-oxnas.c
+Applied to clk-next
 
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
