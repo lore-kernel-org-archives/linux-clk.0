@@ -1,57 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 7 Apr 2016 16:21:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
- clocks
-Message-ID: <20160407232155.GH18567@codeaurora.org>
-References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
- <1459949826.23936.19.camel@collabora.co.uk>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH 10/11] arm64: tegra: Add clock properties on cpu0 for
+ Tegra210
+To: Penny Chiu <pchiu@nvidia.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>
+References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+ <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <571A0E95.9040203@nvidia.com>
+Date: Fri, 22 Apr 2016 12:44:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1459949826.23936.19.camel@collabora.co.uk>
+In-Reply-To: <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Sjoerd Simons wrote:
-> On Wed, 2016-04-06 at 15:11 +0200, Geert Uytterhoeven wrote:
-> > CC Mike, Stephen, linux-clk (this time with the new Mike)
-> > 
-> > On Wed, Apr 6, 2016 at 2:52 PM, Sjoerd Simons
-> > <sjoerd.simons@collabora.co.uk> wrote:
-> > > 
-> > > clk_get on a disabled clock node will return EPROBE_DEFER, which
-> > > can
-> > > cause drivers to be deferred forever if such clocks are referenced
-> > > in
-> > > their clocks property.
-> > Is this a side effect of commit 3e5dd6f6e690048d ("clk: Ignore
-> > disabled DT
-> > clock providers")?
+Hi Penny,
+
+On 22/04/16 11:31, Penny Chiu wrote:
+> Add clocks, clock-names, and clock-latency into cpu0 node.
+> These properties will be used by cpufreq driver.
 > 
-> Yes it seems so. Reverting that patch means that i can drop this one
-> and get the expected behaviour again.
-
-The DT is broken then? Is it possible to mark these status =
-"okay" so that things work again?
-
+> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> Though even so I'm not sure what the convention is for clocks like
-> these, the r8a7791.dtsi is inconsistent, as some are disabled while
-> others (e.g. the audio clocks) are 0hz. Would be good to get some input
-> on that regardless.
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> index 204d9cd..1a85857 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -782,6 +782,12 @@
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a57";
+>  			reg = <0>;
+> +			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
+> +				 <&tegra_car TEGRA210_CLK_PLL_X>,
+> +				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
+> +				 <&dfll>;
+> +			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
+> +			clock-latency = <300000>;
+>  		};
+>  
+>  		cpu@1 {
 > 
 
-What's the question here?
+Can you include a patch with this series to update the binding
+documentation for the nvidia,tegra124-cpufreq.txt? I think that although
+there is no specific nvidia,tegra210-cpufreq compatible string the
+documentation should state that both tegra124 and tegra210 are supported
+so it is clear.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Also I see the above binding no longer includes the "cpu_lp" for
+tegra210 which I understand we don't use here. However, the binding
+documentation should reflect this. Having said that, looking at the
+driver it appears the "cpu_lp" clock is not even used for tegra124. I
+wonder if we should drop this from the binding documentation and the
+tegra124.dtsi altogether?
+
+What about the "vdd-cpu-supply" property? Don't we need this?
+
+Cheers
+Jon
