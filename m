@@ -1,79 +1,103 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [RESEND PATCH 0/8] clk: core: support clocks which requires parents on
-Date: Wed, 20 Apr 2016 17:34:32 +0800
-Message-ID: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 22 Apr 2016 15:23:25 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Penny Chiu <pchiu@nvidia.com>, swarren@wwwdotorg.org, gnurou@gmail.com,
+	pdeschrijver@nvidia.com, pgaikwad@nvidia.com, rjw@rjwysocki.net,
+	viresh.kumar@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] arm64: tegra: Add clock properties on cpu0 for
+ Tegra210
+Message-ID: <20160422132325.GN9047@ulmo.ba.sec>
+References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+ <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
+ <571A0E95.9040203@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="E0h0CbphJD8hN+Gf"
+In-Reply-To: <571A0E95.9040203@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a RESEND patch series.
-The original one can be found at here:
-http://www.spinics.net/lists/arm-kernel/msg435136.html
-It has no functional changes but improve the commit message and
-comments a bit.
 
-This patch series adds support in clock framework for clocks which all the
-operations like gate/ungate, set_rate, set_parent must require its parent
-clock on.
+--E0h0CbphJD8hN+Gf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This special HW requirement can be found on Freescale i.MX7D platform.
-Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
-(see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
-And there may be other SoCs in the same situation.
+On Fri, Apr 22, 2016 at 12:44:21PM +0100, Jon Hunter wrote:
+> Hi Penny,
+>=20
+> On 22/04/16 11:31, Penny Chiu wrote:
+> > Add clocks, clock-names, and clock-latency into cpu0 node.
+> > These properties will be used by cpufreq driver.
+> >=20
+> > Signed-off-by: Penny Chiu <pchiu@nvidia.com>
+> > ---
+> >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot=
+/dts/nvidia/tegra210.dtsi
+> > index 204d9cd..1a85857 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > @@ -782,6 +782,12 @@
+> >  			device_type =3D "cpu";
+> >  			compatible =3D "arm,cortex-a57";
+> >  			reg =3D <0>;
+> > +			clocks =3D <&tegra_car TEGRA210_CLK_CCLK_G>,
+> > +				 <&tegra_car TEGRA210_CLK_PLL_X>,
+> > +				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
+> > +				 <&dfll>;
+> > +			clock-names =3D "cpu_g", "pll_x", "pll_p", "dfll";
+> > +			clock-latency =3D <300000>;
+> >  		};
+> > =20
+> >  		cpu@1 {
+> >=20
+>=20
+> Can you include a patch with this series to update the binding
+> documentation for the nvidia,tegra124-cpufreq.txt? I think that although
+> there is no specific nvidia,tegra210-cpufreq compatible string the
+> documentation should state that both tegra124 and tegra210 are supported
+> so it is clear.
+>=20
+> Also I see the above binding no longer includes the "cpu_lp" for
+> tegra210 which I understand we don't use here. However, the binding
+> documentation should reflect this. Having said that, looking at the
+> driver it appears the "cpu_lp" clock is not even used for tegra124. I
+> wonder if we should drop this from the binding documentation and the
+> tegra124.dtsi altogether?
+>=20
+> What about the "vdd-cpu-supply" property? Don't we need this?
 
-Current clock core can not support such type of clock well.
+For some reason that seems to have moved into the clock@70110000 node.
 
-This patch introduce a new flag CLK_SET_PARENT_ON to handle this special
-case in clock core that enable its parent clock firstly for each operation
-and disable it later after operation complete.
+Thierry
 
-There're two special cases for handling this issue:
+--E0h0CbphJD8hN+Gf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-One is fixing the possible disabling clocks while its parent is already off
-during kernel booting phase in clk_disable_unused_subtree()
-Since this state misalign only happens during booting time,
-so we simply enable the parent clocks before disable it if flag is set.
-For normal clk_disable after kernel booting, there's no such issue
-since the clock tree is already created which makes sure no such issue exist.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Another special case is for set_parent() operation.
-It requires both parent, old one and new one, to be enabled at the same
-time during the operation.
+iQIcBAABCAAGBQJXGiXNAAoJEN0jrNd/PrOhBk4P/jb2b73ahmJWWLCMhTVdj6WL
+0PW8QbXi8+uy8EsFYFtbjiEIDtMH9EozmpkGtIxypzZ0KDfbnxaOQczEkEFRDBMn
+rVVKANIozpXLe4rU8a8719GxeEitg8+gwmzz3G8nFPMwtmb7rfPjl1P0ZW5d5Bqh
+BpL1q0gQFWG5t8lGUF5QO21WFbxcQQ8G1d7PzE9IARcwgQpxiy9GrsPthxTI649K
+TZRiR//NpYxU6meh1x98Wfw9noJRI5dAbIWNQjKwTjUGeD4gezBEDQhllAJeiIHE
+9ULFuWRZr+/xspD9wnv6E+/STMZQ9t8XOXzBWQpXyyjYzvTSz5N9d1A4XvfRAyJD
+5wcZ4wwn5JjOlwuklE6XyJiwSKDxHezFvO5HbmLkDcqwX2++NkYWjXz6z7ONm4cV
+OXgLHFQSSkTp0v566xsxoU1vAC5p2fZZmn7xwA9zoYxOffATik5jY+bm6YCh5k1Z
+T85ee/gxRFe5cDDiPB1GoUkqbFQJ479oWufpK+MaIFDEnn/J08/OizfXAkXIl0nd
+qiwCkZ3BK1xVDMP48UjnIq4gkTfuFAg0FkLwjShbU6G5CMo2FFc2rJUbZSsi7JC0
+ZDiksOsdcxQPHCuB5tWkHVfQXfMZcD1zRTme/Hb7WER5Yj8RhD8QzdeTX/ch/caa
+J9309qUY43TvAJNaDAjO
+=6WzJ
+-----END PGP SIGNATURE-----
 
-Patch 1~4 does this work.
-
-After clk core supports mx7d type clocks, we don't have to enable all clock
-by default anymore, then we remove the enable of all clocks code and instead
-only enable set of minimum required clocks.
-
-Patch 5~8 does this work.
-
-The whole patch series is based on for-next branch of clock tree:
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-
-Dong Aisheng (8):
-  clk: introduce clk_core_enable_lock and clk_core_disable_lock
-    functions
-  clk: move clk_disable_unused after clk_core_disable_unprepare function
-  clk: core: support clocks which requires parents on (part 1)
-  clk: core: support clocks which requires parents on (part 2)
-  clk: imx: re-order and concentrate the same type of clk api
-  clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
-  clk: imx7d: using api with flag CLK_OPS_PARENT_ON
-  clk: imx7d: only enable minimum required clocks
-
- drivers/clk/clk.c            | 329 +++++++++++--------
- drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
- drivers/clk/imx/clk.h        |  90 ++++--
- include/linux/clk-provider.h |   2 +
- 4 files changed, 623 insertions(+), 530 deletions(-)
-
--- 
-1.9.1
+--E0h0CbphJD8hN+Gf--
