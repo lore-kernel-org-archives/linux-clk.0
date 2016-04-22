@@ -1,201 +1,166 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v7 8/9] clk: mediatek: Add config options for MT2701 subsystem clocks
-Date: Thu, 14 Apr 2016 16:11:53 +0800
-Message-ID: <1460621514-65191-9-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 22 Apr 2016 15:04:09 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Penny Chiu <pchiu@nvidia.com>
+Cc: swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/11] clk: tegra: dfll: Move SoC specific data into
+ of_device_id
+Message-ID: <20160422130409.GK9047@ulmo.ba.sec>
+References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+ <1461321071-6431-3-git-send-email-pchiu@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wIc/V6YLA2QdyfT4"
+In-Reply-To: <1461321071-6431-3-git-send-email-pchiu@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-MT2701 subsystem clocks are optional and should be enabled only if
-their subsystem drivers are ready to control these clocks.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/mediatek/Kconfig      | 44 ++++++++++++++++++++++++++++++++++++++-
- drivers/clk/mediatek/clk-mt2701.c | 36 ++++++++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+), 1 deletion(-)
+--wIc/V6YLA2QdyfT4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 1e56000..5aa6204 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -12,7 +12,49 @@ config COMMON_CLK_MT2701
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
- 	---help---
--	  This driver supports Mediatek MT2701 clocks.
-+	  This driver supports Mediatek MT2701 basic clocks.
-+
-+config COMMON_CLK_MT2701_MMSYS
-+	bool "Clock driver for Mediatek MT2701 mmsys"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 mmsys clocks.
-+
-+config COMMON_CLK_MT2701_IMGSYS
-+	bool "Clock driver for Mediatek MT2701 imgsys"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 imgsys clocks.
-+
-+config COMMON_CLK_MT2701_VDECSYS
-+	bool "Clock driver for Mediatek MT2701 vdecsys"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 vdecsys clocks.
-+
-+config COMMON_CLK_MT2701_HIFSYS
-+	bool "Clock driver for Mediatek MT2701 hifsys"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 hifsys clocks.
-+
-+config COMMON_CLK_MT2701_ETHSYS
-+	bool "Clock driver for Mediatek MT2701 ethsys"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 ethsys clocks.
-+
-+config COMMON_CLK_MT2701_BDPSYS
-+	bool "Clock driver for Mediatek MT2701 bdpsys"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 bdpsys clocks.
- 
- config COMMON_CLK_MT8135
- 	bool "Clock driver for Mediatek MT8135"
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 90294e7..68869ff 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -908,6 +908,8 @@ static void __init mtk_pericfg_init(struct device_node *node)
- }
- CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
- 
-+#ifdef CONFIG_COMMON_CLK_MT2701_MMSYS
-+
- static const struct mtk_gate_regs disp0_cg_regs __initconst = {
- 	.set_ofs = 0x0104,
- 	.clr_ofs = 0x0108,
-@@ -991,6 +993,10 @@ static void __init mtk_mmsys_init(struct device_node *node)
- 			__func__, r);
- }
- 
-+#endif /* CONFIG_COMMON_CLK_MT2701_MMSYS */
-+
-+#ifdef CONFIG_COMMON_CLK_MT2701_IMGSYS
-+
- static const struct mtk_gate_regs img_cg_regs __initconst = {
- 	.set_ofs = 0x0004,
- 	.clr_ofs = 0x0008,
-@@ -1031,6 +1037,10 @@ static void __init mtk_imgsys_init(struct device_node *node)
- 			__func__, r);
- }
- 
-+#endif /* CONFIG_COMMON_CLK_MT2701_IMGSYS */
-+
-+#ifdef CONFIG_COMMON_CLK_MT2701_VDECSYS
-+
- static const struct mtk_gate_regs vdec0_cg_regs __initconst = {
- 	.set_ofs = 0x0000,
- 	.clr_ofs = 0x0004,
-@@ -1082,6 +1092,10 @@ static void __init mtk_vdecsys_init(struct device_node *node)
- 			__func__, r);
- }
- 
-+#endif /* CONFIG_COMMON_CLK_MT2701_VDECSYS */
-+
-+#ifdef CONFIG_COMMON_CLK_MT2701_HIFSYS
-+
- static const struct mtk_gate_regs hif_cg_regs __initconst = {
- 	.sta_ofs = 0x0008,
- };
-@@ -1121,6 +1135,10 @@ static void __init mtk_hifsys_init(struct device_node *node)
- 	mtk_register_reset_controller(node, 1, 0x34);
- }
- 
-+#endif /* CONFIG_COMMON_CLK_MT2701_HIFSYS */
-+
-+#ifdef CONFIG_COMMON_CLK_MT2701_ETHSYS
-+
- static const struct mtk_gate_regs eth_cg_regs __initconst = {
- 	.sta_ofs = 0x0030,
- };
-@@ -1161,6 +1179,10 @@ static void __init mtk_ethsys_init(struct device_node *node)
- 			__func__, r);
- }
- 
-+#endif /* CONFIG_COMMON_CLK_MT2701_ETHSYS */
-+
-+#ifdef CONFIG_COMMON_CLK_MT2701_BDPSYS
-+
- static const struct mtk_gate_regs bdp0_cg_regs __initconst = {
- 	.set_ofs = 0x0104,
- 	.clr_ofs = 0x0108,
-@@ -1259,6 +1281,8 @@ static void __init mtk_bdpsys_init(struct device_node *node)
- 			__func__, r);
- }
- 
-+#endif /* CONFIG_COMMON_CLK_MT2701_BDPSYS */
-+
- #define MT8590_PLL_FMAX		(2000 * MHZ)
- #define CON0_MT8590_RST_BAR	BIT(27)
- 
-@@ -1333,24 +1357,36 @@ CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
- 
- static const struct of_device_id of_clk_match_tbl[] = {
- 	{
-+#ifdef CONFIG_COMMON_CLK_MT2701_MMSYS
- 		.compatible = "mediatek,mt2701-mmsys",
- 		.data = mtk_mmsys_init,
- 	}, {
-+#endif
-+#ifdef CONFIG_COMMON_CLK_MT2701_IMGSYS
- 		.compatible = "mediatek,mt2701-imgsys",
- 		.data = mtk_imgsys_init,
- 	}, {
-+#endif
-+#ifdef CONFIG_COMMON_CLK_MT2701_VDECSYS
- 		.compatible = "mediatek,mt2701-vdecsys",
- 		.data = mtk_vdecsys_init,
- 	}, {
-+#endif
-+#ifdef CONFIG_COMMON_CLK_MT2701_HIFSYS
- 		.compatible = "mediatek,mt2701-hifsys",
- 		.data = mtk_hifsys_init,
- 	}, {
-+#endif
-+#ifdef CONFIG_COMMON_CLK_MT2701_ETHSYS
- 		.compatible = "mediatek,mt2701-ethsys",
- 		.data = mtk_ethsys_init,
- 	}, {
-+#endif
-+#ifdef CONFIG_COMMON_CLK_MT2701_BDPSYS
- 		.compatible = "mediatek,mt2701-bdpsys",
- 		.data = mtk_bdpsys_init,
- 	}, {
-+#endif
- 		/* sentinel */
- 	}
- };
--- 
-1.9.1
+On Fri, Apr 22, 2016 at 06:31:02PM +0800, Penny Chiu wrote:
+> Move all SoC specific fcpu data into of_device_id structure, and
+> move SoC fcpu data assignments from init function to probe
+> function.
+>=20
+> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 51 ++++++++++++++++++++++--=
+------
+>  1 file changed, 37 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/teg=
+ra/clk-tegra124-dfll-fcpu.c
+> index 5e5958e..b577bc6 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <soc/tegra/fuse.h>
+> =20
+> @@ -28,8 +29,15 @@
+>  #include "clk-dfll.h"
+>  #include "cvb.h"
+> =20
+> +struct dfll_fcpu_data {
+> +	const unsigned long *cpu_max_freq_table;
+> +	unsigned int cpu_max_freq_table_size;
+> +	const struct cvb_table *cpu_cvb_tables;
+> +	unsigned int cpu_cvb_tables_size;
+> +};
+> +
+>  /* Maximum CPU frequency, indexed by CPU speedo id */
+> -static const unsigned long cpu_max_freq_table[] =3D {
+> +static const unsigned long tegra124_cpu_max_freq_table[] =3D {
+>  	[0] =3D 2014500000UL,
+>  	[1] =3D 2320500000UL,
+>  	[2] =3D 2116500000UL,
+> @@ -79,18 +87,39 @@ static const struct cvb_table tegra124_cpu_cvb_tables=
+[] =3D {
+>  	},
+>  };
+> =20
+> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data =3D {
+> +	.cpu_max_freq_table =3D tegra124_cpu_max_freq_table,
+> +	.cpu_max_freq_table_size =3D ARRAY_SIZE(tegra124_cpu_max_freq_table),
+> +	.cpu_cvb_tables =3D tegra124_cpu_cvb_tables,
+> +	.cpu_cvb_tables_size =3D ARRAY_SIZE(tegra124_cpu_cvb_tables)
+> +};
+> +
+> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] =3D {
+
+There's no need to prefix this with tegra124_ since obviously the goal
+is to make this a table that works at least on Tegra210 as well.
+
+> +	{
+> +		.compatible =3D "nvidia,tegra124-dfll",
+> +		.data =3D &tegra124_dfll_fcpu_data
+> +	},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, tegra124_dfll_fcpu_of_match);
+> +
+>  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  {
+>  	int process_id, speedo_id, speedo_value, ret;
+>  	struct rail_alignment align;
+>  	struct tegra_dfll_soc_data *soc;
+>  	const struct cvb_table *cvb;
+> +	const struct of_device_id *of_id;
+> +	const struct dfll_fcpu_data *fcpu_data;
+> +
+> +	of_id =3D of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
+> +	fcpu_data =3D of_id->data;
+
+You should be using of_device_get_match_data() nowadays. That allows you
+to do this in one step while at the same time allowing to keep the match
+tables where they are.
+
+> =20
+>  	process_id =3D tegra_sku_info.cpu_process_id;
+>  	speedo_id =3D tegra_sku_info.cpu_speedo_id;
+>  	speedo_value =3D tegra_sku_info.cpu_speedo_value;
+> =20
+> -	if (speedo_id >=3D ARRAY_SIZE(cpu_max_freq_table)) {
+> +	if (speedo_id >=3D fcpu_data->cpu_max_freq_table_size) {
+>  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=3D%d\n",
+>  			speedo_id);
+>  		return -ENODEV;
+> @@ -121,12 +150,12 @@ static int tegra124_dfll_fcpu_probe(struct platform=
+_device *pdev)
+>  		return -EINVAL;
+>  	}
+> =20
+> -	cvb =3D tegra_cvb_build_opp_table(tegra124_cpu_cvb_tables,
+> -					ARRAY_SIZE(tegra124_cpu_cvb_tables),
+> -					&align,
+> -					process_id, speedo_id, speedo_value,
+> -					cpu_max_freq_table[speedo_id],
+> -					soc->dev);
+> +	cvb =3D tegra_cvb_build_opp_table(fcpu_data->cpu_cvb_tables,
+> +				fcpu_data->cpu_cvb_tables_size,
+> +				&align,
+> +				process_id, speedo_id, speedo_value,
+> +				fcpu_data->cpu_max_freq_table[speedo_id],
+> +				soc->dev);
+
+This, and potentially other parts will conflict with some cleanup I
+recently did to this code. You may want to rebase on some linux-next
+earlier next week which should have those cleanup patches.
+
+Thierry
+
+--wIc/V6YLA2QdyfT4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXGiFIAAoJEN0jrNd/PrOhdrUQAIg46qfJRBZdtpZLPib8iNwv
+5q9IE8KHsTuGc7fcz5lEroc2nkBhMO6zwaRo/BL+IdPhbohDCLlEbZ+CGi1jRGY6
+Rbn0KfB9etmEB9wRbNwR+IdI7uWqmFaXm6HrYNjWpFz/B+rJBlZu0EqfP3DDQ1dW
+42RZRqkHluqQ2Tkv4cENG1qUsTlSJtPT0h8vGlpuJIOEep3q5z2sOFC9C2cehc82
+JEhS6iBjELJwKbMZDT5bXF3TjtWHKA9+Q9S84Ju/2yYtC8RkpYasabwdlHAAcLsC
+MimTQtsiM6r+//+U5GZ2Edw9fj6rfnpzNwObnW2mrUOCvzgfY3ui1lbltOqwZLvg
+xSRDwSR3ZQw/IDQ88pX2DqUGWbXvJbD/JWnEqH+pGlbQruM5AYd0JhE1AlqgMnc2
+PGuzcmlBS7BCOCHUbXPsHydxASWQLEl7akpc1/b6y0zDsBG3OCFW9+awASHEZ8tQ
+FhFPQRBFQVs5mfLP+7fqMtIzlrS1U96ylDk0YgpJ/PyYAoJa8kXzS1z/WUTnCAAF
+Z9YCZIIo+MdLQAQPNwpPVrphD/9TNIaOd8nSPqf2UnS7cKWfAfL2wd96Vs+aX0TI
+8j1gxbj6k0rLBGh6bsXTjznQi5Vp06baTudqAKSXBAvofkccPhq4BCCFRHP2urPf
+2OtUk5aQZqYbITWbjGWU
+=EiSu
+-----END PGP SIGNATURE-----
+
+--wIc/V6YLA2QdyfT4--
