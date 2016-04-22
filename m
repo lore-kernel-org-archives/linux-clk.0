@@ -1,71 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
-	paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v7 0/9] ARM: dts: DRA7: Add dt nodes for PWMSS
-Date: Tue, 26 Apr 2016 17:36:40 -0500
-Message-Id: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 22 Apr 2016 14:49:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 06/13] clk: gate: Add hw based registration APIs
+Message-ID: <20160422214953.GK13149@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+ <1461277324-27185-7-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461277324-27185-7-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for PWM for DRA7. The IP is the same as the
-one present in AM33XX and AM437XX.
+On 04/21, Stephen Boyd wrote:
+> Add registration APIs in the clk gate code to return struct
+> clk_hw pointers instead of struct clk pointers. This way we hide
+> the struct clk pointer from providers unless they need to use
+> consumer facing APIs.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
-and eQEP.
-
-The following are the biggest changes from v6 to v7:
-* Several patches to document previously undocumented bindings. 
-* Fix minor issues in binding documents.
-
-The following are the biggest changes from v5 to v6:
-* Created two new bindings to allow ECAP and PWM to grab their functional
-clock from DT rather than depending on PWMSS parent.
-* Pull in a couple of patches from the "Correct PWM bindings" series. This
-makes it a bit easier to understand.
-
->From the two patchsets a handful of patches have already been pulled in by
-maintainers and have already made it to linux-next. Therefore, this
-patch series is built ontop of the latest linux-next.
-
-Tested on:
-AM335x, AM437x and X15 + lcd w/backlight
-
-Franklin S Cooper Jr (8):
-  clk: ti: am335x/am4372: Add tbclk to pwm node
-  ARM: dts: am437x: Add missing compatibles to PWM binding documents
-  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
-  pwm: pwm-tiecap: Update dt binding document to use proper unit address
-  ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
-  pwms: pwm-ti*: Get the clock from the PWMSS parent when using old
-    bindings
-  ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
-  ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
-
-Vignesh R (1):
-  ARM: dts: DRA7: Add dt nodes for PWMSS
-
- .../devicetree/bindings/pwm/pwm-tiecap.txt         | 36 +++++++--
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 36 +++++++--
- .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 33 +++++++-
- arch/arm/boot/dts/am33xx.dtsi                      | 36 ++++++---
- arch/arm/boot/dts/am4372.dtsi                      | 63 ++++++++++-----
- arch/arm/boot/dts/da850.dtsi                       | 15 ++--
- arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
- .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
- .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 ---------------
- .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 --------------------
- arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
- arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 -------------
- drivers/clk/ti/clk-33xx.c                          |  3 +
- drivers/clk/ti/clk-43xx.c                          |  6 ++
- drivers/pwm/pwm-tiecap.c                           |  7 ++
- drivers/pwm/pwm-tiehrpwm.c                         |  7 ++
- 16 files changed, 279 insertions(+), 282 deletions(-)
+Applied to clk-next
 
 -- 
-2.7.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
