@@ -1,66 +1,79 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH 10/11] arm64: tegra: Add clock properties on cpu0 for
+ Tegra210
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+ <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
+ <571A0E95.9040203@nvidia.com> <20160422132325.GN9047@ulmo.ba.sec>
+CC: Penny Chiu <pchiu@nvidia.com>, <swarren@wwwdotorg.org>,
+	<gnurou@gmail.com>, <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+	<rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <571A28F2.5070203@nvidia.com>
+Date: Fri, 22 Apr 2016 14:36:50 +0100
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <4956403.scaVRGhPEf@diego>
-References: <1461225849-28074-1-git-send-email-joel@jms.id.au>
- <1461225849-28074-4-git-send-email-joel@jms.id.au> <4956403.scaVRGhPEf@diego>
-From: Joel Stanley <joel@jms.id.au>
-Date: Wed, 27 Apr 2016 18:01:00 +0930
-Message-ID: <CACPK8XfvLR+yZv77C0Eq=RsPOufrwvQjdPtBhnufNc=eJRLZYg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] doc/devicetree: Add Aspeed clock bindings
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160422132325.GN9047@ulmo.ba.sec>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 21, 2016 at 8:50 PM, Heiko St=C3=BCbner <heiko@sntech.de> wrote=
-:
-> [+clock-related patches should include clock-maintainers and lists]
 
-Thanks.
+On 22/04/16 14:23, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, Apr 22, 2016 at 12:44:21PM +0100, Jon Hunter wrote:
+>> Hi Penny,
+>>
+>> On 22/04/16 11:31, Penny Chiu wrote:
+>>> Add clocks, clock-names, and clock-latency into cpu0 node.
+>>> These properties will be used by cpufreq driver.
+>>>
+>>> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
+>>> ---
+>>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>> index 204d9cd..1a85857 100644
+>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>> @@ -782,6 +782,12 @@
+>>>  			device_type = "cpu";
+>>>  			compatible = "arm,cortex-a57";
+>>>  			reg = <0>;
+>>> +			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
+>>> +				 <&tegra_car TEGRA210_CLK_PLL_X>,
+>>> +				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
+>>> +				 <&dfll>;
+>>> +			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
+>>> +			clock-latency = <300000>;
+>>>  		};
+>>>  
+>>>  		cpu@1 {
+>>>
+>>
+>> Can you include a patch with this series to update the binding
+>> documentation for the nvidia,tegra124-cpufreq.txt? I think that although
+>> there is no specific nvidia,tegra210-cpufreq compatible string the
+>> documentation should state that both tegra124 and tegra210 are supported
+>> so it is clear.
+>>
+>> Also I see the above binding no longer includes the "cpu_lp" for
+>> tegra210 which I understand we don't use here. However, the binding
+>> documentation should reflect this. Having said that, looking at the
+>> driver it appears the "cpu_lp" clock is not even used for tegra124. I
+>> wonder if we should drop this from the binding documentation and the
+>> tegra124.dtsi altogether?
+>>
+>> What about the "vdd-cpu-supply" property? Don't we need this?
+> 
+> For some reason that seems to have moved into the clock@70110000 node.
 
-> Am Donnerstag, 21. April 2016, 17:34:01 schrieb Joel Stanley:
->> +For example:
->> +
->> +     clk_clkin: clk_clkin {
->> +             #clock-cells =3D <0>;
->> +             compatible =3D "fixed-clock";
->> +             clock-frequency =3D <48000000>;
->> +     };
->> +
->> +     clk_hpll: clk_hpll {
->> +             compatible =3D "aspeed,g4-hpll-clock";
->> +             #clock-cells =3D <0>;
->> +             reg =3D <0x1e6e2008 0x4>;
->> +     };
->> +
->> +     clk_apb: clk_apb@1e6e2008 {
->> +             #clock-cells =3D <0>;
->> +             compatible =3D "aspeed,g4-apb-clock";
->> +             reg =3D <0x1e6e2008 0x4>;
->> +             clocks =3D <&clk_hpll>;
->> +     };
->
-> You have both the hpll and apb_clk in the same register (probably even mo=
-re
-> clocks?) and separate clock instances where each instance will of_iomap t=
-he
-> register itself (and thus multiple times in general).
+Yes I saw that. I surprised that the cpufreq driver would probe without
+this, unless I am missing something ...
 
-Yep. I agree that's not ideal.
-
->
-> From what I remember exposing the clock controller as one block (instead =
-of
-> declaring each clock individually in the dts) is still the preferred way =
-but I
-> don't think I can find Mike's mail from back then easily.
-
-I can't picture how that would look. I took my lead from the moxart
-clock driver; is there a better example that I should follow?
-
-Cheers,
-
-Joel
+Jon
