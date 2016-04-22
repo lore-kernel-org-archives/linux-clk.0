@@ -1,51 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.137]:50722 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932079AbcDTLM0 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2016 07:12:26 -0400
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org, heiko@sntech.de
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-	elaine.zhang@rock-chips.com, jay.xu@rock-chips.com,
-	dianders@chromium.org, Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH 6/6] clk: rockchip: rk3399: fix the gate bit for i2c4 and i2c8
-Date: Wed, 20 Apr 2016 19:12:10 +0800
-Message-Id: <1461150730-29787-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
-References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+ t-kristo@ti.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
+ vigneshr@ti.com, nsekhar@ti.com
+Subject: [PATCH v6 2/7] pwm: pwm-tiehrpwm: Update dt binding document to use
+ generic node name
+Date: Fri, 22 Apr 2016 11:40:33 -0500
+Message-Id: <1461343238-29274-3-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The gate bits of the i2c4 and i2c8 are incorrect due to the manual
-error, we need to fix them.
+Now that the node name has been changed from ehrpwm to pwm the document
+should show this proper usage. Also change the unit address in the example
+from 0 to the proper physical address value that should be used.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index e81cc85..3c5ab39 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1411,11 +1411,11 @@ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 9c100b2..0f9ba50 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -15,14 +15,14 @@ Optional properties:
  
- 	COMPOSITE_NOMUX(SCLK_I2C4_PMU, "clk_i2c4_pmu", "ppll", 0,
- 			RK3399_PMU_CLKSEL_CON(3), 0, 7, DFLAGS,
--			RK3399_PMU_CLKGATE_CON(0), 11, GFLAGS),
-+			RK3399_PMU_CLKGATE_CON(0), 10, GFLAGS),
+ Example:
  
- 	COMPOSITE_NOMUX(SCLK_I2C8_PMU, "clk_i2c8_pmu", "ppll", 0,
- 			RK3399_PMU_CLKSEL_CON(2), 8, 7, DFLAGS,
--			RK3399_PMU_CLKGATE_CON(0), 10, GFLAGS),
-+			RK3399_PMU_CLKGATE_CON(0), 11, GFLAGS),
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
++ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+ 	compatible = "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x100>;
+ 	ti,hwmods = "ehrpwm0";
+ };
  
- 	DIV(0, "clk_32k_suspend_pmu", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3399_PMU_CLKSEL_CON(4), 0, 10, DFLAGS),
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
++ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
+ 	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x300000 0x2000>;
 -- 
-1.7.9.5
+2.7.0
 
 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
