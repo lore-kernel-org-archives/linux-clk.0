@@ -1,73 +1,218 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [RESEND PATCH 8/8] clk: imx7d: only enable minimum required clocks
-Date: Wed, 20 Apr 2016 17:34:40 +0800
-Message-ID: <1461144880-8724-9-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34856 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753414AbcDVQk4 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 12:40:56 -0400
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+	t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, devicetree@vger.kernel.org, vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v6 7/7] ARM: dts: DRA7: Add dt nodes for PWMSS
+Date: Fri, 22 Apr 2016 11:40:38 -0500
+Message-Id: <1461343238-29274-8-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Formerly clk core does not support imx7d clock type well that all
-its clock operations requires the parent clock on.
-Therefore we enabled all clocks by default in clock driver
-initialization for other module clocks operate well.
+From: Vignesh R <vigneshr@ti.com>
 
-After patch 'clk: imx7d: using api with flag CLK_OPS_PARENT_ON',
-clk core can handle such clock type well, so we don't have to enable
-them all by default anymore. Instead, we only enable a minimum required
-set of clocks.
+Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+for dt bindings.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+[fcooper@ti.com: Add eCAP and use updated bindings for PWMSS and ePWM]
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 ---
- drivers/clk/imx/clk-imx7d.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/pwm/pwm-tiecap.txt         |  9 +++
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  9 +++
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 15 +++-
+ arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
+ 4 files changed, 122 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 980b2b8..18d23da 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -361,6 +361,14 @@ static const char *pll_enet_bypass_sel[] = { "pll_enet_main", "pll_enet_main_src
- static const char *pll_audio_bypass_sel[] = { "pll_audio_main", "pll_audio_main_src", };
- static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_src", };
- 
-+static int const clks_init_on[] __initconst = {
-+	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
-+	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
-+	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
-+	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
-+	IMX7D_AHB_CHANNEL_ROOT_CLK,
-+};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+index 39277b6..2e1c1f1 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible: Must be "ti,<soc>-ecap".
+   for am33xx - compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
+   for da850  - compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
++  for dra746 - compatible = "ti,dra746-ecap", "ti,am3352-ecap";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The PWM channel index ranges from 0 to 4. The only third
+   cell flag supported by this binding is PWM_POLARITY_INVERTED.
+@@ -28,3 +29,11 @@ ecap0: ecap@0 { /* ECAP on da850 */
+ 	#pwm-cells = <3>;
+ 	reg = <0x306000 0x80>;
+ };
 +
- static struct clk_onecell_data clk_data;
++ecap0: ecap@4843e100 {
++	compatible = "ti,dra746-ecap", "ti,am3352-ecap";
++	#pwm-cells = <3>;
++	reg = <0x4843e100 0x80>;
++	clocks = <&l4_root_clk_div>;
++	clock-names = "fck";
++};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index ac1eae6..7eaae2a 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible: Must be "ti,<soc>-ehrpwm".
+   for am33xx - compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+   for da850  - compatible = "ti,da850-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
++  for dra746 - compatible = "ti,dra746-ehrpwm", "ti-am3352-ehrpwm";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -28,3 +29,11 @@ ehrpwm0: pwm@300000 { /* EHRPWM on da850 */
+ 	#pwm-cells = <3>;
+ 	reg = <0x300000 0x2000>;
+ };
++
++ehrpwm0: pwm@4843e200 { /* EHRPWM on dra746 */
++	compatible = "ti,dra746-ehrpwm", "ti,am3352-ehrpwm";
++	#pwm-cells = <3>;
++	reg = <0x48440200 0x80>;
++	clocks = <&ehrpwm0_tbclk>, <&l4_root_clk_div>;
++	clock-names = "tbclk", "fck";
++};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+index f7eae77..29945ed 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+@@ -1,7 +1,9 @@
+ TI SOC based PWM Subsystem
  
- static struct clk ** const uart_clks[] __initconst = {
-@@ -846,14 +854,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_data.clk_num = ARRAY_SIZE(clks);
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ Required properties:
+-- compatible: Must be "ti,am33xx-pwmss";
++- compatible: Must be "ti,<soc>-pwmss".
++  for am33xx - compatible = "ti,am33xx-pwmss"
++  for dra746 - compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss"
+ - reg: physical base address and size of the registers map.
+ - address-cells: Specify the number of u32 entries needed in child nodes.
+ 		  Should set to 1.
+@@ -29,3 +31,14 @@ pwmss0: pwmss@48300000 {
  
--	/* TO BE FIXED LATER
--	 * Enable all clock to bring up imx7, otherwise system will be halt and block
--	 * the other part upstream Because imx7d clock design changed, clock framework
--	 * need do a little modify.
--	 * Dong Aisheng is working on this. After that, this part need be changed.
--	 */
--	for (i = 0; i < IMX7D_CLK_END; i++)
--		clk_prepare_enable(clks[i]);
-+	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
-+		clk_prepare_enable(clks[clks_init_on[i]]);
+ 	/* child nodes go here */
+ };
++
++epwmss0: epwmss@4843e000 { /* On DRA7xx */
++	compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++	reg = <0x4843e000 0x30>;
++	ti,hwmods = "epwmss0";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges;
++
++	/* child nodes go here */
++};
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index e007401..5a21e46 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -1743,6 +1743,96 @@
+ 				clock-names = "fck", "sys_clk";
+ 			};
+ 		};
++
++		epwmss0: epwmss@4843e000 {
++			compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++			reg = <0x4843e000 0x30>;
++			ti,hwmods = "epwmss0";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges;
++
++			ehrpwm0: pwm@4843e200 {
++				compatible = "ti,dra746-ehrpwm",
++					     "ti,am3352-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x4843e200 0x80>;
++				clocks = <&ehrpwm0_tbclk>, <&l4_root_clk_div>;
++				clock-names = "tbclk", "fck";
++				status = "disabled";
++			};
++
++			ecap0: ecap@4843e100 {
++				compatible = "ti,dra746-ecap",
++					     "ti,am3352-ecap";
++				#pwm-cells = <3>;
++				reg = <0x4843e100 0x80>;
++				clocks = <&l4_root_clk_div>;
++				clock-names = "fck";
++				status = "disabled";
++			};
++		};
++
++		epwmss1: epwmss@48440000 {
++			compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++			reg = <0x48440000 0x30>;
++			ti,hwmods = "epwmss1";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges;
++
++			ehrpwm1: pwm@48440200 {
++				compatible = "ti,dra746-ehrpwm",
++					     "ti,am3352-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x48440200 0x80>;
++				clocks = <&ehrpwm1_tbclk>, <&l4_root_clk_div>;
++				clock-names = "tbclk", "fck";
++				status = "disabled";
++			};
++
++			ecap1: ecap@48440100 {
++				compatible = "ti,dra746-ecap",
++					     "ti,am3352-ecap";
++				#pwm-cells = <3>;
++				reg = <0x48440100 0x80>;
++				clocks = <&l4_root_clk_div>;
++				clock-names = "fck";
++				status = "disabled";
++			};
++		};
++
++		epwmss2: epwmss@48442000 {
++			compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++			reg = <0x48442000 0x30>;
++			ti,hwmods = "epwmss2";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges;
++
++			ehrpwm2: pwm@48442200 {
++				compatible = "ti,dra746-ehrpwm",
++					     "ti,am3352-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x48442200 0x80>;
++				clocks = <&ehrpwm2_tbclk>, <&l4_root_clk_div>;
++				clock-names = "tbclk", "fck";
++				status = "disabled";
++			};
++
++			ecap2: ecap@48442100 {
++				compatible = "ti,dra746-ecap",
++					     "ti,am3352-ecap";
++				#pwm-cells = <3>;
++				reg = <0x48442100 0x80>;
++				clocks = <&l4_root_clk_div>;
++				clock-names = "fck";
++				status = "disabled";
++			};
++		};
+ 	};
  
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 	thermal_zones: thermal-zones {
 -- 
-1.9.1
+2.7.0
+
