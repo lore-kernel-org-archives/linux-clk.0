@@ -1,29 +1,49 @@
-Return-Path: <benh@kernel.crashing.org>
-Message-ID: <1461832706.2791.0.camel@kernel.crashing.org>
-Subject: Re: [PATCH v2 03/11] doc/devicetree: Add Aspeed clock bindings
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Joel Stanley
-	 <joel@jms.id.au>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-        Jeremy Kerr <jk@ozlabs.org>, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Date: Thu, 28 Apr 2016 18:38:26 +1000
-In-Reply-To: <4459295.XmBqACy0jk@diego>
-References: <1461225849-28074-1-git-send-email-joel@jms.id.au>
-	 <4956403.scaVRGhPEf@diego>
-	 <CACPK8XfvLR+yZv77C0Eq=RsPOufrwvQjdPtBhnufNc=eJRLZYg@mail.gmail.com>
-	 <4459295.XmBqACy0jk@diego>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 22 Apr 2016 15:36:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: Add is_enabled sanity check
+Message-ID: <20160422223601.GV13149@codeaurora.org>
+References: <1461292356-26043-1-git-send-email-jun.nie@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461292356-26043-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-04-27 at 11:12 +0200, Heiko Stübner wrote:
-> I guess the design would depend on the actual layout of your clock- /
-> system-
-> controller - aka what else is contained there.
+On 04/22, Jun Nie wrote:
+> If .enable and .disable is implemented, we must implement .is_enabled
+> per document. Otherwise, clk_disable_unused_subtree will not disable
+> the unused clock if the .is_enabled is not implemented, unecessary
+> power consumption happens on the clock as a result.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/clk/clk.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f13c3f4..5e63bee 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2526,6 +2526,10 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>  	int i, ret;
+>  	struct clk_core *core;
+>  
+> +	if (hw->init->ops->enable && !hw->init->ops->is_enabled)
+> +		pr_warn("Warning: %s %s must implement .is_enabled\n",
+> +			__func__, hw->init->name);
+> +
+>  	core = kzalloc(sizeof(*core), GFP_KERNEL);
+>  	if (!core) {
+>  		ret = -ENOMEM;
 
-One register controls most clocks so it makes sense to have one driver.
+Please move this to the place we check for other clk ops sanity.
+Also, any idea how many drivers are not implementing is_enabled
+but are implementing enable/disable?
 
-Cheers,
-Ben.
+Also, why isn't prepare/unprepare as important?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
