@@ -1,60 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 14 Apr 2016 17:56:34 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Vaishali Thakkar <vaishali.thakkar@oracle.com>
-Cc: emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: Use resource_size
-Message-ID: <20160414155634.GP4005@lukather>
-References: <1460350383-7661-1-git-send-email-vaishali.thakkar@oracle.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v8, 2/7] ARM64: dts: ls2080a: add device configuration node
+Date: Fri, 22 Apr 2016 14:27:39 +0800
+Message-ID: <1461306464-19521-3-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
+References: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jcwRHPSxFqmwpRFb"
-In-Reply-To: <1460350383-7661-1-git-send-email-vaishali.thakkar@oracle.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: ulf.hansson@linaro.org, Zhao Qiang <qiang.zhao@freescale.com>,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ scott.wood@nxp.com, Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>, Kumar
+ Gala <galak@codeaurora.org>, leoyang.li@nxp.com, xiaobo.xie@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
---jcwRHPSxFqmwpRFb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On Mon, Apr 11, 2016 at 10:23:03AM +0530, Vaishali Thakkar wrote:
-> Use the function resource_size instaed of explicit computation.
->=20
-> Problem found using Coccinelle.
->=20
-> Signed-off-by: Vaishali Thakkar <vaishali.thakkar@oracle.com>
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index 9d746c6..8724cf1 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -191,6 +191,12 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
+-- 
+2.1.0.27.g96db324
 
-Applied, thanks !
-Maxime
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---jcwRHPSxFqmwpRFb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXD72yAAoJEBx+YmzsjxAgw0IP/1HvDD9x32ExKr17Eqtow2q6
-JmpmwNwZG6iGm94Pr7/Ev0d1FftUuzALoFnV5r91SK4UkzuGFCXv6+FJwgJr24fO
-HlgfCTY7Vi0xRFRUepvZ4Yg+axzQAF1T5Y6VzLAqQejWClSUui28CSRBgnt5rlTm
-K/XhWQ9jB75fXjiPg6/a/FjSgbVpqepyl3y5vlv+9PEyXpmB+6dQ4x3ayhXmp78J
-ko8Hx4doRZiU9Br4DKPSMdJDm2mIDop2vxTwI6c8+Pj2K6CDKKrMo0/c3skBUHCL
-ra4/i00zGkAWx4d9ZmQP9c9LWU/fNVnUbx8adMdCCbkx+QXfdWyH0lxpZrVsuA1A
-KeuWmkeDgSj6QU9cUDFEstD/jjFXc2MZjhVk1fUCKaX4i6UYqM0zAqImpzd7fz5y
-mAI3AsjvfXkU+9mI0yVDOqK1dbYD6rqSrr0rcmlkG4U/au6NsAO26R/ELLstxL3h
-ZI7lRjTV9wqXXGSY64Fn42pQRrlbxcJZCguEBJLNLMKVuuILQ9DgS0m+17zIpP/H
-xxxtF1K/nlkW0aquujvMX/CCzLl+ds9iSN2/uf8GMx/oR8QwJVbzKEcXR/WozKdq
-nwtc834EdNsjPNT6ANtKyBKCrv9ptw+NgYUS4iFFS2+vPyqx0UWXfbfI6mOEQH9n
-cbdL75MmvbdGdT1fzQIP
-=SXh/
------END PGP SIGNATURE-----
-
---jcwRHPSxFqmwpRFb--
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
