@@ -1,47 +1,39 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 15/30] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Mon, 11 Apr 2016 11:19:06 +0300
-Message-ID: <1460362761-4842-16-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
-References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 22 Apr 2016 14:44:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 02/13] clk: Add {devm_}clk_hw_{register,unregister}()
+ APIs
+Message-ID: <20160422214449.GH13149@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+ <1461277324-27185-3-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461277324-27185-3-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
+On 04/21, Stephen Boyd wrote:
+> We've largely split the clk consumer and provider APIs along
+> struct clk and struct clk_hw, but clk_register() still returns a
+> struct clk pointer for each struct clk_hw that's registered.
+> Eventually we'd like to only allocate struct clks when there's a
+> user, because struct clk is per-user now, so clk_register() needs
+> to change.
+> 
+> Let's add new APIs to register struct clk_hws, but this time
+> we'll hide the struct clk from the caller by returning an int
+> error code. Also add an unregistration API that takes the clk_hw
+> structure that was passed to the registration API. This way
+> provider drivers never have to deal with a struct clk pointer
+> unless they're using the clk consumer APIs.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- include/linux/clk/ti.h |    4 ----
- 1 file changed, 4 deletions(-)
+Applied to clk-next
 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 210e946..1451291 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -127,8 +127,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -143,8 +141,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
