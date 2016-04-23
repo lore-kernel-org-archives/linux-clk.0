@@ -1,79 +1,48 @@
-Return-Path: <kernel@martin.sperl.org>
-References: <1461770664-29384-1-git-send-email-kernel@martin.sperl.org> <87d1p9v5z5.fsf@eliezer.anholt.net>
-Mime-Version: 1.0 (1.0)
-In-Reply-To: <87d1p9v5z5.fsf@eliezer.anholt.net>
-Content-Type: text/plain;
-	charset=us-ascii
-Message-Id: <66DC3759-FEAB-4B65-BAB4-94D0C2BD70F8@martin.sperl.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-From: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V3] clk: bcm2835: mark enabled clocks with CLK_ENABLE_HAND_OFF
-Date: Thu, 28 Apr 2016 22:56:29 +0200
-To: Eric Anholt <eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:36851 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751770AbcDWKZg (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2016 06:25:36 -0400
+Date: Sat, 23 Apr 2016 13:25:16 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: maxime.ripard@free-electrons.com
+Cc: linux-clk@vger.kernel.org
+Subject: re: clk: sunxi: Add TCON channel1 clock
+Message-ID: <20160423102516.GA14424@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Maxime Ripard,
 
+The patch cc510c736b1b: "clk: sunxi: Add TCON channel1 clock" from
+Jul 1, 2015, leads to the following static checker warning:
 
-> On 28.04.2016, at 22:22, Eric Anholt <eric@anholt.net> wrote:
->=20
-> kernel@martin.sperl.org writes:
->=20
->> From: Martin Sperl <kernel@martin.sperl.org>
->>=20
->> The bcm2835 firmware enables several clocks and plls before
->> booting the linux kernel.
->>=20
->> These plls should never get disabled as it may result in a
->> stopped system clock and more.
->>=20
->> So during probing we check if the clock is enabled
->> and if it is then mark that clock with CLK_ENABLE_HAND_OFF.
->> As a consequence this will also enable the corresponding
->> parent plls and pll-divs.
->>=20
->> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
->>=20
->> --
->=20
->> ---
->> drivers/clk/bcm/clk-bcm2835.c | 8 ++++++++
->> 1 file changed, 8 insertions(+)
->>=20
->> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.=
-c
->> index 35f8de7..65d62c2 100644
->> --- a/drivers/clk/bcm/clk-bcm2835.c
->> +++ b/drivers/clk/bcm/clk-bcm2835.c
->> @@ -1251,7 +1251,14 @@ static struct clk *bcm2835_register_clock(struct b=
-cm2835_cprman *cprman,
->>        init.flags |=3D CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
->>    }
->>=20
->> +    /* if the clock is running then enable HAND_OFF */
->> +    if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
->> +        dev_info(cprman->dev,
->> +             "found enabled clock %s - enabling hand off\n",
->> +             data->name);
->> +        init.flags |=3D CLK_ENABLE_HAND_OFF;
->> +    }
->> +
->=20
-> The debug shouldn't be at dev_info() level, but other than that this
-> seems like a good plan once CLK_ENABLE_HAND_OFF lands.
+	drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:89 tcon_ch1_get_parent()
+	warn: signedness bug returning '(-22)'
 
-Until that point in time we can make those clocks critical.
+drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+    79  static u8 tcon_ch1_get_parent(struct clk_hw *hw)
+               ^^
+Is u8.
 
-I could split it into a 2 part patch first with critical and when we
-have hand off then we can apply the second part that moves to
-hand-off.
+    80  {
+    81          struct tcon_ch1_clk *tclk = hw_to_tclk(hw);
+    82          int num_parents = clk_hw_get_num_parents(hw);
+    83          u32 reg;
+    84  
+    85          reg = readl(tclk->reg) >> TCON_CH1_SCLK2_MUX_SHIFT;
+    86          reg &= reg >> TCON_CH1_SCLK2_MUX_MASK;
+    87  
+    88          if (reg >= num_parents)
+    89                  return -EINVAL;
+                        ^^^^^^^^^^^^^^
+Can't fit.
 
-That way the current issue is solved - even if in a sub-optimal way.
-But the path forward is shown.
+    90  
+    91          return reg;
+    92  }
 
-Should I do this?
-
-Martin=
+regards,
+dan carpenter
