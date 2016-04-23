@@ -1,84 +1,66 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 12 Apr 2016 00:42:45 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 00/46] pwm: add support for atomic update
-Message-ID: <20160412004245.715db791@bbrezillon>
-In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:50085 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751931AbcDWHvo (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2016 03:51:44 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<robh+dt@kernel.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<hermit.wangheming@hisilicon.com>, <jiangheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 0/3] clock: hisilicon: Add CRG driver for hi3519 soc
+Date: Sat, 23 Apr 2016 15:40:27 +0800
+Message-ID: <1461397230-1757-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Thierry,
+This patch set is mainly used to support CRG driver for hi3519 soc.
+It's inherited from the patchset "[RESEND PATCH v10 0/6] ARM: hisi:
+Add initial support including clock driver for Hi3519 soc" (see 
+https://lkml.org/lkml/2016/3/31/175) and includes the patch "[PATCH
+v2] reset: hisilicon: add reset controller driver for hisilicon SOCs"(
+see https://lkml.org/lkml/2016/4/21/126). If the reset patch is OK, I
+hope it can be merged seperately. Because other upcoming hisilicon CRG
+drivers also depend on it. Thank you very much!
 
-On Wed, 30 Mar 2016 22:03:23 +0200
-Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+change log
+v1:
+-Added header <linux/clk-provider.h>.
+-Removed CLK_IS_ROOT.
+-Added some cleanup codes in error case in the probe function. 
+-Removed module_exit(hi3519_clk_exit)
+    The reason is that this clock driver won't be removed during
+ the system running actually. Just like some clock drivers use 
+ builtin_platform_driver(). 
 
-> Hello,
-> 
-> This series adds support for atomic PWM update, or IOW, the capability
-> to update all the parameters of a PWM device (enabled/disabled, period,
-> duty and polarity) in one go.
-> 
-> It also adds support for initial PWM state retrieval (or hardware readout),
-> which should allow smooth handover between the bootloader and Linux. For
-> example, critical PWM users (like critical regulators controlled by a PWM)
-> can query the current PWM state, and adapt the PWM config without having
-> to disable/enable the PWM, or abruptly change the period/dutycyle/polarity
-> config.
-> 
-> Thierry, I hope this version meets your expectations, if that's not the
-> case, could you let me know quickly so I can adjust the implementation
-> accordingly (I'd really like to get most of those changes in 4.7).
+Jiancheng Xue (3):
+  reset: hisilicon: add reset controller driver for hisilicon SOCs
+  clk: hisilicon: export some hisilicon APIs to modules
+  clk: hisilicon: add CRG driver for hi3519 soc
 
-Still haven't had a clear feedback from your side on this series (you
-commented on a few details, but nothing on the general approach). Could
-you please have at a quick look at it, and let me know if I should
-adjust the implementation?
-
-Note that I plan to send a new version  addressing comments made by
-other maintainers/developers by the end of the week. In the meantime,
-could you have a look at the first set of patches (patch 1 to 4 are
-completely independent), and apply them if you're happy with it.
-
-As you can see, I now have a lot of patches. This helps in showing the
-big picture, but also annoys people when I send this 50+ patchset. So,
-if you don't mind, I'd like to drop the changes touching PWM user
-drivers (to make them use the atomic API) until we get the other parts
-applied.
-
-Thanks,
-
-Boris
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
+ drivers/clk/hisilicon/Kconfig                      |  15 +++
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 131 ++++++++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  23 ++--
+ drivers/clk/hisilicon/clk.h                        |  14 +--
+ drivers/clk/hisilicon/reset.c                      | 134 +++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  36 ++++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 ++++++
+ 9 files changed, 426 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.9.1
+
