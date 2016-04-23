@@ -1,129 +1,253 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v5 4/5] dt-bindings: arm: add DT binding for Marvell CP110 system controller
-Date: Thu, 14 Apr 2016 17:33:32 +0200
-Message-Id: <1460648013-31320-5-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:1183 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751931AbcDWHvx (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2016 03:51:53 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<robh+dt@kernel.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<hermit.wangheming@hisilicon.com>, <jiangheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 1/3] reset: hisilicon: add reset controller driver for hisilicon SOCs
+Date: Sat, 23 Apr 2016 15:40:28 +0800
+Message-ID: <1461397230-1757-2-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1461397230-1757-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1461397230-1757-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the Marvell CP110
-system controller, which is part of the CP110 HW block, itself used in
-the Marvell Armada 7K and 8K SoCs.
+In most of hisilicon SOCs, reset controller and clock provider are
+combined together as a block named CRG (Clock and Reset Generator).
+This patch mainly implements the reset function.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- .../arm/marvell/cp110-system-controller0.txt       | 83 ++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+ drivers/clk/hisilicon/Kconfig  |   7 +++
+ drivers/clk/hisilicon/Makefile |   1 +
+ drivers/clk/hisilicon/reset.c  | 134 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h  |  36 +++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index e434854..3cd349c 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -5,6 +5,13 @@ config COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
+ 
++config RESET_HISI
++	bool "HiSilicon Reset Controller Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	select RESET_CONTROLLER
++	help
++	  Build reset controller driver for HiSilicon device chipsets.
++
+ config STUB_CLK_HI6220
+ 	bool "Hi6220 Stub Clock Driver"
+ 	depends on COMMON_CLK_HI6220 && MAILBOX
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 74dba31..c037753 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
++obj-$(CONFIG_RESET_HISI)	+= reset.o
+ obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
 new file mode 100644
-index 0000000..30c5469
+index 0000000..6aa49c2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -0,0 +1,83 @@
-+Marvell Armada CP110 System Controller 0
-+========================================
++++ b/drivers/clk/hisilicon/reset.c
+@@ -0,0 +1,134 @@
++/*
++ * Hisilicon Reset Controller Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+The CP110 is one of the two core HW blocks of the Marvell Armada 7K/8K
-+SoCs. It contains two sets of system control registers, System
-+Controller 0 and System Controller 1. This Device Tree binding allows
-+to describe the first system controller, which provides registers to
-+configure various aspects of the SoC.
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include "reset.h"
 +
-+The Device Tree node representing this System Controller 0 provides a
-+number of clocks:
++#define	HISI_RESET_BIT_MASK	0x1f
++#define	HISI_RESET_OFFSET_SHIFT	8
++#define	HISI_RESET_OFFSET_MASK	0xffff00
 +
-+ - a set of core clocks
-+ - a set of gatable clocks
++struct hisi_reset_controller {
++	spinlock_t	lock;
++	void __iomem	*membase;
++	struct reset_controller_dev	rcdev;
++};
 +
-+Those clocks can be referenced by other Device Tree nodes using two
-+cells:
-+ - The first cell must be 0 or 1. 0 for the core clocks and 1 for the
-+   gatable clocks.
-+ - The second cell identifies the particular core clock or gatable
-+   clocks.
 +
-+The following clocks are available:
-+ - Core clocks
-+   - 0 0	APLL
-+   - 0 1	PPv2 core
-+   - 0 2	EIP
-+   - 0 3	Core
-+   - 0 4	NAND core
-+ - Gatable clocks
-+   - 1 0	Audio
-+   - 1 1	Comm Unit
-+   - 1 2	NAND
-+   - 1 3	PPv2
-+   - 1 4	SDIO
-+   - 1 5	MG Domain
-+   - 1 6	MG Core
-+   - 1 7	XOR1
-+   - 1 8	XOR0
-+   - 1 9	GOP DP
-+   - 1 11	PCIe x1 0
-+   - 1 12	PCIe x1 1
-+   - 1 13	PCIe x4
-+   - 1 14	PCIe / XOR
-+   - 1 15	SATA
-+   - 1 16	SATA USB
-+   - 1 17	Main
-+   - 1 18	SD/MMC
-+   - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
-+   - 1 22	USB3H0
-+   - 1 23	USB3H1
-+   - 1 24	USB3 Device
-+   - 1 25	EIP150
-+   - 1 26	EIP197
++#define to_hisi_reset_controller(rcdev)  \
++	container_of(rcdev, struct hisi_reset_controller, rcdev)
 +
-+Required properties:
++static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
++			const struct of_phandle_args *reset_spec)
++{
++	u32 offset;
++	u8 bit;
 +
-+ - compatible: must be:
-+     "marvell,cp110-system-controller0", "syscon";
-+ - reg: register area of the CP110 system controller 0
-+ - #clock-cells: must be set to 2
-+ - core-clock-output-names must be set to:
-+	"cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
-+ - gate-clock-output-names must be set to:
-+	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
-+	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
-+	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
-+	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
-+	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
++	offset = (reset_spec->args[0] << HISI_RESET_OFFSET_SHIFT)
++		& HISI_RESET_OFFSET_MASK;
++	bit = reset_spec->args[1] & HISI_RESET_BIT_MASK;
 +
-+Example:
++	return (offset | bit);
++}
 +
-+	cpm_syscon0: system-controller@440000 {
-+		compatible = "marvell,cp110-system-controller0", "syscon";
-+		reg = <0x440000 0x1000>;
-+		#clock-cells = <2>;
-+		core-clock-output-names = "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core";
-+		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
-+			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
-+			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
-+			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
-+			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
-+	};
++static int hisi_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
++
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
++
++	spin_lock_irqsave(&rstc->lock, flags);
++
++	reg = readl(rstc->membase + offset);
++	writel(reg | BIT(bit), rstc->membase + offset);
++
++	spin_unlock_irqrestore(&rstc->lock, flags);
++
++	return 0;
++}
++
++static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
++
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
++
++	spin_lock_irqsave(&rstc->lock, flags);
++
++	reg = readl(rstc->membase + offset);
++	writel(reg & ~BIT(bit), rstc->membase + offset);
++
++	spin_unlock_irqrestore(&rstc->lock, flags);
++
++	return 0;
++}
++
++static const struct reset_control_ops hisi_reset_ops = {
++	.assert		= hisi_reset_assert,
++	.deassert	= hisi_reset_deassert,
++};
++
++struct hisi_reset_controller *hisi_reset_init(struct device_node *np)
++{
++	struct hisi_reset_controller *rstc;
++
++	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
++	if (!rstc)
++		return NULL;
++
++	rstc->membase = of_iomap(np, 0);
++	if (!rstc->membase) {
++		kfree(rstc);
++		return NULL;
++	}
++
++	spin_lock_init(&rstc->lock);
++
++	rstc->rcdev.owner = THIS_MODULE;
++	rstc->rcdev.ops = &hisi_reset_ops;
++	rstc->rcdev.of_node = np;
++	rstc->rcdev.of_reset_n_cells = 2;
++	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
++	reset_controller_register(&rstc->rcdev);
++
++	return rstc;
++}
++EXPORT_SYMBOL_GPL(hisi_reset_init);
++
++void hisi_reset_exit(struct hisi_reset_controller *rstc)
++{
++	reset_controller_unregister(&rstc->rcdev);
++	iounmap(rstc->membase);
++	kfree(rstc);
++}
++EXPORT_SYMBOL_GPL(hisi_reset_exit);
+diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+new file mode 100644
+index 0000000..677d773
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.h
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef	__HISI_RESET_H
++#define	__HISI_RESET_H
++
++struct device_node;
++struct hisi_reset_controller;
++
++#ifdef CONFIG_RESET_CONTROLLER
++struct hisi_reset_controller *hisi_reset_init(struct device_node *np);
++void hisi_reset_exit(struct hisi_reset_controller *rstc);
++#else
++static inline hisi_reset_controller *hisi_reset_init(struct device_node *np)
++{
++	return 0;
++}
++static inline void hisi_reset_exit(struct hisi_reset_controller *rstc)
++{}
++#endif
++
++#endif	/* __HISI_RESET_H */
 -- 
-2.6.4
+1.9.1
+
