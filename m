@@ -1,456 +1,301 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com, arnd@arndb.de, k.kozlowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, olof@lixom.net, geert+renesas@glider.be, sjoerd.simons@collabora.co.uk, treding@nvidia.com, public_timo.s@silentcreek.de
-Subject: [PATCH 4/6] regulator: rk8xx: Migrate to regulator core's simplified DT parsing code
-Date: Fri, 15 Apr 2016 11:16:28 +0200
-Message-Id: <1460711790-22646-5-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
-References: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <yanhaifeng@hisilicon.com>,
+        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+        <raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+        <hermit.wangheming@hisilicon.com>, <jiangheng@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 3/3] clk: hisilicon: add CRG driver for hi3519 soc
+Date: Sat, 23 Apr 2016 15:40:30 +0800
+Message-ID: <1461397230-1757-4-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1461397230-1757-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1461397230-1757-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-A common simplified DT parsing code for regulators was introduced in
-commit a0c7b164ad11 ("regulator: of: Provide simplified DT parsing
-method")
+The CRG(Clock and Reset Generator) block provides clock
+and reset signals for other modules in hi3519 soc.
 
-While at it also added RK8XX_DESC and RK8XX_DESC_SWITCH macros for the
-regulator_desc struct initialization. This just makes the driver more compact.
-Remove also linear ranges definitions with only one range.
-
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-Changes since RFC:
-* dropped of_regulator_match
----
- drivers/regulator/rk8xx-regulator.c | 308 +++++++++++++-----------------------
- 1 file changed, 114 insertions(+), 194 deletions(-)
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ++++++++
+ drivers/clk/hisilicon/Kconfig                      |   8 ++
+ drivers/clk/hisilicon/Makefile                     |   1 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 131 +++++++++++++++++++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++++
+ 5 files changed, 226 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
 
-diff --git a/drivers/regulator/rk8xx-regulator.c b/drivers/regulator/rk8xx-regulator.c
-index fc75957..4a29726 100644
---- a/drivers/regulator/rk8xx-regulator.c
-+++ b/drivers/regulator/rk8xx-regulator.c
-@@ -55,6 +55,42 @@
- /* max steps for increase voltage of Buck1/2, equal 100mv*/
- #define MAX_STEPS_ONE_TIME 8
- 
-+#define RK8XX_DESC(_id, _match, _supply, _min, _max, _step, _vreg,	\
-+	_vmask, _ereg, _emask, _etime)					\
-+	[_id] = {							\
-+		.name		= (_match),				\
-+		.supply_name	= (_supply),				\
-+		.of_match	= of_match_ptr(_match),			\
-+		.regulators_node = of_match_ptr("regulators"),		\
-+		.type		= REGULATOR_VOLTAGE,			\
-+		.id		= (_id),				\
-+		.n_voltages	= (((_max) - (_min)) / (_step) + 1),	\
-+		.owner		= THIS_MODULE,				\
-+		.min_uV		= (_min) * 1000,			\
-+		.uV_step	= (_step) * 1000,			\
-+		.vsel_reg	= (_vreg),				\
-+		.vsel_mask	= (_vmask),				\
-+		.enable_reg	= (_ereg),				\
-+		.enable_mask	= (_emask),				\
-+		.enable_time	= (_etime),				\
-+		.ops		= &rk808_reg_ops,			\
-+	}
+diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+new file mode 100644
+index 0000000..acd1f23
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+@@ -0,0 +1,46 @@
++* Hisilicon Hi3519 Clock and Reset Generator(CRG)
 +
-+#define RK8XX_DESC_SWITCH(_id, _match, _supply, _ereg, _emask)		\
-+	[_id] = {							\
-+		.name		= (_match),				\
-+		.supply_name	= (_supply),				\
-+		.of_match	= of_match_ptr(_match),			\
-+		.regulators_node = of_match_ptr("regulators"),		\
-+		.type		= REGULATOR_VOLTAGE,			\
-+		.id		= (_id),				\
-+		.enable_reg	= (_ereg),				\
-+		.enable_mask	= (_emask),				\
-+		.owner		= THIS_MODULE,				\
-+		.ops		= &rk808_switch_ops			\
-+	}
++The Hi3519 CRG module provides clock and reset signals to various
++controllers within the SoC.
 +
++This binding uses the following bindings:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++    Documentation/devicetree/bindings/reset/reset.txt
 +
- struct rk808_regulator_data {
- 	struct gpio_desc *dvs_gpio[2];
- };
-@@ -66,27 +102,11 @@ static const int rk808_buck_config_regs[] = {
- 	RK808_BUCK4_CONFIG_REG,
- };
- 
--static const struct regulator_linear_range rk808_buck_voltage_ranges[] = {
--	REGULATOR_LINEAR_RANGE(712500, 0, 63, 12500),
--};
--
--static const struct regulator_linear_range rk808_buck4_voltage_ranges[] = {
--	REGULATOR_LINEAR_RANGE(1800000, 0, 15, 100000),
--};
--
--static const struct regulator_linear_range rk808_ldo_voltage_ranges[] = {
--	REGULATOR_LINEAR_RANGE(1800000, 0, 16, 100000),
--};
--
- static const struct regulator_linear_range rk808_ldo3_voltage_ranges[] = {
- 	REGULATOR_LINEAR_RANGE(800000, 0, 13, 100000),
- 	REGULATOR_LINEAR_RANGE(2500000, 15, 15, 0),
- };
- 
--static const struct regulator_linear_range rk808_ldo6_voltage_ranges[] = {
--	REGULATOR_LINEAR_RANGE(800000, 0, 17, 100000),
--};
--
- static int rk808_buck1_2_get_voltage_sel_regmap(struct regulator_dev *rdev)
- {
- 	struct rk808_regulator_data *pdata = rdev_get_drvdata(rdev);
-@@ -239,7 +259,7 @@ static int rk808_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
- 				  RK808_RAMP_RATE_MASK, ramp_value);
- }
- 
--static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
-+static int rk808_set_suspend_voltage_range(struct regulator_dev *rdev, int uv)
- {
- 	unsigned int reg;
- 	int sel = regulator_map_voltage_linear_range(rdev, uv, uv);
-@@ -254,6 +274,21 @@ static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
- 				  sel);
- }
- 
-+static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
-+{
-+	unsigned int reg;
-+	int sel = regulator_map_voltage_linear(rdev, uv, uv);
++Required Properties:
 +
-+	if (sel < 0)
-+		return -EINVAL;
++- compatible: should be one of the following.
++  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
 +
-+	reg = rdev->desc->vsel_reg + RK808_SLP_REG_OFFSET;
++- reg: physical base address of the controller and length of memory mapped
++  region.
 +
-+	return regmap_update_bits(rdev->regmap, reg,
-+				  rdev->desc->vsel_mask,
-+				  sel);
-+}
++- #clock-cells: should be 1.
 +
- static int rk808_set_suspend_enable(struct regulator_dev *rdev)
- {
- 	unsigned int reg;
-@@ -291,7 +326,7 @@ static struct regulator_ops rk808_buck1_2_ops = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_reg_ops = {
-+static struct regulator_ops rk808_reg_ops_ranges = {
- 	.list_voltage		= regulator_list_voltage_linear_range,
- 	.map_voltage		= regulator_map_voltage_linear_range,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -299,6 +334,19 @@ static struct regulator_ops rk808_reg_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= regulator_is_enabled_regmap,
-+	.set_suspend_voltage	= rk808_set_suspend_voltage_range,
-+	.set_suspend_enable	= rk808_set_suspend_enable,
-+	.set_suspend_disable	= rk808_set_suspend_disable,
++Each clock is assigned an identifier and client nodes use this identifier
++to specify the clock which they consume.
++
++All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
++
++- #reset-cells: should be 2.
++
++A reset signal can be controlled by writing a bit register in the CRG module.
++The reset specifier consists of two cells. The first cell represents the
++register offset relative to the base address. The second cell represents the
++bit index in the register.
++
++Example: CRG nodes
++CRG: clock-reset-controller@12010000 {
++	compatible = "hisilicon,hi3519-crg";
++	reg = <0x12010000 0x10000>;
++	#clock-cells = <1>;
++	#reset-cells = <2>;
 +};
 +
-+static struct regulator_ops rk808_reg_ops = {
-+	.list_voltage		= regulator_list_voltage_linear,
-+	.map_voltage		= regulator_map_voltage_linear,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.is_enabled		= regulator_is_enabled_regmap,
- 	.set_suspend_voltage	= rk808_set_suspend_voltage,
- 	.set_suspend_enable	= rk808_set_suspend_enable,
- 	.set_suspend_disable	= rk808_set_suspend_disable,
-@@ -316,12 +364,14 @@ static const struct regulator_desc rk808_reg[] = {
- 	{
- 		.name = "DCDC_REG1",
- 		.supply_name = "vcc1",
-+		.of_match = of_match_ptr("DCDC_REG1"),
-+		.regulators_node = of_match_ptr("regulators"),
- 		.id = RK808_ID_DCDC1,
- 		.ops = &rk808_buck1_2_ops,
- 		.type = REGULATOR_VOLTAGE,
-+		.min_uV = 712500,
-+		.uV_step = 12500,
- 		.n_voltages = 64,
--		.linear_ranges = rk808_buck_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_buck_voltage_ranges),
- 		.vsel_reg = RK808_BUCK1_ON_VSEL_REG,
- 		.vsel_mask = RK808_BUCK_VSEL_MASK,
- 		.enable_reg = RK808_DCDC_EN_REG,
-@@ -330,12 +380,14 @@ static const struct regulator_desc rk808_reg[] = {
- 	}, {
- 		.name = "DCDC_REG2",
- 		.supply_name = "vcc2",
-+		.of_match = of_match_ptr("DCDC_REG2"),
-+		.regulators_node = of_match_ptr("regulators"),
- 		.id = RK808_ID_DCDC2,
- 		.ops = &rk808_buck1_2_ops,
- 		.type = REGULATOR_VOLTAGE,
-+		.min_uV = 712500,
-+		.uV_step = 12500,
- 		.n_voltages = 64,
--		.linear_ranges = rk808_buck_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_buck_voltage_ranges),
- 		.vsel_reg = RK808_BUCK2_ON_VSEL_REG,
- 		.vsel_mask = RK808_BUCK_VSEL_MASK,
- 		.enable_reg = RK808_DCDC_EN_REG,
-@@ -344,6 +396,8 @@ static const struct regulator_desc rk808_reg[] = {
- 	}, {
- 		.name = "DCDC_REG3",
- 		.supply_name = "vcc3",
-+		.of_match = of_match_ptr("DCDC_REG3"),
-+		.regulators_node = of_match_ptr("regulators"),
- 		.id = RK808_ID_DCDC3,
- 		.ops = &rk808_switch_ops,
- 		.type = REGULATOR_VOLTAGE,
-@@ -351,55 +405,23 @@ static const struct regulator_desc rk808_reg[] = {
- 		.enable_reg = RK808_DCDC_EN_REG,
- 		.enable_mask = BIT(2),
- 		.owner = THIS_MODULE,
--	}, {
--		.name = "DCDC_REG4",
--		.supply_name = "vcc4",
--		.id = RK808_ID_DCDC4,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 16,
--		.linear_ranges = rk808_buck4_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_buck4_voltage_ranges),
--		.vsel_reg = RK808_BUCK4_ON_VSEL_REG,
--		.vsel_mask = RK808_BUCK4_VSEL_MASK,
--		.enable_reg = RK808_DCDC_EN_REG,
--		.enable_mask = BIT(3),
--		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG1",
--		.supply_name = "vcc6",
--		.id = RK808_ID_LDO1,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 17,
--		.linear_ranges = rk808_ldo_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
--		.vsel_reg = RK808_LDO1_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(0),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG2",
--		.supply_name = "vcc6",
--		.id = RK808_ID_LDO2,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 17,
--		.linear_ranges = rk808_ldo_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
--		.vsel_reg = RK808_LDO2_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(1),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
-+	},
-+	RK8XX_DESC(RK808_ID_DCDC4, "DCDC_REG4", "vcc4", 1800, 3300, 100,
-+		RK808_BUCK4_ON_VSEL_REG, RK808_BUCK4_VSEL_MASK,
-+		RK808_DCDC_EN_REG, BIT(3), 0),
-+	RK8XX_DESC(RK808_ID_LDO1, "LDO_REG1", "vcc6", 1800, 3400, 100,
-+		RK808_LDO1_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(0), 400),
-+	RK8XX_DESC(RK808_ID_LDO2, "LDO_REG2", "vcc6", 1800, 3400, 100,
-+		RK808_LDO2_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(1), 400),
-+	{
- 		.name = "LDO_REG3",
- 		.supply_name = "vcc7",
-+		.of_match = of_match_ptr("LDO_REG3"),
-+		.regulators_node = of_match_ptr("regulators"),
- 		.id = RK808_ID_LDO3,
--		.ops = &rk808_reg_ops,
-+		.ops = &rk808_reg_ops_ranges,
- 		.type = REGULATOR_VOLTAGE,
- 		.n_voltages = 16,
- 		.linear_ranges = rk808_ldo3_voltage_ranges,
-@@ -410,117 +432,26 @@ static const struct regulator_desc rk808_reg[] = {
- 		.enable_mask = BIT(2),
- 		.enable_time = 400,
- 		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG4",
--		.supply_name = "vcc9",
--		.id = RK808_ID_LDO4,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 17,
--		.linear_ranges = rk808_ldo_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
--		.vsel_reg = RK808_LDO4_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(3),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG5",
--		.supply_name = "vcc9",
--		.id = RK808_ID_LDO5,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 17,
--		.linear_ranges = rk808_ldo_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
--		.vsel_reg = RK808_LDO5_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(4),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG6",
--		.supply_name = "vcc10",
--		.id = RK808_ID_LDO6,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 18,
--		.linear_ranges = rk808_ldo6_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo6_voltage_ranges),
--		.vsel_reg = RK808_LDO6_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(5),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG7",
--		.supply_name = "vcc7",
--		.id = RK808_ID_LDO7,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 18,
--		.linear_ranges = rk808_ldo6_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo6_voltage_ranges),
--		.vsel_reg = RK808_LDO7_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(6),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
--		.name = "LDO_REG8",
--		.supply_name = "vcc11",
--		.id = RK808_ID_LDO8,
--		.ops = &rk808_reg_ops,
--		.type = REGULATOR_VOLTAGE,
--		.n_voltages = 17,
--		.linear_ranges = rk808_ldo_voltage_ranges,
--		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
--		.vsel_reg = RK808_LDO8_ON_VSEL_REG,
--		.vsel_mask = RK808_LDO_VSEL_MASK,
--		.enable_reg = RK808_LDO_EN_REG,
--		.enable_mask = BIT(7),
--		.enable_time = 400,
--		.owner = THIS_MODULE,
--	}, {
--		.name = "SWITCH_REG1",
--		.supply_name = "vcc8",
--		.id = RK808_ID_SWITCH1,
--		.ops = &rk808_switch_ops,
--		.type = REGULATOR_VOLTAGE,
--		.enable_reg = RK808_DCDC_EN_REG,
--		.enable_mask = BIT(5),
--		.owner = THIS_MODULE,
--	}, {
--		.name = "SWITCH_REG2",
--		.supply_name = "vcc12",
--		.id = RK808_ID_SWITCH2,
--		.ops = &rk808_switch_ops,
--		.type = REGULATOR_VOLTAGE,
--		.enable_reg = RK808_DCDC_EN_REG,
--		.enable_mask = BIT(6),
--		.owner = THIS_MODULE,
- 	},
--};
--
--static struct of_regulator_match rk808_reg_matches[] = {
--	[RK808_ID_DCDC1]	= { .name = "DCDC_REG1" },
--	[RK808_ID_DCDC2]	= { .name = "DCDC_REG2" },
--	[RK808_ID_DCDC3]	= { .name = "DCDC_REG3" },
--	[RK808_ID_DCDC4]	= { .name = "DCDC_REG4" },
--	[RK808_ID_LDO1]		= { .name = "LDO_REG1" },
--	[RK808_ID_LDO2]		= { .name = "LDO_REG2" },
--	[RK808_ID_LDO3]		= { .name = "LDO_REG3" },
--	[RK808_ID_LDO4]		= { .name = "LDO_REG4" },
--	[RK808_ID_LDO5]		= { .name = "LDO_REG5" },
--	[RK808_ID_LDO6]		= { .name = "LDO_REG6" },
--	[RK808_ID_LDO7]		= { .name = "LDO_REG7" },
--	[RK808_ID_LDO8]		= { .name = "LDO_REG8" },
--	[RK808_ID_SWITCH1]	= { .name = "SWITCH_REG1" },
--	[RK808_ID_SWITCH2]	= { .name = "SWITCH_REG2" },
-+	RK8XX_DESC(RK808_ID_LDO4, "LDO_REG4", "vcc9", 1800, 3400, 100,
-+		RK808_LDO4_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(3), 400),
-+	RK8XX_DESC(RK808_ID_LDO5, "LDO_REG5", "vcc9", 1800, 3400, 100,
-+		RK808_LDO5_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(4), 400),
-+	RK8XX_DESC(RK808_ID_LDO6, "LDO_REG6", "vcc10", 800, 2500, 100,
-+		RK808_LDO6_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(5), 400),
-+	RK8XX_DESC(RK808_ID_LDO7, "LDO_REG7", "vcc7", 800, 2500, 100,
-+		RK808_LDO7_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(6), 400),
-+	RK8XX_DESC(RK808_ID_LDO8, "LDO_REG8", "vcc11", 1800, 3400, 100,
-+		RK808_LDO8_ON_VSEL_REG, RK808_LDO_VSEL_MASK, RK808_LDO_EN_REG,
-+		BIT(7), 400),
-+	RK8XX_DESC_SWITCH(RK808_ID_SWITCH1, "SWITCH_REG1", "vcc8",
-+		RK808_DCDC_EN_REG, BIT(5)),
-+	RK8XX_DESC_SWITCH(RK808_ID_SWITCH2, "SWITCH_REG2", "vcc12",
-+		RK808_DCDC_EN_REG, BIT(6)),
- };
- 
- static int rk8xx_regulator_dt_parse_pdata(struct device *dev,
-@@ -529,17 +460,12 @@ static int rk8xx_regulator_dt_parse_pdata(struct device *dev,
- 				   struct rk808_regulator_data *pdata)
- {
- 	struct device_node *np;
--	int tmp, ret, i;
-+	int tmp, ret = 0, i;
- 
- 	np = of_get_child_by_name(client_dev->of_node, "regulators");
- 	if (!np)
- 		return -ENXIO;
- 
--	ret = of_regulator_match(dev, np, rk808_reg_matches,
--				 RK808_NUM_REGULATORS);
--	if (ret < 0)
--		goto dt_parse_end;
--
- 	for (i = 0; i < ARRAY_SIZE(pdata->dvs_gpio); i++) {
- 		pdata->dvs_gpio[i] =
- 			devm_gpiod_get_index_optional(client_dev, "dvs", i,
-@@ -586,18 +512,12 @@ static int rk8xx_regulator_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pdata);
- 
-+	config.dev = &client->dev;
-+	config.driver_data = pdata;
-+	config.regmap = rk8xx->regmap;
++Example: consumer nodes
++i2c0: i2c@12110000 {
++	compatible = "hisilicon,hi3519-i2c";
++	reg = <0x12110000 0x1000>;
++	clocks = <&CRG HI3519_I2C0_RST>;
++	resets = <&CRG 0xe4 0>;
++};
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index 3cd349c..3f537a0 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -1,3 +1,11 @@
++config COMMON_CLK_HI3519
++	tristate "Hi3519 Clock Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	select RESET_HISI
++	default ARCH_HISI
++	help
++	  Build the clock driver for hi3519.
 +
- 	/* Instantiate the regulators */
- 	for (i = 0; i < RK808_NUM_REGULATORS; i++) {
--		if (!rk808_reg_matches[i].init_data ||
--		    !rk808_reg_matches[i].of_node)
--			continue;
--
--		config.dev = &client->dev;
--		config.driver_data = pdata;
--		config.regmap = rk8xx->regmap;
--		config.of_node = rk808_reg_matches[i].of_node;
--		config.init_data = rk808_reg_matches[i].init_data;
--
- 		rk8xx_rdev = devm_regulator_register(&pdev->dev,
- 						     &rk808_reg[i], &config);
- 		if (IS_ERR(rk8xx_rdev)) {
+ config COMMON_CLK_HI6220
+ 	bool "Hi6220 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index c037753..e169ec7 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -7,6 +7,7 @@ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
++obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+ obj-$(CONFIG_RESET_HISI)	+= reset.o
+ obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+new file mode 100644
+index 0000000..715c730
+--- /dev/null
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -0,0 +1,131 @@
++/*
++ * Hi3519 Clock Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include "clk.h"
++#include "reset.h"
++
++#define HI3519_INNER_CLK_OFFSET	64
++#define HI3519_FIXED_24M	65
++#define HI3519_FIXED_50M	66
++#define HI3519_FIXED_75M	67
++#define HI3519_FIXED_125M	68
++#define HI3519_FIXED_150M	69
++#define HI3519_FIXED_200M	70
++#define HI3519_FIXED_250M	71
++#define HI3519_FIXED_300M	72
++#define HI3519_FIXED_400M	73
++#define HI3519_FMC_MUX		74
++
++#define HI3519_NR_CLKS		128
++
++static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
++	{ HI3519_FIXED_24M, "24m", NULL, 0, 24000000, },
++	{ HI3519_FIXED_50M, "50m", NULL, 0, 50000000, },
++	{ HI3519_FIXED_75M, "75m", NULL, 0, 75000000, },
++	{ HI3519_FIXED_125M, "125m", NULL, 0, 125000000, },
++	{ HI3519_FIXED_150M, "150m", NULL, 0, 150000000, },
++	{ HI3519_FIXED_200M, "200m", NULL, 0, 200000000, },
++	{ HI3519_FIXED_250M, "250m", NULL, 0, 250000000, },
++	{ HI3519_FIXED_300M, "300m", NULL, 0, 300000000, },
++	{ HI3519_FIXED_400M, "400m", NULL, 0, 400000000, },
++};
++
++static const char *const fmc_mux_p[] = {
++		"24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m", };
++static u32 fmc_mux_table[] = {0, 1, 2, 3, 4, 5, 6, 7};
++
++static const struct hisi_mux_clock hi3519_mux_clks[] = {
++	{ HI3519_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
++};
++
++static const struct hisi_gate_clock hi3519_gate_clks[] = {
++	{ HI3519_FMC_CLK, "clk_fmc", "fmc_mux",
++		CLK_SET_RATE_PARENT, 0xc0, 1, 0, },
++	{ HI3519_UART0_CLK, "clk_uart0", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 20, 0, },
++	{ HI3519_UART1_CLK, "clk_uart1", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 21, 0, },
++	{ HI3519_UART2_CLK, "clk_uart2", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 22, 0, },
++	{ HI3519_UART3_CLK, "clk_uart3", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 23, 0, },
++	{ HI3519_UART4_CLK, "clk_uart4", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 24, 0, },
++	{ HI3519_SPI0_CLK, "clk_spi0", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 16, 0, },
++	{ HI3519_SPI1_CLK, "clk_spi1", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 17, 0, },
++	{ HI3519_SPI2_CLK, "clk_spi2", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
++};
++
++static int hi3519_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct hisi_clock_data *clk_data;
++	struct hisi_reset_controller *rstc;
++
++	rstc = hisi_reset_init(np);
++	if (!rstc)
++		return -ENOMEM;
++
++	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
++	if (!clk_data) {
++		hisi_reset_exit(rstc);
++		return -ENODEV;
++	}
++
++	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
++				     ARRAY_SIZE(hi3519_fixed_rate_clks),
++				     clk_data);
++	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
++					clk_data);
++	hisi_clk_register_gate(hi3519_gate_clks,
++			ARRAY_SIZE(hi3519_gate_clks), clk_data);
++
++	return 0;
++}
++
++static const struct of_device_id hi3519_clk_match_table[] = {
++	{ .compatible = "hisilicon,hi3519-crg" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
++
++static struct platform_driver hi3519_clk_driver = {
++	.probe          = hi3519_clk_probe,
++	.driver         = {
++		.name   = "hi3519-clk",
++		.of_match_table = hi3519_clk_match_table,
++	},
++};
++
++static int __init hi3519_clk_init(void)
++{
++	return platform_driver_register(&hi3519_clk_driver);
++}
++core_initcall(hi3519_clk_init);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
+diff --git a/include/dt-bindings/clock/hi3519-clock.h b/include/dt-bindings/clock/hi3519-clock.h
+new file mode 100644
+index 0000000..14f4d21
+--- /dev/null
++++ b/include/dt-bindings/clock/hi3519-clock.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __DTS_HI3519_CLOCK_H
++#define __DTS_HI3519_CLOCK_H
++
++#define HI3519_FMC_CLK			1
++#define HI3519_SPI0_CLK			2
++#define HI3519_SPI1_CLK			3
++#define HI3519_SPI2_CLK			4
++#define HI3519_UART0_CLK		5
++#define HI3519_UART1_CLK		6
++#define HI3519_UART2_CLK		7
++#define HI3519_UART3_CLK		8
++#define HI3519_UART4_CLK		9
++#define HI3519_PWM_CLK			10
++#define HI3519_DMA_CLK			11
++#define HI3519_IR_CLK			12
++#define HI3519_ETH_PHY_CLK		13
++#define HI3519_ETH_MAC_CLK		14
++#define HI3519_ETH_MACIF_CLK		15
++#define HI3519_USB2_BUS_CLK		16
++#define HI3519_USB2_PORT_CLK		17
++#define HI3519_USB3_CLK			18
++
++#endif	/* __DTS_HI3519_CLOCK_H */
 -- 
 1.9.1
