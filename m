@@ -1,55 +1,70 @@
-Return-Path: <Vineet.Gupta1@synopsys.com>
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-To: Jose Abreu <Jose.Abreu@synopsys.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
- <20160415234631.GB4690@codeaurora.org> <5714B763.8010109@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-snps-arc@lists.infradead.org>, <CARLOS.PALMINHA@synopsys.com>,
-	<Alexey.Brodkin@synopsys.com>, <mturquette@baylibre.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <5714C9BA.8040004@synopsys.com>
-Date: Mon, 18 Apr 2016 17:19:14 +0530
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5714B763.8010109@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160423162223.16e3ca28@free-electrons.com>
+References: <1459070777-18049-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1459070777-18049-5-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160328194756.GA28967@rob-hp-laptop>
+	<20160413180122.4f997a9a@free-electrons.com>
+	<CAMuHMdVYtXEZF0+G3W+Q8cDcBFB55s1ru6N6J3tgFy9BcGZiXw@mail.gmail.com>
+	<20160423162223.16e3ca28@free-electrons.com>
+Date: Sun, 24 Apr 2016 11:15:16 +0200
+Message-ID: <CAMuHMdUPMcuQVd-5Gw7Be5eL24yoM_uN-1NBp-0JCcbcipAVig@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: arm: add DT binding for Marvell CP110
+ system controller
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+	Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 18 April 2016 04:00 PM, Jose Abreu wrote:
->>> +	if (readl((void *)FPGA_VER_INFO) <= FPGA_VER_27M) {
->> > Please don't readl directly from addresses. I think I mentioned
->> > that before and didn't get back to you when you replied asking
->> > for other solutions. I still think a proper DT is in order
->> > instead of doing this check for ref_clk.
-> I think that the DT approach would be better but I also think that using two DT
-> files with only one change between them is not viable. I can see some alternatives:
->     1) Pass the region of FPGA version in reg field of DT so that writel is not
-> directly used;
->     2) Create a dummy parent clock driver that reads from FPGA version register
-> and returns the rate;
->     3) Last resort: Use two DT files for each FPGA version.
-> 
-> @Vineet, @Alexey: Can you give some suggestions?
-> 
-> Some background:
-> We are expecting a new firmware release for the AXS board that will change the
-> reference clock value of the I2S PLL from 27MHz to 28.224MHz. Due to this change
-> the dividers of this PLL will change. Right now I am directly reading from the
-> FPGA version register but Stephen suggested to use a DT approach so that this
-> rate is declared as parent clock. This would be a good solution but would
-> require the usage of two different DT files (one for the current firmware and
-> another for the new firmware), which I think is not ideal. What is your opinion?
-> Some other solutions are listed above.
+Hi Thomas,
 
-Consider this my ignorance of clk drivers, what exactly is the problem with that
-readl() for FPGA ver. Having 2 versions of DT is annoyance for sure, but the
-bigger headache is that it still won't help cases of users mixing and matching
-boards and DT. IMO this runtime check is pretty nice and will support both types
-of boards with exact same code/DT !
+On Sat, Apr 23, 2016 at 4:22 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
+> On Thu, 14 Apr 2016 21:19:54 +0200, Geert Uytterhoeven wrote:
+>> From my experience with clock drivers for Renesas SoCs, life is much easier
+>> when handling all of this (clock names, parents, ...) in C. The same is true
+>> BTW for PM Domains.
+>>
+>> The clock controllers of r8a7791 and r8a7795 are very similar, and could
+>> be handled similarly.
+>> Compare the DT hierarchy for CPG and MSTP/MSSR in
+>> arch/arm/boot/dts/r8a7791.dtsi and arch/arm64/boot/dts/renesas/r8a7795.dtsi.
+>
+> Thanks for your feedback. However in practice, there will ultimately be
+> two instances of this clock controller, as some variants of the SoC
+> will contain two CP parts. Due to this, it is going to be quite
+> convenient to have the clock names configurable from the DT, as I will
+> be able to give the same clock on the master CP and the slave CP a
+> different name.
 
-FWIW, both solutions #1 and #3 seem to imply a different DT - no ?
+You could still prefix the names by e.g. an instance number.
 
-And I really don't see how #2 makes things more elegant/abstracted w.r.t clk
-framework ?
+> That's actually why my binding documentation uses names like
+> "cpm-<foo>" for all the clocks, where "cpm" stands for "CP Master". In
+> the future, another instance will have clocks named "cps-<foo>" for "CP
+> Slave".
 
-So I prefer what you had before.
--Vineet
+So the names are actually part of the binding, while nothing really relies
+on the actual names, right? Clocks are referred to by clock specifier (phandle
++ some optonal bits).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
