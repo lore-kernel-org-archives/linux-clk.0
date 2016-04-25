@@ -1,39 +1,46 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v2 6/7] clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
-Date: Thu, 21 Apr 2016 15:12:40 +0200
-Message-Id: <1461244361-45686-7-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
-References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Mon, 25 Apr 2016 15:44:38 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Ian Campbell
+ <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark
+ Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>
+Cc: Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Yehuda
+ Yitschak <yehuday@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Hanna
+ Hawa <hannah@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Gregory
+ Clement <gregory.clement@free-electrons.com>,
+ linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v5 0/5] clk: mvebu: clock drivers for Marvell Armada
+ 7K/8K
+Message-ID: <20160425154438.07cca521@free-electrons.com>
+In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The RK808 and RK818 PMICs are using a similar register map.
-We can reuse the clk driver for the RK818 PMIC. So let's add
-the RK818 in the Kconfig description.
+Stephen, Michael,
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
----
- drivers/clk/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 14 Apr 2016 17:33:28 +0200, Thomas Petazzoni wrote:
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..64b4daa 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -49,10 +49,10 @@ config COMMON_CLK_MAX77802
- 	  This driver supports Maxim 77802 crystal oscillator clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK808"
-+	tristate "Clock driver for RK808/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK808 crystal oscillator clock. These
-+	  This driver supports RK808 and RK818 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
+>   clk: mvebu: new driver for Armada AP806 system controller
+>   dt-bindings: arm: add DT binding for Marvell CP110 system controller
+>   clk: mvebu: new driver for Armada CP110 system controller
+
+Do you have any comments on those three patches? Rob Herring gave his
+Acked-by on the DT binding for both drivers and as you can imagine,
+those drivers are essential to making this new platform work in
+mainline.
+
+Do not hesitate to let me know if anything still needs some
+adaptations/changes in the clock drivers.
+
+Thanks!
+
+Thomas
 -- 
-1.9.1
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
