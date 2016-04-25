@@ -1,31 +1,48 @@
-Return-Path: <w.egorov@phytec.de>
-Subject: Re: Applied "regulator: rk808: remove linear range definitions with a
- single range" to the regulator tree
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Mark Brown <broonie@kernel.org>
-References: <E1aukkg-0007km-6s@debutante> <2754883.PYP7KbpM33@diego>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, a.zummo@towertech.it, pawel.moll@arm.com, rtc-linux@googlegroups.com, ijc+devicetree@hellion.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, alexandre.belloni@free-electrons.com, dianders@chromium.org, galak@codeaurora.org, zyw@rock-chips.com, lee.jones@linaro.org, linux-clk@vger.kernel.org
-From: Wadim Egorov <w.egorov@phytec.de>
-Message-ID: <57205DC2.7070506@phytec.de>
-Date: Wed, 27 Apr 2016 08:35:46 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:58756 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754432AbcDYLsK (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2016 07:48:10 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-clk@vger.kernel.org, geert+renesas@glider.be,
+	linux-renesas-soc@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] clk: shmobile: r8a7795: Add VIN clocks
+Date: Mon, 25 Apr 2016 13:39:20 +0200
+Message-Id: <1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1461584360-32547-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1461584360-32547-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <2754883.PYP7KbpM33@diego>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 005b323..9382df3 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -188,6 +188,14 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("lvds",			 727,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
+ 	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
++	DEF_MOD("vin7",			 804,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin6",			 805,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin5",			 806,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin4",			 807,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin3",			 808,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin2",			 809,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin1",			 810,	R8A7795_CLK_S2D1),
++	DEF_MOD("vin0",			 811,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("etheravb",		 812,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("sata0",		 815,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("gpio7",		 905,	R8A7795_CLK_CP),
+-- 
+2.7.4
 
-On 26.04.2016 21:33, Heiko St=FCbner wrote:
-> Am Montag, 25. April 2016, 18:56:54 schrieb Mark Brown:
->> The patch
->>
->>    regulator: rk808: remove linear range definitions with a single range
->>
->> has been applied to the regulator tree at
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
-> with this patch applied, 4.6.0-rc5-next-20160426 fails to boot on=20
-> rk3288-veyron devices with the bug below. Reverting this one patch
-> results in the system booting again:
->
-This is because I missed to add the correct ops for LDO=5FREG3 in this patc=
-h.
