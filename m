@@ -1,29 +1,34 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 22 Apr 2016 14:49:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 06/13] clk: gate: Add hw based registration APIs
-Message-ID: <20160422214953.GK13149@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
- <1461277324-27185-7-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 25 Apr 2016 16:18:02 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+cc: thierry.reding@gmail.com, tony@atomide.com, t-kristo@ti.com,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, robh+dt@kernel.org,
+	devicetree@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v6 0/7] ARM: dts: DRA7: Add dt nodes for PWMSS
+In-Reply-To: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+Message-ID: <alpine.DEB.2.02.1604251610170.22464@utopia.booyaka.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461277324-27185-7-git-send-email-sboyd@codeaurora.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/21, Stephen Boyd wrote:
-> Add registration APIs in the clk gate code to return struct
-> clk_hw pointers instead of struct clk pointers. This way we hide
-> the struct clk pointer from providers unless they need to use
-> consumer facing APIs.
+On Fri, 22 Apr 2016, Franklin S Cooper Jr wrote:
+
+> This patch series adds support for PWM for DRA7. The IP is the same as the
+> one present in AM33XX and AM437XX.
 > 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
+> and eQEP.
 
-Applied to clk-next
+Just took a quick look (nothing indepth).  Looks OK.  
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Once Rob's issues have been addressed, please feel free to add an 
+Acked-by: from me.  Thanks for playing along, Franklin, I think this final 
+product makes the most sense from a device architecture point of view.
+
+
+- Paul
