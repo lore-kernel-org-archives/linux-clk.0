@@ -1,105 +1,187 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 12 Apr 2016 16:26:08 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
 	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop messing with the
- pwm->period field
-Message-ID: <20160412142608.GB25006@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
- <20160412110809.GI18882@ulmo.ba.sec>
- <20160412141613.GI8094@x1>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
-In-Reply-To: <20160412141613.GI8094@x1>
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 10/11] ARM: sun5i: r8: Add display blocks to the DTSI
+Date: Mon, 25 Apr 2016 15:22:51 +0200
+Message-Id: <1461590572-4027-11-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The TCON, tv-encoder and display engine backends and frontends are combined
+to create our display pipeline.
 
---TakKZr9L6Hm6aLOc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add them to the R8 DTSI. It's supposed to be perfectly compatible with the
+A10s and A13, but since we haven't tested it on them yet, it's safer to
+just enable it on the R8. Eventually, it should be moved to sun5i.dtsi
 
-On Tue, Apr 12, 2016 at 03:16:13PM +0100, Lee Jones wrote:
-> On Tue, 12 Apr 2016, Thierry Reding wrote:
->=20
-> > On Wed, Mar 30, 2016 at 10:03:26PM +0200, Boris Brezillon wrote:
-> > > pwm->period field is not supposed to be changed by PWM users. The only
-> > > ones authorized to change it are the PWM core and PWM drivers.
-> > >=20
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > ---
-> > >  drivers/video/backlight/lm3630a_bl.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >=20
-> > Applied, thanks.
->=20
-> Applied?
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-r8.dtsi | 137 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 137 insertions(+)
 
-You didn't specifically Ack this one, but I presumed that since the
-change is essentially the same as for pwm-backlight, and this is another
-prerequisite for the remainder of the series it should go in through the
-PWM tree as well.
-
-Thierry
-
---TakKZr9L6Hm6aLOc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDQWAAAoJEN0jrNd/PrOh74sP/is8Fx+HimV+xQUGl5bNRqB8
-C9t16YiTbMALk6NDTOQsdDrPcXHqhVuuV/7GW+tC4JmQ/BejNof5OZP7z7BJ6QFi
-eNSBlMQn4pcMnHOOEE8NgcMuowI9Q+WDaXsYGHUd59nnYbZpScuVqJ1qZVB3DBN/
-2rS+2kjdZIS322znn71gYAck/DyEX2uoOE9QdGU7gu18ipYoEdUXGo/XFjY8I+FB
-js8LEfye1ymplhIAtfkB/sncisB59Uy3/DPN04eVf+ra1QikIYcoaFDMIIzMTfFl
-oTLDqK2ANU+cJaOlsdK8C1TACgoTqhB6PtgvYLnyL/9sUbyFKo9l51/TigvUZSCk
-Xylz4LAF0rHK/MnyR4gF5imkicv4MeyIAc9P9pSMq3Gekv02N+JsqYyXqzVhk12B
-9ea3fBivD0nmUbLwvLPcZhBEbV7x3ItW+rY2gwLVgBYEo2lFmfVuXg6U/T8KX8JM
-jHvd0lfwe2qQ1wIp1iuU9YkKsg9c9Dz1Hn7yMsTRhXoKSJQrxNrSM2Esemcuo0qv
-4aLzqaajqWWslcCDjEFYCL0zcs/n25Po6eLvHcRiIZrx+CjvQfjJf9IvQ84OFrTN
-QL+AeJwJHlrvxsVYZ5iyc/lRsl7goLJD8xMyX1pDlLWLO0a77CLXuB3YWnQIyvuG
-RP3jBvYmYnieu5++2opT
-=Dd/s
------END PGP SIGNATURE-----
-
---TakKZr9L6Hm6aLOc--
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index 691d3de75b35..a42b5404893e 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -57,4 +57,141 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	soc@01c00000 {
++		tve0: tv-encoder@01c0a000 {
++			compatible = "allwinner,sun4i-a10-tv-encoder";
++			reg = <0x01c0a000 0x1000>;
++			clocks = <&ahb_gates 34>;
++			resets = <&tcon_ch0_clk 0>;
++			status = "disabled";
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tve0_in_tcon0: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&tcon0_out_tve0>;
++				};
++			};
++		};
++
++		tcon0: lcd-controller@01c0c000 {
++			compatible = "allwinner,sun5i-a13-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <44>;
++			resets = <&tcon_ch0_clk 1>;
++			reset-names = "lcd";
++			clocks = <&ahb_gates 36>,
++				 <&tcon_ch0_clk>,
++				 <&tcon_ch1_clk>;
++			clock-names = "ahb",
++				      "tcon-ch0",
++				      "tcon-ch1";
++			clock-output-names = "tcon-pixel-clock";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_be0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&be0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon0_out_tve0: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&tve0_in_tcon0>;
++					};
++				};
++			};
++		};
++
++		fe0: display-frontend@01e00000 {
++			compatible = "allwinner,sun5i-a13-display-frontend";
++			reg = <0x01e00000 0x20000>;
++			interrupts = <47>;
++			clocks = <&ahb_gates 46>, <&de_fe_clk>,
++				 <&dram_gates 25>;
++			clock-names = "ahb", "mod",
++				      "ram";
++			resets = <&de_fe_clk>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				fe0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					fe0_out_be0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&be0_in_fe0>;
++					};
++				};
++			};
++		};
++
++		be0: display-backend@01e60000 {
++			compatible = "allwinner,sun5i-a13-display-backend";
++			reg = <0x01e60000 0x10000>;
++			clocks = <&ahb_gates 44>, <&de_be_clk>,
++				 <&dram_gates 26>;
++			clock-names = "ahb", "mod",
++				      "ram";
++			resets = <&de_be_clk>;
++			status = "disabled";
++
++			assigned-clocks = <&de_be_clk>;
++			assigned-clock-rates = <300000000>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				be0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					be0_in_fe0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&fe0_out_be0>;
++					};
++				};
++
++				be0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					be0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_be0>;
++					};
++				};
++			};
++		};
++	};
++
++	display-engine {
++		compatible = "allwinner,sun5i-a13-display-engine";
++		pipelines = <&fe0>;
++	};
+ };
+-- 
+2.8.1
