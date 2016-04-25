@@ -1,86 +1,110 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ob0-f194.google.com ([209.85.214.194]:35857 "EHLO
-	mail-ob0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753330AbcDZWhQ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 18:37:16 -0400
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
-	paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v7 6/9] pwms: pwm-ti*: Get the clock from the PWMSS parent when using old bindings
-Date: Tue, 26 Apr 2016 17:36:46 -0500
-Message-Id: <1461710209-6563-7-git-send-email-fcooper@ti.com>
-In-Reply-To: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 09/11] drm: sun4i: tv: Add NTSC output standard
+Date: Mon, 25 Apr 2016 15:22:50 +0200
+Message-Id: <1461590572-4027-10-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When using the old eCAP and ePWM bindings for AM335x and AM437x the clock
-can be retrieved from the PWMSS parent. Newer bindings will insure that
-this clock is provided via device tree.
+Add the settings to support the NTSC standard.
 
-Therefore, update this driver to support the newer and older bindings. In
-the case of the older binding being used give a warning.
-
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/pwm/pwm-tiecap.c   | 7 +++++++
- drivers/pwm/pwm-tiehrpwm.c | 7 +++++++
- 2 files changed, 14 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_tv.c | 45 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
-index 616af76..a0833c8 100644
---- a/drivers/pwm/pwm-tiecap.c
-+++ b/drivers/pwm/pwm-tiecap.c
-@@ -195,6 +195,7 @@ static const struct pwm_ops ecap_pwm_ops = {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+index ccf275a90132..bc047f923508 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+@@ -178,24 +178,69 @@ struct sun4i_tv {
+ 	struct sun4i_drv	*drv;
  };
  
- static const struct of_device_id ecap_of_match[] = {
-+	{ .compatible	= "ti,am3352-ecap" },
- 	{ .compatible	= "ti,am33xx-ecap" },
- 	{},
- };
-@@ -213,6 +214,12 @@ static int ecap_pwm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	clk = devm_clk_get(&pdev->dev, "fck");
++struct video_levels ntsc_video_levels = {
++	.black = 282,	.blank = 240,
++};
 +
-+	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
-+		dev_warn(&pdev->dev, "Binding is obsolete.\n");
-+		clk = devm_clk_get(pdev->dev.parent, "fck");
-+	}
-+
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
- 		return PTR_ERR(clk);
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index 6a41e66..cee29a2 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -426,6 +426,7 @@ static const struct pwm_ops ehrpwm_pwm_ops = {
+ struct video_levels pal_video_levels = {
+ 	.black = 252,	.blank = 252,
  };
  
- static const struct of_device_id ehrpwm_of_match[] = {
-+	{ .compatible	= "ti,am3352-ehrpwm" },
- 	{ .compatible	= "ti,am33xx-ehrpwm" },
- 	{},
++struct burst_levels ntsc_burst_levels = {
++	.cb = 79,	.cr = 0,
++};
++
+ struct burst_levels pal_burst_levels = {
+ 	.cb = 40,	.cr = 40,
  };
-@@ -444,6 +445,12 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
  
- 	clk = devm_clk_get(&pdev->dev, "fck");
++struct color_gains ntsc_color_gains = {
++	.cb = 160,	.cr = 160,
++};
 +
-+	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
-+		dev_warn(&pdev->dev, "Binding is obsolete.\n");
-+		clk = devm_clk_get(pdev->dev.parent, "fck");
-+	}
+ struct color_gains pal_color_gains = {
+ 	.cb = 224,	.cr = 224,
+ };
+ 
++struct resync_parameters ntsc_resync_parameters = {
++	.field = false,	.line = 14,	.pixel = 12,
++};
 +
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
- 		return PTR_ERR(clk);
+ struct resync_parameters pal_resync_parameters = {
+ 	.field = true,	.line = 13,	.pixel = 12,
+ };
+ 
+ struct tv_mode tv_modes[] = {
+ 	{
++		.name		= "NTSC",
++		.mode		= SUN4I_TVE_CFG0_RES_480i,
++		.chroma_freq	= 0x21f07c1f,
++		.yc_en		= true,
++		.dac3_en	= true,
++		.dac_bit25_en	= true,
++
++		.back_porch	= 118,
++		.front_porch	= 32,
++		.line_number	= 525,
++
++		.hdisplay	= 720,
++		.hfront_porch	= 18,
++		.hsync_len	= 2,
++		.hback_porch	= 118,
++
++		.vdisplay	= 480,
++		.vfront_porch	= 26,
++		.vsync_len	= 2,
++		.vback_porch	= 17,
++
++		.vblank_level	= 240,
++
++		.color_gains	= &ntsc_color_gains,
++		.burst_levels	= &ntsc_burst_levels,
++		.video_levels	= &ntsc_video_levels,
++		.resync_params	= &ntsc_resync_parameters,
++	},
++	{
+ 		.name		= "PAL",
+ 		.mode		= SUN4I_TVE_CFG0_RES_576i,
+ 		.chroma_freq	= 0x2a098acb,
 -- 
-2.7.0
-
+2.8.1
