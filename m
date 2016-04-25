@@ -1,80 +1,44 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <570E2123.1000107@samsung.com>
-References: <1460459243-27120-1-git-send-email-alim.akhtar@samsung.com>
-	<CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
-	<570E2123.1000107@samsung.com>
-Date: Wed, 13 Apr 2016 14:31:31 +0300
-Message-ID: <CA+Ln22Gf+aXnOzj-qYeNq5-MO8b+tjxrp0KPtG7Q2ceStk4ERA@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Enable clocks for CMU_CCORE and
- CMU_FSYS0 blocks
-From: Tomasz Figa <tomasz.figa@gmail.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Thomas Abraham <thomas.ab@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v3 8/8] rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
+Date: Mon, 25 Apr 2016 15:20:48 +0200
+Message-Id: <1461590448-47685-9-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-04-13 13:36 GMT+03:00 Sylwester Nawrocki <s.nawrocki@samsung.com>:
-> On 04/13/2016 08:26 AM, Tomasz Figa wrote:
->>> > @@ -205,7 +206,11 @@ static struct samsung_cmu_info topc_cmu_info __initdata = {
->>> >
->>> >  static void __init exynos7_clk_topc_init(struct device_node *np)
->>> >  {
->>> > +       struct clk *clk;
->>> > +
->>> >         samsung_cmu_register_one(np, &topc_cmu_info);
->>> > +       clk = __clk_lookup("aclk_ccore_133");
->>> > +       clk_prepare_enable(clk);
->>
->> Shouldn't this be rather done before calling
->> samsung_cmu_register_one()? I don't remember exactly, but wouldn't
->> clock registration trigger reading back current (mux, div) values from
->> registers?
->>
->> Also, do we have any guarantees on order of initialization of
->> particular CMUs? I believe this will happen in order of DT nodes and
->> so would be not any kind of guarantee at all.
->
-> If these clocks need to be kept enabled perhaps it's better to just set
-> CLK_IS_CRITICAL flag for them? Patches adding this flag are already in
-> clk-next branch in the clk git tree. This way the clocks would get
-> enabled within the clk_register() call.
->
+The RK808 and RK818 PMICs are using a similar register map.
+We can reuse the rtc driver for the RK818 PMIC. So let's add
+the RK818 in the Kconfig description.
 
-Oh, I didn't know about this. Sounds like a good idea. :)
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+Changes since v2:
+- Added Acked-by
+---
+ drivers/rtc/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> The CMU registration order is enforced by listing input clocks to each
-> CMU in DT.
-
-Ah, right, I recall now, I even reviewed relevant patch. Thanks for
-refreshing my memory.
-
-> However, I wouldn't be concerned much about it in context
-> of this patch. We are enabling here clocks which belong to same CMU.
-> samsung_cmu_register_one() needs to be called first for subsequent
-> __clk_lookup() calls to work.
-
-I thought a clock from another CMU has to be enabled for the CPU to be
-able to access the CMU being registered.
-
->
-> Perhaps related bits need to be set manually in CMU registers before
-> registering a clock provider for the CMU, to fulfil the requirements.
->
-> Anyway, summary of the $subject patch seems not precise enough:
->
-> "This patch enables clocks for CMU_CCORE and CMU_FSYS0 blocks. This is
-> required before accessing registers of these blocks."
->
-> We need to enable selected clocks (i.e. access the CMU's registers)
-> before accessing this CMU's registers?
-
-Yeah, maybe the explanation could be a bit more precise.
-
-Best regards,
-Tomasz
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 3e84315..acc2651 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -324,11 +324,11 @@ config RTC_DRV_MAX77686
+ 	  will be called rtc-max77686.
+ 
+ config RTC_DRV_RK808
+-	tristate "Rockchip RK808 RTC"
++	tristate "Rockchip RK808/RK818 RTC"
+ 	depends on MFD_RK808
+ 	help
+ 	  If you say yes here you will get support for the
+-	  RTC of RK808 PMIC.
++	  RTC of RK808 and RK818 PMIC.
+ 
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rk808-rtc.
+-- 
+1.9.1
