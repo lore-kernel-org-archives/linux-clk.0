@@ -1,144 +1,269 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 19/24] pwm: move the enabled/disabled info into pwm_state
-Date: Thu, 14 Apr 2016 21:17:39 +0200
-Message-Id: <1460661464-11216-20-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+In-Reply-To: <1461590448-47685-4-git-send-email-w.egorov@phytec.de>
+Message-Id: <E1aukkg-0007km-6s@debutante>
+Date: Mon, 25 Apr 2016 18:56:54 +0100
+Subject: Applied "regulator: rk808: remove linear range definitions with a single range" to the regulator tree
 List-ID: <linux-clk.vger.kernel.org>
 
-Prepare the transition to PWM atomic update by moving the enabled/disabled
-state into the pwm_state struct. This way we can easily update the whole
-PWM state by copying the new state in the ->state field.
+The patch
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+   regulator: rk808: remove linear range definitions with a single range
+
+has been applied to the regulator tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From afcd666d9db0ebfbf2751cce1e07b548547ca82e Mon Sep 17 00:00:00 2001
+From: Wadim Egorov <w.egorov@phytec.de>
+Date: Mon, 25 Apr 2016 15:20:43 +0200
+Subject: [PATCH] regulator: rk808: remove linear range definitions with a
+ single range
+
+The driver was using only linear ranges. Now we remove linear range
+definitions with a single range. So we have to add an ops struct for
+ranges and adjust all other ops functions accordingly.
+
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/pwm/core.c  | 13 +++++++++----
- include/linux/pwm.h | 11 ++++++++---
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ drivers/regulator/rk808-regulator.c | 90 +++++++++++++++++++++----------------
+ 1 file changed, 51 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 59bcece..c2759bc 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -499,10 +499,10 @@ int pwm_enable(struct pwm_device *pwm)
- 	if (!pwm)
- 		return -EINVAL;
- 
--	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
-+	if (!pwm_is_enabled(pwm)) {
- 		err = pwm->chip->ops->enable(pwm->chip, pwm);
--		if (err)
--			clear_bit(PWMF_ENABLED, &pwm->flags);
-+		if (!err)
-+			pwm->state.enabled = true;
- 	}
- 
- 	return err;
-@@ -515,8 +515,13 @@ EXPORT_SYMBOL_GPL(pwm_enable);
-  */
- void pwm_disable(struct pwm_device *pwm)
- {
--	if (pwm && test_and_clear_bit(PWMF_ENABLED, &pwm->flags))
-+	if (!pwm)
-+		return;
-+
-+	if (pwm_is_enabled(pwm)) {
- 		pwm->chip->ops->disable(pwm->chip, pwm);
-+		pwm->state.enabled = false;
-+	}
- }
- EXPORT_SYMBOL_GPL(pwm_disable);
- 
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 3022c05..7bfeacf 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -93,8 +93,7 @@ struct pwm_args {
- 
- enum {
- 	PWMF_REQUESTED = 1 << 0,
--	PWMF_ENABLED = 1 << 1,
--	PWMF_EXPORTED = 1 << 2,
-+	PWMF_EXPORTED = 1 << 1,
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+index d86a3dcd61e2..964b95eed271 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk808-regulator.c
+@@ -66,27 +66,11 @@ static const int rk808_buck_config_regs[] = {
+ 	RK808_BUCK4_CONFIG_REG,
  };
  
- /*
-@@ -102,11 +101,13 @@ enum {
-  * @period: PWM period (in nanoseconds)
-  * @duty_cycle: PWM duty cycle (in nanoseconds)
-  * @polarity: PWM polarity
-+ * @enabled: PWM enabled status
-  */
- struct pwm_state {
- 	unsigned int period;
- 	unsigned int duty_cycle;
- 	enum pwm_polarity polarity;
-+	bool enabled;
+-static const struct regulator_linear_range rk808_buck_voltage_ranges[] = {
+-	REGULATOR_LINEAR_RANGE(712500, 0, 63, 12500),
+-};
+-
+-static const struct regulator_linear_range rk808_buck4_voltage_ranges[] = {
+-	REGULATOR_LINEAR_RANGE(1800000, 0, 15, 100000),
+-};
+-
+-static const struct regulator_linear_range rk808_ldo_voltage_ranges[] = {
+-	REGULATOR_LINEAR_RANGE(1800000, 0, 16, 100000),
+-};
+-
+ static const struct regulator_linear_range rk808_ldo3_voltage_ranges[] = {
+ 	REGULATOR_LINEAR_RANGE(800000, 0, 13, 100000),
+ 	REGULATOR_LINEAR_RANGE(2500000, 15, 15, 0),
  };
  
- /**
-@@ -145,7 +146,11 @@ static inline void pwm_get_state(const struct pwm_device *pwm,
- 
- static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+-static const struct regulator_linear_range rk808_ldo6_voltage_ranges[] = {
+-	REGULATOR_LINEAR_RANGE(800000, 0, 17, 100000),
+-};
+-
+ static int rk808_buck1_2_get_voltage_sel_regmap(struct regulator_dev *rdev)
  {
--	return test_bit(PWMF_ENABLED, &pwm->flags);
-+	struct pwm_state state;
+ 	struct rk808_regulator_data *pdata = rdev_get_drvdata(rdev);
+@@ -242,6 +226,21 @@ static int rk808_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
+ {
+ 	unsigned int reg;
++	int sel = regulator_map_voltage_linear(rdev, uv, uv);
 +
-+	pwm_get_state(pwm, &state);
++	if (sel < 0)
++		return -EINVAL;
 +
-+	return state.enabled;
++	reg = rdev->desc->vsel_reg + RK808_SLP_REG_OFFSET;
++
++	return regmap_update_bits(rdev->regmap, reg,
++				  rdev->desc->vsel_mask,
++				  sel);
++}
++
++static int rk808_set_suspend_voltage_range(struct regulator_dev *rdev, int uv)
++{
++	unsigned int reg;
+ 	int sel = regulator_map_voltage_linear_range(rdev, uv, uv);
+ 
+ 	if (sel < 0)
+@@ -277,8 +276,8 @@ static int rk808_set_suspend_disable(struct regulator_dev *rdev)
  }
  
- static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
+ static struct regulator_ops rk808_buck1_2_ops = {
+-	.list_voltage		= regulator_list_voltage_linear_range,
+-	.map_voltage		= regulator_map_voltage_linear_range,
++	.list_voltage		= regulator_list_voltage_linear,
++	.map_voltage		= regulator_map_voltage_linear,
+ 	.get_voltage_sel	= rk808_buck1_2_get_voltage_sel_regmap,
+ 	.set_voltage_sel	= rk808_buck1_2_set_voltage_sel,
+ 	.set_voltage_time_sel	= rk808_buck1_2_set_voltage_time_sel,
+@@ -292,6 +291,19 @@ static struct regulator_ops rk808_buck1_2_ops = {
+ };
+ 
+ static struct regulator_ops rk808_reg_ops = {
++	.list_voltage		= regulator_list_voltage_linear,
++	.map_voltage		= regulator_map_voltage_linear,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++	.is_enabled		= regulator_is_enabled_regmap,
++	.set_suspend_voltage	= rk808_set_suspend_voltage,
++	.set_suspend_enable	= rk808_set_suspend_enable,
++	.set_suspend_disable	= rk808_set_suspend_disable,
++};
++
++static struct regulator_ops rk808_reg_ops_ranges = {
+ 	.list_voltage		= regulator_list_voltage_linear_range,
+ 	.map_voltage		= regulator_map_voltage_linear_range,
+ 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+@@ -299,7 +311,7 @@ static struct regulator_ops rk808_reg_ops = {
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+-	.set_suspend_voltage	= rk808_set_suspend_voltage,
++	.set_suspend_voltage	= rk808_set_suspend_voltage_range,
+ 	.set_suspend_enable	= rk808_set_suspend_enable,
+ 	.set_suspend_disable	= rk808_set_suspend_disable,
+ };
+@@ -319,9 +331,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_DCDC1,
+ 		.ops = &rk808_buck1_2_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 712500,
++		.uV_step = 12500,
+ 		.n_voltages = 64,
+-		.linear_ranges = rk808_buck_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_buck_voltage_ranges),
+ 		.vsel_reg = RK808_BUCK1_ON_VSEL_REG,
+ 		.vsel_mask = RK808_BUCK_VSEL_MASK,
+ 		.enable_reg = RK808_DCDC_EN_REG,
+@@ -333,9 +345,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_DCDC2,
+ 		.ops = &rk808_buck1_2_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 712500,
++		.uV_step = 12500,
+ 		.n_voltages = 64,
+-		.linear_ranges = rk808_buck_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_buck_voltage_ranges),
+ 		.vsel_reg = RK808_BUCK2_ON_VSEL_REG,
+ 		.vsel_mask = RK808_BUCK_VSEL_MASK,
+ 		.enable_reg = RK808_DCDC_EN_REG,
+@@ -357,9 +369,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_DCDC4,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 1800000,
++		.uV_step = 100000,
+ 		.n_voltages = 16,
+-		.linear_ranges = rk808_buck4_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_buck4_voltage_ranges),
+ 		.vsel_reg = RK808_BUCK4_ON_VSEL_REG,
+ 		.vsel_mask = RK808_BUCK4_VSEL_MASK,
+ 		.enable_reg = RK808_DCDC_EN_REG,
+@@ -371,9 +383,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO1,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 1800000,
++		.uV_step = 100000,
+ 		.n_voltages = 17,
+-		.linear_ranges = rk808_ldo_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
+ 		.vsel_reg = RK808_LDO1_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
+@@ -386,9 +398,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO2,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 1800000,
++		.uV_step = 100000,
+ 		.n_voltages = 17,
+-		.linear_ranges = rk808_ldo_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
+ 		.vsel_reg = RK808_LDO2_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
+@@ -416,9 +428,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO4,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 1800000,
++		.uV_step = 100000,
+ 		.n_voltages = 17,
+-		.linear_ranges = rk808_ldo_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
+ 		.vsel_reg = RK808_LDO4_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
+@@ -431,9 +443,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO5,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 1800000,
++		.uV_step = 100000,
+ 		.n_voltages = 17,
+-		.linear_ranges = rk808_ldo_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
+ 		.vsel_reg = RK808_LDO5_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
+@@ -446,9 +458,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO6,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 800000,
++		.uV_step = 100000,
+ 		.n_voltages = 18,
+-		.linear_ranges = rk808_ldo6_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo6_voltage_ranges),
+ 		.vsel_reg = RK808_LDO6_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
+@@ -461,9 +473,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO7,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 800000,
++		.uV_step = 100000,
+ 		.n_voltages = 18,
+-		.linear_ranges = rk808_ldo6_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo6_voltage_ranges),
+ 		.vsel_reg = RK808_LDO7_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
+@@ -476,9 +488,9 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.id = RK808_ID_LDO8,
+ 		.ops = &rk808_reg_ops,
+ 		.type = REGULATOR_VOLTAGE,
++		.min_uV = 1800000,
++		.uV_step = 100000,
+ 		.n_voltages = 17,
+-		.linear_ranges = rk808_ldo_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(rk808_ldo_voltage_ranges),
+ 		.vsel_reg = RK808_LDO8_ON_VSEL_REG,
+ 		.vsel_mask = RK808_LDO_VSEL_MASK,
+ 		.enable_reg = RK808_LDO_EN_REG,
 -- 
-2.5.0
+2.8.0.rc3
