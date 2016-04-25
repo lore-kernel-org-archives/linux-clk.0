@@ -1,67 +1,23 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Enable clocks for CMU_CCORE and
- CMU_FSYS0 blocks
-To: Tomasz Figa <tomasz.figa@gmail.com>, Alim Akhtar <alim.akhtar@samsung.com>
-References: <1460459243-27120-1-git-send-email-alim.akhtar@samsung.com>
- <CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Thomas Abraham <thomas.ab@samsung.com>,
- =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <570E2123.1000107@samsung.com>
-Date: Wed, 13 Apr 2016 12:36:19 +0200
-MIME-version: 1.0
-In-reply-to: 
- <CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
-Content-type: text/plain; charset=utf-8
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, elaine.zhang@rock-chips.com, jay.xu@rock-chips.com, dianders@chromium.org
+Subject: Re: [PATCH 6/6] clk: rockchip: rk3399: fix the gate bit for i2c4 and i2c8
+Date: Mon, 25 Apr 2016 23:03:02 +0200
+Message-ID: <33993376.YljBNjpY9Q@diego>
+In-Reply-To: <1461150730-29787-1-git-send-email-zhengxing@rock-chips.com>
+References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com> <1461150730-29787-1-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/13/2016 08:26 AM, Tomasz Figa wrote:
->> > @@ -205,7 +206,11 @@ static struct samsung_cmu_info topc_cmu_info __initdata = {
->> >
->> >  static void __init exynos7_clk_topc_init(struct device_node *np)
->> >  {
->> > +       struct clk *clk;
->> > +
->> >         samsung_cmu_register_one(np, &topc_cmu_info);
->> > +       clk = __clk_lookup("aclk_ccore_133");
->> > +       clk_prepare_enable(clk);
->
-> Shouldn't this be rather done before calling
-> samsung_cmu_register_one()? I don't remember exactly, but wouldn't
-> clock registration trigger reading back current (mux, div) values from
-> registers?
+Am Mittwoch, 20. April 2016, 19:12:10 schrieb Xing Zheng:
+> The gate bits of the i2c4 and i2c8 are incorrect due to the manual
+> error, we need to fix them.
 > 
-> Also, do we have any guarantees on order of initialization of
-> particular CMUs? I believe this will happen in order of DT nodes and
-> so would be not any kind of guarantee at all.
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-If these clocks need to be kept enabled perhaps it's better to just set
-CLK_IS_CRITICAL flag for them? Patches adding this flag are already in
-clk-next branch in the clk git tree. This way the clocks would get 
-enabled within the clk_register() call.
+applied to my clk-branch for v4.7
 
-The CMU registration order is enforced by listing input clocks to each
-CMU in DT. However, I wouldn't be concerned much about it in context 
-of this patch. We are enabling here clocks which belong to same CMU.
-samsung_cmu_register_one() needs to be called first for subsequent 
-__clk_lookup() calls to work.
-
-Perhaps related bits need to be set manually in CMU registers before
-registering a clock provider for the CMU, to fulfil the requirements.
-
-Anyway, summary of the $subject patch seems not precise enough:
-
-"This patch enables clocks for CMU_CCORE and CMU_FSYS0 blocks. This is
-required before accessing registers of these blocks."
-
-We need to enable selected clocks (i.e. access the CMU's registers)
-before accessing this CMU's registers? 
-
---
-Regards, 
-Sylwester
+Thanks
+Heiko
