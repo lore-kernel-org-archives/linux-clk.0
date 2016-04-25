@@ -1,66 +1,82 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:51711 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932174AbcDYNDR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 25 Apr 2016 09:03:17 -0400
+Date: Mon, 25 Apr 2016 08:03:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: thierry.reding@gmail.com, tony@atomide.com, paul@pwsan.com,
+	t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v6 3/7] ARM: dts: am437x/am33xx/da850: Add new ECAP and
+ EPWM bindings
+Message-ID: <20160425130308.GA7802@rob-hp-laptop>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+ <1461343238-29274-4-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <4459295.XmBqACy0jk@diego>
-References: <1461225849-28074-1-git-send-email-joel@jms.id.au>
- <4956403.scaVRGhPEf@diego> <CACPK8XfvLR+yZv77C0Eq=RsPOufrwvQjdPtBhnufNc=eJRLZYg@mail.gmail.com>
- <4459295.XmBqACy0jk@diego>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 28 Apr 2016 16:20:04 +0930
-Message-ID: <CACPK8Xdm_ZAyfUNbwEYrZuUZS4cP3YMkrkVbGNeiVmeFF6j3Cw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] doc/devicetree: Add Aspeed clock bindings
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461343238-29274-4-git-send-email-fcooper@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 27, 2016 at 6:42 PM, Heiko St=C3=BCbner <heiko@sntech.de> wrote=
-:
-> Am Mittwoch, 27. April 2016, 18:01:00 schrieb Joel Stanley:
->> > From what I remember exposing the clock controller as one block (inste=
-ad
->> > of
->> > declaring each clock individually in the dts) is still the preferred w=
-ay
->> > but I don't think I can find Mike's mail from back then easily.
->>
->> I can't picture how that would look. I took my lead from the moxart
->> clock driver; is there a better example that I should follow?
->
-> qcom, samsung, rockchip, hisilicon, imx, ...
+On Fri, Apr 22, 2016 at 11:40:34AM -0500, Franklin S Cooper Jr wrote:
+> Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
+> provide the various required clocks.
+> 
+> For AM437 and AM335x, add the required clocks explicitly to DT. The
+> hwmod entries for ECAP and EPWM will be removed and this will prevent
+> anything from breaking.
+> 
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
+>  .../devicetree/bindings/pwm/pwm-tiecap.txt         | 12 +++--
+>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 12 +++--
+>  arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
+>  arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
+>  arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
+>  5 files changed, 95 insertions(+), 28 deletions(-)
 
-I had a look here, and they appear to be much more complex than I
-need. The qcom directory is 41000 lines of code! The moxart driver is
-similar to what we do, but as you mentioned it is not arranged how you
-want it.
+[...]
 
-> I guess the design would depend on the actual layout of your clock- / sys=
-tem-
-> controller - aka what else is contained there.
+> diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+> index 12fcde4..e858460 100644
+> --- a/arch/arm/boot/dts/am4372.dtsi
+> +++ b/arch/arm/boot/dts/am4372.dtsi
+> @@ -672,18 +672,26 @@
+>  			status = "disabled";
+>  
+>  			ecap0: ecap@48300100 {
+> -				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
+> +				compatible = "ti,am4372-ecap",
 
-In the fourth generation parts, such as the ast2400, we have this layout:
+This doesn't appear to be documented.
 
-    clock                rate
- -----------------------------
-  clk_clkin          48000000
-     clk_hpll       384000000
-        clk_apb      48000000
+> +					     "ti,am3352-ecap",
+> +					     "ti,am33xx-ecap";
+>  				#pwm-cells = <3>;
+>  				reg = <0x48300100 0x80>;
+>  				ti,hwmods = "ecap0";
+> +				clocks = <&l4ls_gclk>;
+> +				clock-names = "fck";
+>  				status = "disabled";
+>  			};
+>  
+>  			ehrpwm0: pwm@48300200 {
+> -				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+> +				compatible = "ti,am4372-ehrpwm",
 
-clkin is the oscillator that may be running at 24, 25 or 48MHz. We can
-determine this from the strapping register.
+ditto.
 
-The hpll divisor is controlled by strapping resistors, and indicated
-in the strapping register.
-
-The apb is controlled by a register in the SCU, the Aspeed's
-bucket-of-bits for controlling various parts of the soc.
-
-In our case we want don't need to adjust any clocks. We do want struct
-clk's so attached device drivers to know how fast they are being
-clocked. How do you see this laid out?
-
-Cheers,
-
-Joel
+> +					     "ti,am3352-ehrpwm",
+> +					     "ti,am33xx-ehrpwm";
+>  				#pwm-cells = <3>;
+>  				reg = <0x48300200 0x80>;
+>  				ti,hwmods = "ehrpwm0";
+> +				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
+> +				clock-names = "tbclk", "fck";
+>  				status = "disabled";
+>  			};
+>  		};
