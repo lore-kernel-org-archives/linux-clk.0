@@ -1,71 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:38483 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752116AbcDRKBr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 06:01:47 -0400
-Received: by mail-wm0-f51.google.com with SMTP id u206so115806435wme.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2016 03:01:46 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 2/2] dt-bindings: Add Oxford Semiconductor OXNAS Standard Clocks bindings
-Date: Mon, 18 Apr 2016 12:01:36 +0200
-Message-Id: <1460973696-5977-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
-References: <1460973696-5977-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 02/11] ARM: sun5i: a13: Add display and TCON clocks
+Date: Mon, 25 Apr 2016 15:22:43 +0200
+Message-Id: <1461590572-4027-3-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Enable the display and TCON (channel 0 and channel 1) clocks that are going
+to be needed to drive the display engine, tcon and TV encoders.
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../devicetree/bindings/clock/oxnas,stdclk.txt     | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+ arch/arm/boot/dts/sun5i-a13.dtsi | 39 +++++++++++++++++++++++++++++++++++++--
+ arch/arm/boot/dts/sun5i-r8.dtsi  |  5 +++--
+ 2 files changed, 40 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
-new file mode 100644
-index 0000000..208cca6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
-@@ -0,0 +1,35 @@
-+Oxford Semiconductor OXNAS SoC Family Standard Clocks
-+================================================
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index 39f23b1ebc8f..263d46dbc7e6 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -61,8 +61,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
+-				 <&dram_gates 26>;
++			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch0_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -170,6 +170,41 @@
+ 					     "dram_ace",
+ 					     "dram_iep";
+ 		};
 +
-+Please also refer to clock-bindings.txt in this directory for common clock
-+bindings usage.
++		de_be_clk: clk@01c20104 {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-display-clk";
++			reg = <0x01c20104 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll5 1>;
++			clock-output-names = "de-be";
++		};
 +
-+Required properties:
-+- compatible: Should be "oxsemi,ox810se-stdclk"
-+- #clock-cells: 1, see below
++		de_fe_clk: clk@01c2010c {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-display-clk";
++			reg = <0x01c2010c 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll5 1>;
++			clock-output-names = "de-fe";
++		};
 +
-+Parent node should have the following properties :
-+- compatible: Should be "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
++		tcon_ch0_clk: clk@01c20118 {
++			#clock-cells = <0>;
++			#reset-cells = <1>;
++			compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
++			reg = <0x01c20118 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
++			clock-output-names = "tcon-ch0-sclk";
++		};
 +
-+For OX810SE, the clock indices are :
-+ - 0: LEON
-+ - 1: DMA_SGDMA
-+ - 2: CIPHER
-+ - 3: SATA
-+ - 4: AUDIO
-+ - 5: USBMPH
-+ - 6: ETHA
-+ - 7: PCIA
-+ - 8: NAND
-+
-+example:
-+
-+sys: sys-ctrl@000000 {
-+	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
-+	reg = <0x000000 0x100000>;
-+
-+	stdclk: stdclk {
-+		compatible = "oxsemi,ox810se-stdclk";
-+		#clock-cells = <1>;
-+	};
-+};
++		tcon_ch1_clk: clk@01c2012c {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
++			reg = <0x01c2012c 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
++			clock-output-names = "tcon-ch1-sclk";
++		};
+ 	};
+ 
+ 	soc@01c00000 {
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index e346ba76db5d..691d3de75b35 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -51,8 +51,9 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+-			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>, <&dram_gates 26>;
++			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
++				 <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch1_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
-1.9.1
-
+2.8.1
