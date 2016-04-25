@@ -1,63 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 18 Apr 2016 18:03:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-	a.zummo@towertech.it, dianders@chromium.org, zyw@rock-chips.com,
-	arnd@arndb.de, k.kozlowski@samsung.com, javier@osg.samsung.com,
-	kgene@kernel.org, olof@lixom.net, geert+renesas@glider.be,
-	sjoerd.simons@collabora.co.uk, treding@nvidia.com,
-	public_timo.s@silentcreek.de
-Message-ID: <20160418170311.GK3217@sirena.org.uk>
-References: <1460711790-22646-1-git-send-email-w.egorov@phytec.de>
- <1460711790-22646-4-git-send-email-w.egorov@phytec.de>
- <20160415102602.GE3217@sirena.org.uk>
- <20160415162406.GD25196@piout.net>
- <57148C05.4090900@phytec.de>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, elaine.zhang@rock-chips.com, jay.xu@rock-chips.com, dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/6] clk: rockchip: rk3399: export some necessary clock IDs
+Date: Mon, 25 Apr 2016 23:12:45 +0200
+Message-ID: <4907016.reVaWPNuy4@diego>
+In-Reply-To: <1461150414-29638-2-git-send-email-zhengxing@rock-chips.com>
+References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com> <1461150414-29638-2-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3NJww9yp20AXRsxZ"
-In-Reply-To: <57148C05.4090900@phytec.de>
-Subject: Re: [PATCH 3/6] regulator: rk808: Make rk808 generic, rename
- rk808-regulator.c
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Xing,
 
---3NJww9yp20AXRsxZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Am Mittwoch, 20. April 2016, 19:06:49 schrieb Xing Zheng:
+> We export some clock IDs for the reference drivers need them.
+> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-On Mon, Apr 18, 2016 at 09:25:57AM +0200, Wadim Egorov wrote:
+I've split this one up quite a bit [0] [1] [2] [3]. Especially binding-
+header and clock-driver changes should be in separate patches, as they
+regularly need to live on different branches.
 
-> It seems this topic has been already discussed here [1].
-> So the right solution is just to rename the rk808 struct in rk808.h,
-> don't touch the driver names and config options and naming the
-> additional RK818 PMIC in the Kconfig?
+Also please don't cram to many unrelated changes into one patch and
+make sure the patch description does explain the reason behind the
+change enough.
 
-Something like that, yes.  If it's really useful for clarification some
-renaming of code might be useful.
+But I've obviously applied the change after splitting, so please take
+a look and shout if you disagree with something ;-)
 
---3NJww9yp20AXRsxZ
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Heiko
 
-iQEcBAEBCAAGBQJXFRNMAAoJECTWi3JdVIfQ9ucH/2UcY+YmZyUcGyDgMIayC9dd
-ua6QDXSgx1W/VNkI+ddPNUHgaIjG4uor6mhhRIE7ltFkVWcyoCqzhnArzPP6GYAX
-WXTLm5BetM6vv2gnJXXnUmFWG9TlXa+7uTbR7QdANPdP1Qk3URHecS0O4W8gNyoI
-0pA/4ndRrs9q2Gq23W+810jCyl/M26uO7f6xdRir8hugCJWnJgXzQ2VWI55uhRXR
-r5Z3wqhnhIPmu0W9y3r0yfND7Fw0NiJOL+lzXNVH1gJYK0zK9JKtrrqAR1tD+7Eh
-pv4G1G9N7NnreQcwC3ijQ9UFVyXQ74dGEUL3EGT+7DvmYIVcGVFqbRQAmD/Uvjg=
-=/lfo
------END PGP SIGNATURE-----
 
---3NJww9yp20AXRsxZ--
+[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.7-shared/clkids&id=f73b5042b9a9c45477246acd478bf49487197a31
+[1] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.7-shared/clkids&id=003e6eb71ed3c884d55443cdb95b909374ade7bc
+[2] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.7-shared/clkids&id=55df45843901847f33816f8246ca2538aadd339a
+[3] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.7-clk/next&id=3f92a05440f92f2734c9b754af39afa3244dfb5b
