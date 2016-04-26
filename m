@@ -1,58 +1,38 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v5 1/5] clk: unconditionally recurse into clk/mvebu/
-Date: Thu, 14 Apr 2016 17:33:29 +0200
-Message-Id: <1460648013-31320-2-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ig0-f196.google.com ([209.85.213.196]:35196 "EHLO
+	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751170AbcDZKYH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 06:24:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1461584360-32547-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	<1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Tue, 26 Apr 2016 12:24:06 +0200
+Message-ID: <CAMuHMdUGvfBh5J7Or2ZiZndaHbFqM2jnqp3x8xNOgSzeAU_JoA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: shmobile: r8a7795: Add VIN clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The drivers/clk/mvebu directory is only being built when
-CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
-platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
-we need to recurse into this directory regardless of the value of
-CONFIG_PLAT_ORION.
+On Mon, Apr 25, 2016 at 1:39 PM, Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Since all files in drivers/clk/mvebu/ are already conditionally
-compiled depending on various Kconfig options, we can recurse
-unconditionally into drivers/clk/mvebu without any other change.
+s/shmobile/renesas/, and applied to clk-renesas-for-v4.7 and renesas-drivers.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 46869d69..f9ad66e 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -61,7 +61,7 @@ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
--obj-$(CONFIG_PLAT_ORION)		+= mvebu/
-+obj-y					+= mvebu/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
--- 
-2.6.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
