@@ -1,94 +1,49 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 13 Apr 2016 09:26:13 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop messing with the
- pwm->period field
-Message-ID: <20160413082613.GM8094@x1>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
- <20160412110809.GI18882@ulmo.ba.sec>
- <20160412141613.GI8094@x1>
- <20160412142608.GB25006@ulmo.ba.sec>
- <20160413082511.GL8094@x1>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160413082511.GL8094@x1>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
+Date: Tue, 26 Apr 2016 09:09:40 +0200
+Message-Id: <1461654582-668-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 13 Apr 2016, Lee Jones wrote:
+As a pure Clock Domain does not have the concept of powering the domain
+itself, the CPG/MSTP driver does not provide power_off() and power_on()
+callbacks.
+However, the genpd core may still perform a dummy power down, causing
+/sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+status being "off-0".
 
-> On Tue, 12 Apr 2016, Thierry Reding wrote:
-> 
-> > On Tue, Apr 12, 2016 at 03:16:13PM +0100, Lee Jones wrote:
-> > > On Tue, 12 Apr 2016, Thierry Reding wrote:
-> > > 
-> > > > On Wed, Mar 30, 2016 at 10:03:26PM +0200, Boris Brezillon wrote:
-> > > > > pwm->period field is not supposed to be changed by PWM users. The only
-> > > > > ones authorized to change it are the PWM core and PWM drivers.
-> > > > > 
-> > > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > > > ---
-> > > > >  drivers/video/backlight/lm3630a_bl.c | 3 +--
-> > > > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > > 
-> > > > Applied, thanks.
-> > > 
-> > > Applied?
-> > 
-> > You didn't specifically Ack this one, but I presumed that since the
-> > change is essentially the same as for pwm-backlight, and this is another
-> > prerequisite for the remainder of the series it should go in through the
-> > PWM tree as well.
-> 
-> If you're taking Backlight patches through a !Backlight tree, you're
-> going to have to send out a pull-request.  There are no conflicts
-> currently, so I won't use it right away, but I need it in my arsenal
-> if they do occur.
+Use the always-on governor to make sure the domain is never powered
+down, and always shows up as "on" in pm_genpd_summary.
 
-... also, don't forget to change the subject line to make the
-rest of the patches in Backlight.  The subject description needs to
-start with an uppercase char.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-mstp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 969fbb61ab07b9b8..5093a250650dad6d 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -319,7 +319,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 	pd->flags = GENPD_FLAG_PM_CLK;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+-	pm_genpd_init(pd, &simple_qos_governor, false);
++	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
+ 
+ 	of_genpd_add_provider_simple(np, pd);
+ }
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
