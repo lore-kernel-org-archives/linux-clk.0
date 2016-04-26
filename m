@@ -1,69 +1,79 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 12 Apr 2016 10:37:22 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Liam Girdwood
- <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>,
- lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck
- <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
- <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
- linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>, Stephen
- Barber <smbarber@chromium.org>
-Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
-Message-ID: <20160412103722.0bfe1d4d@bbrezillon>
-In-Reply-To: <20160412044203.GW3351@sirena.org.uk>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
-	<20160330212410.GX2350@sirena.org.uk>
-	<20160407235431.788dc24a@bbrezillon>
-	<20160412044203.GW3351@sirena.org.uk>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
+ paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: [PATCH v7 1/9] clk: ti: am335x/am4372: Add tbclk to pwm node
+Date: Tue, 26 Apr 2016 17:36:41 -0500
+Message-Id: <1461710209-6563-2-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mark,
+Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
+to the time-based clk.
 
-On Tue, 12 Apr 2016 05:42:03 +0100
-Mark Brown <broonie@kernel.org> wrote:
+Do not remove similar entries for ehrpwm node. Later patches will switch
+from using ehrpwm node name to pwm. But to maintain ABI compatibility we
+shouldn't remove the old entries.
 
-> On Thu, Apr 07, 2016 at 11:54:31PM +0200, Boris Brezillon wrote:
-> 
-> > Is there any reason for calling set_machine_constraints() after
-> > device_register() in regulator_register()?
-> 
-> I'm not sure there's a strong one, we don't really use the class device
-> for anything, but without doing a full audit I couldn't guarantee that.
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/ti/clk-33xx.c | 3 +++
+ drivers/clk/ti/clk-43xx.c | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-At first glance I don't see any problem (even the rdev_err/info/...()
-functions do not use dev_err/info/...()). The patch will be part of v6
-(unless you want me to send it independently).
-
-Thanks,
-
-Boris
-
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index ef2ec64..0e47d95 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
++	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 097fc90..7255aa8 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
+ 	DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
+ 	DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
+ 	DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
++	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
++	DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
++	DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
++	DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
+ 	{ .node_name = NULL },
+ };
+ 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.7.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
