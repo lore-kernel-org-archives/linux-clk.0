@@ -1,137 +1,41 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 2/7] clk: rockchip: simplify GRF handling in pll clocks
-Date: Thu, 28 Apr 2016 15:11:10 +0200
-Message-Id: <1461849075-8310-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, lee.jones@linaro.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v4 7/7] rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
+Date: Tue, 26 Apr 2016 16:54:10 +0200
+Message-Id: <1461682450-22173-8-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
+References: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-With the previous commit, the clock drivers now know at init time if the
-GRF regmap is available. That means if it isn't available then, it also
-won't become available later and we can therefore switch PLLs, that need
-the GRF for the lock-status, to read-only mode - similar behaviour as the
-aborting of rate changes we did before.
+The RK808 and RK818 PMICs are using a similar register map.
+We can reuse the rtc driver for the RK818 PMIC. So let's add
+the RK818 in the Kconfig description.
 
-This saves some conditionals on every rate change and we can also drop
-the rockchip_clk_get_grf function completely.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
- drivers/clk/rockchip/clk-pll.c | 30 +++---------------------------
- drivers/clk/rockchip/clk.c     |  5 -----
- drivers/clk/rockchip/clk.h     |  1 -
- 3 files changed, 3 insertions(+), 33 deletions(-)
+ drivers/rtc/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 128a6b2..5c0b919 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -92,15 +92,10 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
-  */
- static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
- {
--	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
-+	struct regmap *grf = pll->ctx->grf;
- 	unsigned int val;
- 	int delay = 24000000, ret;
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 3e84315..acc2651 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -324,11 +324,11 @@ config RTC_DRV_MAX77686
+ 	  will be called rtc-max77686.
  
--	if (IS_ERR(grf)) {
--		pr_err("%s: grf regmap not available\n", __func__);
--		return PTR_ERR(grf);
--	}
--
- 	while (delay > 0) {
- 		ret = regmap_read(grf, pll->lock_offset, &val);
- 		if (ret) {
-@@ -253,13 +248,6 @@ static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	const struct rockchip_pll_rate_table *rate;
- 	unsigned long old_rate = rockchip_rk3036_pll_recalc_rate(hw, prate);
--	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
--
--	if (IS_ERR(grf)) {
--		pr_debug("%s: grf regmap not available, aborting rate change\n",
--			 __func__);
--		return PTR_ERR(grf);
--	}
+ config RTC_DRV_RK808
+-	tristate "Rockchip RK808 RTC"
++	tristate "Rockchip RK808/RK818 RTC"
+ 	depends on MFD_RK808
+ 	help
+ 	  If you say yes here you will get support for the
+-	  RTC of RK808 PMIC.
++	  RTC of RK808 and RK818 PMIC.
  
- 	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
- 		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
-@@ -492,13 +480,6 @@ static int rockchip_rk3066_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	const struct rockchip_pll_rate_table *rate;
- 	unsigned long old_rate = rockchip_rk3066_pll_recalc_rate(hw, prate);
--	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
--
--	if (IS_ERR(grf)) {
--		pr_debug("%s: grf regmap not available, aborting rate change\n",
--			 __func__);
--		return PTR_ERR(grf);
--	}
- 
- 	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
- 		 __func__, clk_hw_get_name(hw), old_rate, drate, prate);
-@@ -565,11 +546,6 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
- 		 rate->no, cur.no, rate->nf, cur.nf, rate->nb, cur.nb);
- 	if (rate->nr != cur.nr || rate->no != cur.no || rate->nf != cur.nf
- 						     || rate->nb != cur.nb) {
--		struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
--
--		if (IS_ERR(grf))
--			return;
--
- 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
- 			 __func__, clk_hw_get_name(hw));
- 		rockchip_rk3066_pll_set_params(pll, rate);
-@@ -943,13 +919,13 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 
- 	switch (pll_type) {
- 	case pll_rk3036:
--		if (!pll->rate_table)
-+		if (!pll->rate_table || IS_ERR(ctx->grf))
- 			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
- 		else
- 			init.ops = &rockchip_rk3036_pll_clk_ops;
- 		break;
- 	case pll_rk3066:
--		if (!pll->rate_table)
-+		if (!pll->rate_table || IS_ERR(ctx->grf))
- 			init.ops = &rockchip_rk3066_pll_clk_norate_ops;
- 		else
- 			init.ops = &rockchip_rk3066_pll_clk_ops;
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index af6d47b..3a2936d 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -365,11 +365,6 @@ void __init rockchip_clk_of_add_provider(struct device_node *np,
- 		pr_err("%s: could not register clk provider\n", __func__);
- }
- 
--struct regmap *rockchip_clk_get_grf(struct rockchip_clk_provider *ctx)
--{
--	return ctx->grf;
--}
--
- void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
- 			     struct clk *clk, unsigned int id)
- {
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index cb6a639..5468910 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -581,7 +581,6 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 			void __iomem *base, unsigned long nr_clks);
- void rockchip_clk_of_add_provider(struct device_node *np,
- 				struct rockchip_clk_provider *ctx);
--struct regmap *rockchip_clk_get_grf(struct rockchip_clk_provider *ctx);
- void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
- 			     struct clk *clk, unsigned int id);
- void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rk808-rtc.
 -- 
-2.6.4
+1.9.1
