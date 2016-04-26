@@ -1,49 +1,56 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org
-Cc: mturquette@baylibre.com, CARLOS.PALMINHA@synopsys.com,
-	Vineet.Gupta1@synopsys.com, Alexey.Brodkin@synopsys.com,
-	Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: [PATCH 2/2 v5] arc: axs10x: Add DT bindings for I2S PLL Clock
-Date: Tue, 12 Apr 2016 10:14:23 +0100
-Message-Id: <2e7f7ffb48ea246cd10f2a9b36f74254c699ba49.1460451903.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1460451903.git.joabreu@synopsys.com>
-References: <cover.1460451903.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1460451903.git.joabreu@synopsys.com>
-References: <cover.1460451903.git.joabreu@synopsys.com>
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] clk: renesas: Clock Domain fixes
+Date: Tue, 26 Apr 2016 09:09:38 +0200
+Message-Id: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for AXS10X I2S PLL Clock driver.
+	Hi Mike, Stephen,
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
----
+This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
+Clock Domains:
+  1. Postpone calls to pm_genpd_init(), as all local setup of the
+     generic_pm_domain structure should have been completed before
+     calling pm_genpd_init(),
+  2. Use always-on governor for Clock Domains, to prevent their status
+     from being shown as "off-0" in
+     /sys/kernel/debug/pm_genpd/pm_genpd_summary.
 
-This patch was only introduced in v5.
+I plan to queue these up with other clock updates in
+clk-renesas-for-v4.7, and send a pull request later.
 
- arch/arc/boot/dts/axs10x_mb.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks for your comments!
 
-diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
-index ab5d570..227b215 100644
---- a/arch/arc/boot/dts/axs10x_mb.dtsi
-+++ b/arch/arc/boot/dts/axs10x_mb.dtsi
-@@ -16,6 +16,12 @@
- 		ranges = <0x00000000 0xe0000000 0x10000000>;
- 		interrupt-parent = <&mb_intc>;
- 
-+		i2sclk: i2sclk@100a0 {
-+			compatible = "snps,axs10x-i2s-pll-clock";
-+			reg = <0x100a0 0x10>;
-+			#clock-cells = <0>;
-+		};
-+
- 		clocks {
- 			i2cclk: i2cclk {
- 				compatible = "fixed-clock";
+Geert Uytterhoeven (4):
+  clk: renesas: mstp: Postpone call to pm_genpd_init()
+  clk: renesas: mstp: Use always-on governor for Clock Domain
+  clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
+  clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+
+ drivers/clk/renesas/clk-mstp.c         | 3 +--
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
 -- 
 1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
