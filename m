@@ -1,62 +1,52 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 20/28] clk: ti: mux: export mux clock APIs locally
-Date: Thu, 14 Apr 2016 14:08:09 +0300
-Message-ID: <1460632097-25727-21-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: renesas: Clock Domain fixes
+Date: Tue, 26 Apr 2016 10:33 +0300
+Message-ID: <1849807.IPH4zQTRa3@avalon>
+In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-get_parent and set_parent are going to be required by the support of
-module clocks, so export these locally.
+Hi Geert,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clock.h |    3 +++
- drivers/clk/ti/mux.c   |    4 ++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Thank you for the patches.
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 90f3f47..7eca8a1 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -224,6 +224,9 @@ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
- extern const struct clk_ops ti_clk_divider_ops;
- extern const struct clk_ops ti_clk_mux_ops;
- 
-+u8 ti_clk_mux_get_parent(struct clk_hw *hw);
-+int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index);
-+
- int omap2_clkops_enable_clkdm(struct clk_hw *hw);
- void omap2_clkops_disable_clkdm(struct clk_hw *hw);
- 
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 44777ab..57ff471 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -26,7 +26,7 @@
- #undef pr_fmt
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
--static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
-+u8 ti_clk_mux_get_parent(struct clk_hw *hw)
- {
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	int num_parents = clk_hw_get_num_parents(hw);
-@@ -63,7 +63,7 @@ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
- 	return val;
- }
- 
--static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
+For the whole series,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+On Tuesday 26 Apr 2016 09:09:38 Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
+> 
+> This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
+> Clock Domains:
+>   1. Postpone calls to pm_genpd_init(), as all local setup of the
+>      generic_pm_domain structure should have been completed before
+>      calling pm_genpd_init(),
+>   2. Use always-on governor for Clock Domains, to prevent their status
+>      from being shown as "off-0" in
+>      /sys/kernel/debug/pm_genpd/pm_genpd_summary.
+> 
+> I plan to queue these up with other clock updates in
+> clk-renesas-for-v4.7, and send a pull request later.
+> 
+> Thanks for your comments!
+> 
+> Geert Uytterhoeven (4):
+>   clk: renesas: mstp: Postpone call to pm_genpd_init()
+>   clk: renesas: mstp: Use always-on governor for Clock Domain
+>   clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
+>   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+> 
+>  drivers/clk/renesas/clk-mstp.c         | 3 +--
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+
 -- 
-1.7.9.5
+Regards,
+
+Laurent Pinchart
