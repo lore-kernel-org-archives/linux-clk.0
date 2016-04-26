@@ -1,116 +1,151 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 22/24] pwm: update documentation
-Date: Thu, 14 Apr 2016 21:17:42 +0200
-Message-Id: <1460661464-11216-23-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
+ paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: [PATCH v7 2/9] ARM: dts: am437x: Add missing compatibles to PWM
+ binding documents
+Date: Tue, 26 Apr 2016 17:36:42 -0500
+Message-Id: <1461710209-6563-3-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the PWM subsystem documentation to reflect the atomic PWM changes.
+There are several SOC specific compatibles for ECAP, EHRPWM and PWMMS
+that are in use but aren't properly documented. Therefore, fix this
+by adding the compatibles to the appropriate binding documents.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+While at it make minor corrections to the binding document.
+
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 ---
- Documentation/pwm.txt | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/pwm/pwm-tiecap.txt          | 12 ++++++++++--
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt        | 12 ++++++++++--
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt         | 21 +++++++++++++++++++--
+ 3 files changed, 39 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
-index ca895fd..789b27c 100644
---- a/Documentation/pwm.txt
-+++ b/Documentation/pwm.txt
-@@ -42,9 +42,26 @@ variants of these functions, devm_pwm_get() and devm_pwm_put(), also exist.
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+index fb81179..788da6c 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+@@ -2,8 +2,9 @@ TI SOC ECAP based APWM controller
  
- After being requested, a PWM has to be configured using:
+ Required properties:
+ - compatible: Must be "ti,<soc>-ecap".
+-  for am33xx - compatible = "ti,am33xx-ecap";
+-  for da850  - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++  for am33xx  - compatible = "ti,am33xx-ecap";
++  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
++  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The PWM channel index ranges from 0 to 4. The only third
+   cell flag supported by this binding is PWM_POLARITY_INVERTED.
+@@ -22,6 +23,13 @@ ecap0: ecap@0 { /* ECAP on am33xx */
+ 	ti,hwmods = "ecap0";
+ };
  
--int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns);
-+int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state);
- 
--To start/stop toggling the PWM output use pwm_enable()/pwm_disable().
-+This API controls both the PWM period/duty_cycle config and the
-+enable/disable state.
++ecap0: ecap@0 { /* ECAP on am4372 */
++	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
++	#pwm-cells = <3>;
++	reg = <0x48300100 0x80>;
++	ti,hwmods = "ecap0";
++};
 +
-+The pwm_config(), pwm_enable() and pwm_disable() functions are just wrappers
-+around pwm_apply_state() and should not be used if the user wants to change
-+several parameter at once. For example, if you see pwm_config() and
-+pwm_{enable,disable}() calls in the same function, this probably means you
-+should switch to pwm_apply_state().
-+
-+The PWM user API also allows one to query the PWM state with pwm_get_state().
-+
-+In addition to the PWM state, the PWM API also exposes PWM arguments, which
-+are the reference PWM config one should use on this PWM.
-+PWM arguments are usually platform-specific and allows the PWM user to only
-+care about dutycycle relatively to the full period (like, duty = 50% of the
-+period). struct pwm_args contains 2 fields (period and polarity) and should
-+be used to set the initial PWM config (usually done in the probe function
-+of the PWM user). PWM arguments are retrieved with pwm_get_args().
+ ecap0: ecap@0 { /* ECAP on da850 */
+ 	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 9c100b2..99b544f 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -2,8 +2,9 @@ TI SOC EHRPWM based PWM controller
  
- Using PWMs with the sysfs interface
- -----------------------------------
-@@ -105,6 +122,15 @@ goes low for the remainder of the period. Conversely, a signal with inversed
- polarity starts low for the duration of the duty cycle and goes high for the
- remainder of the period.
+ Required properties:
+ - compatible: Must be "ti,<soc>-ehrpwm".
+-  for am33xx - compatible = "ti,am33xx-ehrpwm";
+-  for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++  for am33xx  - compatible = "ti,am33xx-ehrpwm";
++  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
++  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -22,6 +23,13 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+ 	ti,hwmods = "ehrpwm0";
+ };
  
-+Drivers are encouraged to implement ->apply() instead of the legacy
-+->enable(), ->disable() and ->config() methods. Doing that should provide
-+atomicity in the PWM config workflow, which is required when the PWM controls
-+a critical device (like a regulator).
++ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
++	compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
++	#pwm-cells = <3>;
++	reg = <0x48300200 0x80>;
++	ti,hwmods = "ehrpwm0";
++};
 +
-+The implementation of ->get_state() (a method used to retrieve initial PWM
-+state) is also encouraged for the same reason: letting the PWM user know
-+about the current PWM state would allow him to avoid glitches.
-+
- Locking
- -------
+ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
+ 	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+index f7eae77..fd8e87c 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+@@ -1,7 +1,10 @@
+ TI SOC based PWM Subsystem
  
+ Required properties:
+-- compatible: Must be "ti,am33xx-pwmss";
++- compatible: Must be "ti,<soc>-pwmss".
++  for am33xx  - compatible = "ti,am33xx-pwmss";
++  for am4372  - compatible = "ti,am4372-pwmss","ti,am33xx-pwmss";
++
+ - reg: physical base address and size of the registers map.
+ - address-cells: Specify the number of u32 entries needed in child nodes.
+ 		  Should set to 1.
+@@ -16,7 +19,7 @@ Required properties:
+ Also child nodes should also populated under PWMSS DT node.
+ 
+ Example:
+-pwmss0: pwmss@48300000 {
++epwmss0: epwmss@48300000 { /* PWMSS for am33xx */
+ 	compatible = "ti,am33xx-pwmss";
+ 	reg = <0x48300000 0x10>;
+ 	ti,hwmods = "epwmss0";
+@@ -29,3 +32,17 @@ pwmss0: pwmss@48300000 {
+ 
+ 	/* child nodes go here */
+ };
++
++epwmss0: epwmss@48300000 { /* PWMSS for am4372 */
++	compatible = "ti,am4372-pwmss","ti,am33xx-pwmss"
++	reg = <0x48300000 0x10>;
++	ti,hwmods = "epwmss0";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	status = "disabled";
++	ranges = <0x48300100 0x48300100 0x80   /* ECAP */
++		  0x48300180 0x48300180 0x80   /* EQEP */
++		  0x48300200 0x48300200 0x80>; /* EHRPWM */
++
++	/* child nodes go here */
++};
 -- 
-2.5.0
+2.7.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
