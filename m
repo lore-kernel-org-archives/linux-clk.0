@@ -1,159 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40512 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753394AbcDJP0N (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 11:26:13 -0400
-Date: Sun, 10 Apr 2016 02:50:06 -0700
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: sunxi: Add sun6i/8i PLL video support
-Message-ID: <20160410095006.GY4227@lukather>
-References: <cover.1459358017.git.moinejf@free.fr>
- <e63499f789971b8c45a0ae5e90bd127371cbcf19.1459358017.git.moinejf@free.fr>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 4/8] regulator: rk808: Migrate to regulator core's
+ simplified DT parsing code
+To: Mark Brown <broonie@kernel.org>
+References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+ <1461590448-47685-5-git-send-email-w.egorov@phytec.de>
+ <20160425173911.GQ3217@sirena.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+From: Wadim Egorov <w.egorov@phytec.de>
+Message-ID: <571F1CB4.10200@phytec.de>
+Date: Tue, 26 Apr 2016 09:45:56 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yPlaimQd/TpiYx8R"
-In-Reply-To: <e63499f789971b8c45a0ae5e90bd127371cbcf19.1459358017.git.moinejf@free.fr>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160425173911.GQ3217@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---yPlaimQd/TpiYx8R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 25.04.2016 19:39, Mark Brown wrote:
+> On Mon, Apr 25, 2016 at 03:20:44PM +0200, Wadim Egorov wrote:
+>> A common simplified DT parsing code for regulators was introduced in
+>> commit a0c7b164ad11 ("regulator: of: Provide simplified DT parsing
+>> method")
+> This doesn't apply against current code, please check and resend.
 
-On Wed, Mar 30, 2016 at 06:50:43PM +0200, Jean-Francois Moine wrote:
-> Add the PLL type which is used by the sun6i/8i families for video display.
->=20
-> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 65 +++++++++++++++++=
-++++++
->  2 files changed, 66 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index 8c0fda8..ff93aee 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -10,6 +10,7 @@ Required properties:
->  	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
->  	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
->  	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-> +	"allwinner,sun6i-a31-pll3-clk" - for the video PLL clock
->  	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
->  	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
->  	"allwinner,sun4i-a10-pll6-clk" - for the PLL6 clock
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 0581e1b..270f2a9 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -23,6 +23,7 @@
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/log2.h>
-> +#include <linux/rational.h>
-> =20
->  #include "clk-factors.h"
-> =20
-> @@ -1129,6 +1130,70 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pl=
-l6-clk",
->  	       sun6i_pll6_clk_setup);
-> =20
->  /*
-> + * sun6i pll3
-> + *
-> + * if (p =3D=3D 0) rate =3D k ? 270MHz : 297MHz
-> + * else rate =3D parent_rate / (m + 1) * (n + 1);
-> + */
-> +static void sun6i_pll3_factors(struct factors_request *req)
-> +{
-> +	unsigned long n, m;
-> +
-> +	if (req->rate =3D=3D 270000000) {
-> +		req->m =3D 0;
-> +		req->p =3D 0;
-> +		req->k =3D 0;
-> +	} else if (req->rate =3D=3D 297000000) {
-> +		req->m =3D 0;
-> +		req->p =3D 0;
-> +		req->k =3D 1;
-> +	} else {
-> +		rational_best_approximation(req->rate,
-> +					req->parent_rate,
-> +					1 << 7, 1 << 4, &n, &m);
-> +		req->rate =3D req->parent_rate / m * n;
-> +		req->p =3D 1;
-> +		req->m =3D m - 1;
-> +		req->n =3D n - 1;
-> +	}
-> +}
-> +
-> +static void sun6i_pll3_recalc(struct factors_request *req)
-> +{
-> +	if (req->p)
-> +		req->rate =3D req->parent_rate / (req->m + 1) * (req->n + 1);
-> +	else if (req->k)
-> +		req->rate =3D 270000000;
-> +	else
-> +		req->rate =3D 297000000;
-> +}
-> +
-> +static const struct clk_factors_config sun6i_pll3_config =3D {
-> +	.mshift =3D 0,
-> +	.mwidth =3D 4,
-> +	.nshift =3D 8,
-> +	.nwidth =3D 7,
-> +	.pshift =3D 24,	/* mode selection fractional / integer */
-> +	.pwidth =3D 1,
-> +	.kshift =3D 25,	/* fraction 270 / 297 MHz */
-> +	.kwidth =3D 1,
-> +};
-
-That's not what p and k are.
-
-Please add extra parameters to deal with fractional rates in the
-clk_factors_config (like an extra bit + an array with the two rate
-exposed.
-
-That way, you can also deal with it in the core, instead of doing a
-hack.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---yPlaimQd/TpiYx8R
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXCiHOAAoJEBx+YmzsjxAgj/IP/i23VU2JjuMHcqkBCkk+6L3+
-B77AD4x+7y2gkQYi0+LzzAhrAfrkyq47Ot6wuxi9OsjVYm0/EPodAdzjeJdBI8Aq
-RhwFKUOHW2ICb0RqwnCgIbFa/VG0sz3YhJq+un0hIjrHGPhd0chrRuhdin3uOQth
-00cvNTGl0KYGDVNaPqjgRriOd4WQvkFdE/5ObvAKhGxCa2Kd7VFBZyBYuPAwck8a
-e8T0tsoqSHRdLKItErU+h+U6PAoNKv3fMc+nDmktbIcxwpPRy8tvbPGCu/x1XmfH
-kBiYrnZq+FBg7q3ruFDgzPBaoRFby2EQQz7NplgXSpUIJWdtT0FNWzTFVXxwzB/P
-wnCqZ5juJIqjq08VW0tcCfs9qxQDANexOTwrLijfgsrGFJ7MJ8KiKAio/xEdZm8d
-bRLipbY/lc1GaBg26Yp6vxHJGRedhG5UsjSJhIkXomIGrNCZ0D7iBnzrCIoz8Kop
-URjv6qUCJbO0dFQYhsD8BxIGws0uc0h8wfBghMdpHJrQQmOEtb7+IAuUaL9WTZof
-edMGP++PgnOmeiKq+FKJxersq1dcILmARv3KjVB3Z4eL6r+5Ft9awzK2WQ8HUrYa
-msGK2nQhnh72KNIAar3aYPGv6FcFLwJnh/NVBoy28HADfal/hoCq3a363No3JrDX
-moV3OWJE2dAAHczc3GPw
-=3MIA
------END PGP SIGNATURE-----
-
---yPlaimQd/TpiYx8R--
+Hm, for me all patches apply to the current code.
+This patch depends on the first rename patch. Maybe this is the problem?
