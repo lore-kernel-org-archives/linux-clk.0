@@ -1,139 +1,100 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:54605 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755743AbcDJRLf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2016 13:11:35 -0400
-Date: Sun, 10 Apr 2016 19:11:21 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: sunxi: Add sun6i/8i PLL video support
-Message-Id: <20160410191121.6f791f375110cf358b0ee1ab@free.fr>
-In-Reply-To: <20160410095006.GY4227@lukather>
-References: <cover.1459358017.git.moinejf@free.fr>
-	<e63499f789971b8c45a0ae5e90bd127371cbcf19.1459358017.git.moinejf@free.fr>
-	<20160410095006.GY4227@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <20160425222702.GC29990@codeaurora.org>
+References: <1461552642-10732-1-git-send-email-yamada.masahiro@socionext.com>
+	<20160425222702.GC29990@codeaurora.org>
+Date: Tue, 26 Apr 2016 15:19:04 +0900
+Message-ID: <CAK7LNASxL6+uP_G=2ffkamt-VKJmxvU4C7waNbHRPM3uUGEP-w@mail.gmail.com>
+Subject: Re: [PATCH] clk: fix member type of struct clk_hw_onecell_data
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 10 Apr 2016 02:50:06 -0700
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Hi Stephen,
 
-> Hi,
-> 
-> On Wed, Mar 30, 2016 at 06:50:43PM +0200, Jean-Francois Moine wrote:
-> > Add the PLL type which is used by the sun6i/8i families for video display.
-> > 
-> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> > ---
-> >  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
-> >  drivers/clk/sunxi/clk-sunxi.c                     | 65 +++++++++++++++++++++++
-> >  2 files changed, 66 insertions(+)
-	[snip]
-> > diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> > index 0581e1b..270f2a9 100644
-> > --- a/drivers/clk/sunxi/clk-sunxi.c
-> > +++ b/drivers/clk/sunxi/clk-sunxi.c
-> > @@ -23,6 +23,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/spinlock.h>
-> >  #include <linux/log2.h>
-> > +#include <linux/rational.h>
-> >  
-> >  #include "clk-factors.h"
-> >  
-> > @@ -1129,6 +1130,70 @@ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
-> >  	       sun6i_pll6_clk_setup);
-> >  
-> >  /*
-> > + * sun6i pll3
-> > + *
-> > + * if (p == 0) rate = k ? 270MHz : 297MHz
-> > + * else rate = parent_rate / (m + 1) * (n + 1);
-> > + */
-> > +static void sun6i_pll3_factors(struct factors_request *req)
-> > +{
-> > +	unsigned long n, m;
-> > +
-> > +	if (req->rate == 270000000) {
-> > +		req->m = 0;
-> > +		req->p = 0;
-> > +		req->k = 0;
-> > +	} else if (req->rate == 297000000) {
-> > +		req->m = 0;
-> > +		req->p = 0;
-> > +		req->k = 1;
-> > +	} else {
-> > +		rational_best_approximation(req->rate,
-> > +					req->parent_rate,
-> > +					1 << 7, 1 << 4, &n, &m);
-> > +		req->rate = req->parent_rate / m * n;
-> > +		req->p = 1;
-> > +		req->m = m - 1;
-> > +		req->n = n - 1;
-> > +	}
-> > +}
-> > +
-> > +static void sun6i_pll3_recalc(struct factors_request *req)
-> > +{
-> > +	if (req->p)
-> > +		req->rate = req->parent_rate / (req->m + 1) * (req->n + 1);
-> > +	else if (req->k)
-> > +		req->rate = 270000000;
-> > +	else
-> > +		req->rate = 297000000;
-> > +}
-> > +
-> > +static const struct clk_factors_config sun6i_pll3_config = {
-> > +	.mshift = 0,
-> > +	.mwidth = 4,
-> > +	.nshift = 8,
-> > +	.nwidth = 7,
-> > +	.pshift = 24,	/* mode selection fractional / integer */
-> > +	.pwidth = 1,
-> > +	.kshift = 25,	/* fraction 270 / 297 MHz */
-> > +	.kwidth = 1,
-> > +};
-> 
-> That's not what p and k are.
-> 
-> Please add extra parameters to deal with fractional rates in the
-> clk_factors_config (like an extra bit + an array with the two rate
-> exposed.
-> 
-> That way, you can also deal with it in the core, instead of doing a
-> hack.
 
-It is really a good way to add generic code for only one clock?
-Otherwise, there is no 'P' nor 'K' in the pll3 documentation, what is
-the trouble of using the variables 'p' and 'k' for other functions? And
-noone said that the variables should have the same name as those of the
-documentation.
-Anyway, I am stupid and obedient: this code was proposed by Chen-Yu Tsai
-on Sat, 6 Feb 2016 17:56:00 +0800:
+2016-04-26 7:27 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 04/25, Masahiro Yamada wrote:
+>> We cannot assign any value to an array type variable.  So,
+>>
+>>   hw_data->hws = kcalloc(hw_data->num, sizeof(struct clk_hw *),
+>>                          GFP_KERNEL);
+>>
+>> fails with "invalid use of flexible array member" error.
+>
+> That's good. We don't want assignment to the hws member of this
+> structure to happen from an allocation like kcalloc.
+>
+>>
+>> There are two ways to fix this issue.
+>>
+>> [1] Make it a double-pointer
+>>   struct clk_hw_onecell_data {
+>>           size_t num;
+>>           struct clk_hw **hws;
+>>   };
+>>
+>> This works as struct clk_onecell_data does.
+>
+> True we could go back to the old style with two allocations.
+>
+>>
+>> [2] Make it a zero-sized array
+>>   struct clk_hw_onecell_data {
+>>           size_t num;
+>>           struct clk_hw *hws[0];
+>>   };
+>>
+>> This allows one-shot memory allocation like this:
+>>
+>>   hw_data = kmalloc(sizeof(*hw_data) + clk_num * sizeof(struct clk_hw *),
+>>                     GFP_KERNEL);
+>>
+>
+> Good, that was possible before this patch wasn't it?
+>
+>> This commit adopts [2] because it looks like Stephen's intention
+>> (he moved hws[] to the bottom of struct clk_hw_onecell_data).
+>>
+>> Fixes: 0861e5b8cf80 ("clk: Add clk_hw OF clk providers")
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>
+>>
+>>  include/linux/clk-provider.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>> index fd2ccd5..1850e25 100644
+>> --- a/include/linux/clk-provider.h
+>> +++ b/include/linux/clk-provider.h
+>> @@ -769,7 +769,7 @@ struct clk_onecell_data {
+>>
+>>  struct clk_hw_onecell_data {
+>>       size_t num;
+>> -     struct clk_hw *hws[];
+>> +     struct clk_hw *hws[0];
+>
+> I'm totally lost now. Isn't a flex array with [] or with [0] the
+> same?
 
-> clk-factors now supports a custom .recalc callback. Along with get_factors,
-> you can support pretty much any clock that has four variables, not including
-> the mux and clock gate.
-> 
-> So for this you'd have the div as factor m, and the integer mode bit as p,
-> and the fraction bit as n, and recalc would be somewhat like this:
-> 
-> if (p) {
->         rate = parent_rate / (m + 1);
-> } else if (n) {
->         rate = 297000000;
-> } else {
->         rate = 270000000;
-> }
-> 
-> get_factors should be easy enough to figure out.
+I was misunderstanding.
+
+You are right.  They are the same.
+
+
+> The latter being a GCC extension while the former being a
+> C99 standard?
+
+
+Please ignore this patch.  Sorry for noise.
+
+
+
 
 -- 
-Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Best Regards
+Masahiro Yamada
