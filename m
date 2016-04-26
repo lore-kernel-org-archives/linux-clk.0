@@ -1,95 +1,116 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:55444 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752575AbcDRPOo (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2016 11:14:44 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Olof Johansson <olof@lixom.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
-Subject: Re: [Question] reset controlling
-Date: Mon, 18 Apr 2016 17:13:57 +0200
-Message-ID: <4342692.6LEQF6clJv@wuerfel>
-In-Reply-To: <CAK7LNARJo-xDkkwZ0qA+DaKmQ0SixxGytNSKWBZMZ_N_6eWWow@mail.gmail.com>
-References: <CAK7LNATcVwx1q0Nb2WMSpqW3LcoRkZx3RgpMjmbt2EmffJnFvg@mail.gmail.com> <5910310.IeFB0QAt6Q@wuerfel> <CAK7LNARJo-xDkkwZ0qA+DaKmQ0SixxGytNSKWBZMZ_N_6eWWow@mail.gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 26 Apr 2016 11:59:41 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai
+ <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Daniel Vetter
+ <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan
+ <alex@nextthing.co>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 09/11] drm: sun4i: tv: Add NTSC output standard
+Message-ID: <20160426115941.14e2b0fb@bbrezillon>
+In-Reply-To: <1461590572-4027-10-git-send-email-maxime.ripard@free-electrons.com>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1461590572-4027-10-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sunday 17 April 2016 17:16:58 Masahiro Yamada wrote:
-> 2016-04-17 4:23 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> >> Reset signals are sometimes cascaded.
-> >> For example, the UART blocks on my SoCs have a reset for the whole of
-> >> UART blocks
-> >> besides per-channel reset signals.
-> >>
-> >>                      |---(UART ch0 reset)---> UART0
-> >>                      |
-> >> ----(UART reset)-----|---(UART ch1 reset)---> UART1
-> >>                      |
-> >>                      |---(UART ch2 reset)---> UART2
-> >>
-> >> I found this works well with clk-gate drivers.
-> >> Even reset_control_reset() can be implemented
-> >> with clk_disable() followed by clk_enable().
-> >>
-> >
-> > Interesting. My feeling from your description is that this is something
-> > that should be added to the reset controller subsystem. It has probably
-> > not been a serious issue for anyone else, but it's also likely that you
-> > are not the only one that would benefit from having support for nested
-> > resets in the API.
+On Mon, 25 Apr 2016 15:22:50 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+
+> Add the settings to support the NTSC standard.
 > 
-> I want reset sub-system to support (1) nesting,  (2) enable_count.
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tv.c | 45 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 > 
-> To get these two features supported, the reset frame-work
-> would be similar implementation to the clock subsystem.
-> (In other words, we would duplicate effort
-> between clock and reset.)
-> 
-> Moreover, it is very common to control resets and clocks
-> from one hardware block.
-> 
-> So, I am looking for some idea that perhaps can unify the clock
-> and reset subsystems.
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+> index ccf275a90132..bc047f923508 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+> @@ -178,24 +178,69 @@ struct sun4i_tv {
+>  	struct sun4i_drv	*drv;
+>  };
+>  
+> +struct video_levels ntsc_video_levels = {
+> +	.black = 282,	.blank = 240,
+> +};
+> +
+>  struct video_levels pal_video_levels = {
+>  	.black = 252,	.blank = 252,
+>  };
+>  
+> +struct burst_levels ntsc_burst_levels = {
+> +	.cb = 79,	.cr = 0,
+> +};
+> +
+>  struct burst_levels pal_burst_levels = {
+>  	.cb = 40,	.cr = 40,
+>  };
+>  
+> +struct color_gains ntsc_color_gains = {
+> +	.cb = 160,	.cr = 160,
+> +};
+> +
+>  struct color_gains pal_color_gains = {
+>  	.cb = 224,	.cr = 224,
+>  };
+>  
+> +struct resync_parameters ntsc_resync_parameters = {
+> +	.field = false,	.line = 14,	.pixel = 12,
+> +};
+> +
+>  struct resync_parameters pal_resync_parameters = {
+>  	.field = true,	.line = 13,	.pixel = 12,
+>  };
+>  
+>  struct tv_mode tv_modes[] = {
+>  	{
+> +		.name		= "NTSC",
+> +		.mode		= SUN4I_TVE_CFG0_RES_480i,
+> +		.chroma_freq	= 0x21f07c1f,
+> +		.yc_en		= true,
+> +		.dac3_en	= true,
+> +		.dac_bit25_en	= true,
+> +
+> +		.back_porch	= 118,
+> +		.front_porch	= 32,
+> +		.line_number	= 525,
+> +
+> +		.hdisplay	= 720,
+> +		.hfront_porch	= 18,
+> +		.hsync_len	= 2,
+> +		.hback_porch	= 118,
+> +
+> +		.vdisplay	= 480,
+> +		.vfront_porch	= 26,
+> +		.vsync_len	= 2,
+> +		.vback_porch	= 17,
+> +
+> +		.vblank_level	= 240,
+> +
+> +		.color_gains	= &ntsc_color_gains,
+> +		.burst_levels	= &ntsc_burst_levels,
+> +		.video_levels	= &ntsc_video_levels,
+> +		.resync_params	= &ntsc_resync_parameters,
+> +	},
+> +	{
+>  		.name		= "PAL",
+>  		.mode		= SUN4I_TVE_CFG0_RES_576i,
+>  		.chroma_freq	= 0x2a098acb,
 
-If you find parts of the code that could be shared, we can probably
-split those out into a file in lib/*.c and have that used by both
-subsystems and potentially others as well.
 
-> I found some SoCs implement reset drivers in drivers/clk.
-> 
-> 
-> masahiro@grover:~/workspace/linux/drivers/clk$ git grep
-> reset_controller_register
-> mediatek/reset.c:       ret = reset_controller_register(&data->rcdev);
-> mmp/reset.c:    reset_controller_register(&unit->rcdev);
-> qcom/common.c:  ret = reset_controller_register(&reset->rcdev);
-> rockchip/softrst.c:     ret = reset_controller_register(&softrst->rcdev);
-> sirf/clk-atlas7.c:      reset_controller_register(&atlas7_rst_ctlr);
-> sunxi/clk-a10-ve.c:     err = reset_controller_register(&reset_data->rcdev);
-> sunxi/clk-sun9i-mmc.c:  ret = reset_controller_register(&data->rcdev);
-> sunxi/clk-usb.c:        reset_controller_register(&reset_data->rcdev);
-> tegra/clk.c:    reset_controller_register(&rst_ctlr);
 
-I think these are all the ones that have a shared hardware block doing
-both clocks and resets. My guess is that most other hardware does it
-differently.
-
-> I asked about this in the following thread.
-> https://lkml.org/lkml/2015/11/10/724
-
-Your hardware seems to be in a third category, which is not uncommon
-either: you have clocks, resets and additional registers all in a
-single block without a structure around them.
-
-You can handle this with purely syscon based abstraction, or you
-can have a driver for the combined device that registers itself
-to multiple subsystems in addition to being a syscon.
-
-	Arnd
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
