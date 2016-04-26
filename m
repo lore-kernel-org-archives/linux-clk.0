@@ -1,87 +1,40 @@
-Return-Path: <stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 27 Apr 2016 00:28:10 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
- Lucas Stach <l.stach@pengutronix.de>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, mingo@redhat.com, kernel@pengutronix.de,
- Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-In-Reply-To: <CAOMZO5BeAxPLerGMkaadkEZusW8wHkO5P6SiZeHOCKWstHUTSA@mail.gmail.com>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
- <1461663072.7839.17.camel@pengutronix.de>
- <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
- <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger>
- <CAA+hA=SNp7bQZSUp5R5v9BfXMffS-4-msv12G5UAQJTxUMKW=A@mail.gmail.com>
- <CAOMZO5BeAxPLerGMkaadkEZusW8wHkO5P6SiZeHOCKWstHUTSA@mail.gmail.com>
-Message-ID: <1f10ab4830032858bc4d6174528f18e8@agner.ch>
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, lee.jones@linaro.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v4 6/7] clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
+Date: Tue, 26 Apr 2016 16:54:09 +0200
+Message-Id: <1461682450-22173-7-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
+References: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-04-26 19:56, Fabio Estevam wrote:
-> On Tue, Apr 26, 2016 at 11:45 PM, Dong Aisheng <dongas86@gmail.com> wrote:
-> 
->>> We need to firstly understand why this is happening.  The .prepare hook
->>> is defined to be non-atomic context, and so that we call sleep function
->>> in there.  We did everything right.  Why are we getting the warning?  If
->>> I'm correct, this warning only happens on i.MX7D.  Why is that?
->>>
->>
->> This is mainly caused by during kernel early booting, there's only one init idle
->> task running.
->> See:
->> void __init sched_init(void)
->> {
->> .....
->>         /*
->>          * Make us the idle thread. Technically, schedule() should not be
->>          * called from this thread, however somewhere below it might be,
->>          * but because we are the idle thread, we just pick up running again
->>          * when this runqueue becomes "idle".
->>          */
->>         init_idle(current, smp_processor_id());
->> ...
->> }
->>
->> And the idle sched class indicates it's not valid to schedule for idle task.
->> const struct sched_class idle_sched_class = {
->>         /* .next is NULL */
->>         /* no enqueue/yield_task for idle tasks */
->>
->>         /* dequeue is not valid, we print a debug message there: */
->>         .dequeue_task           = dequeue_task_idle,
->> ...........
->>
->> }
->>
->> /*
->>  * It is not legal to sleep in the idle task - print a warning
->>  * message if some code attempts to do it:
->>  */
->> static void
->> dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
->> {
->>         raw_spin_unlock_irq(&rq->lock);
->>         printk(KERN_ERR "bad: scheduling from the idle thread!\n");
->>         dump_stack();
->>         raw_spin_lock_irq(&rq->lock);
->> }
->>
->>
->> Below is the full log of imx7d booting FYI.
-> 
-> This does not answer Shawn's question: why do we see this only on mx7d?
+The RK808 and RK818 PMICs are using a similar register map.
+We can reuse the clk driver for the RK818 PMIC. So let's add
+the RK818 in the Kconfig description.
 
-I was wondering that too.... My theory is that either on i.MX 6 the
-clocks enable almost instantly leading to no sleep, or they are just
-bootloader/firmware on...?
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---
-Stefan
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 16f7d33..64b4daa 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -49,10 +49,10 @@ config COMMON_CLK_MAX77802
+ 	  This driver supports Maxim 77802 crystal oscillator clock.
+ 
+ config COMMON_CLK_RK808
+-	tristate "Clock driver for RK808"
++	tristate "Clock driver for RK808/RK818"
+ 	depends on MFD_RK808
+ 	---help---
+-	  This driver supports RK808 crystal oscillator clock. These
++	  This driver supports RK808 and RK818 crystal oscillator clock. These
+ 	  multi-function devices have two fixed-rate oscillators,
+ 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+ 	  by control register.
+-- 
+1.9.1
