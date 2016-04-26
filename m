@@ -1,68 +1,48 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH 10/11] arm64: tegra: Add clock properties on cpu0 for
- Tegra210
-To: Penny Chiu <pchiu@nvidia.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <571A0E95.9040203@nvidia.com>
-Date: Fri, 22 Apr 2016 12:44:21 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from utopia.booyaka.com ([74.50.51.50]:37935 "EHLO
+	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751980AbcDZO1l (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 10:27:41 -0400
+Date: Tue, 26 Apr 2016 14:27:40 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+cc: thierry.reding@gmail.com, tony@atomide.com, t-kristo@ti.com,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, robh+dt@kernel.org,
+	devicetree@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v6 0/7] ARM: dts: DRA7: Add dt nodes for PWMSS
+In-Reply-To: <571F6B7F.8090008@ti.com>
+Message-ID: <alpine.DEB.2.02.1604261426540.24457@utopia.booyaka.com>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com> <alpine.DEB.2.02.1604251610170.22464@utopia.booyaka.com> <571F6B7F.8090008@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1461321071-6431-11-git-send-email-pchiu@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Penny,
+On Tue, 26 Apr 2016, Franklin S Cooper Jr. wrote:
 
-On 22/04/16 11:31, Penny Chiu wrote:
-> Add clocks, clock-names, and clock-latency into cpu0 node.
-> These properties will be used by cpufreq driver.
 > 
-> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> index 204d9cd..1a85857 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -782,6 +782,12 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a57";
->  			reg = <0>;
-> +			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
-> +				 <&tegra_car TEGRA210_CLK_PLL_X>,
-> +				 <&tegra_car TEGRA210_CLK_PLL_P_OUT4>,
-> +				 <&dfll>;
-> +			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
-> +			clock-latency = <300000>;
->  		};
->  
->  		cpu@1 {
+> On 04/25/2016 11:18 AM, Paul Walmsley wrote:
+> > On Fri, 22 Apr 2016, Franklin S Cooper Jr wrote:
+> > 
+> >> This patch series adds support for PWM for DRA7. The IP is the same as the
+> >> one present in AM33XX and AM437XX.
+> >>
+> >> However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
+> >> and eQEP.
+> > 
+> > Just took a quick look (nothing indepth).  Looks OK.  
+> > 
+> > Once Rob's issues have been addressed, please feel free to add an 
+> > Acked-by: from me.  Thanks for playing along, Franklin, I think this final 
+> > product makes the most sense from a device architecture point of view.
 > 
+> 
+> Thanks Paul. Just to be clear I can add your Acked-by to all 7 patches?
 
-Can you include a patch with this series to update the binding
-documentation for the nvidia,tegra124-cpufreq.txt? I think that although
-there is no specific nvidia,tegra210-cpufreq compatible string the
-documentation should state that both tegra124 and tegra210 are supported
-so it is clear.
+I'd suggest just adding it to the ones that are hwmod-related in either 
+the commit message or the code.
 
-Also I see the above binding no longer includes the "cpu_lp" for
-tegra210 which I understand we don't use here. However, the binding
-documentation should reflect this. Having said that, looking at the
-driver it appears the "cpu_lp" clock is not even used for tegra124. I
-wonder if we should drop this from the binding documentation and the
-tegra124.dtsi altogether?
-
-What about the "vdd-cpu-supply" property? Don't we need this?
-
-Cheers
-Jon
+- Paul
