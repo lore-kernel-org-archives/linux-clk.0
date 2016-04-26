@@ -1,102 +1,421 @@
-Return-Path: <kernel@martin.sperl.org>
-References: <1461660989-11846-1-git-send-email-kernel@martin.sperl.org> <8737q8dv5f.fsf@eliezer.anholt.net> <BC74AA10-C36C-4643-B979-0617D222D605@martin.sperl.org> <87bn4v6dou.fsf@eliezer.anholt.net>
-Mime-Version: 1.0 (1.0)
-In-Reply-To: <87bn4v6dou.fsf@eliezer.anholt.net>
-Content-Type: text/plain;
-	charset=us-ascii
-Message-Id: <7BC21876-C9EF-489D-9F5A-06C7DD52F05C@martin.sperl.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-From: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V2] clk: bcm2835: mark enabled pll_dividers as critical
-Date: Wed, 27 Apr 2016 07:31:05 +0200
-To: Eric Anholt <eric@anholt.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
+	paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v7 8/9] ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
+Date: Tue, 26 Apr 2016 17:36:48 -0500
+Message-Id: <1461710209-6563-9-git-send-email-fcooper@ti.com>
+In-Reply-To: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Devices that utilize the OCP registers and/or PRCM registers and
+register bit fields should be modeled using hwmod. Since eQEP, ePWM and
+eCAP don't fall under this category, remove their hwmod entries.
 
+Instead these clocks simply use the clock that is passed through by its
+parent PWMSS. Therefore, PWMSS handles the clock for itself and its
+subdevices.
 
-> On 27.04.2016, at 03:30, Eric Anholt <eric@anholt.net> wrote:
->=20
-> Martin Sperl <kernel@martin.sperl.org> writes:
->=20
->> Sent from my iPad
->>> On 26.04.2016, at 21:31, Eric Anholt <eric@anholt.net> wrote:
->>>=20
->>> kernel@martin.sperl.org writes:
->>>=20
->>>> From: Martin Sperl <kernel@martin.sperl.org>
->>>>=20
->>>> The bcm2835 firmware enables several clocks and plls before
->>>> booting the linux kernel.
->>>>=20
->>>> These plls should never get disabled as it may result in a
->>>> stopped system clock and more.
->>>>=20
->>>> So during probing we check if the pll_divider is enabled
->>>> and if it is then mark that pll_divider as critical.
->>>> As a consequence this will also enable the corresponding parent pll.
->>>>=20
->>>> Here the list of pll_div that are marked as critical:
->>>> [    2.022437] bcm2835-clk 20101000.cprman: found enabled pll_div plla_=
-core - marking it as critical
->>>> [    2.031640] bcm2835-clk 20101000.cprman: found enabled pll_div pllb_=
-arm - marking it as critical
->>>> [    2.040966] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_=
-core0 - marking it as critical
->>>> [    2.050351] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_=
-per - marking it as critical
->>>> [    2.059427] bcm2835-clk 20101000.cprman: found enabled pll_div plld_=
-core - marking it as critical
->>>> [    2.068590] bcm2835-clk 20101000.cprman: found enabled pll_div plld_=
-per - marking it as critical
->>>> [    2.077724] bcm2835-clk 20101000.cprman: found enabled pll_div pllh_=
-pix - marking it as critical
->>>=20
->>> Yeah, pllh_pix isn't critical, though.  We want it to get turned off
->>> when the driver asks to disable its clock, or we're going to just waste
->>> a pile of power.
->>>=20
->>> I'm sending out a patch that marks the VPU clock as critical (it's the
->>> also AXI bus, so it certainly is critical), which should solve your
->>> aux_uart clock disabling problem, I think.
->>=20
->> The problem is that it also fails on the pcm clock alone when pllc or=20
->> plld_per are used as parent, but it is fine when osc is used...
->=20
-> For that you're going to want the HAND_OFF patches that mturquette is
-> working on: Don't let the clock and its parents get turned off until a
-> driver has shown up that has referenced the clock and done at least a
-> prepare on it once.
-That one was the one I thought of as well, but it does not solve the
-issue at all, because:
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Paul Walmsley <paul@pwsan.com>
+---
+ .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
+ .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 -----------------
+ .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 ----------------------
+ arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
+ arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 --------------
+ 5 files changed, 229 deletions(-)
 
-Speaker-test opens the audio device for 32bit 41200 samples
-Which in turn uses the i2s driver
-Which enable_prepares the clock (uses pllc_per or plld_per)
-Plays sound until the end
-Then speaker test closes the audio device
-Which disables/unprepared the PCM clock
-Which disables/unprepares plld_per
-Which disables/unprepares plld
-Machine crashes
-
-For those last few steps the handsoff still would release the
-Pll-div and pll as it has been claimed correctly first.
-
-Maybe handsoff would work if applied to the individual
-Clocks (not the pll or pllc), but I am not sure if this is a correct
-assumption, as I do not know if handsoff would propagate=20
-up the clock tree.
-
-So the critical flag seems the "best" approach for now,
-But as you have said: it is not ideal as it never disables
-Any clocks when they are not really needed.
-
-But so that we can continue we need something=20
-that works now (even if it is not perfect)
-
-Another approach would be knowing the list of clocks=20
-that the firmware claims/owns and mark only those as "critical".
+diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
+index 7f73796..d3e61d1 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
++++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
+@@ -36,17 +36,8 @@ extern struct omap_hwmod_ocp_if am33xx_l4_per__gpio3;
+ extern struct omap_hwmod_ocp_if am33xx_cpgmac0__mdio;
+ extern struct omap_hwmod_ocp_if am33xx_l4_ls__elm;
+ extern struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss0;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss0__ecap0;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss0__eqep0;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss0__ehrpwm0;
+ extern struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss1;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss1__ecap1;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss1__eqep1;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss1__ehrpwm1;
+ extern struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss2;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss2__ecap2;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss2__eqep2;
+-extern struct omap_hwmod_ocp_if am33xx_epwmss2__ehrpwm2;
+ extern struct omap_hwmod_ocp_if am33xx_l3_s__gpmc;
+ extern struct omap_hwmod_ocp_if am33xx_l4_per__i2c2;
+ extern struct omap_hwmod_ocp_if am33xx_l4_per__i2c3;
+@@ -98,17 +89,8 @@ extern struct omap_hwmod am33xx_dcan0_hwmod;
+ extern struct omap_hwmod am33xx_dcan1_hwmod;
+ extern struct omap_hwmod am33xx_elm_hwmod;
+ extern struct omap_hwmod am33xx_epwmss0_hwmod;
+-extern struct omap_hwmod am33xx_ecap0_hwmod;
+-extern struct omap_hwmod am33xx_eqep0_hwmod;
+-extern struct omap_hwmod am33xx_ehrpwm0_hwmod;
+ extern struct omap_hwmod am33xx_epwmss1_hwmod;
+-extern struct omap_hwmod am33xx_ecap1_hwmod;
+-extern struct omap_hwmod am33xx_eqep1_hwmod;
+-extern struct omap_hwmod am33xx_ehrpwm1_hwmod;
+ extern struct omap_hwmod am33xx_epwmss2_hwmod;
+-extern struct omap_hwmod am33xx_ecap2_hwmod;
+-extern struct omap_hwmod am33xx_eqep2_hwmod;
+-extern struct omap_hwmod am33xx_ehrpwm2_hwmod;
+ extern struct omap_hwmod am33xx_gpio1_hwmod;
+ extern struct omap_hwmod am33xx_gpio2_hwmod;
+ extern struct omap_hwmod am33xx_gpio3_hwmod;
+diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
+index 1c210cb..10dff2f 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
+@@ -176,28 +176,6 @@ struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss0 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
+-struct omap_hwmod_ocp_if am33xx_epwmss0__ecap0 = {
+-	.master		= &am33xx_epwmss0_hwmod,
+-	.slave		= &am33xx_ecap0_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-struct omap_hwmod_ocp_if am33xx_epwmss0__eqep0 = {
+-	.master		= &am33xx_epwmss0_hwmod,
+-	.slave		= &am33xx_eqep0_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-struct omap_hwmod_ocp_if am33xx_epwmss0__ehrpwm0 = {
+-	.master		= &am33xx_epwmss0_hwmod,
+-	.slave		= &am33xx_ehrpwm0_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-
+ static struct omap_hwmod_addr_space am33xx_epwmss1_addr_space[] = {
+ 	{
+ 		.pa_start	= 0x48302000,
+@@ -215,27 +193,6 @@ struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss1 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
+-struct omap_hwmod_ocp_if am33xx_epwmss1__ecap1 = {
+-	.master		= &am33xx_epwmss1_hwmod,
+-	.slave		= &am33xx_ecap1_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-struct omap_hwmod_ocp_if am33xx_epwmss1__eqep1 = {
+-	.master		= &am33xx_epwmss1_hwmod,
+-	.slave		= &am33xx_eqep1_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-struct omap_hwmod_ocp_if am33xx_epwmss1__ehrpwm1 = {
+-	.master		= &am33xx_epwmss1_hwmod,
+-	.slave		= &am33xx_ehrpwm1_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+ static struct omap_hwmod_addr_space am33xx_epwmss2_addr_space[] = {
+ 	{
+ 		.pa_start	= 0x48304000,
+@@ -253,27 +210,6 @@ struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss2 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
+-struct omap_hwmod_ocp_if am33xx_epwmss2__ecap2 = {
+-	.master		= &am33xx_epwmss2_hwmod,
+-	.slave		= &am33xx_ecap2_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-struct omap_hwmod_ocp_if am33xx_epwmss2__eqep2 = {
+-	.master		= &am33xx_epwmss2_hwmod,
+-	.slave		= &am33xx_eqep2_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+-struct omap_hwmod_ocp_if am33xx_epwmss2__ehrpwm2 = {
+-	.master		= &am33xx_epwmss2_hwmod,
+-	.slave		= &am33xx_ehrpwm2_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+ /* l3s cfg -> gpmc */
+ struct omap_hwmod_ocp_if am33xx_l3_s__gpmc = {
+ 	.master		= &am33xx_l3_s_hwmod,
+diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
+index aed3362..6a73b6c 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
+@@ -449,18 +449,6 @@ struct omap_hwmod_class am33xx_epwmss_hwmod_class = {
+ 	.sysc		= &am33xx_epwmss_sysc,
+ };
+ 
+-static struct omap_hwmod_class am33xx_ecap_hwmod_class = {
+-	.name		= "ecap",
+-};
+-
+-static struct omap_hwmod_class am33xx_eqep_hwmod_class = {
+-	.name		= "eqep",
+-};
+-
+-struct omap_hwmod_class am33xx_ehrpwm_hwmod_class = {
+-	.name		= "ehrpwm",
+-};
+-
+ /* epwmss0 */
+ struct omap_hwmod am33xx_epwmss0_hwmod = {
+ 	.name		= "epwmss0",
+@@ -474,30 +462,6 @@ struct omap_hwmod am33xx_epwmss0_hwmod = {
+ 	},
+ };
+ 
+-/* ecap0 */
+-struct omap_hwmod am33xx_ecap0_hwmod = {
+-	.name		= "ecap0",
+-	.class		= &am33xx_ecap_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+-/* eqep0 */
+-struct omap_hwmod am33xx_eqep0_hwmod = {
+-	.name		= "eqep0",
+-	.class		= &am33xx_eqep_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+-/* ehrpwm0 */
+-struct omap_hwmod am33xx_ehrpwm0_hwmod = {
+-	.name		= "ehrpwm0",
+-	.class		= &am33xx_ehrpwm_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+ /* epwmss1 */
+ struct omap_hwmod am33xx_epwmss1_hwmod = {
+ 	.name		= "epwmss1",
+@@ -511,30 +475,6 @@ struct omap_hwmod am33xx_epwmss1_hwmod = {
+ 	},
+ };
+ 
+-/* ecap1 */
+-struct omap_hwmod am33xx_ecap1_hwmod = {
+-	.name		= "ecap1",
+-	.class		= &am33xx_ecap_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+-/* eqep1 */
+-struct omap_hwmod am33xx_eqep1_hwmod = {
+-	.name		= "eqep1",
+-	.class		= &am33xx_eqep_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+-/* ehrpwm1 */
+-struct omap_hwmod am33xx_ehrpwm1_hwmod = {
+-	.name		= "ehrpwm1",
+-	.class		= &am33xx_ehrpwm_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+ /* epwmss2 */
+ struct omap_hwmod am33xx_epwmss2_hwmod = {
+ 	.name		= "epwmss2",
+@@ -548,30 +488,6 @@ struct omap_hwmod am33xx_epwmss2_hwmod = {
+ 	},
+ };
+ 
+-/* ecap2 */
+-struct omap_hwmod am33xx_ecap2_hwmod = {
+-	.name		= "ecap2",
+-	.class		= &am33xx_ecap_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+-/* eqep2 */
+-struct omap_hwmod am33xx_eqep2_hwmod = {
+-	.name		= "eqep2",
+-	.class		= &am33xx_eqep_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+-/* ehrpwm2 */
+-struct omap_hwmod am33xx_ehrpwm2_hwmod = {
+-	.name		= "ehrpwm2",
+-	.class		= &am33xx_ehrpwm_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+ /*
+  * 'gpio' class: for gpio 0,1,2,3
+  */
+diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
+index cc0791d..e1c2025 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
+@@ -593,17 +593,8 @@ static struct omap_hwmod_ocp_if *am33xx_hwmod_ocp_ifs[] __initdata = {
+ 	&am33xx_l4_ls__spinlock,
+ 	&am33xx_l4_ls__elm,
+ 	&am33xx_l4_ls__epwmss0,
+-	&am33xx_epwmss0__ecap0,
+-	&am33xx_epwmss0__eqep0,
+-	&am33xx_epwmss0__ehrpwm0,
+ 	&am33xx_l4_ls__epwmss1,
+-	&am33xx_epwmss1__ecap1,
+-	&am33xx_epwmss1__eqep1,
+-	&am33xx_epwmss1__ehrpwm1,
+ 	&am33xx_l4_ls__epwmss2,
+-	&am33xx_epwmss2__ecap2,
+-	&am33xx_epwmss2__eqep2,
+-	&am33xx_epwmss2__ehrpwm2,
+ 	&am33xx_l3_s__gpmc,
+ 	&am33xx_l3_main__lcdc,
+ 	&am33xx_l4_ls__mcspi0,
+diff --git a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
+index 97fd399..61f2f30 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
+@@ -202,13 +202,6 @@ static struct omap_hwmod am43xx_epwmss3_hwmod = {
+ 	},
+ };
+ 
+-static struct omap_hwmod am43xx_ehrpwm3_hwmod = {
+-	.name		= "ehrpwm3",
+-	.class		= &am33xx_ehrpwm_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+ static struct omap_hwmod am43xx_epwmss4_hwmod = {
+ 	.name		= "epwmss4",
+ 	.class		= &am33xx_epwmss_hwmod_class,
+@@ -222,13 +215,6 @@ static struct omap_hwmod am43xx_epwmss4_hwmod = {
+ 	},
+ };
+ 
+-static struct omap_hwmod am43xx_ehrpwm4_hwmod = {
+-	.name		= "ehrpwm4",
+-	.class		= &am33xx_ehrpwm_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+ static struct omap_hwmod am43xx_epwmss5_hwmod = {
+ 	.name		= "epwmss5",
+ 	.class		= &am33xx_epwmss_hwmod_class,
+@@ -242,13 +228,6 @@ static struct omap_hwmod am43xx_epwmss5_hwmod = {
+ 	},
+ };
+ 
+-static struct omap_hwmod am43xx_ehrpwm5_hwmod = {
+-	.name		= "ehrpwm5",
+-	.class		= &am33xx_ehrpwm_hwmod_class,
+-	.clkdm_name	= "l4ls_clkdm",
+-	.main_clk	= "l4ls_gclk",
+-};
+-
+ static struct omap_hwmod am43xx_spi2_hwmod = {
+ 	.name		= "spi2",
+ 	.class		= &am33xx_spi_hwmod_class,
+@@ -744,13 +723,6 @@ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss3 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
+-static struct omap_hwmod_ocp_if am43xx_epwmss3__ehrpwm3 = {
+-	.master		= &am43xx_epwmss3_hwmod,
+-	.slave		= &am43xx_ehrpwm3_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss4 = {
+ 	.master		= &am33xx_l4_ls_hwmod,
+ 	.slave		= &am43xx_epwmss4_hwmod,
+@@ -758,13 +730,6 @@ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss4 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
+-static struct omap_hwmod_ocp_if am43xx_epwmss4__ehrpwm4 = {
+-	.master		= &am43xx_epwmss4_hwmod,
+-	.slave		= &am43xx_ehrpwm4_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss5 = {
+ 	.master		= &am33xx_l4_ls_hwmod,
+ 	.slave		= &am43xx_epwmss5_hwmod,
+@@ -772,13 +737,6 @@ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss5 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
+-static struct omap_hwmod_ocp_if am43xx_epwmss5__ehrpwm5 = {
+-	.master		= &am43xx_epwmss5_hwmod,
+-	.slave		= &am43xx_ehrpwm5_hwmod,
+-	.clk		= "l4ls_gclk",
+-	.user		= OCP_USER_MPU,
+-};
+-
+ static struct omap_hwmod_ocp_if am43xx_l4_ls__mcspi2 = {
+ 	.master		= &am33xx_l4_ls_hwmod,
+ 	.slave		= &am43xx_spi2_hwmod,
+@@ -919,11 +877,8 @@ static struct omap_hwmod_ocp_if *am43xx_hwmod_ocp_ifs[] __initdata = {
+ 	&am43xx_l4_ls__timer10,
+ 	&am43xx_l4_ls__timer11,
+ 	&am43xx_l4_ls__epwmss3,
+-	&am43xx_epwmss3__ehrpwm3,
+ 	&am43xx_l4_ls__epwmss4,
+-	&am43xx_epwmss4__ehrpwm4,
+ 	&am43xx_l4_ls__epwmss5,
+-	&am43xx_epwmss5__ehrpwm5,
+ 	&am43xx_l4_ls__mcspi2,
+ 	&am43xx_l4_ls__mcspi3,
+ 	&am43xx_l4_ls__mcspi4,
+@@ -982,17 +937,8 @@ static struct omap_hwmod_ocp_if *am43xx_hwmod_ocp_ifs[] __initdata = {
+ 	&am33xx_l4_ls__spinlock,
+ 	&am33xx_l4_ls__elm,
+ 	&am33xx_l4_ls__epwmss0,
+-	&am33xx_epwmss0__ecap0,
+-	&am33xx_epwmss0__eqep0,
+-	&am33xx_epwmss0__ehrpwm0,
+ 	&am33xx_l4_ls__epwmss1,
+-	&am33xx_epwmss1__ecap1,
+-	&am33xx_epwmss1__eqep1,
+-	&am33xx_epwmss1__ehrpwm1,
+ 	&am33xx_l4_ls__epwmss2,
+-	&am33xx_epwmss2__ecap2,
+-	&am33xx_epwmss2__eqep2,
+-	&am33xx_epwmss2__ehrpwm2,
+ 	&am33xx_l3_s__gpmc,
+ 	&am33xx_l4_ls__mcspi0,
+ 	&am33xx_l4_ls__mcspi1,
+-- 
+2.7.0
