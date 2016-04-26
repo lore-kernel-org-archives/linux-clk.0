@@ -1,158 +1,97 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 4 Apr 2016 17:20:48 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args() where
- appropriate
-Message-ID: <20160404152048.GA17856@ulmo>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
- <20160330225244.GA24044@roeck-us.net>
- <20160331090709.5c3bdf70@bbrezillon>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 26 Apr 2016 11:14:19 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai
+ <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Daniel Vetter
+ <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan
+ <alex@nextthing.co>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 05/11] drm: Add Allwinner A10 Display Engine support
+Message-ID: <20160426111419.63db18d4@bbrezillon>
+In-Reply-To: <1461590572-4027-6-git-send-email-maxime.ripard@free-electrons.com>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1461590572-4027-6-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
-In-Reply-To: <20160331090709.5c3bdf70@bbrezillon>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Maxime,
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 25 Apr 2016 15:22:46 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-On Thu, Mar 31, 2016 at 09:07:09AM +0200, Boris Brezillon wrote:
-> Hi Guenter,
->=20
-> On Wed, 30 Mar 2016 15:52:44 -0700
-> Guenter Roeck <linux@roeck-us.net> wrote:
->=20
-> > On Wed, Mar 30, 2016 at 10:03:31PM +0200, Boris Brezillon wrote:
-> > > The PWM framework has clarified the concept of reference PWM config
-> > > (the platform dependent config retrieved from the DT or the PWM
-> > > lookup table) and real PWM state.
-> > >=20
-> > > Use pwm_get_args() when the PWM user wants to retrieve this reference
-> > > config and not the current state.
-> > >=20
-> > > This is part of the rework allowing the PWM framework to support
-> > > hardware readout and expose real PWM state even when the PWM has
-> > > just been requested (before the user calls pwm_config/enable/disable(=
-)).
-> > >=20
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > ---
-> > >  drivers/hwmon/pwm-fan.c | 19 +++++++++++++------
-> > >  1 file changed, 13 insertions(+), 6 deletions(-)
-> > >=20
-> > > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-> > > index 3e23003..82c5656 100644
-> > > --- a/drivers/hwmon/pwm-fan.c
-> > > +++ b/drivers/hwmon/pwm-fan.c
-> > > @@ -40,15 +40,18 @@ struct pwm_fan_ctx {
-> > > =20
-> > >  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
-> > >  {
-> > > +	struct pwm_args pargs =3D { };
-> >=20
-> > Hi Boris,
-> >=20
-> > I guess I am missing some context; sorry for that. Unfortunately,
-> > I did not easily find an explanation, so please bear with me.
-> >=20
-> > Two questions: Why do we need a local copy of struct pwm_args instead
-> > of a pointer to it ? If it can change while being used, isn't it
-> > inconsistent anyway ?
->=20
-> It cannot change after pwm_get() is called. For the reason behind
-> prototype: I just followed the Thierry's proposal, but I'm perfectly
-> fine returning a const struct pwm_args pointer intead of passing
-> pwm_args as a parameter.
->=20
-> Thierry, what's your opinion?
+> The Allwinner A10 and subsequent SoCs share the same display pipeline, with
+> variations in the number of controllers (1 or 2), or the presence or not of
+> some output (HDMI, TV, VGA) or not.
+> 
+> Add a driver with a limited set of features for now, and we will hopefully
+> support all of them eventually
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-I do prefer the current variant because it is more consistent with the
-new atomic API, even if not strictly necessary because of the immutable
-data.
+Just 2 comments below. Once addressed you can add my
 
-> > Also, assuming the local copy is necessary, why initialize pargs ?=20
-> > After all, pwm_get_args() just overwrites it.
->=20
-> It's a leftover from a previous version where pwm_get_args was
-> implemented this way:
->=20
-> static inline void pwm_get_args(pwm, args)
-> {
-> 	if (pwm)
-> 		*args =3D pwm->args
-> }
->=20
-> and this implementation was generating a lot of 'uninitialized
-> variable' warnings.
->=20
-> I just decided to drop the 'if (pwm)' test, because, IMO, this
-> should be checked way before calling pwm_get_args() is called.
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Sounds fine to me.
+> ---
 
-Thierry
+[...]
 
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +static int sun4i_drv_connector_plug_all(struct drm_device *drm)
+> +{
+> +	struct drm_connector *connector, *failed;
+> +	int ret;
+> +
+> +	mutex_lock(&drm->mode_config.mutex);
+> +	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
+> +		ret = drm_connector_register(connector);
+> +		if (ret) {
+> +			failed = connector;
+> +			goto err;
+> +		}
+> +	}
+> +	mutex_unlock(&drm->mode_config.mutex);
+> +	return 0;
+> +
+> +err:
+> +	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
+> +		if (failed == connector)
+> +			break;
+> +
+> +		drm_connector_unregister(connector);
+> +	}
+> +	mutex_unlock(&drm->mode_config.mutex);
+> +
+> +	return ret;
+> +}
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+You can use the generic drm_connector_register_all() to do that.
 
-iQIcBAABCAAGBQJXAoZLAAoJEN0jrNd/PrOhsEQQAKKy319NRaO6e/ciYlg6vDDN
-rdmFDoQgotIfLetr3KUFRP95Q3Cldg3cRW9oEg+OH8Uhf84Wg6Ug+glGDCmZ5jtl
-MNH8yavaO/eE0Ai1uV9rv7Nv6uJKoh+P11aQ7ht6HHr7+Iim8D6HGxdCEnqcxYz/
-Np9mk3jc2pj4FYxY8t8B4xuQS9/sbxKpCRRcQUDXVLnun+88Q+hWPlYA6ypTtQZ3
-deJzpGD3vWZIPtF1ZCm1U6gLetexRC84wyKmVGvV1yaeXaiXnr13MbUn2YbtBRFC
-oYRkNh59URh9bflVUnBORWi0Z9W7JBOt9f9pDUcOnY600rxhn0fXjt5aStdp6bDQ
-WHG/8pXEk5SdwU9PNDUPxhmfM3kO8a3v4KczSthjsUaMBd/76x1TroWTeSk4kuLD
-yEP3ZUP4fPb4hrE7Jvd5ruDnYgv0Vtk2MOa8IssefGYSO36pKTRyBCw7LKwmp+ww
-oFfZMR/KESTFCK59URYElJJHCUOWu3/u4TilXnimjRv2Co6HGdhZj5RTFhe1R3NE
-jO+k3ods1O9oVrVLmteHoePGnt6PCkPR/1szu5xW8XoFgL/58EWusji+XbMOlAlJ
-VJLrWoH2rOUW2/AEKvlasgeUOYFEszRM+vRyId/4awPJhhX5GVV3f+nY5UZLfW5I
-aPz78WqEqGpe2nzBw+67
-=pF1x
------END PGP SIGNATURE-----
+[...]
 
---PNTmBPCT7hxwcZjr--
+> +
+> +static void sun4i_drv_unbind(struct device *dev)
+> +{
+> +	struct drm_device *drm = dev_get_drvdata(dev);
+> +
+
+And you probably miss a call to drm_connector_unregister_all() here.
+
+> +	drm_dev_unregister(drm);
+> +	drm_kms_helper_poll_fini(drm);
+> +	sun4i_framebuffer_free(drm);
+> +	drm_vblank_cleanup(drm);
+> +	drm_dev_unref(drm);
+> +}
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
