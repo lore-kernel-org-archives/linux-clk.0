@@ -1,109 +1,116 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 09/13] clk: fractional-divider: Add hw based registration APIs
-Date: Thu, 21 Apr 2016 15:22:00 -0700
-Message-Id: <1461277324-27185-10-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <dongas86@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1461663072.7839.17.camel@pengutronix.de>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+	<20160421034520.GA19965@shlinux2.ap.freescale.net>
+	<20160426012341.GB8870@tiger>
+	<CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+	<1461663072.7839.17.camel@pengutronix.de>
+Date: Tue, 26 Apr 2016 19:16:15 +0800
+Message-ID: <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+From: Dong Aisheng <dongas86@gmail.com>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, tglx@linutronix.de, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk fractional divider code to
-return struct clk_hw pointers instead of struct clk pointers.
-This way we hide the struct clk pointer from providers unless
-they need to use consumer facing APIs.
+On Tue, Apr 26, 2016 at 5:31 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> Am Dienstag, den 26.04.2016, 13:51 +0800 schrieb Dong Aisheng:
+>> Hi Shawn,
+>>
+>> On Tue, Apr 26, 2016 at 9:23 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+>> > On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
+>> >> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
+>> >> > If a clock gets enabled early during boot time, it can lead to a PLL
+>> >> > startup. The wait_lock function makes sure that the PLL is really
+>> >> > stareted up before it gets used. However, the function sleeps which
+>> >> > leads to scheduling and an error:
+>> >> > bad: scheduling from the idle thread!
+>> >> > ...
+>> >> >
+>> >> > Use udelay in case IRQ's are still disabled.
+>> >> >
+>> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> >> > ---
+>> >> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
+>> >> >  1 file changed, 4 insertions(+), 1 deletion(-)
+>> >> >
+>> >> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+>> >> > index c05c43d..b5ff561 100644
+>> >> > --- a/drivers/clk/imx/clk-pllv3.c
+>> >> > +++ b/drivers/clk/imx/clk-pllv3.c
+>> >> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+>> >> >                     break;
+>> >> >             if (time_after(jiffies, timeout))
+>> >> >                     break;
+>> >> > -           usleep_range(50, 500);
+>> >> > +           if (unlikely(irqs_disabled()))
+>> >>
+>> >> This causes a bit confusion that clk_pllv3_prepare is sleepable.
+>> >> But this line indicates it's possible to be called in irq context.
+>> >> Although it's only happened during kernel boot phase where irq is
+>> >> still not enabled.
+>> >> It seems schedule_debug() somehow did not catch it during early boot
+>> >> phase. Maybe schedule guys can help explain.
+>> >>
+>> >> My question is if it's really worthy to introduce this confusion
+>> >> to fix the issue since the delay is minor?
+>> >
+>> > I do not understand why it's confusing.  The code already obviously
+>> > indicates this is a special handling for cases where irq is still not
+>> > enabled, rather than for irq context.
+>> >
+>>
+>> The code itself has nothing telling it's a special handling for the
+>> case where irq is
+>> still not enabled.
+>> Even it tells, it may still cause confusing by adding complexity in
+>> clk_pllv3_prepare()
+>> which actually should be called in non-atomic context as it could sleep.
+>>
+>> > The patch is to fix the "bad: scheduling from the idle thread!" warning
+>> > rather than minimize the delay.  Do you have an opinion on how to fix
+>> > the warning?
+>> >
+>>
+>> I just wonder maybe we could simply just using udelay(50) instead of
+>> usleep_range(50, 500) to eliminate the confusing since it's minor cast.
+>> What do you think of it?
+>
+> Why should we needless burn CPU time in the likely case of
+> clk_pllv3_prepare() being called in sleepable context?
+>
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-fractional-divider.c | 40 +++++++++++++++++++++++++++++++-----
- include/linux/clk-provider.h         |  5 +++++
- 2 files changed, 40 insertions(+), 5 deletions(-)
+I think because the delay time is not big.
+And pll clks are system basic clocks and less likely to be frequently
+enabled/disabled.
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 1abcd76b4993..aab904618eb6 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -116,14 +116,15 @@ const struct clk_ops clk_fractional_divider_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_fractional_divider_ops);
- 
--struct clk *clk_register_fractional_divider(struct device *dev,
-+struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
- 		u8 clk_divider_flags, spinlock_t *lock)
- {
- 	struct clk_fractional_divider *fd;
- 	struct clk_init_data init;
--	struct clk *clk;
-+	struct clk_hw *hw;
-+	int ret;
- 
- 	fd = kzalloc(sizeof(*fd), GFP_KERNEL);
- 	if (!fd)
-@@ -146,10 +147,39 @@ struct clk *clk_register_fractional_divider(struct device *dev,
- 	fd->lock = lock;
- 	fd->hw.init = &init;
- 
--	clk = clk_register(dev, &fd->hw);
--	if (IS_ERR(clk))
-+	hw = &fd->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
- 		kfree(fd);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_fractional_divider);
- 
--	return clk;
-+struct clk *clk_register_fractional_divider(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
-+		u8 clk_divider_flags, spinlock_t *lock)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_fractional_divider(dev, name, parent_name, flags,
-+			reg, mshift, mwidth, nshift, nwidth, clk_divider_flags,
-+			lock);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
- }
- EXPORT_SYMBOL_GPL(clk_register_fractional_divider);
-+
-+void clk_hw_unregister_fractional_divider(struct clk_hw *hw)
-+{
-+	struct clk_fractional_divider *fd;
-+
-+	fd = to_clk_fd(hw);
-+
-+	clk_hw_unregister(hw);
-+	kfree(fd);
-+}
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 79ad1a8a6831..bcbaf6c95d52 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -563,6 +563,11 @@ struct clk *clk_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
- 		u8 clk_divider_flags, spinlock_t *lock);
-+struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
-+		u8 clk_divider_flags, spinlock_t *lock);
-+void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
- 
- /**
-  * struct clk_multiplier - adjustable multiplier clock
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Using udelay() in a sleepable context is even more confusing than having
+> the special case for clk_prepare() being called in atomic context IMHO.
+>
+
+I can't agree having special case by checking
+unlikely(irqs_disabled()) is better
+which is obviously more confusing IMHO.
+I'd more like to hide it from users.
+
+I see other platforms like samsung&tegra also implements pll using udelay.
+But difference is that they implement it in .enable(I) clalback not prepare.
+
+How about simply remove usleep_range to poll instead of using udelay?
+Cause most PLL enable may be more faster than 50ns.
+
+And according to kernel doc, for delay time less than 10ns,
+udelay or polling is recommended.
+
+> Regards,
+> Lucas
+>
+
+Regards
+Dong Aisheng
