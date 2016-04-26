@@ -1,117 +1,125 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 22 Apr 2016 15:11:43 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Penny Chiu <pchiu@nvidia.com>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] clk: tegra: Add DFLL DVCO reset control for
- Tegra210
-Message-ID: <20160422131143.GL9047@ulmo.ba.sec>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-4-git-send-email-pchiu@nvidia.com>
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dpynvXbW/eW9Tpc3"
-In-Reply-To: <1461321071-6431-4-git-send-email-pchiu@nvidia.com>
+In-Reply-To: <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+	<20160421034520.GA19965@shlinux2.ap.freescale.net>
+	<20160426012341.GB8870@tiger>
+	<CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+	<1461663072.7839.17.camel@pengutronix.de>
+	<CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+Date: Tue, 26 Apr 2016 19:27:03 +0800
+Message-ID: <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+From: Dong Aisheng <dongas86@gmail.com>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, tglx@linutronix.de, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Apr 26, 2016 at 7:16 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+> On Tue, Apr 26, 2016 at 5:31 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+>> Am Dienstag, den 26.04.2016, 13:51 +0800 schrieb Dong Aisheng:
+>>> Hi Shawn,
+>>>
+>>> On Tue, Apr 26, 2016 at 9:23 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+>>> > On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
+>>> >> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
+>>> >> > If a clock gets enabled early during boot time, it can lead to a PLL
+>>> >> > startup. The wait_lock function makes sure that the PLL is really
+>>> >> > stareted up before it gets used. However, the function sleeps which
+>>> >> > leads to scheduling and an error:
+>>> >> > bad: scheduling from the idle thread!
+>>> >> > ...
+>>> >> >
+>>> >> > Use udelay in case IRQ's are still disabled.
+>>> >> >
+>>> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>> >> > ---
+>>> >> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
+>>> >> >  1 file changed, 4 insertions(+), 1 deletion(-)
+>>> >> >
+>>> >> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+>>> >> > index c05c43d..b5ff561 100644
+>>> >> > --- a/drivers/clk/imx/clk-pllv3.c
+>>> >> > +++ b/drivers/clk/imx/clk-pllv3.c
+>>> >> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+>>> >> >                     break;
+>>> >> >             if (time_after(jiffies, timeout))
+>>> >> >                     break;
+>>> >> > -           usleep_range(50, 500);
+>>> >> > +           if (unlikely(irqs_disabled()))
+>>> >>
+>>> >> This causes a bit confusion that clk_pllv3_prepare is sleepable.
+>>> >> But this line indicates it's possible to be called in irq context.
+>>> >> Although it's only happened during kernel boot phase where irq is
+>>> >> still not enabled.
+>>> >> It seems schedule_debug() somehow did not catch it during early boot
+>>> >> phase. Maybe schedule guys can help explain.
+>>> >>
+>>> >> My question is if it's really worthy to introduce this confusion
+>>> >> to fix the issue since the delay is minor?
+>>> >
+>>> > I do not understand why it's confusing.  The code already obviously
+>>> > indicates this is a special handling for cases where irq is still not
+>>> > enabled, rather than for irq context.
+>>> >
+>>>
+>>> The code itself has nothing telling it's a special handling for the
+>>> case where irq is
+>>> still not enabled.
+>>> Even it tells, it may still cause confusing by adding complexity in
+>>> clk_pllv3_prepare()
+>>> which actually should be called in non-atomic context as it could sleep.
+>>>
+>>> > The patch is to fix the "bad: scheduling from the idle thread!" warning
+>>> > rather than minimize the delay.  Do you have an opinion on how to fix
+>>> > the warning?
+>>> >
+>>>
+>>> I just wonder maybe we could simply just using udelay(50) instead of
+>>> usleep_range(50, 500) to eliminate the confusing since it's minor cast.
+>>> What do you think of it?
+>>
+>> Why should we needless burn CPU time in the likely case of
+>> clk_pllv3_prepare() being called in sleepable context?
+>>
+>
+> I think because the delay time is not big.
+> And pll clks are system basic clocks and less likely to be frequently
+> enabled/disabled.
+>
+>> Using udelay() in a sleepable context is even more confusing than having
+>> the special case for clk_prepare() being called in atomic context IMHO.
+>>
+>
+> I can't agree having special case by checking
+> unlikely(irqs_disabled()) is better
+> which is obviously more confusing IMHO.
+> I'd more like to hide it from users.
+>
+> I see other platforms like samsung&tegra also implements pll using udelay.
+> But difference is that they implement it in .enable(I) clalback not prepare.
+>
+> How about simply remove usleep_range to poll instead of using udelay?
+> Cause most PLL enable may be more faster than 50ns.
+>
+> And according to kernel doc, for delay time less than 10ns,
+> udelay or polling is recommended.
+>
 
---dpynvXbW/eW9Tpc3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Shawn,
+What's your suggestion?
 
-On Fri, Apr 22, 2016 at 06:31:03PM +0800, Penny Chiu wrote:
-> The DVCO present in the DFLL IP block has a separate reset line,
-> exposed via the CAR IP block.  This reset line is asserted upon SoC
-> reset.  Unless something (such as the DFLL driver) deasserts this
-> line, the DVCO will not oscillate, although reads and writes to the
-> DFLL IP block will complete.
->=20
-> Signed-off-by: Penny Chiu <pchiu@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c         | 68 ++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/reset/tegra210-car.h | 12 ++++++
->  2 files changed, 80 insertions(+)
->  create mode 100644 include/dt-bindings/reset/tegra210-car.h
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-teg=
-ra210.c
-> index d3709b1..3d70b38 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -24,6 +24,7 @@
->  #include <linux/export.h>
->  #include <linux/clk/tegra.h>
->  #include <dt-bindings/clock/tegra210-car.h>
-> +#include <dt-bindings/reset/tegra210-car.h>
-> =20
->  #include "clk.h"
->  #include "clk-id.h"
-> @@ -39,6 +40,9 @@
->  #define CLK_SOURCE_CSITE 0x1d4
->  #define CLK_SOURCE_EMC 0x19c
-> =20
-> +#define RST_DFLL_DVCO 0x2f4
-> +#define DVFS_DFLL_RESET_SHIFT 0
+Regards
+Dong Aisheng
 
-It'd be more idiomatic to make this:
-
-	#define DVFS_DFLL_RESET (1 << 0)
-
-and use that below instead of hard-coding the 1 << and shifting by the
-define.
-
-> +
->  #define PLLC_BASE 0x80
->  #define PLLC_OUT 0x84
->  #define PLLC_MISC0 0x88
-> @@ -2781,6 +2785,68 @@ static void __init tegra210_clock_apply_init_table=
-(void)
->  }
-> =20
->  /**
-> + * tegra210_car_barrier - wait for pending writes to the CAR to complete
-> + *
-> + * Wait for any outstanding writes to the CAR MMIO space from this CPU
-> + * to complete before continuing execution.  No return value.
-> + */
-> +static void tegra210_car_barrier(void)
-> +{
-> +	readl_relaxed(clk_base + RST_DFLL_DVCO);
-> +}
-
-If you use the plain readl() and writel() functions, do you still need
-the barrier? Or is there actually a requirement from the hardware to
-flush writes by reading from any of the registers?
-
-Thierry
-
---dpynvXbW/eW9Tpc3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXGiMPAAoJEN0jrNd/PrOh5NEP/19hckFLcpMp+Mb8ZdrKCLAZ
-PkyhHwk3NBfV0Scp9XFYaJ1GScjV2vq9szw+O1bVBjg9DpKmVIrS4K3XsZ7j2cYL
-VBJ2bNCDCE8/c9IKpSAvyZ6uh14nXZB2jjR7xn3JpcLge5BXKdVLuXkVyKjtRj8t
-BgZ79IdemSaTV22MACcXCusEAfAFZZzlfolvdkzUNkT+cL96usQBNBIPZ5v15GGG
-RkLLyhldXzwldRkY4qvjeYNubSbk8GAmb5wfqEuUCpAWYPrjfr7PkQ7jhsKiv6Fr
-JZOWSzqKc7UKyxvq97ziLJ2NKuD40uGvON7Z5+B8q9Z5+TUYyT1fOKU0vjrX7DFQ
-eksAf+hSBqsjSq7TD6q9k2RB5zcgrQUK5M+HXvLs68I4T92ZPuyjbAUVw7KLBM/5
-yjysiSVI8s+U9oxlFYdwVmvKdBW+5NSwSL65s/347IWZTJezSe697F8T92yyqk5c
-M29XSL225/ZFKcrqgHiN2oH/UR0sg8Ms8LsJSPC+EnYRs6NaFrlQtx0+4hze+mWX
-iFbiJqxkPBTQnVwg4n/Vs9hD1FVZL5mQH1PQ5sUA5fwePArVpYIuTqWk+RRYvlog
-HJ/WDC0HZkXyd1r72RRcKPBR0qGbMqJycFAe3Tw6IoGd/QGPSyoOXZzjGjZOT+XP
-i0+a2t2t15sOzz30B9mO
-=nxyQ
------END PGP SIGNATURE-----
-
---dpynvXbW/eW9Tpc3--
+>> Regards,
+>> Lucas
+>>
+>
+> Regards
+> Dong Aisheng
