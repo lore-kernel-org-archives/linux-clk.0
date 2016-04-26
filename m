@@ -1,35 +1,67 @@
-Return-Path: <w.egorov@phytec.de>
-Subject: Re: Applied "regulator: rk808: remove linear range definitions with a
- single range" to the regulator tree
-To: Mark Brown <broonie@kernel.org>
-References: <E1aukkg-0007km-6s@debutante> <2754883.PYP7KbpM33@diego>
- <57205DC2.7070506@phytec.de> <20160427135048.GQ3217@sirena.org.uk>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, linux-rockchip@lists.infradead.org, mark.rutland@arm.com, devicetree@vger.kernel.org, a.zummo@towertech.it, pawel.moll@arm.com, rtc-linux@googlegroups.com, ijc+devicetree@hellion.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, alexandre.belloni@free-electrons.com, dianders@chromium.org, galak@codeaurora.org, zyw@rock-chips.com, lee.jones@linaro.org, linux-clk@vger.kernel.org
-From: Wadim Egorov <w.egorov@phytec.de>
-Message-ID: <5720C750.3050104@phytec.de>
-Date: Wed, 27 Apr 2016 16:06:08 +0200
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 26 Apr 2016 09:23:41 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>, kernel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160426012341.GB8870@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
 MIME-Version: 1.0
-In-Reply-To: <20160427135048.GQ3217@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160421034520.GA19965@shlinux2.ap.freescale.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
+> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
+> > If a clock gets enabled early during boot time, it can lead to a PLL
+> > startup. The wait_lock function makes sure that the PLL is really
+> > stareted up before it gets used. However, the function sleeps which
+> > leads to scheduling and an error:
+> > bad: scheduling from the idle thread!
+> > ...
+> > 
+> > Use udelay in case IRQ's are still disabled.
+> > 
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > ---
+> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> > index c05c43d..b5ff561 100644
+> > --- a/drivers/clk/imx/clk-pllv3.c
+> > +++ b/drivers/clk/imx/clk-pllv3.c
+> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+> >  			break;
+> >  		if (time_after(jiffies, timeout))
+> >  			break;
+> > -		usleep_range(50, 500);
+> > +		if (unlikely(irqs_disabled()))
+> 
+> This causes a bit confusion that clk_pllv3_prepare is sleepable.
+> But this line indicates it's possible to be called in irq context.
+> Although it's only happened during kernel boot phase where irq is
+> still not enabled.
+> It seems schedule_debug() somehow did not catch it during early boot
+> phase. Maybe schedule guys can help explain.
+> 
+> My question is if it's really worthy to introduce this confusion
+> to fix the issue since the delay is minor?
 
+I do not understand why it's confusing.  The code already obviously
+indicates this is a special handling for cases where irq is still not
+enabled, rather than for irq context.
 
-On 27.04.2016 15:50, Mark Brown wrote:
-> On Wed, Apr 27, 2016 at 08:35:46AM +0200, Wadim Egorov wrote:
->> On 26.04.2016 21:33, Heiko St=FCbner wrote:
->>> with this patch applied, 4.6.0-rc5-next-20160426 fails to boot on=20
->>> rk3288-veyron devices with the bug below. Reverting this one patch
->>> results in the system booting again:
->> This is because I missed to add the correct ops for LDO=5FREG3 in this p=
-atch.
-> Any ETA on a fix or should I revert?
-this patch
+The patch is to fix the "bad: scheduling from the idle thread!" warning
+rather than minimize the delay.  Do you have an opinion on how to fix
+the warning?
 
-http://lists.infradead.org/pipermail/linux-rockchip/2016-April/008674.html
+> Furthermore, shouldn't it be udelay(500)?
 
-will fix the issue.
+500 is for the worst case of sleep, and 50 is good enough for delay.
 
-The regulator patches from v4 are based on top of
-commit 4a5ed8c1adc3 ("regulator: rk808: remove unused rk808=5Freg=5Fops=5Fr=
-anges")
+Shawn
