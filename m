@@ -1,418 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ob0-f193.google.com ([209.85.214.193]:34157 "EHLO
-	mail-ob0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753270AbcDZWhF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 18:37:05 -0400
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
-	paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v7 5/9] ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
-Date: Tue, 26 Apr 2016 17:36:45 -0500
-Message-Id: <1461710209-6563-6-git-send-email-fcooper@ti.com>
-In-Reply-To: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V2] clk: bcm2835: mark enabled pll_dividers as critical
+Date: Tue, 26 Apr 2016 08:56:29 +0000
+Message-Id: <1461660989-11846-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
-provide the various required clocks.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-For AM437 and AM335x, add the required clocks explicitly to DT. The
-hwmod entries for ECAP and EPWM will be removed and this will prevent
-anything from breaking.
+The bcm2835 firmware enables several clocks and plls before
+booting the linux kernel.
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+These plls should never get disabled as it may result in a
+stopped system clock and more.
+
+So during probing we check if the pll_divider is enabled
+and if it is then mark that pll_divider as critical.
+As a consequence this will also enable the corresponding parent pll.
+
+Here the list of pll_div that are marked as critical:
+[    2.022437] bcm2835-clk 20101000.cprman: found enabled pll_div plla_core - marking it as critical
+[    2.031640] bcm2835-clk 20101000.cprman: found enabled pll_div pllb_arm - marking it as critical
+[    2.040966] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_core0 - marking it as critical
+[    2.050351] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_per - marking it as critical
+[    2.059427] bcm2835-clk 20101000.cprman: found enabled pll_div plld_core - marking it as critical
+[    2.068590] bcm2835-clk 20101000.cprman: found enabled pll_div plld_per - marking it as critical
+[    2.077724] bcm2835-clk 20101000.cprman: found enabled pll_div pllh_pix - marking it as critical
+
+Changelog:
+  V1 -> V2: apply to pll_dividers instead of clocks
+            use CLK_IS_CRITICAL flag instead of prepare/enable manually
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- .../devicetree/bindings/pwm/pwm-tiecap.txt         | 18 +++++---
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 18 +++++---
- arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
- arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
- arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
- 5 files changed, 103 insertions(+), 32 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-index 1b7eec5..76cf322 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-@@ -2,9 +2,9 @@ TI SOC ECAP based APWM controller
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 6479283c..7f6838f 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1086,6 +1086,15 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
+ 	divider->cprman = cprman;
+ 	divider->data = data;
  
- Required properties:
- - compatible: Must be "ti,<soc>-ecap".
--  for am33xx  - compatible = "ti,am33xx-ecap";
--  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
--  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
-+  for am33xx - compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
-+  for am4372 - compatible = "ti,am4372-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
-+  for da850  - compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
- - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
-   the cells format. The PWM channel index ranges from 0 to 4. The only third
-   cell flag supported by this binding is PWM_POLARITY_INVERTED.
-@@ -13,25 +13,31 @@ Required properties:
- Optional properties:
- - ti,hwmods: Name of the hwmod associated to the ECAP:
-   "ecap<x>", <x> being the 0-based instance number from the HW spec
-+- clocks: Handle to the ECAP's functional clock.
-+- clock-names: Must be set to "fck".
- 
- Example:
- 
- ecap0: ecap@48300100 { /* ECAP on am33xx */
--	compatible = "ti,am33xx-ecap";
-+	compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
- 	reg = <0x48300100 0x80>;
- 	ti,hwmods = "ecap0";
-+	clocks = <&l4ls_gclk>;
-+	clock-names = "fck";
- };
- 
- ecap0: ecap@48300100 { /* ECAP on am4372 */
--	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
-+	compatible = "ti,am4372-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
- 	reg = <0x48300100 0x80>;
- 	ti,hwmods = "ecap0";
-+	clocks = <&l4ls_gclk>;
-+	clock-names = "fck";
- };
- 
- ecap0: ecap@1f06000 { /* ECAP on da850 */
--	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
-+	compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
- 	reg = <0x306000 0x80>;
- };
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-index cbc538b..87ef528 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-@@ -2,9 +2,9 @@ TI SOC EHRPWM based PWM controller
- 
- Required properties:
- - compatible: Must be "ti,<soc>-ehrpwm".
--  for am33xx  - compatible = "ti,am33xx-ehrpwm";
--  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
--  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-+  for am33xx  - compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
-+  for am4372  - compatible = "ti,am4372-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
-+  for da850   - compatible = "ti,da850-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
- - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
-   the cells format. The only third cell flag supported by this binding is
-   PWM_POLARITY_INVERTED.
-@@ -13,25 +13,31 @@ Required properties:
- Optional properties:
- - ti,hwmods: Name of the hwmod associated to the EHRPWM:
-   "ehrpwm<x>", <x> being the 0-based instance number from the HW spec
-+- clocks: Handle to the PWM's time-base and functional clock.
-+- clock-names: Must be set to "tbclk" and "fck".
- 
- Example:
- 
- ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
--	compatible = "ti,am33xx-ehrpwm";
-+	compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
- 	#pwm-cells = <3>;
- 	reg = <0x48300200 0x100>;
-+	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
-+	clock-names = "tbclk", "fck";
- 	ti,hwmods = "ehrpwm0";
- };
- 
- ehrpwm0: pwm@48300200 { /* EHRPWM on am4372 */
--	compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
-+	compatible = "ti,am4372-ehrpwm", "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
- 	#pwm-cells = <3>;
- 	reg = <0x48300200 0x80>;
-+	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
-+	clock-names = "tbclk", "fck";
- 	ti,hwmods = "ehrpwm0";
- };
- 
- ehrpwm0: pwm@1f00000 { /* EHRPWM on da850 */
--	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-+	compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
- 	#pwm-cells = <3>;
- 	reg = <0x300000 0x2000>;
- };
-diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
-index 52be48b..999ba2f 100644
---- a/arch/arm/boot/dts/am33xx.dtsi
-+++ b/arch/arm/boot/dts/am33xx.dtsi
-@@ -679,9 +679,12 @@
- 				  0x48300200 0x48300200 0x80>; /* EHRPWM */
- 
- 			ecap0: ecap@48300100 {
--				compatible = "ti,am33xx-ecap";
-+				compatible = "ti,am3352-ecap",
-+					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48300100 0x80>;
-+				clocks = <&l4ls_gclk>;
-+				clock-names = "fck";
- 				interrupts = <31>;
- 				interrupt-names = "ecap0";
- 				ti,hwmods = "ecap0";
-@@ -689,10 +692,13 @@
- 			};
- 
- 			ehrpwm0: pwm@48300200 {
--				compatible = "ti,am33xx-ehrpwm";
-+				compatible = "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48300200 0x80>;
- 				ti,hwmods = "ehrpwm0";
-+				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -709,9 +715,12 @@
- 				  0x48302200 0x48302200 0x80>; /* EHRPWM */
- 
- 			ecap1: ecap@48302100 {
--				compatible = "ti,am33xx-ecap";
-+				compatible = "ti,am3352-ecap",
-+					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48302100 0x80>;
-+				clocks = <&l4ls_gclk>;
-+				clock-names = "fck";
- 				interrupts = <47>;
- 				interrupt-names = "ecap1";
- 				ti,hwmods = "ecap1";
-@@ -719,10 +728,13 @@
- 			};
- 
- 			ehrpwm1: pwm@48302200 {
--				compatible = "ti,am33xx-ehrpwm";
-+				compatible = "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48302200 0x80>;
- 				ti,hwmods = "ehrpwm1";
-+				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -739,9 +751,12 @@
- 				  0x48304200 0x48304200 0x80>; /* EHRPWM */
- 
- 			ecap2: ecap@48304100 {
--				compatible = "ti,am33xx-ecap";
-+				compatible = "ti,am3352-ecap",
-+					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48304100 0x80>;
-+				clocks = <&l4ls_gclk>;
-+				clock-names = "fck";
- 				interrupts = <61>;
- 				interrupt-names = "ecap2";
- 				ti,hwmods = "ecap2";
-@@ -749,10 +764,13 @@
- 			};
- 
- 			ehrpwm2: pwm@48304200 {
--				compatible = "ti,am33xx-ehrpwm";
-+				compatible = "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48304200 0x80>;
- 				ti,hwmods = "ehrpwm2";
-+				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-index 12fcde4..e858460 100644
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -672,18 +672,26 @@
- 			status = "disabled";
- 
- 			ecap0: ecap@48300100 {
--				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
-+				compatible = "ti,am4372-ecap",
-+					     "ti,am3352-ecap",
-+					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48300100 0x80>;
- 				ti,hwmods = "ecap0";
-+				clocks = <&l4ls_gclk>;
-+				clock-names = "fck";
- 				status = "disabled";
- 			};
- 
- 			ehrpwm0: pwm@48300200 {
--				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-+				compatible = "ti,am4372-ehrpwm",
-+					     "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48300200 0x80>;
- 				ti,hwmods = "ehrpwm0";
-+				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -698,18 +706,26 @@
- 			status = "disabled";
- 
- 			ecap1: ecap@48302100 {
--				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
-+				compatible = "ti,am4372-ecap",
-+					     "ti,am3352-ecap",
-+					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48302100 0x80>;
- 				ti,hwmods = "ecap1";
-+				clocks = <&l4ls_gclk>;
-+				clock-names = "fck";
- 				status = "disabled";
- 			};
- 
- 			ehrpwm1: pwm@48302200 {
--				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-+				compatible = "ti,am4372-ehrpwm",
-+					     "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48302200 0x80>;
- 				ti,hwmods = "ehrpwm1";
-+				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -724,18 +740,26 @@
- 			status = "disabled";
- 
- 			ecap2: ecap@48304100 {
--				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
-+				compatible = "ti,am4372-ecap",
-+					     "ti,am3352-ecap",
-+					     "ti,am33xx-ecap";
- 				#pwm-cells = <3>;
- 				reg = <0x48304100 0x80>;
-+				clocks = <&l4ls_gclk>;
-+				clock-names = "fck";
- 				ti,hwmods = "ecap2";
- 				status = "disabled";
- 			};
- 
- 			ehrpwm2: pwm@48304200 {
--				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-+				compatible = "ti,am4372-ehrpwm",
-+					     "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48304200 0x80>;
- 				ti,hwmods = "ehrpwm2";
-+				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -750,10 +774,14 @@
- 			status = "disabled";
- 
- 			ehrpwm3: pwm@48306200 {
--				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-+				compatible = "ti,am4372-ehrpwm",
-+					     "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48306200 0x80>;
- 				ti,hwmods = "ehrpwm3";
-+				clocks = <&ehrpwm3_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -768,10 +796,14 @@
- 			status = "disabled";
- 
- 			ehrpwm4: pwm@48308200 {
--				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-+				compatible = "ti,am4372-ehrpwm",
-+					     "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x48308200 0x80>;
- 				ti,hwmods = "ehrpwm4";
-+				clocks = <&ehrpwm4_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				status = "disabled";
- 			};
- 		};
-@@ -786,9 +818,13 @@
- 			status = "disabled";
- 
- 			ehrpwm5: pwm@4830a200 {
--				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
-+				compatible = "ti,am4372-ehrpwm",
-+					     "ti,am3352-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
- 				#pwm-cells = <3>;
- 				reg = <0x4830a200 0x80>;
-+				clocks = <&ehrpwm5_tbclk>, <&l4ls_gclk>;
-+				clock-names = "tbclk", "fck";
- 				ti,hwmods = "ehrpwm5";
- 				status = "disabled";
- 			};
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index c3910e2..28a1064 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -248,31 +248,36 @@
- 			status = "disabled";
- 		};
- 		ehrpwm0: pwm@01f00000 {
--			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-+			compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm",
-+				     "ti,am33xx-ehrpwm";
- 			#pwm-cells = <3>;
- 			reg = <0x300000 0x2000>;
- 			status = "disabled";
- 		};
- 		ehrpwm1: pwm@01f02000 {
--			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-+			compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm",
-+				     "ti,am33xx-ehrpwm";
- 			#pwm-cells = <3>;
- 			reg = <0x302000 0x2000>;
- 			status = "disabled";
- 		};
- 		ecap0: ecap@01f06000 {
--			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
-+			compatible = "ti,da850-ecap", "ti,am3352-ecap",
-+				     "ti,am33xx-ecap";
- 			#pwm-cells = <3>;
- 			reg = <0x306000 0x80>;
- 			status = "disabled";
- 		};
- 		ecap1: ecap@01f07000 {
--			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
-+			compatible = "ti,da850-ecap", "ti,am3352-ecap",
-+				     "ti,am33xx-ecap";
- 			#pwm-cells = <3>;
- 			reg = <0x307000 0x80>;
- 			status = "disabled";
- 		};
- 		ecap2: ecap@01f08000 {
--			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
-+			compatible = "ti,da850-ecap", "ti,am3352-ecap",
-+				     "ti,am33xx-ecap";
- 			#pwm-cells = <3>;
- 			reg = <0x308000 0x80>;
- 			status = "disabled";
++	/* if the pll-divider is running, then mark is as critical */
++	if ((cprman_read(cprman, data->a2w_reg) &
++	     A2W_PLL_CHANNEL_DISABLE) == 0) {
++		dev_info(cprman->dev,
++			 "found enabled pll_div %s - marking it as critical\n",
++			 data->name);
++		init.flags |= CLK_IS_CRITICAL;
++	}
++
+ 	clk = devm_clk_register(cprman->dev, &divider->div.hw);
+ 	if (IS_ERR(clk))
+ 		return clk;
 -- 
-2.7.0
-
+2.1.4
