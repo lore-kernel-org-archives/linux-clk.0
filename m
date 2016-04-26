@@ -1,90 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:41844 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751221AbcDZNXN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 09:23:13 -0400
-Subject: Re: [PATCH v6 3/7] ARM: dts: am437x/am33xx/da850: Add new ECAP and
- EPWM bindings
-To: Rob Herring <robh@kernel.org>
-References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
- <1461343238-29274-4-git-send-email-fcooper@ti.com>
- <20160425130308.GA7802@rob-hp-laptop>
-CC: <thierry.reding@gmail.com>, <tony@atomide.com>, <paul@pwsan.com>,
-	<t-kristo@ti.com>, <linux-pwm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<vigneshr@ti.com>, <nsekhar@ti.com>
-From: "Franklin S Cooper Jr." <fcooper@ti.com>
-Message-ID: <571F6BA5.4010004@ti.com>
-Date: Tue, 26 Apr 2016 08:22:45 -0500
-MIME-Version: 1.0
-In-Reply-To: <20160425130308.GA7802@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
+	paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v7 0/9] ARM: dts: DRA7: Add dt nodes for PWMSS
+Date: Tue, 26 Apr 2016 17:36:40 -0500
+Message-Id: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch series adds support for PWM for DRA7. The IP is the same as the
+one present in AM33XX and AM437XX.
 
+However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
+and eQEP.
 
-On 04/25/2016 08:03 AM, Rob Herring wrote:
-> On Fri, Apr 22, 2016 at 11:40:34AM -0500, Franklin S Cooper Jr wrote:
->> Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
->> provide the various required clocks.
->>
->> For AM437 and AM335x, add the required clocks explicitly to DT. The
->> hwmod entries for ECAP and EPWM will be removed and this will prevent
->> anything from breaking.
->>
->> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
->> ---
->>  .../devicetree/bindings/pwm/pwm-tiecap.txt         | 12 +++--
->>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 12 +++--
->>  arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
->>  arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
->>  arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
->>  5 files changed, 95 insertions(+), 28 deletions(-)
-> 
-> [...]
-> 
->> diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
->> index 12fcde4..e858460 100644
->> --- a/arch/arm/boot/dts/am4372.dtsi
->> +++ b/arch/arm/boot/dts/am4372.dtsi
->> @@ -672,18 +672,26 @@
->>  			status = "disabled";
->>  
->>  			ecap0: ecap@48300100 {
->> -				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
->> +				compatible = "ti,am4372-ecap",
-> 
-> This doesn't appear to be documented.
-> 
->> +					     "ti,am3352-ecap",
->> +					     "ti,am33xx-ecap";
->>  				#pwm-cells = <3>;
->>  				reg = <0x48300100 0x80>;
->>  				ti,hwmods = "ecap0";
->> +				clocks = <&l4ls_gclk>;
->> +				clock-names = "fck";
->>  				status = "disabled";
->>  			};
->>  
->>  			ehrpwm0: pwm@48300200 {
->> -				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
->> +				compatible = "ti,am4372-ehrpwm",
-> 
-> ditto.
+The following are the biggest changes from v6 to v7:
+* Several patches to document previously undocumented bindings. 
+* Fix minor issues in binding documents.
 
+The following are the biggest changes from v5 to v6:
+* Created two new bindings to allow ECAP and PWM to grab their functional
+clock from DT rather than depending on PWMSS parent.
+* Pull in a couple of patches from the "Correct PWM bindings" series. This
+makes it a bit easier to understand.
 
-Will fix
-> 
->> +					     "ti,am3352-ehrpwm",
->> +					     "ti,am33xx-ehrpwm";
->>  				#pwm-cells = <3>;
->>  				reg = <0x48300200 0x80>;
->>  				ti,hwmods = "ehrpwm0";
->> +				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
->> +				clock-names = "tbclk", "fck";
->>  				status = "disabled";
->>  			};
->>  		};
+>From the two patchsets a handful of patches have already been pulled in by
+maintainers and have already made it to linux-next. Therefore, this
+patch series is built ontop of the latest linux-next.
+
+Tested on:
+AM335x, AM437x and X15 + lcd w/backlight
+
+Franklin S Cooper Jr (8):
+  clk: ti: am335x/am4372: Add tbclk to pwm node
+  ARM: dts: am437x: Add missing compatibles to PWM binding documents
+  pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+  pwm: pwm-tiecap: Update dt binding document to use proper unit address
+  ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
+  pwms: pwm-ti*: Get the clock from the PWMSS parent when using old
+    bindings
+  ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
+  ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
+
+Vignesh R (1):
+  ARM: dts: DRA7: Add dt nodes for PWMSS
+
+ .../devicetree/bindings/pwm/pwm-tiecap.txt         | 36 +++++++--
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 36 +++++++--
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 33 +++++++-
+ arch/arm/boot/dts/am33xx.dtsi                      | 36 ++++++---
+ arch/arm/boot/dts/am4372.dtsi                      | 63 ++++++++++-----
+ arch/arm/boot/dts/da850.dtsi                       | 15 ++--
+ arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
+ .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
+ .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 ---------------
+ .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 --------------------
+ arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
+ arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 -------------
+ drivers/clk/ti/clk-33xx.c                          |  3 +
+ drivers/clk/ti/clk-43xx.c                          |  6 ++
+ drivers/pwm/pwm-tiecap.c                           |  7 ++
+ drivers/pwm/pwm-tiehrpwm.c                         |  7 ++
+ 16 files changed, 279 insertions(+), 282 deletions(-)
+
+-- 
+2.7.0
