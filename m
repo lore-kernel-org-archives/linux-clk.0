@@ -1,236 +1,86 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v2 4/7] regulator: rk808: Add regulator driver for RK818
-Date: Thu, 21 Apr 2016 15:12:38 +0200
-Message-Id: <1461244361-45686-5-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
-References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44158 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082AbcDZKrB (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 06:47:01 -0400
+Date: Tue, 26 Apr 2016 11:46:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+Message-ID: <20160426104645.GU3217@sirena.org.uk>
+References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+ <1461590448-47685-4-git-send-email-w.egorov@phytec.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UDCjyp4MAF5V3Huu"
+In-Reply-To: <1461590448-47685-4-git-send-email-w.egorov@phytec.de>
+Subject: Re: [PATCH v3 3/8] regulator: rk808: remove linear range definitions
+ with a single range
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the rk818 regulator. The regulator module consists
-of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
-power OTG and HDMI5V.
 
-The output voltages are configurable and are meant to supply power
-to the main processor and other components.
+--UDCjyp4MAF5V3Huu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
----
- drivers/regulator/Kconfig           |   4 +-
- drivers/regulator/rk808-regulator.c | 141 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 137 insertions(+), 8 deletions(-)
+On Mon, Apr 25, 2016 at 03:20:43PM +0200, Wadim Egorov wrote:
+> The driver was using only linear ranges. Now we remove linear range
+> definitions with a single range. So we have to add an ops struct for
+> ranges and adjust all other ops functions accordingly.
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index c77dc08..0efbcbf 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -609,11 +609,11 @@ config REGULATOR_RC5T583
- 	  outputs which can be controlled by i2c communication.
- 
- config REGULATOR_RK808
--	tristate "Rockchip RK808 Power regulators"
-+	tristate "Rockchip RK808/RK818 Power regulators"
- 	depends on MFD_RK808
- 	help
- 	  Select this option to enable the power regulator of ROCKCHIP
--	  PMIC RK808.
-+	  PMIC RK808 and RK818.
- 	  This driver supports the control of different power rails of device
- 	  through regulator interface. The device supports multiple DCDC/LDO
- 	  outputs which can be controlled by i2c communication.
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index 2c529fa..9931097 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -6,6 +6,10 @@
-  * Author: Chris Zhong <zyw@rock-chips.com>
-  * Author: Zhang Qing <zhangqing@rock-chips.com>
-  *
-+ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
-+ *
-+ * Author: Wadim Egorov <w.egorov@phytec.de>
-+ *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-  * version 2, as published by the Free Software Foundation.
-@@ -32,6 +36,12 @@
- #define RK808_BUCK4_VSEL_MASK	0xf
- #define RK808_LDO_VSEL_MASK	0x1f
- 
-+#define RK818_BUCK_VSEL_MASK		0x3f
-+#define RK818_BUCK4_VSEL_MASK		0x1f
-+#define RK818_LDO_VSEL_MASK		0x1f
-+#define RK818_LDO3_ON_VSEL_MASK		0xf
-+#define RK818_BOOST_ON_VSEL_MASK	0xe0
-+
- /* Ramp rate definitions for buck1 / buck2 only */
- #define RK808_RAMP_RATE_OFFSET		3
- #define RK808_RAMP_RATE_MASK		(3 << RK808_RAMP_RATE_OFFSET)
-@@ -454,6 +464,108 @@ static const struct regulator_desc rk808_reg[] = {
- 		RK808_DCDC_EN_REG, BIT(6)),
- };
- 
-+static const struct regulator_desc rk818_reg[] = {
-+	{
-+		.name = "DCDC_REG1",
-+		.supply_name = "vcc1",
-+		.of_match = of_match_ptr("DCDC_REG1"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_DCDC1,
-+		.ops = &rk808_reg_ops,
-+		.type = REGULATOR_VOLTAGE,
-+		.min_uV = 712500,
-+		.uV_step = 12500,
-+		.n_voltages = 64,
-+		.vsel_reg = RK818_BUCK1_ON_VSEL_REG,
-+		.vsel_mask = RK818_BUCK_VSEL_MASK,
-+		.enable_reg = RK818_DCDC_EN_REG,
-+		.enable_mask = BIT(0),
-+		.owner = THIS_MODULE,
-+	}, {
-+		.name = "DCDC_REG2",
-+		.supply_name = "vcc2",
-+		.of_match = of_match_ptr("DCDC_REG2"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_DCDC2,
-+		.ops = &rk808_reg_ops,
-+		.type = REGULATOR_VOLTAGE,
-+		.min_uV = 712500,
-+		.uV_step = 12500,
-+		.n_voltages = 64,
-+		.vsel_reg = RK818_BUCK2_ON_VSEL_REG,
-+		.vsel_mask = RK818_BUCK_VSEL_MASK,
-+		.enable_reg = RK818_DCDC_EN_REG,
-+		.enable_mask = BIT(1),
-+		.owner = THIS_MODULE,
-+	}, {
-+		.name = "DCDC_REG3",
-+		.supply_name = "vcc3",
-+		.of_match = of_match_ptr("DCDC_REG3"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_DCDC3,
-+		.ops = &rk808_switch_ops,
-+		.type = REGULATOR_VOLTAGE,
-+		.n_voltages = 1,
-+		.enable_reg = RK818_DCDC_EN_REG,
-+		.enable_mask = BIT(2),
-+		.owner = THIS_MODULE,
-+	},
-+	RK8XX_DESC(RK818_ID_DCDC4, "DCDC_REG4", "vcc4", 1800, 3600, 100,
-+		RK818_BUCK4_ON_VSEL_REG, RK818_BUCK4_VSEL_MASK,
-+		RK818_DCDC_EN_REG, BIT(3), 0),
-+	RK8XX_DESC(RK818_ID_BOOST, "DCDC_BOOST", "boost", 4700, 5400, 100,
-+		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_BOOST_ON_VSEL_MASK,
-+		RK818_DCDC_EN_REG, BIT(4), 0),
-+	RK8XX_DESC(RK818_ID_LDO1, "LDO_REG1", "vcc6", 1800, 3400, 100,
-+		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(0), 400),
-+	RK8XX_DESC(RK818_ID_LDO2, "LDO_REG2", "vcc6", 1800, 3400, 100,
-+		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(1), 400),
-+	{
-+		.name = "LDO_REG3",
-+		.supply_name = "vcc7",
-+		.of_match = of_match_ptr("LDO_REG3"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.id = RK818_ID_LDO3,
-+		.ops = &rk808_reg_ops_ranges,
-+		.type = REGULATOR_VOLTAGE,
-+		.n_voltages = 16,
-+		.linear_ranges = rk808_ldo3_voltage_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(rk808_ldo3_voltage_ranges),
-+		.vsel_reg = RK818_LDO3_ON_VSEL_REG,
-+		.vsel_mask = RK818_LDO3_ON_VSEL_MASK,
-+		.enable_reg = RK818_LDO_EN_REG,
-+		.enable_mask = BIT(2),
-+		.enable_time = 400,
-+		.owner = THIS_MODULE,
-+	},
-+	RK8XX_DESC(RK818_ID_LDO4, "LDO_REG4", "vcc8", 1800, 3400, 100,
-+		RK818_LDO4_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(3), 400),
-+	RK8XX_DESC(RK818_ID_LDO5, "LDO_REG5", "vcc7", 1800, 3400, 100,
-+		RK818_LDO5_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(4), 400),
-+	RK8XX_DESC(RK818_ID_LDO6, "LDO_REG6", "vcc8", 800, 2500, 100,
-+		RK818_LDO6_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(5), 400),
-+	RK8XX_DESC(RK818_ID_LDO7, "LDO_REG7", "vcc7", 800, 2500, 100,
-+		RK818_LDO7_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(6), 400),
-+	RK8XX_DESC(RK818_ID_LDO8, "LDO_REG8", "vcc8", 1800, 3400, 100,
-+		RK818_LDO8_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
-+		BIT(7), 400),
-+	RK8XX_DESC(RK818_ID_LDO9, "LDO_REG9", "vcc9", 1800, 3400, 100,
-+		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_LDO_VSEL_MASK,
-+		RK818_DCDC_EN_REG, BIT(5), 400),
-+	RK8XX_DESC_SWITCH(RK818_ID_SWITCH, "SWITCH_REG", "vcc9",
-+		RK818_DCDC_EN_REG, BIT(6)),
-+	RK8XX_DESC_SWITCH(RK818_ID_HDMI_SWITCH, "HDMI_SWITCH", "h_5v",
-+		RK818_H5V_EN_REG, BIT(0)),
-+	RK8XX_DESC_SWITCH(RK818_ID_OTG_SWITCH, "OTG_SWITCH", "usb",
-+		RK818_DCDC_EN_REG, BIT(7)),
-+};
-+
- static int rk808_regulator_dt_parse_pdata(struct device *dev,
- 				   struct device *client_dev,
- 				   struct regmap *map,
-@@ -499,7 +611,8 @@ static int rk808_regulator_probe(struct platform_device *pdev)
- 	struct regulator_config config = {};
- 	struct regulator_dev *rk808_rdev;
- 	struct rk808_regulator_data *pdata;
--	int ret, i;
-+	const struct regulator_desc *regulators;
-+	int ret, i, nregulators;
- 
- 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -512,14 +625,29 @@ static int rk808_regulator_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pdata);
- 
-+	switch (rk8xx->variant) {
-+	case RK808_ID:
-+		regulators = rk808_reg;
-+		nregulators = RK808_NUM_REGULATORS;
-+		break;
-+	case RK818_ID:
-+		regulators = rk818_reg;
-+		nregulators = RK818_NUM_REGULATORS;
-+		break;
-+	default:
-+		dev_err(&client->dev, "unsupported RK8XX ID %lu\n",
-+			rk8xx->variant);
-+		return -EINVAL;
-+	}
-+
- 	config.dev = &client->dev;
- 	config.driver_data = pdata;
- 	config.regmap = rk8xx->regmap;
- 
- 	/* Instantiate the regulators */
--	for (i = 0; i < RK808_NUM_REGULATORS; i++) {
-+	for (i = 0; i < nregulators; i++) {
- 		rk808_rdev = devm_regulator_register(&pdev->dev,
--						     &rk808_reg[i], &config);
-+						     &regulators[i], &config);
- 		if (IS_ERR(rk808_rdev)) {
- 			dev_err(&client->dev,
- 				"failed to register %d regulator\n", i);
-@@ -540,8 +668,9 @@ static struct platform_driver rk808_regulator_driver = {
- 
- module_platform_driver(rk808_regulator_driver);
- 
--MODULE_DESCRIPTION("regulator driver for the rk808 series PMICs");
--MODULE_AUTHOR("Chris Zhong<zyw@rock-chips.com>");
--MODULE_AUTHOR("Zhang Qing<zhangqing@rock-chips.com>");
-+MODULE_DESCRIPTION("regulator driver for the rk8xx series PMICs");
-+MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
-+MODULE_AUTHOR("Zhang Qing <zhangqing@rock-chips.com>");
-+MODULE_AUTHOR("Wadim Egorov <w.egorov@phytec.de>");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:rk808-regulator");
--- 
-1.9.1
+This and some other cleanups are now available as a signed tag from my
+repository:
+
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-rk808-cleanups
+
+for you to fetch changes up to 4a5ed8c1adc39f86a2887183c71b007bc962fdce:
+
+  regulator: rk808: remove unused rk808_reg_ops_ranges (2016-04-26 11:11:29 +0100)
+
+----------------------------------------------------------------
+regulator: rk808: Some cleanups for the rk808 driver
+
+These are tagged to facilitate the addition of support for the rk818
+which may end up overlapping with some of these cleanups.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      regulator: rk808: remove unused rk808_reg_ops_ranges
+
+Wadim Egorov (1):
+      regulator: rk808: remove linear range definitions with a single range
+
+ drivers/regulator/rk808-regulator.c | 66 ++++++++++++++-----------------------
+ 1 file changed, 25 insertions(+), 41 deletions(-)
+
+--UDCjyp4MAF5V3Huu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXH0cUAAoJECTWi3JdVIfQ6aoH/AmnClPzC9wF7fbnXCseYz8O
+87ecgxRazLhU3fasgfIH8m6+Gj2P7Go+UgHWq9f3ewfdpdU1bFbmGVcCp5hhYscq
+N2X+QdPdcP8FlkqxXzsJP3RI8dCUXofhnVkfX6c5VpjvtT1eUXRyFlNM3fvH3Jpz
+c6mzb41jxOehCGNvnlYwKiYL/ADwa54y0XF8aLbSHjm2OKiA3TbcS0sAjsVAE529
+Eu3jxf9IoxEfVpd7nR5VjSUxjRKZtr8Q9/E8LMdnK9sFiDsWZ97LmaBdyP7II5Eq
+N7W5PmrxqnPo5Y4WBh6zMCvNWm92Wx/D1fkZrN+qQKLqA+ETkpsSIQ6tx0Yik2Q=
+=l/MP
+-----END PGP SIGNATURE-----
+
+--UDCjyp4MAF5V3Huu--
