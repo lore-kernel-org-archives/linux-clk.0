@@ -1,62 +1,90 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:38492 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752064AbcDVLzP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2016 07:55:15 -0400
-Date: Fri, 22 Apr 2016 13:55:11 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: tegra: dfll: Update kerneldoc
-Message-ID: <20160422115511.GG9047@ulmo.ba.sec>
-References: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:41844 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221AbcDZNXN (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2016 09:23:13 -0400
+Subject: Re: [PATCH v6 3/7] ARM: dts: am437x/am33xx/da850: Add new ECAP and
+ EPWM bindings
+To: Rob Herring <robh@kernel.org>
+References: <1461343238-29274-1-git-send-email-fcooper@ti.com>
+ <1461343238-29274-4-git-send-email-fcooper@ti.com>
+ <20160425130308.GA7802@rob-hp-laptop>
+CC: <thierry.reding@gmail.com>, <tony@atomide.com>, <paul@pwsan.com>,
+	<t-kristo@ti.com>, <linux-pwm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<vigneshr@ti.com>, <nsekhar@ti.com>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+Message-ID: <571F6BA5.4010004@ti.com>
+Date: Tue, 26 Apr 2016 08:22:45 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6BvahUXLYAruDZOj"
-In-Reply-To: <1460122297-14420-1-git-send-email-thierry.reding@gmail.com>
+In-Reply-To: <20160425130308.GA7802@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---6BvahUXLYAruDZOj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 08, 2016 at 03:31:33PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> The kerneldoc for struct tegra_dfll_soc_data is stale. Update it to
-> match the current structure definition.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-dfll.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+On 04/25/2016 08:03 AM, Rob Herring wrote:
+> On Fri, Apr 22, 2016 at 11:40:34AM -0500, Franklin S Cooper Jr wrote:
+>> Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
+>> provide the various required clocks.
+>>
+>> For AM437 and AM335x, add the required clocks explicitly to DT. The
+>> hwmod entries for ECAP and EPWM will be removed and this will prevent
+>> anything from breaking.
+>>
+>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>> ---
+>>  .../devicetree/bindings/pwm/pwm-tiecap.txt         | 12 +++--
+>>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 12 +++--
+>>  arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
+>>  arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
+>>  arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
+>>  5 files changed, 95 insertions(+), 28 deletions(-)
+> 
+> [...]
+> 
+>> diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+>> index 12fcde4..e858460 100644
+>> --- a/arch/arm/boot/dts/am4372.dtsi
+>> +++ b/arch/arm/boot/dts/am4372.dtsi
+>> @@ -672,18 +672,26 @@
+>>  			status = "disabled";
+>>  
+>>  			ecap0: ecap@48300100 {
+>> -				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
+>> +				compatible = "ti,am4372-ecap",
+> 
+> This doesn't appear to be documented.
+> 
+>> +					     "ti,am3352-ecap",
+>> +					     "ti,am33xx-ecap";
+>>  				#pwm-cells = <3>;
+>>  				reg = <0x48300100 0x80>;
+>>  				ti,hwmods = "ecap0";
+>> +				clocks = <&l4ls_gclk>;
+>> +				clock-names = "fck";
+>>  				status = "disabled";
+>>  			};
+>>  
+>>  			ehrpwm0: pwm@48300200 {
+>> -				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
+>> +				compatible = "ti,am4372-ehrpwm",
+> 
+> ditto.
 
-Applied the series.
 
-Thierry
-
---6BvahUXLYAruDZOj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXGhEfAAoJEN0jrNd/PrOh2G8QALPa+onXMgv6hz68MIFHQU6j
-oflHbJlbq8yaJIFAqMhaiIIwU6ekP6h9Da216UBKT5s1pAcTmjZQghLozV6xKo/j
-iKFuLpEYWDq1TEK/yCArxd36vrfis+unFDjOZyp/jXjlS3JSBOGFdFt44aAoQ08v
-mVbOzl6kZfPMzPrpPmrT6/Uea6DqNbhYPn2vD5T4XfDDBRQ8MnpivhmYgfhBmig7
-6toqb+3VSyvEMmh+L+ZL2Lb3MkxGuHYwX661PsMbIxtt1/fgL+uGIypt2zkaVzli
-wm5TZXYHs2tLK5czkEvh2y86diDAc3fPhKfgQx1bEGuFmVc5T//UDCc5ohjR4DKD
-0F6N/9RkVKrVZXKrh/XVEyt2+TH12PJPgs5Kln84EsbAVMza78hSGI3uuGkDpKDY
-vBugj5MSbGl1VBfhtSeJ76vNMssGgYifFfxgPpuXJIrwHUZBG0KEINfsEFIfRPi0
-XMUhh1vOtuz4oNr63agqAyu+iEEER1YitNtmVmSn8WUX1gNEyShS4tWwGPCr0VsR
-ViQlXuFnzRfnK2kIo818JRG6g6QsCvbGql+jAXQ17gwzuF/gWyH9HdjsyIz7MvDh
-YGInL8G1cFnf/RelyMlRbFsEIt/75wzY+5VIcRvI0GKXgMucltMDvXm41Q1BFpND
-13HInGcaqvj4bh+JKJOS
-=W6IN
------END PGP SIGNATURE-----
-
---6BvahUXLYAruDZOj--
+Will fix
+> 
+>> +					     "ti,am3352-ehrpwm",
+>> +					     "ti,am33xx-ehrpwm";
+>>  				#pwm-cells = <3>;
+>>  				reg = <0x48300200 0x80>;
+>>  				ti,hwmods = "ehrpwm0";
+>> +				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
+>> +				clock-names = "tbclk", "fck";
+>>  				status = "disabled";
+>>  			};
+>>  		};
