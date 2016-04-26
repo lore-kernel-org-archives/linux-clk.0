@@ -1,68 +1,91 @@
-Return-Path: <Alexey.Brodkin@synopsys.com>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "Vineet.Gupta1@synopsys.com"
-	<Vineet.Gupta1@synopsys.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-snps-arc@lists.infradead.org"
-	<linux-snps-arc@lists.infradead.org>, "CARLOS.PALMINHA@synopsys.com"
-	<CARLOS.PALMINHA@synopsys.com>, "Jose.Abreu@synopsys.com"
-	<Jose.Abreu@synopsys.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: Re: [RESEND PATCH v4] clk/axs10x: Add I2S PLL clock driver
-Date: Fri, 15 Apr 2016 12:08:37 +0000
-Message-ID: <1460722116.3025.40.camel@synopsys.com>
-References: <50c75be8ecab225a1dd49628a173d211a02755b2.1459791946.git.joabreu@synopsys.com>
-	 <1460393270.5119.20.camel@synopsys.com>
-	 <20160411220320.GB14441@codeaurora.org>
-In-Reply-To: <20160411220320.GB14441@codeaurora.org>
-Content-Type: text/plain; charset="utf-7"
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
+In-Reply-To: <20160426012341.GB8870@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+	<20160421034520.GA19965@shlinux2.ap.freescale.net>
+	<20160426012341.GB8870@tiger>
+Date: Tue, 26 Apr 2016 13:51:13 +0800
+Message-ID: <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+From: Dong Aisheng <dongas86@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mingo@redhat.com, tglx@linutronix.de
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi+AKA-Stephen,
+Hi Shawn,
 
-On Mon, 2016-04-11 at 15:03 -0700, sboyd+AEA-codeaurora.org wrote:
-+AD4- On 04/11, Alexey Brodkin wrote:
-+AD4- +AD4-=20
-+AD4- +AD4- On Mon, 2016-04-11 at 11:41 +-0100, Jose Abreu wrote:
-+AD4- +AD4- +AD4-=20
-+AD4- +AD4- +AD4- +- +ACo- warranty of any kind, whether express or implied=
-.
-+AD4- +AD4- +AD4- +- +ACo-/
-+AD4- +AD4- +AD4- +-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/platform+AF8-device.h+AD4-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/module.h+AD4-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/clk-provider.h+AD4-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/err.h+AD4-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/device.h+AD4-
-+AD4- +AD4- +ACI-linux/platform+AF8-device.h+ACI- includes +ACI-linux/devic=
-e.h+ACI- so you may make this list of headers
-+AD4- +AD4- a little bit shorter.
-+AD4- +AD4-=20
-+AD4- +AD4- +AD4-=20
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/of+AF8-address.h+AD4-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/slab.h+AD4-
-+AD4- +AD4- +AD4- +-+ACM-include +ADw-linux/of.h+AD4-
-+AD4- +AD4- +ACI-linux/of+AF8-address.h+ACI- already includes +ACI-linux/of=
-.h+ACI-.
-+AD4- It's ok to include things twice. In fact, its better to avoid any
-+AD4- implicit includes so that if we ever want to remove includes from
-+AD4- other headers we can do so without disturbing this driver.
+On Tue, Apr 26, 2016 at 9:23 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
+>> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
+>> > If a clock gets enabled early during boot time, it can lead to a PLL
+>> > startup. The wait_lock function makes sure that the PLL is really
+>> > stareted up before it gets used. However, the function sleeps which
+>> > leads to scheduling and an error:
+>> > bad: scheduling from the idle thread!
+>> > ...
+>> >
+>> > Use udelay in case IRQ's are still disabled.
+>> >
+>> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> > ---
+>> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
+>> >  1 file changed, 4 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+>> > index c05c43d..b5ff561 100644
+>> > --- a/drivers/clk/imx/clk-pllv3.c
+>> > +++ b/drivers/clk/imx/clk-pllv3.c
+>> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+>> >                     break;
+>> >             if (time_after(jiffies, timeout))
+>> >                     break;
+>> > -           usleep_range(50, 500);
+>> > +           if (unlikely(irqs_disabled()))
+>>
+>> This causes a bit confusion that clk_pllv3_prepare is sleepable.
+>> But this line indicates it's possible to be called in irq context.
+>> Although it's only happened during kernel boot phase where irq is
+>> still not enabled.
+>> It seems schedule_debug() somehow did not catch it during early boot
+>> phase. Maybe schedule guys can help explain.
+>>
+>> My question is if it's really worthy to introduce this confusion
+>> to fix the issue since the delay is minor?
+>
+> I do not understand why it's confusing.  The code already obviously
+> indicates this is a special handling for cases where irq is still not
+> enabled, rather than for irq context.
+>
 
-IMHO approach with minimal amount of headers is nice just because
-it's easier to check if everything is in place. I mean attempt to compile
-will immediately reveal a missing header.
+The code itself has nothing telling it's a special handling for the
+case where irq is
+still not enabled.
+Even it tells, it may still cause confusing by adding complexity in
+clk_pllv3_prepare()
+which actually should be called in non-atomic context as it could sleep.
 
-So that's what I do - I remove as many inclusions as I may until stuff comp=
-iles.
+> The patch is to fix the "bad: scheduling from the idle thread!" warning
+> rather than minimize the delay.  Do you have an opinion on how to fix
+> the warning?
+>
 
-But with approach of explicit inclusion it's much easier to include
-much more headers than really needed. The only way to figure out if header =
-is really
-required is to manually check all used functions in the current source
-which is way too unreliable and probably nobody will do it ever anyways.
-And that's how we'll get more stale and pointless inclusions.
+I just wonder maybe we could simply just using udelay(50) instead of
+usleep_range(50, 500) to eliminate the confusing since it's minor cast.
+What do you think of it?
 
--Alexey
+>> Furthermore, shouldn't it be udelay(500)?
+>
+> 500 is for the worst case of sleep, and 50 is good enough for delay.
+>
+
+Yes, you''re right.
+We have a loop, so 50ns one time should be good.
+
+> Shawn
+
+Regards
+Dong Aisheng
