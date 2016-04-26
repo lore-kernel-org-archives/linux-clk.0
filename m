@@ -1,75 +1,49 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 3/7] clk: rockchip: drop old_rate calculation on pll rate changes
-Date: Thu, 28 Apr 2016 15:11:11 +0200
-Message-Id: <1461849075-8310-4-git-send-email-heiko@sntech.de>
-In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+Date: Tue, 26 Apr 2016 09:09:42 +0200
+Message-Id: <1461654582-668-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously when everything happened in the set_rate callbacks itself we
-needed the old_rate value for the possible rate rollback, so that made
-it easy to also use it in the debug output.
+As a pure Clock Domain does not have the concept of powering the domain
+itself, the CPG/MSTP driver does not provide power_off() and power_on()
+callbacks.
+However, the genpd core may still perform a dummy power down, causing
+/sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+status being "off-0".
 
-Now with the param-handling being done in separate functions, reading and
-recalculating the current pll rate only to use it in a debug message that
-won't get displayed in regular cases anyway is quite a waste.
+Use the always-on governor to make sure the domain is never powered
+down, and always shows up as "on" in pm_genpd_summary.
 
-Therefore drop that value from the debug output. In the worst case that
-previous rate will have been displayed on the rate change before.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/rockchip/clk-pll.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 5c0b919..e56637d 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -247,10 +247,9 @@ static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	const struct rockchip_pll_rate_table *rate;
--	unsigned long old_rate = rockchip_rk3036_pll_recalc_rate(hw, prate);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 0d595311c659a741..210cd744a7a97bbd 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -495,7 +495,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 	genpd->flags = GENPD_FLAG_PM_CLK;
+ 	genpd->attach_dev = cpg_mssr_attach_dev;
+ 	genpd->detach_dev = cpg_mssr_detach_dev;
+-	pm_genpd_init(genpd, &simple_qos_governor, false);
++	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+ 	cpg_mssr_clk_domain = pd;
  
--	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
-+	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
-+		 __func__, __clk_get_name(hw->clk), drate, prate);
- 
- 	/* Get required rate settings from table */
- 	rate = rockchip_get_pll_settings(pll, drate);
-@@ -479,10 +478,9 @@ static int rockchip_rk3066_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	const struct rockchip_pll_rate_table *rate;
--	unsigned long old_rate = rockchip_rk3066_pll_recalc_rate(hw, prate);
- 
--	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
--		 __func__, clk_hw_get_name(hw), old_rate, drate, prate);
-+	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
-+		 __func__, clk_hw_get_name(hw), drate, prate);
- 
- 	/* Get required rate settings from table */
- 	rate = rockchip_get_pll_settings(pll, drate);
-@@ -725,10 +723,9 @@ static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	const struct rockchip_pll_rate_table *rate;
--	unsigned long old_rate = rockchip_rk3399_pll_recalc_rate(hw, prate);
- 
--	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
-+	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
-+		 __func__, __clk_get_name(hw->clk), drate, prate);
- 
- 	/* Get required rate settings from table */
- 	rate = rockchip_get_pll_settings(pll, drate);
+ 	of_genpd_add_provider_simple(np, genpd);
 -- 
-2.6.4
+1.9.1
