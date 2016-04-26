@@ -1,111 +1,246 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-db3on0072.outbound.protection.outlook.com ([157.55.234.72]:47744
-	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751170AbcDZCnO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2016 22:43:14 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	Scott Wood <scott.wood@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	"Russell King" <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	"Joerg Roedel" <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Zhao Qiang <qiang.zhao@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Santosh Shilimkar" <ssantosh@kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>
-Subject: RE: [v8, 1/7] Documentation: DT: update Freescale DCFG compatible
-Date: Tue, 26 Apr 2016 02:43:10 +0000
-Message-ID: <HE1PR04MB0889A68C6D275D3102382D8BF8630@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1461306464-19521-1-git-send-email-yangbo.lu@nxp.com>
- <1461306464-19521-2-git-send-email-yangbo.lu@nxp.com>
- <20160422131151.GJ10606@leverpostej>
-In-Reply-To: <20160422131151.GJ10606@leverpostej>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, lee.jones@linaro.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v4 4/7] regulator: rk808: Add regulator driver for RK818
+Date: Tue, 26 Apr 2016 16:54:07 +0200
+Message-Id: <1461682450-22173-5-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
+References: <1461682450-22173-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mark,
+Add support for the rk818 regulator. The regulator module consists
+of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
+power OTG and HDMI5V.
 
+The output voltages are configurable and are meant to supply power
+to the main processor and other components.
 
-> -----Original Message-----
-> From: Mark Rutland [mailto:mark.rutland@arm.com]
-> Sent: Friday, April 22, 2016 9:12 PM
-> To: Yangbo Lu
-> Cc: linux-mmc@vger.kernel.org; linuxppc-dev@lists.ozlabs.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; linux-clk@vger.kernel.org; linux-
-> i2c@vger.kernel.org; iommu@lists.linux-foundation.org;
-> netdev@vger.kernel.org; ulf.hansson@linaro.org; Scott Wood; Rob Herring;
-> Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil; Bhupesh
-> Sharma; Zhao Qiang; Kumar Gala; Santosh Shilimkar; Yang-Leo Li; Xiaobo
-> Xie
-> Subject: Re: [v8, 1/7] Documentation: DT: update Freescale DCFG
-> compatible
-> 
-> On Fri, Apr 22, 2016 at 02:27:38PM +0800, Yangbo Lu wrote:
-> > Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead of
-> > 'fsl,ls1021a-dcfg' to include more chips.
-> >
-> > Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> > ---
-> > Changes for v8:
-> > 	- Added this patch
-> > ---
-> >  Documentation/devicetree/bindings/arm/fsl.txt | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/fsl.txt
-> > b/Documentation/devicetree/bindings/arm/fsl.txt
-> > index 752a685..1d5f512 100644
-> > --- a/Documentation/devicetree/bindings/arm/fsl.txt
-> > +++ b/Documentation/devicetree/bindings/arm/fsl.txt
-> > @@ -119,7 +119,7 @@ Freescale DCFG
-> >  configuration and status for the device. Such as setting the
-> > secondary  core start address and release the secondary core from
-> holdoff and startup.
-> >    Required properties:
-> > -  - compatible: should be "fsl,ls1021a-dcfg"
-> > +  - compatible: should be "fsl,<chip>-dcfg"
-> 
-> Please list specific values expected for <chip>, while jusy saying <chip>
-> may be more generic, it makes it practically impossible to search for the
-> correct binding given a compatible string, and it's vague as to exaclty
-> what <chip> should be.
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+Changes since v3:
+- renamed rk8xx struct back to rk808
+- fixed file and module descriptions
+---
+ drivers/regulator/Kconfig           |   4 +-
+ drivers/regulator/rk808-regulator.c | 143 ++++++++++++++++++++++++++++++++++--
+ 2 files changed, 138 insertions(+), 9 deletions(-)
 
-[Lu Yangbo-B47093] Thanks for your comment. I will list the possible chips.
-
-> 
-> Thanks,
-> Mark.
-> 
-> 
-> 
-> >    - reg : should contain base address and length of DCFG
-> > memory-mapped registers
-> >
-> >  Example:
-> > --
-> > 2.1.0.27.g96db324
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe devicetree"
-> > in the body of a message to majordomo@vger.kernel.org More majordomo
-> > info at  http://vger.kernel.org/majordomo-info.html
-> >
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index c77dc08..0efbcbf 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -609,11 +609,11 @@ config REGULATOR_RC5T583
+ 	  outputs which can be controlled by i2c communication.
+ 
+ config REGULATOR_RK808
+-	tristate "Rockchip RK808 Power regulators"
++	tristate "Rockchip RK808/RK818 Power regulators"
+ 	depends on MFD_RK808
+ 	help
+ 	  Select this option to enable the power regulator of ROCKCHIP
+-	  PMIC RK808.
++	  PMIC RK808 and RK818.
+ 	  This driver supports the control of different power rails of device
+ 	  through regulator interface. The device supports multiple DCDC/LDO
+ 	  outputs which can be controlled by i2c communication.
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+index 40d07ba..5f412a5 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk808-regulator.c
+@@ -1,11 +1,15 @@
+ /*
+- * Regulator driver for Rockchip RK808
++ * Regulator driver for Rockchip RK808/RK818
+  *
+  * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
+  *
+  * Author: Chris Zhong <zyw@rock-chips.com>
+  * Author: Zhang Qing <zhangqing@rock-chips.com>
+  *
++ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
++ *
++ * Author: Wadim Egorov <w.egorov@phytec.de>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -32,6 +36,12 @@
+ #define RK808_BUCK4_VSEL_MASK	0xf
+ #define RK808_LDO_VSEL_MASK	0x1f
+ 
++#define RK818_BUCK_VSEL_MASK		0x3f
++#define RK818_BUCK4_VSEL_MASK		0x1f
++#define RK818_LDO_VSEL_MASK		0x1f
++#define RK818_LDO3_ON_VSEL_MASK		0xf
++#define RK818_BOOST_ON_VSEL_MASK	0xe0
++
+ /* Ramp rate definitions for buck1 / buck2 only */
+ #define RK808_RAMP_RATE_OFFSET		3
+ #define RK808_RAMP_RATE_MASK		(3 << RK808_RAMP_RATE_OFFSET)
+@@ -454,6 +464,108 @@ static const struct regulator_desc rk808_reg[] = {
+ 		RK808_DCDC_EN_REG, BIT(6)),
+ };
+ 
++static const struct regulator_desc rk818_reg[] = {
++	{
++		.name = "DCDC_REG1",
++		.supply_name = "vcc1",
++		.of_match = of_match_ptr("DCDC_REG1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_DCDC1,
++		.ops = &rk808_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 712500,
++		.uV_step = 12500,
++		.n_voltages = 64,
++		.vsel_reg = RK818_BUCK1_ON_VSEL_REG,
++		.vsel_mask = RK818_BUCK_VSEL_MASK,
++		.enable_reg = RK818_DCDC_EN_REG,
++		.enable_mask = BIT(0),
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG2",
++		.supply_name = "vcc2",
++		.of_match = of_match_ptr("DCDC_REG2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_DCDC2,
++		.ops = &rk808_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 712500,
++		.uV_step = 12500,
++		.n_voltages = 64,
++		.vsel_reg = RK818_BUCK2_ON_VSEL_REG,
++		.vsel_mask = RK818_BUCK_VSEL_MASK,
++		.enable_reg = RK818_DCDC_EN_REG,
++		.enable_mask = BIT(1),
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG3",
++		.supply_name = "vcc3",
++		.of_match = of_match_ptr("DCDC_REG3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_DCDC3,
++		.ops = &rk808_switch_ops,
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 1,
++		.enable_reg = RK818_DCDC_EN_REG,
++		.enable_mask = BIT(2),
++		.owner = THIS_MODULE,
++	},
++	RK8XX_DESC(RK818_ID_DCDC4, "DCDC_REG4", "vcc4", 1800, 3600, 100,
++		RK818_BUCK4_ON_VSEL_REG, RK818_BUCK4_VSEL_MASK,
++		RK818_DCDC_EN_REG, BIT(3), 0),
++	RK8XX_DESC(RK818_ID_BOOST, "DCDC_BOOST", "boost", 4700, 5400, 100,
++		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_BOOST_ON_VSEL_MASK,
++		RK818_DCDC_EN_REG, BIT(4), 0),
++	RK8XX_DESC(RK818_ID_LDO1, "LDO_REG1", "vcc6", 1800, 3400, 100,
++		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(0), 400),
++	RK8XX_DESC(RK818_ID_LDO2, "LDO_REG2", "vcc6", 1800, 3400, 100,
++		RK818_LDO1_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(1), 400),
++	{
++		.name = "LDO_REG3",
++		.supply_name = "vcc7",
++		.of_match = of_match_ptr("LDO_REG3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = RK818_ID_LDO3,
++		.ops = &rk808_reg_ops_ranges,
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 16,
++		.linear_ranges = rk808_ldo3_voltage_ranges,
++		.n_linear_ranges = ARRAY_SIZE(rk808_ldo3_voltage_ranges),
++		.vsel_reg = RK818_LDO3_ON_VSEL_REG,
++		.vsel_mask = RK818_LDO3_ON_VSEL_MASK,
++		.enable_reg = RK818_LDO_EN_REG,
++		.enable_mask = BIT(2),
++		.enable_time = 400,
++		.owner = THIS_MODULE,
++	},
++	RK8XX_DESC(RK818_ID_LDO4, "LDO_REG4", "vcc8", 1800, 3400, 100,
++		RK818_LDO4_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(3), 400),
++	RK8XX_DESC(RK818_ID_LDO5, "LDO_REG5", "vcc7", 1800, 3400, 100,
++		RK818_LDO5_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(4), 400),
++	RK8XX_DESC(RK818_ID_LDO6, "LDO_REG6", "vcc8", 800, 2500, 100,
++		RK818_LDO6_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(5), 400),
++	RK8XX_DESC(RK818_ID_LDO7, "LDO_REG7", "vcc7", 800, 2500, 100,
++		RK818_LDO7_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(6), 400),
++	RK8XX_DESC(RK818_ID_LDO8, "LDO_REG8", "vcc8", 1800, 3400, 100,
++		RK818_LDO8_ON_VSEL_REG, RK818_LDO_VSEL_MASK, RK818_LDO_EN_REG,
++		BIT(7), 400),
++	RK8XX_DESC(RK818_ID_LDO9, "LDO_REG9", "vcc9", 1800, 3400, 100,
++		RK818_BOOST_LDO9_ON_VSEL_REG, RK818_LDO_VSEL_MASK,
++		RK818_DCDC_EN_REG, BIT(5), 400),
++	RK8XX_DESC_SWITCH(RK818_ID_SWITCH, "SWITCH_REG", "vcc9",
++		RK818_DCDC_EN_REG, BIT(6)),
++	RK8XX_DESC_SWITCH(RK818_ID_HDMI_SWITCH, "HDMI_SWITCH", "h_5v",
++		RK818_H5V_EN_REG, BIT(0)),
++	RK8XX_DESC_SWITCH(RK818_ID_OTG_SWITCH, "OTG_SWITCH", "usb",
++		RK818_DCDC_EN_REG, BIT(7)),
++};
++
+ static int rk808_regulator_dt_parse_pdata(struct device *dev,
+ 				   struct device *client_dev,
+ 				   struct regmap *map,
+@@ -499,7 +611,8 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ 	struct regulator_config config = {};
+ 	struct regulator_dev *rk808_rdev;
+ 	struct rk808_regulator_data *pdata;
+-	int ret, i;
++	const struct regulator_desc *regulators;
++	int ret, i, nregulators;
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+@@ -512,14 +625,29 @@ static int rk808_regulator_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, pdata);
+ 
++	switch (rk808->variant) {
++	case RK808_ID:
++		regulators = rk808_reg;
++		nregulators = RK808_NUM_REGULATORS;
++		break;
++	case RK818_ID:
++		regulators = rk818_reg;
++		nregulators = RK818_NUM_REGULATORS;
++		break;
++	default:
++		dev_err(&client->dev, "unsupported RK8XX ID %lu\n",
++			rk808->variant);
++		return -EINVAL;
++	}
++
+ 	config.dev = &client->dev;
+ 	config.driver_data = pdata;
+ 	config.regmap = rk808->regmap;
+ 
+ 	/* Instantiate the regulators */
+-	for (i = 0; i < RK808_NUM_REGULATORS; i++) {
++	for (i = 0; i < nregulators; i++) {
+ 		rk808_rdev = devm_regulator_register(&pdev->dev,
+-						     &rk808_reg[i], &config);
++						     &regulators[i], &config);
+ 		if (IS_ERR(rk808_rdev)) {
+ 			dev_err(&client->dev,
+ 				"failed to register %d regulator\n", i);
+@@ -540,8 +668,9 @@ static struct platform_driver rk808_regulator_driver = {
+ 
+ module_platform_driver(rk808_regulator_driver);
+ 
+-MODULE_DESCRIPTION("regulator driver for the rk808 series PMICs");
+-MODULE_AUTHOR("Chris Zhong<zyw@rock-chips.com>");
+-MODULE_AUTHOR("Zhang Qing<zhangqing@rock-chips.com>");
++MODULE_DESCRIPTION("regulator driver for the RK808/RK818 series PMICs");
++MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
++MODULE_AUTHOR("Zhang Qing <zhangqing@rock-chips.com>");
++MODULE_AUTHOR("Wadim Egorov <w.egorov@phytec.de>");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:rk808-regulator");
+-- 
+1.9.1
