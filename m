@@ -1,142 +1,502 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 12 Apr 2016 15:15:03 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
-Message-ID: <20160412131503.GR18882@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
- <20160412113912.GK18882@ulmo.ba.sec>
- <20160412150627.7084665d@bbrezillon>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 26 Apr 2016 11:56:17 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai
+ <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Daniel Vetter
+ <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan
+ <alex@nextthing.co>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 06/11] drm: sun4i: Add RGB output
+Message-ID: <20160426115617.4b9cecf6@bbrezillon>
+In-Reply-To: <1461590572-4027-7-git-send-email-maxime.ripard@free-electrons.com>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1461590572-4027-7-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TDVcAd+kFgbLxwBe"
-In-Reply-To: <20160412150627.7084665d@bbrezillon>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, 25 Apr 2016 15:22:47 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
---TDVcAd+kFgbLxwBe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> One of the A10 display pipeline possible output is an RGB interface to
+> drive LCD panels directly. This is done through the first channel of the
+> TCON that will output our video signals directly.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Tue, Apr 12, 2016 at 03:06:27PM +0200, Boris Brezillon wrote:
-> On Tue, 12 Apr 2016 13:39:12 +0200
-> Thierry Reding <thierry.reding@gmail.com> wrote:
->=20
-> > On Wed, Mar 30, 2016 at 10:03:28PM +0200, Boris Brezillon wrote:
-> > > Currently the PWM core mixes the current PWM state with the per-platf=
-orm
-> > > reference config (specified through the PWM lookup table, DT definiti=
-on or
-> > > directly hardcoded in PWM drivers).
-> > >=20
-> > > Create a pwm_args struct to store this reference config, so that PWM =
-users
-> > > can differentiate the current config from the reference one.
-> > >=20
-> > > Patch all places where pwm->args should be initialized. We keep the
-> > > pwm_set_polarity/period() calls until all PWM users are patched to
-> > > use pwm_args instead of pwm_get_period/polarity().
-> >=20
-> > Perhaps a helper would be useful? Something like:
-> >=20
-> > 	static inline void
-> > 	pwm_apply_args(struct pwm_device *pwm, const struct pwm_args *args)
-> > 	{
-> > 		pwm_set_duty_cycle(pwm, args->duty_cycle);
-> > 		pwm_set_period(pwm, args->period);
-> > 	}
-> >=20
-> > ? That would make it slightly easier to get rid of it again after all
-> > clients have been converted.
-> >=20
-> > With the exception of pwm-clps711x all of these args are set at of_xlate
-> > time (for DT) or from the lookup table in pwm_get() (for non-DT), so it
-> > might even be possible to move this call to the core, so that removal of
-> > it will be a one-liner.
->=20
-> Okay, I think I misunderstood your suggestion. I thought you wanted
-> this helper to set the reference config, but you actually want to apply
-> a new state based on the PWM reference values.
->=20
-> Except that pwm_args does not contain all the required information to
-> apply a full config (args->duty_cycle and args->enable do not exist).
->=20
-> This being said, in my v6 I moved the content of
-> pwm_regulator_adjust_pwm_config() (patch 27) into a generic helper
-> (pwm_adjust_config()). This helper is doing pretty much what you're
-> suggesting here (but again, I'm not sure I correctly understood your
-> suggestion :-/).
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-I'm not suggesting that pwm_apply_args() apply any state. I think we
-both agreed earlier that the initial state (represented by pwm_args) was
-never to be automatically applied.
+> ---
+>  drivers/gpu/drm/sun4i/Makefile     |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_drv.c  |  24 ++++
+>  drivers/gpu/drm/sun4i/sun4i_rgb.c  | 250 +++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_rgb.h  |  18 +++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c |  61 ++++++++-
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h |   2 +
+>  6 files changed, 355 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.h
+> 
+> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+> index 6df3ef32732d..74f804b88ff5 100644
+> --- a/drivers/gpu/drm/sun4i/Makefile
+> +++ b/drivers/gpu/drm/sun4i/Makefile
+> @@ -4,6 +4,7 @@ sun4i-drm-y += sun4i_framebuffer.o
+>  sun4i-drm-y += sun4i_layer.o
+>  
+>  sun4i-tcon-y += sun4i_tcon.o
+> +sun4i-tcon-y += sun4i_rgb.o
+>  sun4i-tcon-y += sun4i_dotclock.o
+>  
+>  obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> index a081969673ac..891d434ea57f 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@ -222,6 +222,11 @@ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+>  				       "allwinner,sun5i-a13-display-frontend");
+>  }
+>  
+> +static bool sun4i_drv_node_is_tcon(struct device_node *node)
+> +{
+> +	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon");
+> +}
+> +
+>  static int compare_of(struct device *dev, void *data)
+>  {
+>  	DRM_DEBUG_DRIVER("Comparing of node %s with %s\n",
+> @@ -270,6 +275,25 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+>  			continue;
+>  		}
+>  
+> +		/*
+> +		 * If the node is our TCON, the first port is used for our
+> +		 * panel, and will not be part of the
+> +		 * component framework.
+> +		 */
+> +		if (sun4i_drv_node_is_tcon(node)) {
+> +			struct of_endpoint endpoint;
+> +
+> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
+> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+> +				continue;
+> +			}
+> +
+> +			if (!endpoint.id) {
+> +				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
+> +				continue;
+> +			}
+> +		}
+> +
+>  		/* Walk down our tree */
+>  		count += sun4i_drv_add_endpoints(dev, match, remote);
+>  
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> new file mode 100644
+> index 000000000000..ab6494818050
+> --- /dev/null
+> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> @@ -0,0 +1,250 @@
+> +/*
+> + * Copyright (C) 2015 Free Electrons
+> + * Copyright (C) 2015 NextThing Co
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/clk.h>
+> +
+> +#include <drm/drmP.h>
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include "sun4i_drv.h"
+> +#include "sun4i_tcon.h"
+> +
+> +struct sun4i_rgb {
+> +	struct drm_connector	connector;
+> +	struct drm_encoder	encoder;
+> +
+> +	struct sun4i_drv	*drv;
+> +};
+> +
+> +static inline struct sun4i_rgb *
+> +drm_connector_to_sun4i_rgb(struct drm_connector *connector)
+> +{
+> +	return container_of(connector, struct sun4i_rgb,
+> +			    connector);
+> +}
+> +
+> +static inline struct sun4i_rgb *
+> +drm_encoder_to_sun4i_rgb(struct drm_encoder *encoder)
+> +{
+> +	return container_of(encoder, struct sun4i_rgb,
+> +			    encoder);
+> +}
+> +
+> +static int sun4i_rgb_get_modes(struct drm_connector *connector)
+> +{
+> +	struct sun4i_rgb *rgb =
+> +		drm_connector_to_sun4i_rgb(connector);
+> +	struct sun4i_drv *drv = rgb->drv;
+> +	struct sun4i_tcon *tcon = drv->tcon;
+> +
+> +	return drm_panel_get_modes(tcon->panel);
+> +}
+> +
+> +static int sun4i_rgb_mode_valid(struct drm_connector *connector,
+> +				struct drm_display_mode *mode)
+> +{
+> +	u32 hsync = mode->hsync_end - mode->hsync_start;
+> +	u32 vsync = mode->vsync_end - mode->vsync_start;
+> +
+> +	DRM_DEBUG_DRIVER("Validating modes...\n");
+> +
+> +	if (hsync < 1)
+> +		return MODE_HSYNC_NARROW;
+> +
+> +	if (hsync > 0x3ff)
+> +		return MODE_HSYNC_WIDE;
+> +
+> +	if ((mode->hdisplay < 1) || (mode->htotal < 1))
+> +		return MODE_H_ILLEGAL;
+> +
+> +	if ((mode->hdisplay > 0x7ff) || (mode->htotal > 0xfff))
+> +		return MODE_BAD_HVALUE;
+> +
+> +	DRM_DEBUG_DRIVER("Horizontal parameters OK\n");
+> +
+> +	if (vsync < 1)
+> +		return MODE_VSYNC_NARROW;
+> +
+> +	if (vsync > 0x3ff)
+> +		return MODE_VSYNC_WIDE;
+> +
+> +	if ((mode->vdisplay < 1) || (mode->vtotal < 1))
+> +		return MODE_V_ILLEGAL;
+> +
+> +	if ((mode->vdisplay > 0x7ff) || (mode->vtotal > 0xfff))
+> +		return MODE_BAD_VVALUE;
+> +
+> +	DRM_DEBUG_DRIVER("Vertical parameters OK\n");
+> +
+> +	return MODE_OK;
+> +}
+> +
+> +static struct drm_encoder *
+> +sun4i_rgb_best_encoder(struct drm_connector *connector)
+> +{
+> +	struct sun4i_rgb *rgb =
+> +		drm_connector_to_sun4i_rgb(connector);
+> +
+> +	return &rgb->encoder;
+> +}
+> +
+> +static struct drm_connector_helper_funcs sun4i_rgb_con_helper_funcs = {
+> +	.get_modes	= sun4i_rgb_get_modes,
+> +	.mode_valid	= sun4i_rgb_mode_valid,
+> +	.best_encoder	= sun4i_rgb_best_encoder,
+> +};
+> +
+> +static enum drm_connector_status
+> +sun4i_rgb_connector_detect(struct drm_connector *connector, bool force)
+> +{
+> +	return connector_status_connected;
+> +}
+> +
+> +static void
+> +sun4i_rgb_connector_destroy(struct drm_connector *connector)
+> +{
+> +	struct sun4i_rgb *rgb = drm_connector_to_sun4i_rgb(connector);
+> +	struct sun4i_drv *drv = rgb->drv;
+> +	struct sun4i_tcon *tcon = drv->tcon;
+> +
+> +	drm_panel_detach(tcon->panel);
+> +	drm_connector_cleanup(connector);
+> +}
+> +
+> +static struct drm_connector_funcs sun4i_rgb_con_funcs = {
+> +	.dpms			= drm_atomic_helper_connector_dpms,
+> +	.detect			= sun4i_rgb_connector_detect,
+> +	.fill_modes		= drm_helper_probe_single_connector_modes,
+> +	.destroy		= sun4i_rgb_connector_destroy,
+> +	.reset			= drm_atomic_helper_connector_reset,
+> +	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
+> +	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
+> +};
+> +
+> +static int sun4i_rgb_atomic_check(struct drm_encoder *encoder,
+> +				  struct drm_crtc_state *crtc_state,
+> +				  struct drm_connector_state *conn_state)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
+> +{
+> +	struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
+> +	struct sun4i_drv *drv = rgb->drv;
+> +	struct sun4i_tcon *tcon = drv->tcon;
+> +
+> +	DRM_DEBUG_DRIVER("Enabling RGB output\n");
+> +
+> +	drm_panel_enable(tcon->panel);
+> +	sun4i_tcon_channel_enable(tcon, 0);
+> +}
+> +
+> +static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
+> +{
+> +	struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
+> +	struct sun4i_drv *drv = rgb->drv;
+> +	struct sun4i_tcon *tcon = drv->tcon;
+> +
+> +	DRM_DEBUG_DRIVER("Disabling RGB output\n");
+> +
+> +	sun4i_tcon_channel_disable(tcon, 0);
+> +	drm_panel_disable(tcon->panel);
+> +}
+> +
+> +static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
+> +				       struct drm_display_mode *mode,
+> +				       struct drm_display_mode *adjusted_mode)
+> +{
+> +	struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
+> +	struct sun4i_drv *drv = rgb->drv;
+> +	struct sun4i_tcon *tcon = drv->tcon;
+> +
+> +	sun4i_tcon0_mode_set(tcon, mode);
+> +
+> +	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
+> +
+> +	/* FIXME: This seems to be board specific */
+> +	clk_set_phase(tcon->dclk, 120);
+> +}
+> +
+> +static struct drm_encoder_helper_funcs sun4i_rgb_enc_helper_funcs = {
+> +	.atomic_check	= sun4i_rgb_atomic_check,
+> +	.mode_set	= sun4i_rgb_encoder_mode_set,
+> +	.disable	= sun4i_rgb_encoder_disable,
+> +	.enable		= sun4i_rgb_encoder_enable,
+> +};
+> +
+> +static void sun4i_rgb_enc_destroy(struct drm_encoder *encoder)
+> +{
+> +	drm_encoder_cleanup(encoder);
+> +}
+> +
+> +static struct drm_encoder_funcs sun4i_rgb_enc_funcs = {
+> +	.destroy	= sun4i_rgb_enc_destroy,
+> +};
+> +
+> +int sun4i_rgb_init(struct drm_device *drm)
+> +{
+> +	struct sun4i_drv *drv = drm->dev_private;
+> +	struct sun4i_tcon *tcon = drv->tcon;
+> +	struct sun4i_rgb *rgb;
+> +	int ret;
+> +
+> +	/* If we don't have a panel, there's no point in going on */
+> +	if (!tcon->panel)
+> +		return -ENODEV;
+> +
+> +	rgb = devm_kzalloc(drm->dev, sizeof(*rgb), GFP_KERNEL);
+> +	if (!rgb)
+> +		return -ENOMEM;
+> +	rgb->drv = drv;
+> +
+> +	drm_encoder_helper_add(&rgb->encoder,
+> +			       &sun4i_rgb_enc_helper_funcs);
+> +	ret = drm_encoder_init(drm,
+> +			       &rgb->encoder,
+> +			       &sun4i_rgb_enc_funcs,
+> +			       DRM_MODE_ENCODER_NONE,
+> +			       NULL);
+> +	if (ret) {
+> +		dev_err(drm->dev, "Couldn't initialise the rgb encoder\n");
+> +		goto err_out;
+> +	}
+> +
+> +	/* The RGB encoder can only work with the TCON channel 0 */
+> +	rgb->encoder.possible_crtcs = BIT(0);
+> +
+> +	drm_connector_helper_add(&rgb->connector,
+> +				 &sun4i_rgb_con_helper_funcs);
+> +	ret = drm_connector_init(drm, &rgb->connector,
+> +				 &sun4i_rgb_con_funcs,
+> +				 DRM_MODE_CONNECTOR_Unknown);
+> +	if (ret) {
+> +		dev_err(drm->dev, "Couldn't initialise the rgb connector\n");
+> +		goto err_cleanup_connector;
+> +	}
+> +
+> +	drm_mode_connector_attach_encoder(&rgb->connector, &rgb->encoder);
+> +
+> +	drm_panel_attach(tcon->panel, &rgb->connector);
+> +
+> +	return 0;
+> +
+> +err_cleanup_connector:
+> +	drm_encoder_cleanup(&rgb->encoder);
+> +err_out:
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(sun4i_rgb_init);
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.h b/drivers/gpu/drm/sun4i/sun4i_rgb.h
+> new file mode 100644
+> index 000000000000..7c4da4c8acdd
+> --- /dev/null
+> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.h
+> @@ -0,0 +1,18 @@
+> +/*
+> + * Copyright (C) 2015 Free Electrons
+> + * Copyright (C) 2015 NextThing Co
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#ifndef _SUN4I_RGB_H_
+> +#define _SUN4I_RGB_H_
+> +
+> +int sun4i_rgb_init(struct drm_device *drm);
+> +
+> +#endif /* _SUN4I_RGB_H_ */
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 5fbd3ce9d651..9f19b0e08560 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -15,10 +15,12 @@
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_modes.h>
+> +#include <drm/drm_panel.h>
+>  
+>  #include <linux/component.h>
+>  #include <linux/ioport.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_graph.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reset.h>
+> @@ -26,6 +28,7 @@
+>  #include "sun4i_crtc.h"
+>  #include "sun4i_dotclock.h"
+>  #include "sun4i_drv.h"
+> +#include "sun4i_rgb.h"
+>  #include "sun4i_tcon.h"
+>  
+>  void sun4i_tcon_disable(struct sun4i_tcon *tcon)
+> @@ -395,6 +398,40 @@ static int sun4i_tcon_init_regmap(struct device *dev,
+>  	return 0;
+>  }
+>  
+> +static struct drm_panel *sun4i_tcon_find_panel(struct device_node *node)
+> +{
+> +	struct device_node *port, *remote, *child;
+> +	struct device_node *end_node = NULL;
+> +
+> +	/* Inputs are listed first, then outputs */
+> +	port = of_graph_get_port_by_id(node, 1);
+> +
+> +	/*
+> +	 * Our first output is the RGB interface where the panel will
+> +	 * be connected.
+> +	 */
+> +	for_each_child_of_node(port, child) {
+> +		u32 reg;
+> +
+> +		of_property_read_u32(child, "reg", &reg);
+> +		if (reg == 0)
+> +			end_node = child;
+> +	}
+> +
+> +	if (!end_node) {
+> +		DRM_DEBUG_DRIVER("Missing panel endpoint\n");
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	remote = of_graph_get_remote_port_parent(end_node);
+> +	if (!remote) {
+> +		DRM_DEBUG_DRIVER("Enable to parse remote node\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return of_drm_find_panel(remote);
+> +}
+> +
+>  static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>  			   void *data)
+>  {
+> @@ -447,7 +484,13 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>  		goto err_free_clocks;
+>  	}
+>  
+> -	return 0;
+> +	tcon->panel = sun4i_tcon_find_panel(dev->of_node);
+> +	if (IS_ERR(tcon->panel)) {
+> +		dev_info(dev, "No panel found... RGB output disabled\n");
+> +		return 0;
+> +	}
+> +
+> +	return sun4i_rgb_init(drm);
+>  
+>  err_free_clocks:
+>  	sun4i_tcon_free_clocks(tcon);
+> @@ -471,6 +514,22 @@ static struct component_ops sun4i_tcon_ops = {
+>  
+>  static int sun4i_tcon_probe(struct platform_device *pdev)
+>  {
+> +	struct device_node *node = pdev->dev.of_node;
+> +	struct drm_panel *panel;
+> +
+> +	/*
+> +	 * The panel is not ready.
+> +	 * Defer the probe.
+> +	 */
+> +	panel = sun4i_tcon_find_panel(node);
+> +	if (IS_ERR(panel)) {
+> +		/*
+> +		 * If we don't have a panel endpoint, just go on
+> +		 */
+> +		if (PTR_ERR(panel) != -ENODEV)
+> +			return -EPROBE_DEFER;
+> +	}
+> +
+>  	return component_add(&pdev->dev, &sun4i_tcon_ops);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> index 35161218c2c1..0e0b11db401b 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> @@ -161,6 +161,8 @@ struct sun4i_tcon {
+>  
+>  	/* Platform adjustments */
+>  	bool				has_mux;
+> +
+> +	struct drm_panel		*panel;
+>  };
+>  
+>  /* Global Control */
 
-What I was suggesting is that we move all the calls to pwm_set_period()
-and pwm_set_duty_cycle() into a central location to make it easier to
-remove them later in the series. This is really only temporary, so I
-don't mind if we leave the calls sprinkled all over the place. At least
-that way I hope we'll avoid confusion about what we're talking about =3D)
 
-Thierry
 
---TDVcAd+kFgbLxwBe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDPTXAAoJEN0jrNd/PrOh43wP/RW8nWeST0v0826zi4V45N1E
-+TYv38nqsVYDmlhydRpEmUUzDp+i8P+jXS+FD48OsEByyvLzF6NOdtbD7H2no8zb
-7o4G2twqZSwmNTKGcVVnDnvxqsTLRbB/zsSGqPO9NJ3Zu0wBS+0Xg5Vjqk6PmIRR
-LSmzUQc5Cd6Mvb9aQqois5iJ0ivNQlB2YlJ8DYUXfPakj0cc5DpQg1D71c+jCsVL
-REicaT6lu64/oaO2Jkth+9sGtJ3Z4mCoKCRtiAUKSLFojHnhX+ZbPS1U+vgip5UD
-5h3NPaZytj2T/8TdmNceNF2uzpSq5+pc8N37CFpIxcmvhgb3DU24dVsOJyEW5PAk
-QzYA5LDTmAQMsWDSDcoU1pUbxdfIRrIJ6q9kUgIX+aPIcKY8FIJ08XnX5k05Eyve
-4qr29sV/0csHazKsdL94LhfxpmP87DNaLZP3CBXQt8R5PkYFpFY4tAVsYyiRdV0M
-mo9yGfddFafGvqJbLSi19GhXW7tGoFsItMJB843opLZ77mE3VgpLHMCCr6MRGgjK
-ZWWETRUpY2iF72dZc5eJH2cTacw4eAhkkwmi8xHy2aS2tvvzwUnMSagOF1S0NdSP
-lAKl9Y1DcwSrlYNuDkeKIcMULMqC74RB+qM8kdpLiiH08xsBGEKftUt7NGeRg/nx
-DCr+t7SdbH+cClDjpBxu
-=AuFt
------END PGP SIGNATURE-----
-
---TDVcAd+kFgbLxwBe--
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
