@@ -1,85 +1,97 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Tue, 12 Apr 2016 14:17:18 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
- <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
- <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Daniel
- Vetter <daniel.vetter@intel.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
- <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hartley
- Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 15/46] pwm: introduce the pwm_state concept
-Message-ID: <20160412141718.5fe4cf24@bbrezillon>
-In-Reply-To: <20160412114904.GM18882@ulmo.ba.sec>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-16-git-send-email-boris.brezillon@free-electrons.com>
-	<20160412114904.GM18882@ulmo.ba.sec>
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 26 Apr 2016 17:24:15 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	mingo@redhat.com, tglx@linutronix.de
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160426092414.GH8870@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Apr 2016 13:49:04 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
-
-> On Wed, Mar 30, 2016 at 10:03:38PM +0200, Boris Brezillon wrote:
-> > The PWM state, represented by its period, duty_cycle and polarity,
-> > is currently directly stored in the PWM device.
-> > Declare a pwm_state structure embedding those field so that we can later
-> > use this struct to atomically update all the PWM parameters at once.
-> > 
-> > All pwm_get_xxx() helpers are now implemented as wrappers around
-> > pwm_get_state().
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> >  drivers/pwm/core.c  |  8 ++++----
-> >  include/linux/pwm.h | 54 +++++++++++++++++++++++++++++++++++++++++------------
-> >  2 files changed, 46 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> > index 6433059..f3f91e7 100644
-> > --- a/drivers/pwm/core.c
-> > +++ b/drivers/pwm/core.c
-> > @@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
-> >  		pwm->chip = chip;
-> >  		pwm->pwm = chip->base + i;
-> >  		pwm->hwpwm = i;
-> > -		pwm->polarity = polarity;
-> > +		pwm->state.polarity = polarity;
+On Tue, Apr 26, 2016 at 01:51:13PM +0800, Dong Aisheng wrote:
+> Hi Shawn,
 > 
-> Would this not more correctly be assigned to pwm->args.polarity? After
-> all this is setting up the "initial" state, much like DT or the lookup
-> tables would for duty cycle and period.
+> On Tue, Apr 26, 2016 at 9:23 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> > On Thu, Apr 21, 2016 at 11:45:20AM +0800, Dong Aisheng wrote:
+> >> On Fri, Jan 29, 2016 at 02:49:23PM -0800, Stefan Agner wrote:
+> >> > If a clock gets enabled early during boot time, it can lead to a PLL
+> >> > startup. The wait_lock function makes sure that the PLL is really
+> >> > stareted up before it gets used. However, the function sleeps which
+> >> > leads to scheduling and an error:
+> >> > bad: scheduling from the idle thread!
+> >> > ...
+> >> >
+> >> > Use udelay in case IRQ's are still disabled.
+> >> >
+> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> > ---
+> >> >  drivers/clk/imx/clk-pllv3.c | 5 ++++-
+> >> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >> >
+> >> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> >> > index c05c43d..b5ff561 100644
+> >> > --- a/drivers/clk/imx/clk-pllv3.c
+> >> > +++ b/drivers/clk/imx/clk-pllv3.c
+> >> > @@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+> >> >                     break;
+> >> >             if (time_after(jiffies, timeout))
+> >> >                     break;
+> >> > -           usleep_range(50, 500);
+> >> > +           if (unlikely(irqs_disabled()))
+> >>
+> >> This causes a bit confusion that clk_pllv3_prepare is sleepable.
+> >> But this line indicates it's possible to be called in irq context.
+> >> Although it's only happened during kernel boot phase where irq is
+> >> still not enabled.
+> >> It seems schedule_debug() somehow did not catch it during early boot
+> >> phase. Maybe schedule guys can help explain.
+> >>
+> >> My question is if it's really worthy to introduce this confusion
+> >> to fix the issue since the delay is minor?
+> >
+> > I do not understand why it's confusing.  The code already obviously
+> > indicates this is a special handling for cases where irq is still not
+> > enabled, rather than for irq context.
+> >
+> 
+> The code itself has nothing telling it's a special handling for the
+> case where irq is
+> still not enabled.
 
-Yes, I wasn't sure about the pwm_add_with_polarity() meaning. To me,
-all the reference info should be extracted from DT, PWM lookup table or
-driver specific ->request() implementation, but I can definitely
-initialize the args.polarity here too.
+I think the following if-clause is telling that.
 
-Should I keep the pwm->state.polarity assignment (to set the initial
-polarity when the driver does not support hardware readout)?
+	if (unlikely(irqs_disabled()))
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> Even it tells, it may still cause confusing by adding complexity in
+> clk_pllv3_prepare()
+> which actually should be called in non-atomic context as it could sleep.
+
+I agree with you on that.
+
+> > The patch is to fix the "bad: scheduling from the idle thread!" warning
+> > rather than minimize the delay.  Do you have an opinion on how to fix
+> > the warning?
+> >
+> 
+> I just wonder maybe we could simply just using udelay(50) instead of
+> usleep_range(50, 500) to eliminate the confusing since it's minor cast.
+> What do you think of it?
+
+I'm fine with it.  Since I haven't sent the patch to clk maintainers, I
+could replace Stefan's patch with yours, if you can send me a patch
+quickly.
+
+Shawn
