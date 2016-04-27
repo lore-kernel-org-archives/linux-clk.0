@@ -1,61 +1,108 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1460459243-27120-1-git-send-email-alim.akhtar@samsung.com>
-References: <1460459243-27120-1-git-send-email-alim.akhtar@samsung.com>
-Date: Wed, 13 Apr 2016 09:26:15 +0300
-Message-ID: <CA+Ln22G0b1O9HHyePg60Q2uZnGT_a3J1LMU0o3+CpPoLCTbksA@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Enable clocks for CMU_CCORE and
- CMU_FSYS0 blocks
-From: Tomasz Figa <tomasz.figa@gmail.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>,
-	=?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, lee.jones@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+In-Reply-To: <1461682450-22173-2-git-send-email-w.egorov@phytec.de>
+Message-Id: <E1avSQi-0004XP-Kn@debutante>
+Date: Wed, 27 Apr 2016 17:35:12 +0100
+Subject: Applied "regulator: rk808: Add rk808_reg_ops_ranges for LDO3" to the regulator tree
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-04-12 14:07 GMT+03:00 Alim Akhtar <alim.akhtar@samsung.com>:
-> This patch enables clocks for CMU_CCORE and CMU_FSYS0 blocks. This is
-> required before accessing registers of these blocks.
->
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c |    9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-> index ad68d46..7013aa7 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -8,6 +8,7 @@
->   *
->  */
->
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->
-> @@ -205,7 +206,11 @@ static struct samsung_cmu_info topc_cmu_info __initdata = {
->
->  static void __init exynos7_clk_topc_init(struct device_node *np)
->  {
-> +       struct clk *clk;
-> +
->         samsung_cmu_register_one(np, &topc_cmu_info);
-> +       clk = __clk_lookup("aclk_ccore_133");
-> +       clk_prepare_enable(clk);
+The patch
 
-Shouldn't this be rather done before calling
-samsung_cmu_register_one()? I don't remember exactly, but wouldn't
-clock registration trigger reading back current (mux, div) values from
-registers?
+   regulator: rk808: Add rk808_reg_ops_ranges for LDO3
 
-Also, do we have any guarantees on order of initialization of
-particular CMUs? I believe this will happen in order of DT nodes and
-so would be not any kind of guarantee at all.
+has been applied to the regulator tree at
 
-Best regards,
-Tomasz
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 129d7cf98f5c739014ae5aa0311e48f6a64b0758 Mon Sep 17 00:00:00 2001
+From: Wadim Egorov <w.egorov@phytec.de>
+Date: Tue, 26 Apr 2016 16:54:04 +0200
+Subject: [PATCH] regulator: rk808: Add rk808_reg_ops_ranges for LDO3
+
+LDO_REG3 descriptor is using linear_ranges.
+Add and use proper ops for LDO_REG3.
+
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/rk808-regulator.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+index 67f72feed815..6601ab5fcc2d 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk808-regulator.c
+@@ -238,6 +238,21 @@ static int rk808_set_suspend_voltage(struct regulator_dev *rdev, int uv)
+ 				  sel);
+ }
+ 
++static int rk808_set_suspend_voltage_range(struct regulator_dev *rdev, int uv)
++{
++	unsigned int reg;
++	int sel = regulator_map_voltage_linear_range(rdev, uv, uv);
++
++	if (sel < 0)
++		return -EINVAL;
++
++	reg = rdev->desc->vsel_reg + RK808_SLP_REG_OFFSET;
++
++	return regmap_update_bits(rdev->regmap, reg,
++				  rdev->desc->vsel_mask,
++				  sel);
++}
++
+ static int rk808_set_suspend_enable(struct regulator_dev *rdev)
+ {
+ 	unsigned int reg;
+@@ -288,6 +303,19 @@ static struct regulator_ops rk808_reg_ops = {
+ 	.set_suspend_disable	= rk808_set_suspend_disable,
+ };
+ 
++static struct regulator_ops rk808_reg_ops_ranges = {
++	.list_voltage		= regulator_list_voltage_linear_range,
++	.map_voltage		= regulator_map_voltage_linear_range,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++	.is_enabled		= regulator_is_enabled_regmap,
++	.set_suspend_voltage	= rk808_set_suspend_voltage_range,
++	.set_suspend_enable	= rk808_set_suspend_enable,
++	.set_suspend_disable	= rk808_set_suspend_disable,
++};
++
+ static struct regulator_ops rk808_switch_ops = {
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
+@@ -383,7 +411,7 @@ static const struct regulator_desc rk808_reg[] = {
+ 		.name = "LDO_REG3",
+ 		.supply_name = "vcc7",
+ 		.id = RK808_ID_LDO3,
+-		.ops = &rk808_reg_ops,
++		.ops = &rk808_reg_ops_ranges,
+ 		.type = REGULATOR_VOLTAGE,
+ 		.n_voltages = 16,
+ 		.linear_ranges = rk808_ldo3_voltage_ranges,
+-- 
+2.8.0.rc3
