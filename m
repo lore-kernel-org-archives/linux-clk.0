@@ -1,57 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 13 Apr 2016 17:40:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Greg Ungerer <gerg@uclinux.org>, Ryan Mallon <rmallon@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Steven Miao <realmz6@gmail.com>, Simon Horman <horms@verge.net.au>,
-	Wan ZongShun <mcuos.com@gmail.com>, Rich Felker <dalias@libc.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	adi-buildroot-devel@lists.sourceforge.net,
-	Russell King <linux@arm.linux.org.uk>, linux-m68k@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	John Crispin <blogic@openwrt.org>,
-	Haavard Skinnemoen <hskinnemoen@gmail.com>,
-	Hans-Christian Egtvedt <egtvedt@samfundet.no>,
-	Paul Walmsley <paul@pwsan.com>, Tony Lindgren <tony@atomide.com>,
-	linux-omap@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
- NULL or error
-Message-ID: <20160414004050.GJ14441@codeaurora.org>
-References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
- <20160408003328.GA14441@codeaurora.org>
- <20160408100600.GI1668@linux-mips.org>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160408100600.GI1668@linux-mips.org>
+In-Reply-To: <CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+	<1461654582-668-3-git-send-email-geert+renesas@glider.be>
+	<CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
+	<CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
+Date: Wed, 27 Apr 2016 16:07:33 +0200
+Message-ID: <CAPDyKFrSc8YdPc08eZ1usBOrNOkYxqY4BZnPTSk_1EDFpOWs-A@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/08, Ralf Baechle wrote:
-> 
-> While your argument makes perfect sense, Many clk_disable implementations
-> are already doing similar checks, for example:
-> 
-> arch/arm/mach-davinci/clock.c:
-> 
-[...]
-> 
-> So should we go and weed out these checks?
+On 27 April 2016 at 16:04, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Ulf,
+>
+> On Wed, Apr 27, 2016 at 3:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>>> As a pure Clock Domain does not have the concept of powering the domain
+>>> itself, the CPG/MSTP driver does not provide power_off() and power_on()
+>>> callbacks.
+>>> However, the genpd core may still perform a dummy power down, causing
+>>> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+>>> status being "off-0".
+>>>
+>>> Use the always-on governor to make sure the domain is never powered
+>>> down, and always shows up as "on" in pm_genpd_summary.
+>>
+>> Hmm.
+>>
+>> Hypothetically, what if the clock domain would be a subdomain, where
+>> its master is able to power down? Using the always on governor would
+>> prevent the master from power off as well.
+>
+> That's correct. However, on R-Mobile/R-Car SoCs, this is not the case, so it
+> doesn't matter here.
+>
+>> I am wondering whether we should introduce some similar as
+>> pm_runtime_no_callbacks() but for the generic PM domain instead.
+>>
+>> What do you think?
+>
+> In my case, the domain is not managed by its parent, to there's no such
+> analogy.
 
-Yes, it would be nice to at least make the differing
-implementations of the clk API consistent. Of course, we should
-really put our efforts towards getting rid of the non-CCF
-implementations instead so that there's less confusion overall.
+Ok, fair enough.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+This looks good to me!
+
+Kind regards
+Uffe
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
