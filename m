@@ -1,58 +1,61 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 17/28] clk: ti: dm814x: transition to usage of ti_clk_get
-Date: Thu, 14 Apr 2016 14:08:06 +0300
-Message-ID: <1460632097-25727-18-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+	<1461654582-668-3-git-send-email-geert+renesas@glider.be>
+	<CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
+Date: Wed, 27 Apr 2016 16:04:05 +0200
+Message-ID: <CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Cleanup any unnecessary DT_CLK() alias entries from the DM814x clock file.
-Also, use ti_clk_get where necessary.
+Hi Ulf,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-814x.c |   14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+On Wed, Apr 27, 2016 at 3:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> As a pure Clock Domain does not have the concept of powering the domain
+>> itself, the CPG/MSTP driver does not provide power_off() and power_on()
+>> callbacks.
+>> However, the genpd core may still perform a dummy power down, causing
+>> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+>> status being "off-0".
+>>
+>> Use the always-on governor to make sure the domain is never powered
+>> down, and always shows up as "on" in pm_genpd_summary.
+>
+> Hmm.
+>
+> Hypothetically, what if the clock domain would be a subdomain, where
+> its master is able to power down? Using the always on governor would
+> prevent the master from power off as well.
 
-diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
-index 52c6efc..17dc99b 100644
---- a/drivers/clk/ti/clk-814x.c
-+++ b/drivers/clk/ti/clk-814x.c
-@@ -13,19 +13,7 @@
- #include "clock.h"
- 
- static struct ti_dt_clk dm814_clks[] = {
--	DT_CLK(NULL, "devosc_ck", "devosc_ck"),
--	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
--	DT_CLK(NULL, "sysclk4_ck", "sysclk4_ck"),
--	DT_CLK(NULL, "sysclk5_ck", "sysclk5_ck"),
--	DT_CLK(NULL, "sysclk6_ck", "sysclk6_ck"),
--	DT_CLK(NULL, "sysclk8_ck", "sysclk8_ck"),
--	DT_CLK(NULL, "sysclk10_ck", "sysclk10_ck"),
--	DT_CLK(NULL, "sysclk18_ck", "sysclk18_ck"),
- 	DT_CLK(NULL, "timer_sys_ck", "devosc_ck"),
--	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
--	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
--	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
--	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
- 	{ .node_name = NULL },
- };
- 
-@@ -65,7 +53,7 @@ static int __init dm814x_adpll_enable_init_clocks(void)
- 	for (i = 0; i < ARRAY_SIZE(init_clocks); i++) {
- 		struct clk *clock;
- 
--		clock = clk_get(NULL, init_clocks[i]);
-+		clock = ti_clk_get(init_clocks[i]);
- 		if (WARN(IS_ERR(clock), "could not find init clock %s\n",
- 			 init_clocks[i]))
- 			continue;
--- 
-1.7.9.5
+That's correct. However, on R-Mobile/R-Car SoCs, this is not the case, so it
+doesn't matter here.
+
+> I am wondering whether we should introduce some similar as
+> pm_runtime_no_callbacks() but for the generic PM domain instead.
+>
+> What do you think?
+
+In my case, the domain is not managed by its parent, to there's no such
+analogy.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
