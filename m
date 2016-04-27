@@ -1,58 +1,97 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 13/30] clk: ti: dm814x: transition to usage of ti_clk_get
-Date: Mon, 11 Apr 2016 11:19:04 +0300
-Message-ID: <1460362761-4842-14-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
-References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1f10ab4830032858bc4d6174528f18e8@agner.ch>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+	<20160421034520.GA19965@shlinux2.ap.freescale.net>
+	<20160426012341.GB8870@tiger>
+	<CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+	<1461663072.7839.17.camel@pengutronix.de>
+	<CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+	<CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+	<20160427015835.GE30692@tiger>
+	<CAA+hA=SNp7bQZSUp5R5v9BfXMffS-4-msv12G5UAQJTxUMKW=A@mail.gmail.com>
+	<CAOMZO5BeAxPLerGMkaadkEZusW8wHkO5P6SiZeHOCKWstHUTSA@mail.gmail.com>
+	<1f10ab4830032858bc4d6174528f18e8@agner.ch>
+Date: Wed, 27 Apr 2016 16:53:06 +0800
+Message-ID: <CAA+hA=QJJ7zeHn+Luruyq2eGU+HWsv4UmFz7RNqkeaTP0eerUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Lucas Stach <l.stach@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Cleanup any unnecessary DT_CLK() alias entries from the DM814x clock file.
-Also, use ti_clk_get where necessary.
+On Wed, Apr 27, 2016 at 3:28 PM, Stefan Agner <stefan@agner.ch> wrote:
+> On 2016-04-26 19:56, Fabio Estevam wrote:
+>> On Tue, Apr 26, 2016 at 11:45 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+>>
+>>>> We need to firstly understand why this is happening.  The .prepare hook
+>>>> is defined to be non-atomic context, and so that we call sleep function
+>>>> in there.  We did everything right.  Why are we getting the warning?  If
+>>>> I'm correct, this warning only happens on i.MX7D.  Why is that?
+>>>>
+>>>
+>>> This is mainly caused by during kernel early booting, there's only one init idle
+>>> task running.
+>>> See:
+>>> void __init sched_init(void)
+>>> {
+>>> .....
+>>>         /*
+>>>          * Make us the idle thread. Technically, schedule() should not be
+>>>          * called from this thread, however somewhere below it might be,
+>>>          * but because we are the idle thread, we just pick up running again
+>>>          * when this runqueue becomes "idle".
+>>>          */
+>>>         init_idle(current, smp_processor_id());
+>>> ...
+>>> }
+>>>
+>>> And the idle sched class indicates it's not valid to schedule for idle task.
+>>> const struct sched_class idle_sched_class = {
+>>>         /* .next is NULL */
+>>>         /* no enqueue/yield_task for idle tasks */
+>>>
+>>>         /* dequeue is not valid, we print a debug message there: */
+>>>         .dequeue_task           = dequeue_task_idle,
+>>> ...........
+>>>
+>>> }
+>>>
+>>> /*
+>>>  * It is not legal to sleep in the idle task - print a warning
+>>>  * message if some code attempts to do it:
+>>>  */
+>>> static void
+>>> dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+>>> {
+>>>         raw_spin_unlock_irq(&rq->lock);
+>>>         printk(KERN_ERR "bad: scheduling from the idle thread!\n");
+>>>         dump_stack();
+>>>         raw_spin_lock_irq(&rq->lock);
+>>> }
+>>>
+>>>
+>>> Below is the full log of imx7d booting FYI.
+>>
+>> This does not answer Shawn's question: why do we see this only on mx7d?
+>
+> I was wondering that too.... My theory is that either on i.MX 6 the
+> clocks enable almost instantly leading to no sleep, or they are just
+> bootloader/firmware on...?
+>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-814x.c |   14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+Yes, for core plls, they're already enabled in bootloader.
+We observed this issue on MX7D is because we rudely enable all clocks
+for it and MX7D AV PLLs which will lead to sleep reveals this issue.
 
-diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
-index 52c6efc..17dc99b 100644
---- a/drivers/clk/ti/clk-814x.c
-+++ b/drivers/clk/ti/clk-814x.c
-@@ -13,19 +13,7 @@
- #include "clock.h"
- 
- static struct ti_dt_clk dm814_clks[] = {
--	DT_CLK(NULL, "devosc_ck", "devosc_ck"),
--	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
--	DT_CLK(NULL, "sysclk4_ck", "sysclk4_ck"),
--	DT_CLK(NULL, "sysclk5_ck", "sysclk5_ck"),
--	DT_CLK(NULL, "sysclk6_ck", "sysclk6_ck"),
--	DT_CLK(NULL, "sysclk8_ck", "sysclk8_ck"),
--	DT_CLK(NULL, "sysclk10_ck", "sysclk10_ck"),
--	DT_CLK(NULL, "sysclk18_ck", "sysclk18_ck"),
- 	DT_CLK(NULL, "timer_sys_ck", "devosc_ck"),
--	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
--	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
--	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
--	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
- 	{ .node_name = NULL },
- };
- 
-@@ -65,7 +53,7 @@ static int __init dm814x_adpll_enable_init_clocks(void)
- 	for (i = 0; i < ARRAY_SIZE(init_clocks); i++) {
- 		struct clk *clock;
- 
--		clock = clk_get(NULL, init_clocks[i]);
-+		clock = ti_clk_get(init_clocks[i]);
- 		if (WARN(IS_ERR(clock), "could not find init clock %s\n",
- 			 init_clocks[i]))
- 			continue;
--- 
-1.7.9.5
+Regards
+Dong Aisheng
+
+> --
+> Stefan
