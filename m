@@ -1,58 +1,102 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-Subject: Re: [PATCH 2/2 v6] arc: axs10x: Add DT bindings for I2S PLL Clock
-To: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-snps-arc@lists.infradead.org>, <devicetree@vger.kernel.org>
-References: <cover.1461258787.git.joabreu@synopsys.com>
- <e98c3f738b3a8f6755793959d89b4e43c9410fb1.1461258787.git.joabreu@synopsys.com>
-CC: <CARLOS.PALMINHA@synopsys.com>, <Alexey.Brodkin@synopsys.com>,
-	<Vineet.Gupta1@synopsys.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <robh+dt@kernel.org>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Message-ID: <5719143B.2080901@synopsys.com>
-Date: Thu, 21 Apr 2016 18:56:11 +0100
-MIME-Version: 1.0
-In-Reply-To: <e98c3f738b3a8f6755793959d89b4e43c9410fb1.1461258787.git.joabreu@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <kernel@martin.sperl.org>
+References: <1461660989-11846-1-git-send-email-kernel@martin.sperl.org> <8737q8dv5f.fsf@eliezer.anholt.net> <BC74AA10-C36C-4643-B979-0617D222D605@martin.sperl.org> <87bn4v6dou.fsf@eliezer.anholt.net>
+Mime-Version: 1.0 (1.0)
+In-Reply-To: <87bn4v6dou.fsf@eliezer.anholt.net>
+Content-Type: text/plain;
+	charset=us-ascii
+Message-Id: <7BC21876-C9EF-489D-9F5A-06C7DD52F05C@martin.sperl.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+From: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH V2] clk: bcm2835: mark enabled pll_dividers as critical
+Date: Wed, 27 Apr 2016 07:31:05 +0200
+To: Eric Anholt <eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding device tree mailing list and Rob Herring.
 
-On 21-04-2016 18:19, Jose Abreu wrote:
-> Add device tree bindings for AXS10X I2S PLL Clock driver.
->
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> ---
->
-> Changes v5 -> v6:
-> * Added 'clocks' field
->
-> This patch was only introduced in v5.
->
->  arch/arc/boot/dts/axs10x_mb.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
-> index ab5d570..5c6489e 100644
-> --- a/arch/arc/boot/dts/axs10x_mb.dtsi
-> +++ b/arch/arc/boot/dts/axs10x_mb.dtsi
-> @@ -16,7 +16,20 @@
->  		ranges = <0x00000000 0xe0000000 0x10000000>;
->  		interrupt-parent = <&mb_intc>;
->  
-> +		i2sclk: i2sclk@100a0 {
-> +			compatible = "snps,axs10x-i2s-pll-clock";
-> +			reg = <0x100a0 0x10>;
-> +			clocks = <&i2spll_clk>;
-> +			#clock-cells = <0>;
-> +		};
-> +
->  		clocks {
-> +			i2spll_clk: i2spll_clk {
-> +				compatible = "fixed-clock";
-> +				clock-frequency = <27000000>;
-> +				#clock-cells = <0>;
-> +			};
-> +
->  			i2cclk: i2cclk {
->  				compatible = "fixed-clock";
->  				clock-frequency = <50000000>;
+
+> On 27.04.2016, at 03:30, Eric Anholt <eric@anholt.net> wrote:
+>=20
+> Martin Sperl <kernel@martin.sperl.org> writes:
+>=20
+>> Sent from my iPad
+>>> On 26.04.2016, at 21:31, Eric Anholt <eric@anholt.net> wrote:
+>>>=20
+>>> kernel@martin.sperl.org writes:
+>>>=20
+>>>> From: Martin Sperl <kernel@martin.sperl.org>
+>>>>=20
+>>>> The bcm2835 firmware enables several clocks and plls before
+>>>> booting the linux kernel.
+>>>>=20
+>>>> These plls should never get disabled as it may result in a
+>>>> stopped system clock and more.
+>>>>=20
+>>>> So during probing we check if the pll_divider is enabled
+>>>> and if it is then mark that pll_divider as critical.
+>>>> As a consequence this will also enable the corresponding parent pll.
+>>>>=20
+>>>> Here the list of pll_div that are marked as critical:
+>>>> [    2.022437] bcm2835-clk 20101000.cprman: found enabled pll_div plla_=
+core - marking it as critical
+>>>> [    2.031640] bcm2835-clk 20101000.cprman: found enabled pll_div pllb_=
+arm - marking it as critical
+>>>> [    2.040966] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_=
+core0 - marking it as critical
+>>>> [    2.050351] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_=
+per - marking it as critical
+>>>> [    2.059427] bcm2835-clk 20101000.cprman: found enabled pll_div plld_=
+core - marking it as critical
+>>>> [    2.068590] bcm2835-clk 20101000.cprman: found enabled pll_div plld_=
+per - marking it as critical
+>>>> [    2.077724] bcm2835-clk 20101000.cprman: found enabled pll_div pllh_=
+pix - marking it as critical
+>>>=20
+>>> Yeah, pllh_pix isn't critical, though.  We want it to get turned off
+>>> when the driver asks to disable its clock, or we're going to just waste
+>>> a pile of power.
+>>>=20
+>>> I'm sending out a patch that marks the VPU clock as critical (it's the
+>>> also AXI bus, so it certainly is critical), which should solve your
+>>> aux_uart clock disabling problem, I think.
+>>=20
+>> The problem is that it also fails on the pcm clock alone when pllc or=20
+>> plld_per are used as parent, but it is fine when osc is used...
+>=20
+> For that you're going to want the HAND_OFF patches that mturquette is
+> working on: Don't let the clock and its parents get turned off until a
+> driver has shown up that has referenced the clock and done at least a
+> prepare on it once.
+That one was the one I thought of as well, but it does not solve the
+issue at all, because:
+
+Speaker-test opens the audio device for 32bit 41200 samples
+Which in turn uses the i2s driver
+Which enable_prepares the clock (uses pllc_per or plld_per)
+Plays sound until the end
+Then speaker test closes the audio device
+Which disables/unprepared the PCM clock
+Which disables/unprepares plld_per
+Which disables/unprepares plld
+Machine crashes
+
+For those last few steps the handsoff still would release the
+Pll-div and pll as it has been claimed correctly first.
+
+Maybe handsoff would work if applied to the individual
+Clocks (not the pll or pllc), but I am not sure if this is a correct
+assumption, as I do not know if handsoff would propagate=20
+up the clock tree.
+
+So the critical flag seems the "best" approach for now,
+But as you have said: it is not ideal as it never disables
+Any clocks when they are not really needed.
+
+But so that we can continue we need something=20
+that works now (even if it is not perfect)
+
+Another approach would be knowing the list of clocks=20
+that the firmware claims/owns and mark only those as "critical".
