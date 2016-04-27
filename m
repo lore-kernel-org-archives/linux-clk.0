@@ -1,180 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:40983 "EHLO
-	conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751680AbcDPRtr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 16 Apr 2016 13:49:47 -0400
+Return-Path: <tglx@linutronix.de>
+Date: Wed, 27 Apr 2016 12:15:00 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Dong Aisheng <dongas86@gmail.com>
+cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+    Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+    "kernel@pengutronix.de" <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
+    "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+In-Reply-To: <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+Message-ID: <alpine.DEB.2.11.1604271212290.3941@nanos>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch> <20160421034520.GA19965@shlinux2.ap.freescale.net> <20160426012341.GB8870@tiger> <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com> <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com> <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com> <20160427015835.GE30692@tiger> <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
 MIME-Version: 1.0
-Date: Sun, 17 Apr 2016 02:49:40 +0900
-Message-ID: <CAK7LNATcVwx1q0Nb2WMSpqW3LcoRkZx3RgpMjmbt2EmffJnFvg@mail.gmail.com>
-Subject: [Question] reset controlling
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi.
-
-
-I have wondered how to handle reset signals for my SoCs.
-
-
-
-I notice reset controllers are less supported in Linux than clock controllers.
-
-
-
-I grepped "clk_register" and "reset_controller_register".
-
-I know this does not give us the precise number of
-clk/reset providers, but I think it is enough for a rough estimate.
-
-masahiro@grover:~/workspace/linux$ git grep clk_register | wc
-   3520   18014  308516
-masahiro@grover:~/workspace/linux$ git grep reset_controller_register | wc
-     31     107    2462
-
-
-Looks like we support 100 times as many clock providers as
-reset providers.
-
-In other words, 99% of SoCs support clock controllers,
-but not reset controllers.
-
-But, I think most of hardware blocks
-have reset signals as well as clocks.
-At least, it is true on my SoCs.
-
-
-Similar tendency for consumers.
-
-I grepped "clk_get" and "reset_control_get".
-
-
-masahiro@grover:~/workspace/linux$ git grep clk_get | wc
-   3362   16486  256820
-masahiro@grover:~/workspace/linux$ git grep reset_control_get | wc
-    142     732   12481
-
-
-Most of drivers support controlling clock signals,
-but do not care about reset signals.
-
-
-
-So, how can we explain this fact?
-
-What are recommended strategies for reset signals?
-
-I came up with some options as follows:
-
-
-[1] Reset signals should be de-asserted in a firmware (boot-loader)
-    for all the hardware blocks.  Linux kernel need not touch them at all.
-
-[2] We should really make effort to support more reset drivers,
-    like we do for clock drivers.
-
-[3] We can (ab)use clock-gate drivers for controlling reset signals.
-
-
-
-At first, I chose [3] for my SoCs
-with the analogy clk_enable/clk_disable to
-reset_control_deassert/reset_control_assert.
-(and also because the reset sub-system does not support tree-topology
-or enable-count.)
-
-Reset signals are sometimes cascaded.
-For example, the UART blocks on my SoCs have a reset for the whole of
-UART blocks
-besides per-channel reset signals.
-
-                     |---(UART ch0 reset)---> UART0
-                     |
-----(UART reset)-----|---(UART ch1 reset)---> UART1
-                     |
-                     |---(UART ch2 reset)---> UART2
-
-I found this works well with clk-gate drivers.
-Even reset_control_reset() can be implemented
-with clk_disable() followed by clk_enable().
-
-
-
-Having said that, I hesitate to distort my device trees.
-
-In order to make a reset signal look like a clock,
-we need to describe DT as follows
-
-clkrstctrl: clkrstctrl {
-        compatible = "foo-clock-and-reset-controller";
-        #clock-cells = <1>;
-}
-
-uart {
-         clock-names = "clock", "reset";
-         clocks = <&clkctrl 0>, <&rstctrl 0>;
-}
-
-
-instead of
-
-
-clkctrl: clkctrl {
-        compatible = "foo-clock-controller";
-        #clock-cells = <1>;
-}
-
-rstctrl: rstctrl {
-        compatible = "foo-reset-controller";
-        #reset-cells = <1>;
-}
-
-uart {
-         clocks = <&clkctrl 0>;
-         resets = <&rstctrl 0>;
-}
-
-
-
-The first DT fragment seems weird if we consider the concept of device tree;
-as a hardware description language, DT should reflect the hardware
-representation.  Clocks and resets are different things.
-So, DT should not be compromised by the fact that reset driver support
-is poor in Linux.
-
-
-
-
-Next, I thought about [2].
-It should not be so hard to implement a reset provider.
-
-But, as I mentioned above, most of drivers handle clocks,
-but not resets.
-
-Is it worthwhile to patch drivers around
-with reset_control_get_optional()?
-Hmm...
-
-
-
-
-[1] would be the easiest and I think makes sense to some extent
-because controlling clock signals seems enough from the
-power-management perspective.
-
-
-
-Any idea?
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+On Wed, 27 Apr 2016, Dong Aisheng wrote:
+> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+> >> Shawn,
+> >> What's your suggestion?
+> >
+> > I think this needs more discussion, and I just dropped Stefan's patch
+> > from my tree.
+> >
+> > We need to firstly understand why this is happening.  The .prepare hook
+> > is defined to be non-atomic context, and so that we call sleep function
+> > in there.  We did everything right.  Why are we getting the warning?  If
+> > I'm correct, this warning only happens on i.MX7D.  Why is that?
+> >
+> 
+> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+> time init, the irq is still not enabled. It fixes the issue indirectly.
+> See:
+> asmlinkage __visible void __init start_kernel(void)
+> {
+>         /*
+>          * Set up the scheduler prior starting any interrupts (such as the
+>          * timer interrupt). Full topology setup happens at smp_init()
+>          * time - but meanwhile we still have a functioning scheduler.
+>          */
+>         sched_init();
+>         .............
+>         time_init();
+>         ..............
+>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>         early_boot_irqs_disabled = false;
+>         local_irq_enable();
+> }
+> 
+> The issue can only happen when PLL enable causes a schedule during
+> imx_clock_init().
+
+Calling a function which might sleep _BEFORE_ kernel_init() is wrong. Don't
+try to work around such an issue by doing magic irq_disabled() checks and busy
+loops. Fix the call site and be done with it.
+
+Thanks,
+
+	tglx
