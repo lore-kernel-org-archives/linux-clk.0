@@ -1,90 +1,111 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Shunli
- Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v7 1/9] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Thu, 14 Apr 2016 16:11:46 +0800
-Message-ID: <1460621514-65191-2-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V3] clk: bcm2835: mark enabled clocks with CLK_ENABLE_HAND_OFF
+Date: Wed, 27 Apr 2016 15:24:24 +0000
+Message-Id: <1461770664-29384-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
+The bcm2835 firmware enables several clocks and plls before
+booting the linux kernel.
+
+These plls should never get disabled as it may result in a
+stopped system clock and more.
+
+So during probing we check if the clock is enabled
+and if it is then mark that clock with CLK_ENABLE_HAND_OFF.
+As a consequence this will also enable the corresponding
+parent plls and pll-divs.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+
+--
+Note that this requires the following patches applied:
+* clk: introduce CLK_ENABLE_HAND_OFF flag
+* clk: per-user clk prepare & enable ref counts
+
+Here some detailed info:
+
+Registered clocks with hand-off:
+bcm2835-clk 20101000.cprman: found enabled clock timer - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock otp - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock uart - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock v3d - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock isp - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock h264 - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock vec - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock tsens - enabling hand off
+bcm2835-clk 20101000.cprman: found enabled clock emmc - enabling hand off
+
+Enabled clock count:
+root@raspcm:~# grep -vE ^0 /sys/kernel/debug/clk/*/clk_enable_count
+/sys/kernel/debug/clk/apb_pclk/clk_enable_count:1
+/sys/kernel/debug/clk/clock/clk_enable_count:1
+/sys/kernel/debug/clk/core/clk_enable_count:3
+/sys/kernel/debug/clk/emmc/clk_enable_count:1
+/sys/kernel/debug/clk/h264/clk_enable_count:1
+/sys/kernel/debug/clk/isp/clk_enable_count:1
+/sys/kernel/debug/clk/osc/clk_enable_count:7
+/sys/kernel/debug/clk/otp/clk_enable_count:1
+/sys/kernel/debug/clk/plla/clk_enable_count:1
+/sys/kernel/debug/clk/plla_core/clk_enable_count:3
+/sys/kernel/debug/clk/pllc/clk_enable_count:1
+/sys/kernel/debug/clk/pllc_per/clk_enable_count:1
+/sys/kernel/debug/clk/plld/clk_enable_count:1
+/sys/kernel/debug/clk/plld_per/clk_enable_count:1
+/sys/kernel/debug/clk/pllh_aux/clk_enable_count:1
+/sys/kernel/debug/clk/pllh_aux_prediv/clk_enable_count:1
+/sys/kernel/debug/clk/pllh/clk_enable_count:1
+/sys/kernel/debug/clk/timer/clk_enable_count:1
+/sys/kernel/debug/clk/tsens/clk_enable_count:1
+/sys/kernel/debug/clk/uart0_pclk/clk_enable_count:1
+/sys/kernel/debug/clk/uart/clk_enable_count:1
+/sys/kernel/debug/clk/v3d/clk_enable_count:1
+/sys/kernel/debug/clk/vec/clk_enable_count:1
+
+That is a setup where the clock bcm2835 is only referenced
+in the device tree for pcm (which was not loaded or running
+at the time I took the above).
+
+Using pcm-audio would trigger a machine halt before this patch.
+Now this does not happen.
+
+Changelog:
+ V1 -> V2: swith to use CLK_IS_CRITICAL for enabled pll_div
+ V2 -> V3: swith to use CLK_ENABLE_HAND_OFF for enabled clocks
+
 ---
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+ drivers/clk/bcm/clk-bcm2835.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..d94302e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -199,6 +199,7 @@ config COMMON_CLK_PXA
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/samsung/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 35f8de7..65d62c2 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1251,7 +1251,14 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+ 	}
+
++	/* if the clock is running then enable HAND_OFF */
++	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
++		dev_info(cprman->dev,
++			 "found enabled clock %s - enabling hand off\n",
++			 data->name);
++		init.flags |= CLK_ENABLE_HAND_OFF;
++	}
 +
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
--- 
-1.9.1
+ 	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
+ 		return NULL;
+--
+2.1.4
