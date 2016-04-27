@@ -1,750 +1,584 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail2.asahi-net.or.jp ([202.224.39.198]:48478 "EHLO
-	mail2.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750723AbcEAE73 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2016 00:59:29 -0400
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
-To: linux-clk@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-kerel@vger.kernel.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: [PATCH 06/12] clk: sh: SH7750/51 PLL and divider clock driver
-Date: Sun,  1 May 2016 13:59:16 +0900
-Message-Id: <1462078763-27135-7-git-send-email-ysato@users.sourceforge.jp>
-In-Reply-To: <1462078763-27135-1-git-send-email-ysato@users.sourceforge.jp>
-References: <1462078763-27135-1-git-send-email-ysato@users.sourceforge.jp>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <dongas86@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160427015835.GE30692@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+	<20160421034520.GA19965@shlinux2.ap.freescale.net>
+	<20160426012341.GB8870@tiger>
+	<CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+	<1461663072.7839.17.camel@pengutronix.de>
+	<CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+	<CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+	<20160427015835.GE30692@tiger>
+Date: Wed, 27 Apr 2016 10:45:54 +0800
+Message-ID: <CAA+hA=SNp7bQZSUp5R5v9BfXMffS-4-msv12G5UAQJTxUMKW=A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+From: Dong Aisheng <dongas86@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, tglx@linutronix.de, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
----
- .../bindings/clock/renesas,sh-div-clock.txt        |  24 ++
- .../bindings/clock/renesas,sh7750-div-clock.txt    |  27 ++
- .../bindings/clock/renesas,sh7750-pll-clock.txt    |  26 ++
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   3 +-
- drivers/clk/sh/Kconfig                             |   5 +
- drivers/clk/sh/Makefile                            |   2 +
- drivers/clk/sh/clk-sh7750.c                        | 223 ++++++++++++++
- drivers/clk/sh/clk-shdiv.c                         | 338 +++++++++++++++++++++
- 9 files changed, 648 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
- create mode 100644 drivers/clk/sh/Kconfig
- create mode 100644 drivers/clk/sh/Makefile
- create mode 100644 drivers/clk/sh/clk-sh7750.c
- create mode 100644 drivers/clk/sh/clk-shdiv.c
+On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+>> Shawn,
+>> What's your suggestion?
+>
+> I think this needs more discussion, and I just dropped Stefan's patch
+> from my tree.
+>
+> We need to firstly understand why this is happening.  The .prepare hook
+> is defined to be non-atomic context, and so that we call sleep function
+> in there.  We did everything right.  Why are we getting the warning?  If
+> I'm correct, this warning only happens on i.MX7D.  Why is that?
+>
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
-new file mode 100644
-index 0000000..399e0da
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
-@@ -0,0 +1,24 @@
-+* Renesas H8/300 divider clock
-+
-+Required Properties:
-+
-+  - compatible: Must be "renesas,h8300-div-clock"
-+
-+  - clocks: Reference to the parent clocks ("extal1" and "extal2")
-+
-+  - #clock-cells: Must be 1
-+
-+  - reg: Base address and length of the divide rate selector
-+
-+  - renesas,width: bit width of selector
-+
-+Example
-+-------
-+
-+		cclk: cclk {
-+			compatible = "renesas,h8300-div-clock";
-+			clocks = <&xclk>;
-+			#clock-cells = <0>;
-+			reg = <0xfee01b 2>;
-+			renesas,width = <2>;
-+		};
-diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
-new file mode 100644
-index 0000000..8c57ab5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
-@@ -0,0 +1,27 @@
-+* Renesas SH7750/51 divider clock
-+
-+Required Properties:
-+
-+  - compatible: Must be "renesas,sh7750-div-clock"
-+
-+  - clocks: Reference to the parent clocks (mostly PLL)
-+
-+  - #clock-cells: Must be 0
-+
-+  - reg: Base address and length of the divide rate selector
-+
-+  - renesas,offset: bit offset of selector
-+
-+  - clock-output-names: The names of the clocks.
-+
-+Example
-+-------
-+
-+        iclk: iclk {
-+                compatible = "renesas,sh7750-div-clock";
-+                clocks = <&pllclk>;
-+                #clock-cells = <0>;
-+                reg = <0xffc00000 2>;
-+		renesas,offset = <6>;
-+		clock-output-names = "ick";
-+        };
-diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
-new file mode 100644
-index 0000000..06a3d31
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
-@@ -0,0 +1,26 @@
-+Renesas SH7750/51 PLL clock
-+
-+This device is Clock multiplyer
-+
-+Required Properties:
-+
-+  - compatible: Must be "renesas,sh7750-pll-clock"
-+
-+  - clocks: Reference to the parent clocks
-+
-+  - #clock-cells: Must be 0
-+
-+  - renesas,mult: PLL1 multiply rate
-+
-+  - reg: Two rate selector (FRQCR / WDT) register address
-+
-+Example
-+-------
-+
-+        pllclk: pllclk {
-+                compatible = "renesas,sh7750-pll-clock";
-+                clocks = <&oclk>;
-+                #clock-cells = <0>;
-+		renesas,mult = <12>;
-+                reg = <0xffc00000 2>, <0xffc00008 4>;
-+        };
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 16f7d33..19b0cd3 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -202,6 +202,7 @@ source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/samsung/Kconfig"
-+source "drivers/clk/sh/Kconfig"
- source "drivers/clk/tegra/Kconfig"
- source "drivers/clk/ti/Kconfig"
- 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 46869d6..c75d9c8 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -83,4 +83,5 @@ obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
- obj-$(CONFIG_X86)			+= x86/
- obj-$(CONFIG_ARCH_ZX)			+= zte/
- obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
--obj-$(CONFIG_H8300)		+= h8300/
-+obj-$(CONFIG_H8300)			+= h8300/
-+obj-$(CONFIG_SUPERH)			+= sh/
-diff --git a/drivers/clk/sh/Kconfig b/drivers/clk/sh/Kconfig
-new file mode 100644
-index 0000000..729850c
---- /dev/null
-+++ b/drivers/clk/sh/Kconfig
-@@ -0,0 +1,5 @@
-+config COMMON_CLK_SH7750
-+	bool "Clcok driver for SH7750/SH7751"
-+	depends on CPU_SUBTYPE_SH7750 || CPU_SUBTYPE_SH7750S || \
-+	           CPU_SUBTYPE_SH7750R || \
-+	           CPU_SUBTYPE_SH7751 || CPU_SUBTYPE_SH7751R
-diff --git a/drivers/clk/sh/Makefile b/drivers/clk/sh/Makefile
-new file mode 100644
-index 0000000..7122c37
---- /dev/null
-+++ b/drivers/clk/sh/Makefile
-@@ -0,0 +1,2 @@
-+obj-$(CONFIG_COMMON_CLK_SH7750) += clk-sh7750.o
-+obj-$(CONFIG_COMMON_CLK_SH7750) += clk-shdiv.o
-diff --git a/drivers/clk/sh/clk-sh7750.c b/drivers/clk/sh/clk-sh7750.c
-new file mode 100644
-index 0000000..a00c421
---- /dev/null
-+++ b/drivers/clk/sh/clk-sh7750.c
-@@ -0,0 +1,223 @@
-+/*
-+ * Renesas SH7750/51 clock driver
-+ *
-+ * Copyright 2016 Yoshinori Sato <ysato@users.sourceforge.jp>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/io.h>
-+
-+struct clk *sh_div_clk_register(struct device *dev, const char *name,
-+				const char *parent_name,
-+				void __iomem *reg, u8 shift, u8 width,
-+				const struct clk_div_table *table,
-+				spinlock_t *lock);
-+
-+static DEFINE_SPINLOCK(clklock);
-+
-+static struct clk_div_table pdiv_table[] = {
-+	{ .val = 0, .div = 2, },
-+	{ .val = 1, .div = 3, },
-+	{ .val = 2, .div = 4, },
-+	{ .val = 3, .div = 6, },
-+	{ .val = 4, .div = 8, },
-+	{ .val = 0, .div = 0, },
-+};
-+
-+static struct clk_div_table div_table[] = {
-+	{ .val = 0, .div = 1, },
-+	{ .val = 1, .div = 2, },
-+	{ .val = 2, .div = 3, },
-+	{ .val = 3, .div = 4, },
-+	{ .val = 4, .div = 6, },
-+	{ .val = 5, .div = 8, },
-+	{ .val = 0, .div = 0, },
-+};
-+
-+struct pll_clock {
-+	struct clk_hw hw;
-+	void __iomem *freqcr;
-+	void __iomem *wdt;
-+	int mult;
-+};
-+
-+#define to_pll_clock(_hw) container_of(_hw, struct pll_clock, hw)
-+
-+static unsigned long pll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct pll_clock *pll_clock = to_pll_clock(hw);
-+
-+	if ((ioread16(pll_clock->freqcr) >> 9) & 1)
-+		return parent_rate * pll_clock->mult;
-+	else
-+		return parent_rate;
-+}
-+
-+static long pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
-+{
-+	struct pll_clock *pll_clock = to_pll_clock(hw);
-+	int mul;
-+
-+	mul = rate / *prate;
-+	mul = (pll_clock->mult / 2 < mul)?pll_clock->mult:1;
-+	return *prate * mul;
-+}
-+
-+static int pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long parent_rate)
-+{
-+	int mult;
-+	unsigned char val;
-+	unsigned long flags;
-+	struct pll_clock *pll_clock = to_pll_clock(hw);
-+
-+	mult = rate / parent_rate;
-+	if (mult > 1) {
-+		/* PLL enable */
-+		/* required stable time */
-+		spin_lock_irqsave(&clklock, flags);
-+		iowrite16(0x5a00, pll_clock->wdt);
-+		iowrite16(0xa503, pll_clock->wdt + 2);
-+		val = ioread16(pll_clock->freqcr);
-+		val |= 0x0200;
-+		iowrite16(val, pll_clock->freqcr);
-+		spin_unlock_irqrestore(&clklock, flags);
-+	} else {
-+		/* PLL disable */
-+		/* not required stable time */
-+		val = ioread16(pll_clock->freqcr);
-+		val &= ~0x0200;
-+		iowrite16(val, pll_clock->freqcr);
-+	}
-+	return 0;
-+}
-+
-+static const struct clk_ops pll_ops = {
-+	.recalc_rate = pll_recalc_rate,
-+	.round_rate = pll_round_rate,
-+	.set_rate = pll_set_rate,
-+};
-+
-+static void __init sh7750_pll_clk_setup(struct device_node *node)
-+{
-+	unsigned int num_parents;
-+	struct clk *clk;
-+	const char *clk_name = node->name;
-+	const char *parent_name;
-+	struct pll_clock *pll_clock;
-+	struct clk_init_data init;
-+
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents < 1) {
-+		pr_err("%s: no parent found", clk_name);
-+		return;
-+	}
-+
-+	pll_clock = kzalloc(sizeof(struct pll_clock), GFP_KERNEL);
-+	if (!pll_clock) {
-+		pr_err("%s: failed to alloc memory", clk_name);
-+		return;
-+	}
-+
-+	pll_clock->freqcr = of_iomap(node, 0);
-+	if (pll_clock->freqcr == NULL) {
-+		pr_err("%s: failed to map frequenct control register",
-+		       clk_name);
-+		goto free_clock;
-+	}
-+
-+	pll_clock->wdt = of_iomap(node, 1);
-+	if (pll_clock->wdt == NULL) {
-+		pr_err("%s: failed to map watchdog register", clk_name);
-+		goto unmap_freqcr;
-+	}
-+
-+	of_property_read_u32_index(node, "renesas,mult", 0, &pll_clock->mult);
-+
-+	parent_name = of_clk_get_parent_name(node, 0);
-+	init.name = clk_name;
-+	init.ops = &pll_ops;
-+	init.flags = CLK_IS_BASIC;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	pll_clock->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll_clock->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register %s pll clock (%ld)\n",
-+		       __func__, clk_name, PTR_ERR(clk));
-+		goto unmap_wdt;
-+	}
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	return;
-+
-+unmap_wdt:
-+	iounmap(pll_clock->wdt);
-+unmap_freqcr:
-+	iounmap(pll_clock->freqcr);
-+free_clock:
-+	kfree(pll_clock);
-+}
-+
-+static void __init sh7750_div_clk_setup(struct device_node *node)
-+{
-+	unsigned int num_parents;
-+	struct clk *clk;
-+	const char *clk_name = node->name;
-+	const char *parent_name;
-+	void __iomem *freqcr = NULL;
-+	int i;
-+	int num_clks;
-+	int offset;
-+
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents < 1) {
-+		pr_err("%s: no parent found", clk_name);
-+		return;
-+	}
-+
-+	num_clks = of_property_count_strings(node, "clock-output-names");
-+	if (num_clks < 0) {
-+		pr_err("%s: failed to count clocks", clk_name);
-+		return;
-+	}
-+
-+	freqcr = of_iomap(node, 0);
-+	if (freqcr == NULL) {
-+		pr_err("%s: failed to map divide register", clk_name);
-+		goto error;
-+	}
-+	of_property_read_u32_index(node, "renesas,offset", 0, &offset);
-+
-+	parent_name = of_clk_get_parent_name(node, 0);
-+	for (i = 0; i < num_clks; i++) {
-+		of_property_read_string_index(node, "clock-output-names", i,
-+					      &clk_name);
-+		clk = sh_div_clk_register(NULL, clk_name, parent_name,
-+					  freqcr,
-+					  offset, 3,
-+					  (offset == 0)?pdiv_table:div_table,
-+					  &clklock);
-+		if (IS_ERR(clk))
-+			pr_err("%s: failed to register %s div clock (%ld)\n",
-+			       __func__, clk_name, PTR_ERR(clk));
-+		else
-+			of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	}
-+error:
-+	if (freqcr)
-+		iounmap(freqcr);
-+}
-+
-+CLK_OF_DECLARE(sh7750_div_clk, "renesas,sh7750-div-clock",
-+	       sh7750_div_clk_setup);
-+CLK_OF_DECLARE(sh7750_pll_clk, "renesas,sh7750-pll-clock",
-+	       sh7750_pll_clk_setup);
-diff --git a/drivers/clk/sh/clk-shdiv.c b/drivers/clk/sh/clk-shdiv.c
-new file mode 100644
-index 0000000..ad244a8
---- /dev/null
-+++ b/drivers/clk/sh/clk-shdiv.c
-@@ -0,0 +1,338 @@
-+/*
-+ * SuperH divider clock driver
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#define div_mask(width)	((1 << (width)) - 1)
-+
-+static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
-+				      u8 width)
-+{
-+	unsigned int maxdiv = 0, mask = div_mask(width);
-+	const struct clk_div_table *clkt;
-+
-+	for (clkt = table; clkt->div; clkt++)
-+		if (clkt->div > maxdiv && clkt->val <= mask)
-+			maxdiv = clkt->div;
-+	return maxdiv;
-+}
-+
-+static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width)
-+{
-+	if (table)
-+		return _get_table_maxdiv(table, width);
-+	return div_mask(width) + 1;
-+}
-+
-+static unsigned int _get_table_div(const struct clk_div_table *table,
-+				   unsigned int val)
-+{
-+	const struct clk_div_table *clkt;
-+
-+	for (clkt = table; clkt->div; clkt++)
-+		if (clkt->val == val)
-+			return clkt->div;
-+	return 0;
-+}
-+
-+static unsigned int _get_div(const struct clk_div_table *table,
-+			     unsigned int val,  u8 width)
-+{
-+	if (table)
-+		return _get_table_div(table, val);
-+	return val + 1;
-+}
-+
-+static unsigned int _get_table_val(const struct clk_div_table *table,
-+				   unsigned int div)
-+{
-+	const struct clk_div_table *clkt;
-+
-+	for (clkt = table; clkt->div; clkt++)
-+		if (clkt->div == div)
-+			return clkt->val;
-+	return 0;
-+}
-+
-+static unsigned int _get_val(const struct clk_div_table *table,
-+			     unsigned int div, u8 width)
-+{
-+	if (table)
-+		return  _get_table_val(table, div);
-+	return div - 1;
-+}
-+
-+static unsigned long sh_divider_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate,
-+					 unsigned int val,
-+					 const struct clk_div_table *table)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int div;
-+
-+	div = _get_div(table, val, divider->width);
-+
-+	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+}
-+
-+static unsigned long sh_clk_divider_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int val;
-+
-+	val = __raw_readw(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+
-+	return sh_divider_recalc_rate(hw, parent_rate, val, divider->table);
-+}
-+
-+static bool _is_valid_table_div(const struct clk_div_table *table,
-+				unsigned int div)
-+{
-+	const struct clk_div_table *clkt;
-+
-+	for (clkt = table; clkt->div; clkt++)
-+		if (clkt->div == div)
-+			return true;
-+	return false;
-+}
-+
-+static bool _is_valid_div(const struct clk_div_table *table, unsigned int div)
-+{
-+	if (table)
-+		return _is_valid_table_div(table, div);
-+	return true;
-+}
-+
-+static int _round_up_table(const struct clk_div_table *table, int div)
-+{
-+	const struct clk_div_table *clkt;
-+	int up = INT_MAX;
-+
-+	for (clkt = table; clkt->div; clkt++) {
-+		if (clkt->div == div)
-+			return clkt->div;
-+		else if (clkt->div < div)
-+			continue;
-+
-+		if ((clkt->div - div) < (up - div))
-+			up = clkt->div;
-+	}
-+
-+	return up;
-+}
-+
-+static int _div_round_up(const struct clk_div_table *table,
-+			 unsigned long parent_rate, unsigned long rate)
-+{
-+	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+
-+	if (table)
-+		div = _round_up_table(table, div);
-+
-+	return div;
-+}
-+
-+static int _div_round(const struct clk_div_table *table,
-+		      unsigned long parent_rate, unsigned long rate)
-+{
-+	return _div_round_up(table, parent_rate, rate);
-+}
-+
-+static bool _is_best_div(unsigned long rate, unsigned long now,
-+			 unsigned long best)
-+{
-+	return now <= rate && now > best;
-+}
-+
-+static int _next_div(const struct clk_div_table *table, int div)
-+{
-+	div++;
-+
-+	if (table)
-+		return _round_up_table(table, div);
-+
-+	return div;
-+}
-+
-+static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *best_parent_rate,
-+			       const struct clk_div_table *table, u8 width)
-+{
-+	int i, bestdiv = 0;
-+	unsigned long parent_rate, best = 0, now, maxdiv;
-+	unsigned long parent_rate_saved = *best_parent_rate;
-+
-+	if (!rate)
-+		rate = 1;
-+
-+	maxdiv = _get_maxdiv(table, width);
-+
-+	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-+		parent_rate = *best_parent_rate;
-+		bestdiv = _div_round(table, parent_rate, rate);
-+		bestdiv = bestdiv == 0 ? 1 : bestdiv;
-+		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
-+		return bestdiv;
-+	}
-+
-+	/*
-+	 * The maximum divider we can use without overflowing
-+	 * unsigned long in rate * i below
-+	 */
-+	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+
-+	for (i = _next_div(table, 0); i <= maxdiv;
-+	     i = _next_div(table, i)) {
-+		if (rate * i == parent_rate_saved) {
-+			/*
-+			 * It's the most ideal case if the requested rate can be
-+			 * divided from parent clock without needing to change
-+			 * parent rate, so return the divider immediately.
-+			 */
-+			*best_parent_rate = parent_rate_saved;
-+			return i;
-+		}
-+		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-+					       rate * i);
-+		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
-+		if (_is_best_div(rate, now, best)) {
-+			bestdiv = i;
-+			best = now;
-+			*best_parent_rate = parent_rate;
-+		}
-+	}
-+
-+	if (!bestdiv) {
-+		bestdiv = _get_maxdiv(table, width);
-+		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
-+	}
-+
-+	return bestdiv;
-+}
-+
-+static long sh_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long *prate, const struct clk_div_table *table,
-+			u8 width)
-+{
-+	int div;
-+
-+	div = clk_divider_bestdiv(hw, rate, prate, table, width);
-+
-+	return DIV_ROUND_UP_ULL((u64)*prate, div);
-+}
-+
-+static long sh_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+
-+	return sh_divider_round_rate(hw, rate, prate, divider->table,
-+				     divider->width);
-+}
-+
-+static int sh_divider_get_val(unsigned long rate, unsigned long parent_rate,
-+			   const struct clk_div_table *table, u8 width)
-+{
-+	unsigned int div, value;
-+
-+	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+
-+	if (!_is_valid_div(table, div))
-+		return -EINVAL;
-+
-+	value = _get_val(table, div, width);
-+
-+	return min_t(unsigned int, value, div_mask(width));
-+}
-+
-+static int sh_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int value;
-+	unsigned long flags = 0;
-+	u16 val;
-+
-+	value = sh_divider_get_val(rate, parent_rate, divider->table,
-+				   divider->width);
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	val = __raw_readw(divider->reg);
-+	val &= ~(div_mask(divider->width) << divider->shift);
-+	val |= value << divider->shift;
-+	__raw_writew(val, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops sh_clk_divider_ops = {
-+	.recalc_rate = sh_clk_divider_recalc_rate,
-+	.round_rate = sh_clk_divider_round_rate,
-+	.set_rate = sh_clk_divider_set_rate,
-+};
-+
-+static struct clk *_register_divider(struct device *dev, const char *name,
-+		const char *parent_name,
-+		void __iomem *reg, u8 shift, u8 width,
-+		const struct clk_div_table *table,
-+		spinlock_t *lock)
-+{
-+	struct clk_divider *div;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	/* allocate the divider */
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &sh_clk_divider_ops;
-+	init.flags = CLK_IS_BASIC;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+
-+	/* struct clk_divider assignments */
-+	div->reg = reg;
-+	div->shift = shift;
-+	div->width = width;
-+	div->lock = lock;
-+	div->hw.init = &init;
-+	div->table = table;
-+
-+	/* register the clock */
-+	clk = clk_register(dev, &div->hw);
-+
-+	if (IS_ERR(clk))
-+		kfree(div);
-+
-+	return clk;
-+}
-+
-+struct clk *sh_div_clk_register(struct device *dev, const char *name,
-+				const char *parent_name,
-+				void __iomem *reg, u8 shift, u8 width,
-+				const struct clk_div_table *table,
-+				spinlock_t *lock)
-+{
-+	return _register_divider(dev, name, parent_name, reg, shift,
-+				 width, table, lock);
-+}
-+EXPORT_SYMBOL_GPL(sh_div_clk_register);
--- 
-2.7.0
+This is mainly caused by during kernel early booting, there's only one init idle
+task running.
+See:
+void __init sched_init(void)
+{
+.....
+        /*
+         * Make us the idle thread. Technically, schedule() should not be
+         * called from this thread, however somewhere below it might be,
+         * but because we are the idle thread, we just pick up running again
+         * when this runqueue becomes "idle".
+         */
+        init_idle(current, smp_processor_id());
+...
+}
 
+And the idle sched class indicates it's not valid to schedule for idle task.
+const struct sched_class idle_sched_class = {
+        /* .next is NULL */
+        /* no enqueue/yield_task for idle tasks */
+
+        /* dequeue is not valid, we print a debug message there: */
+        .dequeue_task           = dequeue_task_idle,
+...........
+
+}
+
+/*
+ * It is not legal to sleep in the idle task - print a warning
+ * message if some code attempts to do it:
+ */
+static void
+dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+{
+        raw_spin_unlock_irq(&rq->lock);
+        printk(KERN_ERR "bad: scheduling from the idle thread!\n");
+        dump_stack();
+        raw_spin_lock_irq(&rq->lock);
+}
+
+
+Below is the full log of imx7d booting FYI.
+
+You can ignore the first two warning (releasing a pinned lock) which
+is a side affection
+of idle task schedule during booting.
+
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 4.6.0-rc1-00011-gee55b3d17805-dirty
+(b29396@shlinux2) (gcc version 4.9.1 (GCC) ) #779 SMP Tue Apr 26
+18:17:26 CST 2016
+[    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7), cr=10c5387d
+[    0.000000] CPU: div instructions available: patching division code
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+instruction cache
+[    0.000000] Machine model: Freescale i.MX7 SabreSD Board
+[    0.000000] cma: Reserved 16 MiB at 0xbf000000
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] On node 0 totalpages: 262144
+[    0.000000] free_area_init_node: node 0, pgdat c0d72900,
+node_mem_map ef7f9000
+[    0.000000]   Normal zone: 1536 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 196608 pages, LIFO batch:31
+[    0.000000]   HighMem zone: 65536 pages, LIFO batch:15
+[    0.000000] percpu: Embedded 13 pages/cpu @ef7bd000 s20544 r8192
+d24512 u53248
+[    0.000000] pcpu-alloc: s20544 r8192 d24512 u53248 alloc=13*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1
+[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.
+Total pages: 260608
+[    0.000000] Kernel command line: console=ttymxc0,115200
+root=/dev/nfs ip=dhcp
+nfsroot=10.192.224.44:/data/rootfs_home/b29396/rootfs-yocto-L4.1.X-RC5,v3,tcp
+log_buf_len=2M
+[    0.000000] log_buf_len: 2097152 bytes
+[    0.000000] early log buf free: 260724(99%)
+[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
+[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
+[    0.000000] Memory: 999884K/1048576K available (8196K kernel code,
+464K rwdata, 2828K rodata, 1024K init, 8223K bss, 32308K reserved,
+16384K cma-reserved, 245760K highmem)
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+[    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+[    0.000000]     vmalloc : 0xf0800000 - 0xff800000   ( 240 MB)
+[    0.000000]     lowmem  : 0xc0000000 - 0xf0000000   ( 768 MB)
+[    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+[    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+[    0.000000]       .text : 0xc0008000 - 0xc0bc406c   (12017 kB)
+[    0.000000]       .init : 0xc0c00000 - 0xc0d00000   (1024 kB)
+[    0.000000]       .data : 0xc0d00000 - 0xc0d74100   ( 465 kB)
+[    0.000000]        .bss : 0xc0d76000 - 0xc157dfa0   (8224 kB)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000] Running RCU self tests
+[    0.000000] Hierarchical RCU implementation.
+[    0.000000]  RCU lockdep checking is enabled.
+[    0.000000]  Build-time adjustment of leaf fanout to 32.
+[    0.000000]  RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=2.
+[    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=32, nr_cpu_ids=2
+[    0.000000] NR_IRQS:16 nr_irqs:16 16
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:3422
+lock_release+0x340/0x378
+[    0.000000] releasing a pinned lock
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
+4.6.0-rc1-00011-gee55b3d17805-dirty #779
+[    0.000000] Hardware name: Freescale i.MX7 Dual (Device Tree)
+[    0.000000] Backtrace:
+[    0.000000] [<c010c42c>] (dump_backtrace) from [<c010c624>]
+(show_stack+0x18/0x1c)
+[    0.000000]  r6:600000d3 r5:00000000 r4:c0d21f9c r3:00000000
+[    0.000000] [<c010c60c>] (show_stack) from [<c03dfec8>]
+(dump_stack+0xb4/0xe8)
+[    0.000000] [<c03dfe14>] (dump_stack) from [<c0124ce8>] (__warn+0xd8/0x104)
+[    0.000000]  r10:c0d069c0 r9:c016e7ec r8:00000d5e r7:00000009
+r6:c0ad6a04 r5:00000000
+[    0.000000]  r4:c0d01ad8 r3:00000001
+[    0.000000] [<c0124c10>] (__warn) from [<c0124d54>]
+(warn_slowpath_fmt+0x40/0x48)
+[    0.000000]  r9:00000001 r8:c154243c r7:00000002 r6:00000020
+r5:c0d06500 r4:c0ad7ac4
+[    0.000000] [<c0124d18>] (warn_slowpath_fmt) from [<c016e7ec>]
+(lock_release+0x340/0x378)
+[    0.000000]  r3:00000001 r2:c0ad7ac4
+[    0.000000]  r4:00000001
+[    0.000000] [<c016e4ac>] (lock_release) from [<c08f9cf4>]
+(_raw_spin_unlock_irq+0x20/0x34)
+[    0.000000]  r10:c08f4fdc r9:c0d02b0c r8:c0d06844 r7:ef7c14d0
+r6:00000001 r5:ef7c14c0
+[    0.000000]  r4:ef7c14c0
+[    0.000000] [<c08f9cd4>] (_raw_spin_unlock_irq) from [<c015437c>]
+(dequeue_task_idle+0x14/0x30)
+[    0.000000]  r4:ef7c14c0 r3:c0154368
+[    0.000000] [<c0154368>] (dequeue_task_idle) from [<c014c96c>]
+(deactivate_task+0x64/0x68)
+[    0.000000]  r4:c0d06500 r3:c0154368
+[    0.000000] [<c014c908>] (deactivate_task) from [<c08f4b44>]
+(__schedule+0x2e8/0x738)
+[    0.000000]  r6:c0d06500 r5:ef7c14c0 r4:c0c754c0 r3:00000002
+[    0.000000] [<c08f485c>] (__schedule) from [<c08f4fdc>] (schedule+0x48/0xa0)
+[    0.000000]  r10:00000018 r9:0000001c r8:00000003 r7:00000000
+r6:0007a120 r5:00000000
+[    0.000000]  r4:c0d00000
+[    0.000000] [<c08f4f94>] (schedule) from [<c08f9750>]
+(schedule_hrtimeout_range_clock+0xac/0x12c)
+[    0.000000]  r4:0006ddd0 r3:c0d06500
+[    0.000000] [<c08f96a4>] (schedule_hrtimeout_range_clock) from
+[<c08f97f4>] (schedule_hrtimeout_range+0x24/0x2c)
+[    0.000000]  r7:00000001 r6:c0d02100 r5:ffff8ad1 r4:ef004f80
+[    0.000000] [<c08f97d0>] (schedule_hrtimeout_range) from
+[<c08f922c>] (usleep_range+0x54/0x5c)
+[    0.000000] [<c08f91d8>] (usleep_range) from [<c0698148>]
+(clk_pllv3_wait_lock+0x7c/0xb4)
+[    0.000000] [<c06980cc>] (clk_pllv3_wait_lock) from [<c06981b0>]
+(clk_pllv3_prepare+0x30/0x34)
+[    0.000000]  r6:ef007080 r5:ef00ef00 r4:ef007600 r3:000017c0
+[    0.000000] [<c0698180>] (clk_pllv3_prepare) from [<c069203c>]
+(clk_core_prepare+0x98/0xc4)
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef007900
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00e800
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00eb80
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00ef00
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c0692be8>]
+(clk_core_prepare_enable+0x1c/0x5c)
+[    0.000000]  r5:ef00ef00 r4:ef011f80
+[    0.000000] [<c0692bcc>] (clk_core_prepare_enable) from
+[<c0692eb4>] (__clk_set_parent_before+0x38/0x7c)
+[    0.000000]  r5:ef00ef00 r4:ef011f80
+[    0.000000] [<c0692e7c>] (__clk_set_parent_before) from
+[<c0693004>] (clk_core_set_parent+0x10c/0x170)
+[    0.000000]  r7:00000001 r6:ef00ef00 r5:00000000 r4:ef011f80
+[    0.000000] [<c0692ef8>] (clk_core_set_parent) from [<c069308c>]
+(clk_set_parent+0x24/0x28)
+[    0.000000]  r8:00000003 r7:c0d5d434 r6:00000000 r5:ef02b440
+r4:00000009 r3:c15603bc
+[    0.000000] [<c0693068>] (clk_set_parent) from [<c0c4ade8>]
+(imx7d_clocks_init+0x5f4c/0x5f8c)
+[    0.000000] [<c0c44e9c>] (imx7d_clocks_init) from [<c0c30e00>]
+(of_clk_init+0x10c/0x1d4)
+[    0.000000]  r10:00000001 r9:c0d01f68 r8:00000000 r7:c0d01f60
+r6:ef7e3d60 r5:ef004340
+[    0.000000]  r4:00000002
+[    0.000000] [<c0c30cf4>] (of_clk_init) from [<c0c048d4>]
+(time_init+0x2c/0x38)
+[    0.000000]  r10:efffcac0 r9:c0c5da48 r8:c0d76000 r7:c0d028c0
+r6:ffffffff r5:c0d76000
+[    0.000000]  r4:00000000
+[    0.000000] [<c0c048a8>] (time_init) from [<c0c00b7c>]
+(start_kernel+0x218/0x398)
+[    0.000000] [<c0c00964>] (start_kernel) from [<8000807c>] (0x8000807c)
+[    0.000000]  r10:00000000 r9:410fc075 r8:8000406a r7:c0d07e8c
+r6:c0c5da44 r5:c0d0296c
+[    0.000000]  r4:c0d76294
+[    0.000000] ---[ end trace cb88537fdc8fa200 ]---
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:2617
+trace_hardirqs_on_caller+0x1ac/0x1f0
+[    0.000000] DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled))
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
+4.6.0-rc1-00011-gee55b3d17805-dirty #779
+[    0.000000] Hardware name: Freescale i.MX7 Dual (Device Tree)
+[    0.000000] Backtrace:
+[    0.000000] [<c010c42c>] (dump_backtrace) from [<c010c624>]
+(show_stack+0x18/0x1c)
+[    0.000000]  r6:600000d3 r5:00000000 r4:c0d21f9c r3:00000000
+[    0.000000] [<c010c60c>] (show_stack) from [<c03dfec8>]
+(dump_stack+0xb4/0xe8)
+[    0.000000] [<c03dfe14>] (dump_stack) from [<c0124ce8>] (__warn+0xd8/0x104)
+[    0.000000]  r10:c08f4fdc r9:c016b918 r8:00000a39 r7:00000009
+r6:c0ad6a04 r5:00000000
+[    0.000000]  r4:c0d01af8 r3:00000000
+[    0.000000] [<c0124c10>] (__warn) from [<c0124d54>]
+(warn_slowpath_fmt+0x40/0x48)
+[    0.000000]  r9:c0d02b0c r8:c0d06844 r7:ef7c14d0 r6:00000001
+r5:ef7c14c0 r4:c0ad3ea0
+[    0.000000] [<c0124d18>] (warn_slowpath_fmt) from [<c016b918>]
+(trace_hardirqs_on_caller+0x1ac/0x1f0)
+[    0.000000]  r3:c0ad7890 r2:c0ad3ea0
+[    0.000000]  r4:c08f9d00
+[    0.000000] [<c016b76c>] (trace_hardirqs_on_caller) from
+[<c016b970>] (trace_hardirqs_on+0x14/0x18)
+[    0.000000]  r6:00000001 r5:ef7c14c0 r4:ef7c14c0 r3:600000d3
+[    0.000000] [<c016b95c>] (trace_hardirqs_on) from [<c08f9d00>]
+(_raw_spin_unlock_irq+0x2c/0x34)
+[    0.000000] [<c08f9cd4>] (_raw_spin_unlock_irq) from [<c015437c>]
+(dequeue_task_idle+0x14/0x30)
+[    0.000000]  r4:ef7c14c0 r3:c0154368
+[    0.000000] [<c0154368>] (dequeue_task_idle) from [<c014c96c>]
+(deactivate_task+0x64/0x68)
+[    0.000000]  r4:c0d06500 r3:c0154368
+[    0.000000] [<c014c908>] (deactivate_task) from [<c08f4b44>]
+(__schedule+0x2e8/0x738)
+[    0.000000]  r6:c0d06500 r5:ef7c14c0 r4:c0c754c0 r3:00000002
+[    0.000000] [<c08f485c>] (__schedule) from [<c08f4fdc>] (schedule+0x48/0xa0)
+[    0.000000]  r10:00000018 r9:0000001c r8:00000003 r7:00000000
+r6:0007a120 r5:00000000
+[    0.000000]  r4:c0d00000
+[    0.000000] [<c08f4f94>] (schedule) from [<c08f9750>]
+(schedule_hrtimeout_range_clock+0xac/0x12c)
+[    0.000000]  r4:0006ddd0 r3:c0d06500
+[    0.000000] [<c08f96a4>] (schedule_hrtimeout_range_clock) from
+[<c08f97f4>] (schedule_hrtimeout_range+0x24/0x2c)
+[    0.000000]  r7:00000001 r6:c0d02100 r5:ffff8ad1 r4:ef004f80
+[    0.000000] [<c08f97d0>] (schedule_hrtimeout_range) from
+[<c08f922c>] (usleep_range+0x54/0x5c)
+[    0.000000] [<c08f91d8>] (usleep_range) from [<c0698148>]
+(clk_pllv3_wait_lock+0x7c/0xb4)
+[    0.000000] [<c06980cc>] (clk_pllv3_wait_lock) from [<c06981b0>]
+(clk_pllv3_prepare+0x30/0x34)
+[    0.000000]  r6:ef007080 r5:ef00ef00 r4:ef007600 r3:000017c0
+[    0.000000] [<c0698180>] (clk_pllv3_prepare) from [<c069203c>]
+(clk_core_prepare+0x98/0xc4)
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef007900
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00e800
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00eb80
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00ef00
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c0692be8>]
+(clk_core_prepare_enable+0x1c/0x5c)
+[    0.000000]  r5:ef00ef00 r4:ef011f80
+[    0.000000] [<c0692bcc>] (clk_core_prepare_enable) from
+[<c0692eb4>] (__clk_set_parent_before+0x38/0x7c)
+[    0.000000]  r5:ef00ef00 r4:ef011f80
+[    0.000000] [<c0692e7c>] (__clk_set_parent_before) from
+[<c0693004>] (clk_core_set_parent+0x10c/0x170)
+[    0.000000]  r7:00000001 r6:ef00ef00 r5:00000000 r4:ef011f80
+[    0.000000] [<c0692ef8>] (clk_core_set_parent) from [<c069308c>]
+(clk_set_parent+0x24/0x28)
+[    0.000000]  r8:00000003 r7:c0d5d434 r6:00000000 r5:ef02b440
+r4:00000009 r3:c15603bc
+[    0.000000] [<c0693068>] (clk_set_parent) from [<c0c4ade8>]
+(imx7d_clocks_init+0x5f4c/0x5f8c)
+[    0.000000] [<c0c44e9c>] (imx7d_clocks_init) from [<c0c30e00>]
+(of_clk_init+0x10c/0x1d4)
+[    0.000000]  r10:00000001 r9:c0d01f68 r8:00000000 r7:c0d01f60
+r6:ef7e3d60 r5:ef004340
+[    0.000000]  r4:00000002
+[    0.000000] [<c0c30cf4>] (of_clk_init) from [<c0c048d4>]
+(time_init+0x2c/0x38)
+[    0.000000]  r10:efffcac0 r9:c0c5da48 r8:c0d76000 r7:c0d028c0
+r6:ffffffff r5:c0d76000
+[    0.000000]  r4:00000000
+[    0.000000] [<c0c048a8>] (time_init) from [<c0c00b7c>]
+(start_kernel+0x218/0x398)
+[    0.000000] [<c0c00964>] (start_kernel) from [<8000807c>] (0x8000807c)
+[    0.000000]  r10:00000000 r9:410fc075 r8:8000406a r7:c0d07e8c
+r6:c0c5da44 r5:c0d0296c
+[    0.000000]  r4:c0d76294
+[    0.000000] ---[ end trace cb88537fdc8fa201 ]---
+[    0.000000] bad: scheduling from the idle thread!
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
+4.6.0-rc1-00011-gee55b3d17805-dirty #779
+[    0.000000] Hardware name: Freescale i.MX7 Dual (Device Tree)
+[    0.000000] Backtrace:
+[    0.000000] [<c010c42c>] (dump_backtrace) from [<c010c624>]
+(show_stack+0x18/0x1c)
+[    0.000000]  r6:60000053 r5:00000000 r4:c0d21f9c r3:00000000
+[    0.000000] [<c010c60c>] (show_stack) from [<c03dfec8>]
+(dump_stack+0xb4/0xe8)
+[    0.000000] [<c03dfe14>] (dump_stack) from [<c0154388>]
+(dequeue_task_idle+0x20/0x30)
+[    0.000000]  r10:c08f4fdc r9:c0d02b0c r8:c0d06844 r7:ef7c14d0
+r6:00000001 r5:ef7c14c0
+[    0.000000]  r4:ef7c14c0 r3:00000000
+[    0.000000] [<c0154368>] (dequeue_task_idle) from [<c014c96c>]
+(deactivate_task+0x64/0x68)
+[    0.000000]  r4:c0d06500 r3:c0154368
+[    0.000000] [<c014c908>] (deactivate_task) from [<c08f4b44>]
+(__schedule+0x2e8/0x738)
+[    0.000000]  r6:c0d06500 r5:ef7c14c0 r4:c0c754c0 r3:00000002
+[    0.000000] [<c08f485c>] (__schedule) from [<c08f4fdc>] (schedule+0x48/0xa0)
+[    0.000000]  r10:00000018 r9:0000001c r8:00000003 r7:00000000
+r6:0007a120 r5:00000000
+[    0.000000]  r4:c0d00000
+[    0.000000] [<c08f4f94>] (schedule) from [<c08f9750>]
+(schedule_hrtimeout_range_clock+0xac/0x12c)
+[    0.000000]  r4:0006ddd0 r3:c0d06500
+[    0.000000] [<c08f96a4>] (schedule_hrtimeout_range_clock) from
+[<c08f97f4>] (schedule_hrtimeout_range+0x24/0x2c)
+[    0.000000]  r7:00000001 r6:c0d02100 r5:ffff8ad1 r4:ef004f80
+[    0.000000] [<c08f97d0>] (schedule_hrtimeout_range) from
+[<c08f922c>] (usleep_range+0x54/0x5c)
+[    0.000000] [<c08f91d8>] (usleep_range) from [<c0698148>]
+(clk_pllv3_wait_lock+0x7c/0xb4)
+[    0.000000] [<c06980cc>] (clk_pllv3_wait_lock) from [<c06981b0>]
+(clk_pllv3_prepare+0x30/0x34)
+[    0.000000]  r6:ef007080 r5:ef00ef00 r4:ef007600 r3:000017c0
+[    0.000000] [<c0698180>] (clk_pllv3_prepare) from [<c069203c>]
+(clk_core_prepare+0x98/0xc4)
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef007900
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00e800
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00eb80
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c069201c>]
+(clk_core_prepare+0x78/0xc4)
+[    0.000000]  r5:ef00ef00 r4:ef00ef00
+[    0.000000] [<c0691fa4>] (clk_core_prepare) from [<c0692be8>]
+(clk_core_prepare_enable+0x1c/0x5c)
+[    0.000000]  r5:ef00ef00 r4:ef011f80
+[    0.000000] [<c0692bcc>] (clk_core_prepare_enable) from
+[<c0692eb4>] (__clk_set_parent_before+0x38/0x7c)
+[    0.000000]  r5:ef00ef00 r4:ef011f80
+[    0.000000] [<c0692e7c>] (__clk_set_parent_before) from
+[<c0693004>] (clk_core_set_parent+0x10c/0x170)
+[    0.000000]  r7:00000001 r6:ef00ef00 r5:00000000 r4:ef011f80
+[    0.000000] [<c0692ef8>] (clk_core_set_parent) from [<c069308c>]
+(clk_set_parent+0x24/0x28)
+[    0.000000]  r8:00000003 r7:c0d5d434 r6:00000000 r5:ef02b440
+r4:00000009 r3:c15603bc
+[    0.000000] [<c0693068>] (clk_set_parent) from [<c0c4ade8>]
+(imx7d_clocks_init+0x5f4c/0x5f8c)
+[    0.000000] [<c0c44e9c>] (imx7d_clocks_init) from [<c0c30e00>]
+(of_clk_init+0x10c/0x1d4)
+[    0.000000]  r10:00000001 r9:c0d01f68 r8:00000000 r7:c0d01f60
+r6:ef7e3d60 r5:ef004340
+[    0.000000]  r4:00000002
+[    0.000000] [<c0c30cf4>] (of_clk_init) from [<c0c048d4>]
+(time_init+0x2c/0x38)
+[    0.000000]  r10:efffcac0 r9:c0c5da48 r8:c0d76000 r7:c0d028c0
+r6:ffffffff r5:c0d76000
+[    0.000000]  r4:00000000
+[    0.000000] [<c0c048a8>] (time_init) from [<c0c00b7c>]
+(start_kernel+0x218/0x398)
+[    0.000000] [<c0c00964>] (start_kernel) from [<8000807c>] (0x8000807c)
+[    0.000000]  r10:00000000 r9:410fc075 r8:8000406a r7:c0d07e8c
+r6:c0c5da44 r5:c0d0296c
+[    0.000000]  r4:c0d76294
+[    0.000000] Architected cp15 timer(s) running at 8.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
+max_cycles: 0x1d854df40, max_idle_ns: 440795202120 ns
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179
+sched_clock_register+0x44/0x21c
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
+4.6.0-rc1-00011-gee55b3d17805-dirty #779
+[    0.000000] Hardware name: Freescale i.MX7 Dual (Device Tree)
+[    0.000000] Backtrace:
+[    0.000000] [<c010c42c>] (dump_backtrace) from [<c010c624>]
+(show_stack+0x18/0x1c)
+[    0.000000]  r6:60000053 r5:00000000 r4:c0d21f9c r3:00000000
+[    0.000000] [<c010c60c>] (show_stack) from [<c03dfec8>]
+(dump_stack+0xb4/0xe8)
+[    0.000000] [<c03dfe14>] (dump_stack) from [<c0124ce8>] (__warn+0xd8/0x104)
+[    0.000000]  r10:c0b55504 r9:c0c13a04 r8:000000b3 r7:00000009
+r6:c0adb860 r5:00000000
+[    0.000000]  r4:00000000 r3:00000000
+[    0.000000] [<c0124c10>] (__warn) from [<c0124dc8>]
+(warn_slowpath_null+0x28/0x30)
+[    0.000000]  r9:6fbdeeb3 r8:07c96afc r7:c067a55c r6:00000038
+r5:007a1200 r4:c0d164c0
+[    0.000000] [<c0124da0>] (warn_slowpath_null) from [<c0c13a04>]
+(sched_clock_register+0x44/0x21c)
+[    0.000000] [<c0c139c0>] (sched_clock_register) from [<c0c2e148>]
+(arch_timer_common_init+0x1c8/0x22c)
+[    0.000000]  r9:6fbdeeb3 r8:07c96afc r7:c155ec88 r6:c0ae143c
+r5:c0b5551c r4:c0d5bf00
+[    0.000000] [<c0c2df80>] (arch_timer_common_init) from [<c0c2e438>]
+(arch_timer_of_init+0x28c/0x2d8)
+[    0.000000]  r10:efffcac0 r9:c0c5da48 r8:c0d76000 r7:c0d5bf00
+r6:00000000 r5:c155ec88
+[    0.000000]  r4:00000012
+[    0.000000] [<c0c2e1ac>] (arch_timer_of_init) from [<c0c2de38>]
+(clocksource_probe+0x50/0x90)
+[    0.000000]  r8:c0d76000 r7:c0d028c0 r6:ffffffff r5:00000001
+r4:ef7dae9c r3:c0c2e1ac
+[    0.000000] [<c0c2dde8>] (clocksource_probe) from [<c0c048d8>]
+(time_init+0x30/0x38)
+[    0.000000]  r5:c0d76000 r4:00000000
+[    0.000000] [<c0c048a8>] (time_init) from [<c0c00b7c>]
+(start_kernel+0x218/0x398)
+[    0.000000] [<c0c00964>] (start_kernel) from [<8000807c>] (0x8000807c)
+[    0.000000]  r10:00000000 r9:410fc075 r8:8000406a r7:c0d07e8c
+r6:c0c5da44 r5:c0d0296c
+[    0.000000]  r4:c0d76294
+[    0.000000] ---[ end trace cb88537fdc8fa202 ]---
+[    0.000007] sched_clock: 56 bits at 8MHz, resolution 125ns, wraps
+every 2199023255500ns
+[    0.000022] Switching to timer-based delay loop, resolution 125ns
+[    0.000575] Switching to timer-based delay loop, resolution 41ns
+[    0.000587] ------------[ cut here ]------------
+[    0.000604] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179
+sched_clock_register+0x44/0x21c
+[    0.000613] Modules linked in:
+[    0.000629] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
+4.6.0-rc1-00011-gee55b3d17805-dirty #779
+[    0.000638] Hardware name: Freescale i.MX7 Dual (Device Tree)
+[    0.000646] Backtrace:
+[    0.000667] [<c010c42c>] (dump_backtrace) from [<c010c624>]
+(show_stack+0x18/0x1c)
+[    0.000676]  r6:60000053 r5:00000000 r4:c0d21f9c r3:00000000
+[    0.000712] [<c010c60c>] (show_stack) from [<c03dfec8>]
+(dump_stack+0xb4/0xe8)
+[    0.000730] [<c03dfe14>] (dump_stack) from [<c0124ce8>] (__warn+0xd8/0x104)
+[    0.000739]  r10:efffcac0 r9:c0c13a04 r8:000000b3 r7:00000009
+r6:c0adb860 r5:00000000
+[    0.000772]  r4:00000000 r3:00000000
+[    0.000795] [<c0124c10>] (__warn) from [<c0124dc8>]
+(warn_slowpath_null+0x28/0x30)
+[    0.000805]  r9:c0c5da48 r8:00000003 r7:c067b098 r6:00000020
+r5:016e3600 r4:c0d164c0
+[    0.000846] [<c0124da0>] (warn_slowpath_null) from [<c0c13a04>]
+(sched_clock_register+0x44/0x21c)
+[    0.000866] [<c0c139c0>] (sched_clock_register) from [<c0c2eb5c>]
+(_mxc_timer_init+0x144/0x240)
+[    0.000875]  r9:c0c5da48 r8:00000003 r7:016e3600 r6:c155ece8
+r5:f0880024 r4:ef002400
+[    0.000919] [<c0c2ea18>] (_mxc_timer_init) from [<c0c2ed14>]
+(mxc_timer_init_dt+0xbc/0xe8)
+[    0.000928]  r7:00000000 r6:ef7e084c r5:ef002400 r4:c155ece8
+[    0.000965] [<c0c2ec58>] (mxc_timer_init_dt) from [<c0c2ed84>]
+(imx6dl_timer_init_dt+0x14/0x18)
+[    0.000975]  r8:c0d76000 r7:c0d028c0 r6:ffffffff r5:00000002
+r4:ef7e084c r3:c0c2ed70
+[    0.001018] [<c0c2ed70>] (imx6dl_timer_init_dt) from [<c0c2de38>]
+(clocksource_probe+0x50/0x90)
+[    0.001035] [<c0c2dde8>] (clocksource_probe) from [<c0c048d8>]
+(time_init+0x30/0x38)
+[    0.001045]  r5:c0d76000 r4:00000000
+[    0.001069] [<c0c048a8>] (time_init) from [<c0c00b7c>]
+(start_kernel+0x218/0x398)
+[    0.001083] [<c0c00964>] (start_kernel) from [<8000807c>] (0x8000807c)
+[    0.001092]  r10:00000000 r9:410fc075 r8:8000406a r7:c0d07e8c
+r6:c0c5da44 r5:c0d0296c
+[    0.001125]  r4:c0d76294
+[    0.001137] ---[ end trace cb88537fdc8fa203 ]---
+[    0.001156] sched_clock: 32 bits at 24MHz, resolution 41ns, wraps
+every 89478484971ns
+[    0.001174] clocksource: mxc_timer1: mask: 0xffffffff max_cycles:
+0xffffffff, max_idle_ns: 79635851949 ns
+[    0.002055] ------------[ cut here ]------------
+[    0.002073] WARNING: CPU: 0 PID: 0 at init/main.c:575
+start_kernel+0x240/0x398
+[    0.002082] Interrupts were enabled early
+[    0.002090] Modules linked in:
+[    0.002106] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
+4.6.0-rc1-00011-gee55b3d17805-dirty #779
+[    0.002116] Hardware name: Freescale i.MX7 Dual (Device Tree)
+[    0.002124] Backtrace:
+[    0.002145] [<c010c42c>] (dump_backtrace) from [<c010c624>]
+(show_stack+0x18/0x1c)
+[    0.002155]  r6:60000053 r5:00000000 r4:c0d21f9c r3:00000000
+[    0.002191] [<c010c60c>] (show_stack) from [<c03dfec8>]
+(dump_stack+0xb4/0xe8)
+[    0.002209] [<c03dfe14>] (dump_stack) from [<c0124ce8>] (__warn+0xd8/0x104)
+[    0.002219]  r10:efffcac0 r9:c0c00ba4 r8:0000023f r7:00000009
+r6:c0acc620 r5:00000000
+[    0.002252]  r4:c0d01f88 r3:00000000
+[    0.002276] [<c0124c10>] (__warn) from [<c0124d54>]
+(warn_slowpath_fmt+0x40/0x48)
+[    0.002285]  r9:c0c5da48 r8:c0d76000 r7:c0d028c0 r6:ffffffff
+r5:c0d76000 r4:c0acc660
+[    0.002326] [<c0124d18>] (warn_slowpath_fmt) from [<c0c00ba4>]
+(start_kernel+0x240/0x398)
+[    0.002335]  r3:60000053 r2:c0acc660
+[    0.002352]  r4:00000000
+[    0.002368] [<c0c00964>] (start_kernel) from [<8000807c>] (0x8000807c)
+[    0.002378]  r10:00000000 r9:410fc075 r8:8000406a r7:c0d07e8c
+r6:c0c5da44 r5:c0d0296c
+[    0.002411]  r4:c0d76294
+[    0.002423] ---[ end trace cb88537fdc8fa204 ]---
+[    0.002536] Console: colour dummy device 80x30
+[    0.002550] Lock dependency validator: Copyright (c) 2006 Red Hat,
+Inc., Ingo Molnar
+[    0.002559] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.002568] ... MAX_LOCK_DEPTH:          48
+[    0.002576] ... MAX_LOCKDEP_KEYS:        8191
+[    0.002585] ... CLASSHASH_SIZE:          4096
+[    0.002594] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.002602] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.002611] ... CHAINHASH_SIZE:          32768
+[    0.002620]  memory used by lock dependency info: 5167 kB
+[    0.002629]  per task-struct memory footprint: 1536 bytes
+[    0.002652] Calibrating delay loop (skipped), value calculated
+using timer frequency.. 48.00 BogoMIPS (lpj=240000)
+[    0.002669] pid_max: default: 32768 minimum: 301
+[    0.002826] Mount-cache hash table entries: 2048 (order: 1, 8192 bytes)
+[    0.002842] Mountpoint-cache hash table entries: 2048 (order: 1, 8192 bytes)
+.....................
+
+Regards
+Dong Aisheng
