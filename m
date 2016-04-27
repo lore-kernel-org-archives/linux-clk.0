@@ -1,32 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 15:41:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock fixes for 4.6
-Message-ID: <20160415224139.GV14441@codeaurora.org>
-References: <20160413073249.GN28903@tiger>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160413073249.GN28903@tiger>
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 27 Apr 2016 00:28:10 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+ Lucas Stach <l.stach@pengutronix.de>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, kernel@pengutronix.de,
+ Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+In-Reply-To: <CAOMZO5BeAxPLerGMkaadkEZusW8wHkO5P6SiZeHOCKWstHUTSA@mail.gmail.com>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=SNp7bQZSUp5R5v9BfXMffS-4-msv12G5UAQJTxUMKW=A@mail.gmail.com>
+ <CAOMZO5BeAxPLerGMkaadkEZusW8wHkO5P6SiZeHOCKWstHUTSA@mail.gmail.com>
+Message-ID: <1f10ab4830032858bc4d6174528f18e8@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/13, Shawn Guo wrote:
-> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+On 2016-04-26 19:56, Fabio Estevam wrote:
+> On Tue, Apr 26, 2016 at 11:45 PM, Dong Aisheng <dongas86@gmail.com> wrote:
 > 
->   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+>>> We need to firstly understand why this is happening.  The .prepare hook
+>>> is defined to be non-atomic context, and so that we call sleep function
+>>> in there.  We did everything right.  Why are we getting the warning?  If
+>>> I'm correct, this warning only happens on i.MX7D.  Why is that?
+>>>
+>>
+>> This is mainly caused by during kernel early booting, there's only one init idle
+>> task running.
+>> See:
+>> void __init sched_init(void)
+>> {
+>> .....
+>>         /*
+>>          * Make us the idle thread. Technically, schedule() should not be
+>>          * called from this thread, however somewhere below it might be,
+>>          * but because we are the idle thread, we just pick up running again
+>>          * when this runqueue becomes "idle".
+>>          */
+>>         init_idle(current, smp_processor_id());
+>> ...
+>> }
+>>
+>> And the idle sched class indicates it's not valid to schedule for idle task.
+>> const struct sched_class idle_sched_class = {
+>>         /* .next is NULL */
+>>         /* no enqueue/yield_task for idle tasks */
+>>
+>>         /* dequeue is not valid, we print a debug message there: */
+>>         .dequeue_task           = dequeue_task_idle,
+>> ...........
+>>
+>> }
+>>
+>> /*
+>>  * It is not legal to sleep in the idle task - print a warning
+>>  * message if some code attempts to do it:
+>>  */
+>> static void
+>> dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+>> {
+>>         raw_spin_unlock_irq(&rq->lock);
+>>         printk(KERN_ERR "bad: scheduling from the idle thread!\n");
+>>         dump_stack();
+>>         raw_spin_lock_irq(&rq->lock);
+>> }
+>>
+>>
+>> Below is the full log of imx7d booting FYI.
 > 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6
-> 
-> for you to fetch changes up to 7196c52c9377df0175b510ff5896bda524f7345e:
-> 
->   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
+> This does not answer Shawn's question: why do we see this only on mx7d?
 
-Thanks pulled into clk-fixes.
+I was wondering that too.... My theory is that either on i.MX 6 the
+clocks enable almost instantly leading to no sleep, or they are just
+bootloader/firmware on...?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--
+Stefan
