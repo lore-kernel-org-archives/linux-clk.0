@@ -1,85 +1,35 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 13 Apr 2016 17:33:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Greg Ungerer <gerg@uclinux.org>, Ryan Mallon <rmallon@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Steven Miao <realmz6@gmail.com>, Simon Horman <horms@verge.net.au>,
-	Wan ZongShun <mcuos.com@gmail.com>, Rich Felker <dalias@libc.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	adi-buildroot-devel@lists.sourceforge.net,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-m68k@lists.linux-m68k.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
- NULL or error
-Message-ID: <20160414003341.GH14441@codeaurora.org>
-References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
- <20160408003328.GA14441@codeaurora.org>
- <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
+Return-Path: <w.egorov@phytec.de>
+Subject: Re: Applied "regulator: rk808: remove linear range definitions with a
+ single range" to the regulator tree
+To: Mark Brown <broonie@kernel.org>
+References: <E1aukkg-0007km-6s@debutante> <2754883.PYP7KbpM33@diego>
+ <57205DC2.7070506@phytec.de> <20160427135048.GQ3217@sirena.org.uk>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, linux-rockchip@lists.infradead.org, mark.rutland@arm.com, devicetree@vger.kernel.org, a.zummo@towertech.it, pawel.moll@arm.com, rtc-linux@googlegroups.com, ijc+devicetree@hellion.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, alexandre.belloni@free-electrons.com, dianders@chromium.org, galak@codeaurora.org, zyw@rock-chips.com, lee.jones@linaro.org, linux-clk@vger.kernel.org
+From: Wadim Egorov <w.egorov@phytec.de>
+Message-ID: <5720C750.3050104@phytec.de>
+Date: Wed, 27 Apr 2016 16:06:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
+In-Reply-To: <20160427135048.GQ3217@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/08, Masahiro Yamada wrote:
-> 
-> 
-> This makes our driver programming life easier.
-> 
-> 
-> For example, let's see drivers/tty/serial/8250/8250_of.c
-> 
-> 
-> The "clock-frequency" DT property takes precedence over "clocks" property.
-> So, it is valid to probe the driver with a NULL pointer for info->clk.
-> 
-> 
->         if (of_property_read_u32(np, "clock-frequency", &clk)) {
-> 
->                 /* Get clk rate through clk driver if present */
->                 info->clk = devm_clk_get(&ofdev->dev, NULL);
->                 if (IS_ERR(info->clk)) {
->                         dev_warn(&ofdev->dev,
->                                 "clk or clock-frequency not defined\n");
->                         return PTR_ERR(info->clk);
->                 }
-> 
->                 ret = clk_prepare_enable(info->clk);
->                 if (ret < 0)
->                         return ret;
-> 
->                 clk = clk_get_rate(info->clk);
->         }
-> 
-> 
-> As a result, we need to make sure the clk pointer is valid
-> before calling clk_disable_unprepare().
-> 
-> 
-> If we could support pointer checking in callees, we would be able to
-> clean-up lots of clock consumers.
-> 
-> 
 
-I'm not sure if you meant to use that example for the error
-pointer case? It bails out if clk_get() returns an error pointer.
 
-I'm all for a no-op in clk_disable()/unprepare() when the pointer
-is NULL. But when it's an error pointer the driver should be
-handling it and bail out before it would ever call enable/prepare
-on it or disable/unprepare.
+On 27.04.2016 15:50, Mark Brown wrote:
+> On Wed, Apr 27, 2016 at 08:35:46AM +0200, Wadim Egorov wrote:
+>> On 26.04.2016 21:33, Heiko St=FCbner wrote:
+>>> with this patch applied, 4.6.0-rc5-next-20160426 fails to boot on=20
+>>> rk3288-veyron devices with the bug below. Reverting this one patch
+>>> results in the system booting again:
+>> This is because I missed to add the correct ops for LDO=5FREG3 in this p=
+atch.
+> Any ETA on a fix or should I revert?
+this patch
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+http://lists.infradead.org/pipermail/linux-rockchip/2016-April/008674.html
+
+will fix the issue.
+
+The regulator patches from v4 are based on top of
+commit 4a5ed8c1adc3 ("regulator: rk808: remove unused rk808=5Freg=5Fops=5Fr=
+anges")
