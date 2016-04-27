@@ -1,52 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:52320 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752526AbcDZISI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 26 Apr 2016 04:18:08 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Subject: Re: [PATCH v3 4/8] regulator: rk808: Migrate to regulator core's simplified DT parsing code
-Date: Tue, 26 Apr 2016 10:17:59 +0200
-Message-ID: <2669414.IKg01zC8vG@diego>
-In-Reply-To: <571F1CB4.10200@phytec.de>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de> <20160425173911.GQ3217@sirena.org.uk> <571F1CB4.10200@phytec.de>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 27 Apr 2016 00:26:49 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Dong Aisheng <dongas86@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, mingo@redhat.com,
+ kernel@pengutronix.de, tglx@linutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+In-Reply-To: <20160427072454.GJ30692@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+ <20160427072454.GJ30692@tiger>
+Message-ID: <9caa5658ccaf6ad43b3a2f07606f944e@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 26. April 2016, 09:45:56 schrieb Wadim Egorov:
-> On 25.04.2016 19:39, Mark Brown wrote:
-> > On Mon, Apr 25, 2016 at 03:20:44PM +0200, Wadim Egorov wrote:
-> >> A common simplified DT parsing code for regulators was introduced in
-> >> commit a0c7b164ad11 ("regulator: of: Provide simplified DT parsing
-> >> method")
-> > 
-> > This doesn't apply against current code, please check and resend.
+On 2016-04-27 00:24, Shawn Guo wrote:
+> On Wed, Apr 27, 2016 at 10:57:21AM +0800, Dong Aisheng wrote:
+>> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+>> > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+>> >> Shawn,
+>> >> What's your suggestion?
+>> >
+>> > I think this needs more discussion, and I just dropped Stefan's patch
+>> > from my tree.
+>> >
+>> > We need to firstly understand why this is happening.  The .prepare hook
+>> > is defined to be non-atomic context, and so that we call sleep function
+>> > in there.  We did everything right.  Why are we getting the warning?  If
+>> > I'm correct, this warning only happens on i.MX7D.  Why is that?
+>> >
+>>
+>> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+>> time init, the irq is still not enabled. It fixes the issue indirectly.
+>> See:
+>> asmlinkage __visible void __init start_kernel(void)
+>> {
+>>         /*
+>>          * Set up the scheduler prior starting any interrupts (such as the
+>>          * timer interrupt). Full topology setup happens at smp_init()
+>>          * time - but meanwhile we still have a functioning scheduler.
+>>          */
+>>         sched_init();
+>>         .............
+>>         time_init();
+>>         ..............
+>>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>>         early_boot_irqs_disabled = false;
+>>         local_irq_enable();
+>> }
+>>
+>> The issue can only happen when PLL enable causes a schedule during
+>> imx_clock_init().
+>> Not all PLL has this issue.
+>> The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
+>> which requires more delay time and cause usleep.
+>> Because clk framework does not support MX7D clock types (operation requires
+>> parents on), we simply enable all clocks in imx7d_clocks_init().
+>>
+>> If apply my this patch series:
+>> https://lkml.org/lkml/2016/4/20/199
+>> The issue can also be gone.
 > 
-> Hm, for me all patches apply to the current code.
-> This patch depends on the first rename patch. Maybe this is the problem?
+> Thanks for the info.  It sounds like that we are fixing the problem in
+> the wrong place, i.e. clk_pllv3_prepare().  The function does nothing
+> wrong, since the .prepare hook is defined to be one that can sleep.  If
+> we see sleep warning in a context calling clk_prepare(), that probably
+> means we shouldn't make the function call from that context.
+> 
 
-which is the reason why renaming stuff makes everything just more complicated 
-without providing additional value ;-) 
+According to the stack trace in the answer to Stephens question the call
+comes from imx7d_clocks_init. I doubt we can avoid that those clocks get
+enabled there...
 
-The first patch would go through the mfd-tree (if accepted by Lee and Acked by 
-the other involved subsystem maintainers) which would then need a stable 
-branch merged into the regulator tree - or after the first patch goes in you 
-simply wait for a kernel release.
-
-Normally I would expect the reasonable kernel developer to be able to simply 
-read code, kconfig, docs stating the drivers being for rk808 and rk818 without 
-getting "confused" by some structs mentioning the rk808.
-
-
-Heiko
+--
+Stefan
