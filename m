@@ -1,88 +1,90 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v2 5/7] mfd: dt-bindings: Add RK818 device tree bindings document
-Date: Thu, 21 Apr 2016 15:12:39 +0200
-Message-Id: <1461244361-45686-6-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
-References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Martin Sperl <kernel@martin.sperl.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2] clk: bcm2835: mark enabled pll_dividers as critical
+In-Reply-To: <BC74AA10-C36C-4643-B979-0617D222D605@martin.sperl.org>
+References: <1461660989-11846-1-git-send-email-kernel@martin.sperl.org> <8737q8dv5f.fsf@eliezer.anholt.net> <BC74AA10-C36C-4643-B979-0617D222D605@martin.sperl.org>
+Date: Tue, 26 Apr 2016 18:30:25 -0700
+Message-ID: <87bn4v6dou.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings documentation for Rockchip's RK818 PMIC.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
----
- Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 3 deletions(-)
+Martin Sperl <kernel@martin.sperl.org> writes:
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 4ca6aab..9636ae8 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -1,7 +1,11 @@
--RK808 Power Management Integrated Circuit
-+RK8XX Power Management Integrated Circuit
-+
-+The rk8xx family current members:
-+rk808
-+rk818
- 
- Required properties:
--- compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk808", "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
- - interrupts: the interrupt outputs of the controller.
-@@ -13,6 +17,8 @@ Optional properties:
-   default output clock name
- - rockchip,system-power-controller: Telling whether or not this pmic is controlling
-   the system power.
-+
-+Optional RK808 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
- - vcc3-supply:  The input supply for DCDC_REG3
-@@ -29,7 +35,20 @@ Optional properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
--Regulators: All the regulators of RK808 to be instantiated shall be
-+Optional RK818 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- boost-supply: The input supply for DCDC_BOOST
-+- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
-+- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
-+- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
-+- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
-+- h_5v-supply:  The input supply for HDMI_SWITCH
-+- usb-supply:   The input supply for OTG_SWITCH
-+
-+Regulators: All the regulators of RK8XX to be instantiated shall be
- listed in a child node named 'regulators'. Each regulator is represented
- by a child node of the 'regulators' node.
- 
-@@ -48,6 +67,18 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK818 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK818 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 4.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- SWITCH_REG
-+	- HDMI_SWITCH
-+	- OTG_SWITCH
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
--- 
-1.9.1
+> Sent from my iPad
+>> On 26.04.2016, at 21:31, Eric Anholt <eric@anholt.net> wrote:
+>>=20
+>> kernel@martin.sperl.org writes:
+>>=20
+>>> From: Martin Sperl <kernel@martin.sperl.org>
+>>>=20
+>>> The bcm2835 firmware enables several clocks and plls before
+>>> booting the linux kernel.
+>>>=20
+>>> These plls should never get disabled as it may result in a
+>>> stopped system clock and more.
+>>>=20
+>>> So during probing we check if the pll_divider is enabled
+>>> and if it is then mark that pll_divider as critical.
+>>> As a consequence this will also enable the corresponding parent pll.
+>>>=20
+>>> Here the list of pll_div that are marked as critical:
+>>> [    2.022437] bcm2835-clk 20101000.cprman: found enabled pll_div plla_=
+core - marking it as critical
+>>> [    2.031640] bcm2835-clk 20101000.cprman: found enabled pll_div pllb_=
+arm - marking it as critical
+>>> [    2.040966] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_=
+core0 - marking it as critical
+>>> [    2.050351] bcm2835-clk 20101000.cprman: found enabled pll_div pllc_=
+per - marking it as critical
+>>> [    2.059427] bcm2835-clk 20101000.cprman: found enabled pll_div plld_=
+core - marking it as critical
+>>> [    2.068590] bcm2835-clk 20101000.cprman: found enabled pll_div plld_=
+per - marking it as critical
+>>> [    2.077724] bcm2835-clk 20101000.cprman: found enabled pll_div pllh_=
+pix - marking it as critical
+>>=20
+>> Yeah, pllh_pix isn't critical, though.  We want it to get turned off
+>> when the driver asks to disable its clock, or we're going to just waste
+>> a pile of power.
+>>=20
+>> I'm sending out a patch that marks the VPU clock as critical (it's the
+>> also AXI bus, so it certainly is critical), which should solve your
+>> aux_uart clock disabling problem, I think.
+>
+> The problem is that it also fails on the pcm clock alone when pllc or=20
+> plld_per are used as parent, but it is fine when osc is used...=20
+
+For that you're going to want the HAND_OFF patches that mturquette is
+working on: Don't let the clock and its parents get turned off until a
+driver has shown up that has referenced the clock and done at least a
+prepare on it once.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXIBYxAAoJELXWKTbR/J7ochoP/2a9ZHs1KnYh5iipMjBlcElM
+7W+OnQXH3CpvlfibiMVw3QquzKNohaox8X7iOjI+krEuckfjGB4AXArHCrEflee3
+8YXaq1FWnemAyYJhMAF0A5jHGqcd9h7wj3mstePUI79qh0Pzs9cHl8/OmAbNJYvN
+U5PbaWWMJsD195u/WC0ncqY5zNHOHxsRVHKjMn9rJzY7k6O3QP8iolj7gruCJGpt
+Whhj2/+RHFznajShu7Sr59YOWpF0JCoOWa50A3ZveYwzzvYr++jquvyBI0NeTyb1
+H3eEFLb5qbPSzBnES/8Z7Koj1okeq5iH3XQrjwO82hQEEjvdz/bcmcXfChnS27mH
+SCwCYrGmEJaoXK1Krw5CL3dVBNsjBMs9aPUZB7pO4yBoy/z8b07d5fAXuEdv7p6G
+8JmnRCuBwydgTpg/WxrkUSlmUCJAib/+VdxvHJu4eBdPZEDnvpnVdFtLwMrEJeBV
+UtKiXXAHvIup7ynx8oNCnvKQCV5DOQBAXSNhNB7/8yhkBWRs/4KqAzOmBr56Dsca
+zSRo2BqD5d/XJwv6zr3yiMq5nUgJP/BiwFCG3saxQEK0lAh/z54LjnyjvAr/1leC
+noiPCoSwwKgho7rCUObBNtqLz0I7mNHL74XZz02XXdKdaZ1t1sx6Ivjq0BER6hcG
+PuyzwCbvEQzeRVCF9uca
+=BmQS
+-----END PGP SIGNATURE-----
+--=-=-=--
