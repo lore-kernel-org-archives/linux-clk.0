@@ -1,74 +1,73 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com, robh+dt@kernel.org, tony@atomide.com,
- paul@pwsan.com, t-kristo@ti.com, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Subject: [PATCH v7 3/9] pwm: pwm-tiehrpwm: Update dt binding document to use
- generic node name
-Date: Tue, 26 Apr 2016 17:36:43 -0500
-Message-Id: <1461710209-6563-4-git-send-email-fcooper@ti.com>
-In-Reply-To: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20160427015835.GE30692@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+	<20160421034520.GA19965@shlinux2.ap.freescale.net>
+	<20160426012341.GB8870@tiger>
+	<CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+	<1461663072.7839.17.camel@pengutronix.de>
+	<CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+	<CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+	<20160427015835.GE30692@tiger>
+Date: Wed, 27 Apr 2016 10:57:21 +0800
+Message-ID: <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+From: Dong Aisheng <dongas86@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, tglx@linutronix.de, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that the node name has been changed from ehrpwm to pwm the document
-should show this proper usage. Also change the unit address in the example
-from 0 to the proper physical address value that should be used.
+On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+>> Shawn,
+>> What's your suggestion?
+>
+> I think this needs more discussion, and I just dropped Stefan's patch
+> from my tree.
+>
+> We need to firstly understand why this is happening.  The .prepare hook
+> is defined to be non-atomic context, and so that we call sleep function
+> in there.  We did everything right.  Why are we getting the warning?  If
+> I'm correct, this warning only happens on i.MX7D.  Why is that?
+>
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+time init, the irq is still not enabled. It fixes the issue indirectly.
+See:
+asmlinkage __visible void __init start_kernel(void)
+{
+        /*
+         * Set up the scheduler prior starting any interrupts (such as the
+         * timer interrupt). Full topology setup happens at smp_init()
+         * time - but meanwhile we still have a functioning scheduler.
+         */
+        sched_init();
+        .............
+        time_init();
+        ..............
+        WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+        early_boot_irqs_disabled = false;
+        local_irq_enable();
+}
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-index 99b544f..cbc538b 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-@@ -16,21 +16,21 @@ Optional properties:
- 
- Example:
- 
--ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
-+ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
- 	compatible = "ti,am33xx-ehrpwm";
- 	#pwm-cells = <3>;
- 	reg = <0x48300200 0x100>;
- 	ti,hwmods = "ehrpwm0";
- };
- 
--ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
-+ehrpwm0: pwm@48300200 { /* EHRPWM on am4372 */
- 	compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
- 	#pwm-cells = <3>;
- 	reg = <0x48300200 0x80>;
- 	ti,hwmods = "ehrpwm0";
- };
- 
--ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
-+ehrpwm0: pwm@1f00000 { /* EHRPWM on da850 */
- 	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
- 	#pwm-cells = <3>;
- 	reg = <0x300000 0x2000>;
--- 
-2.7.0
+The issue can only happen when PLL enable causes a schedule during
+imx_clock_init().
+Not all PLL has this issue.
+The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
+which requires more delay time and cause usleep.
+Because clk framework does not support MX7D clock types (operation requires
+parents on), we simply enable all clocks in imx7d_clocks_init().
 
+If apply my this patch series:
+https://lkml.org/lkml/2016/4/20/199
+The issue can also be gone.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards
+Dong Aisheng
+
+> Shawn
