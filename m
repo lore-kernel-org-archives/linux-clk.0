@@ -1,93 +1,81 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 22/28] dt-bindings: clk: ti: Document module clock type
-Date: Thu, 14 Apr 2016 14:08:11 +0300
-Message-ID: <1460632097-25727-23-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 27 Apr 2016 15:24:54 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, tglx@linutronix.de,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160427072454.GJ30692@tiger>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the new TI module clock type, which is intended to replace the
-internal clock control handling within omap_hwmod. Module clock is
-effectively a gate clock controlling both interface and functional
-clocks for a single hardware IP block.
+On Wed, Apr 27, 2016 at 10:57:21AM +0800, Dong Aisheng wrote:
+> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+> >> Shawn,
+> >> What's your suggestion?
+> >
+> > I think this needs more discussion, and I just dropped Stefan's patch
+> > from my tree.
+> >
+> > We need to firstly understand why this is happening.  The .prepare hook
+> > is defined to be non-atomic context, and so that we call sleep function
+> > in there.  We did everything right.  Why are we getting the warning?  If
+> > I'm correct, this warning only happens on i.MX7D.  Why is that?
+> >
+> 
+> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+> time init, the irq is still not enabled. It fixes the issue indirectly.
+> See:
+> asmlinkage __visible void __init start_kernel(void)
+> {
+>         /*
+>          * Set up the scheduler prior starting any interrupts (such as the
+>          * timer interrupt). Full topology setup happens at smp_init()
+>          * time - but meanwhile we still have a functioning scheduler.
+>          */
+>         sched_init();
+>         .............
+>         time_init();
+>         ..............
+>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>         early_boot_irqs_disabled = false;
+>         local_irq_enable();
+> }
+> 
+> The issue can only happen when PLL enable causes a schedule during
+> imx_clock_init().
+> Not all PLL has this issue.
+> The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
+> which requires more delay time and cause usleep.
+> Because clk framework does not support MX7D clock types (operation requires
+> parents on), we simply enable all clocks in imx7d_clocks_init().
+> 
+> If apply my this patch series:
+> https://lkml.org/lkml/2016/4/20/199
+> The issue can also be gone.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- .../devicetree/bindings/clock/ti/module.txt        |   59 ++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/module.txt
+Thanks for the info.  It sounds like that we are fixing the problem in
+the wrong place, i.e. clk_pllv3_prepare().  The function does nothing
+wrong, since the .prepare hook is defined to be one that can sleep.  If
+we see sleep warning in a context calling clk_prepare(), that probably
+means we shouldn't make the function call from that context.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/module.txt b/Documentation/devicetree/bindings/clock/ti/module.txt
-new file mode 100644
-index 0000000..0329667
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/module.txt
-@@ -0,0 +1,59 @@
-+Binding for Texas Instruments module clock.
-+
-+Binding status: Unstable - ABI compatibility may be broken in the future
-+
-+This binding uses the common clock binding[1]. This clock is
-+quite much similar to the basic gate-clock [2], however, internally
-+it controls an OMAP module clock, which effectively handles
-+both interface and functional clocks for a single module. In some
-+cases, support for mux clock [3] is composited to the same clock node,
-+currently only needed for proper support of timer module clocks.
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+[2] Documentation/devicetree/bindings/clock/ti/gate.txt
-+[3] Documentation/devicetree/bindings/clock/ti/mux.txt
-+
-+Required properties:
-+- compatible : shall be one of:
-+  "ti,omap4-mod-clock" - basic module clock, no gating supported
-+  "ti,omap4-hw-mod-clock" - module clock with hardware gating support
-+  "ti,omap4-sw-mod-clock" - module clock with software forced gating support
-+  "ti,omap4-sw-no-idlest-mod-clock" - module clock with software forced gating
-+				      support, misses idlest
-+  "ti,omap4-mux-mod-clock" - composite clock with mux and module clocks, no
-+			     gating supported
-+  "ti,omap4-hw-mux-mod-clock" - composite clock with mux and module clocks,
-+				with hardware gating
-+  "ti,omap4-sw-mux-mod-clock" - composite clock with mux and module clocks,
-+				with software forced gating
-+
-+- #clock-cells : from common clock binding; shall be set to 0
-+- clocks : link to phandle of parent clock(s)
-+- reg : offset for register controlling adjustable gate and optional mux
-+
-+Optional properties:
-+- ti,bit-shift : bit shift for programming the clock mux, only needed for
-+		 the nodes of the mux variant
-+
-+Examples:
-+	timer6_mod_ck: timer6_mod_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,omap4-sw-mux-mod-clock";
-+		reg = <0x0570>;
-+		clocks = <&syc_clk_div_ck>, <&sys_32k_ck>;
-+		ti,bit-shift = <24>;
-+	};
-+
-+	i2c1_mod_ck: i2c1_mod_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,omap4-sw-mod-clock";
-+		reg = <0x14a0>;
-+		clocks = <&func_96m_fclk>;
-+	};
-+
-+	hsi_mod_ck: hsi_mod_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,omap4-hw-mod-clock";
-+		reg = <0x1338>;
-+		clocks = <&hsi_fck>;
-+	};
--- 
-1.7.9.5
+Shawn
