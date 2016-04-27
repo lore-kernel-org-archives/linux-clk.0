@@ -1,28 +1,31 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Apr 2016 16:54:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>
-Subject: Re: [PATCH 14/41] clk: sirf: Remove CLK_IS_ROOT
-Message-ID: <20160415235417.GD12052@codeaurora.org>
-References: <1456858826-28541-1-git-send-email-sboyd@codeaurora.org>
- <1456858826-28541-15-git-send-email-sboyd@codeaurora.org>
+Return-Path: <w.egorov@phytec.de>
+Subject: Re: Applied "regulator: rk808: remove linear range definitions with a
+ single range" to the regulator tree
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Mark Brown <broonie@kernel.org>
+References: <E1aukkg-0007km-6s@debutante> <2754883.PYP7KbpM33@diego>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, a.zummo@towertech.it, pawel.moll@arm.com, rtc-linux@googlegroups.com, ijc+devicetree@hellion.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, alexandre.belloni@free-electrons.com, dianders@chromium.org, galak@codeaurora.org, zyw@rock-chips.com, lee.jones@linaro.org, linux-clk@vger.kernel.org
+From: Wadim Egorov <w.egorov@phytec.de>
+Message-ID: <57205DC2.7070506@phytec.de>
+Date: Wed, 27 Apr 2016 08:35:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456858826-28541-15-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <2754883.PYP7KbpM33@diego>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Stephen Boyd wrote:
-> This flag is a no-op now. Remove usage of the flag.
-> 
-> Cc: Guo Zeng <Guo.Zeng@csr.com>
-> Cc: Barry Song <Baohua.Song@csr.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 26.04.2016 21:33, Heiko St=FCbner wrote:
+> Am Montag, 25. April 2016, 18:56:54 schrieb Mark Brown:
+>> The patch
+>>
+>>    regulator: rk808: remove linear range definitions with a single range
+>>
+>> has been applied to the regulator tree at
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
+> with this patch applied, 4.6.0-rc5-next-20160426 fails to boot on=20
+> rk3288-veyron devices with the bug below. Reverting this one patch
+> results in the system booting again:
+>
+This is because I missed to add the correct ops for LDO=5FREG3 in this patc=
+h.
