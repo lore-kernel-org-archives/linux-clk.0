@@ -1,35 +1,64 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
-References: <1460558657-10128-1-git-send-email-geert+renesas@glider.be>
-Date: Mon, 18 Apr 2016 13:32:08 +0200
-Message-ID: <CAMuHMdU3G=33wEnyDQu8Z0D=-hz6MhRU9CyxZfJJGDzz3ke7NA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] clk: renesas: R-Car SYSC PM Domain Preparation
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+In-Reply-To: <1461654582-668-3-git-send-email-geert+renesas@glider.be>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+	<1461654582-668-3-git-send-email-geert+renesas@glider.be>
+Date: Wed, 27 Apr 2016 15:59:52 +0200
+Message-ID: <CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
+From: Ulf Hansson <ulf.hansson@linaro.org>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 13, 2016 at 4:44 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Geert Uytterhoeven (3):
+On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> As a pure Clock Domain does not have the concept of powering the domain
+> itself, the CPG/MSTP driver does not provide power_off() and power_on()
+> callbacks.
+> However, the genpd core may still perform a dummy power down, causing
+> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+> status being "off-0".
+>
+> Use the always-on governor to make sure the domain is never powered
+> down, and always shows up as "on" in pm_genpd_summary.
 
-In case his silly typo wasn't obvious: the subject should have been
-"[PATCH v2 0/3] clk: renesas: R-Car SYSC PM Domain Preparation".
-(i.e. "0/3" i.s.o. "0/4").
+Hmm.
 
-Gr{oetje,eeting}s,
+Hypothetically, what if the clock domain would be a subdomain, where
+its master is able to power down? Using the always on governor would
+prevent the master from power off as well.
 
-                        Geert
+I am wondering whether we should introduce some similar as
+pm_runtime_no_callbacks() but for the generic PM domain instead.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+What do you think?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/clk-mstp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+> index 969fbb61ab07b9b8..5093a250650dad6d 100644
+> --- a/drivers/clk/renesas/clk-mstp.c
+> +++ b/drivers/clk/renesas/clk-mstp.c
+> @@ -319,7 +319,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+>         pd->flags = GENPD_FLAG_PM_CLK;
+>         pd->attach_dev = cpg_mstp_attach_dev;
+>         pd->detach_dev = cpg_mstp_detach_dev;
+> -       pm_genpd_init(pd, &simple_qos_governor, false);
+> +       pm_genpd_init(pd, &pm_domain_always_on_gov, false);
+>
+>         of_genpd_add_provider_simple(np, pd);
+>  }
+> --
+> 1.9.1
+>
+
+Kind regards
+Uffe
