@@ -1,92 +1,81 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v3 6/8] mfd: dt-bindings: Add RK818 device tree bindings document
-Date: Mon, 25 Apr 2016 15:20:46 +0200
-Message-Id: <1461590448-47685-7-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
-References: <1461590448-47685-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 27 Apr 2016 00:34:07 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, mingo@redhat.com,
+ kernel@pengutronix.de, tglx@linutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+In-Reply-To: <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+Message-ID: <bc975a1c9b40ee72b05d6e540ae4f4d8@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings documentation for Rockchip's RK818 PMIC.
+On 2016-04-26 19:57, Dong Aisheng wrote:
+> On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+>> On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+>>> Shawn,
+>>> What's your suggestion?
+>>
+>> I think this needs more discussion, and I just dropped Stefan's patch
+>> from my tree.
+>>
+>> We need to firstly understand why this is happening.  The .prepare hook
+>> is defined to be non-atomic context, and so that we call sleep function
+>> in there.  We did everything right.  Why are we getting the warning?  If
+>> I'm correct, this warning only happens on i.MX7D.  Why is that?
+>>
+> 
+> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+> time init, the irq is still not enabled. It fixes the issue indirectly.
+> See:
+> asmlinkage __visible void __init start_kernel(void)
+> {
+>         /*
+>          * Set up the scheduler prior starting any interrupts (such as the
+>          * timer interrupt). Full topology setup happens at smp_init()
+>          * time - but meanwhile we still have a functioning scheduler.
+>          */
+>         sched_init();
+>         .............
+>         time_init();
+>         ..............
+>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>         early_boot_irqs_disabled = false;
+>         local_irq_enable();
+> }
+> 
+> The issue can only happen when PLL enable causes a schedule during
+> imx_clock_init().
+> Not all PLL has this issue.
+> The issue happens on MX7D pll_audio_main_clk/pll_video_main_clk
+> which requires more delay time and cause usleep.
+> Because clk framework does not support MX7D clock types (operation requires
+> parents on), we simply enable all clocks in imx7d_clocks_init().
+> 
+> If apply my this patch series:
+> https://lkml.org/lkml/2016/4/20/199
+> The issue can also be gone.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes since v2:
-- Added Acked-by
----
- Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 3 deletions(-)
+Oh ok, it does make sense to enable as few clocks as possible.
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 4ca6aab..9636ae8 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -1,7 +1,11 @@
--RK808 Power Management Integrated Circuit
-+RK8XX Power Management Integrated Circuit
-+
-+The rk8xx family current members:
-+rk808
-+rk818
- 
- Required properties:
--- compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk808", "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
- - interrupts: the interrupt outputs of the controller.
-@@ -13,6 +17,8 @@ Optional properties:
-   default output clock name
- - rockchip,system-power-controller: Telling whether or not this pmic is controlling
-   the system power.
-+
-+Optional RK808 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
- - vcc3-supply:  The input supply for DCDC_REG3
-@@ -29,7 +35,20 @@ Optional properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
--Regulators: All the regulators of RK808 to be instantiated shall be
-+Optional RK818 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- boost-supply: The input supply for DCDC_BOOST
-+- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
-+- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
-+- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
-+- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
-+- h_5v-supply:  The input supply for HDMI_SWITCH
-+- usb-supply:   The input supply for OTG_SWITCH
-+
-+Regulators: All the regulators of RK8XX to be instantiated shall be
- listed in a child node named 'regulators'. Each regulator is represented
- by a child node of the 'regulators' node.
- 
-@@ -48,6 +67,18 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK818 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK818 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 4.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- SWITCH_REG
-+	- HDMI_SWITCH
-+	- OTG_SWITCH
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
--- 
-1.9.1
+However, even if we do not enable lots of clocks at that time, and this
+helps to avoid the problem for now, it could still be that
+someone/something requests a clock early during boot, leading to a PLL
+enable... Shouldn't we make sure that those base clocks can be enabled
+even during early boot..?
+
+--
+Stefan
