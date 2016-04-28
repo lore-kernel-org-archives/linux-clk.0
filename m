@@ -1,72 +1,137 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 12 Apr 2016 15:16:13 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>, Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop messing with the
- pwm->period field
-Message-ID: <20160412141613.GI8094@x1>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
- <20160412110809.GI18882@ulmo.ba.sec>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160412110809.GI18882@ulmo.ba.sec>
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 2/7] clk: rockchip: simplify GRF handling in pll clocks
+Date: Thu, 28 Apr 2016 15:11:10 +0200
+Message-Id: <1461849075-8310-3-git-send-email-heiko@sntech.de>
+In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Apr 2016, Thierry Reding wrote:
+With the previous commit, the clock drivers now know at init time if the
+GRF regmap is available. That means if it isn't available then, it also
+won't become available later and we can therefore switch PLLs, that need
+the GRF for the lock-status, to read-only mode - similar behaviour as the
+aborting of rate changes we did before.
 
-> On Wed, Mar 30, 2016 at 10:03:26PM +0200, Boris Brezillon wrote:
-> > pwm->period field is not supposed to be changed by PWM users. The only
-> > ones authorized to change it are the PWM core and PWM drivers.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> >  drivers/video/backlight/lm3630a_bl.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> Applied, thanks.
+This saves some conditionals on every rate change and we can also drop
+the rockchip_clk_get_grf function completely.
 
-Applied?
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-pll.c | 30 +++---------------------------
+ drivers/clk/rockchip/clk.c     |  5 -----
+ drivers/clk/rockchip/clk.h     |  1 -
+ 3 files changed, 3 insertions(+), 33 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 128a6b2..5c0b919 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -92,15 +92,10 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
+  */
+ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+ {
+-	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
++	struct regmap *grf = pll->ctx->grf;
+ 	unsigned int val;
+ 	int delay = 24000000, ret;
+ 
+-	if (IS_ERR(grf)) {
+-		pr_err("%s: grf regmap not available\n", __func__);
+-		return PTR_ERR(grf);
+-	}
+-
+ 	while (delay > 0) {
+ 		ret = regmap_read(grf, pll->lock_offset, &val);
+ 		if (ret) {
+@@ -253,13 +248,6 @@ static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+ 	const struct rockchip_pll_rate_table *rate;
+ 	unsigned long old_rate = rockchip_rk3036_pll_recalc_rate(hw, prate);
+-	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
+-
+-	if (IS_ERR(grf)) {
+-		pr_debug("%s: grf regmap not available, aborting rate change\n",
+-			 __func__);
+-		return PTR_ERR(grf);
+-	}
+ 
+ 	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
+ 		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
+@@ -492,13 +480,6 @@ static int rockchip_rk3066_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+ 	const struct rockchip_pll_rate_table *rate;
+ 	unsigned long old_rate = rockchip_rk3066_pll_recalc_rate(hw, prate);
+-	struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
+-
+-	if (IS_ERR(grf)) {
+-		pr_debug("%s: grf regmap not available, aborting rate change\n",
+-			 __func__);
+-		return PTR_ERR(grf);
+-	}
+ 
+ 	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
+ 		 __func__, clk_hw_get_name(hw), old_rate, drate, prate);
+@@ -565,11 +546,6 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
+ 		 rate->no, cur.no, rate->nf, cur.nf, rate->nb, cur.nb);
+ 	if (rate->nr != cur.nr || rate->no != cur.no || rate->nf != cur.nf
+ 						     || rate->nb != cur.nb) {
+-		struct regmap *grf = rockchip_clk_get_grf(pll->ctx);
+-
+-		if (IS_ERR(grf))
+-			return;
+-
+ 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
+ 			 __func__, clk_hw_get_name(hw));
+ 		rockchip_rk3066_pll_set_params(pll, rate);
+@@ -943,13 +919,13 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 
+ 	switch (pll_type) {
+ 	case pll_rk3036:
+-		if (!pll->rate_table)
++		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+ 		else
+ 			init.ops = &rockchip_rk3036_pll_clk_ops;
+ 		break;
+ 	case pll_rk3066:
+-		if (!pll->rate_table)
++		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3066_pll_clk_norate_ops;
+ 		else
+ 			init.ops = &rockchip_rk3066_pll_clk_ops;
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index af6d47b..3a2936d 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -365,11 +365,6 @@ void __init rockchip_clk_of_add_provider(struct device_node *np,
+ 		pr_err("%s: could not register clk provider\n", __func__);
+ }
+ 
+-struct regmap *rockchip_clk_get_grf(struct rockchip_clk_provider *ctx)
+-{
+-	return ctx->grf;
+-}
+-
+ void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
+ 			     struct clk *clk, unsigned int id)
+ {
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index cb6a639..5468910 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -581,7 +581,6 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+ 			void __iomem *base, unsigned long nr_clks);
+ void rockchip_clk_of_add_provider(struct device_node *np,
+ 				struct rockchip_clk_provider *ctx);
+-struct regmap *rockchip_clk_get_grf(struct rockchip_clk_provider *ctx);
+ void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
+ 			     struct clk *clk, unsigned int id);
+ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.6.4
