@@ -1,91 +1,106 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v4 08/11] drm: sun4i: tv: Add PAL output standard
-Date: Mon, 25 Apr 2016 15:22:49 +0200
-Message-Id: <1461590572-4027-9-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v7 2/9] ARM: dts: am437x: Add missing compatibles to PWM
+ binding documents
+To: Rob Herring <robh@kernel.org>
+References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+ <1461710209-6563-3-git-send-email-fcooper@ti.com>
+ <20160428210716.GA12508@rob-hp-laptop>
+CC: <thierry.reding@gmail.com>, <tony@atomide.com>, <paul@pwsan.com>,
+	<t-kristo@ti.com>, <linux-pwm@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-omap@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <vigneshr@ti.com>, <nsekhar@ti.com>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+Message-ID: <57227C9F.6080705@ti.com>
+Date: Thu, 28 Apr 2016 16:11:59 -0500
+MIME-Version: 1.0
+In-Reply-To: <20160428210716.GA12508@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have support for the composite output, we can start adding new
-supported standards. Start with PAL, and we will add other eventually.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tv.c | 42 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Rob,
+On 04/28/2016 04:07 PM, Rob Herring wrote:
+> On Tue, Apr 26, 2016 at 05:36:42PM -0500, Franklin S Cooper Jr wrote:
+>> There are several SOC specific compatibles for ECAP, EHRPWM and PWMMS
+>> that are in use but aren't properly documented. Therefore, fix this
+>> by adding the compatibles to the appropriate binding documents.
+>>
+>> While at it make minor corrections to the binding document.
+>>
+>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>> ---
+>>  .../devicetree/bindings/pwm/pwm-tiecap.txt          | 12 ++++++++++--
+>>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt        | 12 ++++++++++--
+>>  .../devicetree/bindings/pwm/pwm-tipwmss.txt         | 21 +++++++++++++++++++--
+>>  3 files changed, 39 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+>> index fb81179..788da6c 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+>> @@ -2,8 +2,9 @@ TI SOC ECAP based APWM controller
+>>  
+>>  Required properties:
+>>  - compatible: Must be "ti,<soc>-ecap".
+>> -  for am33xx - compatible = "ti,am33xx-ecap";
+>> -  for da850  - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>> +  for am33xx  - compatible = "ti,am33xx-ecap";
+>> +  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
+>> +  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+>>    the cells format. The PWM channel index ranges from 0 to 4. The only third
+>>    cell flag supported by this binding is PWM_POLARITY_INVERTED.
+>> @@ -22,6 +23,13 @@ ecap0: ecap@0 { /* ECAP on am33xx */
+>>  	ti,hwmods = "ecap0";
+>>  };
+>>  
+>> +ecap0: ecap@0 { /* ECAP on am4372 */
+> 
+> The unit address is wrong.
+> 
+>> +	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
+>> +	#pwm-cells = <3>;
+>> +	reg = <0x48300100 0x80>;
+>> +	ti,hwmods = "ecap0";
+>> +};
+>> +
+>>  ecap0: ecap@0 { /* ECAP on da850 */
+>>  	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>>  	#pwm-cells = <3>;
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>> index 9c100b2..99b544f 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>> @@ -2,8 +2,9 @@ TI SOC EHRPWM based PWM controller
+>>  
+>>  Required properties:
+>>  - compatible: Must be "ti,<soc>-ehrpwm".
+>> -  for am33xx - compatible = "ti,am33xx-ehrpwm";
+>> -  for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>> +  for am33xx  - compatible = "ti,am33xx-ehrpwm";
+>> +  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
+>> +  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+>>    the cells format. The only third cell flag supported by this binding is
+>>    PWM_POLARITY_INVERTED.
+>> @@ -22,6 +23,13 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+>>  	ti,hwmods = "ehrpwm0";
+>>  };
+>>  
+>> +ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
+> 
+> ditto
+> 
+> Otherwise,
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 78634dfc0f77..ccf275a90132 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -178,7 +178,49 @@ struct sun4i_tv {
- 	struct sun4i_drv	*drv;
- };
- 
-+struct video_levels pal_video_levels = {
-+	.black = 252,	.blank = 252,
-+};
-+
-+struct burst_levels pal_burst_levels = {
-+	.cb = 40,	.cr = 40,
-+};
-+
-+struct color_gains pal_color_gains = {
-+	.cb = 224,	.cr = 224,
-+};
-+
-+struct resync_parameters pal_resync_parameters = {
-+	.field = true,	.line = 13,	.pixel = 12,
-+};
-+
- struct tv_mode tv_modes[] = {
-+	{
-+		.name		= "PAL",
-+		.mode		= SUN4I_TVE_CFG0_RES_576i,
-+		.chroma_freq	= 0x2a098acb,
-+
-+		.back_porch	= 138,
-+		.front_porch	= 24,
-+		.line_number	= 625,
-+
-+		.hdisplay	= 720,
-+		.hfront_porch	= 3,
-+		.hsync_len	= 2,
-+		.hback_porch	= 139,
-+
-+		.vdisplay	= 576,
-+		.vfront_porch	= 28,
-+		.vsync_len	= 2,
-+		.vback_porch	= 19,
-+
-+		.vblank_level	= 252,
-+
-+		.color_gains	= &pal_color_gains,
-+		.burst_levels	= &pal_burst_levels,
-+		.video_levels	= &pal_video_levels,
-+		.resync_params	= &pal_resync_parameters,
-+	},
- };
- 
- static inline struct sun4i_tv *
--- 
-2.8.1
+
+Yes, the unit address is wrong but it is wrong in several places. I
+added it like that to match what the other bindings are doing. However,
+patches 3 and 4 fixes these unit address problems for all the bindings
+all together to make things clear.
