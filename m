@@ -1,90 +1,98 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 15/24] drm: i915: explicitly apply PWM config extracted from pwm_args
-Date: Thu, 14 Apr 2016 21:17:35 +0200
-Message-Id: <1460661464-11216-16-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:23211 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752245AbcD1G6K (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2016 02:58:10 -0400
+Subject: Re: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Oleksij Rempel <linux@rempel-privat.de>,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <5721B47D.9030206@de.bosch.com>
+Date: Thu, 28 Apr 2016 08:58:05 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Call pwm_apply_args() just after requesting the PWM device so that the
-polarity and period are initialized according to the information provided
-in pwm_args.
+Hi Geert,
 
-This is an intermediate state, and pwm_apply_args() should be dropped as
-soon as the atomic PWM infrastructure is in place and the driver makes
-use of it.
+On 28.04.2016 08:52, Geert Uytterhoeven wrote:
+> Hi Dirk,
+>
+> On Thu, Apr 28, 2016 at 8:08 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> From: Oleksij Rempel <linux@rempel-privat.de>
+>>
+>> Map the Mode Monitor Register via the device tree instead of
+>> hard coding it in the code. This makes the mapping known to the
+>> device tree.
+>>
+>> Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+>> Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
+>> Signed-off-by: Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>> ---
+>>   .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  9 ++++++---
+>>   arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  4 +++-
+>>   drivers/clk/renesas/r8a7795-cpg-mssr.c             | 22 +++-------------------
+>>   drivers/clk/renesas/renesas-cpg-mssr.c             | 19 ++++++++++++++-----
+>>   drivers/clk/renesas/renesas-cpg-mssr.h             |  2 +-
+>>   5 files changed, 27 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+>> index fefb802..7984485 100644
+>> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+>> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+>> @@ -15,8 +15,10 @@ Required Properties:
+>>     - compatible: Must be one of:
+>>         - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
+>>
+>> -  - reg: Base address and length of the memory resource used by the CPG/MSSR
+>> -    block
+>> +  - reg:
+>> +    - 0: Base address and length of the memory resource used by the CPG/MSSR
+>> +         block.
+>> +    - 1: Mode Monitor Register.
+>>
+>>     - clocks: References to external parent clocks, one entry for each entry in
+>>       clock-names
+>> @@ -46,7 +48,8 @@ Examples
+>>
+>>          cpg: clock-controller@e6150000 {
+>>                  compatible = "renesas,r8a7795-cpg-mssr";
+>> -               reg = <0 0xe6150000 0 0x1000>;
+>> +               reg = <0 0xe6150000 0 0x1000>,
+>> +                     <0 0xe6160060 0 0x4>;
+>
+> The MODEMR register is not part of the CPG block, but of the RST block.
+> So IMHO it doesn't belong in the clock-controller node.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/gpu/drm/i915/intel_panel.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/intel_panel.c b/drivers/gpu/drm/i915/intel_panel.c
-index 21ee647..dc3a2e4 100644
---- a/drivers/gpu/drm/i915/intel_panel.c
-+++ b/drivers/gpu/drm/i915/intel_panel.c
-@@ -1640,6 +1640,12 @@ static int pwm_setup_backlight(struct intel_connector *connector,
- 		return -ENODEV;
- 	}
- 
-+	/*
-+	 * FIXME: pwm_apply_args() should be removed when switching to
-+	 * the atomic PWM API.
-+	 */
-+	pwm_apply_args(panel->backlight.pwm);
-+
- 	retval = pwm_config(panel->backlight.pwm, CRC_PMIC_PWM_PERIOD_NS,
- 			    CRC_PMIC_PWM_PERIOD_NS);
- 	if (retval < 0) {
--- 
-2.5.0
+Ok, fine.
+
+So we agree hat this ugly hard coded register address stuff has to be 
+removed and replaced by a device tree based solution. Correct?
+
+
+> BTW, I still prefer something like
+> "[PATCH 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap"
+> (http://www.spinics.net/lists/linux-sh/msg44757.html).
+
+
+What's the status of this? I see there a date "1 Sep 2015" ;)
+
+Is this available in any testing tree we could try?
+
+
+Best regards
+
+Dirk
