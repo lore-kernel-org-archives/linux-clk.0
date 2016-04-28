@@ -1,112 +1,58 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <robh@kernel.org>
+Date: Wed, 27 Apr 2016 21:37:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
+	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
 	dri-devel@lists.freedesktop.org,
 	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	Alexander Kaplan <alex@nextthing.co>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v4 02/11] ARM: sun5i: a13: Add display and TCON clocks
-Date: Mon, 25 Apr 2016 15:22:43 +0200
-Message-Id: <1461590572-4027-3-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 04/11] drm: sun4i: Add DT bindings documentation
+Message-ID: <20160428023730.GA1514@rob-hp-laptop>
 References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1461590572-4027-5-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461590572-4027-5-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the display and TCON (channel 0 and channel 1) clocks that are going
-to be needed to drive the display engine, tcon and TV encoders.
+On Mon, Apr 25, 2016 at 03:22:45PM +0200, Maxime Ripard wrote:
+> The display pipeline of the Allwinner A10 is involving several loosely
+> coupled components.
+> 
+> Add a documentation for the bindings.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 258 +++++++++++++++++++++
+>  1 file changed, 258 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-a13.dtsi | 39 +++++++++++++++++++++++++++++++++++++--
- arch/arm/boot/dts/sun5i-r8.dtsi  |  5 +++--
- 2 files changed, 40 insertions(+), 4 deletions(-)
+> +The display engine pipeline (and its entry point, since it can be
+> +either directly the backend or the frontend) is represented as an
+> +extra node.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun5i-a13-display-engine
+> +
+> +  - allwinner,pipelines: list of phandle to the display engine
+> +    frontends available.
 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 39f23b1ebc8f..263d46dbc7e6 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -61,8 +61,8 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
--				 <&dram_gates 26>;
-+			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
-+				 <&tcon_ch0_clk>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
-@@ -170,6 +170,41 @@
- 					     "dram_ace",
- 					     "dram_iep";
- 		};
-+
-+		de_be_clk: clk@01c20104 {
-+			#clock-cells = <0>;
-+			#reset-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-display-clk";
-+			reg = <0x01c20104 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll5 1>;
-+			clock-output-names = "de-be";
-+		};
-+
-+		de_fe_clk: clk@01c2010c {
-+			#clock-cells = <0>;
-+			#reset-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-display-clk";
-+			reg = <0x01c2010c 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll5 1>;
-+			clock-output-names = "de-fe";
-+		};
-+
-+		tcon_ch0_clk: clk@01c20118 {
-+			#clock-cells = <0>;
-+			#reset-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
-+			reg = <0x01c20118 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
-+			clock-output-names = "tcon-ch0-sclk";
-+		};
-+
-+		tcon_ch1_clk: clk@01c2012c {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
-+			reg = <0x01c2012c 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
-+			clock-output-names = "tcon-ch1-sclk";
-+		};
- 	};
- 
- 	soc@01c00000 {
-diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-index e346ba76db5d..691d3de75b35 100644
---- a/arch/arm/boot/dts/sun5i-r8.dtsi
-+++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-@@ -51,8 +51,9 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-tve0";
--			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
--				 <&ahb_gates 44>, <&dram_gates 26>;
-+			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
-+				 <&ahb_gates 44>, <&de_be_clk>,
-+				 <&tcon_ch1_clk>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
--- 
-2.8.1
+
+> +display-engine {
+> +	compatible = "allwinner,sun5i-a13-display-engine";
+> +	pipelines = <&fe0>;
+
+Missing allwinner prefix.
+
+Otherwise,
+
+Acked-by: Rob Herring <robh@kernel.org>
