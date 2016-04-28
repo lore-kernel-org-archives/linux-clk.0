@@ -1,33 +1,88 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 18 Apr 2016 12:19:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Alexander Kurz <akurz@blala.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-	Philippe Reynes <tremyfr@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: i.MX35 clk: Introduce DT include for clock
- provider
-Message-ID: <20160418171927.GA26734@rob-hp-laptop>
-References: <1460669450-11729-1-git-send-email-akurz@blala.de>
- <1460669450-11729-2-git-send-email-akurz@blala.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ig0-f195.google.com ([209.85.213.195]:35700 "EHLO
+	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752685AbcD1Gw1 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2016 02:52:27 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460669450-11729-2-git-send-email-akurz@blala.de>
+In-Reply-To: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
+Date: Thu, 28 Apr 2016 08:52:18 +0200
+Message-ID: <CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Oleksij Rempel <linux@rempel-privat.de>,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 14, 2016 at 11:30:50PM +0200, Alexander Kurz wrote:
-> Use clock defines in order to make devicetrees more human readable
-> 
-> Signed-off-by: Alexander Kurz <akurz@blala.de>
+Hi Dirk,
+
+On Thu, Apr 28, 2016 at 8:08 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> From: Oleksij Rempel <linux@rempel-privat.de>
+>
+> Map the Mode Monitor Register via the device tree instead of
+> hard coding it in the code. This makes the mapping known to the
+> device tree.
+>
+> Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+> Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
+> Signed-off-by: Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 > ---
->  .../devicetree/bindings/clock/imx35-clock.txt      |  93 +----
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  9 ++++++---
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  4 +++-
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c             | 22 +++-------------------
+>  drivers/clk/renesas/renesas-cpg-mssr.c             | 19 ++++++++++++++-----
+>  drivers/clk/renesas/renesas-cpg-mssr.h             |  2 +-
+>  5 files changed, 27 insertions(+), 29 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> index fefb802..7984485 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> @@ -15,8 +15,10 @@ Required Properties:
+>    - compatible: Must be one of:
+>        - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
+>
+> -  - reg: Base address and length of the memory resource used by the CPG/MSSR
+> -    block
+> +  - reg:
+> +    - 0: Base address and length of the memory resource used by the CPG/MSSR
+> +         block.
+> +    - 1: Mode Monitor Register.
+>
+>    - clocks: References to external parent clocks, one entry for each entry in
+>      clock-names
+> @@ -46,7 +48,8 @@ Examples
+>
+>         cpg: clock-controller@e6150000 {
+>                 compatible = "renesas,r8a7795-cpg-mssr";
+> -               reg = <0 0xe6150000 0 0x1000>;
+> +               reg = <0 0xe6150000 0 0x1000>,
+> +                     <0 0xe6160060 0 0x4>;
 
-Acked-by: Rob Herring <robh@kernel.org>
+The MODEMR register is not part of the CPG block, but of the RST block.
+So IMHO it doesn't belong in the clock-controller node.
 
->  drivers/clk/imx/clk-imx35.c                        | 429 ++++++++++++---------
->  include/dt-bindings/clock/imx35-clock.h            |  98 +++++
->  3 files changed, 349 insertions(+), 271 deletions(-)
->  create mode 100644 include/dt-bindings/clock/imx35-clock.h
+BTW, I still prefer something like
+"[PATCH 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap"
+(http://www.spinics.net/lists/linux-sh/msg44757.html).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
