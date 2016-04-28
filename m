@@ -1,45 +1,29 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41779 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756311AbcDGXbP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2016 19:31:15 -0400
-Date: Thu, 7 Apr 2016 16:31:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: Add Oxford Semiconductor OXNAS Standard Clocks
-Message-ID: <20160407233113.GI18567@codeaurora.org>
-References: <1459520791-13269-1-git-send-email-narmstrong@baylibre.com>
- <1459520791-13269-2-git-send-email-narmstrong@baylibre.com>
- <20160402005045.GX18567@codeaurora.org>
- <5701210A.4060807@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5701210A.4060807@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <benh@kernel.crashing.org>
+Message-ID: <1461832706.2791.0.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2 03/11] doc/devicetree: Add Aspeed clock bindings
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Joel Stanley
+	 <joel@jms.id.au>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        Jeremy Kerr <jk@ozlabs.org>, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Date: Thu, 28 Apr 2016 18:38:26 +1000
+In-Reply-To: <4459295.XmBqACy0jk@diego>
+References: <1461225849-28074-1-git-send-email-joel@jms.id.au>
+	 <4956403.scaVRGhPEf@diego>
+	 <CACPK8XfvLR+yZv77C0Eq=RsPOufrwvQjdPtBhnufNc=eJRLZYg@mail.gmail.com>
+	 <4459295.XmBqACy0jk@diego>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/03, Neil Armstrong wrote:
-> On 04/02/2016 02:50 AM, Stephen Boyd wrote:
-> > On 04/01, Neil Armstrong wrote:
-> >> +	if (!onecell_data)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	regmap = syscon_node_to_regmap(of_get_parent(np));
-> > 
-> > Can we use dev_get_regmap(&pdev->dev.parent) here instead? I'd
-> > prefer device APIs over DT APIs here. 
-> > 
-> 
-> It will not work here since the parent node is a syscon, the call to syscon_node_to_regmap() will call of_syscon_register() and create the regmap, the dev_get_regmap() needs a proper platform device registered as regmap here.
-> 
+On Wed, 2016-04-27 at 11:12 +0200, Heiko Stübner wrote:
+> I guess the design would depend on the actual layout of your clock- /
+> system-
+> controller - aka what else is contained there.
 
-Ok. I was hoping that we could make simple-mfd look to see if
-there's a syscon and then attach it to the parent device, but it
-seems that simple-mfd is not actually a driver and it might not
-even make a parent device for the children nodes?
+One register controls most clocks so it makes sense to have one driver.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Cheers,
+Ben.
