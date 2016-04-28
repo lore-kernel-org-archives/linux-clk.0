@@ -1,112 +1,81 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:26553 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753007AbcD1IXu (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2016 04:23:50 -0400
+Subject: Re: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
+ <5721B47D.9030206@de.bosch.com>
+ <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Oleksij Rempel <linux@rempel-privat.de>,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <5721C890.7030803@de.bosch.com>
+Date: Thu, 28 Apr 2016 10:23:44 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160408003328.GA14441@codeaurora.org>
-References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
-	<20160408003328.GA14441@codeaurora.org>
-Date: Fri, 8 Apr 2016 10:52:57 +0900
-Message-ID: <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
- NULL or error
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Greg Ungerer <gerg@uclinux.org>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Steven Miao <realmz6@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Wan ZongShun <mcuos.com@gmail.com>,
-	Rich Felker <dalias@libc.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	adi-buildroot-devel@lists.sourceforge.net,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-m68k@lists.linux-m68k.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	John Crispin <blogic@openwrt.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Geert,
 
-
-2016-04-08 9:33 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 04/05, Masahiro Yamada wrote:
->> The clk_disable() in the common clock framework (drivers/clk/clk.c)
->> returns immediately if a given clk is NULL or an error pointer.  It
->> allows clock consumers to call clk_disable() without IS_ERR_OR_NULL
->> checking if drivers are only used with the common clock framework.
->>
->> Unfortunately, NULL/error checking is missing from some of non-common
->> clk_disable() implementations.  This prevents us from completely
->> dropping NULL/error checking from callers.  Let's make it tree-wide
->> consistent by adding IS_ERR_OR_NULL(clk) to all callees.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Acked-by: Greg Ungerer <gerg@uclinux.org>
->> Acked-by: Wan Zongshun <mcuos.com@gmail.com>
->> ---
->>
->> Stephen,
->>
->> This patch has been unapplied for a long time.
->>
->> Please let me know if there is something wrong with this patch.
->>
+On 28.04.2016 10:07, Geert Uytterhoeven wrote:
+> Hi Dirk,
 >
-> I'm mostly confused why we wouldn't want to encourage people to
-> call clk_disable or unprepare on a clk that's an error pointer.
-> Typically an error pointer should be dealt with, instead of
-> silently ignored, so why wasn't it dealt with by passing it up
-> the probe() path?
+> On Thu, Apr 28, 2016 at 8:58 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> On 28.04.2016 08:52, Geert Uytterhoeven wrote:
+>>> On Thu, Apr 28, 2016 at 8:08 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>>> @@ -46,7 +48,8 @@ Examples
+>>>>
+>>>>           cpg: clock-controller@e6150000 {
+>>>>                   compatible = "renesas,r8a7795-cpg-mssr";
+>>>> -               reg = <0 0xe6150000 0 0x1000>;
+>>>> +               reg = <0 0xe6150000 0 0x1000>,
+>>>> +                     <0 0xe6160060 0 0x4>;
+>>>
+>>>
+>>> The MODEMR register is not part of the CPG block, but of the RST block.
+>>> So IMHO it doesn't belong in the clock-controller node.
+>>
+>> Ok, fine.
+>>
+>> So we agree hat this ugly hard coded register address stuff has to be
+>> removed and replaced by a device tree based solution. Correct?
 >
+> Yes we agree.
+>
+>>> BTW, I still prefer something like
+>>> "[PATCH 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap"
+>>> (http://www.spinics.net/lists/linux-sh/msg44757.html).
+>>
+>> What's the status of this? I see there a date "1 Sep 2015" ;)
+>
+> We were considering alternative solutions, cfr. "[PATCH/RFC 0/6] boot-mode-reg:
+> Add core" (http://www.spinics.net/lists/linux-sh/msg45969.html).
+> To avoid delaying upstream r8a7795, we settled for the ugly hard coded
+> register access as an interim solution.
+>
+>> Is this available in any testing tree we could try?
+>
+> It used to be part of older renesas-drivers releases.
 
 
-This makes our driver programming life easier.
+Would it be possible to add them again then, now?
 
 
-For example, let's see drivers/tty/serial/8250/8250_of.c
+Best regards
 
-
-The "clock-frequency" DT property takes precedence over "clocks" property.
-So, it is valid to probe the driver with a NULL pointer for info->clk.
-
-
-        if (of_property_read_u32(np, "clock-frequency", &clk)) {
-
-                /* Get clk rate through clk driver if present */
-                info->clk = devm_clk_get(&ofdev->dev, NULL);
-                if (IS_ERR(info->clk)) {
-                        dev_warn(&ofdev->dev,
-                                "clk or clock-frequency not defined\n");
-                        return PTR_ERR(info->clk);
-                }
-
-                ret = clk_prepare_enable(info->clk);
-                if (ret < 0)
-                        return ret;
-
-                clk = clk_get_rate(info->clk);
-        }
-
-
-As a result, we need to make sure the clk pointer is valid
-before calling clk_disable_unprepare().
-
-
-If we could support pointer checking in callees, we would be able to
-clean-up lots of clock consumers.
+Dirk
 
 
 
--- 
-Best Regards
-Masahiro Yamada
+
