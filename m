@@ -1,90 +1,82 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Ryan Mallon <rmallon@gmail.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Milo Kim <milo.kim@ti.com>,
-	Doug Anderson <dianders@google.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Stephen Barber <smbarber@chromium.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 16/24] ARM: explicitly apply PWM config extracted from pwm_args
-Date: Thu, 14 Apr 2016 21:17:36 +0200
-Message-Id: <1460661464-11216-17-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Joel Stanley <joel@jms.id.au>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] doc/devicetree: Add Aspeed clock bindings
+Date: Thu, 28 Apr 2016 09:25:38 +0200
+Message-ID: <2297276.nzTbucM52b@diego>
+In-Reply-To: <CACPK8Xdm_ZAyfUNbwEYrZuUZS4cP3YMkrkVbGNeiVmeFF6j3Cw@mail.gmail.com>
+References: <1461225849-28074-1-git-send-email-joel@jms.id.au> <4459295.XmBqACy0jk@diego> <CACPK8Xdm_ZAyfUNbwEYrZuUZS4cP3YMkrkVbGNeiVmeFF6j3Cw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Call pwm_apply_args() just after requesting the PWM device so that the
-polarity and period are initialized according to the information provided
-in pwm_args.
+Am Donnerstag, 28. April 2016, 16:20:04 schrieb Joel Stanley:
+> On Wed, Apr 27, 2016 at 6:42 PM, Heiko St=FCbner <heiko@sntech.de> wr=
+ote:
+> > Am Mittwoch, 27. April 2016, 18:01:00 schrieb Joel Stanley:
+> >> > From what I remember exposing the clock controller as one block
+> >> > (instead
+> >> > of
+> >> > declaring each clock individually in the dts) is still the prefe=
+rred
+> >> > way
+> >> > but I don't think I can find Mike's mail from back then easily.
+> >>=20
+> >> I can't picture how that would look. I took my lead from the moxar=
+t
+> >> clock driver; is there a better example that I should follow?
+> >=20
+> > qcom, samsung, rockchip, hisilicon, imx, ...
+>=20
+> I had a look here, and they appear to be much more complex than I
+> need. The qcom directory is 41000 lines of code! The moxart driver is=
 
-This is an intermediate state, and pwm_apply_args() should be dropped as
-soon as the atomic PWM infrastructure is in place and the driver makes
-use of it.
+> similar to what we do, but as you mentioned it is not arranged how yo=
+u
+> want it.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- arch/arm/mach-s3c24xx/mach-rx1950.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I'm by no means authoritative ;-), but from what you describe below, cl=
+k-
+asm9260.c or clk-efm32gg.c might be going in that direction of very sim=
+ple=20
+clock-controllers.
 
-diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
-index 774c982..25a139b 100644
---- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-@@ -496,6 +496,12 @@ static int rx1950_backlight_init(struct device *dev)
- 		return PTR_ERR(lcd_pwm);
- 	}
- 
-+	/*
-+	 * FIXME: pwm_apply_args() should be removed when switching to
-+	 * the atomic PWM API.
-+	 */
-+	pwm_apply_args(lcd_pwm);
-+
- 	rx1950_lcd_power(1);
- 	rx1950_bl_power(1);
- 
--- 
-2.5.0
+Sorry about pointing to more complex drivers for bigger socs at first :=
+-)
+
+
+> > I guess the design would depend on the actual layout of your clock-=
+ /
+> > system- controller - aka what else is contained there.
+>=20
+> In the fourth generation parts, such as the ast2400, we have this lay=
+out:
+>=20
+>     clock                rate
+>  -----------------------------
+>   clk_clkin          48000000
+>      clk_hpll       384000000
+>         clk_apb      48000000
+>=20
+> clkin is the oscillator that may be running at 24, 25 or 48MHz. We ca=
+n
+> determine this from the strapping register.
+>=20
+> The hpll divisor is controlled by strapping resistors, and indicated
+> in the strapping register.
+>=20
+> The apb is controlled by a register in the SCU, the Aspeed's
+> bucket-of-bits for controlling various parts of the soc.
+
+I remember that from working on Samsung s3c24xx socs, the system-contro=
+ller=20
+area also worked as sort of catch-all :-) .
+
+>=20
+> In our case we want don't need to adjust any clocks. We do want struc=
+t
+> clk's so attached device drivers to know how fast they are being
+> clocked. How do you see this laid out?
+
+see drivers referenced above.
