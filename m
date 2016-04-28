@@ -1,50 +1,209 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:58759 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754463AbcDYLsK (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2016 07:48:10 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-clk@vger.kernel.org, geert+renesas@glider.be,
-	linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] clk: shmobile: r8a7795: Add CSI2 clocks
-Date: Mon, 25 Apr 2016 13:39:19 +0200
-Message-Id: <1461584360-32547-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4/7] clk: rockchip: abstract pll get-params and set-params operations
+Date: Thu, 28 Apr 2016 15:11:12 +0200
+Message-Id: <1461849075-8310-5-git-send-email-heiko@sntech.de>
+In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This moves the pll-specific get_params and set_params functions into a
+per-pll struct that gets associated at init time and will help us reign
+in some code duplication we're faced with right now.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index b2198aef..005b323 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -113,6 +113,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
- 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
-+	DEF_DIV6P1("csi0",      R8A7795_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-pll.c | 54 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index e56637d..2c30f52 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -30,6 +30,14 @@
+ #define PLL_MODE_NORM		0x1
+ #define PLL_MODE_DEEP		0x2
+ 
++struct rockchip_clk_pll;
++struct rockchip_pll_data {
++	void (*get_params)(struct rockchip_clk_pll *pll,
++			   struct rockchip_pll_rate_table *rate);
++	int (*set_params)(struct rockchip_clk_pll *pll,
++			  const struct rockchip_pll_rate_table *rate);
++};
++
+ struct rockchip_clk_pll {
+ 	struct clk_hw		hw;
+ 
+@@ -48,6 +56,7 @@ struct rockchip_clk_pll {
+ 	spinlock_t		*lock;
+ 
+ 	struct rockchip_clk_provider *ctx;
++	const struct rockchip_pll_data *data;
  };
  
- static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
-@@ -176,6 +177,10 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("ehci1",		 702,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci0",		 703,	R8A7795_CLK_S3D4),
- 	DEF_MOD("hsusb",		 704,	R8A7795_CLK_S3D4),
-+	DEF_MOD("csi21",		 713,	R8A7795_CLK_CSI0),
-+	DEF_MOD("csi20",		 714,	R8A7795_CLK_CSI0),
-+	DEF_MOD("csi41",		 715,	R8A7795_CLK_CSI0),
-+	DEF_MOD("csi40",		 716,	R8A7795_CLK_CSI0),
- 	DEF_MOD("du3",			 721,	R8A7795_CLK_S2D1),
- 	DEF_MOD("du2",			 722,	R8A7795_CLK_S2D1),
- 	DEF_MOD("du1",			 723,	R8A7795_CLK_S2D1),
+ #define to_rockchip_clk_pll(_hw) container_of(_hw, struct rockchip_clk_pll, hw)
+@@ -164,7 +173,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
+ 	struct rockchip_pll_rate_table cur;
+ 	u64 rate64 = prate;
+ 
+-	rockchip_rk3036_pll_get_params(pll, &cur);
++	pll->data->get_params(pll, &cur);
+ 
+ 	rate64 *= cur.fbdiv;
+ 	do_div(rate64, cur.refdiv);
+@@ -259,7 +268,7 @@ static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		return -EINVAL;
+ 	}
+ 
+-	return rockchip_rk3036_pll_set_params(pll, rate);
++	return pll->data->set_params(pll, rate);
+ }
+ 
+ static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
+@@ -306,7 +315,7 @@ static void rockchip_rk3036_pll_init(struct clk_hw *hw)
+ 	if (!rate)
+ 		return;
+ 
+-	rockchip_rk3036_pll_get_params(pll, &cur);
++	pll->data->get_params(pll, &cur);
+ 
+ 	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
+ 		 drate);
+@@ -330,10 +339,15 @@ static void rockchip_rk3036_pll_init(struct clk_hw *hw)
+ 
+ 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
+ 			 __func__, __clk_get_name(hw->clk));
+-		rockchip_rk3036_pll_set_params(pll, rate);
++		pll->data->set_params(pll, rate);
+ 	}
+ }
+ 
++static const struct rockchip_pll_data rockchip_rk3036_pll_data = {
++	.get_params = rockchip_rk3036_pll_get_params,
++	.set_params = rockchip_rk3036_pll_set_params,
++};
++
+ static const struct clk_ops rockchip_rk3036_pll_clk_norate_ops = {
+ 	.recalc_rate = rockchip_rk3036_pll_recalc_rate,
+ 	.enable = rockchip_rk3036_pll_enable,
+@@ -405,7 +419,7 @@ static unsigned long rockchip_rk3066_pll_recalc_rate(struct clk_hw *hw,
+ 		return prate;
+ 	}
+ 
+-	rockchip_rk3066_pll_get_params(pll, &cur);
++	pll->data->get_params(pll, &cur);
+ 
+ 	rate64 *= cur.nf;
+ 	do_div(rate64, cur.nr);
+@@ -490,7 +504,7 @@ static int rockchip_rk3066_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		return -EINVAL;
+ 	}
+ 
+-	return rockchip_rk3066_pll_set_params(pll, rate);
++	return pll->data->set_params(pll, rate);
+ }
+ 
+ static int rockchip_rk3066_pll_enable(struct clk_hw *hw)
+@@ -537,7 +551,7 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
+ 	if (!rate)
+ 		return;
+ 
+-	rockchip_rk3066_pll_get_params(pll, &cur);
++	pll->data->get_params(pll, &cur);
+ 
+ 	pr_debug("%s: pll %s@%lu: nr (%d:%d); no (%d:%d); nf(%d:%d), nb(%d:%d)\n",
+ 		 __func__, clk_hw_get_name(hw), drate, rate->nr, cur.nr,
+@@ -546,10 +560,15 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
+ 						     || rate->nb != cur.nb) {
+ 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
+ 			 __func__, clk_hw_get_name(hw));
+-		rockchip_rk3066_pll_set_params(pll, rate);
++		pll->data->set_params(pll, rate);
+ 	}
+ }
+ 
++static const struct rockchip_pll_data rockchip_rk3066_pll_data = {
++	.get_params = rockchip_rk3066_pll_get_params,
++	.set_params = rockchip_rk3066_pll_set_params,
++};
++
+ static const struct clk_ops rockchip_rk3066_pll_clk_norate_ops = {
+ 	.recalc_rate = rockchip_rk3066_pll_recalc_rate,
+ 	.enable = rockchip_rk3066_pll_enable,
+@@ -638,7 +657,7 @@ static unsigned long rockchip_rk3399_pll_recalc_rate(struct clk_hw *hw,
+ 	struct rockchip_pll_rate_table cur;
+ 	u64 rate64 = prate;
+ 
+-	rockchip_rk3399_pll_get_params(pll, &cur);
++	pll->data->get_params(pll, &cur);
+ 
+ 	rate64 *= cur.fbdiv;
+ 	do_div(rate64, cur.refdiv);
+@@ -735,7 +754,7 @@ static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		return -EINVAL;
+ 	}
+ 
+-	return rockchip_rk3399_pll_set_params(pll, rate);
++	return pll->data->set_params(pll, rate);
+ }
+ 
+ static int rockchip_rk3399_pll_enable(struct clk_hw *hw)
+@@ -782,7 +801,7 @@ static void rockchip_rk3399_pll_init(struct clk_hw *hw)
+ 	if (!rate)
+ 		return;
+ 
+-	rockchip_rk3399_pll_get_params(pll, &cur);
++	pll->data->get_params(pll, &cur);
+ 
+ 	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
+ 		 drate);
+@@ -806,10 +825,15 @@ static void rockchip_rk3399_pll_init(struct clk_hw *hw)
+ 
+ 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
+ 			 __func__, __clk_get_name(hw->clk));
+-		rockchip_rk3399_pll_set_params(pll, rate);
++		pll->data->set_params(pll, rate);
+ 	}
+ }
+ 
++static const struct rockchip_pll_data rockchip_rk3399_pll_data = {
++	.get_params = rockchip_rk3399_pll_get_params,
++	.set_params = rockchip_rk3399_pll_set_params,
++};
++
+ static const struct clk_ops rockchip_rk3399_pll_clk_norate_ops = {
+ 	.recalc_rate = rockchip_rk3399_pll_recalc_rate,
+ 	.enable = rockchip_rk3399_pll_enable,
+@@ -916,18 +940,24 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 
+ 	switch (pll_type) {
+ 	case pll_rk3036:
++		pll->data = &rockchip_rk3036_pll_data;
++
+ 		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+ 		else
+ 			init.ops = &rockchip_rk3036_pll_clk_ops;
+ 		break;
+ 	case pll_rk3066:
++		pll->data = &rockchip_rk3066_pll_data;
++
+ 		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3066_pll_clk_norate_ops;
+ 		else
+ 			init.ops = &rockchip_rk3066_pll_clk_ops;
+ 		break;
+ 	case pll_rk3399:
++		pll->data = &rockchip_rk3399_pll_data;
++
+ 		if (!pll->rate_table)
+ 			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
+ 		else
 -- 
-2.7.4
-
+2.6.4
