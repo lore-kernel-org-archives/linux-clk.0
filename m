@@ -1,230 +1,116 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v7 2/9] dt-bindings: ARM: Mediatek: Document bindings for MT2701
-Date: Thu, 14 Apr 2016 16:11:47 +0800
-Message-ID: <1460621514-65191-3-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+In-Reply-To: <57227C9F.6080705@ti.com>
+References: <1461710209-6563-1-git-send-email-fcooper@ti.com>
+ <1461710209-6563-3-git-send-email-fcooper@ti.com> <20160428210716.GA12508@rob-hp-laptop>
+ <57227C9F.6080705@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 28 Apr 2016 16:55:31 -0500
+Message-ID: <CAL_JsqLhZvQ9Vd60pNC-4U19qwi23XBC5VYxnPQVZnyYR2V0HQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/9] ARM: dts: am437x: Add missing compatibles to PWM
+ binding documents
+To: "Franklin S Cooper Jr." <fcooper@ti.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	"paul@pwsan.com" <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-omap <linux-omap@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Vignesh R <vigneshr@ti.com>, Sekhar Nori <nsekhar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the binding documentation for apmixedsys, bdpsys,
-ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-vdecsys for Mediatek MT2701.
+On Thu, Apr 28, 2016 at 4:11 PM, Franklin S Cooper Jr. <fcooper@ti.com> wrote:
+>
+> Rob,
+> On 04/28/2016 04:07 PM, Rob Herring wrote:
+>> On Tue, Apr 26, 2016 at 05:36:42PM -0500, Franklin S Cooper Jr wrote:
+>>> There are several SOC specific compatibles for ECAP, EHRPWM and PWMMS
+>>> that are in use but aren't properly documented. Therefore, fix this
+>>> by adding the compatibles to the appropriate binding documents.
+>>>
+>>> While at it make minor corrections to the binding document.
+>>>
+>>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>>> ---
+>>>  .../devicetree/bindings/pwm/pwm-tiecap.txt          | 12 ++++++++++--
+>>>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt        | 12 ++++++++++--
+>>>  .../devicetree/bindings/pwm/pwm-tipwmss.txt         | 21 +++++++++++++++++++--
+>>>  3 files changed, 39 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+>>> index fb81179..788da6c 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+>>> @@ -2,8 +2,9 @@ TI SOC ECAP based APWM controller
+>>>
+>>>  Required properties:
+>>>  - compatible: Must be "ti,<soc>-ecap".
+>>> -  for am33xx - compatible = "ti,am33xx-ecap";
+>>> -  for da850  - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>>> +  for am33xx  - compatible = "ti,am33xx-ecap";
+>>> +  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
+>>> +  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>>>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+>>>    the cells format. The PWM channel index ranges from 0 to 4. The only third
+>>>    cell flag supported by this binding is PWM_POLARITY_INVERTED.
+>>> @@ -22,6 +23,13 @@ ecap0: ecap@0 { /* ECAP on am33xx */
+>>>      ti,hwmods = "ecap0";
+>>>  };
+>>>
+>>> +ecap0: ecap@0 { /* ECAP on am4372 */
+>>
+>> The unit address is wrong.
+>>
+>>> +    compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
+>>> +    #pwm-cells = <3>;
+>>> +    reg = <0x48300100 0x80>;
+>>> +    ti,hwmods = "ecap0";
+>>> +};
+>>> +
+>>>  ecap0: ecap@0 { /* ECAP on da850 */
+>>>      compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>>>      #pwm-cells = <3>;
+>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> index 9c100b2..99b544f 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+>>> @@ -2,8 +2,9 @@ TI SOC EHRPWM based PWM controller
+>>>
+>>>  Required properties:
+>>>  - compatible: Must be "ti,<soc>-ehrpwm".
+>>> -  for am33xx - compatible = "ti,am33xx-ehrpwm";
+>>> -  for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>> +  for am33xx  - compatible = "ti,am33xx-ehrpwm";
+>>> +  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
+>>> +  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+>>>  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+>>>    the cells format. The only third cell flag supported by this binding is
+>>>    PWM_POLARITY_INVERTED.
+>>> @@ -22,6 +23,13 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
+>>>      ti,hwmods = "ehrpwm0";
+>>>  };
+>>>
+>>> +ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
+>>
+>> ditto
+>>
+>> Otherwise,
+>>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>>
+>
+>
+> Yes, the unit address is wrong but it is wrong in several places. I
+> added it like that to match what the other bindings are doing. However,
+> patches 3 and 4 fixes these unit address problems for all the bindings
+> all together to make things clear.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
- 10 files changed, 82 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+Okay, that's fine.
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index 936166f..cb0054a 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -5,7 +5,8 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
- 	- "mediatek,mt8173-apmixedsys"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-new file mode 100644
-index 0000000..4137196
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek bdpsys controller
-+============================
-+
-+The Mediatek bdpsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-bdpsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The bdpsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+bdpsys: clock-controller@1c000000 {
-+	compatible = "mediatek,mt2701-bdpsys", "syscon";
-+	reg = <0 0x1c000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-new file mode 100644
-index 0000000..768f3a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek ethsys controller
-+============================
-+
-+The Mediatek ethsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-ethsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The ethsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+ethsys: clock-controller@1b000000 {
-+	compatible = "mediatek,mt2701-ethsys", "syscon";
-+	reg = <0 0x1b000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-new file mode 100644
-index 0000000..beed7b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-@@ -0,0 +1,24 @@
-+Mediatek hifsys controller
-+============================
-+
-+The Mediatek hifsys controller provides various clocks and reset
-+outputs to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-hifsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The hifsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+hifsys: clock-controller@1a000000 {
-+	compatible = "mediatek,mt2701-hifsys", "syscon";
-+	reg = <0 0x1a000000 0 0x1000>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index b1f2ce1..f6a9166 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -5,7 +5,8 @@ The Mediatek imgsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index aaf8d14..1620ec2 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -6,7 +6,8 @@ outputs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 4385946..67dd2e4 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -5,7 +5,8 @@ The Mediatek mmsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt8173-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-index 2f6ff86..e494366 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-@@ -6,7 +6,8 @@ outputs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-pericfg", "syscon"
- 	- "mediatek,mt8135-pericfg", "syscon"
- 	- "mediatek,mt8173-pericfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index f9e9179..9f2fe78 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -5,7 +5,8 @@ The Mediatek topckgen controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-topckgen"
- 	- "mediatek,mt8135-topckgen"
- 	- "mediatek,mt8173-topckgen"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 1faacf1..2440f73 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -5,7 +5,8 @@ The Mediatek vdecsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
- - #clock-cells: Must be 1
- 
--- 
-1.9.1
+Rob
