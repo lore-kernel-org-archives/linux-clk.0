@@ -1,49 +1,41 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
-Date: Tue, 26 Apr 2016 09:09:42 +0200
-Message-Id: <1461654582-668-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <vaishali.thakkar@oracle.com>
+From: Vaishali Thakkar <vaishali.thakkar@oracle.com>
+To: mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sboyd@codeaurora.org, Vaishali Thakkar <vaishali.thakkar@oracle.com>
+Subject: [PATCH] clk: bcm/kona: Do not use sizeof on pointer type
+Date: Thu, 28 Apr 2016 19:20:33 +0530
+Message-Id: <1461851433-19365-1-git-send-email-vaishali.thakkar@oracle.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As a pure Clock Domain does not have the concept of powering the domain
-itself, the CPG/MSTP driver does not provide power_off() and power_on()
-callbacks.
-However, the genpd core may still perform a dummy power down, causing
-/sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
-status being "off-0".
+When sizeof is applied to a pointer typed expression, it gives
+the size of the pointer. So, here do not use sizeof on pointer
+type. Also, silent checkpatch.pl by using kmalloc_array over
+kmalloc.
 
-Use the always-on governor to make sure the domain is never powered
-down, and always shows up as "on" in pm_genpd_summary.
+Note that this has no effect on runtime because 'parent_names'
+is a pointer to a pointer.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Problem found using Coccinelle.
+
+Signed-off-by: Vaishali Thakkar <vaishali.thakkar@oracle.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/bcm/clk-kona-setup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 0d595311c659a741..210cd744a7a97bbd 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -495,7 +495,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	genpd->flags = GENPD_FLAG_PM_CLK;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
--	pm_genpd_init(genpd, &simple_qos_governor, false);
-+	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
- 	cpg_mssr_clk_domain = pd;
- 
- 	of_genpd_add_provider_simple(np, genpd);
+diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
+index deaa7f9..526b0b0 100644
+--- a/drivers/clk/bcm/clk-kona-setup.c
++++ b/drivers/clk/bcm/clk-kona-setup.c
+@@ -577,7 +577,8 @@ static u32 *parent_process(const char *clocks[],
+ 	 * selector is not required, but we allocate space for the
+ 	 * array anyway to keep things simple.
+ 	 */
+-	parent_names = kmalloc(parent_count * sizeof(parent_names), GFP_KERNEL);
++	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
++			       GFP_KERNEL);
+ 	if (!parent_names) {
+ 		pr_err("%s: error allocating %u parent names\n", __func__,
+ 				parent_count);
 -- 
-1.9.1
+2.1.4
