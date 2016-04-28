@@ -1,23 +1,77 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, elaine.zhang@rock-chips.com, jay.xu@rock-chips.com, dianders@chromium.org
-Subject: Re: [PATCH 5/6] clk: rockchip: rk3399: fix the cifout clock
-Date: Mon, 25 Apr 2016 23:02:51 +0200
-Message-ID: <1734031.qNOhhuPPat@diego>
-In-Reply-To: <1461150692-29751-1-git-send-email-zhengxing@rock-chips.com>
-References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com> <1461150692-29751-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ig0-f194.google.com ([209.85.213.194]:34970 "EHLO
+	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750847AbcD1IIB (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2016 04:08:01 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5721B47D.9030206@de.bosch.com>
+References: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
+	<CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
+	<5721B47D.9030206@de.bosch.com>
+Date: Thu, 28 Apr 2016 10:07:59 +0200
+Message-ID: <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Oleksij Rempel <linux@rempel-privat.de>,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 20. April 2016, 19:11:32 schrieb Xing Zheng:
-> The cifout clock is incorrect due to the manual error, we need to
-> fix it.
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Hi Dirk,
 
-applied to my clk-branch for v4.7
+On Thu, Apr 28, 2016 at 8:58 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> On 28.04.2016 08:52, Geert Uytterhoeven wrote:
+>> On Thu, Apr 28, 2016 at 8:08 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>> @@ -46,7 +48,8 @@ Examples
+>>>
+>>>          cpg: clock-controller@e6150000 {
+>>>                  compatible = "renesas,r8a7795-cpg-mssr";
+>>> -               reg = <0 0xe6150000 0 0x1000>;
+>>> +               reg = <0 0xe6150000 0 0x1000>,
+>>> +                     <0 0xe6160060 0 0x4>;
+>>
+>>
+>> The MODEMR register is not part of the CPG block, but of the RST block.
+>> So IMHO it doesn't belong in the clock-controller node.
+>
+> Ok, fine.
+>
+> So we agree hat this ugly hard coded register address stuff has to be
+> removed and replaced by a device tree based solution. Correct?
 
-Thanks
-Heiko
+Yes we agree.
+
+>> BTW, I still prefer something like
+>> "[PATCH 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap"
+>> (http://www.spinics.net/lists/linux-sh/msg44757.html).
+>
+> What's the status of this? I see there a date "1 Sep 2015" ;)
+
+We were considering alternative solutions, cfr. "[PATCH/RFC 0/6] boot-mode-reg:
+Add core" (http://www.spinics.net/lists/linux-sh/msg45969.html).
+To avoid delaying upstream r8a7795, we settled for the ugly hard coded
+register access as an interim solution.
+
+> Is this available in any testing tree we could try?
+
+It used to be part of older renesas-drivers releases.
+The patches may still apply, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
