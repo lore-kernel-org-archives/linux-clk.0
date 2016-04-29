@@ -1,172 +1,105 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 29 Apr 2016 18:49:33 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 11/13] clk: gpio: Add hw based registration APIs
-Date: Thu, 21 Apr 2016 15:22:02 -0700
-Message-Id: <1461277324-27185-12-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clocks additions for 4.7
+Message-ID: <20160429164933.GA8913@lukather>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk gpio code to return struct
-clk_hw pointers instead of struct clk pointers. This way we hide
-the struct clk pointer from providers unless they need to use
-consumer facing APIs.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-gpio.c       | 52 ++++++++++++++++++++++++++++++++++----------
- include/linux/clk-provider.h |  8 +++++++
- 2 files changed, 49 insertions(+), 11 deletions(-)
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 08f65acc5d57..86b245746a6b 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -94,13 +94,13 @@ const struct clk_ops clk_gpio_mux_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
- 
--static struct clk *clk_register_gpio(struct device *dev, const char *name,
-+static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags,
- 		const struct clk_ops *clk_gpio_ops)
- {
- 	struct clk_gpio *clk_gpio;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init = {};
- 	unsigned long gpio_flags;
- 	int err;
-@@ -141,24 +141,26 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
- 	clk_gpio->gpiod = gpio_to_desc(gpio);
- 	clk_gpio->hw.init = &init;
- 
-+	hw = &clk_gpio->hw;
- 	if (dev)
--		clk = devm_clk_register(dev, &clk_gpio->hw);
-+		err = devm_clk_hw_register(dev, hw);
- 	else
--		clk = clk_register(NULL, &clk_gpio->hw);
-+		err = clk_hw_register(NULL, hw);
- 
--	if (!IS_ERR(clk))
--		return clk;
-+	if (!err)
-+		return hw;
- 
- 	if (!dev) {
- 		gpiod_put(clk_gpio->gpiod);
- 		kfree(clk_gpio);
- 	}
- 
--	return clk;
-+	return ERR_PTR(err);
- }
- 
- /**
-- * clk_register_gpio_gate - register a gpio clock gate with the clock framework
-+ * clk_hw_register_gpio_gate - register a gpio clock gate with the clock
-+ * framework
-  * @dev: device that is registering this clock
-  * @name: name of this clock
-  * @parent_name: name of this clock's parent
-@@ -166,7 +168,7 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
-  * @active_low: true if gpio should be set to 0 to enable clock
-  * @flags: clock flags
-  */
--struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags)
- {
-@@ -175,10 +177,24 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 			(parent_name ? 1 : 0), gpio, active_low, flags,
- 			&clk_gpio_gate_ops);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
-+
-+struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-+		const char *parent_name, unsigned gpio, bool active_low,
-+		unsigned long flags)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
-+				       flags);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
-+}
- EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
- 
- /**
-- * clk_register_gpio_mux - register a gpio clock mux with the clock framework
-+ * clk_hw_register_gpio_mux - register a gpio clock mux with the clock framework
-  * @dev: device that is registering this clock
-  * @name: name of this clock
-  * @parent_names: names of this clock's parents
-@@ -187,7 +203,7 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
-  * @active_low: true if gpio should be set to 0 to enable clock
-  * @flags: clock flags
-  */
--struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags)
- {
-@@ -199,6 +215,20 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
- 	return clk_register_gpio(dev, name, parent_names, num_parents,
- 			gpio, active_low, flags, &clk_gpio_mux_ops);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
-+
-+struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents, unsigned gpio,
-+		bool active_low, unsigned long flags)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
-+			gpio, active_low, flags);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
-+}
- EXPORT_SYMBOL_GPL(clk_register_gpio_mux);
- 
- static int gpio_clk_driver_probe(struct platform_device *pdev)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 456c3ced1ac9..6c36c5e8ccbe 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -667,6 +667,10 @@ extern const struct clk_ops clk_gpio_gate_ops;
- struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags);
-+struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
-+		const char *parent_name, unsigned gpio, bool active_low,
-+		unsigned long flags);
-+void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
- 
- /**
-  * struct clk_gpio_mux - gpio controlled clock multiplexer
-@@ -682,6 +686,10 @@ extern const struct clk_ops clk_gpio_mux_ops;
- struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags);
-+struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
-+		const char * const *parent_names, u8 num_parents, unsigned gpio,
-+		bool active_low, unsigned long flags);
-+void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
- 
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hi Mike, Stephen,
+
+Please pull the following tag for the next merge window.
+
+Thanks!
+Maxime
+
+The following changes since commit 92a39d9043ba5ff98adb1c31491f00c7bea5466e:
+
+  clk: composite: Add unregister function (2016-04-21 14:43:28 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
+nxi-clocks-for-4.7
+
+for you to fetch changes up to ff2bb89335daec6053b5ac778369f7f72b931142:
+
+  clk: sunxi: Let divs clocks read the base factor clock name from devicetr=
+ee (2016-04-25 10:57:45 +0200)
+
+----------------------------------------------------------------
+Allwinner clocks additions for 4.7
+
+As usual, a bunch of clocks patches for 4.7, mostly fixes and cleanups, and
+display-related clocks.
+
+----------------------------------------------------------------
+Andrea Venturi (1):
+      clk: sunxi: mod1 clock should modify it's parent
+
+Jean-Francois Moine (1):
+      clk: sunxi: Add sun6i/8i display support
+
+Jens Kuske (1):
+      clk: sunxi: Let divs clocks read the base factor clock name from devi=
+cetree
+
+Maxime Ripard (3):
+      dt-bindings: clk: sun5i: add DRAM gates compatible
+      clk: sunxi: Add PLL3 clock
+      clk: sunxi: Add TCON channel1 clock
+
+Vaishali Thakkar (1):
+      clk: sunxi: Use resource_size
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |   4 +
+ drivers/clk/sunxi/Makefile                        |   2 +
+ drivers/clk/sunxi/clk-a10-mod1.c                  |   2 +-
+ drivers/clk/sunxi/clk-sun4i-pll3.c                |  98 +++++++
+ drivers/clk/sunxi/clk-sun4i-tcon-ch1.c            | 300 ++++++++++++++++++=
+++++
+ drivers/clk/sunxi/clk-sun9i-mmc.c                 |   2 +-
+ drivers/clk/sunxi/clk-sunxi.c                     |  79 +++++-
+ 7 files changed, 474 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXI5CdAAoJEBx+YmzsjxAg7EYQAIsq8zVbzFqV9vMQtfFDxT7x
+Mh6TRlx0HCvIRxLG9BZkBbcTiPr07211P/mf1+2OvXxwEUK4TIWD31Oh1FJpzvWo
+GUuXayOx9mDxjrjxPCTmBb4FBkwZEmM2UC3ZqYOvN/frmkoISLtMXmXkVm3S8ZAN
+XyZ8uBmInokiQN+liG63IPlpMMwi68EFLPWJu4/3IGh4p0zhhRGGRX0k8E+fwqr7
+bkKqeFJ9bmME/6KRxqgbCK39xI2YStT1v6PVXobu4SqXha0Omqj2q5CQXFyHJFH3
+2B9hYJ3ou1U5IdKkOTzh4ij4IZR2wvdGvMlL9Uv63DpAPgQkuHn057K9pujmku6J
+sC1md5wXtiRYJ4+vucpUunMsymJC+wTqzXwq4chzDZ/P6tuH9/b3LOcv+pA7C/qq
+k1Qi1kD9Zqo8uT3Y/hTmHSF1Tm5fhUWNV4SYb38fjVGU/WxtBFKradeYlObOK1TQ
+nv5/gqwlZN90dqVURoczE09cAci7NJYHhgg373/DbZOtB7TtPnDXPJV86OWlTWd5
+I6iyfertgOR/dGEiH4ExMfBtH3bT7xJCHe30qW7Hr5aQrqdpax7lkQgUkysGOTzm
+PSQHOxUOQ3vAY+ygevXCqfYB/bSq57rEz7NohZcPraHob8BxRTFiLCZ77RS476Lj
+TSml1mv0WgW1Q+ZeadWX
+=+GLK
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
