@@ -1,56 +1,25 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60248 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752140AbcDUQCj (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2016 12:02:39 -0400
-Date: Thu, 21 Apr 2016 17:02:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Message-ID: <20160421160232.GU3217@sirena.org.uk>
-References: <1461244361-45686-1-git-send-email-w.egorov@phytec.de>
- <1461244361-45686-5-git-send-email-w.egorov@phytec.de>
+Return-Path: <ukl@pengutronix.de>
+Date: Fri, 29 Apr 2016 10:19:01 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: imx: fix ahb clock mux 1
+Message-ID: <20160429081901.GU7946@pengutronix.de>
+References: <1461877623-26838-1-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fkX35UkdEibezs2J"
-In-Reply-To: <1461244361-45686-5-git-send-email-w.egorov@phytec.de>
-Subject: Re: [PATCH v2 4/7] regulator: rk808: Add regulator driver for RK818
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1461877623-26838-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
---fkX35UkdEibezs2J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+$Subject ~= s/imx/imx7/
 
-On Thu, Apr 21, 2016 at 03:12:38PM +0200, Wadim Egorov wrote:
-> Add support for the rk818 regulator. The regulator module consists
-> of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
-> power OTG and HDMI5V.
+Best regards
+Uwe
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
---fkX35UkdEibezs2J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXGPmXAAoJECTWi3JdVIfQ3w0H/A+ZTcyGxM8WpZfJGaJkczkE
-5tO4SaQOojezvfRrd9Y5q8PRYljPpjMTCzqoxD94FC2pplzKBVqsLWeaPeUNqr/K
-37FeCFl/8u2RjmkjD/Xav51ML44K1CzvYCndZJE3JfzmPhJy0mt6LO1imPKkhsf5
-nVIErqORwxkzYF/baLLlI8Rmiqk4BWMgsyMuL1l0xIvNb8yLfKo9olDQGI3PsU0s
-i7iXSiNgSbXTQ+BbCpADzT0i+VzCdpy5ELzgpejtQE5A2reUksuIprr8gsTuLiGS
-axev5G24loRMkgdVb36SAfn2ndDQ+gFMJjiw7oxkcBMmFwaDro3ju80fJznJzNY=
-=nc2X
------END PGP SIGNATURE-----
-
---fkX35UkdEibezs2J--
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
