@@ -1,53 +1,60 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>, <paul@pwsan.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 03/30] ARM: OMAP2+: omap_device: create clock alias purely from DT data
-Date: Mon, 11 Apr 2016 11:18:54 +0300
-Message-ID: <1460362761-4842-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
-References: <1460362761-4842-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 2/2] clk: bcm2835: use CLK_ENABLE_HAND_OFF instead of CLK_IS_CRITICAL
+Date: Fri, 29 Apr 2016 17:42:36 +0000
+Message-Id: <1461951756-16804-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
+References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This avoids the need to add most of the clock aliases under
-drivers/clk/ti/clk-xyz.c files.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+The use of CLK_IS_CRITICAL is just a stop-gap to avoid unpreparing
+essential PLLs that may result stopping the system without intention.
+
+This moves to use CLK_ENABLE_HAND_OFF instead of CLK_IS_CRITICAL,
+so that clocks (and their parents) may get released
+if there is a driver that claims (and then later releases) a
+specific clock.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+
+--
+Note that this requires the following patches applied:
+* clk: introduce CLK_ENABLE_HAND_OFF flag
+* clk: per-user clk prepare & enable ref counts
 ---
- arch/arm/mach-omap2/omap_device.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
-index f7ff3b9..b32d7c8 100644
---- a/arch/arm/mach-omap2/omap_device.c
-+++ b/arch/arm/mach-omap2/omap_device.c
-@@ -63,7 +63,22 @@ static void _add_clkdev(struct omap_device *od, const char *clk_alias,
- 		return;
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 03b7f01..6303c3a 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1251,12 +1251,12 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
  	}
  
--	rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev), clk_name, NULL);
-+	r = clk_get_sys(NULL, clk_name);
-+
-+	if (IS_ERR(r) && of_have_populated_dt()) {
-+		struct of_phandle_args clkspec;
-+
-+		clkspec.np = of_find_node_by_name(NULL, clk_name);
-+
-+		r = of_clk_get_from_provider(&clkspec);
-+
-+		rc = clk_register_clkdev(r, clk_alias,
-+					 dev_name(&od->pdev->dev));
-+	} else {
-+		rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev),
-+				   clk_name, NULL);
-+	}
-+
- 	if (rc) {
- 		if (rc == -ENODEV || rc == -ENOMEM)
- 			dev_err(&od->pdev->dev,
+-	/* if the clock is running, then enable CRITICAL */
++	/* if the clock is running, then enable CLK_ENABLE_HAND_OFF */
+ 	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
+ 		dev_dbg(cprman->dev,
+-			"found firmware enabled clock %s - enabling critical\n",
++			"found firmware enabled clock %s - enabling hand off\n",
+ 			data->name);
+-		init.flags |= CLK_IS_CRITICAL;
++		init.flags |= CLK_ENABLE_HAND_OFF;
+ 	}
+ 
+ 	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
 -- 
-1.7.9.5
+2.1.4
