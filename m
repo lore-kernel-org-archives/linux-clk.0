@@ -1,23 +1,61 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, elaine.zhang@rock-chips.com, jay.xu@rock-chips.com, dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] clk: rockchip: rk3399: drop unnecessary CLK_IGNORE_UNUSED flags
-Date: Mon, 25 Apr 2016 23:02:37 +0200
-Message-ID: <2170828.EVvy8hQbgu@diego>
-In-Reply-To: <1461150414-29638-4-git-send-email-zhengxing@rock-chips.com>
-References: <1461150414-29638-1-git-send-email-zhengxing@rock-chips.com> <1461150414-29638-4-git-send-email-zhengxing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 1/2] clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
+Date: Fri, 29 Apr 2016 17:42:35 +0000
+Message-Id: <1461951756-16804-2-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
+References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 20. April 2016, 19:06:51 schrieb Xing Zheng:
-> We don't need to many clocks enable after startup, to reduce some
-> power consumption.
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+From: Martin Sperl <kernel@martin.sperl.org>
 
-applied to my clk-branch for v4.7
+The bcm2835 firmware enables several clocks and plls before
+booting the linux kernel.
 
-Thanks
-Heiko
+These plls should never get disabled as it may result in a
+stopped system clock and more.
+
+So during probing we check if the clock is enabled
+and if it is then mark that clock with CLK_IS_CRITICAL.
+
+As a consequence this will also enable the corresponding
+parent plls and pll-divs.
+
+This is intended as a stop-gap until CLK_ENABLE_HAND_OFF
+becomes available, at which point it should be used instead.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 35f8de7..03b7f01 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1251,6 +1251,14 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+ 	}
+ 
++	/* if the clock is running, then enable CRITICAL */
++	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
++		dev_dbg(cprman->dev,
++			"found firmware enabled clock %s - enabling critical\n",
++			data->name);
++		init.flags |= CLK_IS_CRITICAL;
++	}
++
+ 	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
+ 		return NULL;
+-- 
+2.1.4
