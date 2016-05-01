@@ -1,143 +1,140 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Yangbo Lu <yangbo.lu@nxp.com>, Scott Wood <oss@buserror.net>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>
-Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Thu, 05 May 2016 13:10:31 +0200
-Message-ID: <5159406.HOFrj7pRfW@wuerfel>
-In-Reply-To: <HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <4448030.Zs8fVnr3nm@wuerfel> <HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ig0-f195.google.com ([209.85.213.195]:33943 "EHLO
+	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752319AbcEAUs3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2016 16:48:29 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1462079316-27771-7-git-send-email-ysato@users.sourceforge.jp>
+References: <1462079316-27771-1-git-send-email-ysato@users.sourceforge.jp>
+	<1462079316-27771-7-git-send-email-ysato@users.sourceforge.jp>
+Date: Sun, 1 May 2016 22:48:28 +0200
+Message-ID: <CAMuHMdXwC1CKmQ5X98-oGuZ1VAXYrR+vZsRa6qKPt6Cu9Q_-SA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 06/12] clk: sh: SH7750/51 PLL and divider clock driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 05 May 2016 09:41:32 Yangbo Lu wrote:
-> > -----Original Message-----
-> > From: Arnd Bergmann [mailto:arnd@arndb.de]
-> > Sent: Thursday, May 05, 2016 4:32 PM
-> > To: linuxppc-dev@lists.ozlabs.org
-> > Cc: Yangbo Lu; linux-mmc@vger.kernel.org; devicetree@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> > linux-clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
-> > foundation.org; netdev@vger.kernel.org; Mark Rutland;
-> > ulf.hansson@linaro.org; Russell King; Bhupesh Sharma; Joerg Roedel;
-> > Santosh Shilimkar; Yang-Leo Li; Scott Wood; Rob Herring; Claudiu Manoil;
-> > Kumar Gala; Xiaobo Xie; Qiang Zhao
-> > Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-
-> > R1.0-R2.0
-> > 
-> > On Thursday 05 May 2016 11:12:30 Yangbo Lu wrote:
-> > >
-> > > +       fsl_guts_init();
-> > > +       svr = fsl_guts_get_svr();
-> > > +       if (svr) {
-> > > +               esdhc->soc_ver = SVR_SOC_VER(svr);
-> > > +               esdhc->soc_rev = SVR_REV(svr);
-> > > +       } else {
-> > > +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
-> > > +       }
-> > > +
-> > >
-> > 
-> > 
-> > Sorry for jumping in again after not participating in the discussion for
-> > the past few versions.
-> > 
-> > What happened to my suggestion of making this a platform-independent
-> > interface to avoid the link time dependency?
-> > 
-> > Specifically, why not add an exported function to drivers/base/soc.c that
-> > uses glob_match() for comparing a string in the device driver to the ID
-> > of the SoC that is set by whatever SoC identifying driver the platform
-> > has?
-> 
-> [Lu Yangbo-B47093] I think this has been discussed in v6.
-> You can find Scott's comments about this in below link.
-> https://patchwork.kernel.org/patch/8544501/
+Hi Sato-san,
 
-Ah, thanks for bearing with me and digging this out again. Let me follow
-up on Scott's older replies here then:
+On Sun, May 1, 2016 at 7:08 AM, Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  .../bindings/clock/renesas,sh-div-clock.txt        |  24 ++
+>  .../bindings/clock/renesas,sh7750-div-clock.txt    |  27 ++
+>  .../bindings/clock/renesas,sh7750-pll-clock.txt    |  26 ++
+>  drivers/clk/Kconfig                                |   1 +
+>  drivers/clk/Makefile                               |   3 +-
+>  drivers/clk/sh/Kconfig                             |   5 +
+>  drivers/clk/sh/Makefile                            |   2 +
+>  drivers/clk/sh/clk-sh7750.c                        | 223 ++++++++++++++
+>  drivers/clk/sh/clk-shdiv.c                         | 338 +++++++++++++++++++++
+>  9 files changed, 648 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
+>  create mode 100644 drivers/clk/sh/Kconfig
+>  create mode 100644 drivers/clk/sh/Makefile
+>  create mode 100644 drivers/clk/sh/clk-sh7750.c
+>  create mode 100644 drivers/clk/sh/clk-shdiv.c
+>
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
+> new file mode 100644
+> index 0000000..399e0da
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
+> @@ -0,0 +1,24 @@
+> +* Renesas H8/300 divider clock
 
-> >> IIRC, it is the same IP block as i.MX and Arnd's point is this won't
-> >> even compile on !PPC. It is things like this that prevent sharing the
-> >> driver.
-> 
-> The whole point of using the MMIO SVR instead of the PPC SPR is so that
-> it will work on ARM...  The guts driver should build on any platform as
-> long as OF is enabled, and if it doesn't find a node to bind to it will
-> return 0 for SVR, and the eSDHC driver will continue (after printing an
-> error that should be removed) without the ability to test for errata
-> based on SVR.
+[...]
 
-It feels like a bad design to have to come up with a different
-method for each SoC type here when they all do the same thing
-and want to identify some variant of the chip to do device
-specific quirks.
+h8300?
 
-As far as I'm concerned, every driver in drivers/soc that needs to
-export a symbol to be used by a device driver is an indication that
-we don't have the right set of abstractions yet. There are cases
-that are not worth abstracting because the functionality is rather
-obscure and only a couple of drivers for one particular chip
-ever need it.
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
+> new file mode 100644
+> index 0000000..8c57ab5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
+> @@ -0,0 +1,27 @@
+> +* Renesas SH7750/51 divider clock
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be "renesas,sh7750-div-clock"
+> +
+> +  - clocks: Reference to the parent clocks (mostly PLL)
+> +
+> +  - #clock-cells: Must be 0
+> +
+> +  - reg: Base address and length of the divide rate selector
+> +
+> +  - renesas,offset: bit offset of selector
+> +
+> +  - clock-output-names: The names of the clocks.
+> +
+> +Example
+> +-------
+> +
+> +        iclk: iclk {
+> +                compatible = "renesas,sh7750-div-clock";
+> +                clocks = <&pllclk>;
+> +                #clock-cells = <0>;
+> +                reg = <0xffc00000 2>;
+> +               renesas,offset = <6>;
+> +               clock-output-names = "ick";
+> +        };
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
+> new file mode 100644
+> index 0000000..06a3d31
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
+> @@ -0,0 +1,26 @@
+> +Renesas SH7750/51 PLL clock
+> +
+> +This device is Clock multiplyer
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be "renesas,sh7750-pll-clock"
+> +
+> +  - clocks: Reference to the parent clocks
+> +
+> +  - #clock-cells: Must be 0
+> +
+> +  - renesas,mult: PLL1 multiply rate
+> +
+> +  - reg: Two rate selector (FRQCR / WDT) register address
+> +
+> +Example
+> +-------
+> +
+> +        pllclk: pllclk {
+> +                compatible = "renesas,sh7750-pll-clock";
+> +                clocks = <&oclk>;
+> +                #clock-cells = <0>;
+> +               renesas,mult = <12>;
+> +                reg = <0xffc00000 2>, <0xffc00008 4>;
+> +        };
 
-Finding out the version of the SoC does not look like this case.
+As the registers of the PLL clock and the various div clocks are the
+same, I think it will be simpler to just write a single driver that provides
+all clocks, instead of describing all clocks in DT.
 
-> > I think the first four patches take care of building for ARM,
-> > but the problem remains if you want to enable COMPILE_TEST as
-> > we need for certain automated checking.
-> 
-> What specific problem is there with COMPILE_TEST?
+Cfr. drivers/clk/renesas/*-cpg-mssr.c vs. drivers/clk/renesas/clk-rcar-gen2.c
++ drivers/clk/renesas/clk-mstp.c + drivers/clk/renesas/clk-div6.c.
 
-COMPILE_TEST is solvable here and the way it is implemented in this
-case (selecting FSL_GUTS from the driver) indeed looks like it works
-correctly, but it's still awkward that this means building the
-SoC specific ID stuff into the vmlinux binary for any driver that
-uses something like that for a particular SoC.
+Gr{oetje,eeting}s,
 
-> >> Dealing with Si revs is a common problem. We should have a
-> >> common solution. There is soc_device for this purpose.
-> > 
-> > Exactly. The last time this came up, I think we agreed to implement a
-> > helper using glob_match() on the soc_device strings. Unfortunately
-> > this hasn't happened then, but I'd still prefer that over yet another
-> > vendor-specific way of dealing with the generic issue.
-> 
-> soc_device would require encoding the SVR as a string and then decoding
-> the string, which is more complicated and error prone than having
-> platform-specific code test a platform-specific number. 
+                        Geert
 
-You already need to encode it as a string to register the soc_device,
-and the driver just needs to pass a glob string, so the only part that
-is missing is the generic function that takes the string from the
-driver and passes that to glob_match for the soc_device.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> And when would it get registered on arm64, which doesn't have
-> platform code?
-
-Whenever the soc driver is loaded, as is the case now. The match
-function can return -EPROBE_DEFER if no SoC device is registered
-yet.
-
-	Arnd
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
