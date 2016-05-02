@@ -1,95 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:34715 "EHLO
-	mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753786AbcEEQAh (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2016 12:00:37 -0400
-Received: by mail-io0-f171.google.com with SMTP id 190so88964040iow.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 May 2016 09:00:36 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <572B62AC.1020205@mleia.com>
-References: <CAGhQ9VxsyWq=GK5RnCzspV3=6NbDNH6pJhf3uZqdNPCsP9VzmQ@mail.gmail.com>
-	<572B62AC.1020205@mleia.com>
-Date: Thu, 5 May 2016 18:00:36 +0200
-Message-ID: <CAGhQ9VyBcyRZSRowzpiAWnUBywiu_fDMEYWOXYEykDgLWnU0mA@mail.gmail.com>
-Subject: Re: clk-lpc18xx-creg - scheduling while atomic
-From: Joachim Eastwood <manabian@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	zhangqing@rock-chips.com,
+	tomeu.vizoso@collabora.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [RFC PATCH 3/3] clk: rockchip: make rk3399 vop dclks keep their rate on parent rate changes
+Date: Mon,  2 May 2016 18:36:22 +0200
+Message-Id: <1462206982-10444-4-git-send-email-heiko@sntech.de>
+In-Reply-To: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+The rk3399 hdmi phy is supplied by the vpll directly and needs to adapt
+that frequency depending on the selected resolution on the hdmi output.
+For the hdmi-phy the vpll frequency is supplied unchanged without
+any dividers being present there.
 
-On 5 May 2016 at 17:11, Vladimir Zapolskiy <vz@mleia.com> wrote:
-> Hi Joachim,
->
-> On 05.05.2016 14:53, Joachim Eastwood wrote:
->> Hi,
->>
->> I just tried next/master on my lpc18xx platform and got a 'scheduling
->> while atomic' on the msleep in clk_creg_32k_prepare. This does not
->> occur on 4.6-rc1. See below for backtrace.
->>
->> According to Documentation/clk.txt, Part 6 - Locking, sleeping is
->> allowed in prepare functions. Changing the msleep to an mdelay makes
->> the problem go away.
->>
->> So any ideas to what is going on?
->>
->
-> the bug description resembles a recent problem on iMX7, you may find
-> details from "clk: imx: do not sleep if IRQ's are still disabled"
-> thread, the same sleeping clk_core_prepare() from time_init(), while
-> sleeping is not allowed until the timer is ready.
+The vpll also is one of the sources the general display clock of the
+visual output processor (vop) and as it is somewhat special for
+display operations possibly also the preferred pll source. Here a divider
+is available between the pll-mux and the vop clock, so that this part
+can adapt the resulting frequency if needed.
 
-Thanks alot, Vladimir!
-That sheed more light on the problem.
+So to keep the vop clock in line with the target rate, set the newly
+introduced CLK_KEEP_REQ_RATE flag for the dclk_vop clocks on rk3399.
 
-Doing a partial revert of 32b9b10961860 ("clk: Allow clocks to be
-marked as CRITICAL") also fixes the problem. 32b9b10961860 makes it
-possible to call clk prepare, which is allowed to sleep, when clocks
-are first created from of_clk_init(). of_clk_init() is called very
-early where it's not allow to sleep at all[1].
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-What do you suggest, Stephen?
-Calling prepare() from __clk_core_init() doesn't seem like a good idea
-to me. I think the core clk handing of critical clocks needs to change
-here.
-
-
-regards,
-Joachim Eastwood
-
-
-[1] https://lkml.org/lkml/2016/4/27/233
-
->> BUG: scheduling while atomic: swapper/0/0x00000002
->> CPU: 0 PID: 0 Comm: swapper Not tainted
->> 4.6.0-rc6-next-20160505-00001-g5c8320450d1c #826
->> Hardware name: NXP LPC18xx/43xx (Device Tree)
->> [<2800be81>] (unwind_backtrace) from [<2800b22f>] (show_stack+0xb/0xc)
->> [<2800b22f>] (show_stack) from [<2801ea21>] (__schedule_bug+0x2d/0x44)
->> [<2801ea21>] (__schedule_bug) from [<281dc937>] (__schedule+0x3b/0x268)
->> [<281dc937>] (__schedule) from [<281dcbbb>] (schedule+0x57/0x64)
->> [<281dcbbb>] (schedule) from [<281de8ef>] (schedule_timeout+0xfb/0x120)
->> [<281de8ef>] (schedule_timeout) from [<28030fcd>] (msleep+0xf/0x12)
->> [<28030fcd>] (msleep) from [<28165a6d>] (clk_creg_32k_prepare+0x1f/0x24)
->> [<28165a6d>] (clk_creg_32k_prepare) from [<281620d5>]
->> (clk_core_prepare+0x1d/0x36)
->> [<281620d5>] (clk_core_prepare) from [<2816340b>] (clk_register+0x22f/0x318)
->> [<2816340b>] (clk_register) from [<282b06c9>] (lpc18xx_creg_clk_init+0x55/0x84)
->> [<282b06c9>] (lpc18xx_creg_clk_init) from [<282b0149>] (of_clk_init+0xc1/0x12c)
->> [<282b0149>] (of_clk_init) from [<282a665d>] (time_init+0x15/0x20)
->> [<282a665d>] (time_init) from [<282a457d>] (start_kernel+0x169/0x274)
->> [<282a457d>] (start_kernel) from [<28008025>] (0x28008025)
->> bad: scheduling from the idle thread!
->> CPU: 0 PID: 0 Comm: swapper Tainted: G W
->> 4.6.0-rc6-next-20160505-00001-g5c8320450d1c #826
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 5248726..4462a50 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -277,11 +277,11 @@ static struct rockchip_clk_branch rk3399_uart4_pmu_fracmux __initdata =
+ 			RK3399_PMU_CLKSEL_CON(5), 8, 2, MFLAGS);
+ 
+ static struct rockchip_clk_branch rk3399_dclk_vop0_fracmux __initdata =
+-	MUX(DCLK_VOP0, "dclk_vop0", mux_dclk_vop0_p, CLK_SET_RATE_PARENT,
++	MUX(DCLK_VOP0, "dclk_vop0", mux_dclk_vop0_p, CLK_SET_RATE_PARENT | CLK_KEEP_REQ_RATE,
+ 			RK3399_CLKSEL_CON(49), 11, 1, MFLAGS);
+ 
+ static struct rockchip_clk_branch rk3399_dclk_vop1_fracmux __initdata =
+-	MUX(DCLK_VOP1, "dclk_vop1", mux_dclk_vop1_p, CLK_SET_RATE_PARENT,
++	MUX(DCLK_VOP1, "dclk_vop1", mux_dclk_vop1_p, CLK_SET_RATE_PARENT | CLK_KEEP_REQ_RATE,
+ 			RK3399_CLKSEL_CON(50), 11, 1, MFLAGS);
+ 
+ static struct rockchip_clk_branch rk3399_pmuclk_wifi_fracmux __initdata =
+-- 
+2.8.0.rc3
