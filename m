@@ -1,48 +1,105 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-From: Brian Norris <briannorris@chromium.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
 Cc: linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 1/2] clk: rockchip: mark rk3399 GIC clocks as critical
-Date: Fri, 13 May 2016 11:42:16 -0700
-Message-Id: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+	linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	zhangqing@rock-chips.com,
+	tomeu.vizoso@collabora.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [RFC PATCH 1/3] clk: fix inconsistent use of req_rate
+Date: Mon,  2 May 2016 18:36:20 +0200
+Message-Id: <1462206982-10444-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-We never want to kill the GIC.
+The req_rate property seems to be made to hold the rate requested through
+clk_set_rate. Currently it gets initialized in clk_init to the clocks
+current rate and then adapted in clk_set_rate calls. Orphan clocks and
+their children get initialized to a rate of 0 and req_rate never gets
+re-set when these lose their orphan-status.
 
-Noticed when making other clock fixups, and seeing the newly-constructed
-clock tree try to disable cpll, where we had this parent structure:
+Initializing req_rate to the clocks rate also is unintuitive as it just
+copies the value that is already in the rate property and also looses the
+information if a component actually requested a specific rate.
 
-  aclk_gic <------\
-                  |--- aclk_gic_pre <-- cpll <-- pll_cpll
-  aclk_gic_noc <--/
+So separate the requested rate and only set it in clk_core_set_rate_nolock
+when a real rate gets requested. The users of the req_rate __clk_put and
+clk_set_rate_range that adjust a clock based on that value use req_rate
+at first and fall back to rate if no rate had been requested now.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/rockchip/clk-rk3399.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 291543f52caa..145756c4f3c8 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1466,6 +1466,8 @@ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f079ea4..65e0aad 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1507,8 +1507,10 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 		return 0;
  
- static const char *const rk3399_cru_critical_clocks[] __initconst = {
- 	"aclk_cci_pre",
-+	"aclk_gic",
-+	"aclk_gic_noc",
- 	"pclk_perilp0",
- 	"pclk_perilp0",
- 	"hclk_perilp0",
+ 	/* bail early if nothing to do */
+-	if (rate == clk_core_get_rate_nolock(core))
++	if (rate == clk_core_get_rate_nolock(core)) {
++		core->req_rate = req_rate;
+ 		return 0;
++	}
+ 
+ 	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+ 		return -EBUSY;
+@@ -1599,9 +1601,14 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 	clk_prepare_lock();
+ 
+ 	if (min != clk->min_rate || max != clk->max_rate) {
++		unsigned long rate = clk->core->req_rate;
++
++		if (!rate)
++			rate = clk->core->rate;
++
+ 		clk->min_rate = min;
+ 		clk->max_rate = max;
+-		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++		ret = clk_core_set_rate_nolock(clk->core, rate);
+ 	}
+ 
+ 	clk_prepare_unlock();
+@@ -2379,7 +2386,7 @@ static int __clk_core_init(struct clk_core *core)
+ 		rate = core->parent->rate;
+ 	else
+ 		rate = 0;
+-	core->rate = core->req_rate = rate;
++	core->rate = rate;
+ 
+ 	/*
+ 	 * walk the list of orphan clocks and reparent any that newly finds a
+@@ -2809,6 +2816,7 @@ int __clk_get(struct clk *clk)
+ 
+ void __clk_put(struct clk *clk)
+ {
++	unsigned long rate;
+ 	struct module *owner;
+ 
+ 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+@@ -2817,9 +2825,13 @@ void __clk_put(struct clk *clk)
+ 	clk_prepare_lock();
+ 
+ 	hlist_del(&clk->clks_node);
+-	if (clk->min_rate > clk->core->req_rate ||
+-	    clk->max_rate < clk->core->req_rate)
+-		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++
++	rate = clk->core->req_rate;
++	if (!rate)
++		rate = clk->core->rate;
++
++	if (clk->min_rate > rate || clk->max_rate < rate)
++		clk_core_set_rate_nolock(clk->core, rate);
+ 
+ 	owner = clk->core->owner;
+ 	kref_put(&clk->core->ref, __clk_release);
 -- 
-2.8.0.rc3.226.g39d4020
+2.8.0.rc3
