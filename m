@@ -1,80 +1,64 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: Heiko Stuebner <heiko@sntech.de>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org,
-	shawn.lin@rock-chips.com,
-	zhengxing@rock-chips.com,
-	Douglas Anderson <dianders@chromium.org>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: rockchip: fix the rk3399 sdmmc sample shift
-Date: Thu, 12 May 2016 11:03:17 -0700
-Message-Id: <1463076197-15900-2-git-send-email-dianders@chromium.org>
-In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
-References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.7 (take three)
+Date: Mon,  2 May 2016 13:47:34 +0200
+Message-Id: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Just like every other Rockhip device, the MMC "_sample" clocks should
-have a shift of 0, not a shift of 1.  The rk3399 TRM agrees.  Presumably
-these values were set to 0 because of a typo.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Things _sorta_ would have worked with the incorrect sample phase shift
-because of the register layout but wouldn't have been ideal and we would
-have skipped lots of phases.  Also: we would never actually enabled the
-fine delay unless we happened to have 128 or more delay elements.
+	Hi Mike, Stephen,
 
-This is expected behavior before this patch:
-* Try to set:     0 degrees +   1 delay elements
-  Actually get:   0 degrees +   0 delay elements
-* Try to set:    90 degrees +   0 delay elements
-  Actually get: 180 degrees +   0 delay elements
-* Try to set:   180 degrees +   0 delay elements
-  Actually get:   0 degrees +   0 delay elements
-* Try to set:   270 degrees +   0 delay elements
-  Actually get: 180 degrees +   0 delay elements
-* Try to set:     0 degrees + 129 delay elements
-  Actually get:   0 degrees +   2 delay elements
-* Try to set:   180 degrees + 129 delay elements
-  Actually get:   0 degrees +   3 delay elements
-* Try to set:     0 degrees + 130 delay elements
-  Actually get:   0 degrees +   4 delay elements
+The following changes since commit 2066390ad47b374f3d35075a32325b47d15bf735:
 
-I verified that old code had a problem by turning on debug printouts and
-seeing that the old code would report this for one SD card I had:
-  Good phase range 347-101 (115 len)
-  Good phase range 202-326 (125 len)
+  clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev() (2016-04-20 09:17:07 +0200)
 
-After my fix, it went down to one big good range for the same card.
-This is more expected:
-  Good phase range 189-1 (173 len)
-  Good phase range 82-85 (4 len)
-  Good phase range 166-168 (3 len)
+are available in the git repository at:
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.7-tag3
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 291543f52caa..14ff3e109e1e 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -895,10 +895,10 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(6), 1, GFLAGS),
- 
- 	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
--	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
-+	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 0),
- 
- 	MMC(SCLK_SDIO_DRV,      "sdio_drv",    "clk_sdio",  RK3399_SDIO_CON0,  1),
--	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  1),
-+	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  0),
- 
- 	/* pcie */
- 	COMPOSITE(SCLK_PCIE_PM, "clk_pcie_pm", mux_pll_src_cpll_gpll_npll_24m_p, 0,
--- 
-2.8.0.rc3.226.g39d4020
+for you to fetch changes up to d04a75af450782db2937603bb6706bf6fa7c6f37:
+
+  clk: renesas: cpg-mssr: Use always-on governor for Clock Domain (2016-04-28 10:32:55 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.7 (take three)
+
+  - Support for CSI2 and VIN module clocks on R-Car H3,
+  - Renesas CPG/MSTP and CPG/MSSR Clock Domain fixes.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      clk: renesas: mstp: Postpone call to pm_genpd_init()
+      clk: renesas: mstp: Use always-on governor for Clock Domain
+      clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
+      clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+
+Niklas Söderlund (2):
+      clk: renesas: r8a7795: Add CSI2 clocks
+      clk: renesas: r8a7795: Add VIN clocks
+
+ drivers/clk/renesas/clk-mstp.c         |  3 +--
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 13 +++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c |  2 +-
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
