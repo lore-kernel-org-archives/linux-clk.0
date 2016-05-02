@@ -1,92 +1,64 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 11 May 2016 08:46:33 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Vishnu Patekar
- <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
- Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 08/16] clk: sunxi-ng: Add M-factor clock support
-Message-Id: <20160511084633.29b56effa514996ffafd56ef@free.fr>
-In-Reply-To: <1462737711-10017-9-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1462737711-10017-9-git-send-email-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH V4 1/2] clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
+In-Reply-To: <1461951756-16804-2-git-send-email-kernel@martin.sperl.org>
+References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org> <1461951756-16804-2-git-send-email-kernel@martin.sperl.org>
+Date: Mon, 02 May 2016 08:36:18 -0700
+Message-ID: <87zis8h3pp.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun,  8 May 2016 22:01:43 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+--=-=-=
+Content-Type: text/plain
 
-> Introduce support for clocks that divide by a linear factor.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile |   1 +
->  drivers/clk/sunxi-ng/ccu_m.c  | 135 ++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu_m.h  | 101 +++++++++++++++++++++++++++++++
->  3 files changed, 237 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_m.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_m.h
->=20
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index a47a3bbdf285..f41de901c607 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -4,5 +4,6 @@ obj-y +=3D ccu_reset.o
->  obj-y +=3D ccu_div_table.o
->  obj-y +=3D ccu_fixed_factor.o
->  obj-y +=3D ccu_gate.o
-> +obj-y +=3D ccu_m.o
->  obj-y +=3D ccu_mux.o
->  obj-y +=3D ccu_phase.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_m.c b/drivers/clk/sunxi-ng/ccu_m.c
-> new file mode 100644
-> index 000000000000..424eb6da0d5b
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_m.c
-> @@ -0,0 +1,135 @@
-> +/*
-> + * Copyright (C) 2016 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
-	[snip]
-> +static int ccu_m_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			  unsigned long parent_rate)
-> +{
-> +	struct ccu_m *cm =3D hw_to_ccu_m(hw);
-> +	unsigned long flags;
-> +	unsigned int m;
-> +	u32 reg;
-> +
-> +	ccu_m_find_best(parent_rate, rate, 1 << cm->m.width, &m);
-> +
-> +	spin_lock_irqsave(cm->common.lock, flags);
-> +
-> +	reg =3D readl(cm->common.base + cm->common.reg);
-> +	reg &=3D ((1 << cm->m.width) - 1) << cm->m.shift;
+kernel@martin.sperl.org writes:
 
-Bug:
-	reg &=3D ~GENMASK(cm->m.width + cm->m.shift, cm->m.shift);
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> The bcm2835 firmware enables several clocks and plls before
+> booting the linux kernel.
+>
+> These plls should never get disabled as it may result in a
+> stopped system clock and more.
+>
+> So during probing we check if the clock is enabled
+> and if it is then mark that clock with CLK_IS_CRITICAL.
+>
+> As a consequence this will also enable the corresponding
+> parent plls and pll-divs.
+>
+> This is intended as a stop-gap until CLK_ENABLE_HAND_OFF
+> becomes available, at which point it should be used instead.
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 
-> +
-> +	writel(reg | ((m - 1) << cm->m.shift),
-> +	       cm->common.base + cm->common.reg);
-> +
-> +	spin_unlock_irqrestore(cm->common.lock, flags);
-> +
-> +	return 0;
-> +}
-	[snip]
+I still think that we don't want this patch.  We should be able to
+disable clocks that the firmware turned on, unless they really need to
+stay on.  If you have troubles on the upstream DT, let's talk about
+individual clocks.
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXJ3PyAAoJELXWKTbR/J7o6A8QALiioJr7U8xDbwn22NphL4lV
+h+YvfkyUH6fAosD/MqMPvGuB/GYA8ZC6WBe88RQb1pAn3NgiJ5RuyIZCerlGa/sX
+ZBcbZLEy4NZa8G9eY0/VhlVAkaZUrhfltTyINTEPay+aJblXXrg7HEnqdsIM7vsf
+1ffBPCyZJjNRozhLbkQsALOb3pgEYBYcp2unhLSzsiwqI7VZ8gZ4V1ySWuA2Jnet
+U6lHkBgzFbYhBzNWOQWooaqf/DleIUUPoy2cm2tG7xuJyw006E+0Y7snW/c54Pcj
+fkKoHcytm3i7ydSZcWpBTEhTd+a1NakJOJ8deKRRCmYLs0O3utgt691eSbHsFGZo
+lzSRBVcKdQWw5o99P4cjthOq+WHJNDQR9PLyEgHnB8VuUr7kg3yca9FI7fd07auL
+KimXlzPoZoZIcwCjOy7TSu+epYQSHucMgLxUROi4ZXaqnqg80BrfejojAWh66jPD
+Vy45NNxd3DZr3R2JQ/6lVfKCch7ARBqz2byv2tKqjqPiS6bngv2bLCNFFLCkgaEs
+2Q7dukExcD70CC7Q61a1L1SWbBBLgUDI0n6gvBlZTv9g0NG7dxX6iaUJLLDOJsgo
+xvHpjBB0pr+GklFDHXLjW/cIhAtcMmohxoepjVXwqO4W1of0rDe7F4BfbjHWbJ2F
+qdDGoEyedXWAVVrHCsN3
+=PBZ/
+-----END PGP SIGNATURE-----
+--=-=-=--
