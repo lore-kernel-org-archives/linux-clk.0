@@ -1,198 +1,368 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+Return-Path: <Jose.Abreu@synopsys.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+To: linux-clk@vger.kernel.org
+Cc: Jose Abreu <Jose.Abreu@synopsys.com>,
+	Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
+	Rob Herring <robh@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 22/27] ARM: dts: exynos: Add initial support for Odroid XU board
-Date: Tue, 10 May 2016 22:09:25 +0200
-Message-Id: <1462910970-1812-23-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+	Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+	linux-snps-arc@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH 1/2 v6] clk/axs10x: Add I2S PLL clock driver
+Date: Mon,  2 May 2016 10:39:05 +0100
+Message-Id: <6bae37562ffc6c62c015e12b7bf6a35c9a3e734d.1461258787.git.joabreu@synopsys.com>
+In-Reply-To: <cover.1461258787.git.joabreu@synopsys.com>
+References: <cover.1461258787.git.joabreu@synopsys.com>
+In-Reply-To: <cover.1461258787.git.joabreu@synopsys.com>
+References: <cover.1461258787.git.joabreu@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
-from Samsung: the Exynos5410. Comparing the board to more popular now
-Odroid XU3, the differences are:
-1. Exynos5410 instead of 5422,
-2. MIPI DSI LCD connector,
-3. Main PMIC: Maxim 77802 instead of S2MPS11,
-4. USB3503+LAN9730 instead of integrated LAN9514,
-5. eMMC 4.5 instead of eMMC 5.0,
+The ARC SDP I2S clock can be programmed using a
+specific PLL.
 
-This patch adds initial support for the XU board with working basic
-functions, eMMC/SD and USB (including attached ethernet adapter).
+This patch has the goal of adding a clock driver
+that programs this PLL.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+At this moment the rate values are hardcoded in
+a table but in the future it would be ideal to
+use a function which determines the PLL values
+given the desired rate.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos5410-odroidxu.dts          | 121 +++++++++++++++++++++
- 3 files changed, 123 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index f5deace2b380..0ea7f14ef294 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -47,6 +47,7 @@ Required root node properties:
- 	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
- 	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
- 	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-+	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
- 	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
- 	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
- 					 Odroid XU3 Lite board.
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5aeb10674370..9ed1c7abedb1 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5250-snow-rev5.dtb \
- 	exynos5250-spring.dtb \
- 	exynos5260-xyref5260.dtb \
-+	exynos5410-odroidxu.dtb \
- 	exynos5410-smdk5410.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-peach-pit.dtb \
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+Changes v5 -> v6:
+* Use parent clock to determine PLL input rate instead of using hardcoded values
+* Documentation update (added 'clocks' field)
+
+Changes v4 -> v5:
+* Documentation update (as suggested by Alexey Brodkin)
+* Changed compatible string to "snps,axs10x-i2s-pll-clock" (as suggested by Alexey Brodkin)
+
+Changes v3 -> v4:
+* Added binding document (as suggested by Stephen Boyd)
+* Minor code style fixes (as suggested by Stephen Boyd)
+* Use ioremap (as suggested by Stephen Boyd)
+* Implement round_rate (as suggested by Stephen Boyd)
+* Change to platform driver (as suggested by Stephen Boyd)
+* Use {readl/writel}_relaxed (as suggested by Vineet Gupta)
+
+Changes v2 -> v3:
+* Implemented recalc_rate
+
+Changes v1 -> v2:
+* Renamed folder to axs10x (as suggested by Alexey Brodkin)
+* Added more supported rates
+
+Cc: Carlos Palminha <palminha@synopsys.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+
+ .../bindings/clock/axs10x-i2s-pll-clock.txt        |  25 +++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/axs10x/Makefile                        |   1 +
+ drivers/clk/axs10x/i2s_pll_clock.c                 | 228 +++++++++++++++++++++
+ 4 files changed, 255 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
+ create mode 100644 drivers/clk/axs10x/Makefile
+ create mode 100644 drivers/clk/axs10x/i2s_pll_clock.c
+
+diff --git a/Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt b/Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
 new file mode 100644
-index 000000000000..44ba00a6636f
+index 0000000..5ffc8df
 --- /dev/null
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -0,0 +1,121 @@
++++ b/Documentation/devicetree/bindings/clock/axs10x-i2s-pll-clock.txt
+@@ -0,0 +1,25 @@
++Binding for the AXS10X I2S PLL clock
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: shall be "snps,axs10x-i2s-pll-clock"
++- reg : address and length of the I2S PLL register set.
++- clocks: shall be the input parent clock phandle for the PLL.
++- #clock-cells: from common clock binding; Should always be set to 0.
++
++Example:
++	pll_clock: pll_clock {
++		compatible = "fixed-clock";
++		clock-frequency = <27000000>;
++		#clock-cells = <0>;
++	};
++
++	i2s_clock@100a0 {
++		compatible = "snps,axs10x-i2s-pll-clock";
++		reg = <0x100a0 0x10>;
++		clocks = <&pll_clock>;
++		#clock-cells = <0>;
++	};
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d6..2ca62dc6 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -84,3 +84,4 @@ obj-$(CONFIG_X86)			+= x86/
+ obj-$(CONFIG_ARCH_ZX)			+= zte/
+ obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
+ obj-$(CONFIG_H8300)		+= h8300/
++obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+diff --git a/drivers/clk/axs10x/Makefile b/drivers/clk/axs10x/Makefile
+new file mode 100644
+index 0000000..01996b8
+--- /dev/null
++++ b/drivers/clk/axs10x/Makefile
+@@ -0,0 +1 @@
++obj-y += i2s_pll_clock.o
+diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
+new file mode 100644
+index 0000000..411310d
+--- /dev/null
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -0,0 +1,228 @@
 +/*
-+ * Hardkernel Odroid XU board device tree source
++ * Synopsys AXS10X SDP I2S PLL clock driver
 + *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2016 Krzysztof Kozlowski
++ * Copyright (C) 2016 Synopsys
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
 + */
 +
-+/dts-v1/;
-+#include "exynos5410.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "exynos54xx-odroidxu-leds.dtsi"
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/device.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/of.h>
 +
-+/ {
-+	model = "Hardkernel Odroid XU";
-+	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
++/* PLL registers addresses */
++#define PLL_IDIV_REG	0x0
++#define PLL_FBDIV_REG	0x4
++#define PLL_ODIV0_REG	0x8
++#define PLL_ODIV1_REG	0xC
 +
-+	memory {
-+		reg = <0x40000000 0x7ea00000>;
-+	};
-+
-+	chosen {
-+		linux,stdout-path = &serial_2;
-+	};
-+
-+	emmc_pwrseq: pwrseq {
-+		pinctrl-0 = <&emmc_nrst_pin>;
-+		pinctrl-names = "default";
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 0 20972 0>;
-+		cooling-min-state = <0>;
-+		cooling-max-state = <3>;
-+		#cooling-cells = <2>;
-+		cooling-levels = <0 130 170 230>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	firmware@02073000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x02073000 0x1000>;
-+	};
++struct i2s_pll_cfg {
++	unsigned int rate;
++	unsigned int idiv;
++	unsigned int fbdiv;
++	unsigned int odiv0;
++	unsigned int odiv1;
 +};
 +
-+&mmc_0 {
-+	status = "okay";
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	samsung,read-strobe-delay = <90>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
++static const struct i2s_pll_cfg i2s_pll_cfg_27m[] = {
++	/* 27 Mhz */
++	{ 1024000, 0x104, 0x451, 0x10E38, 0x2000 },
++	{ 1411200, 0x104, 0x596, 0x10D35, 0x2000 },
++	{ 1536000, 0x208, 0xA28, 0x10B2C, 0x2000 },
++	{ 2048000, 0x82, 0x451, 0x10E38, 0x2000 },
++	{ 2822400, 0x82, 0x596, 0x10D35, 0x2000 },
++	{ 3072000, 0x104, 0xA28, 0x10B2C, 0x2000 },
++	{ 2116800, 0x82, 0x3CF, 0x10C30, 0x2000 },
++	{ 2304000, 0x104, 0x79E, 0x10B2C, 0x2000 },
++	{ 0, 0, 0, 0, 0 },
 +};
 +
-+&mmc_2 {
-+	status = "okay";
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	bus-width = <4>;
-+	cap-sd-highspeed;
++static const struct i2s_pll_cfg i2s_pll_cfg_28m[] = {
++	/* 28.224 Mhz */
++	{ 1024000, 0x82, 0x105, 0x107DF, 0x2000 },
++	{ 1411200, 0x28A, 0x1, 0x10001, 0x2000 },
++	{ 1536000, 0xA28, 0x187, 0x10042, 0x2000 },
++	{ 2048000, 0x41, 0x105, 0x107DF, 0x2000 },
++	{ 2822400, 0x145, 0x1, 0x10001, 0x2000 },
++	{ 3072000, 0x514, 0x187, 0x10042, 0x2000 },
++	{ 2116800, 0x514, 0x42, 0x10001, 0x2000 },
++	{ 2304000, 0x619, 0x82, 0x10001, 0x2000 },
++	{ 0, 0, 0, 0, 0 },
 +};
 +
-+&pinctrl_0 {
-+	emmc_nrst_pin: emmc-nrst {
-+		samsung,pins = "gpd1-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++struct i2s_pll_clk {
++	void __iomem *base;
++	struct clk_hw hw;
++	struct device *dev;
 +};
 +
-+&serial_0 {
-+	status = "okay";
++static inline void i2s_pll_write(struct i2s_pll_clk *clk, unsigned int reg,
++		unsigned int val)
++{
++	writel_relaxed(val, clk->base + reg);
++}
++
++static inline unsigned int i2s_pll_read(struct i2s_pll_clk *clk,
++		unsigned int reg)
++{
++	return readl_relaxed(clk->base + reg);
++}
++
++static inline struct i2s_pll_clk *to_i2s_pll_clk(struct clk_hw *hw)
++{
++	return container_of(hw, struct i2s_pll_clk, hw);
++}
++
++static inline unsigned int i2s_pll_get_value(unsigned int val)
++{
++	return (val & 0x3F) + ((val >> 6) & 0x3F);
++}
++
++static const struct i2s_pll_cfg *i2s_pll_get_cfg(unsigned long prate)
++{
++	switch (prate) {
++	case 27000000:
++		return i2s_pll_cfg_27m;
++	case 28224000:
++		return i2s_pll_cfg_28m;
++	default:
++		return NULL;
++	}
++}
++
++static unsigned long i2s_pll_recalc_rate(struct clk_hw *hw,
++			unsigned long parent_rate)
++{
++	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
++	unsigned int idiv, fbdiv, odiv;
++
++	idiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_IDIV_REG));
++	fbdiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_FBDIV_REG));
++	odiv = i2s_pll_get_value(i2s_pll_read(clk, PLL_ODIV0_REG));
++
++	return ((parent_rate / idiv) * fbdiv) / odiv;
++}
++
++static long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *prate)
++{
++	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
++	const struct i2s_pll_cfg *pll_cfg = i2s_pll_get_cfg(*prate);
++	int i;
++
++	if (!pll_cfg) {
++		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
++		return -EINVAL;
++	}
++
++	for (i = 0; pll_cfg[i].rate != 0; i++)
++		if (pll_cfg[i].rate == rate)
++			return rate;
++
++	return -EINVAL;
++}
++
++static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long parent_rate)
++{
++	struct i2s_pll_clk *clk = to_i2s_pll_clk(hw);
++	const struct i2s_pll_cfg *pll_cfg = i2s_pll_get_cfg(parent_rate);
++	int i;
++
++	if (!pll_cfg) {
++		dev_err(clk->dev, "invalid parent rate=%ld\n", parent_rate);
++		return -EINVAL;
++	}
++
++	for (i = 0; pll_cfg[i].rate != 0; i++) {
++		if (pll_cfg[i].rate == rate) {
++			i2s_pll_write(clk, PLL_IDIV_REG, pll_cfg[i].idiv);
++			i2s_pll_write(clk, PLL_FBDIV_REG, pll_cfg[i].fbdiv);
++			i2s_pll_write(clk, PLL_ODIV0_REG, pll_cfg[i].odiv0);
++			i2s_pll_write(clk, PLL_ODIV1_REG, pll_cfg[i].odiv1);
++			return 0;
++		}
++	}
++
++	dev_err(clk->dev, "invalid rate=%ld, parent_rate=%ld\n", rate,
++			parent_rate);
++	return -EINVAL;
++}
++
++static const struct clk_ops i2s_pll_ops = {
++	.recalc_rate = i2s_pll_recalc_rate,
++	.round_rate = i2s_pll_round_rate,
++	.set_rate = i2s_pll_set_rate,
 +};
 +
-+&serial_1 {
-+	status = "okay";
-+};
++static int i2s_pll_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *node = dev->of_node;
++	const char *clk_name;
++	const char *parent_name;
++	struct clk *clk;
++	struct i2s_pll_clk *pll_clk;
++	struct clk_init_data init;
++	struct resource *mem;
 +
-+&serial_2 {
-+	status = "okay";
-+};
++	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
++	if (!pll_clk)
++		return -ENOMEM;
 +
-+&serial_3 {
-+	status = "okay";
-+};
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	pll_clk->base = devm_ioremap_resource(dev, mem);
++	if (IS_ERR(pll_clk->base))
++		return PTR_ERR(pll_clk->base);
 +
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
-+};
++	clk_name = node->name;
++	init.name = clk_name;
++	init.ops = &i2s_pll_ops;
++	parent_name = of_clk_get_parent_name(node, 0);
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	pll_clk->hw.init = &init;
++	pll_clk->dev = dev;
 +
-+&usbdrd_dwc3_1 {
-+	dr_mode = "peripheral";
++	clk = devm_clk_register(dev, &pll_clk->hw);
++	if (IS_ERR(clk)) {
++		dev_err(dev, "failed to register %s clock (%ld)\n",
++				clk_name, PTR_ERR(clk));
++		return PTR_ERR(clk);
++	}
++
++	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++
++static int i2s_pll_clk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++	return 0;
++}
++
++static const struct of_device_id i2s_pll_clk_id[] = {
++	{ .compatible = "snps,axs10x-i2s-pll-clock", },
++	{ },
 +};
++MODULE_DEVICE_TABLE(of, i2s_pll_clk_id);
++
++static struct platform_driver i2s_pll_clk_driver = {
++	.driver = {
++		.name = "axs10x-i2s-pll-clock",
++		.of_match_table = i2s_pll_clk_id,
++	},
++	.probe = i2s_pll_clk_probe,
++	.remove = i2s_pll_clk_remove,
++};
++module_platform_driver(i2s_pll_clk_driver);
++
++MODULE_AUTHOR("Jose Abreu <joabreu@synopsys.com>");
++MODULE_DESCRIPTION("Synopsys AXS10X SDP I2S PLL Clock Driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.5.0
+1.9.1
