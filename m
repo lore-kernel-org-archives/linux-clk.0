@@ -1,194 +1,221 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	paul@pwsan.com,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 07/22] ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
-Date: Sat, 28 May 2016 11:54:18 +0200
-Message-Id: <1464429273-23457-8-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v8 9/9] ARM: dts: DRA7: Add dt nodes for PWMSS
+Date: Tue,  3 May 2016 10:56:55 -0500
+Message-Id: <1462291015-1919-10-git-send-email-fcooper@ti.com>
+In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The LED nodes can be shared between Odroid XU3, XU3-Lite and XU (not yet
-added) thus removing duplication.
+From: Vignesh R <vigneshr@ti.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Add PWMSS device tree nodes for DRA7 SoC family and add documentation
+for dt bindings.
+
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+[fcooper@ti.com: Add eCAP and use updated bindings for PWMSS and ePWM]
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 35 +----------------
- arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 35 +----------------
- arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi | 50 +++++++++++++++++++++++++
- 3 files changed, 52 insertions(+), 68 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ .../devicetree/bindings/pwm/pwm-tiecap.txt         |  9 +++
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  9 +++
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 12 +++
+ arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
+ 4 files changed, 120 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 2ae1cf41dcb6..03fa88c45426 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -14,44 +14,11 @@
- /dts-v1/;
- #include "exynos5422-odroidxu3-common.dtsi"
- #include "exynos5422-odroidxu3-audio.dtsi"
-+#include "exynos54xx-odroidxu-leds.dtsi"
- 
- / {
- 	model = "Hardkernel Odroid XU3 Lite";
- 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
--
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+index f2a9a7c..8007e83 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+@@ -5,6 +5,7 @@ Required properties:
+   for am33xx - compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
+   for am4372 - compatible = "ti,am4372-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
+   for da850  - compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
++  for dra746 - compatible = "ti,dra746-ecap", "ti,am3352-ecap";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The PWM channel index ranges from 0 to 4. The only third
+   cell flag supported by this binding is PWM_POLARITY_INVERTED.
+@@ -38,3 +39,11 @@ ecap0: ecap@1f06000 { /* ECAP on da850 */
+ 	#pwm-cells = <3>;
+ 	reg = <0x1f06000 0x80>;
  };
- 
- &pwm {
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index 432406db85de..9ed6564acfb0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -13,44 +13,11 @@
- /dts-v1/;
- #include "exynos5422-odroidxu3-common.dtsi"
- #include "exynos5422-odroidxu3-audio.dtsi"
-+#include "exynos54xx-odroidxu-leds.dtsi"
- 
- / {
- 	model = "Hardkernel Odroid XU3";
- 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
--
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
- };
- 
- &i2c_0 {
-diff --git a/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
-new file mode 100644
-index 000000000000..0ed30206625c
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
-@@ -0,0 +1,50 @@
-+/*
-+ * Hardkernel Odroid XU/XU3 LED device tree source
-+ *
-+ * Copyright (c) 2015,2016 Krzysztof Kozlowski
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
 +
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		greenled {
-+			label = "green:mmc0";
-+			pwms = <&pwm 1 2000000 0>;
-+			pwm-names = "pwm1";
-+			/*
-+			 * Green LED is much brighter than the others
-+			 * so limit its max brightness
-+			 */
-+			max_brightness = <127>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		blueled {
-+			label = "blue:heartbeat";
-+			pwms = <&pwm 2 2000000 0>;
-+			pwm-names = "pwm2";
-+			max_brightness = <255>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	gpioleds {
-+		compatible = "gpio-leds";
-+		redled {
-+			label = "red:microSD";
-+			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc1";
-+		};
-+	};
++ecap0: ecap@4843e100 {
++	compatible = "ti,dra746-ecap", "ti,am3352-ecap";
++	#pwm-cells = <3>;
++	reg = <0x4843e100 0x80>;
++	clocks = <&l4_root_clk_div>;
++	clock-names = "fck";
 +};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 41a2bd4..944fe35 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -5,6 +5,7 @@ Required properties:
+   for am33xx  - compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+   for am4372  - compatible = "ti,am4372-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
+   for da850   - compatible = "ti,da850-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
++  for dra746 - compatible = "ti,dra746-ehrpwm", "ti-am3352-ehrpwm";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -38,3 +39,11 @@ ehrpwm0: pwm@1f00000 { /* EHRPWM on da850 */
+ 	#pwm-cells = <3>;
+ 	reg = <0x1f00000 0x2000>;
+ };
++
++ehrpwm0: pwm@4843e200 { /* EHRPWM on dra746 */
++	compatible = "ti,dra746-ehrpwm", "ti,am3352-ehrpwm";
++	#pwm-cells = <3>;
++	reg = <0x4843e200 0x80>;
++	clocks = <&ehrpwm0_tbclk>, <&l4_root_clk_div>;
++	clock-names = "tbclk", "fck";
++};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+index fd8e87c..1a5d7b7 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible: Must be "ti,<soc>-pwmss".
+   for am33xx  - compatible = "ti,am33xx-pwmss";
+   for am4372  - compatible = "ti,am4372-pwmss","ti,am33xx-pwmss";
++  for dra746 - compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss"
+ 
+ - reg: physical base address and size of the registers map.
+ - address-cells: Specify the number of u32 entries needed in child nodes.
+@@ -46,3 +47,14 @@ epwmss0: epwmss@48300000 { /* PWMSS for am4372 */
+ 
+ 	/* child nodes go here */
+ };
++
++epwmss0: epwmss@4843e000 { /* PWMSS for DRA7xx */
++	compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++	reg = <0x4843e000 0x30>;
++	ti,hwmods = "epwmss0";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges;
++
++	/* child nodes go here */
++};
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index e007401..5a21e46 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -1743,6 +1743,96 @@
+ 				clock-names = "fck", "sys_clk";
+ 			};
+ 		};
++
++		epwmss0: epwmss@4843e000 {
++			compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++			reg = <0x4843e000 0x30>;
++			ti,hwmods = "epwmss0";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges;
++
++			ehrpwm0: pwm@4843e200 {
++				compatible = "ti,dra746-ehrpwm",
++					     "ti,am3352-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x4843e200 0x80>;
++				clocks = <&ehrpwm0_tbclk>, <&l4_root_clk_div>;
++				clock-names = "tbclk", "fck";
++				status = "disabled";
++			};
++
++			ecap0: ecap@4843e100 {
++				compatible = "ti,dra746-ecap",
++					     "ti,am3352-ecap";
++				#pwm-cells = <3>;
++				reg = <0x4843e100 0x80>;
++				clocks = <&l4_root_clk_div>;
++				clock-names = "fck";
++				status = "disabled";
++			};
++		};
++
++		epwmss1: epwmss@48440000 {
++			compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++			reg = <0x48440000 0x30>;
++			ti,hwmods = "epwmss1";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges;
++
++			ehrpwm1: pwm@48440200 {
++				compatible = "ti,dra746-ehrpwm",
++					     "ti,am3352-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x48440200 0x80>;
++				clocks = <&ehrpwm1_tbclk>, <&l4_root_clk_div>;
++				clock-names = "tbclk", "fck";
++				status = "disabled";
++			};
++
++			ecap1: ecap@48440100 {
++				compatible = "ti,dra746-ecap",
++					     "ti,am3352-ecap";
++				#pwm-cells = <3>;
++				reg = <0x48440100 0x80>;
++				clocks = <&l4_root_clk_div>;
++				clock-names = "fck";
++				status = "disabled";
++			};
++		};
++
++		epwmss2: epwmss@48442000 {
++			compatible = "ti,dra746-pwmss", "ti,am33xx-pwmss";
++			reg = <0x48442000 0x30>;
++			ti,hwmods = "epwmss2";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			status = "disabled";
++			ranges;
++
++			ehrpwm2: pwm@48442200 {
++				compatible = "ti,dra746-ehrpwm",
++					     "ti,am3352-ehrpwm";
++				#pwm-cells = <3>;
++				reg = <0x48442200 0x80>;
++				clocks = <&ehrpwm2_tbclk>, <&l4_root_clk_div>;
++				clock-names = "tbclk", "fck";
++				status = "disabled";
++			};
++
++			ecap2: ecap@48442100 {
++				compatible = "ti,dra746-ecap",
++					     "ti,am3352-ecap";
++				#pwm-cells = <3>;
++				reg = <0x48442100 0x80>;
++				clocks = <&l4_root_clk_div>;
++				clock-names = "fck";
++				status = "disabled";
++			};
++		};
+ 	};
+ 
+ 	thermal_zones: thermal-zones {
 -- 
-2.7.4
+2.7.0
