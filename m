@@ -1,40 +1,92 @@
-Return-Path: <w.egorov@phytec.de>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-Subject: [PATCH v5 5/6] clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
-Date: Tue, 10 May 2016 15:18:59 +0200
-Message-Id: <1462886340-7893-6-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
-References: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	paul@pwsan.com,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v8 6/9] pwms: pwm-ti*: Get the clock from the PWMSS parent when using old bindings
+Date: Tue,  3 May 2016 10:56:52 -0500
+Message-Id: <1462291015-1919-7-git-send-email-fcooper@ti.com>
+In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The RK808 and RK818 PMICs are using a similar register map.
-We can reuse the clk driver for the RK818 PMIC. So let's add
-the RK818 in the Kconfig description.
+When using the old eCAP and ePWM bindings for AM335x and AM437x the clock
+can be retrieved from the PWMSS parent. Newer bindings will insure that
+this clock is provided via device tree.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Therefore, update this driver to support the newer and older bindings. In
+the case of the older binding being used give a warning.
+
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 ---
- drivers/clk/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-tiecap.c   | 7 +++++++
+ drivers/pwm/pwm-tiehrpwm.c | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 2dd371d..af10f2a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -49,10 +49,10 @@ config COMMON_CLK_MAX77802
- 	  This driver supports Maxim 77802 crystal oscillator clock.
+diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
+index 616af76..a0833c8 100644
+--- a/drivers/pwm/pwm-tiecap.c
++++ b/drivers/pwm/pwm-tiecap.c
+@@ -195,6 +195,7 @@ static const struct pwm_ops ecap_pwm_ops = {
+ };
  
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK808"
-+	tristate "Clock driver for RK808/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK808 crystal oscillator clock. These
-+	  This driver supports RK808 and RK818 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
+ static const struct of_device_id ecap_of_match[] = {
++	{ .compatible	= "ti,am3352-ecap" },
+ 	{ .compatible	= "ti,am33xx-ecap" },
+ 	{},
+ };
+@@ -213,6 +214,12 @@ static int ecap_pwm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	clk = devm_clk_get(&pdev->dev, "fck");
++
++	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
++		dev_warn(&pdev->dev, "Binding is obsolete.\n");
++		clk = devm_clk_get(pdev->dev.parent, "fck");
++	}
++
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "failed to get clock\n");
+ 		return PTR_ERR(clk);
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index 6a41e66..cee29a2 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -426,6 +426,7 @@ static const struct pwm_ops ehrpwm_pwm_ops = {
+ };
+ 
+ static const struct of_device_id ehrpwm_of_match[] = {
++	{ .compatible	= "ti,am3352-ehrpwm" },
+ 	{ .compatible	= "ti,am33xx-ehrpwm" },
+ 	{},
+ };
+@@ -444,6 +445,12 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	clk = devm_clk_get(&pdev->dev, "fck");
++
++	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33xx-ecap")) {
++		dev_warn(&pdev->dev, "Binding is obsolete.\n");
++		clk = devm_clk_get(pdev->dev.parent, "fck");
++	}
++
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "failed to get clock\n");
+ 		return PTR_ERR(clk);
 -- 
-1.9.1
+2.7.0
