@@ -1,60 +1,85 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 06/11] clk: tegra114: clean up init_table
-Date: Fri, 27 May 2016 16:38:09 -0400
-Message-ID: <1464381494-27096-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160503083253.GC5874@tiger>
+References: <1461877623-26838-1-git-send-email-stefan@agner.ch>
+	<20160503083253.GC5874@tiger>
+Date: Tue, 3 May 2016 18:50:21 +0800
+Message-ID: <CAA+hA=Rkfii=Mi-NuESpX8E3W37+PnCxa464yOAe5dYMgpt43g@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: fix ahb clock mux 1
+From: Dong Aisheng <dongas86@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>, Anson Huang <b20788@freescale.com>,
+	Adrian Alonso <aalonso@freescale.com>, Frank Li <Frank.Li@freescale.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove entries from the init_table where the clks are now defined
-as CRITICAL clks, if we were only enabling them in the init_table.
+Hi Shawn,
 
-Remove the flag to signal to enable CRITICAL clks if they are still
-needed in the init_table to set other properties.
+On Tue, May 3, 2016 at 4:32 PM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Thu, Apr 28, 2016 at 02:07:03PM -0700, Stefan Agner wrote:
+>> The clock parent of the AHB root clock when using mux option 1
+>> is the SYS PLL 270MHz clock. This is specified in  Table 5-11
+>> Clock Root Table of the i.MX 7Dual Applications Processor
+>> Reference Manual.
+>>
+>> While it could be a documentation error, the 270MHz parent is
+>> also mentioned in the boot ROM configuration in Table 6-28: The
+>> clock is by default at 135MHz due to a POST_PODF value of 1
+>> (=> divider of 2).
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>
+> Anson, Frank,
+>
+> Can you guys confirm this change is correct?
+>
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra114.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+I just checked the doc,
+it's correct the parent should be SYS_PLL_PFD2(270Mhz).
+It's a documentation error of early version and it's already fixed
+in latest internal doc.
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index b78054fac0a8..29fc8c2e4359 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1318,19 +1318,16 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_UARTB, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_UARTC, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_UARTD, TEGRA114_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA114_CLK_EXTERN1, TEGRA114_CLK_PLL_A_OUT0, 0, 1 },
--	{ TEGRA114_CLK_CLK_OUT_1_MUX, TEGRA114_CLK_EXTERN1, 0, 1 },
--	{ TEGRA114_CLK_CLK_OUT_1, TEGRA114_CLK_CLK_MAX, 0, 1 },
-+	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S0, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S1, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S2, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S3, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S4, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_HOST1X, TEGRA114_CLK_PLL_P, 136000000, 0 },
--	{ TEGRA114_CLK_DFLL_SOC, TEGRA114_CLK_PLL_P, 51000000, 1 },
--	{ TEGRA114_CLK_DFLL_REF, TEGRA114_CLK_PLL_P, 51000000, 1 },
-+	{ TEGRA114_CLK_DFLL_SOC, TEGRA114_CLK_PLL_P, 51000000, 0 },
-+	{ TEGRA114_CLK_DFLL_REF, TEGRA114_CLK_PLL_P, 51000000, 0 },
- 	{ TEGRA114_CLK_DISP1, TEGRA114_CLK_PLL_P, 0, 0 },
- 	{ TEGRA114_CLK_DISP2, TEGRA114_CLK_PLL_P, 0, 0 },
- 	{ TEGRA114_CLK_GR2D, TEGRA114_CLK_PLL_C2, 300000000, 0 },
--- 
-1.9.1
+Regards
+Dong Aisheng
+
+> Shawn
+>
+>> ---
+>> Hi Shawn,
+>>
+>> I did not found a clock which was based on this clock which I
+>> could measure externally... But the change is backed by the
+>> documentation.
+>>
+>> --
+>> Stefan
+>>
+>>  drivers/clk/imx/clk-imx7d.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+>> index 7912be8..5229968 100644
+>> --- a/drivers/clk/imx/clk-imx7d.c
+>> +++ b/drivers/clk/imx/clk-imx7d.c
+>> @@ -56,7 +56,7 @@ static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
+>>       "pll_sys_pfd2_135m_clk", "pll_sys_pfd6_clk", "pll_enet_250m_clk",
+>>       "pll_audio_main_clk", };
+>>
+>> -static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
+>> +static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
+>>       "pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
+>>       "pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_main_clk",
+>>       "pll_video_main_clk", };
+>> --
+>> 2.8.0
+>>
+>>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
