@@ -1,226 +1,425 @@
-Return-Path: <v1ron@mail.ru>
-Date: Tue, 31 May 2016 21:38:54 +0300
-From: Roman Volkov <v1ron@mail.ru>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
- <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roman
- Volkov <rvolkov@v1ros.org>, Tony Prisk <linux@prisktech.co.nz>
-Subject: Re: [PATCH 2/2] clk/vt8500: Fix compilation warnings
-Message-ID: <20160531213854.343e6129@v1ron-s7>
-In-Reply-To: <4814911.mY88HjlURn@wuerfel>
-References: <1464120473-1808-1-git-send-email-v1ron@mail.ru>
-	<1464120473-1808-3-git-send-email-v1ron@mail.ru>
-	<4814911.mY88HjlURn@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	paul@pwsan.com,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v8 5/9] ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
+Date: Tue,  3 May 2016 10:56:51 -0500
+Message-Id: <1462291015-1919-6-git-send-email-fcooper@ti.com>
+In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-=D0=92 Tue, 31 May 2016 12:51:55 +0200
-Arnd Bergmann <arnd@arndb.de> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
+provide the various required clocks.
 
-> On Tuesday, May 24, 2016 11:07:53 PM CEST Roman Volkov wrote:
-> > From: Roman Volkov <rvolkov@v1ros.org>
-> >=20
-> > GCC 5.3.0 still throws the following warnings for functions
-> > wm8750_find_pll_bits() and wm8850_find_pll_bits():
-> >=20
-> > warning: 'best_div2' may be used uninitialized in this function
-> > warning: 'best_div1' may be used uninitialized in this function
-> > warning: 'best_mul' may be used uninitialized in this function
-> >=20
-> > These warnings are false positives, the variables are controlled
-> > by checking the value of the variable 'best_err' which is -1 by
-> > default. It is safe to initialize all these variables to zero.
-> >=20
-> > Fixes: 090341b0a95d ("clk: vt8500: fix sign of possible PLL values")
-> > Signed-off-by: Roman Volkov <rvolkov@v1ros.org> =20
->=20
-> With gcc-5.3 and linux-4.7-rc1, they should be gone now (no longer
-> warning about this with gcov enabled), but I still get them with
-> gcc-4.9.
->=20
-> > diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-> > index 77650f19a9b6..7c970d7c0a6a 100644
-> > --- a/drivers/clk/clk-vt8500.c
-> > +++ b/drivers/clk/clk-vt8500.c
-> > @@ -461,7 +461,7 @@ static int wm8750_find_pll_bits(unsigned long
-> > rate, unsigned long parent_rate, {
-> >  	u32 mul;
-> >  	int div1, div2;
-> > -	u32 best_mul, best_div1, best_div2;
-> > +	u32 best_mul =3D 0, best_div1 =3D 0, best_div2 =3D 0;
-> >  	unsigned long tclk, rate_err, best_err;
-> > =20
-> >  	best_err =3D (unsigned long)-1;
-> > @@ -513,7 +513,7 @@ static int wm8850_find_pll_bits(unsigned long
-> > rate, unsigned long parent_rate, {
-> >  	u32 mul;
-> >  	int div1, div2;
-> > -	u32 best_mul, best_div1, best_div2;
-> > +	u32 best_mul =3D 0, best_div1 =3D 0, best_div2 =3D 0;
-> >  	unsigned long tclk, rate_err, best_err;
-> > =20
-> >  	best_err =3D (unsigned long)-1;
-> >  =20
->=20
-> I see you only patch two instances but not the third one. I think
-> we should do it consistently at least.
->=20
-> Coincidentally, I've just done another patch for this myself, since
-> it's the last gcc-4.9 warning we get in linux-4.7.
->=20
-> My version below
->=20
-> commit a38daeb34a2dc9d39ee1f153244cfcd83e865e0d
-> Author: Arnd Bergmann <arnd@arndb.de>
-> Date:   Tue May 31 10:41:26 2016 +0200
->=20
-> clk: vt8500: fix gcc-4.9 warnings
->=20
-> This fixes some false positive warnings we get with older compiler
-> versions:
->=20
-> clk-vt8500.c: In function =E2=80=98wm8650_find_pll_bits=E2=80=99:
-> clk-vt8500.c:430:12: =E2=80=98best_div2=E2=80=99 may be used uninitialize=
-d in this
-> function clk-vt8500.c:429:12: =E2=80=98best_div1=E2=80=99 may be used uni=
-nitialized
-> in this function clk-vt8500.c:428:14: =E2=80=98best_mul=E2=80=99 may be u=
-sed
-> uninitialized in this function clk-vt8500.c: In function
-> =E2=80=98wm8750_find_pll_bits=E2=80=99: clk-vt8500.c:509:12: =E2=80=98bes=
-t_div2=E2=80=99 may be used
-> uninitialized in this function clk-vt8500.c:508:12: =E2=80=98best_div1=E2=
-=80=99 may
-> be used uninitialized in this function clk-vt8500.c:507:14:
-> =E2=80=98best_mul=E2=80=99 may be used uninitialized in this function clk=
--vt8500.c:
-> In function =E2=80=98wm8850_find_pll_bits=E2=80=99: clk-vt8500.c:560:12: =
-=E2=80=98best_div2=E2=80=99
-> may be used uninitialized in this function clk-vt8500.c:559:12:
-> =E2=80=98best_div1=E2=80=99 may be used uninitialized in this function
-> clk-vt8500.c:558:14: =E2=80=98best_mul=E2=80=99 may be used uninitialized=
- in this
-> function
->=20
-> As the local variables are only use for temporaries, we can just
-> as well assign the final values directly, which also makes the
-> code slightly shorter.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->=20
-> diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-> index b0f76a84f1e9..d5a3453970d0 100644
-> --- a/drivers/clk/clk-vt8500.c
-> +++ b/drivers/clk/clk-vt8500.c
-> @@ -388,7 +388,6 @@ static int wm8650_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate, {
->  	u32 mul, div1;
->  	int div2;
-> -	u32 best_mul, best_div1, best_div2;
->  	unsigned long tclk, rate_err, best_err;
-> =20
->  	best_err =3D (unsigned long)-1;
-> @@ -411,9 +410,9 @@ static int wm8650_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate,=20
->  				if (rate_err < best_err) {
->  					best_err =3D rate_err;
-> -					best_mul =3D mul;
-> -					best_div1 =3D div1;
-> -					best_div2 =3D div2;
-> +					*multiplier =3D mul;
-> +					*divisor1 =3D div1;
-> +					*divisor2 =3D div2;
->  				}
->  			}
-> =20
-> @@ -425,10 +424,6 @@ static int wm8650_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate, /* if we got here, it wasn't an
-> exact match */ pr_warn("%s: requested rate %lu, found rate %lu\n",
-> __func__, rate, rate - best_err);
-> -	*multiplier =3D best_mul;
-> -	*divisor1 =3D best_div1;
-> -	*divisor2 =3D best_div2;
-> -
->  	return 0;
->  }
-> =20
-> @@ -464,7 +459,6 @@ static int wm8750_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate, {
->  	u32 mul;
->  	int div1, div2;
-> -	u32 best_mul, best_div1, best_div2;
->  	unsigned long tclk, rate_err, best_err;
-> =20
->  	best_err =3D (unsigned long)-1;
-> @@ -488,9 +482,9 @@ static int wm8750_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate,=20
->  				if (rate_err < best_err) {
->  					best_err =3D rate_err;
-> -					best_mul =3D mul;
-> -					best_div1 =3D div1;
-> -					best_div2 =3D div2;
-> +					*multiplier =3D mul;
-> +					*divisor1 =3D div1;
-> +					*divisor2 =3D div2;
->  				}
->  			}
-> =20
-> @@ -503,10 +497,7 @@ static int wm8750_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate, pr_warn("%s: requested rate %lu,
-> found rate %lu\n", __func__, rate, rate - best_err);
-> =20
-> -	*filter =3D wm8750_get_filter(parent_rate, best_div1);
-> -	*multiplier =3D best_mul;
-> -	*divisor1 =3D best_div1;
-> -	*divisor2 =3D best_div2;
-> +	*filter =3D wm8750_get_filter(parent_rate, *divisor1);
-> =20
->  	return 0;
->  }
-> @@ -516,7 +507,6 @@ static int wm8850_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate, {
->  	u32 mul;
->  	int div1, div2;
-> -	u32 best_mul, best_div1, best_div2;
->  	unsigned long tclk, rate_err, best_err;
-> =20
->  	best_err =3D (unsigned long)-1;
-> @@ -540,9 +530,9 @@ static int wm8850_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate,=20
->  				if (rate_err < best_err) {
->  					best_err =3D rate_err;
-> -					best_mul =3D mul;
-> -					best_div1 =3D div1;
-> -					best_div2 =3D div2;
-> +					*multiplier =3D mul;
-> +					*divisor1 =3D div1;
-> +					*divisor2 =3D div2;
->  				}
->  			}
-> =20
-> @@ -555,10 +545,6 @@ static int wm8850_find_pll_bits(unsigned long
-> rate, unsigned long parent_rate, pr_warn("%s: requested rate %lu,
-> found rate %lu\n", __func__, rate, rate - best_err);
-> =20
-> -	*multiplier =3D best_mul;
-> -	*divisor1 =3D best_div1;
-> -	*divisor2 =3D best_div2;
-> -
->  	return 0;
->  }
-> =20
->=20
->=20
+For AM437 and AM335x, add the required clocks explicitly to DT. The
+hwmod entries for ECAP and EPWM will be removed and this will prevent
+anything from breaking.
 
-Arnd, your version is fine for me. We may apply it instead.
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/pwm/pwm-tiecap.txt         | 18 +++++---
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 18 +++++---
+ arch/arm/boot/dts/am33xx.dtsi                      | 30 +++++++++---
+ arch/arm/boot/dts/am4372.dtsi                      | 54 ++++++++++++++++++----
+ arch/arm/boot/dts/da850.dtsi                       | 15 ++++--
+ 5 files changed, 103 insertions(+), 32 deletions(-)
 
-As you can see, I attached another patch where the logic for WM8650 is
-completely reworked. This patch also removes the warning, that is why
-fixing the wm8650 function is not necessary.
-
-What about the WM8650 enhancement? Can I apply it on top of your
-changes?
-
-Regards,
-Roman
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+index 0d47354..ee0a8bd 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+@@ -2,9 +2,9 @@ TI SOC ECAP based APWM controller
+ 
+ Required properties:
+ - compatible: Must be "ti,<soc>-ecap".
+-  for am33xx  - compatible = "ti,am33xx-ecap";
+-  for am4372  - compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
+-  for da850   - compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++  for am33xx - compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
++  for am4372 - compatible = "ti,am4372-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
++  for da850  - compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The PWM channel index ranges from 0 to 4. The only third
+   cell flag supported by this binding is PWM_POLARITY_INVERTED.
+@@ -13,25 +13,31 @@ Required properties:
+ Optional properties:
+ - ti,hwmods: Name of the hwmod associated to the ECAP:
+   "ecap<x>", <x> being the 0-based instance number from the HW spec
++- clocks: Handle to the ECAP's functional clock.
++- clock-names: Must be set to "fck".
+ 
+ Example:
+ 
+ ecap0: ecap@48300100 { /* ECAP on am33xx */
+-	compatible = "ti,am33xx-ecap";
++	compatible = "ti,am3352-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300100 0x80>;
+ 	ti,hwmods = "ecap0";
++	clocks = <&l4ls_gclk>;
++	clock-names = "fck";
+ };
+ 
+ ecap0: ecap@48300100 { /* ECAP on am4372 */
+-	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
++	compatible = "ti,am4372-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300100 0x80>;
+ 	ti,hwmods = "ecap0";
++	clocks = <&l4ls_gclk>;
++	clock-names = "fck";
+ };
+ 
+ ecap0: ecap@1f06000 { /* ECAP on da850 */
+-	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++	compatible = "ti,da850-ecap", "ti,am3352-ecap", "ti,am33xx-ecap";
+ 	#pwm-cells = <3>;
+ 	reg = <0x1f06000 0x80>;
+ };
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index f3bc09e..e9a156b 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -2,9 +2,9 @@ TI SOC EHRPWM based PWM controller
+ 
+ Required properties:
+ - compatible: Must be "ti,<soc>-ehrpwm".
+-  for am33xx  - compatible = "ti,am33xx-ehrpwm";
+-  for am4372  - compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
+-  for da850   - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++  for am33xx  - compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
++  for am4372  - compatible = "ti,am4372-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
++  for da850   - compatible = "ti,da850-ehrpwm", "ti-am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -13,25 +13,31 @@ Required properties:
+ Optional properties:
+ - ti,hwmods: Name of the hwmod associated to the EHRPWM:
+   "ehrpwm<x>", <x> being the 0-based instance number from the HW spec
++- clocks: Handle to the PWM's time-base and functional clock.
++- clock-names: Must be set to "tbclk" and "fck".
+ 
+ Example:
+ 
+ ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+-	compatible = "ti,am33xx-ehrpwm";
++	compatible = "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x100>;
++	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++	clock-names = "tbclk", "fck";
+ 	ti,hwmods = "ehrpwm0";
+ };
+ 
+ ehrpwm0: pwm@48300200 { /* EHRPWM on am4372 */
+-	compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
++	compatible = "ti,am4372-ehrpwm", "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x80>;
++	clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++	clock-names = "tbclk", "fck";
+ 	ti,hwmods = "ehrpwm0";
+ };
+ 
+ ehrpwm0: pwm@1f00000 { /* EHRPWM on da850 */
+-	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++	compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x1f00000 0x2000>;
+ };
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index 52be48b..999ba2f 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -679,9 +679,12 @@
+ 				  0x48300200 0x48300200 0x80>; /* EHRPWM */
+ 
+ 			ecap0: ecap@48300100 {
+-				compatible = "ti,am33xx-ecap";
++				compatible = "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				interrupts = <31>;
+ 				interrupt-names = "ecap0";
+ 				ti,hwmods = "ecap0";
+@@ -689,10 +692,13 @@
+ 			};
+ 
+ 			ehrpwm0: pwm@48300200 {
+-				compatible = "ti,am33xx-ehrpwm";
++				compatible = "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+ 				ti,hwmods = "ehrpwm0";
++				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -709,9 +715,12 @@
+ 				  0x48302200 0x48302200 0x80>; /* EHRPWM */
+ 
+ 			ecap1: ecap@48302100 {
+-				compatible = "ti,am33xx-ecap";
++				compatible = "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				interrupts = <47>;
+ 				interrupt-names = "ecap1";
+ 				ti,hwmods = "ecap1";
+@@ -719,10 +728,13 @@
+ 			};
+ 
+ 			ehrpwm1: pwm@48302200 {
+-				compatible = "ti,am33xx-ehrpwm";
++				compatible = "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+ 				ti,hwmods = "ehrpwm1";
++				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -739,9 +751,12 @@
+ 				  0x48304200 0x48304200 0x80>; /* EHRPWM */
+ 
+ 			ecap2: ecap@48304100 {
+-				compatible = "ti,am33xx-ecap";
++				compatible = "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				interrupts = <61>;
+ 				interrupt-names = "ecap2";
+ 				ti,hwmods = "ecap2";
+@@ -749,10 +764,13 @@
+ 			};
+ 
+ 			ehrpwm2: pwm@48304200 {
+-				compatible = "ti,am33xx-ehrpwm";
++				compatible = "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+ 				ti,hwmods = "ehrpwm2";
++				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index 12fcde4..e858460 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -672,18 +672,26 @@
+ 			status = "disabled";
+ 
+ 			ecap0: ecap@48300100 {
+-				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
++				compatible = "ti,am4372-ecap",
++					     "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300100 0x80>;
+ 				ti,hwmods = "ecap0";
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				status = "disabled";
+ 			};
+ 
+ 			ehrpwm0: pwm@48300200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48300200 0x80>;
+ 				ti,hwmods = "ehrpwm0";
++				clocks = <&ehrpwm0_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -698,18 +706,26 @@
+ 			status = "disabled";
+ 
+ 			ecap1: ecap@48302100 {
+-				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
++				compatible = "ti,am4372-ecap",
++					     "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302100 0x80>;
+ 				ti,hwmods = "ecap1";
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				status = "disabled";
+ 			};
+ 
+ 			ehrpwm1: pwm@48302200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48302200 0x80>;
+ 				ti,hwmods = "ehrpwm1";
++				clocks = <&ehrpwm1_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -724,18 +740,26 @@
+ 			status = "disabled";
+ 
+ 			ecap2: ecap@48304100 {
+-				compatible = "ti,am4372-ecap","ti,am33xx-ecap";
++				compatible = "ti,am4372-ecap",
++					     "ti,am3352-ecap",
++					     "ti,am33xx-ecap";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304100 0x80>;
++				clocks = <&l4ls_gclk>;
++				clock-names = "fck";
+ 				ti,hwmods = "ecap2";
+ 				status = "disabled";
+ 			};
+ 
+ 			ehrpwm2: pwm@48304200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48304200 0x80>;
+ 				ti,hwmods = "ehrpwm2";
++				clocks = <&ehrpwm2_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -750,10 +774,14 @@
+ 			status = "disabled";
+ 
+ 			ehrpwm3: pwm@48306200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48306200 0x80>;
+ 				ti,hwmods = "ehrpwm3";
++				clocks = <&ehrpwm3_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -768,10 +796,14 @@
+ 			status = "disabled";
+ 
+ 			ehrpwm4: pwm@48308200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x48308200 0x80>;
+ 				ti,hwmods = "ehrpwm4";
++				clocks = <&ehrpwm4_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -786,9 +818,13 @@
+ 			status = "disabled";
+ 
+ 			ehrpwm5: pwm@4830a200 {
+-				compatible = "ti,am4372-ehrpwm","ti,am33xx-ehrpwm";
++				compatible = "ti,am4372-ehrpwm",
++					     "ti,am3352-ehrpwm",
++					     "ti,am33xx-ehrpwm";
+ 				#pwm-cells = <3>;
+ 				reg = <0x4830a200 0x80>;
++				clocks = <&ehrpwm5_tbclk>, <&l4ls_gclk>;
++				clock-names = "tbclk", "fck";
+ 				ti,hwmods = "ehrpwm5";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index c3910e2..28a1064 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -248,31 +248,36 @@
+ 			status = "disabled";
+ 		};
+ 		ehrpwm0: pwm@01f00000 {
+-			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++			compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm",
++				     "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x300000 0x2000>;
+ 			status = "disabled";
+ 		};
+ 		ehrpwm1: pwm@01f02000 {
+-			compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
++			compatible = "ti,da850-ehrpwm", "ti,am3352-ehrpwm",
++				     "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x302000 0x2000>;
+ 			status = "disabled";
+ 		};
+ 		ecap0: ecap@01f06000 {
+-			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++			compatible = "ti,da850-ecap", "ti,am3352-ecap",
++				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x306000 0x80>;
+ 			status = "disabled";
+ 		};
+ 		ecap1: ecap@01f07000 {
+-			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++			compatible = "ti,da850-ecap", "ti,am3352-ecap",
++				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x307000 0x80>;
+ 			status = "disabled";
+ 		};
+ 		ecap2: ecap@01f08000 {
+-			compatible = "ti,da850-ecap", "ti,am33xx-ecap";
++			compatible = "ti,da850-ecap", "ti,am3352-ecap",
++				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x308000 0x80>;
+ 			status = "disabled";
+-- 
+2.7.0
