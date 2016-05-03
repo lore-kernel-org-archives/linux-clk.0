@@ -1,98 +1,39 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>, Scott Wood <oss@buserror.net>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for
- T4240-R1.0-R2.0
-Date: Thu, 5 May 2016 09:41:32 +0000
-Message-ID: <HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
- <1462417950-46796-8-git-send-email-yangbo.lu@nxp.com>
- <4448030.Zs8fVnr3nm@wuerfel>
-In-Reply-To: <4448030.Zs8fVnr3nm@wuerfel>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 2 May 2016 17:37:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v2 04/13] clkdev: Add clk_hw based registration APIs
+Message-ID: <20160503003716.GH3492@codeaurora.org>
+References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
+ <1461277324-27185-5-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Kumar Gala <galak@codeaurora.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Yang-Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Rob Herring <robh+dt@kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Claudiu
- Manoil <claudiu.manoil@freescale.com>, Santosh Shilimkar <ssantosh@kernel.org>,
- Xiaobo Xie <xiaobo.xie@nxp.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461277324-27185-5-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
-
-
-> -----Original Message-----
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: Thursday, May 05, 2016 4:32 PM
-> To: linuxppc-dev@lists.ozlabs.org
-> Cc: Yangbo Lu; linux-mmc@vger.kernel.org; devicetree@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> linux-clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
-> foundation.org; netdev@vger.kernel.org; Mark Rutland;
-> ulf.hansson@linaro.org; Russell King; Bhupesh Sharma; Joerg Roedel;
-> Santosh Shilimkar; Yang-Leo Li; Scott Wood; Rob Herring; Claudiu Manoil;
-> Kumar Gala; Xiaobo Xie; Qiang Zhao
-> Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-
-> R1.0-R2.0
+On 04/21, Stephen Boyd wrote:
+> Now that we have a clk registration API that doesn't return
+> struct clks, we need to have some way to hand out struct clks via
+> the clk_get() APIs that doesn't involve associating struct clk
+> pointers with a struct clk_lookup. Luckily, clkdev already
+> operates on struct clk_hw pointers, except for the registration
+> facing APIs where it converts struct clk pointers into struct
+> clk_hw pointers almost immediately.
 > 
-> On Thursday 05 May 2016 11:12:30 Yangbo Lu wrote:
-> >
-> > +       fsl_guts_init();
-> > +       svr = fsl_guts_get_svr();
-> > +       if (svr) {
-> > +               esdhc->soc_ver = SVR_SOC_VER(svr);
-> > +               esdhc->soc_rev = SVR_REV(svr);
-> > +       } else {
-> > +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
-> > +       }
-> > +
-> >
+> Let's add clk_hw based registration APIs so that we can skip the
+> conversion step and provide a way for clk provider drivers to
+> operate exclusively on clk_hw structs. This way we clearly
+> split the API between consumers and providers.
 > 
-> 
-> Sorry for jumping in again after not participating in the discussion for
-> the past few versions.
-> 
-> What happened to my suggestion of making this a platform-independent
-> interface to avoid the link time dependency?
-> 
-> Specifically, why not add an exported function to drivers/base/soc.c that
-> uses glob_match() for comparing a string in the device driver to the ID
-> of the SoC that is set by whatever SoC identifying driver the platform
-> has?
-> 
-> 	Arnd
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-[Lu Yangbo-B47093] I think this has been discussed in v6.
-You can find Scott's comments about this in below link.
-https://patchwork.kernel.org/patch/8544501/
+Applied to clk-next
 
-Thanks.
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
