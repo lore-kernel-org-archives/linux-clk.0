@@ -1,82 +1,71 @@
-Return-Path: <dianders@google.com>
-MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <1463164937-91089-2-git-send-email-briannorris@chromium.org>
-References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
-	<1463164937-91089-2-git-send-email-briannorris@chromium.org>
-Date: Fri, 13 May 2016 13:10:57 -0700
-Message-ID: <CAD=FV=XstYhqpStSGw5PObWvpsvd3Nwp_hfEE-56bpFoVUyu+g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src
-From: Doug Anderson <dianders@chromium.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>, Xing Zheng <zhengxing@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <fcooperwork@gmail.com>
+Return-Path: <fcooperwork@gmail.com>
+From: Franklin S Cooper Jr <fcooper@ti.com>
+To: thierry.reding@gmail.com,
+	robh+dt@kernel.org,
+	tony@atomide.com,
+	linux@arm.linux.org.uk,
+	paul@pwsan.com,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	vigneshr@ti.com,
+	nsekhar@ti.com
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Subject: [PATCH v8 3/9] pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+Date: Tue,  3 May 2016 10:56:49 -0500
+Message-Id: <1462291015-1919-4-git-send-email-fcooper@ti.com>
+In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Now that the node name has been changed from ehrpwm to pwm the document
+should show this proper usage. Change the unit address in the example
+from 0 to the proper physical address value that should be used. Also
+insure that the unit address matches to the reg property.
 
-On Fri, May 13, 2016 at 11:42 AM, Brian Norris <briannorris@chromium.org> wrote:
-> From: Xing Zheng <zhengxing@rock-chips.com>
->
-> There was a typo, swapping 'c' <--> 'g'.
->
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
->  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index 145756c4f3c8..9f86bfef70f7 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->                         RK3399_CLKGATE_CON(13), 1, GFLAGS),
->
->         /* perihp */
-> -       GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
-> +       GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
->                         RK3399_CLKGATE_CON(5), 0, GFLAGS),
-> -       GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
-> +       GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->                         RK3399_CLKGATE_CON(5), 1, GFLAGS),
->         COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
->                         RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
+Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Definitely there was a bug since this table itself was inconsistent.
-...and I _think_ this fix is correct, but I'll note that the TRM has
-more inconsistency here.
-
-In the big clock table 'CRU Clock Architecture Diagram', I see:
-  CLK 4 is CPLL
-  CLK 5 is GPLL
-  CLK 125 is aclk_perihp_cpll_src and has 4 (CPLL) as source, with
-g5[0] as the bit
-  CLK 126 is aclk_perihp_gpll_src and has 5 (GPLL) as source, with
-g5[1] as the bit
-
-In the definition of CRU_CLKGATE_CON5:
-  bit 0 shows aclk_perihp_gpll_src_en
-  bit 1 shows aclk_perihp_cpll_src_en
-
-
-Thus the table shows CPLL as gate5[0] and GPLL as gate5[1].  The
-register definition shows the opposite.  I'll tend to believe the
-table over the register definition, but I figured I'd bring it up
-anyway.
-
-
-Xing Zheng: can you confirm that the table is correct and ask
-documentation folks to fix the register definition for
-CRU_CLKGATE_CON5?
-
-
-
-Thanks!
-
--Doug
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+index 99b544f..f3bc09e 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
+@@ -16,22 +16,22 @@ Optional properties:
+ 
+ Example:
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on am33xx */
++ehrpwm0: pwm@48300200 { /* EHRPWM on am33xx */
+ 	compatible = "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x100>;
+ 	ti,hwmods = "ehrpwm0";
+ };
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on am4372 */
++ehrpwm0: pwm@48300200 { /* EHRPWM on am4372 */
+ 	compatible = "ti,am4372-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+ 	reg = <0x48300200 0x80>;
+ 	ti,hwmods = "ehrpwm0";
+ };
+ 
+-ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
++ehrpwm0: pwm@1f00000 { /* EHRPWM on da850 */
+ 	compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
+ 	#pwm-cells = <3>;
+-	reg = <0x300000 0x2000>;
++	reg = <0x1f00000 0x2000>;
+ };
+-- 
+2.7.0
