@@ -1,42 +1,46 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1462878590.3050.5.camel@pengutronix.de>
-Subject: Re: [PATCH 1/5] reset: hisilicon: change the definition of
- hisi_reset_init
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
- yanhaifeng@hisilicon.com,  haojian.zhuang@linaro.org,
- zhangfei.gao@linaro.org, xuwei5@hisilicon.com,  yanghongwei@hisilicon.com
-Date: Tue, 10 May 2016 13:09:50 +0200
-In-Reply-To: <1462871953-26606-2-git-send-email-xuejiancheng@hisilicon.com>
-References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
-	 <1462871953-26606-2-git-send-email-xuejiancheng@hisilicon.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 2 May 2016 17:36:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mason <slash.tmp@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Sebastian Frias <sf84@laposte.net>, clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3] clk: tango4: improve clkgen driver
+Message-ID: <20160503003650.GF3492@codeaurora.org>
+References: <56BE0F25.2040909@free.fr>
+ <20160225220803.GK4847@codeaurora.org>
+ <56D066B1.7000808@free.fr>
+ <57023205.6050903@free.fr>
+ <20160416001608.GC26353@codeaurora.org>
+ <5711F947.4010204@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5711F947.4010204@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jiancheng,
-
-Am Dienstag, den 10.05.2016, 17:19 +0800 schrieb Jiancheng Xue:
-> Change the input arguments type to struct platform_device pointer.
+On 04/16, Mason wrote:
+> On 16/04/2016 02:16, Stephen Boyd wrote:
 > 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-[...]
-> diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
-> index 677d773..9a69374 100644
-> --- a/drivers/clk/hisilicon/reset.h
-> +++ b/drivers/clk/hisilicon/reset.h
-> @@ -22,10 +22,11 @@ struct device_node;
->  struct hisi_reset_controller;
->  
->  #ifdef CONFIG_RESET_CONTROLLER
-> -struct hisi_reset_controller *hisi_reset_init(struct device_node *np);
-> +struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev);
+> > Applied to clk-next
+> 
+> Great! Thanks.
+> 
+> Hopefully, I won't have to write any more clk code until Tango5.
+> 
+> The last feature missing is support for fractional dividers.
+> We discussed this back in March on IRC, and you mentioned
+> "libifying" some parts of the code.
+> 
+> Could you say a bit more to put me on the right track?
 
-Changing this without changing the call to hisi_reset_init() in 
-hi3519_clk_probe at the same time will break compilation until
-patch 5 is applied.
+I mean that clk-fractional-divider.c can become more like
+clk-divider.c and grow functions like
+fractional_divider_round_rate(), fractional_divider_get_val(),
+and fractional_divider_recalc_rate() that would parallel
+divider_round_rate(), divider_get_val() and divider_recalc_rate()
+respectively. If any sort of flags are needed to change rounding
+behavior, etc. then a flags argument could be used similar to how
+the divider code has one.
 
-regards
-Philipp
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
