@@ -1,85 +1,45 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 25 May 2016 18:29:45 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 2 May 2016 17:07:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 12/20] drm/sun4i: Add bridge support
-Message-ID: <20160525162945.GK9232@lukather>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-13-git-send-email-maxime.ripard@free-electrons.com>
- <CAKMK7uG-uq7XSqyesVnPtx0Ajx-FQjVKm_QzjEZgWJQDn8EkPA@mail.gmail.com>
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [git pull] clk: renesas: Updates for v4.7 (take three)
+Message-ID: <20160503000701.GD3492@codeaurora.org>
+References: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="opg8F0UgoHELSI+9"
-In-Reply-To: <CAKMK7uG-uq7XSqyesVnPtx0Ajx-FQjVKm_QzjEZgWJQDn8EkPA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 05/02, Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit 2066390ad47b374f3d35075a32325b47d15bf735:
+> 
+>   clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev() (2016-04-20 09:17:07 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.7-tag3
+> 
+> for you to fetch changes up to d04a75af450782db2937603bb6706bf6fa7c6f37:
+> 
+>   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain (2016-04-28 10:32:55 +0200)
+> 
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.7 (take three)
+> 
+>   - Support for CSI2 and VIN module clocks on R-Car H3,
+>   - Renesas CPG/MSTP and CPG/MSSR Clock Domain fixes.
+> 
 
---opg8F0UgoHELSI+9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks. Pulled.
 
-Hi Daniel,
-
-On Mon, May 16, 2016 at 03:12:15PM +0200, Daniel Vetter wrote:
-> On Mon, May 16, 2016 at 2:47 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Our RGB bus can be either connected to a bridge or a panel. While the p=
-anel
-> > support was already there, the bridge was not.
-> >
-> > Fix that.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->=20
-> For bridge support the only thing you need is to set
-> drm_encoder->bridge. Why do you need to hand-roll your own bridge
-> support? That pretty muchmeans you'll do it slightly differently (e.g.
-> you don't bother with a lot of the calls), which will make sharing
-> bridge drivers ever so harder. And also reviewing code, since using
-> shared code but slightly differently is really confusing.
-
-Because I overlooked it :)
-
-I'll change that.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---opg8F0UgoHELSI+9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXRdL5AAoJEBx+YmzsjxAgmQwQAMB4NgJLyyr0/cLzGvYDoSBW
-LmIllM/WFiU1xGySjTtymYKL44qSihgDPBtg/8VZuGI7BaME5IBguZXklUtkdSKp
-kGRoue6D5Nu3Ra3fxoyjxgj74DrD82j6XheCUe05kQtsaAcLFG/UpwS0XU/ZlaXk
-jUXABZmQyxaZXMjJP3akntWvOUUOPAGSn1HpeMYJz2mggNn1rgHnpfWwX4mv8NBd
-sF97fTz2trm+7VJECO9N1CtQUqzW5TYPg7N0KBAkE2bsR2B2VZLJGRItQhzOp/k7
-wlM1a7dirqHfsmuOAgimgjuaaIwPX7JWtJU7Odznp+eT1873c6IQ8ysbuSPzjSkm
-vl1VyUfqr/a8IbQK0WqFywY2YPBm1DBdRu8Vify06RV5xGICY71yJPQiB1tNsXe3
-6mq1UgCp/+lMsLoOTSA+7RWUBaGTh1ZyC6qOCGv1cWNZVHE64SS1a4RHuTO6libx
-+m1+04E2ldAKN4RGFMldhYBs0GicY4dQEw5blgfnQnPPXMYDjTciepoOqKMxyPrr
-h9NdaSXSNzmMvkWNp7DQFj5JPYAXHnc/d5Sfg5o0uencXRf/fyuJUWNChWnW4BXG
-WDDIwgw79ev/9e0VfLPu/Gbkp5Ir2wBtuLLKz4gz4uFU04Csy+OL4BdiqKYkKe3b
-kUNOw44KXVAJ97mX/Jze
-=1f8a
------END PGP SIGNATURE-----
-
---opg8F0UgoHELSI+9--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
