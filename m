@@ -1,52 +1,44 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+Return-Path: <andy.gross@linaro.org>
+Return-Path: <andy.gross@linaro.org>
+From: Andy Gross <andy.gross@linaro.org>
+To: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 14/22] ARM: dts: exynos: MCT is not an interrupt controller and extend length of iomap
-Date: Sun, 15 May 2016 22:13:55 +0200
-Message-Id: <1463343243-26429-15-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+	linux-arm-msm@vger.kernel.org,
+	Andy Gross <andy.gross@linaro.org>
+Subject: [PATCH] clk: qcom: msm8916: Fix crypto clock flags
+Date: Tue,  3 May 2016 15:24:11 -0500
+Message-Id: <1462307051-19256-1-git-send-email-andy.gross@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Multi-Core Timer generates interrupts but it is not really an interrupt
-controller so remove the "interrupt-controller" and "interrupt-cells"
-properties. Additionally extend the length of mapped memory to cover all
-registers (last SFR is at 0x0A40).
+This patch adds the CLK_SET_RATE_PARENT flag for the crypto core and
+ahb blocks.  Without this flag, clk_set_rate can fail for certain
+frequency requests.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-msm8916.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4b16a9376a24..872dadf0f2d4 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -263,9 +263,7 @@
- 
- 		mct: mct@101C0000 {
- 			compatible = "samsung,exynos4210-mct";
--			reg = <0x101C0000 0x800>;
--			interrupt-controller;
--			#interrupt-cells = <1>;
-+			reg = <0x101C0000 0xB00>;
- 			interrupt-parent = <&mct_map>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
- 					<8>, <9>, <10>, <11>;
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 9c29080..5c4e193 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -2346,6 +2346,7 @@ static struct clk_branch gcc_crypto_ahb_clk = {
+ 				"pcnoc_bfdcd_clk_src",
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2381,6 +2382,7 @@ static struct clk_branch gcc_crypto_clk = {
+ 				"crypto_clk_src",
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 -- 
-2.5.0
+1.9.1
