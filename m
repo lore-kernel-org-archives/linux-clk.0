@@ -1,109 +1,94 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Qiang Zhao <qiang.zhao@nxp.com>
-To: Yangbo Lu <yangbo.lu@nxp.com>, "linux-mmc@vger.kernel.org"
- <linux-mmc@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-i2c@vger.kernel.org"
- <linux-i2c@vger.kernel.org>, "iommu@lists.linux-foundation.org"
- <iommu@lists.linux-foundation.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>
-Subject: RE: [v9, 6/7] MAINTAINERS: add entry for Freescale SoC driver
-Date: Thu, 5 May 2016 02:31:27 +0000
-Message-ID: <AM3PR04MB1185B5352C395FE8951CA5A5917C0@AM3PR04MB1185.eurprd04.prod.outlook.com>
-References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
- <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Santosh
- Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
- Yang-Leo Li <leoyang.li@nxp.com>, Scott Wood <oss@buserror.net>,
- Rob Herring <robh+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, Xiaobo Xie <xiaobo.xie@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <kernel@martin.sperl.org>
+References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org> <1461951756-16804-2-git-send-email-kernel@martin.sperl.org> <87zis8h3pp.fsf@eliezer.anholt.net> <5CC0D984-91E5-4401-8AB6-5827269C4395@martin.sperl.org> <87wpncueoq.fsf@eliezer.anholt.net>
+Mime-Version: 1.0 (1.0)
+In-Reply-To: <87wpncueoq.fsf@eliezer.anholt.net>
+Content-Type: text/plain;
+	charset=us-ascii
+Message-Id: <399371FE-CC25-469C-9917-FDFCDA741D56@martin.sperl.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+From: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH V4 1/2] clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
+Date: Tue, 3 May 2016 07:07:11 +0200
+To: Eric Anholt <eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-05-04 at 11:24 +0800, Yangbo Lu wrote:
-> -----Original Message-----
-> From: Yangbo Lu [mailto:yangbo.lu@nxp.com]
-> Sent: Wednesday, May 04, 2016 11:25 AM
-> To: linux-mmc@vger.kernel.org; linuxppc-dev@lists.ozlabs.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; linux-clk@vger.kernel.org; linux-i2c@vger.kernel.org;
-> iommu@lists.linux-foundation.org; netdev@vger.kernel.org
-> Cc: ulf.hansson@linaro.org; Scott Wood <oss@buserror.net>; Mark Rutland
-> <mark.rutland@arm.com>; Rob Herring <robh+dt@kernel.org>; Russell King
-> <linux@arm.linux.org.uk>; Jochen Friedrich <jochen@scram.de>; Joerg Roedel
-> <joro@8bytes.org>; Claudiu Manoil <claudiu.manoil@freescale.com>; Bhupesh
-> Sharma <bhupesh.sharma@freescale.com>; Qiang Zhao
-> <qiang.zhao@nxp.com>; Kumar Gala <galak@codeaurora.org>; Santosh
-> Shilimkar <ssantosh@kernel.org>; Yang-Leo Li <leoyang.li@nxp.com>; Xiaobo
-> Xie <xiaobo.xie@nxp.com>; Yangbo Lu <yangbo.lu@nxp.com>
-> Subject: [v9, 6/7] MAINTAINERS: add entry for Freescale SoC driver
-> 
-> Add maintainer entry for Freescale SoC driver including the QE library and the
-> GUTS driver now. Also add maintainer for QE library.
-> 
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> ---
-> Changes for v8:
-> 	- Added this patch
-> Changes for v9:
-> 	- Added linux-arm mail list
-> 	- Removed GUTS driver entry
-> ---
->  MAINTAINERS | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42e65d1..ce91db7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4622,9 +4622,18 @@ F:	drivers/net/ethernet/freescale/fec_ptp.c
->  F:	drivers/net/ethernet/freescale/fec.h
->  F:	Documentation/devicetree/bindings/net/fsl-fec.txt
-> 
-> +FREESCALE SOC DRIVER
-> +M:	Scott Wood <oss@buserror.net>
-> +L:	linuxppc-dev@lists.ozlabs.org
-> +L:	linux-arm-kernel@lists.infradead.org
-> +S:	Maintained
-> +F:	drivers/soc/fsl/
-> +F:	include/linux/fsl/
-> +
->  FREESCALE QUICC ENGINE LIBRARY
-> +M:	Qiang Zhao <qiang.zhao@nxp.com>
->  L:	linuxppc-dev@lists.ozlabs.org
-> -S:	Orphan
-> +S:	Maintained
->  F:	drivers/soc/fsl/qe/
->  F:	include/soc/fsl/*qe*.h
->  F:	include/soc/fsl/*ucc*.h
-> --
-> 2.1.0.27.g96db324
-
-I am ok!
-
--Zhao Qiang
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> On 03.05.2016, at 03:13, Eric Anholt <eric@anholt.net> wrote:
+> 
+> Martin Sperl <kernel@martin.sperl.org> writes:
+> 
+>>> On 02.05.2016, at 17:36, Eric Anholt <eric@anholt.net> wrote:
+>>> 
+>>> kernel@martin.sperl.org writes:
+>>> 
+>>>> From: Martin Sperl <kernel@martin.sperl.org>
+>>>> 
+>>>> The bcm2835 firmware enables several clocks and plls before
+>>>> booting the linux kernel.
+>>>> 
+>>>> These plls should never get disabled as it may result in a
+>>>> stopped system clock and more.
+>>>> 
+>>>> So during probing we check if the clock is enabled
+>>>> and if it is then mark that clock with CLK_IS_CRITICAL.
+>>>> 
+>>>> As a consequence this will also enable the corresponding
+>>>> parent plls and pll-divs.
+>>>> 
+>>>> This is intended as a stop-gap until CLK_ENABLE_HAND_OFF
+>>>> becomes available, at which point it should be used instead.
+>>>> 
+>>>> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+>>> 
+>>> I still think that we don't want this patch.  We should be able to
+>>> disable clocks that the firmware turned on, unless they really need to
+>>> stay on.  If you have troubles on the upstream DT, let's talk about
+>>> individual clocks.
+>> 
+>> May I ask you what is your main concern about using
+>> CLK_IS_CRITICAL as a stop-gap/in general?
+> 
+> Burning power when you shouldn't, which is a bug.
+It is a bug, but it is better than a crash that happens currently
+because of a stopped clock.
+Also there is a proposed way forward when hand-off
+becomes available.
+
+> 
+>> Also the current situation of the machine crashing when releasing the
+>> PCM clock when the parent is PLLC or PLLD is worse than having some
+>> clocks/pll running unnecessarily.
+> 
+> Are you saying this happens on the upstream kernel?  This sounds like a
+> bug you'd see in the downstream kernel because they haven't hooked up
+> the clocks in their DT.
+This happens for both upstream and downstream when using
+cprman...
+
+You remember the main-uart crashing discussion (when 
+loaded as a module or not used as the kernel console?) it is
+exactly what an unclaimed clock is triggering when the clock
+Is prepared/enabled and then released.
+
+I have also seen the same issue happen with PCM without
+the patch - as soon as we request a frequency which will use
+pllc/d-per as the parent, and we later release the clock the
+system crashes -  but there only if we run the dt with minimal
+clocks using cprman, as it is hidden as soon as you increase enable
+count of the plls because of an enabled clock by a different
+device that also consumes the same pll.
+
+So this bug is mostly hidden behind the complete dts that
+just consumes lots of parent clocks, but it still may occur 
+when we select a frequency that will select the firmware 
+enabled but not claimed plla_per - no idea what stopping
+that pll would trigger in the system.
+
+Hence we need this patch for the running clocks , but we
+also need it for the pll_divs, so actually my patch is
+incomplete!
