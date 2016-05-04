@@ -1,58 +1,66 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] rockchip clock changes for 4.7 part 4 - some more fixes
-Date: Mon, 09 May 2016 16:22:24 +0200
-Message-ID: <16076636.fp1YCeqDWQ@phil>
+Return-Path: <robh@kernel.org>
+Date: Wed, 4 May 2016 08:47:03 -0500
+From: Rob Herring <robh@kernel.org>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: thierry.reding@gmail.com, tony@atomide.com, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to
+ use proper unit address
+Message-ID: <20160504134703.GA4194@rob-hp-laptop>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-5-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1462291015-1919-5-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+On Tue, May 03, 2016 at 10:56:50AM -0500, Franklin S Cooper Jr wrote:
+> Replace unit address from 0 to the proper physical address. Also insure
+> that the unit address matches the reg property address.
+> 
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-A fixup for a rk3399 clock name as well as the GRF-portions of
-my cleanup series. As Stephen had some mild reservations about the
-introduced indirection in the pll parts and we don't save to much lines
-with my modifications for the currently supported pll-types, I think it's
-easier to postpone those until the next new pll type comes around.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Maybe it even has some completely different properties to handle where
-the current "simplification" might even be counter-productive :-) .
-
-So please pull if possible.
-
-Thanks
-Heiko
-
-
-The following changes since commit fd8bc829336a24b770247eb893111bcb8f1ddedb:
-
-  clk: rockchip: fix the rk3399 cifout clock (2016-04-25 22:54:51 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.7-rockchip-clk4
-
-for you to fetch changes up to 7e5385dc722258c862f969ab7e67907156ad0e3f:
-
-  clk: rockchip: drop old_rate calculation on pll rate changes (2016-05-09 16:04:39 +0200)
-
-----------------------------------------------------------------
-Another small rk3399 fixup as well as simplifications around
-our handling of the General-Register-Files syscon.
-
-----------------------------------------------------------------
-Douglas Anderson (1):
-      clk: rockchip: fix the rk3399 sdmmc sample / drv name
-
-Heiko Stuebner (3):
-      clk: rockchip: lookup General Register Files in rockchip_clk_init
-      clk: rockchip: simplify GRF handling in pll clocks
-      clk: rockchip: drop old_rate calculation on pll rate changes
-
- drivers/clk/rockchip/clk-pll.c    | 45 ++++++++-------------------------------
- drivers/clk/rockchip/clk-rk3399.c |  4 ++--
- drivers/clk/rockchip/clk.c        | 11 +++-------
- drivers/clk/rockchip/clk.h        |  1 -
- 4 files changed, 14 insertions(+), 47 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+> index 788da6c..0d47354 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
+> @@ -16,22 +16,22 @@ Optional properties:
+>  
+>  Example:
+>  
+> -ecap0: ecap@0 { /* ECAP on am33xx */
+> +ecap0: ecap@48300100 { /* ECAP on am33xx */
+>  	compatible = "ti,am33xx-ecap";
+>  	#pwm-cells = <3>;
+>  	reg = <0x48300100 0x80>;
+>  	ti,hwmods = "ecap0";
+>  };
+>  
+> -ecap0: ecap@0 { /* ECAP on am4372 */
+> +ecap0: ecap@48300100 { /* ECAP on am4372 */
+>  	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
+>  	#pwm-cells = <3>;
+>  	reg = <0x48300100 0x80>;
+>  	ti,hwmods = "ecap0";
+>  };
+>  
+> -ecap0: ecap@0 { /* ECAP on da850 */
+> +ecap0: ecap@1f06000 { /* ECAP on da850 */
+>  	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
+>  	#pwm-cells = <3>;
+> -	reg = <0x306000 0x80>;
+> +	reg = <0x1f06000 0x80>;
+>  };
+> -- 
+> 2.7.0
+> 
