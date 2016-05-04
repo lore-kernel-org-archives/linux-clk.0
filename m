@@ -1,86 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40156 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757219AbcEFRRv (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2016 13:17:51 -0400
-Date: Fri, 6 May 2016 10:17:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: clk-lpc18xx-creg - scheduling while atomic
-Message-ID: <20160506171748.GS3492@codeaurora.org>
-References: <CAGhQ9VxsyWq=GK5RnCzspV3=6NbDNH6pJhf3uZqdNPCsP9VzmQ@mail.gmail.com>
- <572B62AC.1020205@mleia.com>
- <CAGhQ9VyBcyRZSRowzpiAWnUBywiu_fDMEYWOXYEykDgLWnU0mA@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v9, 6/7] MAINTAINERS: add entry for Freescale SoC driver
+Date: Wed, 4 May 2016 11:24:33 +0800
+Message-ID: <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGhQ9VyBcyRZSRowzpiAWnUBywiu_fDMEYWOXYEykDgLWnU0mA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+ Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/05, Joachim Eastwood wrote:
-> Hi Stephen,
-> 
-> On 5 May 2016 at 17:11, Vladimir Zapolskiy <vz@mleia.com> wrote:
-> > Hi Joachim,
-> >
-> > On 05.05.2016 14:53, Joachim Eastwood wrote:
-> >> Hi,
-> >>
-> >> I just tried next/master on my lpc18xx platform and got a 'scheduling
-> >> while atomic' on the msleep in clk_creg_32k_prepare. This does not
-> >> occur on 4.6-rc1. See below for backtrace.
-> >>
-> >> According to Documentation/clk.txt, Part 6 - Locking, sleeping is
-> >> allowed in prepare functions. Changing the msleep to an mdelay makes
-> >> the problem go away.
-> >>
-> >> So any ideas to what is going on?
-> >>
-> >
-> > the bug description resembles a recent problem on iMX7, you may find
-> > details from "clk: imx: do not sleep if IRQ's are still disabled"
-> > thread, the same sleeping clk_core_prepare() from time_init(), while
-> > sleeping is not allowed until the timer is ready.
-> 
-> Thanks alot, Vladimir!
-> That sheed more light on the problem.
-> 
-> Doing a partial revert of 32b9b10961860 ("clk: Allow clocks to be
-> marked as CRITICAL") also fixes the problem. 32b9b10961860 makes it
-> possible to call clk prepare, which is allowed to sleep, when clocks
-> are first created from of_clk_init(). of_clk_init() is called very
-> early where it's not allow to sleep at all[1].
-> 
-> What do you suggest, Stephen?
-> Calling prepare() from __clk_core_init() doesn't seem like a good idea
-> to me. I think the core clk handing of critical clocks needs to change
-> here.
+Add maintainer entry for Freescale SoC driver including
+the QE library and the GUTS driver now. Also add maintainer
+for QE library.
 
-Yeah we need to figure out something for people who are using
-critical clks in of_clk_init() path because that's just not going
-to work if they sleep in their prepare callbacks.
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v8:
+	- Added this patch
+Changes for v9:
+	- Added linux-arm mail list
+	- Removed GUTS driver entry
+---
+ MAINTAINERS | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Regardless, is your driver using critical clks? It seems more
-like we need to apply this patch so that the flags member of
-clk_init_data isn't full of junk that might match against the
-critical flag?
-
----8<----
-diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
-index d44b61afa2dc..9e35749dafdf 100644
---- a/drivers/clk/nxp/clk-lpc18xx-creg.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
-@@ -147,6 +147,7 @@ static struct clk *clk_register_creg_clk(struct device *dev,
- 	init.name = creg_clk->name;
- 	init.parent_names = parent_name;
- 	init.num_parents = 1;
-+	init.flags = 0;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 42e65d1..ce91db7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4622,9 +4622,18 @@ F:	drivers/net/ethernet/freescale/fec_ptp.c
+ F:	drivers/net/ethernet/freescale/fec.h
+ F:	Documentation/devicetree/bindings/net/fsl-fec.txt
  
- 	creg_clk->reg = syscon;
- 	creg_clk->hw.init = &init;
++FREESCALE SOC DRIVER
++M:	Scott Wood <oss@buserror.net>
++L:	linuxppc-dev@lists.ozlabs.org
++L:	linux-arm-kernel@lists.infradead.org
++S:	Maintained
++F:	drivers/soc/fsl/
++F:	include/linux/fsl/
++
+ FREESCALE QUICC ENGINE LIBRARY
++M:	Qiang Zhao <qiang.zhao@nxp.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+-S:	Orphan
++S:	Maintained
+ F:	drivers/soc/fsl/qe/
+ F:	include/soc/fsl/*qe*.h
+ F:	include/soc/fsl/*ucc*.h
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
