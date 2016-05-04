@@ -1,67 +1,85 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk: samsung: Suppress unbinding to prevent theoretical attacks
-Date: Tue, 17 May 2016 09:26:14 +0200
-Message-id: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v9, 4/7] dt: move guts devicetree doc out of powerpc directory
+Date: Wed, 4 May 2016 11:24:31 +0800
+Message-ID: <1462332274-13744-5-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+ Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Although unbinding a driver requires root privileges but it still might
-be used theoretically in certain attacks (by triggering NULL pointer
-exception or memory corruption if driver does not provide proper remove
-callbacks or core does not handle it).
+Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
+since it's used by not only PowerPC but also ARM. And add a specification
+for 'little-endian' property.
 
-Samsung clock drivers are essential for system operation so their
-removal is not expected. More over, the Exynos3250 ISP clock driver does
-not implement remove() driver callback and it is not buildable as
-modules.
-
-Suppress the unbind interface for Exynos3250 ISP and S3C2410 DCLK clock
-drivers.
-
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c   | 1 +
- drivers/clk/samsung/clk-s3c2410-dclk.c | 5 +++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Changes for v4:
+	- Added this patch
+Changes for v5:
+	- Modified the description for little-endian property
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+	- Added 'Acked-by: Rob Herring'
+Changes for v9:
+	- None
+---
+ Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+ rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 16575ee874cb..dc4d493e61c2 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -1087,6 +1087,7 @@ static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
- static struct platform_driver exynos3250_cmu_isp_driver = {
- 	.driver = {
- 		.name = "exynos3250-cmu-isp",
-+		.suppress_bind_attrs = true,
- 		.of_match_table = exynos3250_cmu_isp_of_match,
- 	},
- };
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index ec6fb14d951c..ae9a595c72d0 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -428,8 +428,9 @@ MODULE_DEVICE_TABLE(platform, s3c24xx_dclk_driver_ids);
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+similarity index 91%
+rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
+rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
+index b71b203..07adca9 100644
+--- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
++++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+@@ -25,6 +25,9 @@ Recommended properties:
+  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
+    registers, for those SOCs that have a PAMU device.
  
- static struct platform_driver s3c24xx_dclk_driver = {
- 	.driver = {
--		.name		= "s3c24xx-dclk",
--		.pm		= &s3c24xx_dclk_pm_ops,
-+		.name			= "s3c24xx-dclk",
-+		.pm			= &s3c24xx_dclk_pm_ops,
-+		.suppress_bind_attrs	= true,
- 	},
- 	.probe = s3c24xx_dclk_probe,
- 	.remove = s3c24xx_dclk_remove,
++ - little-endian : Indicates that the global utilities block is little
++   endian. The default is big endian.
++
+ Examples:
+ 	global-utilities@e0000 {	/* global utilities block */
+ 		compatible = "fsl,mpc8548-guts";
 -- 
-1.9.1
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
