@@ -1,188 +1,109 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 5/5] clk: hisilicon: hi3519: add driver remove path and fix some issues
-Date: Fri, 13 May 2016 10:05:55 +0800
-Message-ID: <1463105155-20385-6-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] clk: renesas: Add r8a7796 CPG Core Clock Definitions
+Date: Wed,  4 May 2016 16:35:41 +0200
+Message-Id: <1462372543-31835-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-1. Add driver remove path.
-2. Fix some issues.
-   -Fix the ordering issue about clock provider being published.
-   -Add error checking upon registering clocks.
+Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
+in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
+datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
+not included, as they are used as internal clock sources only, and never
+referenced from DT.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 100 insertions(+), 16 deletions(-)
+ include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
 
-diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
-index 8d12700..51b173e 100644
---- a/drivers/clk/hisilicon/clk-hi3519.c
-+++ b/drivers/clk/hisilicon/clk-hi3519.c
-@@ -38,6 +38,11 @@
- 
- #define HI3519_NR_CLKS		128
- 
-+struct hi3519_crg_data {
-+	struct hisi_clock_data *clk_data;
-+	struct hisi_reset_controller *rstc;
-+};
+diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..1e5942695f0dd057
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
 +
- static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
- 	{ HI3519_FIXED_24M, "24m", NULL, 0, 24000000, },
- 	{ HI3519_FIXED_50M, "50m", NULL, 0, 50000000, },
-@@ -80,33 +85,105 @@ static const struct hisi_gate_clock hi3519_gate_clks[] = {
- 		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
- };
- 
--static int hi3519_clk_probe(struct platform_device *pdev)
-+static struct hisi_clock_data *hi3519_clk_register(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
- 	struct hisi_clock_data *clk_data;
--	struct hisi_reset_controller *rstc;
-+	int ret;
- 
--	rstc = hisi_reset_init(pdev);
--	if (!rstc)
-+	clk_data = hisi_clk_alloc(pdev, HI3519_NR_CLKS);
-+	if (!clk_data)
-+		return ERR_PTR(-ENOMEM);
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+	ret = hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
-+				     ARRAY_SIZE(hi3519_fixed_rate_clks),
-+				     clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
++/* r8a7796 CPG Core Clocks */
++#define R8A7796_CLK_Z			0
++#define R8A7796_CLK_Z2			1
++#define R8A7796_CLK_ZR			2
++#define R8A7796_CLK_ZG			3
++#define R8A7796_CLK_ZTR			4
++#define R8A7796_CLK_ZTRD2		5
++#define R8A7796_CLK_ZT			6
++#define R8A7796_CLK_ZX			7
++#define R8A7796_CLK_S0D1		8
++#define R8A7796_CLK_S0D2		9
++#define R8A7796_CLK_S0D3		10
++#define R8A7796_CLK_S0D4		11
++#define R8A7796_CLK_S0D6		12
++#define R8A7796_CLK_S0D8		13
++#define R8A7796_CLK_S0D12		14
++#define R8A7796_CLK_S1D1		15
++#define R8A7796_CLK_S1D2		16
++#define R8A7796_CLK_S1D4		17
++#define R8A7796_CLK_S2D1		18
++#define R8A7796_CLK_S2D2		19
++#define R8A7796_CLK_S2D4		20
++#define R8A7796_CLK_S3D1		21
++#define R8A7796_CLK_S3D2		22
++#define R8A7796_CLK_S3D4		23
++#define R8A7796_CLK_LB			24
++#define R8A7796_CLK_CL			25
++#define R8A7796_CLK_ZB3			26
++#define R8A7796_CLK_ZB3D2		27
++#define R8A7796_CLK_ZB3D4		28
++#define R8A7796_CLK_CR			29
++#define R8A7796_CLK_CRD2		30
++#define R8A7796_CLK_SD0H		31
++#define R8A7796_CLK_SD0			32
++#define R8A7796_CLK_SD1H		33
++#define R8A7796_CLK_SD1			34
++#define R8A7796_CLK_SD2H		35
++#define R8A7796_CLK_SD2			36
++#define R8A7796_CLK_SD3H		37
++#define R8A7796_CLK_SD3			38
++#define R8A7796_CLK_SSP2		39
++#define R8A7796_CLK_SSP1		40
++#define R8A7796_CLK_SSPRS		41
++#define R8A7796_CLK_RPC			42
++#define R8A7796_CLK_RPCD2		43
++#define R8A7796_CLK_MSO			44
++#define R8A7796_CLK_CANFD		45
++#define R8A7796_CLK_HDMI		46
++#define R8A7796_CLK_CSI0		47
++#define R8A7796_CLK_CSIREF		48
++#define R8A7796_CLK_CP			49
++#define R8A7796_CLK_CPEX		50
++#define R8A7796_CLK_R			51
++#define R8A7796_CLK_OSC			52
 +
-+	ret = hisi_clk_register_mux(hi3519_mux_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				clk_data);
-+	if (ret)
-+		goto unregister_fixed_rate;
-+
-+	ret = hisi_clk_register_gate(hi3519_gate_clks,
-+				ARRAY_SIZE(hi3519_gate_clks),
-+				clk_data);
-+	if (ret)
-+		goto unregister_mux;
-+
-+	ret = of_clk_add_provider(pdev->dev.of_node,
-+			of_clk_src_onecell_get, &clk_data->clk_data);
-+	if (ret)
-+		goto unregister_gate;
-+
-+	return clk_data;
-+
-+unregister_fixed_rate:
-+	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
-+				ARRAY_SIZE(hi3519_fixed_rate_clks),
-+				clk_data);
-+
-+unregister_mux:
-+	hisi_clk_unregister_mux(hi3519_mux_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				clk_data);
-+unregister_gate:
-+	hisi_clk_unregister_gate(hi3519_gate_clks,
-+				ARRAY_SIZE(hi3519_gate_clks),
-+				clk_data);
-+	return ERR_PTR(ret);
-+}
-+
-+static void hi3519_clk_unregister(struct platform_device *pdev)
-+{
-+	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	hisi_clk_unregister_gate(hi3519_gate_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				crg->clk_data);
-+	hisi_clk_unregister_mux(hi3519_mux_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				crg->clk_data);
-+	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
-+				ARRAY_SIZE(hi3519_fixed_rate_clks),
-+				crg->clk_data);
-+}
-+
-+static int hi3519_clk_probe(struct platform_device *pdev)
-+{
-+	struct hi3519_crg_data *crg;
-+
-+	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
-+	if (!crg)
-+		return -ENOMEM;
-+
-+	crg->rstc = hisi_reset_init(pdev);
-+	if (!crg->rstc)
- 		return -ENOMEM;
- 
--	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
--	if (!clk_data) {
--		hisi_reset_exit(rstc);
--		return -ENODEV;
-+	crg->clk_data = hi3519_clk_register(pdev);
-+	if (IS_ERR(crg->clk_data)) {
-+		hisi_reset_exit(crg->rstc);
-+		return PTR_ERR(crg->clk_data);
- 	}
- 
--	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
--				     ARRAY_SIZE(hi3519_fixed_rate_clks),
--				     clk_data);
--	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
--					clk_data);
--	hisi_clk_register_gate(hi3519_gate_clks,
--			ARRAY_SIZE(hi3519_gate_clks), clk_data);
-+	platform_set_drvdata(pdev, crg);
-+	return 0;
-+}
-+
-+static int hi3519_clk_remove(struct platform_device *pdev)
-+{
-+	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
- 
-+	hisi_reset_exit(crg->rstc);
-+	hi3519_clk_unregister(pdev);
- 	return 0;
- }
- 
-+
- static const struct of_device_id hi3519_clk_match_table[] = {
- 	{ .compatible = "hisilicon,hi3519-crg" },
- 	{ }
-@@ -115,6 +192,7 @@ MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
- 
- static struct platform_driver hi3519_clk_driver = {
- 	.probe          = hi3519_clk_probe,
-+	.remove		= hi3519_clk_remove,
- 	.driver         = {
- 		.name   = "hi3519-clk",
- 		.of_match_table = hi3519_clk_match_table,
-@@ -127,5 +205,11 @@ static int __init hi3519_clk_init(void)
- }
- core_initcall(hi3519_clk_init);
- 
-+static void __exit hi3519_clk_exit(void)
-+{
-+	platform_driver_unregister(&hi3519_clk_driver);
-+}
-+module_exit(hi3519_clk_exit);
-+
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
++#endif /* __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__ */
 -- 
 1.9.1
