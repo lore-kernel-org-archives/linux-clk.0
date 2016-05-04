@@ -1,62 +1,148 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 10 May 2016 08:41:25 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-	mturquette@baylibre.com, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.wolfsonmicro.com
-Subject: Re: [PATCH v3 3/4] mfd: arizona: Switch to using clock driver for
- 32k clock
-Message-ID: <20160510074125.GI19473@dell>
-References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1452252582-20834-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20160507005510.GO3492@codeaurora.org>
- <20160509074459.GD8324@dell>
- <20160509193404.GP3492@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1bon0070.outbound.protection.outlook.com ([157.56.111.70]:23544
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1757016AbcEDDfI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 3 May 2016 23:35:08 -0400
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+	<netdev@vger.kernel.org>
+CC: <ulf.hansson@linaro.org>, Scott Wood <oss@buserror.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	"Bhupesh Sharma" <bhupesh.sharma@freescale.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
+	<xiaobo.xie@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v9, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Date: Wed, 4 May 2016 11:24:34 +0800
+Message-ID: <1462332274-13744-8-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160509193404.GP3492@codeaurora.org>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 09 May 2016, Stephen Boyd wrote:
-> On 05/09, Lee Jones wrote:
-> > On Fri, 06 May 2016, Stephen Boyd wrote:
-> > 
-> > > On 01/08, Charles Keepax wrote:
-> > > > Now we have a clock driver that can control the 32k clock use this
-> > > > rather than directly controlling the 32k clock from the MFD device.
-> > > > 
-> > > > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > > > ---
-> > > 
-> > > Applied to clk-next
-> > 
-> > If you're going to take the set though the clk tree, don't forget to
-> > sent out a pull-request of the immutable branch you created.  If
-> > you're not happy to do that, drop the patch and I'll happily oblige.
-> > 
-> 
-> Oh sorry, I got confused. I thought you acked this mfd patch so I could
-> take it through the clk tree but it seems you acked them so you
-> could apply it later without re-reviewing it?
+The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
+Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
+This patch adds the GUTS driver support for eSDHC driver to get SVR(System
+version register). And fix host version to avoid that incorrect version
+numbers break down the ADMA data transfer.
 
-Right, that's what I mean by "for my own reference".  Since MFD is
-more often than not the central/parent device, it's usually easier to
-tunnel patch sets through the MFD, and I will always sent out a
-pull-requests out to the other maintainers concerned in order to
-prevent merge conflicts for Linus.
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v2:
+	- Got SVR through iomap instead of dts
+Changes for v3:
+	- Managed GUTS through syscon instead of iomap in eSDHC driver
+Changes for v4:
+	- Got SVR by GUTS driver instead of SYSCON
+Changes for v5:
+	- Changed to get SVR through API fsl_guts_get_svr()
+	- Combined patch 4, patch 5 and patch 6 into one
+Changes for v6:
+	- Added 'Acked-by: Ulf Hansson'
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+---
+ drivers/mmc/host/Kconfig          |  1 +
+ drivers/mmc/host/sdhci-of-esdhc.c | 23 +++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-> Either way, I'm going to drop these patches for now and wait for
-> a v4 because Charles has suggested there are some more issues to
-> work out.
-
-Sure.
-
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 0aa484c..e15e836 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -143,6 +143,7 @@ config MMC_SDHCI_OF_ESDHC
+ 	depends on MMC_SDHCI_PLTFM
+ 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
+ 	select MMC_SDHCI_IO_ACCESSORS
++	select FSL_GUTS
+ 	help
+ 	  This selects the Freescale eSDHC controller support.
+ 
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 3f34d35..68cc020 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -18,6 +18,8 @@
+ #include <linux/of.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
++#include <linux/fsl/svr.h>
++#include <linux/fsl/guts.h>
+ #include <linux/mmc/host.h>
+ #include "sdhci-pltfm.h"
+ #include "sdhci-esdhc.h"
+@@ -28,6 +30,8 @@
+ struct sdhci_esdhc {
+ 	u8 vendor_ver;
+ 	u8 spec_ver;
++	u32 soc_ver;
++	u8 soc_rev;
+ };
+ 
+ /**
+@@ -73,6 +77,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
+ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 				     int spec_reg, u32 value)
+ {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
+ 	u16 ret;
+ 	int shift = (spec_reg & 0x2) * 8;
+ 
+@@ -80,6 +86,13 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 		ret = value & 0xffff;
+ 	else
+ 		ret = (value >> shift) & 0xffff;
++
++	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
++	 * vendor version and spec version information.
++	 */
++	if ((spec_reg == SDHCI_HOST_VERSION) &&
++	    (esdhc->soc_ver == SVR_T4240) && (esdhc->soc_rev <= 0x20))
++		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
+ 	return ret;
+ }
+ 
+@@ -567,10 +580,20 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
+ 	struct sdhci_pltfm_host *pltfm_host;
+ 	struct sdhci_esdhc *esdhc;
+ 	u16 host_ver;
++	u32 svr;
+ 
+ 	pltfm_host = sdhci_priv(host);
+ 	esdhc = sdhci_pltfm_priv(pltfm_host);
+ 
++	fsl_guts_init();
++	svr = fsl_guts_get_svr();
++	if (svr) {
++		esdhc->soc_ver = SVR_SOC_VER(svr);
++		esdhc->soc_rev = SVR_REV(svr);
++	} else {
++		dev_err(&pdev->dev, "Failed to get SVR value!\n");
++	}
++
+ 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
+ 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
+ 			     SDHCI_VENDOR_VER_SHIFT;
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.1.0.27.g96db324
+
