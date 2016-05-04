@@ -1,119 +1,186 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [RFC PATCH 16/21] reset: uniphier: add reset driver for UniPhier
- PH1-Pro5 SoC
-Date: Tue, 10 May 2016 18:50:57 +0900
-Message-Id: <1462873862-30940-17-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 4 May 2016 20:01:43 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 00/11] drm: Add Allwinner A10 display engine support
+Message-ID: <20160504180143.GA17159@lukather>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WbqItKNU/G8FVTDf"
+In-Reply-To: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--WbqItKNU/G8FVTDf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/reset/uniphier/Kconfig               |  4 +++
- drivers/reset/uniphier/Makefile              |  1 +
- drivers/reset/uniphier/reset-uniphier-pro5.c | 46 ++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
- create mode 100644 drivers/reset/uniphier/reset-uniphier-pro5.c
+On Mon, Apr 25, 2016 at 03:22:41PM +0200, Maxime Ripard wrote:
+> Hi everyone,
+>=20
+> The Allwinner SoCs (except for the very latest ones) all share the
+> same set of controllers, loosely coupled together to form the display
+> pipeline.
+>=20
+> Depending on the SoC, the number of instances of the controller will
+> change (2 instances of each in the A10, only one in the A13, for
+> example), and the output availables will change too (HDMI, composite,
+> VGA on the A20, none of them on the A13).
+>=20
+> On most featured SoCs, it looks like that:
+>=20
+> +--------------------------------------------+
+> |                    RAM                     |
+> +--------------------------------------------+
+>       |            |      |            |
+>       v            |      |            v
+> +----------------+ |      | +----------------+
+> |    Frontend    | |      | |    Frontend    |
+> +----------------+ |      | +----------------+
+>         |          |      |         |
+>         v          |      |         v
+> +----------------+ |      | +----------------+
+> |    Backend     |<+      +>|    Backend     |
+> +----------------+          +----------------+
+>         |                           |
+>         v                           v
+> +----------------+          +----------------+---> LVDS
+> |      TCON      |          |      TCON      |---> RGB
+> +----------------+          +----------------+
+>       |       +---+       +---+          |
+>       |           |       |              |
+>       v           v       v              v
+> +------------+  +------------+  +------------+---> VGA
+> | TV Encoder |  |    HDMI    |  | TV Encoder |---> Composite
+> +------------+  +------------+  +------------+
+>=20
+> The current code only assumes that there is a single instance of all
+> the controllers. It also supports only the RGB and Composite
+> interfaces.
+>=20
+> Let me know what you think,
+> Maxime
+>=20
+> Changes from v3:
+>   - Fixed a circular dependency issue found when building as a module
+>   - Changed a bit the mode_valid checks
+>   - Fixed an issue with the timings generated by the display engine
+>=20
+>   - Changed the DT bindings according to Rob feedback (removed the
+>     allwinner,panel property, documented the endpoints indices, always
+>     use the frontend as the pipeline entrypoint)
+>=20
+>   - Changed the display clocks according to Stephen comments (marked
+>     structures as const, changed a variable name)
+>=20
+> Changes from v2:
+>   - Rebased on top of next-20160318
+>=20
+>   - Dropped the generic clock regmap conversion and implemented a
+>     custom clock for our pixel clock, backed by a regmap
+>   - Added the reset bits for the tcon channel 0 and display clocks
+>   - Used the new generic gates compatible for the DRAM gates
+>   - Few clock fixes (missing iounmap, return error checks, etc)
+>   - Found out that the TCON channel 1 clock was not operating properly
+>     because of some weird rounding down and up between the various
+>     generic clocks involved. Rewrote it using custom operations
+>=20
+>   - Removed some TODO that were still there
+>   - Converted our panel DT description to the OF graph instead of a
+>     custom property
+>   - Tested the driver on a setup where U-Boot was not initialising the
+>     display, or initialising it on a different output, and fixed a
+>     number of associated bugs (mostly related to missing
+>     initialisation bits, missing reset handles, and so on)
+>   - Fixed the layer code that was assuming that the X and Y
+>     coordinates were in pixels, leading to a miscalculation of the
+>     buffer address when those coordinates where set.
+>   - Added the missing EXPORT_SYMBOL calls
+>=20
+>   - Fixed our VBLANK interrupt code that was completely broken (and
+>     not usable, which is why it was unnoticed)
+>=20
+> Changes from v1:
+>   - Rebased on top of 4.4
+>=20
+>   - Merged the clock drivers for the display and TCON channel 0 clocks
+>   - Replaced the container_of calls in the display reset clocks to an
+>     inline function
+>   - Checked the return code of of_clk_parent_fill in the clocks
+>     drivers
+>   - Checked the return code of of_clk_add_provider in the tcon-ch1 and
+>     PLL3 clocks
+>   - Added missing clocks headers
+>   - Created a composite clock unregister function
+>=20
+>   - Moved the binding documentation to
+>     Documentation/devicetree/bindings/display
+>   - Added the clocks binding documentation
+>   - Added the Olimex vendor to the list of DT vendors
+>   - Moved to the OF graph representation and the component framework
+>=20
+>   - Moved the reset cells count check into the reset framework to
+>     avoid duplicating the code in every xlate implementation.
+>   - Made the reset_ops const
+>=20
+>   - Reworked the DRM cmdline mode parsing code to allow named mode
+>   - Fixed the TV mode lookup when the mode name is not present (for
+>     example because it was given by the userspace)
+>=20
+>   - Made the driver outputs optional (to avoid crashing when a board
+>     doesn't have either a panel or a composite output enabled)
+>   - Added multiple plane support with transparency
+>   - Moved the backend registers writes commit in the CRTC atomic_flush
+>     callback
+>   - Removed the load / unload functions
+>   - Removed the enabled booleans in my private structure and removed
+>     the implicit call to disable_unused_functions in the DRM core to
+>     push it in the drivers.
+>   - Fixed a few bitmasks on some bitfields definition
+>   - Fixed the RGB connector mode validation that was not testing the
+>     right values				 =20
 
-diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
-index 307d563..92d9a5f 100644
---- a/drivers/reset/uniphier/Kconfig
-+++ b/drivers/reset/uniphier/Kconfig
-@@ -18,4 +18,8 @@ config RESET_UNIPHIER_SLD8
- 	tristate "Reset driver for UniPhier PH1-sLD8 SoC"
- 	default ARM
- 
-+config RESET_UNIPHIER_PRO5
-+	tristate "Reset driver for UniPhier PH1-Pro5 SoC"
-+	default ARM
-+
- endif
-diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
-index e1001c6..537e3f8 100644
---- a/drivers/reset/uniphier/Makefile
-+++ b/drivers/reset/uniphier/Makefile
-@@ -3,3 +3,4 @@ obj-y					+= reset-uniphier-core.o
- obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
- obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
- obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
-+obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
-diff --git a/drivers/reset/uniphier/reset-uniphier-pro5.c b/drivers/reset/uniphier/reset-uniphier-pro5.c
-new file mode 100644
-index 0000000..dae6f54
---- /dev/null
-+++ b/drivers/reset/uniphier/reset-uniphier-pro5.c
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "reset-uniphier.h"
-+
-+static const struct uniphier_reset_data uniphier_pro5_reset_data[] = {
-+	{
-+		.id = 7,
-+		.reg = 0x2000,
-+		.mask = BIT(10),
-+		.deassert_val = BIT(10),
-+	},
-+	{ .id = UNIPHIER_RESET_ID_END }
-+};
-+
-+static int uniphier_pro5_reset_probe(struct platform_device *pdev)
-+{
-+	return uniphier_reset_probe(pdev, uniphier_pro5_reset_data);
-+}
-+
-+static struct platform_driver uniphier_pro5_reset_driver = {
-+	.probe = uniphier_pro5_reset_probe,
-+	.driver = {
-+		.name = "uniphier-pro5-reset",
-+	},
-+};
-+module_platform_driver(uniphier_pro5_reset_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-Pro5 Reset Controller Driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+Applied the DT patches.
 
+Maxime
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--WbqItKNU/G8FVTDf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXKjkHAAoJEBx+YmzsjxAgs/QQALtwrqExkk8ddl6BZWdZ9x1C
+G9HuPWA4nlsKhncgLkaAdKmIR2wjYTar0XPtq3x6EuCivQwUhfE0qbERv79UPVWD
+jLs3Sl2+/l0ZA74pX7Xect0WVhyPnmUr4M+VwUcizSSlZ0Ml+TyJsP+buEWxbCow
+eVokaYK98fIFuvQtIe/U6r2A6x9cV3YYYlnybZMNesdkNpYpNtvKxPXn2XNc4DVP
+yInkCg+6BMBov3obcrBiYDxxEBRG7frLOP7aS9QMjgSRZhWqg5ovFbfOJfakHz6N
+Ia3bGPQZzeDZ8zoUwTJzOqCI2eypV7nVBUFiU7tJIiikbbH3iF1B9MaWj+1GWdhQ
+ivqX1hhbGI8ovdqNfJglg4UV/ZR7+zcFzRT1bC8WQIW6rQxwn+J3XMznMiYS3ckh
+0lsO8Qj0iDu5OpmOE8bdsHdOrnY6ejhNDGcw4v8nysywcl7AI9JjaBNv/kIYfqIM
+hb7BJpvDML0Ab0gO/Xcp3MSM8DkWsNAtTzKiWQa/5rhuOIiAnfwzIkPX516SVx5l
+CJuMgzvE40siOQONV1wkh1BE3JFHDb/E9fFV8vWtZESR1Wdo9kxazCZI6kRI47zM
+5eveASKKDx7ShhcZ5/Hs4U797kSO5eWmQLJkhNh037Ntr1QFEfFcFUciSmtXPRbi
+P18wsq1KgXcsvLytuxyV
+=Fnrb
+-----END PGP SIGNATURE-----
+
+--WbqItKNU/G8FVTDf--
