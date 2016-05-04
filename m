@@ -1,48 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.141]:48483 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753652AbcEZNtt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2016 09:49:49 -0400
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: fix cclk error handing
-Date: Thu, 26 May 2016 21:49:08 +0800
-Message-Id: <1464270549-12713-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v9, 2/7] ARM64: dts: ls2080a: add device configuration node
+Date: Wed, 4 May 2016 11:24:29 +0800
+Message-ID: <1462332274-13744-3-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+ Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It maybe due to a copy-paste error the error handing should be
-cclk not clk.
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
-Reported-by: Lin Huang <lin.huang@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
 ---
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- drivers/clk/rockchip/clk-cpu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 4bb130c..05b3d73 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -321,9 +321,9 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 	}
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index 9d746c6..8724cf1 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -191,6 +191,12 @@
+ 			clocks = <&sysclk>;
+ 		};
  
- 	cclk = clk_register(NULL, &cpuclk->hw);
--	if (IS_ERR(clk)) {
-+	if (IS_ERR(cclk)) {
- 		pr_err("%s: could not register cpuclk %s\n", __func__,	name);
--		ret = PTR_ERR(clk);
-+		ret = PTR_ERR(cclk);
- 		goto free_rate_table;
- 	}
- 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
 -- 
-1.7.9.5
+2.1.0.27.g96db324
 
 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
