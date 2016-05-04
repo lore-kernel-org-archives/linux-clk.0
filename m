@@ -1,82 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 12 May 2016 16:33:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
-Message-ID: <20160512233338.GM3492@codeaurora.org>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
- <1462797111-14271-3-git-send-email-joel@jms.id.au>
- <20160509224953.GZ3492@codeaurora.org>
- <CACPK8Xfq=Pfy=7GYuS7LJs-CFJOimBUoHA=Y6NHb4=DRcOnvfQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACPK8Xfq=Pfy=7GYuS7LJs-CFJOimBUoHA=Y6NHb4=DRcOnvfQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from host.buserror.net ([209.198.135.123]:43445 "EHLO
+	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754219AbcEDRfY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2016 13:35:24 -0400
+Message-ID: <1462383308.16584.43.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	iommu@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: ulf.hansson@linaro.org, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
+	xiaobo.xie@nxp.com
+Date: Wed, 04 May 2016 12:35:08 -0500
+In-Reply-To: <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
+References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
+	 <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [v9, 6/7] MAINTAINERS: add entry for Freescale SoC driver
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/10, Joel Stanley wrote:
-> On Tue, May 10, 2016 at 8:19 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > Please write a proper clk driver that sets clkin to be the parent
-> > of this clk registered here and then calculates the frequency
-> > based on the parent clk rate and the strapping registers via the
-> > recalc rate callback.
+On Wed, 2016-05-04 at 11:24 +0800, Yangbo Lu wrote:
+> Add maintainer entry for Freescale SoC driver including
+> the QE library and the GUTS driver now. Also add maintainer
+> for QE library.
 > 
-> After a few goes I understood what you meant here.
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> ---
+> Changes for v8:
+> 	- Added this patch
+> Changes for v9:
+> 	- Added linux-arm mail list
+> 	- Removed GUTS driver entry
+> ---
+>  MAINTAINERS | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> Is the pclk part okay? I modified the pclk part use a fixed factor
-> clock instead of the fixed clock, so I could drop the pclk_get_rate
-> call below.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 42e65d1..ce91db7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4622,9 +4622,18 @@ F:	drivers/net/ethernet/freescale/fec_ptp.c
+>  F:	drivers/net/ethernet/freescale/fec.h
+>  F:	Documentation/devicetree/bindings/net/fsl-fec.txt
+>  
+> +FREESCALE SOC DRIVER
+> +M:	Scott Wood <oss@buserror.net>
+> +L:	linuxppc-dev@lists.ozlabs.org
+> +L:	linux-arm-kernel@lists.infradead.org
+> +S:	Maintained
+> +F:	drivers/soc/fsl/
+> +F:	include/linux/fsl/
+> +
+>  FREESCALE QUICC ENGINE LIBRARY
+> +M:	Qiang Zhao <qiang.zhao@nxp.com>
+>  L:	linuxppc-dev@lists.ozlabs.org
+> -S:	Orphan
+> +S:	Maintained
+>  F:	drivers/soc/fsl/qe/
+>  F:	include/soc/fsl/*qe*.h
+>  F:	include/soc/fsl/*ucc*.h
 
-Sorry what's the pclk part? Using a fixed factor is OK, as long
-as we don't have to call clk_get_rate() in this driver it's a
-better design.
+s/DRIVER/DRIVERS/
+
+There's more than one.
+
+Otherwise:
+Acked-by: Scott Wood <oss@buserror.net>
+
+-Scott
 
 > 
-> > Also please move this to a platform driver
-> > instead of using CLK_OF_DECLARE assuming this isn't required for
-> > any timers in the system.
-> 
-> Can you clarify here? We do use the rate of pclk (the apb clock) in
-> the clocksource driver to calculate our count_per_tick value.
-
-Ok. I was hoping that this wasn't providing any clks required in
-the timer driver. Even if that's true, we could just register the
-part of the clk tree that needs to be ready for the timer from
-CLK_OF_DECLARE() and then register the other clks from a regular
-platform driver. Some people have already started doing this, so
-there are some examples around (clk/nxp/clk-lpc18xx-creg.c is one
-example).
-
-> > Following on Rob's comment, please combine this into one driver
-> > instead of having different DT nodes for different clks that are
-> > all really part of one clock controller hw block.
-> 
-> Ok, I have had a go at this. In our case the clock registers are part
-> of the "SCU" IP; a collection of disparate functions that happen to
-> include clock control. Is syscon the right thing to use here?
-> 
-> regmap = syscon_regmap_lookup_by_compatible("aspeed,ast2400-syscon-scu");
-> ret = regmap_read(hpll->regmap, 0x70, &reg);
-> 
-
-In that case I don't have a problem with a toplevel MFD node in
-DT with a child node for the clk part and a child node for other
-logical driver parts. Or it could all be one MFD driver and node
-that knows to add a clk device as a child of the MFD purely in
-software so that we can fork control of the clk part over to the
-drivers/clk directory. If you have the clk driver attach to some
-child device then you can always get the regmap from the parent
-MFD via the dev->parent pointer.
-
-Maybe Rob can chime in here too with the proper design, because
-I've seen both styles.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
