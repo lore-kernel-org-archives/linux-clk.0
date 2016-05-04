@@ -1,39 +1,50 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 23/27] dt-bindings: clock: Add I2C, HSI2C and RTC clock
- IDs to Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <1462910970-1812-24-git-send-email-krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <ee0b3b8f-d499-c735-1b46-1710e2e91b59@osg.samsung.com>
-Date: Wed, 11 May 2016 08:31:00 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462910970-1812-24-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] clk: renesas: cpg-mssr: Document r8a7796 support
+Date: Wed,  4 May 2016 16:35:40 +0200
+Message-Id: <1462372543-31835-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> Add IDs for I2C, USI (HSI2C) and RTC clocks to Exynos5410. Use the same
-> number as for Exynos5420 just in case in future these drivers were
-> merged.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index fefb8023020f1a54..394d725ac7e0baa3 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -13,7 +13,8 @@ They provide the following functionalities:
+ 
+ Required Properties:
+   - compatible: Must be one of:
+-      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
++      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
++      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+ 
+   - reg: Base address and length of the memory resource used by the CPG/MSSR
+     block
+@@ -21,8 +22,8 @@ Required Properties:
+   - clocks: References to external parent clocks, one entry for each entry in
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+-      - "extal" (r8a7795)
+-      - "extalr" (r8a7795)
++      - "extal" (r8a7795, r8a7796)
++      - "extalr" (r8a7795, r8a7796)
+ 
+   - #clock-cells: Must be 2
+       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
