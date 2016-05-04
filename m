@@ -1,317 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conuserg-10.nifty.com ([210.131.2.77]:37035 "EHLO
-	conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751899AbcEJJw4 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 05:52:56 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Lee Jones <lee.jones@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [RFC PATCH 01/21] mfd: uniphier: add UniPhier MFD driver
-Date: Tue, 10 May 2016 18:50:42 +0900
-Message-Id: <1462873862-30940-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V5] clk: bcm2835: mark enabled clocks and pll with CLK_ENABLE_HAND_OFF
+Date: Wed,  4 May 2016 07:53:05 +0000
+Message-Id: <1462348385-16167-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This MFD driver populates child devices such clock, reset, and other
-system controlling blocks.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-On UniPhier SoCs, one system control block contains various registers
-for clock, reset, and others in it.  So, it is not reasonable to have
-separate DT nodes for different sub-systems.
+The bcm2835 firmware enables several clocks and plls before
+booting the linux kernel.
 
-This MFD approach modifies Device Tree source just once for adding
-an MFD node.
+These plls should never get disabled as it may result in a
+stopped system clock and more.
 
-This series is just for review.
-Please do not apply this patch.
+So during probing we check if the clock and plls are enabled
+and if it is then mark that clock/pll with CLK_ENABLE_HAND_OFF.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
+ drivers/clk/bcm/clk-bcm2835.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
- MAINTAINERS                |   1 +
- drivers/mfd/Kconfig        |   9 ++
- drivers/mfd/Makefile       |   1 +
- drivers/mfd/uniphier-mfd.c | 214 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 225 insertions(+)
- create mode 100644 drivers/mfd/uniphier-mfd.c
+Note: This requires the CLK_ENABLE_HAND_OFF patch to be applied.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87b2ddd..8c987ca 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1728,6 +1728,7 @@ F:	arch/arm/mm/cache-uniphier.c
- F:	arch/arm64/boot/dts/socionext/
- F:	drivers/bus/uniphier-system-bus.c
- F:	drivers/i2c/busses/i2c-uniphier*
-+F:	drivers/mfd/uniphier-mfd.c
- F:	drivers/mmc/host/uniphier-sd.c
- F:	drivers/pinctrl/uniphier/
- F:	drivers/tty/serial/8250/8250_uniphier.c
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index eea61e3..ea85862 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -892,6 +892,15 @@ config MFD_SKY81452
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called sky81452.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 0fc71cb..0663b6c 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1211,6 +1211,15 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
+ 	divider->cprman = cprman;
+ 	divider->data = data;
  
-+config MFD_UNIPHIER
-+	tristate "Socionext UniPhier MFD"
-+	depends on ARCH_UNIPHIER || COMPILE_TEST
-+	default ARCH_UNIPHIER
-+	select MFD_CORE
-+	help
-+	  Support for the System Control Block, Media I/O Control Block,
-+	  Peripheral Control Block available on UniPhier SoCs.
++	/* if the pll-divider is running, then enable CLK_ENABLE_HAND_OFF */
++	if ((cprman_read(cprman, data->a2w_reg) &
++	     A2W_PLL_CHANNEL_DISABLE) == 0) {
++		dev_dbg(cprman->dev,
++			"found firmware enabled pll_div %s - enabling hand off\n",
++			data->name);
++		init.flags |= CLK_ENABLE_HAND_OFF;
++	}
 +
- config MFD_SMSC
-        bool "SMSC ECE1099 series chips"
-        depends on I2C=y
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 5eaa6465d..5e8c20c 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -198,6 +198,7 @@ obj-$(CONFIG_MFD_HI6421_PMIC)	+= hi6421-pmic-core.o
- obj-$(CONFIG_MFD_DLN2)		+= dln2.o
- obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
- obj-$(CONFIG_MFD_SKY81452)	+= sky81452.o
-+obj-$(CONFIG_MFD_UNIPHIER)	+= uniphier-mfd.o
+ 	clk = devm_clk_register(cprman->dev, &divider->div.hw);
+ 	if (IS_ERR(clk))
+ 		return clk;
+@@ -1262,6 +1271,14 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+ 	}
  
- intel-soc-pmic-objs		:= intel_soc_pmic_core.o intel_soc_pmic_crc.o
- intel-soc-pmic-$(CONFIG_INTEL_PMC_IPC)	+= intel_soc_pmic_bxtwc.o
-diff --git a/drivers/mfd/uniphier-mfd.c b/drivers/mfd/uniphier-mfd.c
-new file mode 100644
-index 0000000..7f01d64
---- /dev/null
-+++ b/drivers/mfd/uniphier-mfd.c
-@@ -0,0 +1,214 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++	/* if the clock is running, then enable CLK_ENABLE_HAND_OFF */
++	if (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) {
++		dev_dbg(cprman->dev,
++			"found firmware enabled clock %s - enabling hand off\n",
++			data->name);
++		init.flags |= CLK_ENABLE_HAND_OFF;
++	}
 +
-+#include <linux/mfd/core.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+static const struct mfd_cell uniphier_ld4_sysctrl_cells[] = {
-+	{ .name = "uniphier-ld4-clk" },
-+	{ .name = "uniphier-ld4-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_pro4_sysctrl_cells[] = {
-+	{ .name = "uniphier-pro4-clk" },
-+	{ .name = "uniphier-pro4-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_sld8_sysctrl_cells[] = {
-+	{ .name = "uniphier-sld8-clk" },
-+	{ .name = "uniphier-sld8-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_pro5_sysctrl_cells[] = {
-+	{ .name = "uniphier-pro5-clk" },
-+	{ .name = "uniphier-pro5-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_pxs2_sysctrl_cells[] = {
-+	{ .name = "uniphier-pxs2-clk" },
-+	{ .name = "uniphier-pxs2-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_ld11_sysctrl_cells[] = {
-+	{ .name = "uniphier-ld11-clk" },
-+	{ .name = "uniphier-ld11-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_ld20_sysctrl_cells[] = {
-+	{ .name = "uniphier-ld20-clk" },
-+	{ .name = "uniphier-ld20-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_ld4_mioctrl_cells[] = {
-+	{ .name = "uniphier-ld4-mio-clk" },
-+	{ .name = "uniphier-ld4-mio-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_pro5_mioctrl_cells[] = {
-+	{ .name = "uniphier-pro5-mio-clk" },
-+	{ .name = "uniphier-pro5-mio-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_ld4_perictrl_cells[] = {
-+	{ .name = "uniphier-ld4-peri-clk" },
-+	{ .name = "uniphier-ld4-peri-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct mfd_cell uniphier_pro4_perictrl_cells[] = {
-+	{ .name = "uniphier-pro4-peri-clk" },
-+	{ .name = "uniphier-pro4-peri-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct of_device_id uniphier_mfd_match[] = {
-+	/* System Control */
-+	{
-+		.compatible = "socionext,uniphier-ld4-sysctrl",
-+		.data = uniphier_ld4_sysctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pro4-sysctrl",
-+		.data = uniphier_pro4_sysctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-sld8-sysctrl",
-+		.data = uniphier_sld8_sysctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pro5-sysctrl",
-+		.data = uniphier_pro5_sysctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs2-sysctrl",
-+		.data = uniphier_pxs2_sysctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld11-sysctrl",
-+		.data = uniphier_ld11_sysctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld20-sysctrl",
-+		.data = uniphier_ld20_sysctrl_cells,
-+	},
-+	/* Media I/O */
-+	{
-+		.compatible = "socionext,uniphier-ld4-mioctrl",
-+		.data = uniphier_ld4_mioctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pro4-mioctrl",
-+		.data = uniphier_ld4_mioctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-sld8-mioctrl",
-+		.data = uniphier_ld4_mioctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pro5-mioctrl",
-+		.data = uniphier_pro5_mioctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs2-mioctrl",
-+		.data = uniphier_pro5_mioctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld11-mioctrl",
-+		.data = uniphier_ld4_mioctrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld20-mioctrl",
-+		.data = uniphier_pro5_mioctrl_cells,
-+	},
-+	/* Peripheral Control */
-+	{
-+		.compatible = "socionext,uniphier-ld4-perictrl",
-+		.data = uniphier_ld4_perictrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-sld8-perictrl",
-+		.data = uniphier_ld4_perictrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pro4-perictrl",
-+		.data = uniphier_pro4_perictrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pro5-perictrl",
-+		.data = uniphier_pro4_perictrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs2-perictrl",
-+		.data = uniphier_pro4_perictrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld11-perictrl",
-+		.data = uniphier_pro4_perictrl_cells,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld20-perictrl",
-+		.data = uniphier_pro4_perictrl_cells,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_mfd_match);
-+
-+static int uniphier_mfd_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *match;
-+	const struct mfd_cell *cell;
-+	int ret;
-+	int n_cells = 0;
-+
-+	match = of_match_node(uniphier_mfd_match, pdev->dev.of_node);
-+	if (!match)
-+		return -ENODEV;
-+
-+	cell = match->data;
-+
-+	for (; cell->name; cell++)
-+		n_cells++;
-+
-+	ret = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, match->data,
-+			      n_cells, NULL, 0, NULL);
-+	if (ret)
-+		dev_err(&pdev->dev, "failed to add MFD devices\n");
-+
-+	return ret;
-+}
-+
-+static struct platform_driver uniphier_mfd_driver = {
-+	.probe = uniphier_mfd_probe,
-+	.driver = {
-+		.name = "uniphier-mfd",
-+		.of_match_table = uniphier_mfd_match,
-+	},
-+};
-+module_platform_driver(uniphier_mfd_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier SoC MFD Driver");
-+MODULE_LICENSE("GPL");
+ 	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
+ 		return NULL;
 -- 
-1.9.1
-
+2.1.4
