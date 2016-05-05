@@ -1,56 +1,83 @@
-Return-Path: <wens@csie.org>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH V5] clk: bcm2835: mark enabled clocks and pll with CLK_ENABLE_HAND_OFF
+In-Reply-To: <1462348385-16167-1-git-send-email-kernel@martin.sperl.org>
+References: <1462348385-16167-1-git-send-email-kernel@martin.sperl.org>
+Date: Thu, 05 May 2016 12:17:51 -0700
+Message-ID: <87oa8ks49s.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <1463402840-17062-7-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-7-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 May 2016 01:18:44 +0800
-Message-ID: <CAGb2v65tiUt9FvmJ2RaZdXaAFEznKZZjycO+tZcP-4spOAjObQ@mail.gmail.com>
-Subject: Re: [PATCH 06/20] drm/sun4i: allow dclk to modify its parent rate
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The pixel clock being only a divider of its parent clock, depending on the
-> resolution, it's expected to change its parent rate. Add that flag so that
-> the clock framework knows it.
+kernel@martin.sperl.org writes:
 
-This should be squashed into the previous patch. Otherwise, the previous one
-doesn't really fix things, and probably makes things worse as it assumes the
-parent clock would be changed.
-
-ChenYu
-
-> Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> From: Martin Sperl <kernel@martin.sperl.org>
+>
+> The bcm2835 firmware enables several clocks and plls before
+> booting the linux kernel.
+>
+> These plls should never get disabled as it may result in a
+> stopped system clock and more.
+>
+> So during probing we check if the clock and plls are enabled
+> and if it is then mark that clock/pll with CLK_ENABLE_HAND_OFF.
+>
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 > ---
->  drivers/gpu/drm/sun4i/sun4i_dotclock.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/bcm/clk-bcm2835.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-> index 1ddf6d7a7107..5b3463197c48 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-> @@ -170,6 +170,7 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
->         init.ops = &sun4i_dclk_ops;
->         init.parent_names = &parent_name;
->         init.num_parents = 1;
-> +       init.flags = CLK_SET_RATE_PARENT;
+> Note: This requires the CLK_ENABLE_HAND_OFF patch to be applied.
 >
->         dclk->regmap = tcon->regs;
->         dclk->hw.init = &init;
-> --
-> 2.8.2
->
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 0fc71cb..0663b6c 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -1211,6 +1211,15 @@ bcm2835_register_pll_divider(struct bcm2835_cprman=
+ *cprman,
+>  	divider->cprman =3D cprman;
+>  	divider->data =3D data;
+>=20=20
+> +	/* if the pll-divider is running, then enable CLK_ENABLE_HAND_OFF */
+> +	if ((cprman_read(cprman, data->a2w_reg) &
+> +	     A2W_PLL_CHANNEL_DISABLE) =3D=3D 0) {
+> +		dev_dbg(cprman->dev,
+> +			"found firmware enabled pll_div %s - enabling hand off\n",
+> +			data->name);
+> +		init.flags |=3D CLK_ENABLE_HAND_OFF;
+> +	}
+
+I don't think we want this on dividers.  There are very few cases where
+a divider will be grabbed and prepare/enabled on its own, rather than as
+a side effect of a downstream clock being needed.  So, I think the
+dividers need to stay as being enabled/disabled automatically by the
+downstream clocks, like in the v3 patch you had sent.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXK5xfAAoJELXWKTbR/J7ocyUQAKMEymgsMgvn6gfnEilc+yOQ
+wPbG3Jec8NCYShKPPtx5+CgwQD3MpoOAEz64qxBS0ttSSwDPxVJZiFSoVHxBPYLR
+Cu7FCFuIx1cruumOtKgoSAfaVSU2bqEJxQ8ndW1+oYWnBCVdEskbz8LKz2PUvIKu
+U3dUX23//JeJNkmwAKLzFF+4nb+9NjJFNRB0McV5VrBBMXm0vV4B2rgorxv8i1He
+EhcREj64oQp2F40xV2EnvnNmg2Pfk1tgGhbcspWblo+Vl6zLczq1vgK1A/6KI3A5
+wtWEv7be1KLWoqsHL0iqAMdc9pKif9wVCLP4aDct3S8F+0kaRQYLCXk8IYGNuI9U
+N5+OVGR6TEtkEik04Tjj6td4kIYxXLZGijvMlrkhR33MDnfXTAuE1Nv6D1u24n1w
+w5G7rbUgYOHm7HlW/Ok2vgak0opD/ptA5Y9lD6bSUaCQHwjTSWCCJcj5Z5pgDBCw
+C3U1Jlik3m1aVcN2SGIECJNLItymNDfL+s2FZcBqo4OArUrdpa3qRCMD5Nt5EmBM
+pIM9toO1IUvZc0BiAxAD+dPoqECRtEvNExJmAMaUzAOENtfviPqFpkNtnzjiDQ01
+KuOJ21TfpIWPuVHJYNn1JhNyvdWwSmfCSIw0M8aiogGOYWs8mo/oPih6t8Adf7OA
+wdE74h5BASo5v67bdC08
+=q/yA
+-----END PGP SIGNATURE-----
+--=-=-=--
