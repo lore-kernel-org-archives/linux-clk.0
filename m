@@ -1,62 +1,48 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 04/22] ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl nodes
-Date: Sat, 28 May 2016 11:54:15 +0200
-Message-Id: <1464429273-23457-5-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 5 May 2016 17:25:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: linux-mmc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+	netdev@vger.kernel.org, ulf.hansson@linaro.org,
+	Scott Wood <oss@buserror.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
+	xiaobo.xie@nxp.com
+Subject: Re: [v10, 1/7] Documentation: DT: update Freescale DCFG compatible
+Message-ID: <20160505222521.GA18377@rob-hp-laptop>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+ <1462417950-46796-2-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1462417950-46796-2-git-send-email-yangbo.lu@nxp.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The 'sd0_rclk' was put in the middle of SD1 nodes. Remove the confusion.
+On Thu, May 05, 2016 at 11:12:24AM +0800, Yangbo Lu wrote:
+> Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
+> of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
+> ls1043a, and ls2080a.
+> 
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> ---
+> Changes for v8:
+> 	- Added this patch
+> Changes for v9:
+> 	- Added a list for the possible compatibles
+> Changes for v10:
+> 	- None
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index 130563b2ca95..14beb7e07323 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -193,17 +193,17 @@
- 		samsung,pin-drv = <3>;
- 	};
- 
--	sd1_clk: sd1-clk {
--		samsung,pins = "gpc1-0";
-+	sd0_rclk: sd0-rclk {
-+		samsung,pins = "gpc0-7";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <0>;
-+		samsung,pin-pud = <1>;
- 		samsung,pin-drv = <3>;
- 	};
- 
--	sd0_rclk: sd0-rclk {
--		samsung,pins = "gpc0-7";
-+	sd1_clk: sd1-clk {
-+		samsung,pins = "gpc1-0";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <1>;
-+		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <3>;
- 	};
- 
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
