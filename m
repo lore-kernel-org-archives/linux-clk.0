@@ -1,106 +1,75 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4/6] ARM: dts: exynos: Add Thermal Management Unit to Exynos5410
-Date: Tue, 31 May 2016 20:39:03 +0200
-Message-Id: <1464719945-3417-4-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v10, 1/7] Documentation: DT: update Freescale DCFG compatible
+Date: Thu, 5 May 2016 11:12:24 +0800
+Message-ID: <1462417950-46796-2-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+ Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add nodes for Thermal Management Unit to exynos5410.dtsi. Use the same
-compatible as for Exynos5420 however without second base for TRIMINFO
-register.
+Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
+of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
+ls1043a, and ls2080a.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 55 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+Changes for v8:
+	- Added this patch
+Changes for v9:
+	- Added a list for the possible compatibles
+Changes for v10:
+	- None
+---
+ Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 994d16a44fe4..f1effd3f03c4 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -81,6 +81,42 @@
- 			#clock-cells = <1>;
- 		};
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 752a685..465cba1 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -119,7 +119,11 @@ Freescale DCFG
+ configuration and status for the device. Such as setting the secondary
+ core start address and release the secondary core from holdoff and startup.
+   Required properties:
+-  - compatible: should be "fsl,ls1021a-dcfg"
++  - compatible: should be "fsl,<chip>-dcfg"
++    Possible compatibles:
++	"fsl,ls1021a-dcfg"
++	"fsl,ls1043a-dcfg"
++	"fsl,ls2080a-dcfg"
+   - reg : should contain base address and length of DCFG memory-mapped registers
  
-+		tmu_cpu0: tmu@10060000 {
-+			compatible = "samsung,exynos5420-tmu";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <0 65 0>;
-+			clocks = <&clock CLK_TMU>;
-+			clock-names = "tmu_apbif";
-+			#include "exynos4412-tmu-sensor-conf.dtsi"
-+		};
-+
-+		tmu_cpu1: tmu@10064000 {
-+			compatible = "samsung,exynos5420-tmu";
-+			reg = <0x10064000 0x100>;
-+			interrupts = <0 183 0>;
-+			clocks = <&clock CLK_TMU>;
-+			clock-names = "tmu_apbif";
-+			#include "exynos4412-tmu-sensor-conf.dtsi"
-+		};
-+
-+		tmu_cpu2: tmu@10068000 {
-+			compatible = "samsung,exynos5420-tmu";
-+			reg = <0x10068000 0x100>;
-+			interrupts = <0 184 0>;
-+			clocks = <&clock CLK_TMU>;
-+			clock-names = "tmu_apbif";
-+			#include "exynos4412-tmu-sensor-conf.dtsi"
-+		};
-+
-+		tmu_cpu3: tmu@1006c000 {
-+			compatible = "samsung,exynos5420-tmu";
-+			reg = <0x1006c000 0x100>;
-+			interrupts = <0 185 0>;
-+			clocks = <&clock CLK_TMU>;
-+			clock-names = "tmu_apbif";
-+			#include "exynos4412-tmu-sensor-conf.dtsi"
-+		};
-+
- 		mmc_0: mmc@12200000 {
- 			compatible = "samsung,exynos5250-dw-mshc";
- 			reg = <0x12200000 0x1000>;
-@@ -147,6 +183,25 @@
- 			interrupts = <0 47 0>;
- 		};
- 	};
-+
-+	thermal-zones {
-+		cpu0_thermal: cpu0-thermal {
-+			thermal-sensors = <&tmu_cpu0>;
-+			#include "exynos5420-trip-points.dtsi"
-+		};
-+		cpu1_thermal: cpu1-thermal {
-+		       thermal-sensors = <&tmu_cpu1>;
-+		       #include "exynos5420-trip-points.dtsi"
-+		};
-+		cpu2_thermal: cpu2-thermal {
-+		       thermal-sensors = <&tmu_cpu2>;
-+		       #include "exynos5420-trip-points.dtsi"
-+		};
-+		cpu3_thermal: cpu3-thermal {
-+		       thermal-sensors = <&tmu_cpu3>;
-+		       #include "exynos5420-trip-points.dtsi"
-+		};
-+	};
- };
- 
- &i2c_0 {
+ Example:
 -- 
-2.7.4
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
