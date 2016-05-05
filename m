@@ -1,100 +1,138 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH v1 13/14] ASoC: omap-mcpdm: Support for suspend resume
-Date: Mon, 30 May 2016 11:55:21 +0300
-Message-ID: <20160530085522.30398-14-peter.ujfalusi@ti.com>
-In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 5/5] clk: bcm2835: add support for BCM2835_CLOCK_FLAG_USE_MASH/INTEGER
+Date: Thu,  5 May 2016 15:53:28 +0000
+Message-Id: <1462463608-22940-6-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Implement ASoC's suspend and resume callbacks.
-Since McPDM does not use pcm_trigger for start and stop of the stream due
-to strict sequencing needs with the twl6040, the callbacks will stop and
-restart the McPDM in case the board suspended during audio activity.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Allow the use of higher order mash fractional divider modes
+and also allow to force the use of integer dividers.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- sound/soc/omap/omap-mcpdm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/clk/bcm/clk-bcm2835.c       | 57 +++++++++++++++++++++++++++++++++++--
+ include/dt-bindings/clock/bcm2835.h |  7 +++++
+ 2 files changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 11bd07cdce22..74d6e6fdcfd0 100644
---- a/sound/soc/omap/omap-mcpdm.c
-+++ b/sound/soc/omap/omap-mcpdm.c
-@@ -66,6 +66,9 @@ struct omap_mcpdm {
- 	/* McPDM needs to be restarted due to runtime reconfiguration */
- 	bool restart;
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index c80487e..08140ad 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -130,6 +130,7 @@
+ # define CM_BUSY			BIT(7)
+ # define CM_BUSYD			BIT(8)
+ # define CM_FRAC			BIT(9)
++# define CM_MASH			BIT(10)
+ # define CM_SRC_SHIFT			0
+ # define CM_SRC_BITS			4
+ # define CM_SRC_MASK			0xf
+@@ -888,6 +889,24 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 				 CM_DIV_FRAC_BITS - data->frac_bits);
+ 	}
  
-+	/* pm state for suspend/resume handling */
-+	int pm_active_count;
-+
- 	struct snd_dmaengine_dai_dma_data dma_data[2];
- };
- 
-@@ -422,12 +425,55 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int omap_mcpdm_suspend(struct snd_soc_dai *dai)
-+{
-+	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+
-+	if (dai->active) {
-+		omap_mcpdm_stop(mcpdm);
-+		omap_mcpdm_close_streams(mcpdm);
++	/* based on flags modify settings */
++	switch (clock->flags & BCM2835_CLOCK_FLAG_USE_MASK) {
++	case BCM2835_CLOCK_FLAG_USE_FRAC:
++			break;
++	case BCM2835_CLOCK_FLAG_USE_INTEGER:
++		div &= GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
++			       CM_DIV_FRAC_BITS);
++		break;
++	case BCM2835_CLOCK_FLAG_USE_MASH2:
++		mindiv += 2 << CM_DIV_FRAC_BITS;
++		maxdiv -= 1 << CM_DIV_FRAC_BITS;
++		break;
++	case BCM2835_CLOCK_FLAG_USE_MASH3:
++		mindiv += 4 << CM_DIV_FRAC_BITS;
++		maxdiv -= 3 << CM_DIV_FRAC_BITS;
++		break;
 +	}
 +
-+	mcpdm->pm_active_count = 0;
-+	while (pm_runtime_active(mcpdm->dev)) {
-+		pm_runtime_put_sync(mcpdm->dev);
-+		mcpdm->pm_active_count++;
+ 	/* apply the clamping  limits */
+ 	div = max_t(u32, div, mindiv);
+ 	div = min_t(u32, div, maxdiv);
+@@ -996,8 +1015,26 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ 	 * clock this requirement should be take care of by the
+ 	 * clk-framework.
+ 	 */
+-	ctl = cprman_read(cprman, data->ctl_reg) & ~CM_FRAC;
+-	ctl |= (div & CM_DIV_FRAC_MASK) ? CM_FRAC : 0;
++	ctl = cprman_read(cprman, data->ctl_reg) & ~(CM_FRAC | CM_MASH);
++	if (div & CM_DIV_FRAC_MASK) {
++		/*
++		 * we never get to *MASH* for non-mash clock,
++		 * as it is filtered in bcm2835_register_clock
++		 * USE_INTEGER forces already choose_clock_div
++		 * to apply the mask so that we do not get here
++		 */
++		switch (clock->flags & BCM2835_CLOCK_FLAG_USE_MASK) {
++		case BCM2835_CLOCK_FLAG_USE_FRAC:
++			ctl |= CM_FRAC;
++			break;
++		case BCM2835_CLOCK_FLAG_USE_MASH2:
++			ctl |= CM_MASH;
++			break;
++		case BCM2835_CLOCK_FLAG_USE_MASH3:
++			ctl |= CM_MASH | CM_FRAC;
++			break;
++		}
 +	}
-+
-+	return 0;
-+}
-+
-+static int omap_mcpdm_resume(struct snd_soc_dai *dai)
-+{
-+	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+
-+	if (mcpdm->pm_active_count) {
-+		while (mcpdm->pm_active_count--)
-+			pm_runtime_get_sync(mcpdm->dev);
-+
-+		if (dai->active) {
-+			omap_mcpdm_open_streams(mcpdm);
-+			omap_mcpdm_start(mcpdm);
+ 	cprman_write(cprman, data->ctl_reg, ctl);
+ 
+ 	cprman_write(cprman, data->div_reg, div);
+@@ -1280,6 +1317,22 @@ bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 		clock->flags |= bcm2835_register_clock_default_parents(
+ 			cprman->dev, data);
+ 
++	/* check for MASH flags when the clock is not a mash clock */
++	if (!data->is_mash_clock) {
++		switch (clock->flags & BCM2835_CLOCK_FLAG_USE_MASK) {
++		case BCM2835_CLOCK_FLAG_USE_MASH2:
++		case BCM2835_CLOCK_FLAG_USE_MASH3:
++			dev_warn(cprman->dev,
++				 "found mash2/mash3 flag for clock %s, which does not support mash\n",
++				 data->name);
++			clock->flags &= BCM2835_CLOCK_FLAG_USE_MASK;
++			clock->flags |= BCM2835_CLOCK_FLAG_USE_FRAC;
++			break;
++		default:
++			break;
 +		}
 +	}
 +
-+
-+	return 0;
-+}
-+#else
-+#define omap_mcpdm_suspend NULL
-+#define omap_mcpdm_resume NULL
-+#endif
-+
- #define OMAP_MCPDM_RATES	(SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000)
- #define OMAP_MCPDM_FORMATS	SNDRV_PCM_FMTBIT_S32_LE
+ 	return devm_clk_register(cprman->dev, &clock->hw);
+ }
  
- static struct snd_soc_dai_driver omap_mcpdm_dai = {
- 	.probe = omap_mcpdm_probe,
- 	.remove = omap_mcpdm_remove,
-+	.suspend = omap_mcpdm_suspend,
-+	.resume = omap_mcpdm_resume,
- 	.probe_order = SND_SOC_COMP_ORDER_LATE,
- 	.remove_order = SND_SOC_COMP_ORDER_EARLY,
- 	.playback = {
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index e5396fe..5591bd1 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -90,3 +90,10 @@
+ #define BCM2835_VPU_PARENT_PLLH_AUX	7
+ #define BCM2835_VPU_PARENT_PLLC_CORE1	8
+ #define BCM2835_VPU_PARENT_PLLC_CORE2	9
++
++/* additional clock flags */
++#define BCM2835_CLOCK_FLAG_USE_FRAC	((0 << 31) | (0 << 30))
++#define BCM2835_CLOCK_FLAG_USE_INTEGER	((0 << 31) | (1 << 30))
++#define BCM2835_CLOCK_FLAG_USE_MASH2	((1 << 31) | (0 << 30))
++#define BCM2835_CLOCK_FLAG_USE_MASH3	((1 << 31) | (1 << 30))
++#define BCM2835_CLOCK_FLAG_USE_MASK	((1 << 31) | (1 << 30))
 -- 
-2.8.3
+2.1.4
