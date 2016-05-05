@@ -1,71 +1,72 @@
-Return-Path: <krzk@kernel.org>
-Subject: Re: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid
- XU
-To: Robin Murphy <robin.murphy@arm.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <5735C274.50504@arm.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
- Rob Herring <robh+dt@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Message-id: <5735C48A.6030508@kernel.org>
-Date: Fri, 13 May 2016 14:11:54 +0200
-MIME-version: 1.0
-In-reply-to: <5735C274.50504@arm.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mleia.com ([178.79.152.223]:47608 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752377AbcEEPLn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 5 May 2016 11:11:43 -0400
+Subject: Re: clk-lpc18xx-creg - scheduling while atomic
+To: Joachim Eastwood <manabian@gmail.com>
+References: <CAGhQ9VxsyWq=GK5RnCzspV3=6NbDNH6pJhf3uZqdNPCsP9VzmQ@mail.gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <572B62AC.1020205@mleia.com>
+Date: Thu, 5 May 2016 18:11:40 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAGhQ9VxsyWq=GK5RnCzspV3=6NbDNH6pJhf3uZqdNPCsP9VzmQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/13/2016 02:03 PM, Robin Murphy wrote:
-> Hi Krzysztof,
+Hi Joachim,
+
+On 05.05.2016 14:53, Joachim Eastwood wrote:
+> Hi,
 > 
-> On 10/05/16 21:09, Krzysztof Kozlowski wrote:
->> Hi,
->>
->> Patchset adds necessary clocks, reorganizes existing stuff and finally
->> adds Odroid XU support.
->>
->>
->> Changes since v2
->> ================
->> 1. Got global-ack from Stephen for the clock changes. I think merging
->>     everything through arm-soc might be the easiest but:
->>     a. In such case I will prepare a tag with clock changes,
->>     b. Anyway I will wait for response from Sylwester and Tomasz.
->> 2. Applied comments from Javier and added his Reviewed-by.
->> 3. Patch 22: added ack from Rob.
->> 4. Minor improvements in existing patches.
->> 5. Five new patches at the end: 23-27 (not reviewed yet).
->>     Some of them could be squashed with existing ones but existing
->>     changes got reviews. Although the final Odroid XU DTS works fine but
->>     in general this is still work-in-progress so I suspect it will grow.
->>     I am releasing it early following Linux concept. :)
->>
->> Patchset is available at my private repo @github:
->> https://github.com/krzk/linux.git for-next/odroid-xu-v3
+> I just tried next/master on my lpc18xx platform and got a 'scheduling
+> while atomic' on the msleep in clk_creg_32k_prepare. This does not
+> occur on 4.6-rc1. See below for backtrace.
 > 
-> Since I have one of these gathering dust on my desk, it's really cool to
-> see this series, thanks!
+> According to Documentation/clk.txt, Part 6 - Locking, sleeping is
+> allowed in prepare functions. Changing the msleep to an mdelay makes
+> the problem go away.
 > 
-> I've successfully booted that branch to a filesystem on SD card, but USB
-> clearly isn't quite right - the USB 2.0 hub is powered up, but only the
-> bottom right port will actually enumerate devices; the ethernet is
-> nowhere to be seen. However, if I drop into the bootloader and do a "usb
-> start" beforehand, it all keeps working into the kernel.
+> So any ideas to what is going on?
+> 
 
-Thanks for letting me know. I am testing the board from TFTP boot which
-means "usb start" in Uboot. I'll add it to my todo-list.
+the bug description resembles a recent problem on iMX7, you may find
+details from "clk: imx: do not sleep if IRQ's are still disabled"
+thread, the same sleeping clk_core_prepare() from time_init(), while
+sleeping is not allowed until the timer is ready.
 
-> As for the USB
-> 3.0, though, the ports report over-current conditions shortly after the
-> XHCI probe despite having nothing plugged in :(
+With best wishes,
+Vladimir
 
-Yes, I am seeing this as well. Maybe the cause is lack regulator supplies?
-
-Best regards,
-Krzysztof
+> 
+> BUG: scheduling while atomic: swapper/0/0x00000002
+> CPU: 0 PID: 0 Comm: swapper Not tainted
+> 4.6.0-rc6-next-20160505-00001-g5c8320450d1c #826
+> Hardware name: NXP LPC18xx/43xx (Device Tree)
+> [<2800be81>] (unwind_backtrace) from [<2800b22f>] (show_stack+0xb/0xc)
+> [<2800b22f>] (show_stack) from [<2801ea21>] (__schedule_bug+0x2d/0x44)
+> [<2801ea21>] (__schedule_bug) from [<281dc937>] (__schedule+0x3b/0x268)
+> [<281dc937>] (__schedule) from [<281dcbbb>] (schedule+0x57/0x64)
+> [<281dcbbb>] (schedule) from [<281de8ef>] (schedule_timeout+0xfb/0x120)
+> [<281de8ef>] (schedule_timeout) from [<28030fcd>] (msleep+0xf/0x12)
+> [<28030fcd>] (msleep) from [<28165a6d>] (clk_creg_32k_prepare+0x1f/0x24)
+> [<28165a6d>] (clk_creg_32k_prepare) from [<281620d5>]
+> (clk_core_prepare+0x1d/0x36)
+> [<281620d5>] (clk_core_prepare) from [<2816340b>] (clk_register+0x22f/0x318)
+> [<2816340b>] (clk_register) from [<282b06c9>] (lpc18xx_creg_clk_init+0x55/0x84)
+> [<282b06c9>] (lpc18xx_creg_clk_init) from [<282b0149>] (of_clk_init+0xc1/0x12c)
+> [<282b0149>] (of_clk_init) from [<282a665d>] (time_init+0x15/0x20)
+> [<282a665d>] (time_init) from [<282a457d>] (start_kernel+0x169/0x274)
+> [<282a457d>] (start_kernel) from [<28008025>] (0x28008025)
+> bad: scheduling from the idle thread!
+> CPU: 0 PID: 0 Comm: swapper Tainted: G W
+> 4.6.0-rc6-next-20160505-00001-g5c8320450d1c #826
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
