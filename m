@@ -1,48 +1,70 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
-Date: Sun, 15 May 2016 22:13:54 +0200
-Message-Id: <1463343243-26429-14-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Return-Path: <tomeu.vizoso@collabora.com>
+Subject: Re: [RFC PATCH 0/3] clk: attempt to keep requested rate on parent
+ changes
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+ sboyd@codeaurora.org
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ zhengxing@rock-chips.com, zhangqing@rock-chips.com,
+ Doug Anderson <dianders@google.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <572B4AF8.6070509@collabora.com>
+Date: Thu, 5 May 2016 15:30:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Just like other Exynos5 family SoCs, this one has four UARTs. Configure
-clocks for UART3 and enable it.
+On 05/02/2016 06:36 PM, Heiko Stuebner wrote:
+> I remember reading about people discussing that problem in the past, but
+> haven't been able to find another approach to it yet [or I'm just blind
+> as happens to often].
+> 
+> Our problem is the following clock structure:
+> 
+> [anotherPLL]
+>     |
+>     ------ [div] ----- dclk_vop
+>     |
+> [   vpll   ] --------- hdmi_phy
+> 
+> 
+> We need to set the vpll dynamically but still want to retain
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5410.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Guess something is missing here?
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index c8f2e4881667..0edcd7022293 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -215,7 +215,8 @@
- };
- 
- &serial_3 {
--	status = "disabled";
-+	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-+	clock-names = "uart", "clk_uart_baud0";
- };
- 
- &sromc {
--- 
-2.5.0
+> The other option that comes to mind, would be to have a clock-notifier,
+> in the drm driver, but calling clk_set_rate from their looks like it
+> shouldn't work due to the prepare mutex already being held.
+> 
+> 
+> The whole thing is labeled RFC because while it works for us and solves
+> the problem, I'm not sure if I'm overlooking some important aspect or
+> am interferring with some other planned approach for that issue.
+
+I like this approach very much and wonder in what cases it wouldn't be
+desirable to re-try to achieve the requested rate after a change in an
+ancestor clock.
+
+Besides that, do you know already if it would solve the conflicts
+described by Doug in the thread below?
+
+http://thread.gmane.org/gmane.linux.kernel/1820653/focus=3298
+
+Thanks,
+
+Tomeu
+
+
+
+
+> Heiko Stuebner (3):
+>   clk: fix inconsistent use of req_rate
+>   clk: adjust clocks to their requested rate after parent changes
+>   clk: rockchip: make rk3399 vop dclks keep their rate on parent rate changes
+> 
+>  drivers/clk/clk.c                 | 37 +++++++++++++++++++++++++++++--------
+>  drivers/clk/rockchip/clk-rk3399.c |  4 ++--
+>  include/linux/clk-provider.h      |  1 +
+>  3 files changed, 32 insertions(+), 10 deletions(-)
+> 
