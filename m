@@ -1,126 +1,69 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 14/14] ASoC: omap-mcpdm: Add support for pdmclk clock handling
-Date: Wed, 18 May 2016 16:46:36 +0300
-Message-ID: <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
-In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 1/5] dt: bindings: add means to control flags of specific clocks
+Date: Thu,  5 May 2016 15:53:24 +0000
+Message-Id: <1462463608-22940-2-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-McPDM module receives it's functional clock from external source. This
-clock is the pdmclk provided by the twl6040 audio IC. If the clock is not
-available all register accesses to McPDM fails and the module is not
-operational.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Add documentation for "brcm,clock-index" and "brcm,clock-flags"
+which allows to set flags to enable the use of parent clocks
+that may be different from the default.
+
+In the future this may also contain flags that would allow
+enabling higher order mash dividers.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- Documentation/devicetree/bindings/sound/omap-mcpdm.txt | 10 ++++++++++
- sound/soc/omap/omap-mcpdm.c                            | 17 +++++++++++++++++
- 2 files changed, 27 insertions(+)
+ .../devicetree/bindings/clock/brcm,bcm2835-cprman.txt      | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/omap-mcpdm.txt b/Documentation/devicetree/bindings/sound/omap-mcpdm.txt
-index 0741dff048dd..6f6c2f8e908d 100644
---- a/Documentation/devicetree/bindings/sound/omap-mcpdm.txt
-+++ b/Documentation/devicetree/bindings/sound/omap-mcpdm.txt
-@@ -8,6 +8,8 @@ Required properties:
- - interrupts: Interrupt number for McPDM
- - interrupt-parent: The parent interrupt controller
- - ti,hwmods: Name of the hwmod associated to the McPDM
-+- clocks:  phandle for the pdmclk provider, likely <&twl6040>
-+- clock-names: Must be "pdmclk"
- 
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+index e56a1df..cbcca56 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+@@ -18,6 +18,15 @@ Required properties:
+ - reg:		Specifies base physical address and size of the registers
+ - clocks:	The external oscillator clock phandle
+
++Optional properties:
++- brcm,clock-index: clock id to which the corresponding brcm,clock-flags
++		      value applies
++- brcm,clock-flags: flags for the specific clock id given in
++		      brcm,clock-index - the bits are defined in
++		      include/dt-bindings/clock/bcm2835.h
++		      of which the bottom 16 bits are reserved for
++		      parent clock selection.
++
  Example:
- 
-@@ -19,3 +21,11 @@ mcpdm: mcpdm@40132000 {
- 	interrupt-parent = <&gic>;
- 	ti,hwmods = "mcpdm";
- };
-+
-+In board DTS file the pdmclk needs to be added:
-+
-+&mcpdm {
-+	clocks = <&twl6040>;
-+	clock-names = "pdmclk";
-+	status = "okay";
-+};
-diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 74d6e6fdcfd0..e7cdc51fd806 100644
---- a/sound/soc/omap/omap-mcpdm.c
-+++ b/sound/soc/omap/omap-mcpdm.c
-@@ -31,6 +31,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/clk.h>
- #include <linux/slab.h>
- #include <linux/pm_runtime.h>
- #include <linux/of_device.h>
-@@ -54,6 +55,7 @@ struct omap_mcpdm {
- 	unsigned long phys_base;
- 	void __iomem *io_base;
- 	int irq;
-+	struct clk *pdmclk;
- 
- 	struct mutex mutex;
- 
-@@ -388,6 +390,7 @@ static int omap_mcpdm_probe(struct snd_soc_dai *dai)
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
- 	int ret;
- 
-+	clk_prepare_enable(mcpdm->pdmclk);
- 	pm_runtime_enable(mcpdm->dev);
- 
- 	/* Disable lines while request is ongoing */
-@@ -422,6 +425,7 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
- 
- 	pm_runtime_disable(mcpdm->dev);
- 
-+	clk_disable_unprepare(mcpdm->pdmclk);
- 	return 0;
- }
- 
-@@ -441,6 +445,8 @@ static int omap_mcpdm_suspend(struct snd_soc_dai *dai)
- 		mcpdm->pm_active_count++;
- 	}
- 
-+	clk_disable_unprepare(mcpdm->pdmclk);
-+
- 	return 0;
- }
- 
-@@ -448,6 +454,8 @@ static int omap_mcpdm_resume(struct snd_soc_dai *dai)
- {
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
- 
-+	clk_prepare_enable(mcpdm->pdmclk);
-+
- 	if (mcpdm->pm_active_count) {
- 		while (mcpdm->pm_active_count--)
- 			pm_runtime_get_sync(mcpdm->dev);
-@@ -541,6 +549,15 @@ static int asoc_mcpdm_probe(struct platform_device *pdev)
- 
- 	mcpdm->dev = &pdev->dev;
- 
-+	mcpdm->pdmclk = devm_clk_get(&pdev->dev, "pdmclk");
-+	if (IS_ERR(mcpdm->pdmclk)) {
-+		if (PTR_ERR(mcpdm->pdmclk) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		dev_warn(&pdev->dev, "Error getting pdmclk (%ld)!\n",
-+			 PTR_ERR(mcpdm->pdmclk));
-+		mcpdm->pdmclk = NULL;
-+	}
-+
- 	ret =  devm_snd_soc_register_component(&pdev->dev,
- 					       &omap_mcpdm_component,
- 					       &omap_mcpdm_dai, 1);
--- 
-2.8.2
+
+ 	clk_osc: clock@3 {
+@@ -33,7 +42,11 @@ Example:
+ 		#clock-cells = <1>;
+ 		reg = <0x7e101000 0x2000>;
+ 		clocks = <&clk_osc>;
++		/* the pcm clock should use the non-standard pllc-per parent */
++		brcm,clock-index = <BCM2835_CLOCK_PCM>;
++		brcm,clock-flags = <((1 <<BCM2835_PER_PARENT_GND)|
++				     (1 <<BCM2835_PER_PARENT_OSC)|
++				     (1 <<BCM2835_PER_PARENT_PLLC))>;
+ 	};
+
+ 	i2c0: i2c@7e205000 {
+--
+2.1.4
