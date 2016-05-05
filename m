@@ -1,38 +1,28 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 11:02:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [GIT PULL] i.MX clock fixes for 4.6, take 2
-Message-ID: <20160506180217.GW3492@codeaurora.org>
-References: <20160503133605.GN5874@tiger>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <69a8cb7c-0821-a6d2-607b-7d9a0ac057d2@gmail.com>
+Date: Thu, 5 May 2016 14:45:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160503133605.GN5874@tiger>
+In-Reply-To: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/03, Shawn Guo wrote:
-> The following changes since commit 7196c52c9377df0175b510ff5896bda524f7345e:
-> 
->   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6-2
-> 
-> for you to fetch changes up to 3397c2c45b1b6f54834dfeae30a73046f33ca943:
-> 
->   ARM: dts: imx35: restore existing used clock enumeration (2016-04-18 12:37:21 +0800)
-> 
-> ----------------------------------------------------------------
-> The i.MX clock fixes for 4.6, take 2:
->  - Fix the commit 3713e3f5e927 ("clk: imx35: define two clocks for rtc")
->    which messed up the clock enumeration when adding new clock.
+I forgot to mention that this is observed on 3.18 android kernel fork under a 
+quite specific condition: EMC scaling enabled and set to the lowest freq, CPU 
+max freq reduced. This may cause higher latency on CPU idle enter/exit.
 
-This commit wasn't introduced in this merge window, so I'm going
-to pull this into clk-next unless you have some justification.
+I couldn't reproduce this issue with the upstream kernel, guess some specific 
+workload is also required. Any comments? =)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Dmitry
