@@ -1,47 +1,59 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:57569 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751047AbcEJEzp (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 00:55:45 -0400
-Subject: [PATCH 0/2] cpufreq: rcar: Enable CPUFreq support
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <5731664D.1030909@rvc.renesas.com>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <573169CD.8050607@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:55:41 +0700
-MIME-Version: 1.0
-In-Reply-To: <5731664D.1030909@rvc.renesas.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Received: from conuserg-09.nifty.com ([210.131.2.76]:19083 "EHLO
+	conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216AbcEEH5e (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2016 03:57:34 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Jay Sternberg <jay.e.sternberg@intel.com>,
+	Jens Axboe <axboe@fb.com>, linux-kernel@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	=?UTF-8?q?Matias=20Bj=C3=B8rling?= <m@bjorling.me>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Valentin Rothberg <valentinrothberg@gmail.com>
+Subject: [PATCH] clk: probe common clock drivers earlier
+Date: Thu,  5 May 2016 16:57:17 +0900
+Message-Id: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series enables CPUFreq support in available R-Car Gen3 SoC.
+Several SoCs implement platform drivers for clocks rather than
+CLK_OF_DECLARE().  Clocks should come earlier because they are
+prerequisites for many of other drivers.  It will help to mitigate
+EPROBE_DEFER issues.
 
-It depends on 2 series below:
-    [PATCH 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W
-    [RFC 0/4] Add Z clock support
+Also, drop the comment since it does not look valuable.
 
-All comments are appreciated.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Khiem Nguyen (2):
-   cpufreq: rcar: Add support for R8A7795 SoC
-   cpufreq: rcar: Add support for R8A7796 SoC
+ drivers/Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
-  1 file changed, 2 insertions(+)
-
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 8f5d076..a2a4922 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_REGULATOR)		+= regulator/
+ 
+ # reset controllers early, since gpu drivers might rely on them to initialize
+ obj-$(CONFIG_RESET_CONTROLLER)	+= reset/
++obj-y				+= clk/
+ 
+ # tty/ comes before char/ so that the VT console is the boot-time
+ # default.
+@@ -141,8 +142,6 @@ obj-$(CONFIG_VHOST_RING)	+= vhost/
+ obj-$(CONFIG_VLYNQ)		+= vlynq/
+ obj-$(CONFIG_STAGING)		+= staging/
+ obj-y				+= platform/
+-#common clk code
+-obj-y				+= clk/
+ 
+ obj-$(CONFIG_MAILBOX)		+= mailbox/
+ obj-$(CONFIG_HWSPINLOCK)	+= hwspinlock/
 -- 
 1.9.1
 
