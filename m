@@ -1,214 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 12/16] clk: sunxi-ng: Add N-M-factor clock support
-Date: Sun,  8 May 2016 22:01:47 +0200
-Message-Id: <1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
- Vishnu Patekar <vishnupatekar0510@gmail.com>,
- Andre Przywara <andre.przywara@arm.com>, Hans de Goede <hdegoede@redhat.com>,
- Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+	netdev@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+	ulf.hansson@linaro.org, Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
+	Scott Wood <oss@buserror.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+	Qiang Zhao <qiang.zhao@nxp.com>
+Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Date: Thu, 05 May 2016 10:31:36 +0200
+Message-ID: <4448030.Zs8fVnr3nm@wuerfel>
+In-Reply-To: <1462417950-46796-8-git-send-email-yangbo.lu@nxp.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <1462417950-46796-8-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that multiply and divide using linear factors.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Makefile |   1 +
- drivers/clk/sunxi-ng/ccu_nm.c | 103 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nm.h |  41 +++++++++++++++++
- 3 files changed, 145 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
-
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index e29ddae99653..fba64c7f4fcd 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -8,5 +8,6 @@ obj-y += ccu_m.o
- obj-y += ccu_mp.o
- obj-y += ccu_mux.o
- obj-y += ccu_nk.o
-+obj-y += ccu_nm.o
- obj-y += ccu_p.o
- obj-y += ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-new file mode 100644
-index 000000000000..268637db137b
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -0,0 +1,103 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_nm.h"
-+
-+static void ccu_nm_disable(struct clk_hw *hw)
-+{
-+	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+
-+	return ccu_gate_helper_disable(&nm->common, nm->enable);
-+}
-+
-+static int ccu_nm_enable(struct clk_hw *hw)
-+{
-+	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+
-+	return ccu_gate_helper_enable(&nm->common, nm->enable);
-+}
-+
-+static int ccu_nm_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+
-+	return ccu_gate_helper_is_enabled(&nm->common, nm->enable);
-+}
-+
-+static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+	unsigned long n, m;
-+	u32 reg;
-+
-+	reg = readl(nm->common.base + nm->common.reg);
-+
-+	n = reg >> nm->n.shift;
-+	n &= (1 << nm->n.width) - 1;
-+
-+	m = reg >> nm->m.shift;
-+	m &= (1 << nm->m.width) - 1;
-+
-+	return parent_rate * (n + 1) / (m + 1);
-+}
-+
-+static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+	unsigned long n, m;
-+
-+	rational_best_approximation(rate, *parent_rate,
-+				    nm->n.width, nm->m.width, &n, &m);
-+
-+	return *parent_rate * n / m;
-+}
-+
-+static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+	unsigned long flags;
-+	unsigned long n, m;
-+	u32 reg;
-+
-+	rational_best_approximation(rate, parent_rate,
-+				    nm->n.width, nm->m.width, &n, &m);
-+
-+	spin_lock_irqsave(nm->common.lock, flags);
-+
-+	reg = readl(nm->common.base + nm->common.reg);
-+	reg &= ~GENMASK(nm->n.width + nm->n.shift, nm->n.shift);
-+	reg &= ~GENMASK(nm->m.width + nm->m.shift, nm->m.shift);
-+
-+	writel(reg | ((m - 1) << nm->m.shift) | ((n - 1) << nm->n.shift),
-+	       nm->common.base + nm->common.reg);
-+
-+	spin_unlock_irqrestore(nm->common.lock, flags);
-+
-+	ccu_helper_wait_for_lock(&nm->common, nm->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_nm_ops = {
-+	.disable	= ccu_nm_disable,
-+	.enable		= ccu_nm_enable,
-+	.is_enabled	= ccu_nm_is_enabled,
-+
-+	.recalc_rate	= ccu_nm_recalc_rate,
-+	.round_rate	= ccu_nm_round_rate,
-+	.set_rate	= ccu_nm_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
-new file mode 100644
-index 000000000000..6fda3ed05cd8
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nm.h
-@@ -0,0 +1,41 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_NM_H_
-+#define _CCU_NM_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_factor.h"
-+#include "ccu_common.h"
-+
-+struct ccu_nm {
-+	u32			enable;
-+	u32			lock;
-+
-+	struct ccu_factor	n;
-+	struct ccu_factor	m;
-+
-+	struct ccu_common	common;
-+};
-+
-+static inline struct ccu_nm *hw_to_ccu_nm(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_nm, common);
-+}
-+
-+extern const struct clk_ops ccu_nm_ops;
-+
-+#endif /* _CCU_NM_H_ */
--- 
-2.8.2
+On Thursday 05 May 2016 11:12:30 Yangbo Lu wrote:
+> 
+> +       fsl_guts_init();
+> +       svr = fsl_guts_get_svr();
+> +       if (svr) {
+> +               esdhc->soc_ver = SVR_SOC_VER(svr);
+> +               esdhc->soc_rev = SVR_REV(svr);
+> +       } else {
+> +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
+> +       }
+> +
+> 
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Sorry for jumping in again after not participating in the discussion for the
+past few versions.
+
+What happened to my suggestion of making this a platform-independent interface
+to avoid the link time dependency?
+
+Specifically, why not add an exported function to drivers/base/soc.c that
+uses glob_match() for comparing a string in the device driver to the ID
+of the SoC that is set by whatever SoC identifying driver the platform
+has?
+
+	Arnd
