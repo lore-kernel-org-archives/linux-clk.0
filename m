@@ -1,39 +1,139 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 10/22] ARM: dts: exynos: Use lowercase for Exynos5410
- CPU node labels
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-11-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <05d35d71-f383-307c-4c9e-24cc7afa911f@osg.samsung.com>
-Date: Mon, 9 May 2016 16:54:35 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-11-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 2/5] clk: bcm2835: expose the parent clocks via include/dt-bindings
+Date: Thu,  5 May 2016 15:53:25 +0000
+Message-Id: <1462463608-22940-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+From: Martin Sperl <kernel@martin.sperl.org>
 
-On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
-> Fro consistency lowercase node labels are used.
->
+Expose the parent clocks via include/dt-bindings,
+so that they can easily get referred to in the device tree.
 
-s/Fro/For
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       | 45 ++++++++++++++++++-------------------
+ include/dt-bindings/clock/bcm2835.h | 26 +++++++++++++++++++++
+ 2 files changed, 48 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index c19b99c9..1b1657d 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1303,10 +1303,10 @@ struct bcm2835_clk_desc {
  
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+ /* main oscillator parent mux */
+ static const char *const bcm2835_clock_osc_parents[] = {
+-	"gnd",
+-	"xosc",
+-	"testdebug0",
+-	"testdebug1"
++	[BCM2835_OSC_PARENT_GND]	= "gnd",
++	[BCM2835_OSC_PARENT_OSC]	= "xosc",
++	[BCM2835_OSC_PARENT_TESTDEBUG0]	= "testdebug0",
++	[BCM2835_OSC_PARENT_TESTDEBUG1]	= "testdebug1",
+ };
+ 
+ #define REGISTER_OSC_CLK(...)	REGISTER_CLK(				\
+@@ -1316,14 +1316,14 @@ static const char *const bcm2835_clock_osc_parents[] = {
+ 
+ /* main peripherial parent mux */
+ static const char *const bcm2835_clock_per_parents[] = {
+-	"gnd",
+-	"xosc",
+-	"testdebug0",
+-	"testdebug1",
+-	"plla_per",
+-	"pllc_per",
+-	"plld_per",
+-	"pllh_aux",
++	[BCM2835_PER_PARENT_GND]	= "gnd",
++	[BCM2835_PER_PARENT_OSC]	= "xosc",
++	[BCM2835_PER_PARENT_TESTDEBUG0]	= "testdebug0",
++	[BCM2835_PER_PARENT_TESTDEBUG1]	= "testdebug1",
++	[BCM2835_PER_PARENT_PLLA_PER]	= "plla_per",
++	[BCM2835_PER_PARENT_PLLC_PER]	= "pllc_per",
++	[BCM2835_PER_PARENT_PLLD_PER]	= "plld_per",
++	[BCM2835_PER_PARENT_PLLH_AUX]	= "pllh_aux",
+ };
+ 
+ #define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
+@@ -1333,18 +1333,17 @@ static const char *const bcm2835_clock_per_parents[] = {
+ 
+ /* main vpu parent mux */
+ static const char *const bcm2835_clock_vpu_parents[] = {
+-	"gnd",
+-	"xosc",
+-	"testdebug0",
+-	"testdebug1",
+-	"plla_core",
+-	"pllc_core0",
+-	"plld_core",
+-	"pllh_aux",
+-	"pllc_core1",
+-	"pllc_core2",
++	[BCM2835_VPU_PARENT_GND]	= "gnd",
++	[BCM2835_VPU_PARENT_OSC]	= "xosc",
++	[BCM2835_VPU_PARENT_TESTDEBUG0]	= "testdebug0",
++	[BCM2835_VPU_PARENT_TESTDEBUG1]	= "testdebug1",
++	[BCM2835_VPU_PARENT_PLLA_CORE]	= "plla_core",
++	[BCM2835_VPU_PARENT_PLLC_CORE0]	= "pllc_core0",
++	[BCM2835_VPU_PARENT_PLLD_CORE]	= "plld_core",
++	[BCM2835_VPU_PARENT_PLLH_AUX]	= "pllh_aux",
++	[BCM2835_VPU_PARENT_PLLC_CORE1]	= "pllc_core1",
++	[BCM2835_VPU_PARENT_PLLC_CORE2]	= "pllc_core2",
+ };
+-
+ #define REGISTER_VPU_CLK(...)	REGISTER_CLK(				\
+ 	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_vpu_parents),	\
+ 	.parents = bcm2835_clock_vpu_parents,				\
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 360e00c..e5396fe 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -64,3 +64,29 @@
+ #define BCM2835_CLOCK_CAM1		46
+ #define BCM2835_CLOCK_DSI0E		47
+ #define BCM2835_CLOCK_DSI1E		48
++
++/* the parent clock for different clock types */
++#define BCM2835_OSC_PARENT_GND		0
++#define BCM2835_OSC_PARENT_OSC		1
++#define BCM2835_OSC_PARENT_TESTDEBUG0	2
++#define BCM2835_OSC_PARENT_TESTDEBUG1	3
++
++#define BCM2835_PER_PARENT_GND		0
++#define BCM2835_PER_PARENT_OSC		1
++#define BCM2835_PER_PARENT_TESTDEBUG0	2
++#define BCM2835_PER_PARENT_TESTDEBUG1	3
++#define BCM2835_PER_PARENT_PLLA_PER	4
++#define BCM2835_PER_PARENT_PLLC_PER	5
++#define BCM2835_PER_PARENT_PLLD_PER	6
++#define BCM2835_PER_PARENT_PLLH_AUX	7
++
++#define BCM2835_VPU_PARENT_GND		0
++#define BCM2835_VPU_PARENT_OSC		1
++#define BCM2835_VPU_PARENT_TESTDEBUG0	2
++#define BCM2835_VPU_PARENT_TESTDEBUG1	3
++#define BCM2835_VPU_PARENT_PLLA_CORE	4
++#define BCM2835_VPU_PARENT_PLLC_CORE0	5
++#define BCM2835_VPU_PARENT_PLLD_CORE	6
++#define BCM2835_VPU_PARENT_PLLH_AUX	7
++#define BCM2835_VPU_PARENT_PLLC_CORE1	8
++#define BCM2835_VPU_PARENT_PLLC_CORE2	9
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.1.4
