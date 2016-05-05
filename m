@@ -1,94 +1,80 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 4/6] ARM: dts: exynos: Add Thermal Management Unit to
- Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-4-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <25549eaa-a286-7579-8407-411f0c1834ae@osg.samsung.com>
-Date: Tue, 31 May 2016 15:21:06 -0400
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v10, 0/7] Fix eSDHC host version register bug
+Date: Thu, 5 May 2016 11:12:23 +0800
+Message-ID: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1464719945-3417-4-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+ Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
+eSDHC controller. To get the SoC version and revision, it's needed to add the
+GUTS driver to access the global utilities registers.
 
-On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
-> Add nodes for Thermal Management Unit to exynos5410.dtsi. Use the same
-> compatible as for Exynos5420 however without second base for TRIMINFO
-> register.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5410.dtsi | 55 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 994d16a44fe4..f1effd3f03c4 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -81,6 +81,42 @@
->  			#clock-cells = <1>;
->  		};
->  
-> +		tmu_cpu0: tmu@10060000 {
-> +			compatible = "samsung,exynos5420-tmu";
-> +			reg = <0x10060000 0x100>;
-> +			interrupts = <0 65 0>;
+So, the first four patches are to add the GUTS driver.
+The following patches except the updating MAINTAINERS patch are to enable
+GUTS driver support to get SVR in eSDHC driver and fix host version for T4240.
 
-Please use GIC_SPI instead of 0 on these.
+Yangbo Lu (7):
+  Documentation: DT: update Freescale DCFG compatible
+  ARM64: dts: ls2080a: add device configuration node
+  soc: fsl: add GUTS driver for QorIQ platforms
+  dt: move guts devicetree doc out of powerpc directory
+  powerpc/fsl: move mpc85xx.h to include/linux/fsl
+  MAINTAINERS: add entry for Freescale SoC drivers
+  mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
 
-> +			clocks = <&clock CLK_TMU>;
-> +			clock-names = "tmu_apbif";
-> +			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +		};
-> +
-> +		tmu_cpu1: tmu@10064000 {
-> +			compatible = "samsung,exynos5420-tmu";
-> +			reg = <0x10064000 0x100>;
-> +			interrupts = <0 183 0>;
-> +			clocks = <&clock CLK_TMU>;
-> +			clock-names = "tmu_apbif";
-> +			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +		};
-> +
-> +		tmu_cpu2: tmu@10068000 {
-> +			compatible = "samsung,exynos5420-tmu";
-> +			reg = <0x10068000 0x100>;
-> +			interrupts = <0 184 0>;
-> +			clocks = <&clock CLK_TMU>;
-> +			clock-names = "tmu_apbif";
-> +			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +		};
-> +
-> +		tmu_cpu3: tmu@1006c000 {
-> +			compatible = "samsung,exynos5420-tmu";
-> +			reg = <0x1006c000 0x100>;
-> +			interrupts = <0 185 0>;
-> +			clocks = <&clock CLK_TMU>;
-> +			clock-names = "tmu_apbif";
-> +			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +		};
-> +
+ Documentation/devicetree/bindings/arm/fsl.txt      |   6 +-
+ .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
+ MAINTAINERS                                        |  11 +-
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
+ arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
+ drivers/clk/clk-qoriq.c                            |   3 +-
+ drivers/i2c/busses/i2c-mpc.c                       |   2 +-
+ drivers/iommu/fsl_pamu.c                           |   3 +-
+ drivers/mmc/host/Kconfig                           |   1 +
+ drivers/mmc/host/sdhci-of-esdhc.c                  |  23 ++++
+ drivers/net/ethernet/freescale/gianfar.c           |   2 +-
+ drivers/soc/Kconfig                                |   2 +-
+ drivers/soc/fsl/Kconfig                            |   8 ++
+ drivers/soc/fsl/Makefile                           |   1 +
+ drivers/soc/fsl/guts.c                             | 119 +++++++++++++++++++
+ include/linux/fsl/guts.h                           | 126 +++++++++++++--------
+ .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
+ 17 files changed, 262 insertions(+), 60 deletions(-)
+ rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+ create mode 100644 drivers/soc/fsl/Kconfig
+ create mode 100644 drivers/soc/fsl/guts.c
+ rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
 
-Exynos5420 has 5 TMU channels and you are adding only 4 so I guess this
-is another difference with Exynos5410 besides the TRIMINFO register not
-being misplaced? Probably is worth to mention it in the commit message.
-
-Anyway, the patch looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
