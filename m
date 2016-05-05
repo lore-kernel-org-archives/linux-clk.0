@@ -1,48 +1,87 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 27 May 2016 21:31:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, tony@atomide.com,
-	lee.jones@linaro.org, robh+dt@kernel.org, lgirdwood@gmail.com,
-	t-kristo@ti.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	alsa-devel@alsa-project.org
-Message-ID: <20160527203140.GD29837@sirena.org.uk>
-References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
- <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <netdev@vger.kernel.org>
+Subject: [v10, 4/7] dt: move guts devicetree doc out of powerpc directory
+Date: Thu, 5 May 2016 11:12:27 +0800
+Message-ID: <1462417950-46796-5-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
-In-Reply-To: <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
-Subject: Re: [PATCH 14/14] ASoC: omap-mcpdm: Add support for pdmclk clock
- handling
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
+ leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
+ Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
+since it's used by not only PowerPC but also ARM. And add a specification
+for 'little-endian' property.
 
---at6+YcpfzWZg/htY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes for v4:
+	- Added this patch
+Changes for v5:
+	- Modified the description for little-endian property
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+	- Added 'Acked-by: Rob Herring'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+---
+ Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+ rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
 
-On Wed, May 18, 2016 at 04:46:36PM +0300, Peter Ujfalusi wrote:
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+similarity index 91%
+rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
+rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
+index b71b203..07adca9 100644
+--- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
++++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+@@ -25,6 +25,9 @@ Recommended properties:
+  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
+    registers, for those SOCs that have a PAMU device.
+ 
++ - little-endian : Indicates that the global utilities block is little
++   endian. The default is big endian.
++
+ Examples:
+ 	global-utilities@e0000 {	/* global utilities block */
+ 		compatible = "fsl,mpc8548-guts";
+-- 
+2.1.0.27.g96db324
 
-> +	clk_prepare_enable(mcpdm->pdmclk);
 
-Should really check the return value here.
-
---at6+YcpfzWZg/htY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXSK6nAAoJECTWi3JdVIfQgLgH/1n87ZBxKwq4fE9xWWzz7VSe
-g/1vKGI7TcRkGSrC3jnotjQV/Nn8p3HYm19VBxdiQyR6gBRduGi5KFq1S9G6cimk
-ZF2a7er96t8SeCHplP7obU3slnpuAitBRrUnDQJ7Xb+ZGJJjyeDoETFV7XHYMglX
-/PTce4gJkxtTG7WSaru49540J4nU7YKtwOsOY8pmyC2eRxMekfO9HPq92565Y3bT
-hYpjb4HzBgcfL3OID5OWScBVJBZ4lZx/A69wb7lxeR+DWc+uu2XStqojQ1tSpDMv
-4/4Tw0xJ8aXDjQZqr6D6e0gu7jOBp2rOt4kmSJTCKetPrxf+ROcSEjB/IYc3ff0=
-=IO6m
------END PGP SIGNATURE-----
-
---at6+YcpfzWZg/htY--
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
