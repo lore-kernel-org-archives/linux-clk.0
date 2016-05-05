@@ -1,105 +1,119 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-Date: Sun, 15 May 2016 22:13:42 +0200
-Message-Id: <1463343243-26429-2-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 3/5] clk: bcm2835: enable default filtering for parent clocks
+Date: Thu,  5 May 2016 15:53:26 +0000
+Message-Id: <1462463608-22940-4-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add license and copyrights (file introduced in 2014) to header with
-Exynos5410 clock IDs. Additionally reformat it to improve readability.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Depending on the type of clock define a default set of
+parent clocks that are uses during parent clock selection.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 22 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 47 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 9b180f032e2d..213f19e02870 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,33 +1,43 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants for Exynos5421 clock controller.
-+*/
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 1b1657d..8a44ebf 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -836,6 +836,7 @@ struct bcm2835_clock {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+ 	const struct bcm2835_clock_data *data;
++	u32 flags;
+ };
+ 
+ static struct bcm2835_clock *bcm2835_clock_from_hw(struct clk_hw *hw)
+@@ -1023,6 +1024,8 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
++		if (!(clock->flags & BIT(i)))
++			continue;
+ 		prate = clk_hw_get_rate(parent);
+ 		div = bcm2835_clock_choose_div(hw, req->rate, prate, true);
+ 		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
+@@ -1216,6 +1219,10 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
+ 	return clk;
+ }
+ 
++static u32 bcm2835_register_clock_default_parents(
++	struct device *dev,
++	const struct bcm2835_clock_data *data);
 +
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 					  const struct bcm2835_clock_data *data)
+ {
+@@ -1263,6 +1270,8 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	clock->cprman = cprman;
+ 	clock->data = data;
+ 	clock->hw.init = &init;
++	clock->flags = bcm2835_register_clock_default_parents(
++		cprman->dev, data);
  
- /* core clocks */
--#define CLK_FIN_PLL 1
--#define CLK_FOUT_APLL 2
--#define CLK_FOUT_CPLL 3
--#define CLK_FOUT_MPLL 4
--#define CLK_FOUT_BPLL 5
--#define CLK_FOUT_KPLL 6
-+#define CLK_FIN_PLL		1
-+#define CLK_FOUT_APLL		2
-+#define CLK_FOUT_CPLL		3
-+#define CLK_FOUT_MPLL		4
-+#define CLK_FOUT_BPLL		5
-+#define CLK_FOUT_KPLL		6
+ 	return devm_clk_register(cprman->dev, &clock->hw);
+ }
+@@ -1349,6 +1358,44 @@ static const char *const bcm2835_clock_vpu_parents[] = {
+ 	.parents = bcm2835_clock_vpu_parents,				\
+ 	__VA_ARGS__)
  
- /* gate for special clocks (sclk) */
--#define CLK_SCLK_UART0 128
--#define CLK_SCLK_UART1 129
--#define CLK_SCLK_UART2 130
--#define CLK_SCLK_UART3 131
--#define CLK_SCLK_MMC0 132
--#define CLK_SCLK_MMC1 133
--#define CLK_SCLK_MMC2 134
-+#define CLK_SCLK_UART0		128
-+#define CLK_SCLK_UART1		129
-+#define CLK_SCLK_UART2		130
-+#define CLK_SCLK_UART3		131
-+#define CLK_SCLK_MMC0		132
-+#define CLK_SCLK_MMC1		133
-+#define CLK_SCLK_MMC2		134
- 
- /* gate clocks */
--#define CLK_UART0 257
--#define CLK_UART1 258
--#define CLK_UART2 259
--#define CLK_UART3 260
--#define CLK_MCT 315
--#define CLK_MMC0 351
--#define CLK_MMC1 352
--#define CLK_MMC2 353
-+#define CLK_UART0		257
-+#define CLK_UART1		258
-+#define CLK_UART2		259
-+#define CLK_UART3		260
-+#define CLK_MCT			315
-+#define CLK_MMC0		351
-+#define CLK_MMC1		352
-+#define CLK_MMC2		353
- 
--#define CLK_NR_CLKS 512
-+#define CLK_NR_CLKS		512
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
++/* calc the default flags for different clocks based on the parent array */
++static u32 bcm2835_register_clock_default_parents(
++	struct device *dev,
++	const struct bcm2835_clock_data *data)
++{
++	/* by default we disable the testdebug clocks for all known types */
++	if (data->parents == bcm2835_clock_osc_parents)
++		return
++			BIT(BCM2835_OSC_PARENT_GND) |
++			BIT(BCM2835_OSC_PARENT_OSC);
++	if (data->parents == bcm2835_clock_vpu_parents)
++		return
++			BIT(BCM2835_VPU_PARENT_GND) |
++			BIT(BCM2835_VPU_PARENT_OSC) |
++			BIT(BCM2835_VPU_PARENT_PLLA_CORE) |
++			BIT(BCM2835_VPU_PARENT_PLLC_CORE0) |
++			BIT(BCM2835_VPU_PARENT_PLLD_CORE) |
++			BIT(BCM2835_VPU_PARENT_PLLH_AUX) |
++			BIT(BCM2835_VPU_PARENT_PLLC_CORE1) |
++			BIT(BCM2835_VPU_PARENT_PLLC_CORE2);
++	if (data->parents == bcm2835_clock_per_parents)
++		return
++			BIT(BCM2835_PER_PARENT_GND) |
++			BIT(BCM2835_PER_PARENT_OSC) |
++			BIT(BCM2835_PER_PARENT_PLLA_PER) |
++			/* by default do not use PLLC_PER */
++			BIT(BCM2835_PER_PARENT_PLLD_PER) |
++			BIT(BCM2835_PER_PARENT_PLLH_AUX);
++
++	/* warn about unknown parents */
++	dev_warn(dev,
++		 "unknown clock parents for clock %s - enabling all %d parents\n",
++		 data->name, data->num_mux_parents);
++
++	/* return enable all clocks */
++	return BIT(data->num_mux_parents) - 1;
++}
++
+ /*
+  * the real definition of all the pll, pll_dividers and clocks
+  * these make use of the above REGISTER_* macros
 -- 
-2.5.0
+2.1.4
