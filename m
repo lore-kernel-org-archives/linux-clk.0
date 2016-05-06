@@ -1,198 +1,33 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH 3/5] clk: hisilicon: add error processing for hisi_clk_register_* functions
-Date: Tue, 10 May 2016 17:19:11 +0800
-Message-ID: <1462871953-26606-4-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:40943 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756308AbcEFRcs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2016 13:32:48 -0400
+Date: Fri, 6 May 2016 10:32:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: clk-lpc18xx-creg - scheduling while atomic
+Message-ID: <20160506173246.GT3492@codeaurora.org>
+References: <CAGhQ9VxsyWq=GK5RnCzspV3=6NbDNH6pJhf3uZqdNPCsP9VzmQ@mail.gmail.com>
+ <572B62AC.1020205@mleia.com>
+ <CAGhQ9VyBcyRZSRowzpiAWnUBywiu_fDMEYWOXYEykDgLWnU0mA@mail.gmail.com>
+ <20160506171748.GS3492@codeaurora.org>
+ <CAGhQ9VzWdpj-jdTEXxSEckpN_iZLPQU0_v8jcXh18YLXBkpkDA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAGhQ9VzWdpj-jdTEXxSEckpN_iZLPQU0_v8jcXh18YLXBkpkDA@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add error processing for hisi_clk_register_* functions.
+On 05/06, Joachim Eastwood wrote:
+> 
+> Thanks for spotting the bug in lpc18xx-creg. Are you going to apply it directly?
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
----
- drivers/clk/hisilicon/clk.c | 60 +++++++++++++++++++++++++++++++++++++--------
- drivers/clk/hisilicon/clk.h | 10 ++++----
- 2 files changed, 55 insertions(+), 15 deletions(-)
+Yes I'll fix it up today, thanks.
 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 78675d1..9ba2d91 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -102,7 +102,7 @@ err:
- }
- EXPORT_SYMBOL_GPL(hisi_clk_init);
- 
--void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
-+int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
- 					 int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -116,14 +116,22 @@ void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_fixed_rate(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_rate);
- 
--void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
-+int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
- 					   int nums,
- 					   struct hisi_clock_data *data)
- {
-@@ -138,14 +146,22 @@ void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_fixed_factor(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_factor);
- 
--void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
-+int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 				  int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -164,7 +180,7 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -172,10 +188,18 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_mux(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
- 
--void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
-+int hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 				      int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -194,7 +218,7 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -202,10 +226,18 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_divider(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_divider);
- 
--void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
-+int hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 				       int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -223,7 +255,7 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -231,6 +263,14 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_gate(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_gate);
- 
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 5fc644f..2575329 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -114,15 +114,15 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 
- struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
- struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
--void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
-+int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
-+int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
-+int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
- 				struct hisi_clock_data *);
--void hisi_clk_register_divider(const struct hisi_divider_clock *,
-+int hisi_clk_register_divider(const struct hisi_divider_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_gate(const struct hisi_gate_clock *,
-+int hisi_clk_register_gate(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
