@@ -1,40 +1,36 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock
- provider on SMDK5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-7-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <723d088c-ada7-a18f-87a2-e7caaf2c56fd@osg.samsung.com>
-Date: Mon, 9 May 2016 16:24:51 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 16:12:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
+	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com
+Subject: Re: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
+Message-ID: <20160506231229.GJ3492@codeaurora.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-7-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
-
-On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
-> All "fin_pll" clock users are switched to the new one, provided by
-
-s/are switched/were switched
-
-> Exynos5410 clock driver. Remove old DT node.
+On 04/14, James Liao wrote:
+> Some system clocks should be turned on by default on MT2701.
+> This patch enable these clocks when related clocks have
+> been registered.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
 > ---
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+critical clks got merged now (sorry I'm slowly getting back to
+looking at patches). Please use that flag.
 
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
