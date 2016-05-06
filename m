@@ -1,49 +1,33 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 10/22] ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
-Date: Sun, 15 May 2016 22:13:51 +0200
-Message-Id: <1463343243-26429-11-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 11:06:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vaishali Thakkar <vaishali.thakkar@oracle.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: bcm/kona: Do not use sizeof on pointer type
+Message-ID: <20160506180646.GZ3492@codeaurora.org>
+References: <1461851433-19365-1-git-send-email-vaishali.thakkar@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461851433-19365-1-git-send-email-vaishali.thakkar@oracle.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2c-arbitrator node in exynos5250-snow-common used absolute path to
-reference other node (the i2c parent). Use phandle instead, because the
-depth of the other node may be changed (like moving it under 'soc'
-node).
+On 04/28, Vaishali Thakkar wrote:
+> When sizeof is applied to a pointer typed expression, it gives
+> the size of the pointer. So, here do not use sizeof on pointer
+> type. Also, silent checkpatch.pl by using kmalloc_array over
+> kmalloc.
+> 
+> Note that this has no effect on runtime because 'parent_names'
+> is a pointer to a pointer.
+> 
+> Problem found using Coccinelle.
+> 
+> Signed-off-by: Vaishali Thakkar <vaishali.thakkar@oracle.com>
+> ---
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to clk-next
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index ddfe1f558c10..419d59da1751 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -61,7 +61,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		i2c-parent = <&{/i2c@12CA0000}>;
-+		i2c-parent = <&i2c_4>;
- 
- 		our-claim-gpio = <&gpf0 3 GPIO_ACTIVE_LOW>;
- 		their-claim-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
