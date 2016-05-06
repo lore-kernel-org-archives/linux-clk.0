@@ -1,48 +1,27 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 02/18] clk: samsung: exynos3250: Move platform driver and
- of_device_id to init section
-Date: Wed, 11 May 2016 14:01:58 +0200
-Message-id: <1462968134-6085-2-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 15:56:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 0/7] clk: rockchip: cleanup some code duplication
+Message-ID: <20160506225645.GG3492@codeaurora.org>
+References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The platform_driver and of_device_id structs can be moved to init
-section because they are referenced only from subsys_initcall-level
-function.
+On 04/28, Heiko Stuebner wrote:
+> This tries to generalize code paths that contain some (nearly)
+> duplicate code. While it's only a bit noticeable now for 3 different
+> plls, the effect should be more pronounced when the next pll-type
+> shows up.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos3250.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Looks ok. Are you sending another pull? Or I can apply them
+directly.
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 16575ee874cb..e26b04fea33b 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -1079,12 +1079,12 @@ static int __init exynos3250_cmu_isp_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
-+static const struct of_device_id exynos3250_cmu_isp_of_match[] __initconst = {
- 	{ .compatible = "samsung,exynos3250-cmu-isp", },
- 	{ /* sentinel */ }
- };
- 
--static struct platform_driver exynos3250_cmu_isp_driver = {
-+static struct platform_driver exynos3250_cmu_isp_driver __initdata = {
- 	.driver = {
- 		.name = "exynos3250-cmu-isp",
- 		.of_match_table = exynos3250_cmu_isp_of_match,
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
