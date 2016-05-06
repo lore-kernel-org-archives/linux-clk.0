@@ -1,122 +1,156 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 12 May 2016 08:59:43 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Priit Laes <plaes@plaes.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 16:11:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
 	Mike Turquette <mturquette@baylibre.com>,
-	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 01/11] clk: sunxi: Add display and
- TCON0 clocks driver
-Message-ID: <20160512065943.GX3733@lukather>
-References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
- <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
- <20160506223002.GE3492@codeaurora.org>
- <20160508200308.GF6167@lukather>
- <20160509223238.GW3492@codeaurora.org>
- <20160509223924.GX3492@codeaurora.org>
- <1462907459.9981.0.camel@plaes.org>
- <20160511221541.GG3492@codeaurora.org>
- <1463024360.16747.4.camel@plaes.org>
+	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
+	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>
+Subject: Re: [PATCH v7 4/9] clk: mediatek: Add MT2701 clock support
+Message-ID: <20160506231151.GI3492@codeaurora.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1460621514-65191-5-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5T9d2Bf7JajBsgKp"
-In-Reply-To: <1463024360.16747.4.camel@plaes.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460621514-65191-5-git-send-email-jamesjj.liao@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/14, James Liao wrote:
+> diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+> new file mode 100644
+> index 0000000..b4db141
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt2701.c
+> +static void __init mtk_infrasys_init(struct device_node *node)
+> +{
+> +	struct clk_onecell_data *clk_data;
+> +	int r;
+> +
+> +	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
+> +
+> +	mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
+> +						clk_data);
+> +	mtk_clk_register_factors(infra_fixed_divs, ARRAY_SIZE(infra_fixed_divs),
+> +						clk_data);
+> +
+> +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +	if (r)
+> +		pr_err("%s(): could not register clock provider: %d\n",
+> +			__func__, r);
+> +}
+> +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
 
---5T9d2Bf7JajBsgKp
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm still lost on the usage of CLK_OF_DECLARE here. What part of
+these clk controllers needs to be registered to make the timer
+work?
 
-On Thu, May 12, 2016 at 06:39:20AM +0300, Priit Laes wrote:
-> On Wed, 2016-05-11 at 15:15 -0700, Stephen Boyd wrote:
-> > On 05/10, Priit Laes wrote:
-> > >=20
-> > > On Mon, 2016-05-09 at 15:39 -0700, Stephen Boyd wrote:
-> > > >=20
-> > > > On 05/09, Stephen Boyd wrote:
-> > > > >=20
-> > > > >=20
-> > > > >=20
-> > > > > Ok I applied this one to clk-next.
-> > > > >=20
-> > > > And I squashed this in to silence the following checker warning.
-> > > >=20
-> > > > drivers/clk/sunxi/clk-sun4i-display.c:110:33: warning: Variable
-> > > > length array is used.
-> > > >=20
-> > > > ---8<---
-> > > > diff --git a/drivers/clk/sunxi/clk-sun4i-display.c
-> > > > b/drivers/clk/sunxi/clk-sun4i-display.c
-> > > > index f02e250e64ed..f8ff6c4a5633 100644
-> > > > --- a/drivers/clk/sunxi/clk-sun4i-display.c
-> > > > +++ b/drivers/clk/sunxi/clk-sun4i-display.c
-> > > > @@ -107,7 +107,7 @@ static int
-> > > > sun4i_a10_display_reset_xlate(struct
-> > > > reset_controller_dev *rcdev,
-> > > > =A0static void __init sun4i_a10_display_init(struct device_node
-> > > > *node,
-> > > > =A0					=A0=A0const struct
-> > > > sun4i_a10_display_clk_data *data)
-> > > > =A0{
-> > > > -	const char *parents[data->parents];
-> > > > +	const char *parents[4];
-> > > This change breaks at least de_[bf]e clocks which have 3 clock
-> > > parents.
->=20
-> > I just used the largest data->parents number, which was 4. How
-> > does that break anything?
->=20
-> If you look at the=A0sun4i_a10_display_init, it contains this block:
->=20
-> =A0 =A0 ret =3D of_clk_parent_fill(node, parents, ARRAY_SIZE(parents));
-> =A0=A0=A0=A0if (ret !=3D ARRAY_SIZE(parents)) {
-> =A0=A0=A0=A0=A0=A0=A0=A0pr_err("%s: Could not retrieve the parents\n", cl=
-k_name);
-> =A0=A0=A0=A0=A0=A0=A0=A0goto unmap;
-> =A0=A0=A0=A0}
->=20
-> of_clk_parent_fill returns 3 for de_be/de_fe nodes, and
-> ARRAY_SIZE(parents) is 4.
+> +	GATE_DISP1(CLK_MM_DPI_DIGL, "mm_dpi_digl", "dpi0_sel", 2),
+> +	GATE_DISP1(CLK_MM_DPI_ENGINE, "mm_dpi_eng", "mm_sel", 3),
+> +	GATE_DISP1(CLK_MM_DPI1_DIGL, "mm_dpi1_digl", "dpi1_sel", 4),
+> +	GATE_DISP1(CLK_MM_DPI1_ENGINE, "mm_dpi1_eng", "mm_sel", 5),
+> +	GATE_DISP1(CLK_MM_TVE_OUTPUT, "mm_tve_output", "tve_sel", 6),
+> +	GATE_DISP1(CLK_MM_TVE_INPUT, "mm_tve_input", "dpi0_sel", 7),
+> +	GATE_DISP1(CLK_MM_HDMI_PIXEL, "mm_hdmi_pixel", "dpi1_sel", 8),
+> +	GATE_DISP1(CLK_MM_HDMI_PLL, "mm_hdmi_pll", "hdmi_sel", 9),
+> +	GATE_DISP1(CLK_MM_HDMI_AUDIO, "mm_hdmi_audio", "apll_sel", 10),
+> +	GATE_DISP1(CLK_MM_HDMI_SPDIF, "mm_hdmi_spdif", "apll_sel", 11),
+> +	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
+> +};
 
-Replacing both ARRAY_SIZE(parents) by data->parents would work though.
+I also don't understand why we don't have different files and
+drivers for all these different clock controllers? They all have
+a similar probe structure, sure, but otherwise these are
+different devices with different clks for them. The whole #ifdef
+thing in the later patch would go away too.
 
-Maxime
+> +	GATE_BDP1(CLK_BDP_BRG_RT_B, "brg_rt_bclk", "mm_sel", 12),
+> +	GATE_BDP1(CLK_BDP_BRG_RT_DRAM, "brg_rt_dram", "mm_sel", 13),
+> +	GATE_BDP1(CLK_BDP_LARBRT_DRAM, "larbrt_dram", "mm_sel", 14),
+> +	GATE_BDP1(CLK_BDP_TMDS_SYN, "tmds_syn", "hdmi_0_pll340m", 15),
+> +	GATE_BDP1(CLK_BDP_HDMI_MON, "hdmi_mon", "hdmi_0_pll340m", 16),
+> +};
+> +
+> +static void __init mtk_bdpsys_init(struct device_node *node)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Shouldn't be __init because it's driver probe path.
 
---5T9d2Bf7JajBsgKp
-Content-Type: application/pgp-signature; name="signature.asc"
+> +{
+> +	struct clk_onecell_data *clk_data;
+> +	int r;
+> +
+> +	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
+> +
+> +	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
+> +						clk_data);
+> +
+> +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +	if (r)
+> +		pr_err("%s(): could not register clock provider: %d\n",
+> +			__func__, r);
+> +}
+[...]
+> +
+> +static int __init clk_probe(struct platform_device *pdev)
+> +{
+> +	void (*clk_init)(struct device_node *);
+> +	const struct of_device_id *of_id;
+> +
+> +	of_id = of_match_node(of_clk_match_tbl, pdev->dev.of_node);
+> +	if (!of_id || !of_id->data)
+> +		return -EINVAL;
+> +
+> +	clk_init = of_id->data;
+> +	clk_init(pdev->dev.of_node);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver clk_drv = {
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Please add some mtk here, 'clk_drv' is too generic.
 
-iQIcBAEBAgAGBQJXNCnfAAoJEBx+YmzsjxAgnjIP/RtQp6ZsO9cOdO0iG6mhAFsg
-7ba3kAr6Y93EKyVa3lUGwmvf+z0O+Q6QcZateNCbYCWAl6Z3aHgfF6dMJzB+Y6Wd
-9zImOiG8O9deMOFO4I6Si9DCag2e99R3FcGcEcmoeX/ty8J0i8zxNrZaJlW/2LWf
-uJcxtuSvGN9mghZFnHQ+DcKiy8murqw3JB0iY5QxFnLY7MUB9GgVpSe7HT1St004
-VsFrsYfmgiIwOWefxLnUgiS4pBiYRjsmxNR0ApBxeqEcjE7tsRZW+nv0U/mlhbq8
-aUCMz7b4qf+jfLFpc6MGP4TgGluNCzXCXMsHZa9eOQXsVjwy1gpxo27bsp0wpWvH
-08lTNUOkOGseh4dK53EOT8dKJ3n+GrnpZvag/RXUC/ZrwfnShkVHQEtcsd6dcqBK
-tgHSWs/ZviIkRY2xyUXUtceUQC/PDgrUTtQH4ECu651Qv9ufXpLq94AF1WD2eNq9
-KUNliJ67GRhL970s1gAidI1NBDG8ZQe0b/nysZ62yVV+7q8lC6FwvhS2Cdvl0d7u
-u9t2+xfWBJ/gdrrvTm1GCL18i44z8iQaerkvTiK+nmiBrGK0R55sMpcvMtxfph4x
-lRmbX7Vb9x1+K5qLfOEF50EugozoDa2YDmll2qbEJ+95QVy5lgl4DcRufHidsfjC
-OF69rLpAz0u/DPNr01XK
-=Zvlj
------END PGP SIGNATURE-----
+> +	.driver = {
+> +		.name = "mtk-clk",
+> +		.owner = THIS_MODULE,
 
---5T9d2Bf7JajBsgKp--
+This is unnecessary.
+
+> +		.of_match_table = of_match_ptr(of_clk_match_tbl),
+
+Just drop of_match_ptr() because it's not helping. Also
+of_clk_match_tbl is too generic.
+
+> +	},
+> +};
+> +
+> +builtin_platform_driver_probe(clk_drv, clk_probe);
+> +}
+> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+> index 32d2e45..8796acc 100644
+> --- a/drivers/clk/mediatek/clk-mtk.h
+> +++ b/drivers/clk/mediatek/clk-mtk.h
+> @@ -145,8 +146,35 @@ struct mtk_gate {
+[...]
+> +struct mtk_clk_divider {
+> +	int id;
+> +	const char *name;
+> +	const char *parent_name;
+> +	unsigned long flags;
+> +
+> +	uint32_t div_reg;
+
+u32 is shorter
+
+> +	unsigned char div_shift;
+> +	unsigned char div_width;
+> +	unsigned char clk_divider_flags;
+> +	const struct clk_div_table *clk_div_table;
+> +};
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
