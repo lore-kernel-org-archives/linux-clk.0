@@ -1,119 +1,27 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [RFC PATCH 15/21] reset: uniphier: add reset driver for UniPhier
- PH1-sLD8 SoC
-Date: Tue, 10 May 2016 18:50:56 +0900
-Message-Id: <1462873862-30940-16-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 11:04:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Gross <andy.gross@linaro.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: msm8916: Fix crypto clock flags
+Message-ID: <20160506180451.GY3492@codeaurora.org>
+References: <1462307051-19256-1-git-send-email-andy.gross@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1462307051-19256-1-git-send-email-andy.gross@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+On 05/03, Andy Gross wrote:
+> This patch adds the CLK_SET_RATE_PARENT flag for the crypto core and
+> ahb blocks.  Without this flag, clk_set_rate can fail for certain
+> frequency requests.
+> 
+> Signed-off-by: Andy Gross <andy.gross@linaro.org>
+> ---
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Applied to clk-next + added Fixes tag.
 
- drivers/reset/uniphier/Kconfig               |  4 +++
- drivers/reset/uniphier/Makefile              |  1 +
- drivers/reset/uniphier/reset-uniphier-sld8.c | 46 ++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
- create mode 100644 drivers/reset/uniphier/reset-uniphier-sld8.c
-
-diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
-index 1633093..307d563 100644
---- a/drivers/reset/uniphier/Kconfig
-+++ b/drivers/reset/uniphier/Kconfig
-@@ -14,4 +14,8 @@ config RESET_UNIPHIER_PRO4
- 	tristate "Reset driver for UniPhier PH1-Pro4 SoC"
- 	default ARM
- 
-+config RESET_UNIPHIER_SLD8
-+	tristate "Reset driver for UniPhier PH1-sLD8 SoC"
-+	default ARM
-+
- endif
-diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
-index d496fe8..e1001c6 100644
---- a/drivers/reset/uniphier/Makefile
-+++ b/drivers/reset/uniphier/Makefile
-@@ -2,3 +2,4 @@ obj-y					+= reset-uniphier-core.o
- 
- obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
- obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
-+obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
-diff --git a/drivers/reset/uniphier/reset-uniphier-sld8.c b/drivers/reset/uniphier/reset-uniphier-sld8.c
-new file mode 100644
-index 0000000..736abd0
---- /dev/null
-+++ b/drivers/reset/uniphier/reset-uniphier-sld8.c
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "reset-uniphier.h"
-+
-+static const struct uniphier_reset_data uniphier_sld8_reset_data[] = {
-+	{
-+		.id = 7,
-+		.reg = 0x2000,
-+		.mask = BIT(10),
-+		.deassert_val = BIT(10),
-+	},
-+	{ .id = UNIPHIER_RESET_ID_END }
-+};
-+
-+static int uniphier_sld8_reset_probe(struct platform_device *pdev)
-+{
-+	return uniphier_reset_probe(pdev, uniphier_sld8_reset_data);
-+}
-+
-+static struct platform_driver uniphier_sld8_reset_driver = {
-+	.probe = uniphier_sld8_reset_probe,
-+	.driver = {
-+		.name = "uniphier-sld8-reset",
-+	},
-+};
-+module_platform_driver(uniphier_sld8_reset_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-sLD8 Reset Controller Driver");
-+MODULE_LICENSE("GPL");
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
