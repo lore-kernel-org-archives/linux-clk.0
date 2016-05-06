@@ -1,32 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 May 2016 16:03:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 4/7] clk: rockchip: abstract pll get-params and
- set-params operations
-Message-ID: <20160509230328.GA3492@codeaurora.org>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
- <1461849075-8310-5-git-send-email-heiko@sntech.de>
- <20160506225543.GF3492@codeaurora.org>
- <3451726.6PKcY6Rd6y@phil>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3451726.6PKcY6Rd6y@phil>
+Sender: dianders@google.com
+In-Reply-To: <CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+	<1462206982-10444-3-git-send-email-heiko@sntech.de>
+	<CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com>
+Date: Thu, 5 May 2016 17:49:39 -0700
+Message-ID: <CAD=FV=WegPb3AMsUM+Rx_uZ3sMCGUFz-vEh_8WDTqTp1MHWOUQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
+ parent changes
+From: Doug Anderson <dianders@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Xing Zheng <zhengxing@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	zhangqing <zhangqing@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/08, Heiko Stuebner wrote:
-> 
-> I think the "flat design" is what we have right now. The problem is that the 
-> core code is pretty similar and only the hardware-specific accesses are 
-> special, thus the later indirection.
+Hi,
 
-Right, which is where having some functions that manipulate
-register values in a generic way lets us consolidate the common
-code into one place while leaving the hardware specific accesses
-in the clk ops before or after calling the common functions.
+On Thu, May 5, 2016 at 5:35 PM, Doug Anderson <dianders@chromium.org> wrote:
+> I guess we don't care about errors here?
+>
+> ...maybe (?) we could ignore errors if we validated this rate change
+> with PRE_RATE_CHANGE before attempting to change the parent clock, but
+> I don't see the code doing this unless I missed it.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+One other related thought: it seems like there should be code
+_somewhere_ that decides whether to adjust the child dividers before
+or after the parent clock changes.  Specifically if the parent clock
+is increasing in speed we probably want to slow down the child clock
+ahead of the parent's increase.  I don't see such code here, but again
+I'm pretty good at missing things unless they are slapping me in the
+face.  ;)
+
+-Doug
