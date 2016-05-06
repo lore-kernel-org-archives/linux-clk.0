@@ -1,98 +1,44 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 9 May 2016 15:30:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, jk@ozlabs.org,
-	benh@kernel.crashing.org, arnd@arndb.de, heiko@sntech.de
-Subject: Re: [PATCH 1/4] doc/devicetree: Add Aspeed clock bindings
-Message-ID: <20160509203003.GA24945@rob-hp-laptop>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
- <1462797111-14271-2-git-send-email-joel@jms.id.au>
+Return-Path: <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 05/11] pwm: tegra-dfll: Add driver for Tegra DFLL PWM
+ controller
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
+ <1461321071-6431-6-git-send-email-pchiu@nvidia.com>
+ <20160422125513.GJ9047@ulmo.ba.sec> <20160506231532.GK3492@codeaurora.org>
+Cc: Penny Chiu <pchiu@nvidia.com>, gnurou@gmail.com, pdeschrijver@nvidia.com,
+ pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+ mturquette@baylibre.com, linux-tegra@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <572D26E7.2060406@wwwdotorg.org>
+Date: Fri, 6 May 2016 17:21:11 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462797111-14271-2-git-send-email-joel@jms.id.au>
+In-Reply-To: <20160506231532.GK3492@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 09, 2016 at 10:01:48PM +0930, Joel Stanley wrote:
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
->  .../devicetree/bindings/clock/aspeed-clock.txt     | 156 +++++++++++++++++++++
->  1 file changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/aspeed-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/aspeed-clock.txt b/Documentation/devicetree/bindings/clock/aspeed-clock.txt
-> new file mode 100644
-> index 000000000000..968329406435
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/aspeed-clock.txt
-> @@ -0,0 +1,156 @@
-> +Device Tree Clock bindings for the Aspeed SoCs
-> +
-> +Aspeed SoCs have a fixed frequency input osciallator is used to create the PLL
-> +and APB clocks. We can determine these frequencies by reading registers that
-> +are set according to strapping bits.
-> +
-> +Forth generation boards
-> +-----------------------
-> +
-> +eg, ast2400.
-> +
-> +CLKIN:
-> + - compatible : Must be "fixed-clock"
-> + - #clock-cells : Should be 0
-> + - clock-frequency: 48e6, 25e6 or 24e6 depending on the input clock
-> +
-> +PLL:
-> +
-> +Required properties:
-> + - compatible : Must be "aspeed,g4-hpll-clock"
-> + - #clock-cells : Should be 0
-> + - reg : Should contain registers location and length
-> + - clocks : Should contain phandle + clock-specifier for the input clock (clkin)
-> +
-> +Optional properties:
-> + - clock-output-names : Should contain clock name
-> +
-> +
-> +APB:
-> +
-> +Required properties:
-> + - compatible : Must be "aspeed,g4-apb-clock"
-> + - #clock-cells : Should be 0
-> + - reg : Should contain registers location and length
-> + - clocks : Should contain phandle + clock-specifier for the h-pll
-> +
-> +Optional properties:
-> + - clock-output-names : Should contain clock name
-> +
-> +
-> +For example:
-> +
-> +	clk_clkin: clk_clkin {
-> +		#clock-cells = <0>;
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <48000000>;
-> +	};
-> +
-> +	clk_hpll: clk_hpll {
-> +		compatible = "aspeed,g4-hpll-clock";
-> +		#clock-cells = <0>;
-> +		reg = <0x1e6e2008 0x4>;
-> +	};
-> +
-> +	clk_apb: clk_apb@1e6e2008 {
-> +		#clock-cells = <0>;
-> +		compatible = "aspeed,g4-apb-clock";
-> +		reg = <0x1e6e2008 0x4>;
+On 05/06/2016 05:15 PM, Stephen Boyd wrote:
+> On 04/22, Thierry Reding wrote:
+>> On Fri, Apr 22, 2016 at 06:31:05PM +0800, Penny Chiu wrote:
+>>> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
+>>> new file mode 100644
+>>> index 0000000..bd0d247
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
+>>> @@ -0,0 +1,48 @@
+>>> +Tegra SoC DFLL PWM controller
+>>
+>> Stephen, we have in the past used tegra124 in names, even if the IP was
+>> already included in tegra114, but we never supported it on Tegra114 and
+>> hence couldn't even verify that the binding was valid. Any preference as
+>> to the name in this particular case?
+>
+> You meant Stephen Warren right? I don't care either way.
 
-You have overlapping register regions which we try to avoid (it would 
-through errors, but doesn't because of existing platforms).
+Sorry, I wasn't really paying attention to patches.
 
-Just define the h/w block controlling these clocks and support multiple 
-clocks.
-
-Is this really all the clocks the SOC has?
-
-Rob
+Yes, using "124" seems to make sense; we can always expand the binding 
+to cover "114" later if there's any demand.
