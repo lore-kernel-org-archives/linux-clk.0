@@ -1,58 +1,38 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/2] ARM: dts: Fix imprecise external abort error when
- accessing Exynos MFC
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- linux-kernel@vger.kernel.org
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
- Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Andrzej Hajda <a.hajda@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
-Date: Wed, 25 May 2016 08:51:05 +0200
-MIME-version: 1.0
-In-reply-to: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
-Content-type: text/plain; charset=utf-8; format=flowed
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 11:02:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [GIT PULL] i.MX clock fixes for 4.6, take 2
+Message-ID: <20160506180217.GW3492@codeaurora.org>
+References: <20160503133605.GN5874@tiger>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160503133605.GN5874@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On 05/03, Shawn Guo wrote:
+> The following changes since commit 7196c52c9377df0175b510ff5896bda524f7345e:
+> 
+>   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6-2
+> 
+> for you to fetch changes up to 3397c2c45b1b6f54834dfeae30a73046f33ca943:
+> 
+>   ARM: dts: imx35: restore existing used clock enumeration (2016-04-18 12:37:21 +0800)
+> 
+> ----------------------------------------------------------------
+> The i.MX clock fixes for 4.6, take 2:
+>  - Fix the commit 3713e3f5e927 ("clk: imx35: define two clocks for rtc")
+>    which messed up the clock enumeration when adding new clock.
 
+This commit wasn't introduced in this merge window, so I'm going
+to pull this into clk-next unless you have some justification.
 
-On 2016-05-24 19:41, Javier Martinez Canillas wrote:
-> This series fixes an imprecise external abort error when accessing the
-> Exynos MFC registers due the power domain configuration requiring the
-> aclk333 clock to be enabled during a domain switch.
->
-> There isn't a dependency between the clock and Linux Samsung SoC trees
-> because the CLK_ACLK333 clock ID is already defined so the patches can
-> be picked indepedently by the relevant subsystem maintainers.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-I'm really curious what kind of async-bridge is there, but this patch
-really fixes the problem with mfc power domain.
-
-> Best regards,
-> Javier
->
->
-> Javier Martinez Canillas (2):
->    clk: exynos5420: Set ID for aclk333 gate clock
->    ARM: dts: Add async-bridge clock to MFC power domain for Exynos5420
->
->   arch/arm/boot/dts/exynos5420.dtsi    | 5 +++--
->   drivers/clk/samsung/clk-exynos5420.c | 2 +-
->   2 files changed, 4 insertions(+), 3 deletions(-)
->
-
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
