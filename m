@@ -1,186 +1,113 @@
-Return-Path: <hramrach@gmail.com>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com>
-References: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
- <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com>
-From: Michal Suchanek <hramrach@gmail.com>
-Date: Sun, 22 May 2016 18:41:18 +0200
-Message-ID: <CAOMqctRS6sEcQ9sy7dqX_TH4gsRiywCN1nUJiQtXAa7NtoboOw@mail.gmail.com>
-Subject: Re: sunxi spi clock problem
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Sender: dianders@google.com
+In-Reply-To: <1462206982-10444-3-git-send-email-heiko@sntech.de>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+	<1462206982-10444-3-git-send-email-heiko@sntech.de>
+Date: Thu, 5 May 2016 17:35:03 -0700
+Message-ID: <CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
+ parent changes
+From: Doug Anderson <dianders@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Xing Zheng <zhengxing@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	zhangqing <zhangqing@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Heiko,
 
-The debugfs output shows that spi2 is reparented under pll5 and the
-pll5 frequency remains unchanged.
-
-The request to get a 2GHz clock for spi is fulfilled on best-effort
-basis by giving the 864MHz pll5 clock which should theoretically
-result in 432MHz SPI clock.
-
-On 22 May 2016 at 16:58, Chen-Yu Tsai <wens@csie.org> wrote:
-> Hi,
+On Mon, May 2, 2016 at 9:36 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Given a hirarchy of clk1 -> [div] -> clk2, when the rate of clk1 gets
+> changed, clk2 changes as well as the divider stays the same. There may
+> be cases where a user of clk2 needs it at a specific rate, so clk2
+> needs to be readjusted for the changed rate of clk1.
 >
-> On Sun, May 22, 2016 at 10:18 PM, Michal Suchanek <hramrach@gmail.com> wrote:
->> Hello,
->>
->> I tried running a spidev test program on linux 4.6 and I uncovered a
->> problem with the sunxi clk framework.
->>
->> Basically the system would lock up after running the test program.
->>
->> Digging deeper I found that it locks up with commit
->> [47284e3e0f3c427c93f8583549b6c938e8a18015] spi: sun4i: allow transfers
->> to set transmission speed
->>
->> This exposes a problem with the test program. I try to set the SPI
->> sped to 1MHz but at other place the speed is multiplied by 1000 to
->> save typing zeros so the actual requested speed is 1GHz. This commit
->> probably allows that request to propagate leading to the observed
->> system lockup.
->>
->> Given the parents OSC24M, pll6 and pll5 one of pll6 and pll5 is
->> probably set up at 2GHz (or both in turn because due to some rounding
->> neither goes fully up to 2GHz resulting in 864000000 SPI clock). Then
->> the system locks up.
+> So if a rate was requested for the clock, and its rate changed during
+> the underlying rate-change, with this change the clock framework now
+> tries to readjust the rate back to/near the requested one.
 >
-> IIRC the mod clock does not propagate rate changes up the tree.
-> But some output from the debugfs would be helpful. See below.
+> The whole process is protected by a new clock-flag to not force this
+> behaviour change onto every clock defined in the ccf.
+
+I'm not an expert on CCF details, but presumably you need to be really
+careful here.  Is there any way you could get an infinite loop here
+where you ping-pong between two people trying to control their parent
+clock?  Right now I see mutual recursion between
+clk_core_set_rate_nolock() and clk_change_rate() and no base case.
+
+Specifically if there's a path (because of CLK_SET_RATE_PARENT) where
+setting a clock rate on "clk2" in your example can cause a rate change
+of "clk1" I worry that we'll be in trouble.  Maybe a requirement of
+your patch is that no such path exists?  ...or maybe something in the
+code prevents this...
+
+
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/clk/clk.c            | 13 +++++++++++--
+>  include/linux/clk-provider.h |  1 +
+>  2 files changed, 12 insertions(+), 2 deletions(-)
 >
->>
->> I can limit the speed in the SPI driver which is rated at 100MHz in
->> SoC manual (giving 200MHz pll) but the clk driver should probably
->> limit the clock setting to sane speeds itself.
->>
->> I am not familiar with the sunxi-clk code and it has unfortunately no
->> debug prints which would show what is programmed to what speed.
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 65e0aad..22be369 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1410,6 +1410,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+>         return fail_clk;
+>  }
 >
-> You can use /sys/kernel/debug/clk/clk_summary, provided you have
-> debugfs built in and mounted.
+> +static int clk_core_set_rate_nolock(struct clk_core *core,
+> +                                   unsigned long req_rate);
+> +
+>  /*
+>   * walk down a subtree and set the new rates notifying the rate
+>   * change on the way
+> @@ -1494,6 +1497,12 @@ static void clk_change_rate(struct clk_core *core)
+>         /* handle the new child who might not be in core->children yet */
+>         if (core->new_child)
+>                 clk_change_rate(core->new_child);
+> +
+> +       /* handle a changed clock that needs to readjust its rate */
+> +       if (core->flags & CLK_KEEP_REQ_RATE && core->req_rate
+> +                                           && core->new_rate != old_rate
+> +                                           && core->new_rate != core->req_rate)
+> +               clk_core_set_rate_nolock(core, core->req_rate);
 
-root@a10s:~/spidisp# ./spitest -d -s 1000000 /dev/spidev2.0
-Debug mode.
-/dev/spidev2.0: spi mode 0x0, 8 bits per word, 1000000000 Hz max
-Sending 00
-   clock                         enable_cnt  prepare_cnt        rate
-accuracy   phase
-----------------------------------------------------------------------------------------
- osc32k                                   0            0       32768
-       0 0
- osc24M                                   6            6    24000000
-       0 0
-    ir0                                   0            0    24000000
-       0 0
-    spi2                                  0            0    24000000
-       0 0
-    spi1                                  0            0    24000000
-       0 0
-    spi0                                  0            0    24000000
-       0 0
-...
-spi_master spi2: spi2.0: timeout transferring 1 bytes@1000000000Hz for
-100(100)ms
-spidev spi2.0: SPI transfer failed: -110
-spi_master spi2: failed to transfer one message from queue
-...
-    pll5                                  1            1   864000000
-       0 0
-       pll5_other                         0            0   864000000
-       0 0
-       pll5_ddr                           1            1   432000000
-       0 0
-...
-xfer: Connection timed out
-buffer size: 1, result -110
-buffer size: 1, result -110, Connection timed out
-Sending
-   clock                         enable_cnt  prepare_cnt        rate
-accuracy   phase
-----------------------------------------------------------------------------------------
- osc32k                                   0            0       32768
-       0 0
- osc24M                                   6            6    24000000
-       0 0
-    ir0                                   0            0    24000000
-       0 0
-    spi1                                  0            0    24000000
-       0 0
-    spi0                                  0            0    24000000
-       0 0
-    ss                                    0            0    24000000
-       0 0
-...
-    pll5                                  1            1   864000000
-       0 0
-       pll5_other                         0            0   864000000
-       0 0
-          spi2                            0            0   864000000
-       0 0
-       pll5_ddr                           1            1   432000000
-       0 0
-...
-maximum buffer size: 0
-Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-...
-    pll5                                  1            1   864000000
-       0 0
-       pll5_other                         0            0   864000000
-       0 0
-          spi2                            0            0   864000000
-       0 0
-       pll5_ddr                           1            1   432000000
-       0 0
-    pll4                                  0            0   384000000
-       0 0
-    pll2-prediv                           0
+I guess we don't care about errors here?
 
-The system locks up here before finishing the output from debugfs and
-actually starting the transfer printed above.
+...maybe (?) we could ignore errors if we validated this rate change
+with PRE_RATE_CHANGE before attempting to change the parent clock, but
+I don't see the code doing this unless I missed it.
 
-Thanks
 
-Michal
+>  }
+>
+>  static int clk_core_set_rate_nolock(struct clk_core *core,
+> @@ -1529,11 +1538,11 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>                 return -EBUSY;
+>         }
+>
+> +       core->req_rate = req_rate;
+> +
+>         /* change the rates */
+>         clk_change_rate(top);
+>
+> -       core->req_rate = req_rate;
+> -
+>         return ret;
+>  }
+>
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 0c72204..06f189e 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -33,6 +33,7 @@
+>  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notifications */
+>  #define CLK_SET_RATE_UNGATE    BIT(10) /* clock needs to run to set rate */
+>  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
+> +#define CLK_KEEP_REQ_RATE      BIT(12) /* keep reqrate on parent rate change */
 
----
-
-The diff between the two full outputs shows only spi2 changed:
-
---- clk1.txt    2016-05-22 18:38:24.890906037 +0200
-+++ clk2.txt    2016-05-22 18:38:15.891003130 +0200
-@@ -3,7 +3,6 @@
-  osc32k                                   0            0       32768
-        0 0
-  osc24M                                   6            6    24000000
-        0 0
-     ir0                                   0            0    24000000
-        0 0
--    spi2                                  0            0    24000000
-        0 0
-     spi1                                  0            0    24000000
-        0 0
-     spi0                                  0            0    24000000
-        0 0
-     ss                                    0            0    24000000
-        0 0
-@@ -69,6 +68,7 @@
-        pll6_sata                          0            0   100000000
-        0 0
-     pll5                                  1            1   864000000
-        0 0
-        pll5_other                         0            0   864000000
-        0 0
-+          spi2                            0            0   864000000
-        0 0
-        pll5_ddr                           1            1   432000000
-        0 0
-     pll4                                  0            0   384000000
-        0 0
-     pll2-prediv                           0            0     1500000
-        0 0
+s/reqrate/req_rate/
