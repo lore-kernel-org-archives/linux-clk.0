@@ -1,87 +1,230 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 15:28:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 00/20] drm: Add Support for Passive RGB to VGA bridges
-Date: Mon, 16 May 2016 14:47:00 +0200
-Message-Id: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>
+Subject: Re: [PATCH v5 0/5] clk: mvebu: clock drivers for Marvell Armada 7K/8K
+Message-ID: <20160506222801.GD3492@codeaurora.org>
+References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 04/14, Thomas Petazzoni wrote:
+> Hello,
+> 
+> Here is the fifth version of the clock drivers for Armada 7K/8K. The
+> first two patches have already been applied by Stephen Boyd, but I'm
+> still including them for completeness.
+> 
+> Changes since v4:
+> 
+>  - Remove the gatable-clock-indices from the CP110 driver, use "none"
+>    when a given bit does not provide a clock. Suggested by Rob
+>    Herring.
+> 
+>  - Update the gatable clock tree with the latest technical information
+>    received.
+> 
+>  - Turn the clock drivers into proper platform drivers. Suggested by
+>    Stephen Boyd.
+> 
+>  - Remove useless headers include from the clock drivers. Suggested by
+>    Stephen Boyd.
+> 
+>  - Add proper handling in the clock driver ->probe() function.
+> 
 
-This serie is about adding support for the RGB to VGA bridge found in
-the A13-Olinuxino and the CHIP VGA adapter.
+Applied the last three with this squashed in to shut up
+checkpatch.
 
-Both these boards rely on an entirely passive bridge made out of
-resitor ladders that do not require any initialisation. The only thing
-needed is to get the timings from the screen if available (and if not,
-fall back on XGA standards), set up the display pipeline to output on
-the RGB bus with the proper timings, and you're done.
-
-This serie also fixes a bunch of bugs uncovered when trying to
-increase the resolution, and hence the pixel clock, of our
-pipeline. It also fixes a few bugs in the DRM driver itself that went
-unnoticed before.
-
-Let me know what you think,
-Maxime
-
-Maxime Ripard (20):
-  clk: fixed-factor: Pass clk rates change to the parent
-  clk: multiplier: Prevent the multiplier from under / over flowing
-  clk: sunxi: tcon-ch1: Do not return a negative error in get_parent
-  clk: sunxi: display: Add per-clock flags
-  drm/sun4i: request exact rates to our parents
-  drm/sun4i: allow dclk to modify its parent rate
-  drm/sun4i: rgb: Validate the clock rate
-  drm/sun4i: rgb: panel is an error pointer
-  drm/sun4i: defer only if we didn't find our panel
-  drm/sun4i: remove simplefb at probe
-  drm/sun4i: Convert to connector register helpers
-  drm/sun4i: Add bridge support
-  drm/bridge: Add RGB to VGA bridge support
-  ARM: sun5i: a13: Add LCD pins
-  ARM: sun5i: Move display blocks to A13
-  ARM: sun5i: a13-olinuxino: Enable VGA bridge
-  ARM: multi_v7: Enable sun4i DRM driver
-  ARM: multi_v7: enable VGA bridge
-  ARM: sunxi: Enable sun4i DRM driver
-  ARM: sunxi: Enable VGA bridge
-
- .../bindings/display/bridge/dumb-vga.txt           |  40 +++++
- arch/arm/boot/dts/sun5i-a13-olinuxino.dts          |  34 ++++
- arch/arm/boot/dts/sun5i-a13.dtsi                   | 122 ++++++++++++++
- arch/arm/boot/dts/sun5i-r8.dtsi                    | 120 +------------
- arch/arm/configs/multi_v7_defconfig                |   2 +
- arch/arm/configs/sunxi_defconfig                   |   3 +
- drivers/clk/clk-fixed-factor.c                     |   3 +-
- drivers/clk/clk-multiplier.c                       |  20 ++-
- drivers/clk/sunxi/clk-sun4i-display.c              |   5 +-
- drivers/clk/sunxi/clk-sun4i-tcon-ch1.c             |   3 -
- drivers/gpu/drm/bridge/Kconfig                     |   6 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/dumb-vga.c                  | 186 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_dotclock.c             |  31 +++-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |  54 +++---
- drivers/gpu/drm/sun4i/sun4i_rgb.c                  |  70 ++++++--
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  59 +++++--
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
- 18 files changed, 578 insertions(+), 182 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
- create mode 100644 drivers/gpu/drm/bridge/dumb-vga.c
-
+---8<---
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index ac9201c7c730..02023baf86c9 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -23,7 +23,7 @@
+ #define AP806_SAR_REG			0x400
+ #define AP806_SAR_CLKFREQ_MODE_MASK	0x1f
+ 
+-#define AP806_CLK_NUM 			4
++#define AP806_CLK_NUM			4
+ 
+ static struct clk *ap806_clks[AP806_CLK_NUM];
+ 
+@@ -54,7 +54,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	freq_mode = reg & AP806_SAR_CLKFREQ_MODE_MASK;
+-	switch(freq_mode) {
++	switch (freq_mode) {
+ 	case 0x0 ... 0x5:
+ 		cpuclk_freq = 2000;
+ 		break;
+@@ -100,8 +100,8 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	/* Fixed clock is always 1200 Mhz */
+ 	of_property_read_string_index(np, "clock-output-names",
+ 				      2, &fixedclk_name);
+-	ap806_clks[2] = clk_register_fixed_rate(&pdev->dev, fixedclk_name, NULL, 0,
+-						1200 * 1000 * 1000);
++	ap806_clks[2] = clk_register_fixed_rate(&pdev->dev, fixedclk_name, NULL,
++						0, 1200 * 1000 * 1000);
+ 	if (IS_ERR(ap806_clks[2])) {
+ 		ret = PTR_ERR(ap806_clks[2]);
+ 		goto fail2;
+@@ -147,8 +147,8 @@ static int ap806_syscon_clk_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id ap806_syscon_of_match[] = {
+-        { .compatible = "marvell,ap806-system-controller", },
+-        {},
++	{ .compatible = "marvell,ap806-system-controller", },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, armada8k_pcie_of_match);
+ 
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index f45e7cabd811..f1f41443e466 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -109,6 +109,7 @@ static int cp110_gate_enable(struct clk_hw *hw)
+ static void cp110_gate_disable(struct clk_hw *hw)
+ {
+ 	struct cp110_gate_clk *gate = to_cp110_gate_clk(hw);
++
+ 	regmap_update_bits(gate->regmap, CP110_PM_CLOCK_GATING_REG,
+ 			   BIT(gate->bit_idx), 0);
+ }
+@@ -129,7 +130,8 @@ static const struct clk_ops cp110_gate_ops = {
+ 	.is_enabled = cp110_gate_is_enabled,
+ };
+ 
+-static struct clk *cp110_register_gate(const char *name, const char *parent_name,
++static struct clk *cp110_register_gate(const char *name,
++				       const char *parent_name,
+ 				       struct regmap *regmap, u8 bit_idx)
+ {
+ 	struct cp110_gate_clk *gate;
+@@ -205,10 +207,10 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-        /* Register the APLL which is the root of the clk tree */
++	/* Register the APLL which is the root of the clk tree */
+ 	of_property_read_string_index(np, "core-clock-output-names",
+                                       CP110_CORE_APLL, &apll_name);
+-        clk = clk_register_fixed_rate(NULL, apll_name, NULL, 0,
++	clk = clk_register_fixed_rate(NULL, apll_name, NULL, 0,
+ 				      1000 * 1000 * 1000);
+ 	if (IS_ERR(clk)) {
+ 		ret = PTR_ERR(clk);
+@@ -217,7 +219,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 
+ 	cp110_clks[CP110_CORE_APLL] = clk;
+ 
+-        /* PPv2 is APLL/3 */
++	/* PPv2 is APLL/3 */
+ 	of_property_read_string_index(np, "core-clock-output-names",
+ 				      CP110_CORE_PPV2, &ppv2_name);
+ 	clk = clk_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
+@@ -228,7 +230,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 
+ 	cp110_clks[CP110_CORE_PPV2] = clk;
+ 
+-        /* EIP clock is APLL/2 */
++	/* EIP clock is APLL/2 */
+ 	of_property_read_string_index(np, "core-clock-output-names",
+ 				      CP110_CORE_EIP, &eip_name);
+ 	clk = clk_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
+@@ -239,7 +241,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 
+ 	cp110_clks[CP110_CORE_EIP] = clk;
+ 
+-        /* Core clock is EIP/2 */
++	/* Core clock is EIP/2 */
+ 	of_property_read_string_index(np, "core-clock-output-names",
+ 				      CP110_CORE_CORE, &core_name);
+ 	clk = clk_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
+@@ -270,7 +272,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		const char *parent, *name;
+ 		int ret;
+ 
+-		ret = of_property_read_string_index(np, "gate-clock-output-names",
++		ret = of_property_read_string_index(np,
++						    "gate-clock-output-names",
+ 						    i, &name);
+ 		/* Reached the end of the list? */
+ 		if (ret < 0)
+@@ -279,13 +282,14 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		if (!strcmp(name, "none"))
+ 			continue;
+ 
+-		switch(i) {
++		switch (i) {
+ 		case CP110_GATE_AUDIO:
+ 		case CP110_GATE_COMM_UNIT:
+ 		case CP110_GATE_EIP150:
+ 		case CP110_GATE_EIP197:
+ 		case CP110_GATE_SLOW_IO:
+-			of_property_read_string_index(np, "gate-clock-output-names",
++			of_property_read_string_index(np,
++						      "gate-clock-output-names",
+ 						      CP110_GATE_MAIN, &parent);
+ 			break;
+ 		case CP110_GATE_NAND:
+@@ -295,7 +299,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 			parent = ppv2_name;
+ 			break;
+ 		case CP110_GATE_SDIO:
+-			of_property_read_string_index(np, "gate-clock-output-names",
++			of_property_read_string_index(np,
++						      "gate-clock-output-names",
+ 						      CP110_GATE_SDMMC, &parent);
+ 			break;
+ 		case CP110_GATE_XOR1:
+@@ -303,14 +308,16 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		case CP110_GATE_PCIE_X1_0:
+ 		case CP110_GATE_PCIE_X1_1:
+ 		case CP110_GATE_PCIE_X4:
+-			of_property_read_string_index(np, "gate-clock-output-names",
++			of_property_read_string_index(np,
++						      "gate-clock-output-names",
+ 						      CP110_GATE_PCIE_XOR, &parent);
+ 			break;
+ 		case CP110_GATE_SATA:
+ 		case CP110_GATE_USB3H0:
+ 		case CP110_GATE_USB3H1:
+ 		case CP110_GATE_USB3DEV:
+-			of_property_read_string_index(np, "gate-clock-output-names",
++			of_property_read_string_index(np,
++						      "gate-clock-output-names",
+ 						      CP110_GATE_SATA_USB, &parent);
+ 			break;
+ 		default:
+@@ -378,8 +385,8 @@ static int cp110_syscon_clk_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id cp110_syscon_of_match[] = {
+-        { .compatible = "marvell,cp110-system-controller0", },
+-        {},
++	{ .compatible = "marvell,cp110-system-controller0", },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, armada8k_pcie_of_match);
+ 
 -- 
-2.8.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
