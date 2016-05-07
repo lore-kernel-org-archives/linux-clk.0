@@ -1,59 +1,123 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <1462910970-1812-28-git-send-email-krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <b1f47282-f70e-4354-9146-9b4b27ba1726@osg.samsung.com>
-Date: Wed, 11 May 2016 08:44:16 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 17:55:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org,
+	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.wolfsonmicro.com
+Subject: Re: [PATCH v3 2/4] clk: arizona: Add clock driver for the Arizona
+ devices
+Message-ID: <20160507005501.GN3492@codeaurora.org>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1452252582-20834-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
-In-Reply-To: <1462910970-1812-28-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452252582-20834-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+I've applied this to clk-next but still have a question, see
+below.
 
-On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
-> This still does not enable them on the board level though.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index dd4d6d752865..ae64cb0a8efd 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -114,6 +114,9 @@
->  			status = "disabled";
->  		};
->  
-> +		/* i2c_0-3 are defined in exynos5.dtsi */
-> +		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
+On 01/08, Charles Keepax wrote:
+> diff --git a/drivers/clk/clk-arizona.c b/drivers/clk/clk-arizona.c
+> new file mode 100644
+> index 0000000..eaf2877
+> --- /dev/null
+> +++ b/drivers/clk/clk-arizona.c
 > +
+> +static int arizona_clk_of_get_pdata(struct arizona *arizona)
+> +{
+> +	const char * const pins[] = { "mclk1", "mclk2" };
+> +	struct clk *mclk;
+> +	int i;
+> +
+> +	if (!of_property_read_bool(arizona->dev->of_node, "clocks"))
+> +		return 0;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(pins); ++i) {
+> +		mclk = of_clk_get_by_name(arizona->dev->of_node, pins[i]);
+> +		if (IS_ERR(mclk))
+> +			return PTR_ERR(mclk);
+> +
+> +		if (clk_get_rate(mclk) == CLK32K_RATE) {
+> +			arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK1 + i;
+> +			arizona->pdata.clk32k_parent = __clk_get_name(mclk);
+> +		}
+> +
+> +		clk_put(mclk);
 
-I don't think these comments are needed. For each DTS, there are usually a lot of
-nodes defined in higher levels of the DT hierarchy but isn't common to mention it.
+Could this be done through assigned parents instead of this rate
+checking stuff? Presumably DT could tell us how the clk tree
+should be configured.
 
-Specially since the mentioned nodes are referenced here by their labels so it is
-implicit that are defined in one of the included DTSI (or dtc will fail to build).
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int arizona_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct arizona *arizona = dev_get_drvdata(pdev->dev.parent);
+> +	struct arizona_clk *clkdata;
+> +	int ret;
+> +
+> +	struct clk_init_data clk32k_init = {
+> +		.name = "arizona-32k",
+> +		.ops = &arizona_32k_ops,
+> +	};
+> +
+> +	if (IS_ENABLED(CONFIG_OF) && !dev_get_platdata(arizona->dev)) {
+> +		ret = arizona_clk_of_get_pdata(arizona);
+> +		if (ret) {
+> +			dev_err(arizona->dev, "Failed parsing clock DT: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	clkdata = devm_kzalloc(&pdev->dev, sizeof(*clkdata), GFP_KERNEL);
+> +	if (!clkdata)
+> +		return -ENOMEM;
+> +
+> +	clkdata->arizona = arizona;
+> +
+> +	switch (arizona->pdata.clk32k_src) {
+> +	case 0:
+> +		arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK2;
+> +		/* Fall through */
+> +	case ARIZONA_32KZ_MCLK1:
+> +	case ARIZONA_32KZ_MCLK2:
+> +	case ARIZONA_32KZ_NONE:
+> +		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
+> +				   ARIZONA_CLK_32K_SRC_MASK,
+> +				   arizona->pdata.clk32k_src - 1);
+> +		break;
+> +	default:
+> +		dev_err(arizona->dev, "Invalid 32kHz clock source: %d\n",
+> +			arizona->pdata.clk32k_src);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (arizona->pdata.clk32k_parent) {
+> +		clk32k_init.num_parents = 1;
+> +		clk32k_init.parent_names = &arizona->pdata.clk32k_parent;
+> +	} else {
+> +		clk32k_init.flags |= CLK_IS_ROOT;
 
-The actual change looks good to me though:
+This flag is going away so I deleted it.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> +	}
+> +
+> +	clkdata->clk32k_hw.init = &clk32k_init;
+> +	clkdata->clk32k = devm_clk_register(&pdev->dev, &clkdata->clk32k_hw);
+> +	if (IS_ERR(clkdata->clk32k)) {
+> +		ret = PTR_ERR(clkdata->clk32k);
+> +		dev_err(arizona->dev, "Failed to register 32k clock: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
 
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
