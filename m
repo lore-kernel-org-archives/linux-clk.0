@@ -1,65 +1,38 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Wed, 11 May 2016 20:14:00 +0200
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for
- Odroid XU
-Message-ID: <20160511181400.GA8265@kozik-lap>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <09dcc771-40e2-8be0-de73-bc1db37d6804@osg.samsung.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Sat, 7 May 2016 08:22:03 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Ian Campbell
+ <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark
+ Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, Jason Cooper <jason@lakedaemon.net>,
+ Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>,
+ Lior Amsalem <alior@marvell.com>, Hanna Hawa <hannah@marvell.com>, Yehuda
+ Yitschak <yehuday@marvell.com>
+Subject: Re: [PATCH v5 0/5] clk: mvebu: clock drivers for Marvell Armada
+ 7K/8K
+Message-ID: <20160507082203.147863e5@free-electrons.com>
+In-Reply-To: <20160506222801.GD3492@codeaurora.org>
+References: <1460648013-31320-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20160506222801.GD3492@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <09dcc771-40e2-8be0-de73-bc1db37d6804@osg.samsung.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 11, 2016 at 11:41:34AM -0400, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > Patchset adds necessary clocks, reorganizes existing stuff and finally
-> > adds Odroid XU support.
-> > 
-> > 
-> > Changes since v2
-> > ================
-> > 1. Got global-ack from Stephen for the clock changes. I think merging
-> >    everything through arm-soc might be the easiest but:
-> >    a. In such case I will prepare a tag with clock changes,
-> >    b. Anyway I will wait for response from Sylwester and Tomasz.
-> > 2. Applied comments from Javier and added his Reviewed-by.
-> > 3. Patch 22: added ack from Rob.
-> > 4. Minor improvements in existing patches.
-> > 5. Five new patches at the end: 23-27 (not reviewed yet).
-> >    Some of them could be squashed with existing ones but existing
-> >    changes got reviews. Although the final Odroid XU DTS works fine but
-> >    in general this is still work-in-progress so I suspect it will grow.
-> >    I am releasing it early following Linux concept. :)
-> > 
-> > Patchset is available at my private repo @github:
-> > https://github.com/krzk/linux.git for-next/odroid-xu-v3
-> > 
-> 
-> I have tested this branch on both an Exynos5422 Odroid XU4 board and an
-> Exynos5800 Peach Pi Chromebook. All the peripherals are working correctly.
-> 
-> So for all patches affecting Exynos54xx/5800 (9,12,13,14,16,19,20,21,25):
-> 
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Hello,
 
-Thanks!
+On Fri, 6 May 2016 15:28:01 -0700, Stephen Boyd wrote:
 
-Best regards,
-Krzysztof
+> Applied the last three with this squashed in to shut up
+> checkpatch.
+
+Thanks a lot, it all looks good!
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
