@@ -1,36 +1,30 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] clk: samsung: exynos5433: add CPU clocks configuration
- data and instantiate CPU clocks
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>
-References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
- <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5745719C.4000106@samsung.com>
-Date: Wed, 25 May 2016 11:34:20 +0200
-MIME-version: 1.0
-In-reply-to: <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 May 2016 17:50:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org,
+	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.wolfsonmicro.com
+Subject: Re: [PATCH v3 1/4] extcon: arizona: Remove enable/disable of 32k
+ clock
+Message-ID: <20160507005046.GM3492@codeaurora.org>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/24/2016 03:19 PM, Bartlomiej Zolnierkiewicz wrote:
-> Add the CPU clocks configuration data and instantiate the CPU clocks
-> type for Exynos5433.
+On 01/08, Charles Keepax wrote:
+> The 32k clock is unconditionally enabled by the MFD core so there is no
+> need to control it from the extcon device, so this patch removes the
+> control of the 32k clock.
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > ---
->  drivers/clk/samsung/clk-exynos5433.c | 72 ++++++++++++++++++++++++++++++++----
->  1 file changed, 64 insertions(+), 8 deletions(-)
-> 
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Applied to clk-next
 
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
