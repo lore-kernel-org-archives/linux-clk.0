@@ -13,57 +13,82 @@ To: Kukjin Kim <kgene@kernel.org>,
 	linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-Date: Sun,  8 May 2016 21:05:47 +0200
-Message-Id: <1462734367-5619-3-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 07/22] clk: samsung: exynos5410: Rename fin_pll from temporary to regular name
+Date: Sun,  8 May 2016 21:05:52 +0200
+Message-Id: <1462734367-5619-8-git-send-email-krzk@kernel.org>
 In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
-Exynos5420 just in case in future these drivers were merged.
+For smooth transition of fin_pll to clk-exynos5410.c from fixed-clock
+driver, initially it was named "fin_pll_new". Fix this here.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/samsung/clk-exynos5410.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 213f19e02870..34c8e96987a1 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,16 +28,25 @@
- #define CLK_SCLK_MMC0		132
- #define CLK_SCLK_MMC1		133
- #define CLK_SCLK_MMC2		134
-+#define CLK_SCLK_USBD300	150
-+#define CLK_SCLK_USBD301	151
-+#define CLK_SCLK_USBPHY300	152
-+#define CLK_SCLK_USBPHY301	153
-+#define CLK_SCLK_PWM		155
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 35f2cb36f7ef..a7d714435307 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -59,27 +59,27 @@ enum exynos5410_plls {
+ };
  
- /* gate clocks */
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
- #define CLK_UART3		260
-+#define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
-+#define CLK_USBH20		365
-+#define CLK_USBD300		366
-+#define CLK_USBD301		367
+ /* list of all parent clocks */
+-PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
+-PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
+-PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
+-PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
+-PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
++PNAME(apll_p)		= { "fin_pll", "fout_apll", };
++PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
++PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
++PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
++PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
  
- #define CLK_NR_CLKS		512
+ PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
+ PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
+ 
+-PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
+-PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
++PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
++PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
+ PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
+ 
+-PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
++PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
+ 			"none", "none", "sclk_mpll_bpll",
+ 			 "none", "none", "sclk_cpll" };
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock
+ 		exynos5x_fixed_rate_ext_clks[] __initdata = {
+-	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
++	FRATE(CLK_FIN_PLL, "fin_pll", NULL, 0, 0),
+ };
+ 
+ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
+@@ -174,15 +174,15 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+-	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
++	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+-	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
++	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
+ 		CPLL_CON0, NULL),
+-	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
++	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
+ 		MPLL_CON0, NULL),
+-	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
++	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+ 		BPLL_CON0, NULL),
+-	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
++	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
+ 		KPLL_CON0, NULL),
+ };
  
 -- 
 2.5.0
