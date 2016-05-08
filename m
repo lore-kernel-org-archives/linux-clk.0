@@ -1,58 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:62236 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752285AbcEKMCm (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 08:02:42 -0400
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Kukjin Kim <kgene@kernel.org>,
 	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 15/18] clk: samsung: exynos5433: Move PLL rates data to init
- section
-Date: Wed, 11 May 2016 14:02:11 +0200
-Message-id: <1462968134-6085-15-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] clk: samsung: exynos5420: Remove useless check for return value of samsung_clk_init
+Date: Sun,  8 May 2016 11:24:56 +0200
+Message-Id: <1462699496-16646-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The arrays with initialization data of PLLs can be moved to initconst
-section because they are referenced only from other initconst-level
-symbols.
+The samsung_clk_init() cannot return NULL. Either it returns allocated
+memory or it panics.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index f202a51ff99b..5993bd5ac6ba 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -693,7 +693,7 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
-  * ATLAS_PLL & APOLLO_PLL & MEM0_PLL & MEM1_PLL & BUS_PLL & MFC_PLL
-  * & MPHY_PLL & G3D_PLL & DISP_PLL & ISP_PLL
-  */
--static const struct samsung_pll_rate_table exynos5443_pll_rates[] = {
-+static const struct samsung_pll_rate_table exynos5443_pll_rates[] __initconst = {
- 	PLL_35XX_RATE(2500000000U, 625, 6,  0),
- 	PLL_35XX_RATE(2400000000U, 500, 5,  0),
- 	PLL_35XX_RATE(2300000000U, 575, 6,  0),
-@@ -744,7 +744,7 @@ static const struct samsung_pll_rate_table exynos5443_pll_rates[] = {
- };
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 92382cef9f90..770c0f007c6b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	exynos5x_soc = soc;
  
- /* AUD_PLL */
--static const struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
-+static const struct samsung_pll_rate_table exynos5443_aud_pll_rates[] __initconst = {
- 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
- 	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
- 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
 -- 
-1.9.1
-
+2.5.0
