@@ -1,63 +1,68 @@
-Return-Path: <stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 25 May 2016 14:54:07 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
- Lucas Stach <l.stach@pengutronix.de>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, mingo@redhat.com, kernel@pengutronix.de,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-In-Reply-To: <alpine.DEB.2.11.1604271212290.3941@nanos>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
- <1461663072.7839.17.camel@pengutronix.de>
- <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
- <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger>
- <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
- <alpine.DEB.2.11.1604271212290.3941@nanos>
-Message-ID: <c3368a10135e304051a56562a1ae0f99@agner.ch>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 10/22] ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+Date: Sun,  8 May 2016 21:05:55 +0200
+Message-Id: <1462734367-5619-11-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-04-27 03:15, Thomas Gleixner wrote:
-> On Wed, 27 Apr 2016, Dong Aisheng wrote:
->> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
->> time init, the irq is still not enabled. It fixes the issue indirectly.
->> See:
->> asmlinkage __visible void __init start_kernel(void)
->> {
->>         /*
->>          * Set up the scheduler prior starting any interrupts (such as the
->>          * timer interrupt). Full topology setup happens at smp_init()
->>          * time - but meanwhile we still have a functioning scheduler.
->>          */
->>         sched_init();
->>         .............
->>         time_init();
->>         ..............
->>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
->>         early_boot_irqs_disabled = false;
->>         local_irq_enable();
->> }
->>
->> The issue can only happen when PLL enable causes a schedule during
->> imx_clock_init().
-> 
-> Calling a function which might sleep _BEFORE_ kernel_init() is wrong. Don't
-> try to work around such an issue by doing magic irq_disabled() checks and busy
-> loops. Fix the call site and be done with it.
+Fro consistency lowercase node labels are used.
 
-What do you mean exactly by fix the call site? The patch I proposed
-(https://lkml.org/lkml/2016/1/29/695) fixes the call site...
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-But I see Dong's argument here, irqs_disabled is the wrong way to figure
-out whether we are in kernel_init. What is the right approach to
-distinguish whether we are allowed to sleep?
-
---
-Stefan
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 233149abfb62..58d3844ef923 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -35,28 +35,28 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		CPU0: cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x0>;
+ 			clock-frequency = <1600000000>;
+ 		};
+ 
+-		CPU1: cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x1>;
+ 			clock-frequency = <1600000000>;
+ 		};
+ 
+-		CPU2: cpu@2 {
++		cpu2: cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x2>;
+ 			clock-frequency = <1600000000>;
+ 		};
+ 
+-		CPU3: cpu@3 {
++		cpu3: cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x3>;
+-- 
+2.5.0
