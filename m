@@ -1,89 +1,107 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v8 10/10] arm: dts: mt2701: Use real clock for UARTs
-Date: Tue, 17 May 2016 13:05:11 +0800
-Message-ID: <1463461511-25019-11-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for Odroid XU
+Date: Sun,  8 May 2016 21:05:45 +0200
+Message-Id: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 171d4da..e79e88f 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -71,12 +71,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -167,7 +161,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -176,7 +171,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -185,7 +181,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -194,7 +191,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
+Patchset adds necessary clocks, reorganizes existing stuff and finally
+adds Odroid XU support.
+
+Merging strategy
+================
+Complicated! The clock dt-bindings and driver changes can go to clock
+tree. However there are three DTS patches in the middle.
+a. This has to go in before adding "fin_pll_new" to clock driver:
+   - [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+
+b. This should go in before renaming "fin_pll_new" back to original name:
+   - [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+   - [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+
+The order of patches in the patchset is really how it should go in
+to reduce any bisectability glitches.
+
+
+Changes since v1
+================
+1. A lot of new patches.
+2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
+3. New clocks, more reorganization.
+4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
+   and more complicated but this might help removing duplications
+   and keeping everything under control.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (22):
+  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+  ARM: dts: exynos: Add fin_pll node for clock driver
+  clk: samsung: exynos5410: Provide fin_pll external fixed clock
+  ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+  ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+  clk: samsung: exynos5410: Rename fin_pll from temporary to regular
+    name
+  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+    nodes
+  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+  ARM: dts: exynos: Move common nodes to exynos5.dtsi
+  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+    exynos5410.dtsi
+  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+  ARM: dts: exynos: Enable UART3 on Exynos5410
+  ARM: dts: exynos: MCT is not an interrupt controller and extend length
+    of iomap
+  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+  ARM: dts: exynos: Add USB to Exynos5410
+  ARM: dts: exynos: Add initial support for Odroid XU board
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |  171 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  | 1718 +++++++++--------
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  166 ++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |   77 +
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   16 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  204 +-
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  | 1981 ++++++++++----------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
+ arch/arm/boot/dts/exynos54xx.dtsi                  |  142 ++
+ drivers/clk/samsung/clk-exynos5410.c               |   52 +
+ include/dt-bindings/clock/exynos5410.h             |   64 +-
+ 17 files changed, 2519 insertions(+), 2208 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
+
 -- 
-1.9.1
+2.5.0
