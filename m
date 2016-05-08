@@ -1,70 +1,149 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 04/11] clk: tegra30: Mark certain clks as critical
-Date: Fri, 27 May 2016 16:38:07 -0400
-Message-ID: <1464381494-27096-5-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 03/16] clk: sunxi-ng: Add fixed factor clock support
+Date: Sun,  8 May 2016 22:01:38 +0200
+Message-Id: <1462737711-10017-4-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Mark the required clks as critical so the core will enable them during
-registration and therefore they will stay on.
+Some clocks in the Allwinner SoCs clock units are direct, fixed,
+multipliers or dividers from their parent.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Add support for such clocks.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/tegra/clk-tegra30.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/clk/sunxi-ng/Makefile           |  2 ++
+ drivers/clk/sunxi-ng/ccu_fixed_factor.c | 42 +++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_fixed_factor.h | 50 +++++++++++++++++++++++++++++++++
+ 3 files changed, 94 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.h
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 9396f4930da7..fc91460ab892 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -948,8 +948,8 @@ static void __init tegra30_pll_init(void)
- 
- 	/* PLLM */
- 	clk = tegra_clk_register_pll("pll_m", "pll_ref", clk_base, pmc_base,
--			    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
--			    &pll_m_params, NULL);
-+			    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE |
-+			    CLK_IS_CRITICAL, &pll_m_params, NULL);
- 	clks[TEGRA30_CLK_PLL_M] = clk;
- 
- 	/* PLLM_OUT1 */
-@@ -1104,7 +1104,8 @@ static void __init tegra30_super_clk_init(void)
- 
- 	/* twd */
- 	clk = clk_register_fixed_factor(NULL, "twd", "cclk_g",
--					CLK_SET_RATE_PARENT, 1, 2);
-+					CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+					1, 2);
- 	clks[TEGRA30_CLK_TWD] = clk;
- 
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra30_clks, NULL);
-@@ -1164,11 +1165,12 @@ static void __init tegra30_periph_clk_init(void)
- 	/* emc */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
-+			       CLK_SET_RATE_NO_REPARENT | CLK_IS_CRITICAL,
- 			       clk_base + CLK_SOURCE_EMC,
- 			       30, 2, 0, &emc_lock);
--	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
--				    57, periph_clk_enb_refcnt);
-+	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base,
-+				    CLK_IS_CRITICAL, 57,
-+				    periph_clk_enb_refcnt);
- 	clks[TEGRA30_CLK_EMC] = clk;
- 
- 	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index bd3461b0f38c..d76276736765 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,2 +1,4 @@
+ obj-y += ccu_common.o
+ obj-y += ccu_reset.o
++
++obj-y += ccu_fixed_factor.o
+diff --git a/drivers/clk/sunxi-ng/ccu_fixed_factor.c b/drivers/clk/sunxi-ng/ccu_fixed_factor.c
+new file mode 100644
+index 000000000000..75df8a854db5
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_fixed_factor.c
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_fixed_factor.h"
++
++static unsigned long ccu_fixed_factor_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct ccu_fixed_factor *fix = hw_to_ccu_fixed_factor(hw);
++
++	return parent_rate * fix->mult / fix->div;
++}
++
++static long ccu_fixed_factor_round_rate(struct clk_hw *hw,
++					unsigned long rate,
++					unsigned long *parent_rate)
++{
++	struct ccu_fixed_factor *fix = hw_to_ccu_fixed_factor(hw);
++
++	return *parent_rate / fix->div * fix->mult;
++}
++
++static int ccu_fixed_factor_set_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
++{
++	return 0;
++}
++
++const struct clk_ops ccu_fixed_factor_ops = {
++	.recalc_rate	= ccu_fixed_factor_recalc_rate,
++	.round_rate	= ccu_fixed_factor_round_rate,
++	.set_rate	= ccu_fixed_factor_set_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_fixed_factor.h b/drivers/clk/sunxi-ng/ccu_fixed_factor.h
+new file mode 100644
+index 000000000000..4e53dbc9d10b
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_fixed_factor.h
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_FIXED_FACTOR_H_
++#define _CCU_FIXED_FACTOR_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++
++struct ccu_fixed_factor {
++	u16			div;
++	u16			mult;
++
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_FIXED_FACTOR(_struct, _name, _parent,			\
++			       _div, _mult, _flags)			\
++	struct ccu_fixed_factor _struct = {				\
++		.div	= _div,						\
++		.mult	= _mult,					\
++		.common	= {						\
++			.hw.init	= SUNXI_HW_INIT(_name,		\
++							_parent,	\
++							&ccu_fixed_factor_ops, \
++							_flags),	\
++		},							\
++	}
++
++static inline struct ccu_fixed_factor *hw_to_ccu_fixed_factor(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_fixed_factor, common);
++}
++
++extern const struct clk_ops ccu_fixed_factor_ops;
++
++#endif /* _CCU_FIXED_FACTOR_H_ */
 -- 
-1.9.1
+2.8.2
