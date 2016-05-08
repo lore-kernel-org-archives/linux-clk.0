@@ -1,109 +1,295 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] clk: renesas: Add r8a7796 CPG Core Clock Definitions
-Date: Wed,  4 May 2016 16:35:41 +0200
-Message-Id: <1462372543-31835-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 10/16] clk: sunxi-ng: Add M-P factor clock support
+Date: Sun,  8 May 2016 22:01:45 +0200
+Message-Id: <1462737711-10017-11-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
-in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
-datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
+Introduce support for the clocks that combine a linear divider and a
+power-of-two based one.
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
-not included, as they are used as internal clock sources only, and never
-referenced from DT.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
+ drivers/clk/sunxi-ng/Makefile |   1 +
+ drivers/clk/sunxi-ng/ccu_mp.c | 158 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_mp.h |  79 +++++++++++++++++++++
+ 3 files changed, 238 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mp.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mp.h
 
-diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 063c50f35ad4..09fce7467784 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -5,6 +5,7 @@ obj-y += ccu_div_table.o
+ obj-y += ccu_fixed_factor.o
+ obj-y += ccu_gate.o
+ obj-y += ccu_m.o
++obj-y += ccu_mp.o
+ obj-y += ccu_mux.o
+ obj-y += ccu_p.o
+ obj-y += ccu_phase.o
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
 new file mode 100644
-index 0000000000000000..1e5942695f0dd057
+index 000000000000..7181188deba7
 --- /dev/null
-+++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-@@ -0,0 +1,69 @@
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -0,0 +1,158 @@
 +/*
-+ * Copyright (C) 2016 Renesas Electronics Corp.
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
 + */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <linux/clk-provider.h>
 +
-+/* r8a7796 CPG Core Clocks */
-+#define R8A7796_CLK_Z			0
-+#define R8A7796_CLK_Z2			1
-+#define R8A7796_CLK_ZR			2
-+#define R8A7796_CLK_ZG			3
-+#define R8A7796_CLK_ZTR			4
-+#define R8A7796_CLK_ZTRD2		5
-+#define R8A7796_CLK_ZT			6
-+#define R8A7796_CLK_ZX			7
-+#define R8A7796_CLK_S0D1		8
-+#define R8A7796_CLK_S0D2		9
-+#define R8A7796_CLK_S0D3		10
-+#define R8A7796_CLK_S0D4		11
-+#define R8A7796_CLK_S0D6		12
-+#define R8A7796_CLK_S0D8		13
-+#define R8A7796_CLK_S0D12		14
-+#define R8A7796_CLK_S1D1		15
-+#define R8A7796_CLK_S1D2		16
-+#define R8A7796_CLK_S1D4		17
-+#define R8A7796_CLK_S2D1		18
-+#define R8A7796_CLK_S2D2		19
-+#define R8A7796_CLK_S2D4		20
-+#define R8A7796_CLK_S3D1		21
-+#define R8A7796_CLK_S3D2		22
-+#define R8A7796_CLK_S3D4		23
-+#define R8A7796_CLK_LB			24
-+#define R8A7796_CLK_CL			25
-+#define R8A7796_CLK_ZB3			26
-+#define R8A7796_CLK_ZB3D2		27
-+#define R8A7796_CLK_ZB3D4		28
-+#define R8A7796_CLK_CR			29
-+#define R8A7796_CLK_CRD2		30
-+#define R8A7796_CLK_SD0H		31
-+#define R8A7796_CLK_SD0			32
-+#define R8A7796_CLK_SD1H		33
-+#define R8A7796_CLK_SD1			34
-+#define R8A7796_CLK_SD2H		35
-+#define R8A7796_CLK_SD2			36
-+#define R8A7796_CLK_SD3H		37
-+#define R8A7796_CLK_SD3			38
-+#define R8A7796_CLK_SSP2		39
-+#define R8A7796_CLK_SSP1		40
-+#define R8A7796_CLK_SSPRS		41
-+#define R8A7796_CLK_RPC			42
-+#define R8A7796_CLK_RPCD2		43
-+#define R8A7796_CLK_MSO			44
-+#define R8A7796_CLK_CANFD		45
-+#define R8A7796_CLK_HDMI		46
-+#define R8A7796_CLK_CSI0		47
-+#define R8A7796_CLK_CSIREF		48
-+#define R8A7796_CLK_CP			49
-+#define R8A7796_CLK_CPEX		50
-+#define R8A7796_CLK_R			51
-+#define R8A7796_CLK_OSC			52
++#include "ccu_gate.h"
++#include "ccu_mp.h"
 +
-+#endif /* __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__ */
++static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
++			     unsigned int max_m, unsigned int max_p,
++			     unsigned int *m, unsigned int *p)
++{
++	unsigned long best_rate = 0;
++	unsigned int best_m = 0, best_p = 0;
++	unsigned int _m, _p;
++
++	for (_p = 0; _p <= max_p; _p++) {
++		for (_m = 1; _m <= max_m; _m++) {
++			unsigned long tmp_rate = (parent >> _p) / _m;
++
++			if (tmp_rate > rate)
++				continue;
++
++			if ((rate - tmp_rate) < (rate - best_rate)) {
++				best_rate = tmp_rate;
++				best_m = _m;
++				best_p = _p;
++			}
++		}
++	}
++
++	*m = best_m;
++	*p = best_p;
++}
++
++static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
++				       unsigned long parent_rate,
++				       unsigned long rate,
++				       void *data)
++{
++	struct ccu_mp *cmp = data;
++	unsigned int m, p;
++
++	ccu_mp_find_best(parent_rate, rate,
++			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
++			 &m, &p);
++
++	return (parent_rate >> p) / m;
++}
++
++static void ccu_mp_disable(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_gate_helper_disable(&cmp->common, cmp->enable);
++}
++
++static int ccu_mp_enable(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_gate_helper_enable(&cmp->common, cmp->enable);
++}
++
++static int ccu_mp_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_gate_helper_is_enabled(&cmp->common, cmp->enable);
++}
++
++static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++	unsigned int m, p;
++	u32 reg;
++
++	reg = readl(cmp->common.base + cmp->common.reg);
++
++	m = reg >> cmp->m.shift;
++	m &= (1 << cmp->m.width) - 1;
++
++	p = reg >> cmp->p.shift;
++	p &= (1 << cmp->p.width) - 1;
++
++	return (parent_rate >> p) / (m + 1);
++}
++
++static int ccu_mp_determine_rate(struct clk_hw *hw,
++				 struct clk_rate_request *req)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_mux_helper_determine_rate(&cmp->common, &cmp->mux,
++					     req, ccu_mp_round_rate, cmp);
++}
++
++static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
++			   unsigned long parent_rate)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++	unsigned long flags;
++	unsigned int m, p;
++	u32 reg;
++
++	ccu_mp_find_best(parent_rate, rate,
++			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
++			 &m, &p);
++
++
++	spin_lock_irqsave(cmp->common.lock, flags);
++
++	reg = readl(cmp->common.base + cmp->common.reg);
++	reg &= ~GENMASK(cmp->m.width + cmp->m.shift, cmp->m.shift);
++	reg &= ~GENMASK(cmp->p.width + cmp->p.shift, cmp->p.shift);
++
++	writel(reg | (p << cmp->p.shift) | ((m - 1) << cmp->m.shift),
++	       cmp->common.base + cmp->common.reg);
++
++	spin_unlock_irqrestore(cmp->common.lock, flags);
++
++	return 0;
++}
++
++static u8 ccu_mp_get_parent(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_mux_helper_get_parent(&cmp->common, &cmp->mux);
++}
++
++static int ccu_mp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_mux_helper_set_parent(&cmp->common, &cmp->mux, index);
++}
++
++const struct clk_ops ccu_mp_ops = {
++	.disable	= ccu_mp_disable,
++	.enable		= ccu_mp_enable,
++	.is_enabled	= ccu_mp_is_enabled,
++
++	.get_parent	= ccu_mp_get_parent,
++	.set_parent	= ccu_mp_set_parent,
++
++	.determine_rate	= ccu_mp_determine_rate,
++	.recalc_rate	= ccu_mp_recalc_rate,
++	.set_rate	= ccu_mp_set_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+new file mode 100644
+index 000000000000..95da9c46cd4f
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mp.h
+@@ -0,0 +1,79 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_MP_H_
++#define _CCU_MP_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++#include "ccu_factor.h"
++#include "ccu_mux.h"
++
++struct ccu_mp {
++	u32			enable;
++
++	struct ccu_factor	m;
++	struct ccu_factor	p;
++	struct ccu_mux_internal	mux;
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_MP_WITH_MUX(_struct, _name, _parents, _reg,		\
++			      _mshift, _mwidth,				\
++			      _pshift, _pwidth,				\
++			      _muxshift, _muxwidth,			\
++			      _flags)					\
++	struct ccu_mp _struct = {					\
++		.m	= SUNXI_CLK_FACTOR(_mshift, _mwidth),		\
++		.p	= SUNXI_CLK_FACTOR(_pshift, _pwidth),		\
++		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
++								_parents, \
++								&ccu_mp_ops, \
++								_flags), \
++		}							\
++	}
++
++#define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				   _mshift, _mwidth,			\
++				   _pshift, _pwidth,			\
++				   _muxshift, _muxwidth,		\
++				   _gate, _flags)			\
++	struct ccu_mp _struct = {					\
++		.enable	= _gate,					\
++		.m	= SUNXI_CLK_FACTOR(_mshift, _mwidth),		\
++		.p	= SUNXI_CLK_FACTOR(_pshift, _pwidth),		\
++		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_GATE,		\
++			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
++								_parents, \
++								&ccu_mp_ops, \
++								_flags), \
++		}							\
++	}
++
++static inline struct ccu_mp *hw_to_ccu_mp(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_mp, common);
++}
++
++extern const struct clk_ops ccu_mp_ops;
++
++#endif /* _CCU_MP_H_ */
 -- 
-1.9.1
+2.8.2
