@@ -1,53 +1,59 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 25 May 2016 14:01:56 +0200
+Date: Sun, 8 May 2016 22:03:08 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	dri-devel@lists.freedesktop.org,
 	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 06/20] drm/sun4i: allow dclk to modify its parent rate
-Message-ID: <20160525120156.GA9232@lukather>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-7-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v65tiUt9FvmJ2RaZdXaAFEznKZZjycO+tZcP-4spOAjObQ@mail.gmail.com>
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 01/11] clk: sunxi: Add display and TCON0 clocks driver
+Message-ID: <20160508200308.GF6167@lukather>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20160506223002.GE3492@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-In-Reply-To: <CAGb2v65tiUt9FvmJ2RaZdXaAFEznKZZjycO+tZcP-4spOAjObQ@mail.gmail.com>
+	protocol="application/pgp-signature"; boundary="VuQYccsttdhdIfIP"
+In-Reply-To: <20160506223002.GE3492@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---SUOF0GtieIMvvwua
+--VuQYccsttdhdIfIP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 17, 2016 at 01:18:44AM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The pixel clock being only a divider of its parent clock, depending on =
-the
-> > resolution, it's expected to change its parent rate. Add that flag so t=
-hat
-> > the clock framework knows it.
->=20
-> This should be squashed into the previous patch. Otherwise, the previous =
-one
-> doesn't really fix things, and probably makes things worse as it assumes =
-the
-> parent clock would be changed.
+Hi Stephen,
 
-Merged the two patches and applied, thanks!
+On Fri, May 06, 2016 at 03:30:02PM -0700, Stephen Boyd wrote:
+> On 04/25, Maxime Ripard wrote:
+> > The A10 SoCs and its relatives has a special clock controller to drive =
+the
+> > display engines (both frontend and backend), that have a lot in common =
+with
+> > the clock to drive the first TCON channel.
+> >=20
+> > Add a driver to support both.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > ---
+>=20
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>=20
+> Unless I can merge this into clk-next? Wasn't clear to me.
+
+Yes, please do, I already sent you the bunch of patches I gathered for
+4.7, and I don't have any others but this one.
+
+Thanks!
 Maxime
 
 --=20
@@ -55,25 +61,25 @@ Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
 
---SUOF0GtieIMvvwua
+--VuQYccsttdhdIfIP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXRZQ0AAoJEBx+YmzsjxAg19EP/A3wXTN8exzOUJG/1v9+Agx6
-0ji5nVu8j7VAyWq700vA+6ftaEzFkhNU0/GnP11gkC0DMI6GXMSCGxZmErYSW/PU
-gsnE+muMicHvXVjcyEqth6b2281VphetBHa8MYo/Mg41rZZY3M0AZRA0uqQiSYSZ
-vkztquzRqlHoCbnVZ5xvEPgH9kx1XXRf3PNdYM0/YIazvpcf2Sc/Vy1JsUdWwPWm
-SiQi8sZ6HLN6QgxnridctLD1sHLfZu/cDVt4MdxNSFoMktPm6Brt9+DTRldLFJ0Q
-I538QtMDKc8mBmnc8YuqOXDhSLpTCvJA5wF3qfqabW+s/XoxrWXO8Y4RxpAuLWBC
-5rje/xUTsDVWhfknWgWo5oT2Lg0FxEZZZEEJMdmiO8oWTv7N8l/DuW9lYddgwYVe
-Bxh7EJfYPZjhvxeiLqBpitPkcXXFIQJn+wQ2BlRtKsBKn1oj/mXjHnk+DRqsLLlU
-KWVIdKQlC64Itul50iwZFkzdeQI/1/oqiHR9DvgVaOsZgyOqEvdnIPF+hnT6qEkg
-SkNg/EgWSK7oMHa4g3Hlu3g7fEbN5g2ww5mgvsscbyc4hxs2r0tks+q9ORl2XRGp
-VNOzIuuqBb5/Fn34mYJtTm+2+4mGEOqpqx46KZA+T1JovnTZqjaHv26HWyFyEIXn
-cmd+Ls+3X4tVyY0zRnAN
-=QByE
+iQIcBAEBAgAGBQJXL5t8AAoJEBx+YmzsjxAgxjMQAJRscW5VbMdQAUp92zlXM5k0
+RIjmeVxfuQImSn71I+/qfXinTf8XRCCnlomiLBKQn69MdG3ge61kcTgRmzmAISxM
+O/2nSbepShCjjw9br89wJKdONFFOP9nEBil+tX4rbRJZ/SI1nx9c1lDUwCO/O7RT
+Zd+rFqdgDDAAUUhkvKbxbbsynAtFDB6nPvb8NMDn3DqPuDpf4dgE6ILqNpSJVZsW
+uGd/8uowBD5gYfCdyPdFHtneAPQv/krBmHU9dRgm/ehWQ5WV7dY0lxFhRG6d/aYc
+XtYWB4Sc3r4W5zJ3sCdrv26wB8BXSsh9cLqGLoP7AqO8cRUX77l8QsOQpEMAcToY
+5+UxlD79aSKT/m+vsspLKCrgA7Dq644HgMFyEmFvBps36L/ICJ00C9XMspRUZYh3
+dzk2Y8Pn7Yi4RjpoIbzwgouPgyelMiI3E1RTm59geinKfVeUQz92eLMpvd335GYQ
+kJuvQdBIm0/zAfdtnQTpLraRlbpXiegco1+hCeGl7Ac+zM30j2s3LvCNDYt6QxS7
+ujHOdu8fFdajbdaIJA/OxZqcHvvKHbp3NlBRGeP40aHMMXxjduxOg1IZeP01qXT4
+5c7rdI+sQAeftNiUzVJMwLfokA95jVpk3FWkJ+GSZ3gBztEjbrfV3SkS9kF1t4Wb
+kqaIf8FH71wpXz0Jlfr7
+=rNod
 -----END PGP SIGNATURE-----
 
---SUOF0GtieIMvvwua--
+--VuQYccsttdhdIfIP--
