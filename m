@@ -1,50 +1,47 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 01/14] clk: twl6040: Correct clk_ops
-Date: Wed, 18 May 2016 16:46:23 +0300
-Message-ID: <1463579196-5484-2-git-send-email-peter.ujfalusi@ti.com>
-In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 15/22] ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+Date: Sun,  8 May 2016 21:06:00 +0200
+Message-Id: <1462734367-5619-16-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the drover only supports prepare callbacks, the use of is_enabled is
-not correct, it should be handling is_prepared.
+The i2c-arbitrator node in exynos5250-snow-common used absolute path to
+reference other node (the i2c parent). Use phandle instead, because the
+depth of the other node may be changed (like moving it under 'soc'
+node).
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/clk-twl6040.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 697c66757400..e167e0bbaff5 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -34,7 +34,7 @@ struct twl6040_clk {
- 	int enabled;
- };
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index ddfe1f558c10..419d59da1751 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -61,7 +61,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
--static int twl6040_bitclk_is_enabled(struct clk_hw *hw)
-+static int twl6040_bitclk_is_prepared(struct clk_hw *hw)
- {
- 	struct twl6040_clk *twl6040_clk = container_of(hw, struct twl6040_clk,
- 						       mcpdm_fclk);
-@@ -66,7 +66,7 @@ static void twl6040_bitclk_unprepare(struct clk_hw *hw)
- }
+-		i2c-parent = <&{/i2c@12CA0000}>;
++		i2c-parent = <&i2c_4>;
  
- static const struct clk_ops twl6040_mcpdm_ops = {
--	.is_enabled = twl6040_bitclk_is_enabled,
-+	.is_prepared = twl6040_bitclk_is_prepared,
- 	.prepare = twl6040_bitclk_prepare,
- 	.unprepare = twl6040_bitclk_unprepare,
- };
+ 		our-claim-gpio = <&gpf0 3 GPIO_ACTIVE_LOW>;
+ 		their-claim-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
 -- 
-2.8.2
+2.5.0
