@@ -1,135 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:42836 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671AbcEMAUW (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2016 20:20:22 -0400
-Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc
- card initialization"
-To: Douglas Anderson <dianders@chromium.org>,
-	Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
-	sboyd@codeaurora.org
-References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
-Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
-	zhengxing@rock-chips.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <78aecdae-7b9b-d687-a8d3-44f476ddd73e@rock-chips.com>
-Date: Fri, 13 May 2016 08:19:54 +0800
-MIME-Version: 1.0
-In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 04/22] clk: samsung: exynos5410: Provide fin_pll external fixed clock
+Date: Sun,  8 May 2016 21:05:49 +0200
+Message-Id: <1462734367-5619-5-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016/5/13 2:03, Douglas Anderson wrote:
-> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
-> before mmc card initialization").
->
-> Though not totally obvious from the commit message nor from the source
-> code, that commit appears to be trying to reset the "_drv" MMC clocks to
-> 90 degrees (note that the "_sample" MMC clocks have a shift of 0 so are
-> not touched).
+Just like clock driver for Exynos542x/5800, provide the fixed clock here
+so the clock bindings and their consumers would be consistent and
+similar.
 
-Hrrr...my fault, anyway it should be reverted in case of new register
-layout in the future.
+However a clock named "fin_pll" is already provided by generic
+fixed-clock and it is both referenced in the clock driver (by name) and
+in DT (by phandle). To make the transition smooth, first introduce the
+new external fixed clock here under temporary, different name and switch
+internal users to it.
 
-Have you found the difference of sample shift between rk3399 and former
-Socs?  Per Mobile Storage Host Controller section, it migrate from
-bit[1:0] to bit[2:1]...
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos5410.c | 42 +++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 13 deletions(-)
 
-Acutally there are three register layouts about sdmmc/sdio tuning
-stuff I found. Although just two types were upstreamed, it still
-caused difficulty. With your patch for dw_mmc to explictly assign
-dr_phase, we keep the phase policy better to be unstood and traced.
-
-Again sorry for commit 7a03fe6f48!
-
->
-> The major problem here is that it doesn't properly reset things.  The
-> phase is a two bit field and the commit only touches one of the two
-> bits.  Thus the commit had the following affect:
-> - phase   0  => phase  90
-> - phase  90  => phase  90
-> - phase 180  => phase 270
-> - phase 270  => phase 270
->
-> Things get even weirder if you happen to have a bootloader that was
-> actually using delay elements (should be no reason to, but you never
-> know), since those are additional bits that weren't touched by the
-> original patch.
->
-> This is unlikely to be what we actually want.  Checking on rk3288-veyron
-> devices, I can see that the bootloader leaves these clocks as:
-> - emmc:  phase 180
-> - sdmmc: phase 90
-> - sdio0: phase 90
->
-> Thus on rk3288-veyron devices the commit we're reverting had the effect
-> of changing the eMMC clock to phase 270.  This probably explains the
-> scattered reports I've heard of eMMC devices not working on some veyron
-> devices when using the upstream kernel.
->
-> The original commit was presumably made because previously the kernel
-> didn't touch the "_drv" phase at all and relied on whatever value was
-> there when the kernel started.  If someone was using a bootloader that
-> touched the "_drv" phase then, indeed, we should have code in the kernel
-> to fix that.  ...and also, to get ideal timings, we should also have the
-> kernel change the phase depending on the speed mode.  In fact, that's
-> the subject of a recent patch I posted at
-> <https://patchwork.kernel.org/patch/9075141/>.
->
-> Ideally, we should take both the patch posted to dw_mmc and this
-> revert.  Since those will likely go through different trees, here I
-> describe behavior with the combos:
->
-> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
->    + other cases; might break someone with a strange bootloader that
->    sets the phase to 0 or one that uses delay elements (pretty
->    unpredicable what would happen in that case).
-> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
->    totally override the broken patch and fix everything.
-> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
->    any defaults from the clock code doesn't mattery.
->
-> Fixes: 7a03fe6f48f3 ("clk: rockchip: reset init state before mmc card initialization")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->  drivers/clk/rockchip/clk-mmc-phase.c | 11 -----------
->  1 file changed, 11 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-> index bc856f21f6b2..5b18265c2306 100644
-> --- a/drivers/clk/rockchip/clk-mmc-phase.c
-> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
-> @@ -41,8 +41,6 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
->  #define ROCKCHIP_MMC_DEGREE_MASK 0x3
->  #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
->  #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-> -#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
-> -#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
->
->  #define PSECS_PER_SEC 1000000000000LL
->
-> @@ -162,15 +160,6 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->  	mmc_clock->reg = reg;
->  	mmc_clock->shift = shift;
->
-> -	/*
-> -	 * Assert init_state to soft reset the CLKGEN
-> -	 * for mmc tuning phase and degree
-> -	 */
-> -	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
-> -		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
-> -				     ROCKCHIP_MMC_INIT_STATE_RESET,
-> -				     mmc_clock->shift), mmc_clock->reg);
-> -
->  	clk = clk_register(NULL, &mmc_clock->hw);
->  	if (IS_ERR(clk))
->  		kfree(mmc_clock);
->
-
-
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index d5d5dcabc4a9..35f2cb36f7ef 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -59,23 +59,29 @@ enum exynos5410_plls {
+ };
+ 
+ /* list of all parent clocks */
+-PNAME(apll_p)		= { "fin_pll", "fout_apll", };
+-PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
+-PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
+-PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
+-PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
++PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
++PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
++PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
++PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
++PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
+ 
+ PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
+ PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
+ 
+-PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
+-PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
++PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
++PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
+ PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
+ 
+-PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
++PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
+ 			"none", "none", "sclk_mpll_bpll",
+ 			 "none", "none", "sclk_cpll" };
+ 
++/* fixed rate clocks generated outside the soc */
++static struct samsung_fixed_rate_clock
++		exynos5x_fixed_rate_ext_clks[] __initdata = {
++	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
++};
++
+ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
+ 	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+@@ -168,18 +174,24 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+-	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
++	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
+ 		APLL_CON0, NULL),
+-	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
++	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
+ 		CPLL_CON0, NULL),
+-	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
++	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
+ 		MPLL_CON0, NULL),
+-	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
++	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
+ 		BPLL_CON0, NULL),
+-	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
++	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
+ 		KPLL_CON0, NULL),
+ };
+ 
++/* Same as in Exynos5420 */
++static const struct of_device_id ext_clk_match[] __initconst = {
++	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
++	{ },
++};
++
+ /* register exynos5410 clocks */
+ static void __init exynos5410_clk_init(struct device_node *np)
+ {
+@@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+ 
++	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
++			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
++			ext_clk_match);
++
+ 	samsung_clk_register_pll(ctx, exynos5410_plls,
+ 			ARRAY_SIZE(exynos5410_plls), reg_base);
+ 
 -- 
-Best Regards
-Shawn Lin
-
+2.5.0
