@@ -1,37 +1,262 @@
-Return-Path: <dianders@google.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 11/16] clk: sunxi-ng: Add N-K-factor clock support
+Date: Sun,  8 May 2016 22:01:46 +0200
+Message-Id: <1462737711-10017-12-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Vishnu Patekar <vishnupatekar0510@gmail.com>,
+ Andre Przywara <andre.przywara@arm.com>, Hans de Goede <hdegoede@redhat.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
-References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
-Date: Fri, 13 May 2016 12:43:25 -0700
-Message-ID: <CAD=FV=UjPy-n-53nhxr7yC1t1j+eD6pRt0_i5_6hhY=Rnz6xsw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: mark rk3399 GIC clocks as critical
-From: Doug Anderson <dianders@chromium.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>, Xing Zheng <zhengxing@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Brian,
+Introduce support for clocks that use a combination of two linear
+multipliers.
 
-On Fri, May 13, 2016 at 11:42 AM, Brian Norris <briannorris@chromium.org> wrote:
-> We never want to kill the GIC.
->
-> Noticed when making other clock fixups, and seeing the newly-constructed
-> clock tree try to disable cpll, where we had this parent structure:
->
->   aclk_gic <------\
->                   |--- aclk_gic_pre <-- cpll <-- pll_cpll
->   aclk_gic_noc <--/
->
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
->  drivers/clk/rockchip/clk-rk3399.c | 2 ++
->  1 file changed, 2 insertions(+)
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Makefile |   1 +
+ drivers/clk/sunxi-ng/ccu_nk.c | 147 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_nk.h |  44 +++++++++++++
+ 3 files changed, 192 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_nk.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_nk.h
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 09fce7467784..e29ddae99653 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -7,5 +7,6 @@ obj-y += ccu_gate.o
+ obj-y += ccu_m.o
+ obj-y += ccu_mp.o
+ obj-y += ccu_mux.o
++obj-y += ccu_nk.o
+ obj-y += ccu_p.o
+ obj-y += ccu_phase.o
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+new file mode 100644
+index 000000000000..46eede3e986e
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -0,0 +1,147 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/rational.h>
++
++#include "ccu_gate.h"
++#include "ccu_nk.h"
++
++void ccu_nk_find_best(unsigned long parent, unsigned long rate,
++		      unsigned int max_n, unsigned int max_k,
++		      unsigned int *n, unsigned int *k)
++{
++	unsigned long best_rate = 0;
++	unsigned int best_k = 0, best_n =0;
++	unsigned int _k, _n;
++
++	for (_k = 0; _k <= max_k; _k++) {
++		for (_n = 0; _n <= max_n; _n++) {
++			unsigned long tmp_rate = parent * _n * _k;
++
++			if (tmp_rate > rate)
++				continue;
++
++			if ((rate - tmp_rate) < (rate - best_rate)) {
++				best_rate = tmp_rate;
++				best_k = _k;
++				best_n = _n;
++			}
++		}
++	}
++
++	*k = best_k;
++	*n = best_n;
++}
++
++static void ccu_nk_disable(struct clk_hw *hw)
++{
++	struct ccu_nk *nk = hw_to_ccu_nk(hw);
++
++	return ccu_gate_helper_disable(&nk->common, nk->enable);
++}
++
++static int ccu_nk_enable(struct clk_hw *hw)
++{
++	struct ccu_nk *nk = hw_to_ccu_nk(hw);
++
++	return ccu_gate_helper_enable(&nk->common, nk->enable);
++}
++
++static int ccu_nk_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_nk *nk = hw_to_ccu_nk(hw);
++
++	return ccu_gate_helper_is_enabled(&nk->common, nk->enable);
++}
++
++static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct ccu_nk *nk = hw_to_ccu_nk(hw);
++	unsigned long rate, n, k;
++	u32 reg;
++
++	reg = readl(nk->common.base + nk->common.reg);
++
++	n = reg >> nk->n.shift;
++	n &= (1 << nk->n.width) - 1;
++
++	k = reg >> nk->k.shift;
++	k &= (1 << nk->k.width) - 1;
++
++	rate = parent_rate * (n + 1) * (k + 1);
++
++	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate / nk->fixed_post_div;
++
++	return rate;
++}
++
++static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long *parent_rate)
++{
++	struct ccu_nk *nk = hw_to_ccu_nk(hw);
++	unsigned int n, k;
++
++	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate * nk->fixed_post_div;
++
++	ccu_nk_find_best(*parent_rate, rate,
++			 1 << nk->n.width, 1 << nk->k.width,
++			 &n, &k);
++
++	rate = *parent_rate * n * k;
++	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate / nk->fixed_post_div;
++
++	return rate;
++}
++
++static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
++			   unsigned long parent_rate)
++{
++	struct ccu_nk *nk = hw_to_ccu_nk(hw);
++	unsigned long flags;
++	unsigned int n, k;
++	u32 reg;
++
++	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate * nk->fixed_post_div;
++
++	ccu_nk_find_best(parent_rate, rate,
++			 1 << nk->n.width, 1 << nk->k.width,
++			 &n, &k);
++
++	spin_lock_irqsave(nk->common.lock, flags);
++
++	reg = readl(nk->common.base + nk->common.reg);
++	reg &= ~GENMASK(nk->n.width + nk->n.shift, nk->n.shift);
++	reg &= ~GENMASK(nk->k.width + nk->k.shift, nk->k.shift);
++
++	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
++	       nk->common.base + nk->common.reg);
++
++	spin_unlock_irqrestore(nk->common.lock, flags);
++
++	ccu_helper_wait_for_lock(&nk->common, nk->lock);
++
++	return 0;
++}
++
++const struct clk_ops ccu_nk_ops = {
++	.disable	= ccu_nk_disable,
++	.enable		= ccu_nk_enable,
++	.is_enabled	= ccu_nk_is_enabled,
++
++	.recalc_rate	= ccu_nk_recalc_rate,
++	.round_rate	= ccu_nk_round_rate,
++	.set_rate	= ccu_nk_set_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.h b/drivers/clk/sunxi-ng/ccu_nk.h
+new file mode 100644
+index 000000000000..cdbbd45815c6
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_nk.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_NK_H_
++#define _CCU_NK_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++#include "ccu_factor.h"
++
++struct ccu_nk {
++	u16			reg;
++	u32			enable;
++	u32			lock;
++
++	struct ccu_factor	n;
++	struct ccu_factor	k;
++
++	unsigned int		fixed_post_div;
++
++	struct ccu_common	common;
++};
++
++static inline struct ccu_nk *hw_to_ccu_nk(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_nk, common);
++}
++
++extern const struct clk_ops ccu_nk_ops;
++
++#endif /* _CCU_NK_H_ */
+-- 
+2.8.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
