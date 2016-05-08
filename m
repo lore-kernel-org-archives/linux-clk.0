@@ -1,58 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:52408 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161029AbcE3NOV (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2016 09:14:21 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Yangbo Lu <yangbo.lu@nxp.com>, Scott Wood <oss@buserror.net>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>
-Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Mon, 30 May 2016 15:13:39 +0200
-Message-ID: <11214004.Ypipe5qZMl@wuerfel>
-In-Reply-To: <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com> <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Xing Zheng <zhengxing@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, zhangqing <zhangqing@rock-chips.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after parent changes
+Date: Sun, 08 May 2016 22:34:41 +0200
+Message-ID: <3005442.vcrD3GKCxP@phil>
+In-Reply-To: <CAD=FV=WegPb3AMsUM+Rx_uZ3sMCGUFz-vEh_8WDTqTp1MHWOUQ@mail.gmail.com>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de> <CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com> <CAD=FV=WegPb3AMsUM+Rx_uZ3sMCGUFz-vEh_8WDTqTp1MHWOUQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, May 26, 2016 9:44:10 AM CEST Ulf Hansson wrote:
-> On 26 May 2016 at 06:05, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> > Hi Uffe,
-> >
-> > Could we merge this patchset? ...
-> > It has been a long time to wait for Arnd's response...
-> >
-> > Thanks a lot.
-> >
-> >
+Am Donnerstag, 5. Mai 2016, 17:49:39 schrieb Doug Anderson:
+> Hi,
 > 
-> As we are still in the merge window I won't queue anything but fixes.
-> Let's give Arnd another week or so to respond.
+> On Thu, May 5, 2016 at 5:35 PM, Doug Anderson <dianders@chromium.org> wrote:
+> > I guess we don't care about errors here?
+> > 
+> > ...maybe (?) we could ignore errors if we validated this rate change
+> > with PRE_RATE_CHANGE before attempting to change the parent clock, but
+> > I don't see the code doing this unless I missed it.
+> 
+> One other related thought: it seems like there should be code
+> _somewhere_ that decides whether to adjust the child dividers before
+> or after the parent clock changes.  Specifically if the parent clock
+> is increasing in speed we probably want to slow down the child clock
+> ahead of the parent's increase.  I don't see such code here, but again
+> I'm pretty good at missing things unless they are slapping me in the
+> face.  ;)
 
-I've got a patch series now that implements a method for matching
-the soc ID, see the following emails.
+yep, but that problem of a divider exceeding a requested rate temporarily
+exist currently already, even before this change ;-)
 
-	Arnd
+Recently we did fix it on a small-scale for composite-clocks though [0].
 
+
+Heiko
+
+
+[0] https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/drivers/clk/clk-composite.c?h=clk-next&id=9e52cec04fd3b9b686f9256151b47fe61f7c28ef
