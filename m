@@ -1,213 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:55083 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754874AbcE3O6X (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2016 10:58:23 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Yangbo Lu <yangbo.lu@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Scott Wood <oss@buserror.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH 1/4]  base: soc: introduce soc_device_match() interface
-Date: Mon, 30 May 2016 16:57:55 +0200
-Message-ID: <4811326.1KLIei2jcl@wuerfel>
-In-Reply-To: <6032641.cjSseEG2PF@wuerfel>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com> <6032641.cjSseEG2PF@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+Date: Sun,  8 May 2016 21:05:47 +0200
+Message-Id: <1462734367-5619-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, May 30, 2016 3:14:38 PM CEST Arnd Bergmann wrote:
-> We keep running into cases where device drivers want to know the exact
-> version of the SoC a they are currently running on. In the past, this
-> has usually been done through a vendor specific API that can be called
-> by a driver, or by directly accessing some kind of version register
-> that is not part of the device itself but that belongs to a global
-> register area of the chip.
-> 
-> Common reasons for doing this include:
-> 
-> - A machine is not using devicetree or similar for passing data
->   about on-chip devices, but just announces their presence using
->   boot-time platform devices, and the machine code itself does
->   not care about the revision.
-> 
-> - There is existing firmware or boot loaders with existing DT
->   binaries with generic compatible strings that do not identify
->   the particular revision of each device, but the driver knows
->   which SoC revisions include which part
-> 
-> - A prerelease version of a chip has some quirks and we are
->   using the same version of the bootloader and the DT blob
->   on both the prerelease and the final version. An update of
->   the DT binding seems inappropriate because that would involve
->   maintaining multiple copies of the dts and/or bootloader.
-> 
-> This introduces the soc_device_match() interface that is meant
-> to work like of_match_node() but instead of identifying the
-> version of a device, it identifies the SoC itself using a
-> vendor-agnostic interface.
-> 
-> Unlike soc_device_match(), we do not do an exact string compare
-> but instead use glob_match() to allow wildcards in strings.
+Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
+Exynos5420 just in case in future these drivers were merged.
 
-I'm sorry the series introduced build failures (I had done some changes
-after testing), here is a quick fixup. I'll resend the whole thing
-after someone has looked at it as none of the changes below should
-have any influence on the review.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-	Arnd
-
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index e9623c6674a5..c38573249777 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -173,7 +173,7 @@ module_exit(soc_bus_unregister);
- static int soc_device_match_one(struct device *dev, void *arg)
- {
- 	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
--	struct soc_device_attribute *match = arg;
-+	const struct soc_device_attribute *match = arg;
- 
- 	if (match->machine && !glob_match(match->machine, soc_dev->attr->machine))
- 		return 0;
-@@ -208,7 +208,7 @@ static int soc_device_match_one(struct device *dev, void *arg)
-  * soc_device_attribute to pass a structure or function pointer for
-  * each entry.
-  */
--struct soc_device_attribute *soc_device_match(struct soc_device_attribute *matches)
-+const struct soc_device_attribute *soc_device_match(const struct soc_device_attribute *matches)
- {
- 	struct device *dev;
- 	int ret;
-@@ -219,7 +219,7 @@ struct soc_device_attribute *soc_device_match(struct soc_device_attribute *match
- 			return NULL;
- 
- 		dev = NULL;
--		ret = bus_for_each_dev(&soc_bus_type, dev, matches,
-+		ret = bus_for_each_dev(&soc_bus_type, dev, (void *)matches,
- 					 soc_device_match_one);
- 	}
- 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index 1d4814fe4cb2..a7b8b05a13e8 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -19,6 +19,8 @@
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/mmc/host.h>
-+#include <linux/sys_soc.h>
-+
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
- 
-@@ -75,7 +77,6 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
--	u16 ret;
- 	int shift = (spec_reg & 0x2) * 8;
- 
- 	if (spec_reg == SDHCI_HOST_VERSION)
-@@ -565,7 +566,7 @@ static const struct sdhci_pltfm_data sdhci_esdhc_le_pdata = {
- };
- 
- #define T4240_HOST_VER ((VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200)
--static const struct soc_device_attribute esdhc_t4240_quirk = {
-+static const struct soc_device_attribute esdhc_t4240_quirk[] = {
- 	/* T4240 revision < 0x20 uses vendor version 23, SDHCI version 200 */
- 	{ .soc_id = "T4*(0x824000)", .revision = "0x[01]?",
- 	  .data = (void *)(uintptr_t)(T4240_HOST_VER) },
-@@ -576,6 +577,7 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host;
- 	struct sdhci_esdhc *esdhc;
-+	u32 host_ver;
- 
- 	pltfm_host = sdhci_priv(host);
- 	esdhc = sdhci_pltfm_priv(pltfm_host);
-@@ -583,9 +585,9 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
- 
- 	if (of_device_is_compatible(pdev->dev.of_node, "fsl,t4240-esdhc")) {
--		struct soc_device_attribute *match;
-+		const struct soc_device_attribute *match;
- 
--		match = soc_device_match(&esdhc_t4240_quirk);
-+		match = soc_device_match(esdhc_t4240_quirk);
- 		if (match)
- 			host_ver = (uintptr_t)match->data;
- 	}
-diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-index 2f30698f5bcf..476969644bed 100644
---- a/drivers/soc/fsl/guts.c
-+++ b/drivers/soc/fsl/guts.c
-@@ -34,14 +34,6 @@ static u32 fsl_guts_get_svr(struct guts *guts)
- 		return ioread32be(guts->regs + GUTS_SVR);
- }
- 
--static u32 fsl_guts_get_pvr(struct guts *guts)
--{
--	if (guts->little_endian)
--		return ioread32(guts->regs + GUTS_PVR);
--	else
--		return ioread32be(guts->regs + GUTS_PVR);
--}
--
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 213f19e02870..34c8e96987a1 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,5 +1,6 @@
  /*
-  * Table for matching compatible strings, for device tree
-  * guts node, for Freescale QorIQ SOCs.
-@@ -76,13 +68,15 @@ static const struct of_device_id fsl_guts_of_match[] = {
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2016 Krzysztof Kozlowski
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -27,16 +28,25 @@
+ #define CLK_SCLK_MMC0		132
+ #define CLK_SCLK_MMC1		133
+ #define CLK_SCLK_MMC2		134
++#define CLK_SCLK_USBD300	150
++#define CLK_SCLK_USBD301	151
++#define CLK_SCLK_USBPHY300	152
++#define CLK_SCLK_USBPHY301	153
++#define CLK_SCLK_PWM		155
  
- static void fsl_guts_init(struct device *dev, struct guts *guts)
- {
--	const struct of_device_id *id;
- 	u32 svr = fsl_guts_get_svr(guts);
-+	const struct of_device_id *id;
-+	const char *socname;
+ /* gate clocks */
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
+ #define CLK_UART3		260
++#define CLK_PWM			279
+ #define CLK_MCT			315
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
++#define CLK_USBH20		365
++#define CLK_USBD300		366
++#define CLK_USBD301		367
  
- 	guts->soc.family = "NXP QorIQ";
- 	id = of_match_node(fsl_guts_of_match, dev->of_node);
--	guts->soc.soc_id = devm_kasprintf(dev, "%s (ver 0x%06x)" id->data,
--					  svr >> 8;
-+	socname = id->data;
-+	guts->soc.soc_id = devm_kasprintf(dev, GFP_KERNEL, "%s (ver 0x%06x)",
-+					  socname, svr >> 8);
- 	guts->soc.revision = devm_kasprintf(dev, GFP_KERNEL, "0x%02x",
- 					    svr & 0xff);
- }
-diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
-index 02c48c76052b..3dfc8714a88c 100644
---- a/include/linux/sys_soc.h
-+++ b/include/linux/sys_soc.h
-@@ -36,6 +36,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
-  */
- struct device *soc_device_to_device(struct soc_device *soc);
+ #define CLK_NR_CLKS		512
  
--struct soc_device_attribute *soc_device_match(struct soc_device_attribute *matches);
-+const struct soc_device_attribute *soc_device_match(const struct soc_device_attribute *matches);
- 
- #endif /* __SOC_BUS_H */
-
+-- 
+2.5.0
