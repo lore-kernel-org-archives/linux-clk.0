@@ -1,39 +1,51 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 15/22] ARM: dts: exynos: Use phandle to get parent node
- in exynos5250-snow
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+Date: Sun,  8 May 2016 21:05:48 +0200
+Message-Id: <1462734367-5619-4-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-16-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <a978eba1-5dc9-0b20-d131-b180047cc143@osg.samsung.com>
-Date: Mon, 9 May 2016 17:29:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-16-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+For consistency between Exynos5410 and Exynos542x/5800 switch to similar
+way of defining fin_pll/oscclk. Add a node early, before implementing
+this in driver to preserve bisectability.
 
-On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> The i2c-arbitrator node in exynos5250-snow-common used absolute path to
-> reference other node (the i2c parent). Use phandle instead, because the
-> depth of the other node may be changed (like moving it under 'soc'
-> node).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index 0f6429e1b75c..d7d658deeff4 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -31,6 +31,13 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
++		};
++	};
++
+ 	firmware@02037000 {
+ 		compatible = "samsung,secure-firmware";
+ 		reg = <0x02037000 0x1000>;
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.5.0
