@@ -1,102 +1,341 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11187 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203AbcEENR0 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2016 09:17:26 -0400
-Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
-To: Dmitry Osipenko <digetx@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"Alexandre Courbot" <gnurou@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>
-References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <572B47DE.1090804@nvidia.com>
-Date: Thu, 5 May 2016 14:17:18 +0100
-MIME-Version: 1.0
-In-Reply-To: <1460900051-3065-1-git-send-email-digetx@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 05/16] clk: sunxi-ng: Add mux clock support
+Date: Sun,  8 May 2016 22:01:40 +0200
+Message-Id: <1462737711-10017-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Some clocks in the Allwinner SoCs clocks unit are just muxes.
 
-On 17/04/16 14:34, Dmitry Osipenko wrote:
-> clk_get_rate() takes a mutex, hence cannot be used while IRQ's been
-> disabled. Replace it with a locked version.
-> 
-> [    3.430853] [<c0850fcc>] (dump_stack) from [<c00411f8>] (__schedule_bug+0x50/0x64)
-> [    3.431079] [<c00411f8>] (__schedule_bug) from [<c08553a8>] (__schedule+0x5c8/0x688)
-> [    3.431453] [<c08553a8>] (__schedule) from [<c08558f4>] (schedule_preempt_disabled+0x24/0x34)
-> [    3.431835] [<c08558f4>] (schedule_preempt_disabled) from [<c0856f24>] (__mutex_lock_slowpath+0xbc/0x170)
-> [    3.432204] [<c0856f24>] (__mutex_lock_slowpath) from [<c0857024>] (mutex_lock+0x4c/0x50)
-> [    3.432427] [<c0857024>] (mutex_lock) from [<c0610368>] (clk_prepare_lock+0x88/0xfc)
-> [    3.432800] [<c0610368>] (clk_prepare_lock) from [<c0611034>] (clk_get_rate+0xc/0x60)
-> [    3.433177] [<c0611034>] (clk_get_rate) from [<c034f10c>] (tegra_pmc_enter_suspend_mode+0x188/0x20c)
-> [    3.433580] [<c034f10c>] (tegra_pmc_enter_suspend_mode) from [<c0020d48>] (tegra_idle_lp2_last+0xc/0x40)
-> [    3.433795] [<c0020d48>] (tegra_idle_lp2_last) from [<c0021e1c>] (tegra20_idle_lp2_coupled+0x118/0x1fc)
-> [    3.434171] [<c0021e1c>] (tegra20_idle_lp2_coupled) from [<c055ec24>] (cpuidle_enter_state+0x3c/0x160)
-> [    3.434551] [<c055ec24>] (cpuidle_enter_state) from [<c0560ce8>] (cpuidle_enter_state_coupled+0x3dc/0x3f4)
-> [    3.434959] [<c0560ce8>] (cpuidle_enter_state_coupled) from [<c0055f1c>] (cpu_startup_entry+0x240/0x288)
-> [    3.435340] [<c0055f1c>] (cpu_startup_entry) from [<c0b29c84>] (start_kernel+0x3b4/0x3c0)
-> [    3.435557] [<c0b29c84>] (start_kernel) from [<00008074>] (0x8074)
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+However, those muxes might also be found in some other complicated clocks
+that would benefit from the code in there to deal with "advanced" features,
+like pre-dividers.
 
-Thanks for the report. I have been unable to reproduce this, but then I
-don't see my tegra20 entering LP2 during cpuidle. I did force my tegra20
-into LP2 during suspend which will exercise the same code but I did not
-trigger this either. However, from looking at the code it does appear
-that we could hit this.
+Introduce a set of helpers to reduce the code duplication in such cases.
 
-> ---
->  drivers/clk/tegra/clk-tegra-pmc.c | 9 +++++++++
->  drivers/soc/tegra/pmc.c           | 2 +-
->  include/linux/clk/tegra.h         | 2 ++
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-> index 91377ab..1ccf414 100644
-> --- a/drivers/clk/tegra/clk-tegra-pmc.c
-> +++ b/drivers/clk/tegra/clk-tegra-pmc.c
-> @@ -78,6 +78,8 @@ static struct pmc_clk_init_data pmc_clks[] = {
->  	PMC_CLK(3, 22, 18),
->  };
->  
-> +static struct clk_hw *pclk_hw;
-> +
->  void __init tegra_pmc_clk_init(void __iomem *pmc_base,
->  				struct tegra_clk *tegra_clks)
->  {
-> @@ -112,6 +114,9 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
->  		clk_register_clkdev(clk, data->dev_name, data->gate_name);
->  	}
->  
-> +	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
-> +	pclk_hw = __clk_get_hw(*dt_clk);
-> +
->  	/* blink */
->  	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
->  	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
-> @@ -129,3 +134,7 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
->  	*dt_clk = clk;
->  }
->  
-> +unsigned long tegra_pmc_get_pclk_rate(void)
-> +{
-> +	return clk_hw_get_rate(pclk_hw);
-> +}
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Makefile  |   1 +
+ drivers/clk/sunxi-ng/ccu_mux.c | 187 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_mux.h |  80 +++++++++++++++++-
+ 3 files changed, 264 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mux.c
 
-Ideally, it would be great if we did not need to add another custom API
-for this, but I did not find anything in the CCF that would allow us to
-avoid but that was only a quick look. However, we could ask the CCF folks.
-
-What I plan to do next is to understand if the pclk is likely to change.
-I know that it comes from one of the plls but I am not sure if we ever
-change the rate. If not we may be able to move this to probe time and
-avoid this.
-
-Cheers
-Jon
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index fc01127b3b45..aa5c411ff8ea 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -3,3 +3,4 @@ obj-y += ccu_reset.o
+ 
+ obj-y += ccu_fixed_factor.o
+ obj-y += ccu_gate.o
++obj-y += ccu_mux.o
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+new file mode 100644
+index 000000000000..cb54a8931de3
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -0,0 +1,187 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_gate.h"
++#include "ccu_mux.h"
++
++void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
++					     struct ccu_mux_internal *cm,
++					     int parent_index,
++					     unsigned long *parent_rate)
++{
++	u8 prediv = 1;
++	u32 reg;
++
++	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
++	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
++		return;
++
++	reg = readl(common->base + common->reg);
++	if (parent_index < 0) {
++		parent_index = reg >> cm->shift;
++		parent_index &= (1 << cm->width) - 1;
++	}
++
++	if (common->features & CCU_FEATURE_FIXED_PREDIV)
++		if (parent_index == cm->fixed_prediv.index)
++			prediv = cm->fixed_prediv.div;
++
++	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
++		if (parent_index == cm->variable_prediv.index) {
++			u8 div;
++
++			div = reg >> cm->variable_prediv.shift;
++			div &= (1 << cm->variable_prediv.width) - 1;
++			prediv = div + 1;
++		}
++
++	*parent_rate = *parent_rate / prediv;
++}
++
++int ccu_mux_helper_determine_rate(struct ccu_common *common,
++				  struct ccu_mux_internal *cm,
++				  struct clk_rate_request *req,
++				  unsigned long (*round)(struct ccu_mux_internal *,
++							 unsigned long,
++							 unsigned long,
++							 void *),
++				  void *data)
++{
++	unsigned long best_parent_rate = 0, best_rate = 0;
++	struct clk_hw *best_parent, *hw = &common->hw;
++	unsigned int i;
++
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		unsigned long tmp_rate, parent_rate;
++		struct clk_hw *parent;
++
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (!parent)
++			continue;
++
++		parent_rate = clk_hw_get_rate(parent);
++		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
++							&parent_rate);
++
++		tmp_rate = round(cm, clk_hw_get_rate(parent), req->rate, data);
++		if (tmp_rate == req->rate) {
++			best_parent = parent;
++			best_parent_rate = parent_rate;
++			best_rate = tmp_rate;
++			goto out;
++		}
++
++		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
++			best_rate = tmp_rate;
++			best_parent_rate = parent_rate;
++			best_parent = parent;
++		}
++	}
++
++	if (best_rate == 0)
++		return -EINVAL;
++
++out:
++	req->best_parent_hw = best_parent;
++	req->best_parent_rate = best_parent_rate;
++	req->rate = best_rate;
++	return 0;
++}
++
++u8 ccu_mux_helper_get_parent(struct ccu_common *common,
++			     struct ccu_mux_internal *cm)
++{
++	u32 reg;
++	u8 parent;
++
++	reg = readl(common->base + common->reg);
++	parent = reg >> cm->shift;
++	parent &= (1 << cm->width) - 1;
++
++	return parent;
++}
++
++int ccu_mux_helper_set_parent(struct ccu_common *common,
++			      struct ccu_mux_internal *cm,
++			      u8 index)
++{
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + common->reg);
++	reg &= ~GENMASK(cm->width + cm->shift, cm->shift);
++	writel(reg | (index << cm->shift), common->base + common->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
++
++static void ccu_mux_disable(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_gate_helper_disable(&cm->common, cm->enable);
++}
++
++static int ccu_mux_enable(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_gate_helper_enable(&cm->common, cm->enable);
++}
++
++static int ccu_mux_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_gate_helper_is_enabled(&cm->common, cm->enable);
++}
++
++static u8 ccu_mux_get_parent(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_mux_helper_get_parent(&cm->common, &cm->mux);
++}
++
++static int ccu_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_mux_helper_set_parent(&cm->common, &cm->mux, index);
++}
++
++static unsigned long ccu_mux_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
++						&parent_rate);
++
++	return parent_rate;
++}
++
++const struct clk_ops ccu_mux_ops = {
++	.disable	= ccu_mux_disable,
++	.enable		= ccu_mux_enable,
++	.is_enabled	= ccu_mux_is_enabled,
++
++	.get_parent	= ccu_mux_get_parent,
++	.set_parent	= ccu_mux_set_parent,
++
++	.determine_rate	= __clk_mux_determine_rate,
++	.recalc_rate	= ccu_mux_recalc_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 17cedad4e433..c85707f80f68 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -1,20 +1,92 @@
+ #ifndef _CCU_MUX_H_
+ #define _CCU_MUX_H_
+ 
+-#include "common.h"
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
+ 
+ struct ccu_mux_internal {
+ 	u8	shift;
+ 	u8	width;
+ 
+-	u8	*map;
++	struct {
++		u8	index;
++		u8	div;
++	} fixed_prediv;
++
++	struct {
++		u8	index;
++		u8	shift;
++		u8	width;
++	} variable_prediv;
+ };
+ 
+-#define SUNXI_CLK_MUX(_shift, _width, _map)	\
++#define SUNXI_CLK_MUX(_shift, _width)	\
+ 	{					\
+-		.map	= _map,			\
+ 		.shift	= _shift,		\
+ 		.width	= _width,		\
+ 	}
+ 
++struct ccu_mux {
++	u16			reg;
++	u32			enable;
++
++	struct ccu_mux_internal	mux;
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
++	struct ccu_mux _struct = {					\
++		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
++								_parents, \
++								&ccu_mux_ops, \
++								_flags), \
++		}							\
++	}
++
++#define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
++				_shift, _width, _gate, _flags)		\
++	struct ccu_mux _struct = {					\
++		.enable	= _gate,					\
++		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_GATE,		\
++			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
++								_parents, \
++								&ccu_mux_ops, \
++								_flags), \
++		}							\
++	}
++
++static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_mux, common);
++}
++
++extern const struct clk_ops ccu_mux_ops;
++
++void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
++					     struct ccu_mux_internal *cm,
++					     int parent_index,
++					     unsigned long *parent_rate);
++int ccu_mux_helper_determine_rate(struct ccu_common *common,
++				  struct ccu_mux_internal *cm,
++				  struct clk_rate_request *req,
++				  unsigned long (*round)(struct ccu_mux_internal *,
++							 unsigned long,
++							 unsigned long,
++							 void *),
++				  void *data);
++u8 ccu_mux_helper_get_parent(struct ccu_common *common,
++			     struct ccu_mux_internal *cm);
++int ccu_mux_helper_set_parent(struct ccu_common *common,
++			      struct ccu_mux_internal *cm,
++			      u8 index);
++
+ #endif /* _CCU_MUX_H_ */
+-- 
+2.8.2
