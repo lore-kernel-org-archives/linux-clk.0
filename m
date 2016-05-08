@@ -1,51 +1,102 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <5731672B.9040204@rvc.renesas.com>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-	<573166EB.70908@rvc.renesas.com>
-	<5731672B.9040204@rvc.renesas.com>
-Date: Tue, 10 May 2016 09:39:44 +0200
-Message-ID: <CAMuHMdVtw564ZQbhGPLbZoReCHmnevedEWMFj5Ndf49chkpL7Q@mail.gmail.com>
-Subject: Re: [RFC 3/4] clk: renesas: r8a7796: Add Z clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+Date: Sun,  8 May 2016 21:05:46 +0200
+Message-Id: <1462734367-5619-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Khiem,
+Add license and copyrights (file introduced in 2014) to header with
+Exynos5410 clock IDs. Additionally reformat it to improve readability.
 
-On Tue, May 10, 2016 at 6:44 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> index c84b549..7368805 100644
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -94,6 +94,8 @@ static const struct cpg_core_clk r8a7796_core_clks[]
-> __initconst = {
->
->         DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
->         DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
-> +
-> +       DEF_BASE("z",           R8A7795_CLK_Z,   CLK_TYPE_GEN3_Z,   CLK_PLL0),
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 22 deletions(-)
 
-R8A7796_CLK_Z?
-
-How could that work?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 9b180f032e2d..213f19e02870 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,33 +1,43 @@
++/*
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants for Exynos5421 clock controller.
++*/
++
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ 
+ /* core clocks */
+-#define CLK_FIN_PLL 1
+-#define CLK_FOUT_APLL 2
+-#define CLK_FOUT_CPLL 3
+-#define CLK_FOUT_MPLL 4
+-#define CLK_FOUT_BPLL 5
+-#define CLK_FOUT_KPLL 6
++#define CLK_FIN_PLL		1
++#define CLK_FOUT_APLL		2
++#define CLK_FOUT_CPLL		3
++#define CLK_FOUT_MPLL		4
++#define CLK_FOUT_BPLL		5
++#define CLK_FOUT_KPLL		6
+ 
+ /* gate for special clocks (sclk) */
+-#define CLK_SCLK_UART0 128
+-#define CLK_SCLK_UART1 129
+-#define CLK_SCLK_UART2 130
+-#define CLK_SCLK_UART3 131
+-#define CLK_SCLK_MMC0 132
+-#define CLK_SCLK_MMC1 133
+-#define CLK_SCLK_MMC2 134
++#define CLK_SCLK_UART0		128
++#define CLK_SCLK_UART1		129
++#define CLK_SCLK_UART2		130
++#define CLK_SCLK_UART3		131
++#define CLK_SCLK_MMC0		132
++#define CLK_SCLK_MMC1		133
++#define CLK_SCLK_MMC2		134
+ 
+ /* gate clocks */
+-#define CLK_UART0 257
+-#define CLK_UART1 258
+-#define CLK_UART2 259
+-#define CLK_UART3 260
+-#define CLK_MCT 315
+-#define CLK_MMC0 351
+-#define CLK_MMC1 352
+-#define CLK_MMC2 353
++#define CLK_UART0		257
++#define CLK_UART1		258
++#define CLK_UART2		259
++#define CLK_UART3		260
++#define CLK_MCT			315
++#define CLK_MMC0		351
++#define CLK_MMC1		352
++#define CLK_MMC2		353
+ 
+-#define CLK_NR_CLKS 512
++#define CLK_NR_CLKS		512
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
+-- 
+2.5.0
