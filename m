@@ -1,38 +1,50 @@
-Return-Path: <w.egorov@phytec.de>
-Subject: Re: [PATCH v5 3/6] regulator: rk808: Add regulator driver for RK818
-To: Lee Jones <lee.jones@linaro.org>
-References: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
- <1462886340-7893-4-git-send-email-w.egorov@phytec.de>
- <20160510140320.GO19473@dell>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
-From: Wadim Egorov <w.egorov@phytec.de>
-Message-ID: <5731ECFB.2000207@phytec.de>
-Date: Tue, 10 May 2016 16:15:23 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160510140320.GO19473@dell>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+Date: Sun,  8 May 2016 21:05:51 +0200
+Message-Id: <1462734367-5619-7-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+All "fin_pll" clock users are switched to the new one, provided by
+Exynos5410 clock driver. Remove old DT node.
 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 -------
+ 1 file changed, 7 deletions(-)
 
-On 10.05.2016 16:03, Lee Jones wrote:
-> On Tue, 10 May 2016, Wadim Egorov wrote:
->
->> Add support for the rk818 regulator. The regulator module consists
->> of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
->> power OTG and HDMI5V.
->>
->> The output voltages are configurable and are meant to supply power
->> to the main processor and other components.
->>
->> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
->> ---
->>  drivers/regulator/Kconfig           |   4 +-
->>  drivers/regulator/rk808-regulator.c | 143 ++++++++++++++++++++++++++++++++++--
->>  2 files changed, 138 insertions(+), 9 deletions(-)
-> Needs an Ack before I can take the set.
->
-
-Mark acked this patch in v3.
-After small changes I removed the ack again. I don't know if it is ok to
-keep an Acked-by with small changes in the patch.
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index d7d658deeff4..377a679b454b 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -24,13 +24,6 @@
+ 		bootargs = "console=ttySAC2,115200";
+ 	};
+ 
+-	fin_pll: xxti {
+-		compatible = "fixed-clock";
+-		clock-frequency = <24000000>;
+-		clock-output-names = "fin_pll";
+-		#clock-cells = <0>;
+-	};
+-
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
+-- 
+2.5.0
