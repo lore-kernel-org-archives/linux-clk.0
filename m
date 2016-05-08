@@ -1,48 +1,45 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 01/20] clk: fixed-factor: Pass clk rates change to the parent
-Date: Mon, 16 May 2016 14:47:01 +0200
-Message-Id: <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 14/22] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
+Date: Sun,  8 May 2016 21:05:59 +0200
+Message-Id: <1462734367-5619-15-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-A fixed factor clock, if it needs to change its rate, by definition do not
-have any choice but to modify its parent rate.
+Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
+can be referenced by inheriting DTSI.
 
-Add the CLK_SET_RATE_PARENT flag to that clock so that it can happen
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/clk-fixed-factor.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 75cd6c792cb8..3363abd9b4ae 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -167,7 +167,8 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 	parent_name = of_clk_get_parent_name(node, 0);
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index fe901152f3ea..7c83dc6ef972 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -31,7 +31,7 @@
+ 		reg = <0x10000000 0x100>;
+ 	};
  
--	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
-+	clk = clk_register_fixed_factor(NULL, clk_name, parent_name,
-+					CLK_SET_RATE_PARENT,
- 					mult, div);
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-	memory-controller@12250000 {
++	sromc: memory-controller@12250000 {
+ 		compatible = "samsung,exynos4210-srom";
+ 		reg = <0x12250000 0x14>;
+ 	};
 -- 
-2.8.2
+2.5.0
