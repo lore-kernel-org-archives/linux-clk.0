@@ -1,82 +1,46 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Martin Sperl <kernel@martin.sperl.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V4 1/2] clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
-In-Reply-To: <5CC0D984-91E5-4401-8AB6-5827269C4395@martin.sperl.org>
-References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org> <1461951756-16804-2-git-send-email-kernel@martin.sperl.org> <87zis8h3pp.fsf@eliezer.anholt.net> <5CC0D984-91E5-4401-8AB6-5827269C4395@martin.sperl.org>
-Date: Mon, 02 May 2016 18:13:09 -0700
-Message-ID: <87wpncueoq.fsf@eliezer.anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 May 2016 16:05:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] rockchip clock changes for 4.7 part 4 - some more
+ fixes
+Message-ID: <20160509230516.GB3492@codeaurora.org>
+References: <16076636.fp1YCeqDWQ@phil>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <16076636.fp1YCeqDWQ@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 05/09, Heiko Stübner wrote:
+> Hi Mike, Stephen,
+> 
+> A fixup for a rk3399 clock name as well as the GRF-portions of
+> my cleanup series. As Stephen had some mild reservations about the
+> introduced indirection in the pll parts and we don't save to much lines
+> with my modifications for the currently supported pll-types, I think it's
+> easier to postpone those until the next new pll type comes around.
+> 
+> Maybe it even has some completely different properties to handle where
+> the current "simplification" might even be counter-productive :-) .
+> 
+> So please pull if possible.
+> 
+> Thanks
+> Heiko
+> 
+> 
+> The following changes since commit fd8bc829336a24b770247eb893111bcb8f1ddedb:
+> 
+>   clk: rockchip: fix the rk3399 cifout clock (2016-04-25 22:54:51 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.7-rockchip-clk4
 
-Martin Sperl <kernel@martin.sperl.org> writes:
+Thanks. Pulled.
 
->> On 02.05.2016, at 17:36, Eric Anholt <eric@anholt.net> wrote:
->>=20
->> kernel@martin.sperl.org writes:
->>=20
->>> From: Martin Sperl <kernel@martin.sperl.org>
->>>=20
->>> The bcm2835 firmware enables several clocks and plls before
->>> booting the linux kernel.
->>>=20
->>> These plls should never get disabled as it may result in a
->>> stopped system clock and more.
->>>=20
->>> So during probing we check if the clock is enabled
->>> and if it is then mark that clock with CLK_IS_CRITICAL.
->>>=20
->>> As a consequence this will also enable the corresponding
->>> parent plls and pll-divs.
->>>=20
->>> This is intended as a stop-gap until CLK_ENABLE_HAND_OFF
->>> becomes available, at which point it should be used instead.
->>>=20
->>> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
->>=20
->> I still think that we don't want this patch.  We should be able to
->> disable clocks that the firmware turned on, unless they really need to
->> stay on.  If you have troubles on the upstream DT, let's talk about
->> individual clocks.
->
-> May I ask you what is your main concern about using
-> CLK_IS_CRITICAL as a stop-gap/in general?
-
-Burning power when you shouldn't, which is a bug.
-
-> Also the current situation of the machine crashing when releasing the
-> PCM clock when the parent is PLLC or PLLD is worse than having some
-> clocks/pll running unnecessarily.
-
-Are you saying this happens on the upstream kernel?  This sounds like a
-bug you'd see in the downstream kernel because they haven't hooked up
-the clocks in their DT.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJXJ/slAAoJELXWKTbR/J7ounQP/jFCQevkHaYFc7gH4vXGKlUe
-fCHnkNa0DiexBTUXYuIBVLedBj2aUMEllR63/6dY9d/RuwLSBA6x017nHm9TE0NI
-AWgQa/HxM7OaRrDJw6JLkcr6DndekTg83Exdy0UGNG+g01l2E2XcGFp8yBwdMMDP
-O+ba0Pnlhq08PbKe0uFWmIK+Kt13vdGFaKjgHOLBWVYA6Sj/IUnSkQK5A5e8KKmC
-7kCRRv27WhfRpgD1C9oL4jE/aGTxXu2AeRIdNz/iSd2lQ+XssdVHNiXU79GCvPFR
-J68eR2gIDsQ81zaa2FGllACAQ0bbbxoN+F/jVS6EciFrO6CB6LslNrVVD0+TXC9i
-s/n2E7b2GhJmaXvzfCNDnxMKjEz9WVM7Fvjc3GDPENx0VK7hc6tk+PRPjMHt5tDH
-Vog5r4RE3keHRJNwcTND12jT5gfz08nRHmS903chZcbhgXX6Rf6ERMlgT/vEXMip
-4YjqL5uV3jQXxQVIviVEvJMUdyXL5UEvJ+fJQDLGM88URV85XOdwfXHdjy0VeATK
-bnxXxBlViSH8WyypL4NmGSx6iujhMO+2Oy0HAW9W9jaC8kJPbOoE8VwHgZI8vsb+
-CHIbyykrt3ZibjxsuK7pDAjBp/QGKfg8oCaWRKeRuEvg5Mz5r49xSPAmAzMlxcRm
-aKjf3mkiPx4NFYq2vjFR
-=LZWO
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
