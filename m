@@ -1,125 +1,189 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+Return-Path: <joel@jms.id.au>
+Return-Path: <joel@jms.id.au>
+From: Joel Stanley <joel@jms.id.au>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 04/27] clk: samsung: exynos5410: Provide fin_pll external fixed clock
-Date: Tue, 10 May 2016 22:09:07 +0200
-Message-Id: <1462910970-1812-5-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	jk@ozlabs.org,
+	benh@kernel.crashing.org,
+	arnd@arndb.de,
+	heiko@sntech.de
+Subject: [PATCH 1/4] doc/devicetree: Add Aspeed clock bindings
+Date: Mon,  9 May 2016 22:01:48 +0930
+Message-Id: <1462797111-14271-2-git-send-email-joel@jms.id.au>
+In-Reply-To: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Just like clock driver for Exynos542x/5800, provide the fixed clock here
-so the clock bindings and their consumers would be consistent and
-similar.
-
-However a clock named "fin_pll" is already provided by generic
-fixed-clock and it is both referenced in the clock driver (by name) and
-in DT (by phandle). To make the transition smooth, first introduce the
-new external fixed clock here under temporary, different name and switch
-internal users to it.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/clk/samsung/clk-exynos5410.c | 42 +++++++++++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 13 deletions(-)
+ .../devicetree/bindings/clock/aspeed-clock.txt     | 156 +++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/aspeed-clock.txt
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index d5d5dcabc4a9..35f2cb36f7ef 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -59,23 +59,29 @@ enum exynos5410_plls {
- };
- 
- /* list of all parent clocks */
--PNAME(apll_p)		= { "fin_pll", "fout_apll", };
--PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
--PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
--PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
--PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
-+PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
-+PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
-+PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
-+PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
-+PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
- 
- PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
- PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
- 
--PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
--PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
-+PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
-+PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
- PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
- 
--PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
-+PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
- 			"none", "none", "sclk_mpll_bpll",
- 			 "none", "none", "sclk_cpll" };
- 
-+/* fixed rate clocks generated outside the soc */
-+static struct samsung_fixed_rate_clock
-+		exynos5x_fixed_rate_ext_clks[] __initdata = {
-+	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
-+};
+diff --git a/Documentation/devicetree/bindings/clock/aspeed-clock.txt b/Documentation/devicetree/bindings/clock/aspeed-clock.txt
+new file mode 100644
+index 000000000000..968329406435
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/aspeed-clock.txt
+@@ -0,0 +1,156 @@
++Device Tree Clock bindings for the Aspeed SoCs
 +
- static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
- 	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
- 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
-@@ -168,18 +174,24 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- };
- 
- static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
--	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
-+	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
- 		APLL_CON0, NULL),
--	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
-+	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
- 		CPLL_CON0, NULL),
--	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
-+	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
- 		MPLL_CON0, NULL),
--	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
-+	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
- 		BPLL_CON0, NULL),
--	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
-+	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
- 		KPLL_CON0, NULL),
- };
- 
-+/* Same as in Exynos5420 */
-+static const struct of_device_id ext_clk_match[] __initconst = {
-+	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
-+	{ },
-+};
++Aspeed SoCs have a fixed frequency input osciallator is used to create the PLL
++and APB clocks. We can determine these frequencies by reading registers that
++are set according to strapping bits.
 +
- /* register exynos5410 clocks */
- static void __init exynos5410_clk_init(struct device_node *np)
- {
-@@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
- 
- 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
- 
-+	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
-+			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
-+			ext_clk_match);
++Forth generation boards
++-----------------------
 +
- 	samsung_clk_register_pll(ctx, exynos5410_plls,
- 			ARRAY_SIZE(exynos5410_plls), reg_base);
- 
++eg, ast2400.
++
++CLKIN:
++ - compatible : Must be "fixed-clock"
++ - #clock-cells : Should be 0
++ - clock-frequency: 48e6, 25e6 or 24e6 depending on the input clock
++
++PLL:
++
++Required properties:
++ - compatible : Must be "aspeed,g4-hpll-clock"
++ - #clock-cells : Should be 0
++ - reg : Should contain registers location and length
++ - clocks : Should contain phandle + clock-specifier for the input clock (clkin)
++
++Optional properties:
++ - clock-output-names : Should contain clock name
++
++
++APB:
++
++Required properties:
++ - compatible : Must be "aspeed,g4-apb-clock"
++ - #clock-cells : Should be 0
++ - reg : Should contain registers location and length
++ - clocks : Should contain phandle + clock-specifier for the h-pll
++
++Optional properties:
++ - clock-output-names : Should contain clock name
++
++
++For example:
++
++	clk_clkin: clk_clkin {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <48000000>;
++	};
++
++	clk_hpll: clk_hpll {
++		compatible = "aspeed,g4-hpll-clock";
++		#clock-cells = <0>;
++		reg = <0x1e6e2008 0x4>;
++	};
++
++	clk_apb: clk_apb@1e6e2008 {
++		#clock-cells = <0>;
++		compatible = "aspeed,g4-apb-clock";
++		reg = <0x1e6e2008 0x4>;
++		clocks = <&clk_hpll>;
++	};
++
++
++
++Fifth generation boards
++-----------------------
++
++eg, ast2500.
++
++CLKIN:
++Required properties:
++ - compatible : Must be "fixed-clock"
++ - #clock-cells : Should be 0
++ - clock-frequency: 25000000 or 24000000 depending on the input clock
++
++H-PLL:
++
++Required properties:
++ - compatible : Must be "aspeed,g5-hpll-clock"
++ - #clock-cells : Should be 0
++ - reg : Should contain registers location and length
++ - clocks : Should contain phandle + clock-specifier for the input clock (clkin)
++
++Optional properties:
++ - clock-output-names : Should contain clock name
++
++AHB:
++
++Required properties:
++ - compatible : Must be "aspeed,g5-ahb-clock"
++ - #clock-cells : Should be 0
++ - reg : Should contain registers location and length
++ - clocks : Should contain phandle + clock-specifier for the the h-pll
++
++Optional properties:
++ - clock-output-names : Should contain clock name
++
++APB:
++
++Required properties:
++ - compatible : Must be "aspeed,g4-apb-clock"
++ - #clock-cells : Should be 0
++ - reg : Should contain registers location and length
++ - clocks : Should contain phandle + clock-specifier for the the h-pll
++
++Optional properties:
++ - clock-output-names : Should contain clock name
++
++For example:
++	clk_clkin: clk_clkin@1e6e2070 {
++		#clock-cells = <0>;
++		compatible = "aspeed,g5-clkin-clock";
++		reg = <0x1e6e2070 0x04>;
++	};
++
++	clk_hpll: clk_hpll@1e6e2024 {
++		#clock-cells = <0>;
++		compatible = "aspeed,g5-hpll-clock";
++		reg = <0x1e6e2024 0x4>;
++		clocks = <&clk_clkin>;
++	};
++
++	clk_ahb: clk_ahb@1e6e2070 {
++		#clock-cells = <0>;
++		compatible = "aspeed,g5-ahb-clock";
++		reg = <0x1e6e2070 0x4>;
++		clocks = <&clk_hpll>;
++	};
++
++	clk_apb: clk_apb@1e6e2008 {
++		#clock-cells = <0>;
++		compatible = "aspeed,g5-apb-clock";
++		reg = <0x1e6e2008 0x4>;
++		clocks = <&clk_hpll>;
++	};
++
++Common clocks
++-------------
++
++UART:
++
++All supported boards have a uart clock that is derived from a 24MHz reference.
++We have a clock driver for it as there is a register in the SCU that controls
++weather it will be divided down by 13 or not.
++
++Required properties:
++ - compatible : Must be "aspeed,uart-clock"
++ - #clock-cells : Should be 0
++ - reg : Should contain registers location and length
++
++For example:
++
++	clk_uart: clk_uart@1e6e2008 {
++		#clock-cells = <0>;
++		compatible = "aspeed,uart-clock";
++		reg = <0x1e6e202c 0x4>;
++	};
 -- 
-2.5.0
+2.8.1
