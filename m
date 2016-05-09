@@ -1,84 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:43445 "EHLO
-	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754219AbcEDRfY (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2016 13:35:24 -0400
-Message-ID: <1462383308.16584.43.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	iommu@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: ulf.hansson@linaro.org, Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
+Return-Path: <Jose.Abreu@synopsys.com>
+Subject: Re: [RESEND PATCH 2/2 v6] arc: axs10x: Add DT bindings for I2S PLL
+ Clock
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+References: <cover.1461258787.git.joabreu@synopsys.com>
+ <e98c3f738b3a8f6755793959d89b4e43c9410fb1.1461258787.git.joabreu@synopsys.com>
+CC: <linux-clk@vger.kernel.org>,
+	Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
+	Rob Herring <robh@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	"Mark Rutland" <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Date: Wed, 04 May 2016 12:35:08 -0500
-In-Reply-To: <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
-References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
-	 <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [v9, 6/7] MAINTAINERS: add entry for Freescale SoC driver
-Sender: linux-clk-owner@vger.kernel.org
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Alexey Brodkin" <Alexey.Brodkin@synopsys.com>,
+	<linux-snps-arc@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <57305472.2000507@synopsys.com>
+Date: Mon, 9 May 2016 10:12:18 +0100
+MIME-Version: 1.0
+In-Reply-To: <e98c3f738b3a8f6755793959d89b4e43c9410fb1.1461258787.git.joabreu@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-05-04 at 11:24 +0800, Yangbo Lu wrote:
-> Add maintainer entry for Freescale SoC driver including
-> the QE library and the GUTS driver now. Also add maintainer
-> for QE library.
-> 
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Hi Vineet,
+
+
+On 02-05-2016 10:39, Jose Abreu wrote:
+> Add device tree bindings for AXS10X I2S PLL Clock driver.
+>
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
+> Acked-by: Vineet Gupta <vgupta@synopsys.com>
 > ---
-> Changes for v8:
-> 	- Added this patch
-> Changes for v9:
-> 	- Added linux-arm mail list
-> 	- Removed GUTS driver entry
-> ---
->  MAINTAINERS | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42e65d1..ce91db7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4622,9 +4622,18 @@ F:	drivers/net/ethernet/freescale/fec_ptp.c
->  F:	drivers/net/ethernet/freescale/fec.h
->  F:	Documentation/devicetree/bindings/net/fsl-fec.txt
+>
+> Changes v5 -> v6:
+> * Added 'clocks' field
+>
+> This patch was only introduced in v5.
+>
+> Cc: Carlos Palminha <palminha@synopsys.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> Cc: Kumar Gala <galak@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: Vineet Gupta <vgupta@synopsys.com>
+> Cc: linux-snps-arc@lists.infradead.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+>
+>  arch/arc/boot/dts/axs10x_mb.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
+> index ab5d570..5c6489e 100644
+> --- a/arch/arc/boot/dts/axs10x_mb.dtsi
+> +++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+> @@ -16,7 +16,20 @@
+>  		ranges = <0x00000000 0xe0000000 0x10000000>;
+>  		interrupt-parent = <&mb_intc>;
 >  
-> +FREESCALE SOC DRIVER
-> +M:	Scott Wood <oss@buserror.net>
-> +L:	linuxppc-dev@lists.ozlabs.org
-> +L:	linux-arm-kernel@lists.infradead.org
-> +S:	Maintained
-> +F:	drivers/soc/fsl/
-> +F:	include/linux/fsl/
+> +		i2sclk: i2sclk@100a0 {
+> +			compatible = "snps,axs10x-i2s-pll-clock";
+> +			reg = <0x100a0 0x10>;
+> +			clocks = <&i2spll_clk>;
+> +			#clock-cells = <0>;
+> +		};
 > +
->  FREESCALE QUICC ENGINE LIBRARY
-> +M:	Qiang Zhao <qiang.zhao@nxp.com>
->  L:	linuxppc-dev@lists.ozlabs.org
-> -S:	Orphan
-> +S:	Maintained
->  F:	drivers/soc/fsl/qe/
->  F:	include/soc/fsl/*qe*.h
->  F:	include/soc/fsl/*ucc*.h
+>  		clocks {
+> +			i2spll_clk: i2spll_clk {
+> +				compatible = "fixed-clock";
+> +				clock-frequency = <27000000>;
+> +				#clock-cells = <0>;
+> +			};
+> +
+>  			i2cclk: i2cclk {
+>  				compatible = "fixed-clock";
+>  				clock-frequency = <50000000>;
 
-s/DRIVER/DRIVERS/
+Can you apply this to arc-next? Main driver was already merged into clk-next. We
+still have to check how to deal with the parent clock frequency that will change
+in the next firmware release.
 
-There's more than one.
-
-Otherwise:
-Acked-by: Scott Wood <oss@buserror.net>
-
--Scott
-
-> 
+Best regards,
+Jose Miguel Abreu
