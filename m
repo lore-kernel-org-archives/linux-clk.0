@@ -1,48 +1,41 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 0/5] clk: bcm2835: add flags for mash and parent clocks
-Date: Thu,  5 May 2016 15:53:23 +0000
-Message-Id: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 9 May 2016 08:44:59 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+	mturquette@baylibre.com, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.wolfsonmicro.com
+Subject: Re: [PATCH v3 3/4] mfd: arizona: Switch to using clock driver for
+ 32k clock
+Message-ID: <20160509074459.GD8324@dell>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1452252582-20834-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20160507005510.GO3492@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160507005510.GO3492@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Fri, 06 May 2016, Stephen Boyd wrote:
 
-Allow flags to be set on a per clock index basis, which control:
-* the parent clocks selected when not setting clocks explicitly
-* the clock mode with regards to integer only or higher order mash
+> On 01/08, Charles Keepax wrote:
+> > Now we have a clock driver that can control the 32k clock use this
+> > rather than directly controlling the 32k clock from the MFD device.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > ---
+> 
+> Applied to clk-next
 
-These flags can also get set via the device tree.
+If you're going to take the set though the clk tree, don't forget to
+sent out a pull-request of the immutable branch you created.  If
+you're not happy to do that, drop the patch and I'll happily oblige.
 
-Default flags:
-* avoid the use of testdebug clocks for all clocks
-* avoid pllc_* for per clocks
-* allow fractional clocks, but not higher order mash
-
-Other flags can easily get added if the need arrises.
-
-Martin Sperl (5):
-  dt: bindings: add means to control flags of specific clocks
-  clk: bcm2835: expose the parent clocks via include/dt-bindings
-  clk: bcm2835: enable default filtering for parent clocks
-  clk: bcm2835: allow setting clocks flags via the dt
-  clk: bcm2835: add support for BCM2835_CLOCK_FLAG_USE_MASH/INTEGER
-
- .../bindings/clock/brcm,bcm2835-cprman.txt         |  14 ++
- drivers/clk/bcm/clk-bcm2835.c                      | 202 +++++++++++++++++----
- include/dt-bindings/clock/bcm2835.h                |  33 ++++
- 3 files changed, 216 insertions(+), 33 deletions(-)
-
---
-2.1.4
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
