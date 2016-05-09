@@ -1,135 +1,449 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid XU
-Date: Sat, 28 May 2016 11:54:11 +0200
-Message-Id: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1462737711-10017-3-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-3-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 9 May 2016 18:01:45 +0800
+Message-ID: <CAGb2v67XWt6tjG_xXWgGatTaiN5uYQb2_Q6bgixMDUkHfVHLHg@mail.gmail.com>
+Subject: Re: [PATCH 02/16] clk: sunxi-ng: Add common infrastructure
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Start our new clock infrastructure by adding the registration code, common
+> structure and common code.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/Makefile              |   1 +
+>  drivers/clk/sunxi-ng/Makefile     |   2 +
+>  drivers/clk/sunxi-ng/ccu_common.c | 108 ++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_common.h |  74 ++++++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_factor.h |  15 ++++++
+>  drivers/clk/sunxi-ng/ccu_mux.h    |  20 +++++++
+>  drivers/clk/sunxi-ng/ccu_reset.c  |  55 +++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_reset.h  |  40 ++++++++++++++
+>  8 files changed, 315 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/Makefile
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_common.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_common.h
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_factor.h
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_mux.h
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_reset.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_reset.h
+>
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 4ef71a13ab37..83a93cd9e21d 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -78,6 +78,7 @@ obj-$(CONFIG_ARCH_SOCFPGA)            += socfpga/
+>  obj-$(CONFIG_PLAT_SPEAR)               += spear/
+>  obj-$(CONFIG_ARCH_STI)                 += st/
+>  obj-$(CONFIG_ARCH_SUNXI)               += sunxi/
+> +obj-$(CONFIG_ARCH_SUNXI)               += sunxi-ng/
+>  obj-$(CONFIG_ARCH_TEGRA)               += tegra/
+>  obj-y                                  += ti/
+>  obj-$(CONFIG_ARCH_U8500)               += ux500/
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> new file mode 100644
+> index 000000000000..bd3461b0f38c
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -0,0 +1,2 @@
+> +obj-y += ccu_common.o
+> +obj-y += ccu_reset.o
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+> new file mode 100644
+> index 000000000000..1d9242566fbd
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_common.c
+> @@ -0,0 +1,108 @@
+> +/*
+> + * Copyright 2016 Maxime Ripard
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#include "ccu_common.h"
+> +#include "ccu_reset.h"
+> +
+> +static DEFINE_SPINLOCK(ccu_lock);
+> +
+> +void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+> +{
+> +       u32 reg;
+> +
+> +       if (!(common->features & CCU_FEATURE_LOCK))
+> +               return;
+> +
+> +       WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg, reg,
+> +                                          !(reg & lock), 0, 500));
 
-Patchset adds necessary clocks, reorganizes existing stuff and finally
-adds Odroid XU support.
+                                    no delay between reads? ^
+
+> +}
+> +
+> +int sunxi_ccu_probe(struct device_node *node,
+> +                   const struct sunxi_ccu_desc *desc)
+> +{
+> +       struct ccu_common **cclks = desc->clks;
+> +       size_t num_clks = desc->num_clks;
+> +       struct clk_onecell_data *data;
+> +       struct ccu_reset *reset;
+> +       struct clk **clks;
+> +       void __iomem *reg;
+> +       int i, ret;
+> +
+> +       reg = of_iomap(node, 0);
+
+Why not of_io_request_and_map?
+
+> +       if (IS_ERR(reg)) {
+
+And of_iomap returns NULL on error. This is for of_io_request_and_map.
+
+> +               pr_err("%s: Could not map the clock registers\n",
+> +                      of_node_full_name(node));
+> +               return PTR_ERR(reg);
+> +       }
+> +
+> +       data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       clks = kcalloc(num_clks, sizeof(struct clk *), GFP_KERNEL);
+> +       if (!clks)
+> +               return -ENOMEM;
+> +
+> +       data->clks = clks;
+> +       data->clk_num = num_clks;
+> +
+> +       for (i = 0; i < num_clks; i++) {
+> +               struct ccu_common *cclk = cclks[i];
+> +               struct clk *clk;
+> +
+> +               if (!cclk) {
+> +                       cclk = ERR_PTR(-ENOENT);
+
+This seems redundant, unless you intended to use it elsewhere?
+
+> +                       continue;
+> +               }
+> +
+> +               cclk->base = reg;
+> +               cclk->lock = &ccu_lock;
+> +
+> +               clk = clk_register(NULL, &cclk->hw);
+> +               if (IS_ERR(clk))
+> +                       continue;
+> +
+> +               clks[i] = clk;
+> +       }
+> +
+> +       ret = of_clk_add_provider(node, of_clk_src_onecell_get, data);
+> +       if (ret)
+> +               goto err_clk_unreg;
+> +
+> +       reset = kzalloc(sizeof(*reset), GFP_KERNEL);
+> +       reset->rcdev.of_node = node;
+> +       reset->rcdev.ops = &ccu_reset_ops;
+> +       reset->rcdev.owner = THIS_MODULE;
+> +       reset->rcdev.nr_resets = desc->num_resets;
+> +       reset->base = reg;
+> +       reset->lock = &ccu_lock;
+> +       reset->reset_map = desc->resets;
+> +
+> +       ret = reset_controller_register(&reset->rcdev);
+> +       if (ret)
+> +               goto err_of_clk_unreg;
+> +
+> +       return 0;
+> +
+> +err_of_clk_unreg:
+> +err_clk_unreg:
+> +       return ret;
+> +}
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+> new file mode 100644
+> index 000000000000..e8b477fcd320
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_common.h
+> @@ -0,0 +1,74 @@
+> +/*
+> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _COMMON_H_
+> +#define _COMMON_H_
+> +
+> +#include <linux/compiler.h>
+> +#include <linux/clk-provider.h>
+> +
+> +#define CCU_FEATURE_GATE               BIT(0)
+> +#define CCU_FEATURE_LOCK               BIT(1)
+
+*_PLL_LOCK would be clearer that this implements a PLL lock indicator.
+Or maybe a comment.
+
+> +#define CCU_FEATURE_FRACTIONAL         BIT(2)
+> +#define CCU_FEATURE_VARIABLE_PREDIV    BIT(3)
+> +#define CCU_FEATURE_FIXED_PREDIV       BIT(4)
+> +#define CCU_FEATURE_FIXED_POSTDIV      BIT(5)
+> +
+> +struct device_node;
+> +
+> +#define SUNXI_HW_INIT(_name, _parent, _ops, _flags)                    \
+> +       &(struct clk_init_data) {                                       \
+> +               .flags          = _flags,                               \
+> +               .name           = _name,                                \
+> +               .parent_names   = (const char *[]) { _parent },         \
+> +               .num_parents    = 1,                                    \
+> +               .ops            = _ops,                                 \
+> +       }
+> +
+> +#define SUNXI_HW_INIT_PARENTS(_name, _parents, _ops, _flags)           \
+> +       &(struct clk_init_data) {                                       \
+> +               .flags          = _flags,                               \
+> +               .name           = _name,                                \
+> +               .parent_names   = _parents,                             \
+> +               .num_parents    = ARRAY_SIZE(_parents),                 \
+> +               .ops            = _ops,                                 \
+> +       }
+> +
+> +struct ccu_common {
+> +       void __iomem    *base;
+> +       unsigned long   reg;
+
+This seems quite large, considering the address space of the CCU,
+and you using u16 or u32 for the same thing on the reset control side.
+
+> +
+> +       unsigned long   features;
+> +       spinlock_t      *lock;
+> +       struct clk_hw   hw;
+> +};
+> +
+> +static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
+> +{
+> +       return container_of(hw, struct ccu_common, hw);
+> +}
+> +
+> +struct sunxi_ccu_desc {
+> +       struct ccu_common       **clks;
+> +       unsigned long           num_clks;
+> +
+> +       struct ccu_reset_map    *resets;
+> +       unsigned long           num_resets;
+> +};
+> +
+> +void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock);
+> +
+> +int sunxi_ccu_probe(struct device_node *node,
+> +                   const struct sunxi_ccu_desc *desc);
+> +
+> +#endif /* _COMMON_H_ */
+> diff --git a/drivers/clk/sunxi-ng/ccu_factor.h b/drivers/clk/sunxi-ng/ccu_factor.h
+> new file mode 100644
+> index 000000000000..e7cc564aaea0
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_factor.h
+> @@ -0,0 +1,15 @@
+> +#ifndef _CLK_FACTOR_H_
+> +#define _CLK_FACTOR_H_
+> +
+> +struct ccu_factor {
+> +       u8      shift;
+> +       u8      width;
+> +};
+> +
+> +#define SUNXI_CLK_FACTOR(_shift, _width)       \
+> +       {                                       \
+> +               .shift  = _shift,               \
+> +               .width  = _width,               \
+> +       }
+> +
+> +#endif /* _CLK_FACTOR_H_ */
+> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+> new file mode 100644
+> index 000000000000..17cedad4e433
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
+
+As far as I can tell there are no users of this file within this patch or the
+following patches before the mux clock support one. It'd be easier to understand
+if this part was moved to the mux clock patch.
+
+> @@ -0,0 +1,20 @@
+> +#ifndef _CCU_MUX_H_
+> +#define _CCU_MUX_H_
+> +
+> +#include "common.h"
+> +
+> +struct ccu_mux_internal {
+> +       u8      shift;
+> +       u8      width;
+> +
+> +       u8      *map;
+
+I assume map is a table?
+
+> +};
+> +
+> +#define SUNXI_CLK_MUX(_shift, _width, _map)    \
+> +       {                                       \
+> +               .map    = _map,                 \
+> +               .shift  = _shift,               \
+> +               .width  = _width,               \
+> +       }
+> +
+> +#endif /* _CCU_MUX_H_ */
+> diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
+> new file mode 100644
+> index 000000000000..6c31d48783a7
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_reset.c
+> @@ -0,0 +1,55 @@
+> +/*
+> + * Copyright (C) 2016 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#include "ccu_reset.h"
+> +
+> +static int ccu_reset_assert(struct reset_controller_dev *rcdev,
+> +                           unsigned long id)
+> +{
+> +       struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
+> +       const struct ccu_reset_map *map = &ccu->reset_map[id];
+> +       unsigned long flags;
+> +       u32 reg;
+> +
+> +       spin_lock_irqsave(ccu->lock, flags);
+> +
+> +       reg = readl(ccu->base + map->reg);
+> +       writel(reg & ~map->bit, ccu->base + map->reg);
+> +
+> +       spin_unlock_irqrestore(ccu->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static int ccu_reset_deassert(struct reset_controller_dev *rcdev,
+> +                             unsigned long id)
+> +{
+> +       struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
+> +       const struct ccu_reset_map *map = &ccu->reset_map[id];
+> +       unsigned long flags;
+> +       u32 reg;
+> +
+> +       spin_lock_irqsave(ccu->lock, flags);
+> +
+> +       reg = readl(ccu->base + map->reg);
+> +       writel(reg | map->bit, ccu->base + map->reg);
+> +
+> +       spin_unlock_irqrestore(ccu->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +const struct reset_control_ops ccu_reset_ops = {
+> +       .assert         = ccu_reset_assert,
+> +       .deassert       = ccu_reset_deassert,
+> +};
+> diff --git a/drivers/clk/sunxi-ng/ccu_reset.h b/drivers/clk/sunxi-ng/ccu_reset.h
+> new file mode 100644
+> index 000000000000..36a4679210bd
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_reset.h
+> @@ -0,0 +1,40 @@
+> +/*
+> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _CCU_RESET_H_
+> +#define _CCU_RESET_H_
+> +
+> +#include <linux/reset-controller.h>
+> +
+> +struct ccu_reset_map {
+> +       u16     reg;
+> +       u32     bit;
+> +};
+> +
+> +
+> +struct ccu_reset {
+> +       void __iomem                    *base;
+> +       struct ccu_reset_map            *reset_map;
+> +       spinlock_t                      *lock;
+> +
+> +       struct reset_controller_dev     rcdev;
+> +};
+> +
+> +static inline struct ccu_reset *rcdev_to_ccu_reset(struct reset_controller_dev *rcdev)
+> +{
+> +       return container_of(rcdev, struct ccu_reset, rcdev);
+> +}
+> +
+> +extern const struct reset_control_ops ccu_reset_ops;
+> +
+> +#endif /* _CCU_RESET_H_ */
+
+The reset control code looks good.
 
 
-Changes since v4
-================
-1. Patch 20: Remove the nodes in exynos5420.dtsi (before they were
-   actually just copied instead of moving).
+Regards
+ChenYu
 
-Changes since v3
-================
-1. Get rid of 5 patches changing the fin_pll after talk with Tomasz
-   Figa. The existing definition of oscillator in exynos5410.dtsi
-   is preferred over solution chosen for Exynos5420.
-   This simplifies also the merging strategy.
-2. Add tags from Javier (tested and reviewed).
-
-Patchset is available at my private repo @github:
-https://github.com/krzk/linux.git for-next/odroid-xu-v4
-(I have some more changes coming but I think it is easier for
-reviewers if the patchset does not grow infinitely)
-
-
-Changes since v2
-================
-1. Got global-ack from Stephen for the clock changes. I think merging
-   everything through arm-soc might be the easiest but:
-   a. In such case I will prepare a tag with clock changes,
-   b. Anyway I will wait for response from Sylwester and Tomasz.
-2. Applied comments from Javier and added his Reviewed-by.
-3. Patch 22: added ack from Rob.
-4. Minor improvements in existing patches.
-5. Five new patches at the end: 23-27 (not reviewed yet).
-   Some of them could be squashed with existing ones but existing
-   changes got reviews. Although the final Odroid XU DTS works fine but
-   in general this is still work-in-progress so I suspect it will grow.
-   I am releasing it early following Linux concept. :)
-
-
-Changes since v1
-================
-1. A lot of new patches.
-2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
-3. New clocks, more reorganization.
-4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
-   and more complicated but this might help removing duplications
-   and keeping everything under control.
-
-
-
-Merging strategy
-================
-The clock changes can go to clock tree. ARM changes to samsung-soc tree.
-Please provide me a tag with include/dt-bindings/clock commits so I can
-merge it.
-
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (22):
-  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
-  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
-    nodes
-  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
-  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
-  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
-  ARM: dts: exynos: Move common nodes to exynos5.dtsi
-  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
-    exynos5410.dtsi
-  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
-  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
-  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
-  ARM: dts: exynos: Enable UART3 on Exynos5410
-  ARM: dts: exynos: MCT is not an interrupt controller and extend length
-    of iomap
-  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
-  ARM: dts: exynos: Add USB to Exynos5410
-  ARM: dts: exynos: Add initial support for Odroid XU board
-  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-  clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
-  ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
-  ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
-  ARM: dts: exynos: Add RTC and I2C to Exynos5410
-
- .../bindings/arm/samsung/samsung-boards.txt        |    1 +
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
- arch/arm/boot/dts/exynos5250.dtsi                  | 1701 +++++++++--------
- arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
- arch/arm/boot/dts/exynos5410-smdk5410.dts          |    6 +-
- arch/arm/boot/dts/exynos5410.dtsi                  |  267 +--
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
- arch/arm/boot/dts/exynos5420.dtsi                  | 1939 +++++++++-----------
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
- arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
- arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
- arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
- drivers/clk/samsung/clk-exynos5410.c               |   45 +
- include/dt-bindings/clock/exynos5410.h             |   73 +-
- 17 files changed, 2681 insertions(+), 2220 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
- create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
- create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
-
--- 
-2.7.4
+> --
+> 2.8.2
+>
