@@ -1,111 +1,163 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <5731678E.3080003@rvc.renesas.com>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-	<573166EB.70908@rvc.renesas.com>
-	<5731678E.3080003@rvc.renesas.com>
-Date: Tue, 17 May 2016 15:03:23 +0200
-Message-ID: <CAMuHMdW52t9SZq89QjdB=P-aM8dCSq-YYLCxRA7Wk1NVGLsUPg@mail.gmail.com>
-Subject: Re: [RFC 4/4] arm64: dts: r8a7795: Add Z clock scaling support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	Linux PM list <linux-pm@vger.kernel.org>
+Sender: dianders@google.com
+In-Reply-To: <2927458.4ozSLghtXU@phil>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+	<1462206982-10444-3-git-send-email-heiko@sntech.de>
+	<CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com>
+	<2927458.4ozSLghtXU@phil>
+Date: Mon, 9 May 2016 08:49:43 -0700
+Message-ID: <CAD=FV=VBiUvRxh4b50eHdToywyzhvsi0nX_fLv1pJKrNiOuoZg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
+ parent changes
+From: Doug Anderson <dianders@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Xing Zheng <zhengxing@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	zhangqing <zhangqing@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 10, 2016 at 6:46 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> This patch adds Z clock scaling support for CA57 in R8A7795 SoC.
-> An OPP table is created with the supported frequency scaling.
+Hi,
+
+On Mon, May 9, 2016 at 4:40 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Donnerstag, 5. Mai 2016, 17:35:03 schrieb Doug Anderson:
+>> Heiko,
+>>
+>> On Mon, May 2, 2016 at 9:36 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+>> > Given a hirarchy of clk1 -> [div] -> clk2, when the rate of clk1 gets
+>> > changed, clk2 changes as well as the divider stays the same. There may
+>> > be cases where a user of clk2 needs it at a specific rate, so clk2
+>> > needs to be readjusted for the changed rate of clk1.
+>> >
+>> > So if a rate was requested for the clock, and its rate changed during
+>> > the underlying rate-change, with this change the clock framework now
+>> > tries to readjust the rate back to/near the requested one.
+>> >
+>> > The whole process is protected by a new clock-flag to not force this
+>> > behaviour change onto every clock defined in the ccf.
+>>
+>> I'm not an expert on CCF details, but presumably you need to be really
+>> careful here.  Is there any way you could get an infinite loop here
+>> where you ping-pong between two people trying to control their parent
+>> clock?  Right now I see mutual recursion between
+>> clk_core_set_rate_nolock() and clk_change_rate() and no base case.
+>>
+>> Specifically if there's a path (because of CLK_SET_RATE_PARENT) where
+>> setting a clock rate on "clk2" in your example can cause a rate change
+>> of "clk1" I worry that we'll be in trouble.  Maybe a requirement of
+>> your patch is that no such path exists?  ...or maybe something in the
+>> code prevents this...
 >
-> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> This was one of my worries as well, which is why the flag exists in the first
+> place, right now offloading the requirement to check for such conflict cases to
+> the clock-tree creator.
+
+If that's the case, it needs to be documented somewhere.  Without some
+documentation this flag sounds like a flag that everyone would of
+course want everywhere.
+
+
+> I think one possible test to add could be to check for conflicts between
+> CLK_SET_RATE_PARENT and this new flag.
 >
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index 7181db0..041d0f2 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -43,6 +43,8 @@
->                         power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
-> +                       operating-points-v2 = <&cluster0_opp_tb0>;
->                 };
+> Aka in clk-init once encountering the CLK_KEEP_REQRATE, go up through parent
+> clocks as long as CLK_SET_RATE_PARENT is set and if we encounter a parent
+> with num_children > 1 (aka a shared base-clock, like a PLL on rockchip)
+> unset CLK_KEEP_REQRATE, as it would like introduce that ping-pong game.
 >
->                 a57_1: cpu@1 {
-> @@ -52,6 +54,7 @@
->                         power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       operating-points-v2 = <&cluster0_opp_tb0>;
->                 };
->                 a57_2: cpu@2 {
->                         compatible = "arm,cortex-a57","arm,armv8";
-> @@ -60,6 +63,7 @@
->                         power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       operating-points-v2 = <&cluster0_opp_tb0>;
->                 };
->                 a57_3: cpu@3 {
->                         compatible = "arm,cortex-a57","arm,armv8";
-> @@ -68,6 +72,28 @@
->                         power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       operating-points-v2 = <&cluster0_opp_tb0>;
-> +               };
-> +       };
-> +
-> +       cluster0_opp_tb0: opp_table0 {
-> +               compatible = "operating-points-v2";
-> +               opp-shared;
-> +
-> +               opp@500000000 {
-> +                       opp-hz = /bits/ 64 <500000000>;
-> +                       opp-microvolt = <820000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +               opp@1000000000 {
-> +                       opp-hz = /bits/ 64 <1000000000>;
-> +                       opp-microvolt = <820000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +               opp@1500000000 {
-> +                       opp-hz = /bits/ 64 <1500000000>;
-> +                       opp-microvolt = <820000>;
-> +                       clock-latency-ns = <300000>;
+> Hmm, although this test would also fire in cases like Rockchip's fractional
+> dividers, where there is the common pll-select-mux+divider and after that
+> the mux selecting between that or having the fractional-divider in between
+> as well.
+>
+> I guess it can get hairy to detect such cases sucessfully.
 
-With W=1:
+Wouldn't this logic work?
 
-Warning (unit_address_vs_reg): Node /opp_table0/opp@500000000 has a
-unit name, but no reg property
-Warning (unit_address_vs_reg): Node /opp_table0/opp@1000000000 has a
-unit name, but no reg property
-Warning (unit_address_vs_reg): Node /opp_table0/opp@1500000000 has a
-unit name, but no reg property
+1. Walk up through parents as long as CLK_SET_RATE_PARENT is set.  Add
+to "ancestors" list.
 
-Gr{oetje,eeting}s,
+2. Walk down through children of "ancestors" as long as
+CLK_SET_RATE_PARENT is set in the child.
 
-                        Geert
+3. If CLK_KEEP_REQRATE is found in one of those children and we're not
+the original clock then it's an error.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Actually, though, it seems like there's a much easier rule.  For now,
+just make CLK_SET_RATE_PARENT and CLK_KEEP_REQRATE mutually exclusive.
+You can choose to react to your parent's rate or you can choose to
+affect your parent's rate, but not both.
+
+In your current patch 3/3 you actually set both, but I don't think you
+really need to do you?
+
+
+>> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>> > ---
+>> >
+>> >  drivers/clk/clk.c            | 13 +++++++++++--
+>> >  include/linux/clk-provider.h |  1 +
+>> >  2 files changed, 12 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> > index 65e0aad..22be369 100644
+>> > --- a/drivers/clk/clk.c
+>> > +++ b/drivers/clk/clk.c
+>> > @@ -1410,6 +1410,9 @@ static struct clk_core
+>> > *clk_propagate_rate_change(struct clk_core *core,>
+>> >         return fail_clk;
+>> >
+>> >  }
+>> >
+>> > +static int clk_core_set_rate_nolock(struct clk_core *core,
+>> > +                                   unsigned long req_rate);
+>> > +
+>> >
+>> >  /*
+>> >
+>> >   * walk down a subtree and set the new rates notifying the rate
+>> >   * change on the way
+>> >
+>> > @@ -1494,6 +1497,12 @@ static void clk_change_rate(struct clk_core
+>> > *core)
+>> >
+>> >         /* handle the new child who might not be in core->children yet
+>> >         */
+>> >         if (core->new_child)
+>> >
+>> >                 clk_change_rate(core->new_child);
+>> >
+>> > +
+>> > +       /* handle a changed clock that needs to readjust its rate */
+>> > +       if (core->flags & CLK_KEEP_REQ_RATE && core->req_rate
+>> > +                                           && core->new_rate !=
+>> > old_rate
+>> > +                                           && core->new_rate !=
+>> > core->req_rate) +               clk_core_set_rate_nolock(core,
+>> > core->req_rate);
+>>
+>> I guess we don't care about errors here?
+>>
+>> ...maybe (?) we could ignore errors if we validated this rate change
+>> with PRE_RATE_CHANGE before attempting to change the parent clock, but
+>> I don't see the code doing this unless I missed it.
+>
+> It's more like what would you want to do in the error/failure cases.
+>
+> So far I was going by the assumption we're going to change the clock anyway
+> and just try to pull marked clocks along, so in the error case it would just
+> fall back to the current behaviour.
+
+In the very least it should cause a warning to be printed.  By
+introducing a new flag you've changed the expectations and I don't
+think a user would expect to fall back to the old behavior without at
+least an warning.
+
+I think it still makes sense to pre-validate your change in
+PRE_RATE_CHANGE, of course.
+
+
+-Doug
