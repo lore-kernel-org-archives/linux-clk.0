@@ -1,94 +1,162 @@
-Return-Path: <kernel@martin.sperl.org>
-References: <1461951756-16804-1-git-send-email-kernel@martin.sperl.org> <1461951756-16804-2-git-send-email-kernel@martin.sperl.org> <87zis8h3pp.fsf@eliezer.anholt.net> <5CC0D984-91E5-4401-8AB6-5827269C4395@martin.sperl.org> <87wpncueoq.fsf@eliezer.anholt.net>
-Mime-Version: 1.0 (1.0)
-In-Reply-To: <87wpncueoq.fsf@eliezer.anholt.net>
-Content-Type: text/plain;
-	charset=us-ascii
-Message-Id: <399371FE-CC25-469C-9917-FDFCDA741D56@martin.sperl.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-From: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V4 1/2] clk: bcm2835: mark enabled clocks with CLK_IS_CRITICAL
-Date: Tue, 3 May 2016 07:07:11 +0200
-To: Eric Anholt <eric@anholt.net>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2] clk: samsung: Remove useless check for return value of samsung_clk_init
+Date: Mon,  9 May 2016 19:32:31 +0200
+Message-Id: <1462815151-14396-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The samsung_clk_init() cannot return NULL. Either it returns allocated
+memory or it panics.
 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> On 03.05.2016, at 03:13, Eric Anholt <eric@anholt.net> wrote:
-> 
-> Martin Sperl <kernel@martin.sperl.org> writes:
-> 
->>> On 02.05.2016, at 17:36, Eric Anholt <eric@anholt.net> wrote:
->>> 
->>> kernel@martin.sperl.org writes:
->>> 
->>>> From: Martin Sperl <kernel@martin.sperl.org>
->>>> 
->>>> The bcm2835 firmware enables several clocks and plls before
->>>> booting the linux kernel.
->>>> 
->>>> These plls should never get disabled as it may result in a
->>>> stopped system clock and more.
->>>> 
->>>> So during probing we check if the clock is enabled
->>>> and if it is then mark that clock with CLK_IS_CRITICAL.
->>>> 
->>>> As a consequence this will also enable the corresponding
->>>> parent plls and pll-divs.
->>>> 
->>>> This is intended as a stop-gap until CLK_ENABLE_HAND_OFF
->>>> becomes available, at which point it should be used instead.
->>>> 
->>>> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
->>> 
->>> I still think that we don't want this patch.  We should be able to
->>> disable clocks that the firmware turned on, unless they really need to
->>> stay on.  If you have troubles on the upstream DT, let's talk about
->>> individual clocks.
->> 
->> May I ask you what is your main concern about using
->> CLK_IS_CRITICAL as a stop-gap/in general?
-> 
-> Burning power when you shouldn't, which is a bug.
-It is a bug, but it is better than a crash that happens currently
-because of a stopped clock.
-Also there is a proposed way forward when hand-off
-becomes available.
+---
 
-> 
->> Also the current situation of the machine crashing when releasing the
->> PCM clock when the parent is PLLC or PLLD is worse than having some
->> clocks/pll running unnecessarily.
-> 
-> Are you saying this happens on the upstream kernel?  This sounds like a
-> bug you'd see in the downstream kernel because they haven't hooked up
-> the clocks in their DT.
-This happens for both upstream and downstream when using
-cprman...
+Changes since v1:
+1. Remove the check from most of other Samsung clock drivers (suggested
+   by Javier).
+---
+ drivers/clk/samsung/clk-exynos4.c    | 2 --
+ drivers/clk/samsung/clk-exynos5250.c | 3 +--
+ drivers/clk/samsung/clk-exynos5420.c | 2 --
+ drivers/clk/samsung/clk-exynos5440.c | 2 --
+ drivers/clk/samsung/clk-s3c2410.c    | 2 --
+ drivers/clk/samsung/clk-s3c2412.c    | 2 --
+ drivers/clk/samsung/clk-s3c2443.c    | 2 --
+ drivers/clk/samsung/clk-s3c64xx.c    | 2 --
+ drivers/clk/samsung/clk-s5pv210.c    | 2 --
+ 9 files changed, 1 insertion(+), 18 deletions(-)
 
-You remember the main-uart crashing discussion (when 
-loaded as a module or not used as the kernel console?) it is
-exactly what an unclaimed clock is triggering when the clock
-Is prepared/enabled and then released.
-
-I have also seen the same issue happen with PCM without
-the patch - as soon as we request a frequency which will use
-pllc/d-per as the parent, and we later release the clock the
-system crashes -  but there only if we run the dt with minimal
-clocks using cprman, as it is hidden as soon as you increase enable
-count of the plls because of an enabled clock by a different
-device that also consumes the same pll.
-
-So this bug is mostly hidden behind the complete dts that
-just consumes lots of parent clocks, but it still may occur 
-when we select a frequency that will select the firmware 
-enabled but not claimed plla_per - no idea what stopping
-that pll would trigger in the system.
-
-Hence we need this patch for the running clocks , but we
-also need it for the pll_divs, so actually my patch is
-incomplete!
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 7b3d0f975987..2f458233908b 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1450,8 +1450,6 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		panic("%s: failed to map registers\n", __func__);
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos4_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 837197db4ffb..d8621cf31786 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -805,8 +805,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
++
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5250_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
+ 			ext_clk_match);
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 92382cef9f90..770c0f007c6b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	exynos5x_soc = soc;
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index c57cff1e1798..22c73d4a5ee3 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -125,8 +125,6 @@ static void __init exynos5440_clk_init(struct device_node *np)
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5440_fixed_rate_ext_clks,
+ 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
+diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+index d7b011c1fcf8..d7a1e772d95a 100644
+--- a/drivers/clk/samsung/clk-s3c2410.c
++++ b/drivers/clk/samsung/clk-s3c2410.c
+@@ -374,8 +374,6 @@ void __init s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	/* Register external clocks only in non-dt cases */
+ 	if (!np)
+diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+index effe3736ec6b..ec873ee15d37 100644
+--- a/drivers/clk/samsung/clk-s3c2412.c
++++ b/drivers/clk/samsung/clk-s3c2412.c
+@@ -265,8 +265,6 @@ void __init s3c2412_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	/* Register external clocks only in non-dt cases */
+ 	if (!np)
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index 37562783b25e..5e24a17e10e6 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -400,8 +400,6 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	/* Register external clocks only in non-dt cases */
+ 	if (!np)
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 60aa775bd374..a48bd5f17330 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -471,8 +471,6 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	/* Register external clocks. */
+ 	if (!np)
+diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
+index 52302262045d..fd2725710a6f 100644
+--- a/drivers/clk/samsung/clk-s5pv210.c
++++ b/drivers/clk/samsung/clk-s5pv210.c
+@@ -784,8 +784,6 @@ static void __init __s5pv210_clk_init(struct device_node *np,
+ 	struct samsung_clk_provider *ctx;
+ 
+ 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	samsung_clk_register_mux(ctx, early_mux_clks,
+ 					ARRAY_SIZE(early_mux_clks));
+-- 
+2.5.0
