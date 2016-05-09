@@ -1,37 +1,62 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new
- fin_pll clock
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-6-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <9359df26-fc41-78da-dbf8-cc336dbe80da@osg.samsung.com>
-Date: Mon, 9 May 2016 16:22:01 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 May 2016 15:11:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 01/16] clk: fix critical clock locking
+Message-ID: <20160509221146.GS3492@codeaurora.org>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-2-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-6-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1462737711-10017-2-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
-
-On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
-> The clk-exynos5410 driver now provides the "fin_pll" external fixed
-> clock. Switch the Multi-Core Timer to this clock.
+On 05/08, Maxime Ripard wrote:
+> The critical clock handling in __clk_core_init isn't taking the enable lock
+> before calling clk_core_enable, which in turns triggers the warning in the
+> lockdep_assert_held call in that function when lockep is enabled.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Add the calls to clk_enable_lock/unlock to make sure it doesn't happen.
+> 
+> Fixes: 32b9b1096186 ("clk: Allow clocks to be marked as CRITICAL")
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Why is this patch hiding in this series?
 
-Best regards,
+>  drivers/clk/clk.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index ce39add5a258..16a38df3c688 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2404,8 +2404,15 @@ static int __clk_core_init(struct clk_core *core)
+>  		core->ops->init(core->hw);
+>  
+>  	if (core->flags & CLK_IS_CRITICAL) {
+> +		unsigned long flags;
+> +
+> +		clk_prepare_lock();
+>  		clk_core_prepare(core);
+> +		clk_prepare_unlock();
+
+It looks like we already hold the prepare lock at this point.
+
+> +
+> +		flags = clk_enable_lock();
+>  		clk_core_enable(core);
+> +		clk_enable_unlock(flags);
+
+This seems correct though.
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
