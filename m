@@ -1,62 +1,44 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 9 May 2016 14:11:24 -0500
-From: Rob Herring <robh@kernel.org>
-To: kernel@martin.sperl.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt: bindings: add means to control flags of specific
- clocks
-Message-ID: <20160509191124.GA31621@rob-hp-laptop>
-References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
- <1462463608-22940-2-git-send-email-kernel@martin.sperl.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1462772426.5344.7.camel@mtksdaap41>
+Subject: Re: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>
+Date: Mon, 9 May 2016 13:40:26 +0800
+In-Reply-To: <20160506231229.GJ3492@codeaurora.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160506231229.GJ3492@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462463608-22940-2-git-send-email-kernel@martin.sperl.org>
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 05, 2016 at 03:53:24PM +0000, kernel@martin.sperl.org wrote:
-> From: Martin Sperl <kernel@martin.sperl.org>
+Hi Stephen,
+
+On Fri, 2016-05-06 at 16:12 -0700, Stephen Boyd wrote:
+> On 04/14, James Liao wrote:
+> > Some system clocks should be turned on by default on MT2701.
+> > This patch enable these clocks when related clocks have
+> > been registered.
+> > 
+> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > ---
 > 
-> Add documentation for "brcm,clock-index" and "brcm,clock-flags"
-> which allows to set flags to enable the use of parent clocks
-> that may be different from the default.
+> critical clks got merged now (sorry I'm slowly getting back to
+> looking at patches). Please use that flag.
 
-assigned-clocks provides a way to do this already though that does mean 
-exposing all the parents to DT. Does that not work for you?
+I don't see critical clock support in v4.6-rc7. Is there a repo/branch
+that has critical clocks merged?
 
-> In the future this may also contain flags that would allow
-> enabling higher order mash dividers.
-> 
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-> ---
->  .../devicetree/bindings/clock/brcm,bcm2835-cprman.txt      | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-> index e56a1df..cbcca56 100644
-> --- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-> @@ -18,6 +18,15 @@ Required properties:
->  - reg:		Specifies base physical address and size of the registers
->  - clocks:	The external oscillator clock phandle
-> 
-> +Optional properties:
-> +- brcm,clock-index: clock id to which the corresponding brcm,clock-flags
-> +		      value applies
-> +- brcm,clock-flags: flags for the specific clock id given in
-> +		      brcm,clock-index - the bits are defined in
-> +		      include/dt-bindings/clock/bcm2835.h
-> +		      of which the bottom 16 bits are reserved for
-> +		      parent clock selection.
 
-These are an array or single value?
+Best regards,
 
-I tend to think these should be generic properties or not at all. I'd 
-like to hear Mike's and/or Stephen's opinion on it.
-
-Rob
+James
