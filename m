@@ -1,44 +1,39 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 10/22] ARM: dts: exynos: Use lowercase for Exynos5410
+ CPU node labels
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-11-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <05d35d71-f383-307c-4c9e-24cc7afa911f@osg.samsung.com>
+Date: Mon, 9 May 2016 16:54:35 -0400
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <5731664D.1030909@rvc.renesas.com>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-	<5731664D.1030909@rvc.renesas.com>
-Date: Fri, 13 May 2016 10:55:48 +0200
-Message-ID: <CAMuHMdXRajaf7C09mO8WKqYL8cF09i96eWdC_FXBef6XUxcasw@mail.gmail.com>
-Subject: Re: [RFC 0/4] Add Z clock support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1462734367-5619-11-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Khiem,
+Hello Krzysztof,
 
-On Tue, May 10, 2016 at 6:40 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> This series adds Z clock support for R-Car Gen3.
-> It was written on top of "[PATCH 0/4] clk: renesas: cpg-mssr: Add support
-> for R-Car M3-W" series.
+On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+> Fro consistency lowercase node labels are used.
+>
 
-Thanks for your patch series!
+s/Fro/For
+ 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Unfortunately it seems to be whitespace-damaged, and can't be applied
-without manual tweaking.
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
