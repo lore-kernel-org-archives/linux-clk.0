@@ -1,140 +1,168 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 07/21] clk: uniphier: add clock driver for UniPhier ProXstream2/PH1-LD6b SoC
-Date: Tue, 10 May 2016 18:50:48 +0900
-Message-Id: <1462873862-30940-8-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1462737711-10017-4-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-4-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 9 May 2016 18:05:20 +0800
+Message-ID: <CAGb2v65LcXnMj7B-0q2MYESM9vGd9k-yChjvFdX--EivSYdVJg@mail.gmail.com>
+Subject: Re: [PATCH 03/16] clk: sunxi-ng: Add fixed factor clock support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+Hi,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Some clocks in the Allwinner SoCs clock units are direct, fixed,
+> multipliers or dividers from their parent.
+>
+> Add support for such clocks.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/Makefile           |  2 ++
+>  drivers/clk/sunxi-ng/ccu_fixed_factor.c | 42 +++++++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_fixed_factor.h | 50 +++++++++++++++++++++++++++++++++
+>  3 files changed, 94 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.h
+>
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index bd3461b0f38c..d76276736765 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -1,2 +1,4 @@
+>  obj-y += ccu_common.o
+>  obj-y += ccu_reset.o
+> +
+> +obj-y += ccu_fixed_factor.o
+> diff --git a/drivers/clk/sunxi-ng/ccu_fixed_factor.c b/drivers/clk/sunxi-ng/ccu_fixed_factor.c
+> new file mode 100644
+> index 000000000000..75df8a854db5
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_fixed_factor.c
+> @@ -0,0 +1,42 @@
+> +/*
+> + * Copyright (C) 2016 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "ccu_fixed_factor.h"
+> +
+> +static unsigned long ccu_fixed_factor_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_rate)
+> +{
+> +       struct ccu_fixed_factor *fix = hw_to_ccu_fixed_factor(hw);
+> +
+> +       return parent_rate * fix->mult / fix->div;
 
- drivers/clk/uniphier/Kconfig             |  4 ++
- drivers/clk/uniphier/Makefile            |  1 +
- drivers/clk/uniphier/clk-uniphier-pxs2.c | 83 ++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
- create mode 100644 drivers/clk/uniphier/clk-uniphier-pxs2.c
+do_div (from include/asm-generic/div64.h) is better, since this is an
+64 bit value.
 
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
-index de3fada..d4a3d55 100644
---- a/drivers/clk/uniphier/Kconfig
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -22,4 +22,8 @@ config CLK_UNIPHIER_PRO5
- 	tristate "Clock driver for UniPhier PH1-Pro5 SoC"
- 	default ARM
- 
-+config CLK_UNIPHIER_PXS2
-+	tristate "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
-+	default ARM
-+
- endif
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-index d1edf30..20a274f 100644
---- a/drivers/clk/uniphier/Makefile
-+++ b/drivers/clk/uniphier/Makefile
-@@ -8,3 +8,4 @@ obj-$(CONFIG_CLK_UNIPHIER_LD4)	+= clk-uniphier-ld4.o
- obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
- obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
- obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
-+obj-$(CONFIG_CLK_UNIPHIER_PXS2)	+= clk-uniphier-pxs2.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-pxs2.c b/drivers/clk/uniphier/clk-uniphier-pxs2.c
-new file mode 100644
-index 0000000..07f7969
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-pxs2.c
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-uniphier.h"
-+
-+static const struct uniphier_clk_data uniphier_pxs2_clk_data[] = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "ref",
-+			.mult = 96,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 0,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 27,
-+		},
-+	},
-+	{
-+		.name = "fi2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 1,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 48,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 7,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x2104,
-+			.mask = BIT(10),
-+			.enable_val = BIT(10),
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static int uniphier_pxs2_clk_probe(struct platform_device *pdev)
-+{
-+	return uniphier_clk_probe(pdev, uniphier_pxs2_clk_data);
-+}
-+
-+static struct platform_driver uniphier_pxs2_clk_driver = {
-+	.probe = uniphier_pxs2_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-pxs2-clk",
-+	},
-+};
-+module_platform_driver(uniphier_pxs2_clk_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier ProXstream2 System Clock Driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+> +}
+> +
+> +static long ccu_fixed_factor_round_rate(struct clk_hw *hw,
+> +                                       unsigned long rate,
+> +                                       unsigned long *parent_rate)
+> +{
+> +       struct ccu_fixed_factor *fix = hw_to_ccu_fixed_factor(hw);
+> +
+> +       return *parent_rate / fix->div * fix->mult;
+
+Why is this the other way around? With integer math it shouldn't be
+interchangeable. (Though it seems clk_fixed_factor does the same...)
+
+Also, clk_fixed_factor handles CLK_SET_RATE_PARENT. Do we need to do the
+same here?
+
+> +}
+> +
+> +static int ccu_fixed_factor_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                    unsigned long parent_rate)
+> +{
+> +       return 0;
+> +}
+> +
+> +const struct clk_ops ccu_fixed_factor_ops = {
+> +       .recalc_rate    = ccu_fixed_factor_recalc_rate,
+> +       .round_rate     = ccu_fixed_factor_round_rate,
+> +       .set_rate       = ccu_fixed_factor_set_rate,
+> +};
+> diff --git a/drivers/clk/sunxi-ng/ccu_fixed_factor.h b/drivers/clk/sunxi-ng/ccu_fixed_factor.h
+> new file mode 100644
+> index 000000000000..4e53dbc9d10b
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_fixed_factor.h
+> @@ -0,0 +1,50 @@
+> +/*
+> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _CCU_FIXED_FACTOR_H_
+> +#define _CCU_FIXED_FACTOR_H_
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "ccu_common.h"
+> +
+> +struct ccu_fixed_factor {
+> +       u16                     div;
+> +       u16                     mult;
+> +
+> +       struct ccu_common       common;
+> +};
+> +
+> +#define SUNXI_CCU_FIXED_FACTOR(_struct, _name, _parent,                        \
+> +                              _div, _mult, _flags)                     \
+> +       struct ccu_fixed_factor _struct = {                             \
+> +               .div    = _div,                                         \
+> +               .mult   = _mult,                                        \
+> +               .common = {                                             \
+> +                       .hw.init        = SUNXI_HW_INIT(_name,          \
+> +                                                       _parent,        \
+> +                                                       &ccu_fixed_factor_ops, \
+> +                                                       _flags),        \
+> +               },                                                      \
+> +       }
+> +
+> +static inline struct ccu_fixed_factor *hw_to_ccu_fixed_factor(struct clk_hw *hw)
+> +{
+> +       struct ccu_common *common = hw_to_ccu_common(hw);
+> +
+> +       return container_of(common, struct ccu_fixed_factor, common);
+> +}
+> +
+> +extern const struct clk_ops ccu_fixed_factor_ops;
+> +
+> +#endif /* _CCU_FIXED_FACTOR_H_ */
+> --
+> 2.8.2
+>
+
+
+Regards
+ChenYu
