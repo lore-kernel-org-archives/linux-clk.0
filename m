@@ -1,89 +1,37 @@
-Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new
+ fin_pll clock
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-6-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <9359df26-fc41-78da-dbf8-cc336dbe80da@osg.samsung.com>
+Date: Mon, 9 May 2016 16:22:01 -0400
 MIME-Version: 1.0
-In-Reply-To: <20160525172409.GA27913@rob-hp-laptop>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
- <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org> <20160525172409.GA27913@rob-hp-laptop>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Date: Thu, 26 May 2016 11:49:46 +0200
-Message-ID: <CAG374jDTCJfZB+PuAnggjXhbcd3NjJqrESpe_EnMniCAeoph9A@mail.gmail.com>
-Subject: Re: [PATCH 02/11] drivers: clk: st: Add clock propagation for audio clocks
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>,
-	Pankaj Dev <pankaj.dev@st.com>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kernel@stlinux.com" <kernel@stlinux.com>, linux-clk@vger.kernel.org,
-	Lee Jones <lee.jones@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
-	Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-	Vincent ABRIOU <vincent.abriou@st.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1462734367-5619-6-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
-> > This patch allows fine tuning of the quads FS for audio clocks
-> > accuracy.
-> >
-> > Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> > ---
-> >  .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
-> >  drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
-> >  2 files changed, 25 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-> > index b7ee5c7..15b33c7 100644
-> > --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-> > +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-> > @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
-> >  Required properties:
-> >  - compatible : shall be:
-> >    "st,flexgen"
-> > +  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on parent)
->
-> What do "d0" and "d2" refer to?
->
-> This seems to indicate you have too much clock detail in the DT (with
-> individual clocks described) or not enough with genericish compatible
-> strings. What happens for the mext clock you need to adjust the flags
-> on? You should be able to make these adjustments without DT updates.
-> Perhaps you need a wider fixing of clock compatible strings.
->
-> Rob
+Hello Krzysztof,
 
-Sorry i sent my response in html...
+On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+> The clk-exynos5410 driver now provides the "fin_pll" external fixed
+> clock. Switch the Multi-Core Timer to this clock.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Hi Rob,
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Thanks for reviewing.
-
-Can i remove
-"
-st,stih407-clkgend0" & "
-st,stih407-clkgend2" compatible strings and add proprieties instead ?
-I only need to activate 2 features and then we can keep generic
-compatible strings.
-
-e.g.
-
-clk_s_d2_flexgen: clk-s-d2-flexgen {
-#clock-cells = <1>;
-compatible = "st,flexgen";
-        ...
-       st-sync-mode;
-        st-update
--parent-rate;
-};
-
-for d0_flexgen i will enable only st-sync-mode;
-
-Best Regards
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
