@@ -1,159 +1,83 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 05/21] clk: uniphier: add clock driver for UniPhier PH1-sLD8 SoC
-Date: Tue, 10 May 2016 18:50:46 +0900
-Message-Id: <1462873862-30940-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 9 May 2016 07:25:00 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v2] clk: tegra: Initialize UTMIPLL when enabling PLLU
+Message-ID: <20160509052500.GB18753@ulmo.ba.sec>
+References: <1462566015-12306-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+In-Reply-To: <1462566015-12306-1-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--p4qYPpj5QlsIQJ0K
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/clk/uniphier/Kconfig             |   4 ++
- drivers/clk/uniphier/Makefile            |   1 +
- drivers/clk/uniphier/clk-uniphier-sld8.c | 102 +++++++++++++++++++++++++++++++
- 3 files changed, 107 insertions(+)
- create mode 100644 drivers/clk/uniphier/clk-uniphier-sld8.c
+On Fri, May 06, 2016 at 04:20:15PM -0400, Rhyland Klein wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> Move the UTMIPLL initialization code from the clk-tegra<chip>.c
+> files into clk-pll.c and perform the initialization sequence when
+> PLLU is enabled.
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> [rklein: Merged in some later fixes for potential deadlocks]
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+> v2:
+>  - Swapped out __clk_lookup for 2 calls to clk_hw_get_parent
+>=20
+>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
+>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
+>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
+>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
+>  drivers/clk/tegra/clk.h          |  17 ++
+>  6 files changed, 510 insertions(+), 597 deletions(-)
 
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
-index d789e26..8e930c3 100644
---- a/drivers/clk/uniphier/Kconfig
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -14,4 +14,8 @@ config CLK_UNIPHIER_PRO4
- 	tristate "Clock driver for UniPhier PH1-Pro4 SoC"
- 	default ARM
- 
-+config CLK_UNIPHIER_SLD8
-+	tristate "Clock driver for UniPhier PH1-sLD8 SoC"
-+	default ARM
-+
- endif
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-index ceed615..c7a8390 100644
---- a/drivers/clk/uniphier/Makefile
-+++ b/drivers/clk/uniphier/Makefile
-@@ -6,3 +6,4 @@ obj-y				+= clk-uniphier-mux.o
- 
- obj-$(CONFIG_CLK_UNIPHIER_LD4)	+= clk-uniphier-ld4.o
- obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
-+obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-sld8.c b/drivers/clk/uniphier/clk-uniphier-sld8.c
-new file mode 100644
-index 0000000..74574ba
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-sld8.c
-@@ -0,0 +1,102 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-uniphier.h"
-+
-+static const struct uniphier_clk_data uniphier_sld8_clk_data[] = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "ref",
-+			.mult = 64,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "upll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "ref",
-+			.mult = 288,
-+			.div = 25,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 0,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 20,
-+		},
-+	},
-+	{
-+		.name = "i2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 1,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 16,
-+		},
-+	},
-+	{
-+		.name = "ehci",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 5,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 1,
-+			.div = 12,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 7,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x2104,
-+			.mask = BIT(10),
-+			.enable_val = BIT(10),
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static int uniphier_sld8_clk_probe(struct platform_device *pdev)
-+{
-+	return uniphier_clk_probe(pdev, uniphier_sld8_clk_data);
-+}
-+
-+static struct platform_driver uniphier_sld8_clk_driver = {
-+	.probe = uniphier_sld8_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-sld8-clk",
-+	},
-+};
-+module_platform_driver(uniphier_sld8_clk_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-sLD8 System Clock Driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+The commit message should mention *why* this change is necessary. It's
+fairly obvious what you're doing by looking at the code, but the commit
+message is an opportunity to let others know why this is necessary or
+worthwhile. Does it fix a bug? Is this clean up? It seems important to
+me when you say "perform the initialization sequence when PLLU is
+enabled", but as it is I don't understand why.
+
+Thierry
+
+--p4qYPpj5QlsIQJ0K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXMB8rAAoJEN0jrNd/PrOh228QAI1zVCq1KCgkMTY2+uxwLvPL
+TCYfnmFbbplz5k/curXpGQHE4MFixqWSAhqlR/tPniUXgqJg7fFbYnc+KCCTU0Fe
+Kyp+NkOXt54k5B5WGDp1SfRBCX5F2VkHhJLpjzGBKEC+4+D+ZAB8uWt0kOOfFEaR
+XKm8ViwiaRcwCbNuET7HjY5gBr/llxE+0diXizwmmJe9a7jJzb1nVtfi7ecaHv5a
+nZl1zoQ6by6Q5MRLedp2DGGw/m14ktjwUEUDoce0RMssTqFmvp1vsZBg1pJIYwoK
+NSHaN7dBrPmwKq+ZL51nt9iO0ww3QzuEABHon7reUYrT7USguP1mAwJcTvoOeywZ
+8qR1i9rms7EwJDjEk5Yw71X1MnzJwA1/0GtHlxXZ/2kd1CJ+j8BXZ+0rq4rXJnFd
+J2mFcridjklPY0m6geMpJdsufFStatIR9WBqE/WA6XYqXrzsfv69KJSHDYehl5UA
+RFv1HExRPdP0NFG1qnscJGW2ZjDlcYxudW1MunZCaMTPn+nveGheWduZfVXgKloE
+0lcp+RrUGtnJooiQkZNSt9eFN1QeGRkVWg/h25THe0Hhx2allUthQ3Sa3GpbzxA7
+SdkOHnWA5Pu0v/PQwumX0qJRh4w4rv1XMTOE7ZdIVBss0+7ybfJyBhQXN/8C9YwM
+t1JGd6IAJoJ3ZZCSnwOC
+=1AE6
+-----END PGP SIGNATURE-----
+
+--p4qYPpj5QlsIQJ0K--
