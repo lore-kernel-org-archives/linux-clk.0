@@ -1,54 +1,29 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 01/16] clk: fix critical clock locking
-Date: Sun,  8 May 2016 22:01:36 +0200
-Message-Id: <1462737711-10017-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 0/7] clk: rockchip: cleanup some code duplication
+Date: Mon, 09 May 2016 16:28:16 +0200
+Message-ID: <1846515.jCoz32uTXP@phil>
+In-Reply-To: <20160506225645.GG3492@codeaurora.org>
+References: <1461849075-8310-1-git-send-email-heiko@sntech.de> <20160506225645.GG3492@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The critical clock handling in __clk_core_init isn't taking the enable lock
-before calling clk_core_enable, which in turns triggers the warning in the
-lockdep_assert_held call in that function when lockep is enabled.
+Am Freitag, 6. Mai 2016, 15:56:45 schrieb Stephen Boyd:
+> On 04/28, Heiko Stuebner wrote:
+> > This tries to generalize code paths that contain some (nearly)
+> > duplicate code. While it's only a bit noticeable now for 3 different
+> > plls, the effect should be more pronounced when the next pll-type
+> > shows up.
+> 
+> Looks ok. Are you sending another pull? Or I can apply them
+> directly.
 
-Add the calls to clk_enable_lock/unlock to make sure it doesn't happen.
+I've sent a pull request with the first 3 patches of the series - see comment 
+to your doubts to patch 4 and further. Also including one other fix from Doug 
+as well).
 
-Fixes: 32b9b1096186 ("clk: Allow clocks to be marked as CRITICAL")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/clk.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ce39add5a258..16a38df3c688 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2404,8 +2404,15 @@ static int __clk_core_init(struct clk_core *core)
- 		core->ops->init(core->hw);
- 
- 	if (core->flags & CLK_IS_CRITICAL) {
-+		unsigned long flags;
-+
-+		clk_prepare_lock();
- 		clk_core_prepare(core);
-+		clk_prepare_unlock();
-+
-+		flags = clk_enable_lock();
- 		clk_core_enable(core);
-+		clk_enable_unlock(flags);
- 	}
- 
- 	kref_init(&core->ref);
--- 
-2.8.2
+Heiko
