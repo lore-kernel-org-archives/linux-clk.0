@@ -1,45 +1,45 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 11/11] clk: tegra: WARN if clk in the init_table has enable
-Date: Wed, 25 May 2016 18:24:31 -0400
-Message-ID: <1464215071-28696-12-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1462772246.5344.4.camel@mtksdaap41>
+Subject: Re: [PATCH v7 8/9] clk: mediatek: Add config options for MT2701
+ subsystem clocks
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>
+Date: Mon, 9 May 2016 13:37:26 +0800
+In-Reply-To: <20160506230214.GH3492@codeaurora.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1460621514-65191-9-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160506230214.GH3492@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Enabling clocks through the init_table mechanism is deprecated. Clocks
-that need to be enabled early and stay on should be marked as CRITICAL.
+HI Stephen,
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On Fri, 2016-05-06 at 16:02 -0700, Stephen Boyd wrote:
+> On 04/14, James Liao wrote:
+> > MT2701 subsystem clocks are optional and should be enabled only if
+> > their subsystem drivers are ready to control these clocks.
+> > 
+> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > ---
+> 
+> Why is this patch split off from the patch that introduces the
+> file?
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index b2cdd9a235f4..898fe922c742 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -262,6 +262,11 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
- 				WARN_ON(1);
- 			}
- 
-+		/* Using the init_table to enable clks at boot is
-+		 * deprecated. Clks that need to be enabled through early
-+		 * boot, they should be marked as CLK_IS_CRITICAL
-+		 */
-+		WARN_ON_ONCE(tbl->state);
- 		if (tbl->state)
- 			if (clk_prepare_enable(clk)) {
- 				pr_err("%s: Failed to enable %s\n", __func__,
--- 
-1.9.1
+I was looking for comments about how to make subsystem clocks optional.
+So I used a separated patch to do it. Is it an acceptable way to use
+config options to enable subsystem clock support?
+
+
+Best regards,
+
+James
