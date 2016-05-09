@@ -1,31 +1,39 @@
-Return-Path: <ralf@linux-mips.org>
-Date: Fri, 13 May 2016 14:18:33 +0200
-From: Ralf Baechle <ralf@linux-mips.org>
-To: Purna Chandra Mandal <purna.mandal@microchip.com>
-Cc: linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Kumar Gala <galak@codeaurora.org>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joshua Henderson <joshua.henderson@microchip.com>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Sandeep Sheriker <sandeepsheriker.mallikarjun@microchip.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v11 0/3] PIC32MZDA Clock Driver
-Message-ID: <20160513121833.GC4215@linux-mips.org>
-References: <1463125961-10706-1-git-send-email-purna.mandal@microchip.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 19/22] ARM: dts: exynos: MCT is not an interrupt
+ controller and extend length of iomap
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-20-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <cd2cfef1-f9a8-0daa-e4bc-c00b0943c52e@osg.samsung.com>
+Date: Mon, 9 May 2016 17:44:54 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1463125961-10706-1-git-send-email-purna.mandal@microchip.com>
+In-Reply-To: <1462734367-5619-20-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 13, 2016 at 01:22:38PM +0530, Purna Chandra Mandal wrote:
+Hello Krzysztof,
 
-Thanks for resolving the remaining issues.  As per discussion of the
-last version I've now queued the entire series for 4.7.
+On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
+> Multi-Core Timer generates interrupts but it is not really an interrupt
+> controller so remove the "interrupt-controller" and "interrupt-cells"
+> properties. Additionally extend the length of mapped memory to cover all
+> registers (last SFR is at 0x0A40).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-One step closer to full PIC32MZDA in-tree support!
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-  Ralf
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
