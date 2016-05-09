@@ -1,111 +1,155 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] ARM: clk: Amlogic: Add support for clock gates
-Date: Wed, 11 May 2016 20:21:04 +0200
-Message-Id: <1462990865-22651-2-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1462990865-22651-1-git-send-email-serveralex@gmail.com>
-References: <1462990865-22651-1-git-send-email-serveralex@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 May 2016 15:49:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	jk@ozlabs.org, benh@kernel.crashing.org, arnd@arndb.de,
+	heiko@sntech.de
+Subject: Re: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
+Message-ID: <20160509224953.GZ3492@codeaurora.org>
+References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+ <1462797111-14271-3-git-send-email-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1462797111-14271-3-git-send-email-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adds support to register clock gates required to enable SoC components that
-are disabled by default.
+On 05/09, Joel Stanley wrote:
+> diff --git a/drivers/clk/aspeed/clk-g4.c b/drivers/clk/aspeed/clk-g4.c
+> new file mode 100644
+> index 000000000000..91677e9177f5
+> --- /dev/null
+> +++ b/drivers/clk/aspeed/clk-g4.c
+> @@ -0,0 +1,109 @@
+> +/*
+> + * Copyright 2016 IBM Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/clk.h>
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/clkc.c | 18 ++++++++++++++++++
- drivers/clk/meson/clkc.h | 18 ++++++++++++++++++
- 2 files changed, 36 insertions(+)
+Hopefully this include isn't needed.
 
-diff --git a/drivers/clk/meson/clkc.c b/drivers/clk/meson/clkc.c
-index d920d41..a7a14a2 100644
---- a/drivers/clk/meson/clkc.c
-+++ b/drivers/clk/meson/clkc.c
-@@ -197,6 +197,20 @@ meson_clk_register_fixed_rate(const struct clk_conf *clk_conf,
- 	return clk;
- }
- 
-+static struct clk * __init
-+meson_clk_register_gate(const struct clk_conf *clk_conf,
-+			      void __iomem *clk_base, spinlock_t *lock)
-+{
-+	return clk_register_gate(NULL, clk_conf->clk_name,
-+			clk_conf->num_parents
-+				? clk_conf->clks_parent[0] : NULL,
-+			clk_conf->flags,
-+			clk_base + clk_conf->reg_off,
-+			clk_conf->conf.gate.bit_idx,
-+			0,
-+			lock);
-+}
-+
- void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
- 				    unsigned int nr_confs,
- 				    void __iomem *clk_base)
-@@ -228,6 +242,10 @@ void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
- 			clk = meson_clk_register_pll(clk_conf, clk_base,
- 						     &clk_lock);
- 			break;
-+		case CLK_GATE:
-+			clk = meson_clk_register_gate(clk_conf, clk_base,
-+							 &clk_lock);
-+			break;
- 		default:
- 			clk = NULL;
- 		}
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 609ae92..944a50b 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -85,6 +85,10 @@ struct composite_conf {
- 	u8			gate_flags;
- };
- 
-+struct gate_conf {
-+	u8			bit_idx;
-+};
-+
- #define PNAME(x) static const char *x[]
- 
- enum clk_type {
-@@ -93,6 +97,7 @@ enum clk_type {
- 	CLK_COMPOSITE,
- 	CLK_CPU,
- 	CLK_PLL,
-+	CLK_GATE,
- };
- 
- struct clk_conf {
-@@ -109,6 +114,7 @@ struct clk_conf {
- 		const struct composite_conf		*composite;
- 		struct pll_conf			*pll;
- 		const struct clk_div_table	*div_table;
-+		const struct gate_conf		gate;
- 	} conf;
- };
- 
-@@ -176,6 +182,18 @@ struct clk_conf {
- 		.conf.composite			= (_c),			\
- 	}								\
- 
-+#define GATE(_ro, _ci, _cn, _cp, _f, _bi)				\
-+	{								\
-+		.reg_off			= (_ro),		\
-+		.clk_type			= CLK_GATE,		\
-+		.clk_id				= (_ci),		\
-+		.clk_name			= (_cn),		\
-+		.clks_parent			= (_cp),		\
-+		.num_parents			= ARRAY_SIZE(_cp),	\
-+		.flags				= (_f),			\
-+		.conf.gate.bit_idx		= (_bi),		\
-+	}								\
-+
- struct clk **meson_clk_init(struct device_node *np, unsigned long nr_clks);
- void meson_clk_register_clks(const struct clk_conf *clk_confs,
- 			     unsigned int nr_confs, void __iomem *clk_base);
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/clkdev.h>
+> +
+> +static void __init aspeed_of_hpll_clk_init(struct device_node *node)
+> +{
+> +	struct clk *clk, *clkin_clk;
+> +	void __iomem *base;
+> +	int reg, rate, clkin;
+> +	const char *name = node->name;
+> +	const char *parent_name;
+> +	const int rates[][4] = {
+> +		{384, 360, 336, 408},
+> +		{400, 375, 350, 425},
+> +	};
+> +
+> +	of_property_read_string(node, "clock-output-names", &name);
+> +	parent_name = of_clk_get_parent_name(node, 0);
+> +
+> +	base = of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("%s: of_iomap failed\n", node->full_name);
+> +		return;
+> +	}
+> +	reg = readl(base);
+> +	iounmap(base);
+> +
+> +	clkin_clk = of_clk_get(node, 0);
+> +	if (IS_ERR(clkin_clk)) {
+> +		pr_err("%s: of_clk_get failed\n", node->full_name);
+> +		return;
+> +	}
+> +
+> +	clkin = clk_get_rate(clkin_clk);
+> +
+> +	reg = (reg >> 8) & 0x2;
+> +
+> +	if (clkin == 48000000 || clkin == 24000000)
+> +		rate = rates[0][reg] * 1000000;
+> +	else if (clkin == 25000000)
+> +		rate = rates[1][reg] * 1000000;
+> +	else {
+> +		pr_err("%s: unknown clkin frequency %dHz\n",
+> +				node->full_name, clkin);
+> +		WARN_ON(1);
+> +	}
+> +
+> +	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
+
+Please write a proper clk driver that sets clkin to be the parent
+of this clk registered here and then calculates the frequency
+based on the parent clk rate and the strapping registers via the
+recalc rate callback. Also please move this to a platform driver
+instead of using CLK_OF_DECLARE assuming this isn't required for
+any timers in the system.
+
+> +	if (IS_ERR(clk)) {
+> +		pr_err("%s: failed to register clock\n", node->full_name);
+> +		return;
+> +	}
+> +
+> +	clk_register_clkdev(clk, NULL, name);
+
+Do you have clkdev users? If not then please drop this.
+
+> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +}
+> +CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g4-hpll-clock",
+> +	       aspeed_of_hpll_clk_init);
+> +
+> +static void __init aspeed_of_apb_clk_init(struct device_node *node)
+> +{
+> +	struct clk *clk, *hpll_clk;
+> +	void __iomem *base;
+> +	int reg, rate;
+> +	const char *name = node->name;
+> +	const char *parent_name;
+> +
+> +	of_property_read_string(node, "clock-output-names", &name);
+> +	parent_name = of_clk_get_parent_name(node, 0);
+> +
+> +	base = of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("%s: of_iomap failed\n", node->full_name);
+> +		return;
+> +	}
+> +	reg = readl(base);
+> +	iounmap(base);
+> +
+> +	hpll_clk = of_clk_get(node, 0);
+> +	if (IS_ERR(hpll_clk)) {
+> +		pr_err("%s: of_clk_get failed\n", node->full_name);
+> +		return;
+> +	}
+> +
+> +	reg = (reg >> 23) & 0x3;
+> +	rate = clk_get_rate(hpll_clk) / (2 + 2 * reg);
+> +
+> +	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
+> +	if (IS_ERR(clk)) {
+> +		pr_err("%s: failed to register clock\n", node->full_name);
+> +		return;
+> +	}
+> +
+> +	clk_register_clkdev(clk, NULL, name);
+> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +}
+> +CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g4-apb-clock",
+> +	       aspeed_of_apb_clk_init);
+
+Following on Rob's comment, please combine this into one driver
+instead of having different DT nodes for different clks that are
+all really part of one clock controller hw block.
+
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
