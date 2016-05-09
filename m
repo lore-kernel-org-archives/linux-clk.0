@@ -1,48 +1,169 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 May 2016 15:13:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
-Message-ID: <20160509221321.GT3492@codeaurora.org>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
- <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
- <20160506231229.GJ3492@codeaurora.org>
- <1462772426.5344.7.camel@mtksdaap41>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462772426.5344.7.camel@mtksdaap41>
+Return-Path: <joel@jms.id.au>
+Return-Path: <joel@jms.id.au>
+From: Joel Stanley <joel@jms.id.au>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	jk@ozlabs.org,
+	benh@kernel.crashing.org,
+	arnd@arndb.de,
+	heiko@sntech.de
+Subject: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
+Date: Mon,  9 May 2016 22:01:49 +0930
+Message-Id: <1462797111-14271-3-git-send-email-joel@jms.id.au>
+In-Reply-To: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/09, James Liao wrote:
-> Hi Stephen,
-> 
-> On Fri, 2016-05-06 at 16:12 -0700, Stephen Boyd wrote:
-> > On 04/14, James Liao wrote:
-> > > Some system clocks should be turned on by default on MT2701.
-> > > This patch enable these clocks when related clocks have
-> > > been registered.
-> > > 
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > ---
-> > 
-> > critical clks got merged now (sorry I'm slowly getting back to
-> > looking at patches). Please use that flag.
-> 
-> I don't see critical clock support in v4.6-rc7. Is there a repo/branch
-> that has critical clocks merged?
-> 
+A basic driver to create fixed rate clock devices from strapping
+registers.
 
-Right, it's in clk-next in the clk tree.
+The clocks on the ast2400 are derived from an external oscillator and
+the frequency of this can be derived from the strapping of the
+processor. The frequency of internal clocks can be derived from other
+registers in the SCU (System Control Unit).
 
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/Makefile        |   1 +
+ drivers/clk/aspeed/Makefile |   1 +
+ drivers/clk/aspeed/clk-g4.c | 109 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 111 insertions(+)
+ create mode 100644 drivers/clk/aspeed/Makefile
+ create mode 100644 drivers/clk/aspeed/clk-g4.c
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d696e4d..8eaaef013a28 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -84,3 +84,4 @@ obj-$(CONFIG_X86)			+= x86/
+ obj-$(CONFIG_ARCH_ZX)			+= zte/
+ obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
+ obj-$(CONFIG_H8300)		+= h8300/
++obj-$(CONFIG_ARCH_ASPEED)		+= aspeed/
+diff --git a/drivers/clk/aspeed/Makefile b/drivers/clk/aspeed/Makefile
+new file mode 100644
+index 000000000000..d3457fbe3019
+--- /dev/null
++++ b/drivers/clk/aspeed/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_MACH_ASPEED_G4) += clk-g4.o
+diff --git a/drivers/clk/aspeed/clk-g4.c b/drivers/clk/aspeed/clk-g4.c
+new file mode 100644
+index 000000000000..91677e9177f5
+--- /dev/null
++++ b/drivers/clk/aspeed/clk-g4.c
+@@ -0,0 +1,109 @@
++/*
++ * Copyright 2016 IBM Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version
++ * 2 of the License, or (at your option) any later version.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/clkdev.h>
++
++static void __init aspeed_of_hpll_clk_init(struct device_node *node)
++{
++	struct clk *clk, *clkin_clk;
++	void __iomem *base;
++	int reg, rate, clkin;
++	const char *name = node->name;
++	const char *parent_name;
++	const int rates[][4] = {
++		{384, 360, 336, 408},
++		{400, 375, 350, 425},
++	};
++
++	of_property_read_string(node, "clock-output-names", &name);
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	base = of_iomap(node, 0);
++	if (!base) {
++		pr_err("%s: of_iomap failed\n", node->full_name);
++		return;
++	}
++	reg = readl(base);
++	iounmap(base);
++
++	clkin_clk = of_clk_get(node, 0);
++	if (IS_ERR(clkin_clk)) {
++		pr_err("%s: of_clk_get failed\n", node->full_name);
++		return;
++	}
++
++	clkin = clk_get_rate(clkin_clk);
++
++	reg = (reg >> 8) & 0x2;
++
++	if (clkin == 48000000 || clkin == 24000000)
++		rate = rates[0][reg] * 1000000;
++	else if (clkin == 25000000)
++		rate = rates[1][reg] * 1000000;
++	else {
++		pr_err("%s: unknown clkin frequency %dHz\n",
++				node->full_name, clkin);
++		WARN_ON(1);
++	}
++
++	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register clock\n", node->full_name);
++		return;
++	}
++
++	clk_register_clkdev(clk, NULL, name);
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g4-hpll-clock",
++	       aspeed_of_hpll_clk_init);
++
++static void __init aspeed_of_apb_clk_init(struct device_node *node)
++{
++	struct clk *clk, *hpll_clk;
++	void __iomem *base;
++	int reg, rate;
++	const char *name = node->name;
++	const char *parent_name;
++
++	of_property_read_string(node, "clock-output-names", &name);
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	base = of_iomap(node, 0);
++	if (!base) {
++		pr_err("%s: of_iomap failed\n", node->full_name);
++		return;
++	}
++	reg = readl(base);
++	iounmap(base);
++
++	hpll_clk = of_clk_get(node, 0);
++	if (IS_ERR(hpll_clk)) {
++		pr_err("%s: of_clk_get failed\n", node->full_name);
++		return;
++	}
++
++	reg = (reg >> 23) & 0x3;
++	rate = clk_get_rate(hpll_clk) / (2 + 2 * reg);
++
++	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register clock\n", node->full_name);
++		return;
++	}
++
++	clk_register_clkdev(clk, NULL, name);
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g4-apb-clock",
++	       aspeed_of_apb_clk_init);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
