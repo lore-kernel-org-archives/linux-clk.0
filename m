@@ -1,54 +1,76 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v8 01/10] clk: fix initial state of critical clock's parents
-Date: Tue, 17 May 2016 13:05:02 +0800
-Message-ID: <1463461511-25019-2-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Mon, 9 May 2016 11:47:28 +0100
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>,
+        <myungjoo.ham@samsung.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 2/4] clk: arizona: Add clock driver for the Arizona
+ devices
+Message-ID: <20160509104728.GG1646@localhost.localdomain>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1452252582-20834-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20160507005501.GN3492@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160507005501.GN3492@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+On Fri, May 06, 2016 at 05:55:01PM -0700, Stephen Boyd wrote:
+> I've applied this to clk-next but still have a question, see
+> below.
+> 
+> On 01/08, Charles Keepax wrote:
+> > diff --git a/drivers/clk/clk-arizona.c b/drivers/clk/clk-arizona.c
+> > new file mode 100644
+> > index 0000000..eaf2877
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-arizona.c
+> > +
+> > +static int arizona_clk_of_get_pdata(struct arizona *arizona)
+> > +{
+> > +	const char * const pins[] = { "mclk1", "mclk2" };
+> > +	struct clk *mclk;
+> > +	int i;
+> > +
+> > +	if (!of_property_read_bool(arizona->dev->of_node, "clocks"))
+> > +		return 0;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(pins); ++i) {
+> > +		mclk = of_clk_get_by_name(arizona->dev->of_node, pins[i]);
+> > +		if (IS_ERR(mclk))
+> > +			return PTR_ERR(mclk);
+> > +
+> > +		if (clk_get_rate(mclk) == CLK32K_RATE) {
+> > +			arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK1 + i;
+> > +			arizona->pdata.clk32k_parent = __clk_get_name(mclk);
+> > +		}
+> > +
+> > +		clk_put(mclk);
+> 
+> Could this be done through assigned parents instead of this rate
+> checking stuff? Presumably DT could tell us how the clk tree
+> should be configured.
+> 
 
-This patch fixed wrong state of parent clocks if they are registered
-after critical clocks.
+Apologies, I have been working on a v4 that includes these
+improvements. It does indeed look much nicer using assigned
+parents etc. I think it might be best to drop these for now until
+those are ready to send.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/clk.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+The only problem I really have left to sort out before I can send
+it are some locking issues. It is quite tricky to get interaction
+between the clocking and SPI frameworks to play nicely. The SPI
+framework will sometimes punt the actually processing for the
+transfer to a worker thread which will often perform operations
+on clocks required for the SPI. Because this is a seperate
+thread it isn't handled by the re-enterant locking in the clock
+framework. I had been working around this using async transfers
+for the SPI, but even then I have since found you can get lockdep
+warnings because of the potential mutex inversion (SPI mutex and
+the clock one).
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ce39add..bf80e39 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
- 		struct clk_core *parent = __clk_init_parent(orphan);
- 
--		if (parent)
-+		if (parent) {
- 			clk_core_reparent(orphan, parent);
-+
-+			if (orphan->prepare_count)
-+				clk_core_prepare(parent);
-+
-+			if (orphan->enable_count)
-+				clk_core_enable(parent);
-+		}
- 	}
- 
- 	/*
--- 
-1.9.1
+Any suggestions on this front would be greatly appreciated?
+
+Thanks, Charles
