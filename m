@@ -1,41 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 16:15:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Penny Chiu <pchiu@nvidia.com>, swarren@wwwdotorg.org, gnurou@gmail.com,
-	pdeschrijver@nvidia.com, pgaikwad@nvidia.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] pwm: tegra-dfll: Add driver for Tegra DFLL PWM
- controller
-Message-ID: <20160506231532.GK3492@codeaurora.org>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-6-git-send-email-pchiu@nvidia.com>
- <20160422125513.GJ9047@ulmo.ba.sec>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Remove useless check for return
+ value of samsung_clk_init
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1462699496-16646-1-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
+Date: Mon, 9 May 2016 09:32:47 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160422125513.GJ9047@ulmo.ba.sec>
+In-Reply-To: <1462699496-16646-1-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22, Thierry Reding wrote:
-> On Fri, Apr 22, 2016 at 06:31:05PM +0800, Penny Chiu wrote:
-> > diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
-> > new file mode 100644
-> > index 0000000..bd0d247
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
-> > @@ -0,0 +1,48 @@
-> > +Tegra SoC DFLL PWM controller
+Hello Krzysztof,
+
+On 05/08/2016 05:24 AM, Krzysztof Kozlowski wrote:
+> The samsung_clk_init() cannot return NULL. Either it returns allocated
+> memory or it panics.
 > 
-> Stephen, we have in the past used tegra124 in names, even if the IP was
-> already included in tegra114, but we never supported it on Tegra114 and
-> hence couldn't even verify that the binding was valid. Any preference as
-> to the name in this particular case?
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 92382cef9f90..770c0f007c6b 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  	exynos5x_soc = soc;
+>  
+>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+> -	if (!ctx)
+> -		panic("%s: unable to allocate context.\n", __func__);
+>
 
-You meant Stephen Warren right? I don't care either way.
+Indeed, the check is superfluous. I see that most callers [0] currently
+do the same, so probably makes sense to remove those too in this patch.
 
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+[0]:
+drivers/clk/samsung/clk-exynos4.c
+drivers/clk/samsung/clk-exynos5250.c
+drivers/clk/samsung/clk-exynos5440.c
+drivers/clk/samsung/clk-s3c2410.c
+drivers/clk/samsung/clk-s3c2412.c
+drivers/clk/samsung/clk-s3c2443.c
+drivers/clk/samsung/clk-s3c64xx.c
+drivers/clk/samsung/clk-s5pv210.c
+
+Best regards,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
