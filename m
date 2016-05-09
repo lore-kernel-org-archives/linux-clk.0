@@ -1,36 +1,52 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 09/22] ARM: dts: exynos: Re-order alphabetically
- Exynos5420 SD0/SD1 pinctrl nodes
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-10-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <30758464-a516-9066-c4cb-8d0dd82a0d80@osg.samsung.com>
-Date: Mon, 9 May 2016 16:52:19 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-10-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <joel@jms.id.au>
+Return-Path: <joel@jms.id.au>
+From: Joel Stanley <joel@jms.id.au>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	jk@ozlabs.org,
+	benh@kernel.crashing.org,
+	arnd@arndb.de,
+	heiko@sntech.de
+Subject: [PATCH 0/4] clk: Add drivers for Aspeed BMC SoCs
+Date: Mon,  9 May 2016 22:01:47 +0930
+Message-Id: <1462797111-14271-1-git-send-email-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Hello,
 
-On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
-> The 'sd0_rclk' was put in the middle of SD1 nodes. Remove the confusion.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+This adds support for the Aspeed ast2400 and ast2500 BMC SoCs. The drivers are
+basic in that they only create clock devices so other drivers know what
+frequency they are clocked at; there is no support for modifying the clocks.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Heiko and I exchanged some mail about the structure of the drivers. Thanks for
+the review Hieko! However, I still think the layout matches the hardware as we
+understand it so I did not make significant changes.
 
-Best regards,
+Cheers,
+
+Joel
+
+Joel Stanley (4):
+  doc/devicetree: Add Aspeed clock bindings
+  drvers/clk: Support fourth generation Aspeed SoCs
+  drvers/clk: Support fifth generation Aspeed SoCs
+  drivers/clk: Support Aspeed UART clock divisor
+
+ .../devicetree/bindings/clock/aspeed-clock.txt     | 156 +++++++++++++++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/aspeed/Makefile                        |   3 +
+ drivers/clk/aspeed/clk-g4.c                        | 109 ++++++++++++
+ drivers/clk/aspeed/clk-g5.c                        | 189 +++++++++++++++++++++
+ drivers/clk/aspeed/clk-uart.c                      |  52 ++++++
+ 6 files changed, 510 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/aspeed-clock.txt
+ create mode 100644 drivers/clk/aspeed/Makefile
+ create mode 100644 drivers/clk/aspeed/clk-g4.c
+ create mode 100644 drivers/clk/aspeed/clk-g5.c
+ create mode 100644 drivers/clk/aspeed/clk-uart.c
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.8.1
