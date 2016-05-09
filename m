@@ -1,283 +1,185 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>
-Subject: [PATCH 01/11] drivers: clk: st: Add fs660c32 synthesizer algorithm
-Date: Wed, 18 May 2016 10:41:22 +0200
-Message-Id: <1463560892-7209-2-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1462775888.5344.20.camel@mtksdaap41>
+Subject: Re: [PATCH v7 4/9] clk: mediatek: Add MT2701 clock support
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>
+Date: Mon, 9 May 2016 14:38:08 +0800
+In-Reply-To: <20160506231151.GI3492@codeaurora.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1460621514-65191-5-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160506231151.GI3492@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Use an algorithm instead of a table to compute clocks for fs660c32
-synthesizer.
-During a video playback we need to adjust audio & video frequencies.
-A table can't cover all HDMI resolutions and audio adjustment.
+Hi Stephen,
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- drivers/clk/st/clkgen-fsyn.c | 159 +++++++++++++++++++++++++++++++------------
- 1 file changed, 117 insertions(+), 42 deletions(-)
+On Fri, 2016-05-06 at 16:11 -0700, Stephen Boyd wrote:
+> On 04/14, James Liao wrote:
+> > diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+> > new file mode 100644
+> > index 0000000..b4db141
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-mt2701.c
+> > +static void __init mtk_infrasys_init(struct device_node *node)
+> > +{
+> > +	struct clk_onecell_data *clk_data;
+> > +	int r;
+> > +
+> > +	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
+> > +
+> > +	mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
+> > +						clk_data);
+> > +	mtk_clk_register_factors(infra_fixed_divs, ARRAY_SIZE(infra_fixed_divs),
+> > +						clk_data);
+> > +
+> > +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> > +	if (r)
+> > +		pr_err("%s(): could not register clock provider: %d\n",
+> > +			__func__, r);
+> > +}
+> > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+> 
+> I'm still lost on the usage of CLK_OF_DECLARE here. What part of
+> these clk controllers needs to be registered to make the timer
+> work?
 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index dec4eaa..06e9537 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -81,40 +81,6 @@ static const struct stm_fs fs432c65_rtbl[] = {
- 	{ .mdiv = 0x19, .pe = 0x121a,	.sdiv = 0x0,	.nsdiv = 1 },	/* 297     MHz */
- };
- 
--static const struct stm_fs fs660c32_rtbl[] = {
--	{ .mdiv = 0x14, .pe = 0x376b,	.sdiv = 0x4,	.nsdiv = 1 },	/* 25.175  MHz */
--	{ .mdiv = 0x14, .pe = 0x30c3,	.sdiv = 0x4,	.nsdiv = 1 },	/* 25.200  MHz */
--	{ .mdiv = 0x10, .pe = 0x71c7,	.sdiv = 0x4,	.nsdiv = 1 },	/* 27.000  MHz */
--	{ .mdiv = 0x00, .pe = 0x47af,	.sdiv = 0x3,	.nsdiv = 0 },	/* 27.027  MHz */
--	{ .mdiv = 0x0e, .pe = 0x4e1a,	.sdiv = 0x4,	.nsdiv = 1 },	/* 28.320  MHz */
--	{ .mdiv = 0x0b, .pe = 0x534d,	.sdiv = 0x4,	.nsdiv = 1 },	/* 30.240  MHz */
--	{ .mdiv = 0x17, .pe = 0x6fbf,	.sdiv = 0x2,	.nsdiv = 0 },	/* 31.500  MHz */
--	{ .mdiv = 0x01, .pe = 0x0,	.sdiv = 0x4,	.nsdiv = 1 },	/* 40.000  MHz */
--	{ .mdiv = 0x15, .pe = 0x2aab,	.sdiv = 0x3,	.nsdiv = 1 },	/* 49.500  MHz */
--	{ .mdiv = 0x14, .pe = 0x6666,	.sdiv = 0x3,	.nsdiv = 1 },	/* 50.000  MHz */
--	{ .mdiv = 0x1d, .pe = 0x395f,	.sdiv = 0x1,	.nsdiv = 0 },	/* 57.284  MHz */
--	{ .mdiv = 0x08, .pe = 0x4ec5,	.sdiv = 0x3,	.nsdiv = 1 },	/* 65.000  MHz */
--	{ .mdiv = 0x05, .pe = 0x1770,	.sdiv = 0x3,	.nsdiv = 1 },	/* 71.000  MHz */
--	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x3,	.nsdiv = 1 },	/* 74.176  MHz */
--	{ .mdiv = 0x0f, .pe = 0x3426,	.sdiv = 0x1,	.nsdiv = 0 },	/* 74.250  MHz */
--	{ .mdiv = 0x0e, .pe = 0x7777,	.sdiv = 0x1,	.nsdiv = 0 },	/* 75.000  MHz */
--	{ .mdiv = 0x01, .pe = 0x4053,	.sdiv = 0x3,	.nsdiv = 1 },	/* 78.800  MHz */
--	{ .mdiv = 0x09, .pe = 0x15b5,	.sdiv = 0x1,	.nsdiv = 0 },	/* 85.500  MHz */
--	{ .mdiv = 0x1b, .pe = 0x3f19,	.sdiv = 0x2,	.nsdiv = 1 },	/* 88.750  MHz */
--	{ .mdiv = 0x10, .pe = 0x71c7,	.sdiv = 0x2,	.nsdiv = 1 },	/* 108.000 MHz */
--	{ .mdiv = 0x00, .pe = 0x47af,	.sdiv = 0x1,	.nsdiv = 0 },	/* 108.108 MHz */
--	{ .mdiv = 0x0c, .pe = 0x3118,	.sdiv = 0x2,	.nsdiv = 1 },	/* 118.963 MHz */
--	{ .mdiv = 0x0c, .pe = 0x2f54,	.sdiv = 0x2,	.nsdiv = 1 },	/* 119.000 MHz */
--	{ .mdiv = 0x07, .pe = 0xe39,	.sdiv = 0x2,	.nsdiv = 1 },	/* 135.000 MHz */
--	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x2,	.nsdiv = 1 },	/* 148.352 MHz */
--	{ .mdiv = 0x0f, .pe = 0x3426,	.sdiv = 0x0,	.nsdiv = 0 },	/* 148.500 MHz */
--	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x1,	.nsdiv = 1 },	/* 296.704 MHz */
--	{ .mdiv = 0x03, .pe = 0x471c,	.sdiv = 0x1,	.nsdiv = 1 },	/* 297.000 MHz */
--	{ .mdiv = 0x00, .pe = 0x295f,	.sdiv = 0x1,	.nsdiv = 1 },	/* 326.700 MHz */
--	{ .mdiv = 0x1f, .pe = 0x3633,	.sdiv = 0x0,	.nsdiv = 1 },	/* 333.000 MHz */
--	{ .mdiv = 0x1c, .pe = 0x0,	.sdiv = 0x0,	.nsdiv = 1 },	/* 352.000 Mhz */
--};
--
- struct clkgen_quadfs_data {
- 	bool reset_present;
- 	bool bwfilter_present;
-@@ -140,6 +106,7 @@ struct clkgen_quadfs_data {
- 	const struct clk_ops *pll_ops;
- 	const struct stm_fs *rtbl;
- 	u8 rtbl_cnt;
-+	int  (*get_params)(unsigned long, unsigned long, struct stm_fs *);
- 	int  (*get_rate)(unsigned long , const struct stm_fs *,
- 			unsigned long *);
- };
-@@ -156,6 +123,9 @@ static int clk_fs432c65_get_rate(unsigned long, const struct stm_fs *,
- 		unsigned long *);
- static int clk_fs660c32_dig_get_rate(unsigned long, const struct stm_fs *,
- 		unsigned long *);
-+static int clk_fs660c32_dig_get_params(unsigned long input,
-+		unsigned long output, struct stm_fs *fs);
-+
- /*
-  * Values for all of the standalone instances of this clock
-  * generator found in STiH415 and STiH416 SYSCFG register banks. Note
-@@ -266,8 +236,7 @@ static const struct clkgen_quadfs_data st_fs660c32_E_416 = {
- 	.lockstatus_present = true,
- 	.lock_status = CLKGEN_FIELD(0xAC, 0x1, 0),
- 	.pll_ops	= &st_quadfs_pll_c32_ops,
--	.rtbl		= fs660c32_rtbl,
--	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
-+	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
-@@ -302,8 +271,7 @@ static const struct clkgen_quadfs_data st_fs660c32_F_416 = {
- 	.lockstatus_present = true,
- 	.lock_status = CLKGEN_FIELD(0xEC, 0x1, 0),
- 	.pll_ops	= &st_quadfs_pll_c32_ops,
--	.rtbl		= fs660c32_rtbl,
--	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
-+	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
-@@ -345,8 +313,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C = {
- 	.powerup_polarity = 1,
- 	.standby_polarity = 1,
- 	.pll_ops	= &st_quadfs_pll_c32_ops,
--	.rtbl		= fs660c32_rtbl,
--	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
-+	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
-@@ -388,8 +355,7 @@ static const struct clkgen_quadfs_data st_fs660c32_D = {
- 	.powerup_polarity = 1,
- 	.standby_polarity = 1,
- 	.pll_ops	= &st_quadfs_pll_c32_ops,
--	.rtbl		= fs660c32_rtbl,
--	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
-+	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,};
- 
- /**
-@@ -893,12 +859,113 @@ static int quadfs_fsynt_get_hw_value_for_recalc(struct st_clk_quadfs_fsynth *fs,
- 	return 0;
- }
- 
-+static int clk_fs660c32_get_pe(int m, int si, unsigned long *deviation,
-+		signed long input, unsigned long output, uint64_t *p,
-+		struct stm_fs *fs)
-+{
-+	unsigned long new_freq, new_deviation;
-+	struct stm_fs fs_tmp;
-+	uint64_t val;
-+
-+	val = (uint64_t)output << si;
-+
-+	*p = (uint64_t)input * P20 - (32LL  + (uint64_t)m) * val * (P20 / 32LL);
-+
-+	*p = div64_u64(*p, val);
-+
-+	if (*p > 32767LL)
-+		return 1;
-+
-+	fs_tmp.mdiv = (unsigned long) m;
-+	fs_tmp.pe = (unsigned long)*p;
-+	fs_tmp.sdiv = si;
-+	fs_tmp.nsdiv = 1;
-+
-+	clk_fs660c32_dig_get_rate(input, &fs_tmp, &new_freq);
-+
-+	new_deviation = abs(output - new_freq);
-+
-+	if (new_deviation < *deviation) {
-+		fs->mdiv = m;
-+		fs->pe = (unsigned long)*p;
-+		fs->sdiv = si;
-+		fs->nsdiv = 1;
-+		*deviation = new_deviation;
-+	}
-+	return 0;
-+}
-+
-+static int clk_fs660c32_dig_get_params(unsigned long input,
-+		unsigned long output, struct stm_fs *fs)
-+{
-+	int si;	/* sdiv_reg (8 downto 0) */
-+	int m; /* md value */
-+	unsigned long new_freq, new_deviation;
-+	/* initial condition to say: "infinite deviation" */
-+	unsigned long deviation = ~0;
-+	uint64_t p, p1, p2;	/* pe value */
-+	int r1, r2;
-+
-+	struct stm_fs fs_tmp;
-+
-+	for (si = 0; (si <= 8) && deviation; si++) {
-+
-+		/* Boundary test to avoid useless iteration */
-+		r1 = clk_fs660c32_get_pe(0, si, &deviation,
-+				input, output, &p1, fs);
-+		r2 = clk_fs660c32_get_pe(31, si, &deviation,
-+				input, output, &p2, fs);
-+
-+		/* No solution */
-+		if (r1 && r2 && (p1 > p2))
-+			continue;
-+
-+		/* Try to find best deviation */
-+		for (m = 1; (m < 31) && deviation; m++)
-+			clk_fs660c32_get_pe(m, si, &deviation,
-+					input, output, &p, fs);
-+
-+	}
-+
-+	if (deviation == ~0) /* No solution found */
-+		return -1;
-+
-+	/* pe fine tuning if deviation not 0: +/- 2 around computed pe value */
-+	if (deviation) {
-+		fs_tmp.mdiv = fs->mdiv;
-+		fs_tmp.sdiv = fs->sdiv;
-+		fs_tmp.nsdiv = fs->nsdiv;
-+
-+		if (fs->pe > 2)
-+			p2 = fs->pe - 2;
-+		else
-+			p2 = 0;
-+
-+		for (; p2 < 32768ll && (p2 <= (fs->pe + 2)); p2++) {
-+			fs_tmp.pe = (unsigned long)p2;
-+
-+			clk_fs660c32_dig_get_rate(input, &fs_tmp, &new_freq);
-+
-+			new_deviation = abs(output - new_freq);
-+
-+			/* Check if this is a better solution */
-+			if (new_deviation < deviation) {
-+				fs->pe = (unsigned long)p2;
-+				deviation = new_deviation;
-+
-+			}
-+		}
-+	}
-+	return 0;
-+}
-+
- static long quadfs_find_best_rate(struct clk_hw *hw, unsigned long drate,
- 				unsigned long prate, struct stm_fs *params)
- {
- 	struct st_clk_quadfs_fsynth *fs = to_quadfs_fsynth(hw);
- 	int (*clk_fs_get_rate)(unsigned long ,
- 				const struct stm_fs *, unsigned long *);
-+	int (*clk_fs_get_params)(unsigned long, unsigned long, struct stm_fs *);
- 	struct stm_fs prev_params;
- 	unsigned long prev_rate, rate = 0;
- 	unsigned long diff_rate, prev_diff_rate = ~0;
-@@ -906,6 +973,14 @@ static long quadfs_find_best_rate(struct clk_hw *hw, unsigned long drate,
- 
- 	clk_fs_get_rate = fs->data->get_rate;
- 
-+	if (fs->data->get_params) {
-+		clk_fs_get_params = fs->data->get_params;
-+
-+		if (!clk_fs_get_params(prate, drate, params))
-+			clk_fs_get_rate(prate, params, &rate);
-+		return rate;
-+	}
-+
- 	for (index = 0; index < fs->data->rtbl_cnt; index++) {
- 		prev_rate = rate;
- 
--- 
-1.9.1
+GPT (mtk-timer.c) may need infracfg and topckgen clocks. MT8173 for
+example:
+
+	timer: timer@10008000 {
+	[...]
+		clocks = <&infracfg CLK_INFRA_CLK_13M>,
+			 <&topckgen CLK_TOP_RTC_SEL>;
+	};
+
+> > +	GATE_DISP1(CLK_MM_DPI_DIGL, "mm_dpi_digl", "dpi0_sel", 2),
+> > +	GATE_DISP1(CLK_MM_DPI_ENGINE, "mm_dpi_eng", "mm_sel", 3),
+> > +	GATE_DISP1(CLK_MM_DPI1_DIGL, "mm_dpi1_digl", "dpi1_sel", 4),
+> > +	GATE_DISP1(CLK_MM_DPI1_ENGINE, "mm_dpi1_eng", "mm_sel", 5),
+> > +	GATE_DISP1(CLK_MM_TVE_OUTPUT, "mm_tve_output", "tve_sel", 6),
+> > +	GATE_DISP1(CLK_MM_TVE_INPUT, "mm_tve_input", "dpi0_sel", 7),
+> > +	GATE_DISP1(CLK_MM_HDMI_PIXEL, "mm_hdmi_pixel", "dpi1_sel", 8),
+> > +	GATE_DISP1(CLK_MM_HDMI_PLL, "mm_hdmi_pll", "hdmi_sel", 9),
+> > +	GATE_DISP1(CLK_MM_HDMI_AUDIO, "mm_hdmi_audio", "apll_sel", 10),
+> > +	GATE_DISP1(CLK_MM_HDMI_SPDIF, "mm_hdmi_spdif", "apll_sel", 11),
+> > +	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
+> > +};
+> 
+> I also don't understand why we don't have different files and
+> drivers for all these different clock controllers? They all have
+> a similar probe structure, sure, but otherwise these are
+> different devices with different clks for them. The whole #ifdef
+> thing in the later patch would go away too.
+
+Yes, you are right. So you prefer to support subsystem clocks in
+separated files such as clk-mt2701-mm.c, clk-mt2701-bdp.c and so on,
+right?
+
+But even if we implement subsystem clock in separated files, we still
+need a way to make them optional. So the config options and #ifdef may
+not be removed.
+
+> > +	GATE_BDP1(CLK_BDP_BRG_RT_B, "brg_rt_bclk", "mm_sel", 12),
+> > +	GATE_BDP1(CLK_BDP_BRG_RT_DRAM, "brg_rt_dram", "mm_sel", 13),
+> > +	GATE_BDP1(CLK_BDP_LARBRT_DRAM, "larbrt_dram", "mm_sel", 14),
+> > +	GATE_BDP1(CLK_BDP_TMDS_SYN, "tmds_syn", "hdmi_0_pll340m", 15),
+> > +	GATE_BDP1(CLK_BDP_HDMI_MON, "hdmi_mon", "hdmi_0_pll340m", 16),
+> > +};
+> > +
+> > +static void __init mtk_bdpsys_init(struct device_node *node)
+> 
+> Shouldn't be __init because it's driver probe path.
+
+I use builtin_platform_driver_probe(clk_drv, clk_probe) to register this
+driver, and it looks can be __init.
+
+> > +{
+> > +	struct clk_onecell_data *clk_data;
+> > +	int r;
+> > +
+> > +	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
+> > +
+> > +	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
+> > +						clk_data);
+> > +
+> > +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> > +	if (r)
+> > +		pr_err("%s(): could not register clock provider: %d\n",
+> > +			__func__, r);
+> > +}
+> [...]
+> > +
+> > +static int __init clk_probe(struct platform_device *pdev)
+> > +{
+> > +	void (*clk_init)(struct device_node *);
+> > +	const struct of_device_id *of_id;
+> > +
+> > +	of_id = of_match_node(of_clk_match_tbl, pdev->dev.of_node);
+> > +	if (!of_id || !of_id->data)
+> > +		return -EINVAL;
+> > +
+> > +	clk_init = of_id->data;
+> > +	clk_init(pdev->dev.of_node);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static struct platform_driver clk_drv = {
+> 
+> Please add some mtk here, 'clk_drv' is too generic.
+
+OK. I'll add it in next patch.
+
+> > +	.driver = {
+> > +		.name = "mtk-clk",
+> > +		.owner = THIS_MODULE,
+> 
+> This is unnecessary.
+
+I'll remove it.
+
+> > +		.of_match_table = of_match_ptr(of_clk_match_tbl),
+> 
+> Just drop of_match_ptr() because it's not helping. Also
+> of_clk_match_tbl is too generic.
+
+I'll change it.
+
+> > +	},
+> > +};
+> > +
+> > +builtin_platform_driver_probe(clk_drv, clk_probe);
+> > +}
+> > diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+> > index 32d2e45..8796acc 100644
+> > --- a/drivers/clk/mediatek/clk-mtk.h
+> > +++ b/drivers/clk/mediatek/clk-mtk.h
+> > @@ -145,8 +146,35 @@ struct mtk_gate {
+> [...]
+> > +struct mtk_clk_divider {
+> > +	int id;
+> > +	const char *name;
+> > +	const char *parent_name;
+> > +	unsigned long flags;
+> > +
+> > +	uint32_t div_reg;
+> 
+> u32 is shorter
+
+I'll change it.
+
+> > +	unsigned char div_shift;
+> > +	unsigned char div_width;
+> > +	unsigned char clk_divider_flags;
+> > +	const struct clk_div_table *clk_div_table;
+> > +};
