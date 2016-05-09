@@ -1,55 +1,98 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 14/20] ARM: sun5i: a13: Add LCD pins
-Date: Mon, 16 May 2016 14:47:14 +0200
-Message-Id: <1463402840-17062-15-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 May 2016 14:48:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org,
+	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.wolfsonmicro.com
+Subject: Re: [PATCH v3 2/4] clk: arizona: Add clock driver for the Arizona
+ devices
+Message-ID: <20160509214829.GQ3492@codeaurora.org>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1452252582-20834-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20160507005501.GN3492@codeaurora.org>
+ <20160509104728.GG1646@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160509104728.GG1646@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-The RGB bus can be used in several configurations, one of which being the
-RGB666.
+On 05/09, Charles Keepax wrote:
+> On Fri, May 06, 2016 at 05:55:01PM -0700, Stephen Boyd wrote:
+> > I've applied this to clk-next but still have a question, see
+> > below.
+> > 
+> > On 01/08, Charles Keepax wrote:
+> > > diff --git a/drivers/clk/clk-arizona.c b/drivers/clk/clk-arizona.c
+> > > new file mode 100644
+> > > index 0000000..eaf2877
+> > > --- /dev/null
+> > > +++ b/drivers/clk/clk-arizona.c
+> > > +
+> > > +static int arizona_clk_of_get_pdata(struct arizona *arizona)
+> > > +{
+> > > +	const char * const pins[] = { "mclk1", "mclk2" };
+> > > +	struct clk *mclk;
+> > > +	int i;
+> > > +
+> > > +	if (!of_property_read_bool(arizona->dev->of_node, "clocks"))
+> > > +		return 0;
+> > > +
+> > > +	for (i = 0; i < ARRAY_SIZE(pins); ++i) {
+> > > +		mclk = of_clk_get_by_name(arizona->dev->of_node, pins[i]);
+> > > +		if (IS_ERR(mclk))
+> > > +			return PTR_ERR(mclk);
+> > > +
+> > > +		if (clk_get_rate(mclk) == CLK32K_RATE) {
+> > > +			arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK1 + i;
+> > > +			arizona->pdata.clk32k_parent = __clk_get_name(mclk);
+> > > +		}
+> > > +
+> > > +		clk_put(mclk);
+> > 
+> > Could this be done through assigned parents instead of this rate
+> > checking stuff? Presumably DT could tell us how the clk tree
+> > should be configured.
+> > 
+> 
+> Apologies, I have been working on a v4 that includes these
+> improvements. It does indeed look much nicer using assigned
+> parents etc. I think it might be best to drop these for now until
+> those are ready to send.
 
-Add a pinctrl group for that case.
+Ok sure. I've dropped them.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-a13.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> 
+> The only problem I really have left to sort out before I can send
+> it are some locking issues. It is quite tricky to get interaction
+> between the clocking and SPI frameworks to play nicely. The SPI
+> framework will sometimes punt the actually processing for the
+> transfer to a worker thread which will often perform operations
+> on clocks required for the SPI. Because this is a seperate
+> thread it isn't handled by the re-enterant locking in the clock
+> framework. I had been working around this using async transfers
+> for the SPI, but even then I have since found you can get lockdep
+> warnings because of the potential mutex inversion (SPI mutex and
+> the clock one).
+> 
+> Any suggestions on this front would be greatly appreciated?
+> 
 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 263d46dbc7e6..79b5d513c142 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -237,6 +237,16 @@
- &pio {
- 	compatible = "allwinner,sun5i-a13-pinctrl";
- 
-+	lcd_rgb666_pins: lcd_rgb666@0 {
-+		allwinner,pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-+				 "PD10", "PD11", "PD12", "PD13", "PD14", "PD15",
-+				 "PD18", "PD19", "PD20", "PD21", "PD22", "PD23",
-+				 "PD24", "PD25", "PD26", "PD27";
-+		allwinner,function = "lcd0";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+	};
-+
- 	uart1_pins_a: uart1@0 {
- 		allwinner,pins = "PE10", "PE11";
- 		allwinner,function = "uart1";
+The fix is to always prepare the first clk right? That way we
+avoid any deadlock scenario.
+
+We've been slowly working our way toward an alternate solution,
+which is to have one mutex per clk so that different parts of the
+clk tree can be locked independently, but so far that's blocked
+on drivers re-entering the clk framework with clk consumer APIs
+from within the clk_ops callbacks. Hopefully coordinated clk rate
+switches will allow us to get rid of those situations and then we
+can go and make sure all drivers aren't relying on the big
+prepare mutex to keep their drivers safe from concurrent accesses
+and finally move to one mutex per clk. This is a long term goal
+though so I wouldn't depend on this happening anytime soon.
+
 -- 
-2.8.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
