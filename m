@@ -1,72 +1,102 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-Date: Sat, 28 May 2016 11:54:13 +0200
-Message-Id: <1464429273-23457-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <moinejf@free.fr>
+Date: Mon, 9 May 2016 09:24:21 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Vishnu Patekar
+ <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
+ Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 12/16] clk: sunxi-ng: Add N-M-factor clock support
+Message-Id: <20160509092421.a36252139fd6b00b2cd32f24@free.fr>
+In-Reply-To: <1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
-Exynos5420 just in case in future these drivers were merged.
+On Sun,  8 May 2016 22:01:47 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> Introduce support for clocks that multiply and divide using linear factor=
+s.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/Makefile |   1 +
+>  drivers/clk/sunxi-ng/ccu_nm.c | 103 ++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/sunxi-ng/ccu_nm.h |  41 +++++++++++++++++
+>  3 files changed, 145 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
+	[snip]
+> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+> new file mode 100644
+> index 000000000000..268637db137b
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> @@ -0,0 +1,103 @@
+	[snip]
+> +static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			      unsigned long *parent_rate)
+> +{
+> +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
+> +	unsigned long n, m;
+> +
+> +	rational_best_approximation(rate, *parent_rate,
+> +				    nm->n.width, nm->m.width, &n, &m);
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 213f19e02870..34c8e96987a1 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,16 +28,25 @@
- #define CLK_SCLK_MMC0		132
- #define CLK_SCLK_MMC1		133
- #define CLK_SCLK_MMC2		134
-+#define CLK_SCLK_USBD300	150
-+#define CLK_SCLK_USBD301	151
-+#define CLK_SCLK_USBPHY300	152
-+#define CLK_SCLK_USBPHY301	153
-+#define CLK_SCLK_PWM		155
- 
- /* gate clocks */
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
- #define CLK_UART3		260
-+#define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
-+#define CLK_USBH20		365
-+#define CLK_USBD300		366
-+#define CLK_USBD301		367
- 
- #define CLK_NR_CLKS		512
- 
--- 
-2.7.4
+Should be
+			1 << nm->n.width, 1 << nm->m.width, &n, &m);
+
+> +
+> +	return *parent_rate * n / m;
+> +}
+> +
+> +static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			   unsigned long parent_rate)
+> +{
+> +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
+> +	unsigned long flags;
+> +	unsigned long n, m;
+> +	u32 reg;
+> +
+> +	rational_best_approximation(rate, parent_rate,
+> +				    nm->n.width, nm->m.width, &n, &m);
+
+Idem
+
+> +
+> +	spin_lock_irqsave(nm->common.lock, flags);
+> +
+> +	reg =3D readl(nm->common.base + nm->common.reg);
+> +	reg &=3D ~GENMASK(nm->n.width + nm->n.shift, nm->n.shift);
+> +	reg &=3D ~GENMASK(nm->m.width + nm->m.shift, nm->m.shift);
+> +
+> +	writel(reg | ((m - 1) << nm->m.shift) | ((n - 1) << nm->n.shift),
+> +	       nm->common.base + nm->common.reg);
+> +
+> +	spin_unlock_irqrestore(nm->common.lock, flags);
+> +
+> +	ccu_helper_wait_for_lock(&nm->common, nm->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +const struct clk_ops ccu_nm_ops =3D {
+> +	.disable	=3D ccu_nm_disable,
+> +	.enable		=3D ccu_nm_enable,
+> +	.is_enabled	=3D ccu_nm_is_enabled,
+> +
+> +	.recalc_rate	=3D ccu_nm_recalc_rate,
+> +	.round_rate	=3D ccu_nm_round_rate,
+> +	.set_rate	=3D ccu_nm_set_rate,
+> +};
+	[snip]
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
