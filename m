@@ -1,27 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 11:04:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: msm8916: Fix crypto clock flags
-Message-ID: <20160506180451.GY3492@codeaurora.org>
-References: <1462307051-19256-1-git-send-email-andy.gross@linaro.org>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Mon, 9 May 2016 19:30:38 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: exynos5420: Remove useless check for
+ return value of samsung_clk_init
+Message-ID: <20160509173038.GA2507@kozik-lap>
+References: <1462699496-16646-1-git-send-email-krzk@kernel.org>
+ <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462307051-19256-1-git-send-email-andy.gross@linaro.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/03, Andy Gross wrote:
-> This patch adds the CLK_SET_RATE_PARENT flag for the crypto core and
-> ahb blocks.  Without this flag, clk_set_rate can fail for certain
-> frequency requests.
+On Mon, May 09, 2016 at 09:32:47AM -0400, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> Signed-off-by: Andy Gross <andy.gross@linaro.org>
-> ---
+> On 05/08/2016 05:24 AM, Krzysztof Kozlowski wrote:
+> > The samsung_clk_init() cannot return NULL. Either it returns allocated
+> > memory or it panics.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  drivers/clk/samsung/clk-exynos5420.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> > index 92382cef9f90..770c0f007c6b 100644
+> > --- a/drivers/clk/samsung/clk-exynos5420.c
+> > +++ b/drivers/clk/samsung/clk-exynos5420.c
+> > @@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
+> >  	exynos5x_soc = soc;
+> >  
+> >  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+> > -	if (!ctx)
+> > -		panic("%s: unable to allocate context.\n", __func__);
+> >
+> 
+> Indeed, the check is superfluous. I see that most callers [0] currently
+> do the same, so probably makes sense to remove those too in this patch.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Applied to clk-next + added Fixes tag.
+Thanks, I'll change this everywhere.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Best regards,
+Krzysztof
