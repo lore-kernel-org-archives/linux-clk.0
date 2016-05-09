@@ -1,72 +1,36 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-Date: Sun, 15 May 2016 22:13:43 +0200
-Message-Id: <1463343243-26429-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 11/22] ARM: dts: exynos: Configure Exynos5410 pinctrl
+ for eMMC and SD card
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-12-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <ec696ee3-9a35-7a25-21f7-b0b635d7c2c4@osg.samsung.com>
+Date: Mon, 9 May 2016 16:58:00 -0400
+MIME-Version: 1.0
+In-Reply-To: <1462734367-5619-12-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
-Exynos5420 just in case in future these drivers were merged.
+Hello Krzysztof,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+> Configure the pinctrl for MMC0 (eMMC) and MMC2 (microSD card).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 213f19e02870..34c8e96987a1 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,16 +28,25 @@
- #define CLK_SCLK_MMC0		132
- #define CLK_SCLK_MMC1		133
- #define CLK_SCLK_MMC2		134
-+#define CLK_SCLK_USBD300	150
-+#define CLK_SCLK_USBD301	151
-+#define CLK_SCLK_USBPHY300	152
-+#define CLK_SCLK_USBPHY301	153
-+#define CLK_SCLK_PWM		155
- 
- /* gate clocks */
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
- #define CLK_UART3		260
-+#define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
-+#define CLK_USBH20		365
-+#define CLK_USBD300		366
-+#define CLK_USBD301		367
- 
- #define CLK_NR_CLKS		512
- 
+Best regards,
 -- 
-2.5.0
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
