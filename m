@@ -1,76 +1,40 @@
-Return-Path: <dianders@google.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock
+ provider on SMDK5410
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-7-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <723d088c-ada7-a18f-87a2-e7caaf2c56fd@osg.samsung.com>
+Date: Mon, 9 May 2016 16:24:51 -0400
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <2083095.luTHhmZ9EO@phil>
-References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
-	<2083095.luTHhmZ9EO@phil>
-Date: Thu, 12 May 2016 19:11:25 -0700
-Message-ID: <CAD=FV=XVMQ025Z-+C4fVQUuof=9wnjvJKr2PtuJhxOVwo7TjSg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc
- card initialization"
-From: Doug Anderson <dianders@chromium.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Shawn Lin <shawn.lin@rock-chips.com>,
-	Xing Zheng <zhengxing@rock-chips.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1462734367-5619-7-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Heiko,
+Hello Krzysztof,
 
-On Thu, May 12, 2016 at 4:41 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Am Donnerstag, 12. Mai 2016, 11:03:16 schrieb Douglas Anderson:
->
-> Not sure what the policy is for revert-subjects in the clock-tree, but I
-> guess
->
-> clk: rockchip: Revert "reset init state before mmc card initialization"
->
-> might look nicer?
+On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+> All "fin_pll" clock users are switched to the new one, provided by
 
-Sure.  If you want me to re-post with that, let me know.  Else feel
-free to fix when applying.
+s/are switched/were switched
 
+> Exynos5410 clock driver. Remove old DT node.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
->> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
->> before mmc card initialization").
->
-> I've tested these two patches together with the dw_mmc one and everything
-> that worked before still works (tuning on veyron-jerry) and everything that
-> didn't work still doesn't work (tuning on firefly [likely a regulator issue]).
->
-> And re-checking the code against the TRM I now also see the mask that is to
-> short (1 bit in the code vs. the actual 2 bits described in the manual)
->
-> [...]
->
->> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
->>    + other cases; might break someone with a strange bootloader that
->>    sets the phase to 0 or one that uses delay elements (pretty
->>    unpredicable what would happen in that case).
->> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
->>    totally override the broken patch and fix everything.
->> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
->>    any defaults from the clock code doesn't mattery.
->
-> I'm still trying to make up my mind on how to proceed - aka in which order
-> patches should get picked up.
->
-> Going with the "if it isn't upstream it doesn't exist" mantra Rob wrote
-> somewhere some days ago, taking this revert should not hurt anything, as all
-> the non-veyron devices currently don't support any tuning at all.
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Note that this patch can still affect devices that don't use tuning.
-MMC Hold times are important not just for high speed modes but even
-for low speed modes.
-
-
-> So I'd think except for the issue Shawn was originally trying to fix (for
-> some non-mainline board?) it should be possible to take this patch any time
-> independently of the dw_mmc part.
-
-Yeah, just not sure.  Shawn: do you know which specific device you
-were trying to fix with the original patch?  Is it OK to revert for
-now until the dw_mmc patch lands?
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
