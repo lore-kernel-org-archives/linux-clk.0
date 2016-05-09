@@ -1,48 +1,54 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 09/22] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
-Date: Sat, 28 May 2016 11:54:20 +0200
-Message-Id: <1464429273-23457-10-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 May 2016 15:32:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 01/11] clk: sunxi: Add display and TCON0 clocks driver
+Message-ID: <20160509223238.GW3492@codeaurora.org>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20160506223002.GE3492@codeaurora.org>
+ <20160508200308.GF6167@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160508200308.GF6167@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
-can be referenced by inheriting DTSI.
+On 05/08, Maxime Ripard wrote:
+> Hi Stephen,
+> 
+> On Fri, May 06, 2016 at 03:30:02PM -0700, Stephen Boyd wrote:
+> > On 04/25, Maxime Ripard wrote:
+> > > The A10 SoCs and its relatives has a special clock controller to drive the
+> > > display engines (both frontend and backend), that have a lot in common with
+> > > the clock to drive the first TCON channel.
+> > > 
+> > > Add a driver to support both.
+> > > 
+> > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > > Acked-by: Rob Herring <robh@kernel.org>
+> > > ---
+> > 
+> > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> > 
+> > Unless I can merge this into clk-next? Wasn't clear to me.
+> 
+> Yes, please do, I already sent you the bunch of patches I gathered for
+> 4.7, and I don't have any others but this one.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok I applied this one to clk-next.
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index c5d198c70b86..30a0b63b06c9 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -35,7 +35,7 @@
- 		reg = <0x10000000 0x100>;
- 	};
- 
--	memory-controller@12250000 {
-+	sromc: memory-controller@12250000 {
- 		compatible = "samsung,exynos4210-srom";
- 		reg = <0x12250000 0x14>;
- 	};
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
