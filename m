@@ -1,198 +1,37 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 3/5] clk: hisilicon: add error processing for hisi_clk_register_* functions
-Date: Fri, 13 May 2016 10:05:53 +0800
-Message-ID: <1463105155-20385-4-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 02/22] dt-bindings: clock: Add PWM and USB clock IDs to
+ Exynos5410
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-3-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <b73e9ad3-6c5f-e4e1-8bcf-228cf889c05e@osg.samsung.com>
+Date: Mon, 9 May 2016 15:41:02 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1462734367-5619-3-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add error processing for hisi_clk_register_* functions.
+Hello Krzysztof,
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
----
- drivers/clk/hisilicon/clk.c | 60 +++++++++++++++++++++++++++++++++++++--------
- drivers/clk/hisilicon/clk.h | 10 ++++----
- 2 files changed, 55 insertions(+), 15 deletions(-)
+On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+> Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
+> Exynos5420 just in case in future these drivers were merged.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 78675d1..9ba2d91 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -102,7 +102,7 @@ err:
- }
- EXPORT_SYMBOL_GPL(hisi_clk_init);
- 
--void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
-+int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
- 					 int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -116,14 +116,22 @@ void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_fixed_rate(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_rate);
- 
--void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
-+int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
- 					   int nums,
- 					   struct hisi_clock_data *data)
- {
-@@ -138,14 +146,22 @@ void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_fixed_factor(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_factor);
- 
--void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
-+int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 				  int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -164,7 +180,7 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -172,10 +188,18 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_mux(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
- 
--void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
-+int hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 				      int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -194,7 +218,7 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -202,10 +226,18 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_divider(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_divider);
- 
--void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
-+int hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 				       int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -223,7 +255,7 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -231,6 +263,14 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_gate(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_gate);
- 
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 5fc644f..2575329 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -114,15 +114,15 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 
- struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
- struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
--void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
-+int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
-+int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
-+int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
- 				struct hisi_clock_data *);
--void hisi_clk_register_divider(const struct hisi_divider_clock *,
-+int hisi_clk_register_divider(const struct hisi_divider_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_gate(const struct hisi_gate_clock *,
-+int hisi_clk_register_gate(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
