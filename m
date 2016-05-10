@@ -1,51 +1,159 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 19/27] ARM: dts: exynos: MCT is not an interrupt controller and extend length of iomap
-Date: Tue, 10 May 2016 22:09:22 +0200
-Message-Id: <1462910970-1812-20-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 06/21] clk: uniphier: add clock driver for UniPhier PH1-Pro5 SoC
+Date: Tue, 10 May 2016 18:50:47 +0900
+Message-Id: <1462873862-30940-7-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Multi-Core Timer generates interrupts but it is not really an interrupt
-controller so remove the "interrupt-controller" and "interrupt-cells"
-properties. Additionally extend the length of mapped memory to cover all
-registers (last SFR is at 0x0A40).
+This series is just for review.
+Please do not apply this patch.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4b16a9376a24..872dadf0f2d4 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -263,9 +263,7 @@
+ drivers/clk/uniphier/Kconfig             |   4 ++
+ drivers/clk/uniphier/Makefile            |   1 +
+ drivers/clk/uniphier/clk-uniphier-pro5.c | 102 +++++++++++++++++++++++++++++++
+ 3 files changed, 107 insertions(+)
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-pro5.c
+
+diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+index 8e930c3..de3fada 100644
+--- a/drivers/clk/uniphier/Kconfig
++++ b/drivers/clk/uniphier/Kconfig
+@@ -18,4 +18,8 @@ config CLK_UNIPHIER_SLD8
+ 	tristate "Clock driver for UniPhier PH1-sLD8 SoC"
+ 	default ARM
  
- 		mct: mct@101C0000 {
- 			compatible = "samsung,exynos4210-mct";
--			reg = <0x101C0000 0x800>;
--			interrupt-controller;
--			#interrupt-cells = <1>;
-+			reg = <0x101C0000 0xB00>;
- 			interrupt-parent = <&mct_map>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
- 					<8>, <9>, <10>, <11>;
++config CLK_UNIPHIER_PRO5
++	tristate "Clock driver for UniPhier PH1-Pro5 SoC"
++	default ARM
++
+ endif
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+index c7a8390..d1edf30 100644
+--- a/drivers/clk/uniphier/Makefile
++++ b/drivers/clk/uniphier/Makefile
+@@ -7,3 +7,4 @@ obj-y				+= clk-uniphier-mux.o
+ obj-$(CONFIG_CLK_UNIPHIER_LD4)	+= clk-uniphier-ld4.o
+ obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
+ obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
++obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-pro5.c b/drivers/clk/uniphier/clk-uniphier-pro5.c
+new file mode 100644
+index 0000000..5ce5fbc
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-pro5.c
+@@ -0,0 +1,102 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "clk-uniphier.h"
++
++static const struct uniphier_clk_data uniphier_pro5_clk_data[] = {
++	{
++		.name = "spll",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "ref",
++			.mult = 120,
++			.div = 1,
++		},
++	},
++	{
++		.name = "dapll1",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "ref",
++			.mult = 128,
++			.div = 125,
++		},
++	},
++	{
++		.name = "dapll2",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "upll",
++			.mult = 144,
++			.div = 5,
++		},
++	},
++	{
++		.name = "uart",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 0,
++		.data.factor = {
++			.parent_name = "dapll2",
++			.mult = 1,
++			.div = 8,
++		},
++	},
++	{
++		.name = "fi2c",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 1,
++		.data.factor = {
++			.parent_name = "spll",
++			.mult = 1,
++			.div = 48,
++		},
++	},
++	{
++		.name = "stdmac",
++		.type = UNIPHIER_CLK_TYPE_GATE,
++		.output_index = 7,
++		.data.gate = {
++			.parent_name = "stdmac-clken",
++			.reg = 0x2000,
++			.mask = BIT(10),
++			.enable_val = BIT(10),
++		},
++	},
++	{ /* sentinel */ }
++};
++
++static int uniphier_pro5_clk_probe(struct platform_device *pdev)
++{
++	return uniphier_clk_probe(pdev, uniphier_pro5_clk_data);
++}
++
++static struct platform_driver uniphier_pro5_clk_driver = {
++	.probe = uniphier_pro5_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-pro5-clk",
++	},
++};
++module_platform_driver(uniphier_pro5_clk_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-Pro5 System Clock Driver");
++MODULE_LICENSE("GPL");
 -- 
-2.5.0
+1.9.1
