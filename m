@@ -1,209 +1,56 @@
-Return-Path: <khiem.nguyen.xt@rvc.renesas.com>
-Subject: [RFC 1/4] clk: renesas: rcar-gen3-cpg: Add Z clock
-To: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:56204 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750991AbcEJE5x (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 00:57:53 -0400
+Subject: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>
 References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>, Magnus
- Damm <damm+renesas@opensource.se>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+ <5731664D.1030909@rvc.renesas.com> <573169CD.8050607@rvc.renesas.com>
+CC: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
 From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <573166A8.1030101@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:42:16 +0700
+Message-ID: <57316A4E.7040100@rvc.renesas.com>
+Date: Tue, 10 May 2016 11:57:50 +0700
 MIME-Version: 1.0
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <573169CD.8050607@rvc.renesas.com>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Base on Dien Pham work.
+After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
+driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
+Hence, follow the implementation to support new R8A7795 SoC.
 
 Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 ---
-  drivers/clk/renesas/rcar-gen3-cpg.c | 143 
-++++++++++++++++++++++++++++++++++++
-  drivers/clk/renesas/rcar-gen3-cpg.h |   1 +
-  2 files changed, 144 insertions(+)
+  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c 
-b/drivers/clk/renesas/rcar-gen3-cpg.c
-index bb4f2f9..45209ac 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -28,6 +28,146 @@
-  #define CPG_PLL2CR		0x002c
-  #define CPG_PLL4CR		0x01f4
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c 
+b/drivers/cpufreq/cpufreq-dt-platdev.c
+index ac4a0ba..32f6dda 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -53,6 +53,7 @@ static const struct of_device_id machines[] 
+__initconst = {
+  	{ .compatible = "renesas,r8a7791", },
+  	{ .compatible = "renesas,r8a7793", },
+  	{ .compatible = "renesas,r8a7794", },
++	{ .compatible = "renesas,r8a7795", },
+  	{ .compatible = "renesas,sh73a0", },
 
-+/** Modify for Z-clock
-+ * 
------------------------------------------------------------------------------
-+ * Z Clock
-+ *
-+ * Traits of this clock:
-+ * prepare - clk_prepare only ensures that parents are prepared
-+ * enable - clk_enable only ensures that parents are enabled
-+ * rate - rate is adjustable.  clk->rate = parent->rate * mult / 32
-+ * parent - fixed parent.  No clk_set_parent support
-+ */
-+#define CPG_FRQCRB			0x00000004
-+#define CPG_FRQCRB_KICK			BIT(31)
-+#define CPG_FRQCRC			0x000000e0
-+#define CPG_FRQCRC_ZFC_MASK		(0x1f << 8)
-+#define CPG_FRQCRC_ZFC_SHIFT		8
-+
-+
-+struct cpg_z_clk {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+	void __iomem *kick_reg;
-+};
-+
-+#define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
-+
-+static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+	unsigned int val;
-+	unsigned long rate;
-+
-+	val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
-+	    >> CPG_FRQCRC_ZFC_SHIFT;
-+	mult = 32 - val;
-+
-+	rate = div_u64((u64)parent_rate * mult + 16, 32);
-+	/* Round to closest value at 100MHz unit */
-+	rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
-+	return rate;
-+}
-+
-+static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	unsigned long prate  = *parent_rate;
-+	unsigned int mult;
-+
-+	if (!prate)
-+		prate = 1;
-+
-+	mult = div_u64((u64)rate * 32 + prate/2, prate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	return *parent_rate / 32 * mult;
-+}
-+
-+static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+	u32 val, kick;
-+	unsigned int i;
-+
-+	mult = div_u64((u64)rate * 32 + parent_rate/2, parent_rate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
-+		return -EBUSY;
-+
-+	val = clk_readl(zclk->reg);
-+	val &= ~CPG_FRQCRC_ZFC_MASK;
-+	val |= (32 - mult) << CPG_FRQCRC_ZFC_SHIFT;
-+	clk_writel(val, zclk->reg);
-+
-+	/*
-+	 * Set KICK bit in FRQCRB to update hardware setting and wait for
-+	 * clock change completion.
-+	 */
-+	kick = clk_readl(zclk->kick_reg);
-+	kick |= CPG_FRQCRB_KICK;
-+	clk_writel(kick, zclk->kick_reg);
-+
-+	/*
-+	 * Note: There is no HW information about the worst case latency.
-+	 *
-+	 * Using experimental measurements, it seems that no more than
-+	 * ~10 iterations are needed, independently of the CPU rate.
-+	 * Since this value might be dependent of external xtal rate, pll1
-+	 * rate or even the other emulation clocks rate, use 1000 as a
-+	 * "super" safe value.
-+	 */
-+	for (i = 1000; i; i--) {
-+		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
-+			return 0;
-+
-+		cpu_relax();
-+	}
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static const struct clk_ops cpg_z_clk_ops = {
-+	.recalc_rate = cpg_z_clk_recalc_rate,
-+	.round_rate = cpg_z_clk_round_rate,
-+	.set_rate = cpg_z_clk_set_rate,
-+};
-+
-+static struct clk * __init cpg_z_clk_register(const struct cpg_core_clk 
-*core,
-+					      void __iomem *base,
-+					      const char *parent_name)
-+{
-+	struct clk_init_data init;
-+	struct cpg_z_clk *zclk;
-+	struct clk *clk;
-+
-+	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
-+	if (!zclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = core->name;
-+	init.ops = &cpg_z_clk_ops;
-+	init.flags = CLK_SET_RATE_GATE;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	zclk->reg = base + CPG_FRQCRC;
-+	zclk->kick_reg = base + CPG_FRQCRB;
-+	zclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(zclk);
-+
-+	return clk;
-+}
-+
-+/** End of modifying for Z-clock */
-
-  /*
-   * SDn Clock
-@@ -325,6 +465,9 @@ struct clk * __init 
-rcar_gen3_cpg_clk_register(struct device *dev,
-  		writel(value, base + CPG_RCKCR);
-  		break;
-
-+	case CLK_TYPE_GEN3_Z:
-+		return cpg_z_clk_register(core, base, __clk_get_name(parent));
-+
-  	default:
-  		return ERR_PTR(-EINVAL);
-  	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h 
-b/drivers/clk/renesas/rcar-gen3-cpg.h
-index f699085..03c26e1 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -20,6 +20,7 @@ enum rcar_gen3_clk_types {
-  	CLK_TYPE_GEN3_PLL4,
-  	CLK_TYPE_GEN3_SD,
-  	CLK_TYPE_GEN3_R,
-+	CLK_TYPE_GEN3_Z,
-  };
-
-  #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+  	{ .compatible = "rockchip,rk2928", },
 -- 
 1.9.1
+
