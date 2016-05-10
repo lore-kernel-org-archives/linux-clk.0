@@ -1,102 +1,119 @@
-Return-Path: <joel@jms.id.au>
-Return-Path: <joel@jms.id.au>
-From: Joel Stanley <joel@jms.id.au>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	jk@ozlabs.org,
-	benh@kernel.crashing.org,
-	arnd@arndb.de,
-	heiko@sntech.de
-Subject: [PATCH 4/4] drivers/clk: Support Aspeed UART clock divisor
-Date: Mon,  9 May 2016 22:01:51 +0930
-Message-Id: <1462797111-14271-5-git-send-email-joel@jms.id.au>
-In-Reply-To: <1462797111-14271-1-git-send-email-joel@jms.id.au>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [RFC PATCH 15/21] reset: uniphier: add reset driver for UniPhier
+ PH1-sLD8 SoC
+Date: Tue, 10 May 2016 18:50:56 +0900
+Message-Id: <1462873862-30940-16-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Aspeed BMC SoCs have UART IP that derive their clocks from
-a 24MHz reference. It's not clear where this reference comes from, so it
-is hard coded in the driver.
+This series is just for review.
+Please do not apply this patch.
 
-This clock may be divided down by 13 if a certain register is set. This
-driver reads this register and creates a struct clk for the UARTs to
-consume.
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/clk/aspeed/Makefile   |  1 +
- drivers/clk/aspeed/clk-uart.c | 52 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
- create mode 100644 drivers/clk/aspeed/clk-uart.c
 
-diff --git a/drivers/clk/aspeed/Makefile b/drivers/clk/aspeed/Makefile
-index 9ddb0f8f4356..9d5754c086eb 100644
---- a/drivers/clk/aspeed/Makefile
-+++ b/drivers/clk/aspeed/Makefile
-@@ -1,2 +1,3 @@
-+obj-y += clk-uart.o
- obj-$(CONFIG_MACH_ASPEED_G4) += clk-g4.o
- obj-$(CONFIG_MACH_ASPEED_G5) += clk-g5.o
-diff --git a/drivers/clk/aspeed/clk-uart.c b/drivers/clk/aspeed/clk-uart.c
+ drivers/reset/uniphier/Kconfig               |  4 +++
+ drivers/reset/uniphier/Makefile              |  1 +
+ drivers/reset/uniphier/reset-uniphier-sld8.c | 46 ++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-sld8.c
+
+diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
+index 1633093..307d563 100644
+--- a/drivers/reset/uniphier/Kconfig
++++ b/drivers/reset/uniphier/Kconfig
+@@ -14,4 +14,8 @@ config RESET_UNIPHIER_PRO4
+ 	tristate "Reset driver for UniPhier PH1-Pro4 SoC"
+ 	default ARM
+ 
++config RESET_UNIPHIER_SLD8
++	tristate "Reset driver for UniPhier PH1-sLD8 SoC"
++	default ARM
++
+ endif
+diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
+index d496fe8..e1001c6 100644
+--- a/drivers/reset/uniphier/Makefile
++++ b/drivers/reset/uniphier/Makefile
+@@ -2,3 +2,4 @@ obj-y					+= reset-uniphier-core.o
+ 
+ obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
+ obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
++obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-sld8.c b/drivers/reset/uniphier/reset-uniphier-sld8.c
 new file mode 100644
-index 000000000000..8cd23a758887
+index 0000000..736abd0
 --- /dev/null
-+++ b/drivers/clk/aspeed/clk-uart.c
-@@ -0,0 +1,52 @@
++++ b/drivers/reset/uniphier/reset-uniphier-sld8.c
+@@ -0,0 +1,46 @@
 +/*
-+ * Copyright 2016 IBM Corporation
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the License, or (at your option) any later version.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of_address.h>
-+#include <linux/clkdev.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
 +
-+static void __init aspeed_of_uart_clk_init(struct device_node *node)
++#include "reset-uniphier.h"
++
++static const struct uniphier_reset_data uniphier_sld8_reset_data[] = {
++	{
++		.id = 7,
++		.reg = 0x2000,
++		.mask = BIT(10),
++		.deassert_val = BIT(10),
++	},
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_sld8_reset_probe(struct platform_device *pdev)
 +{
-+	struct clk *clk;
-+	void __iomem *base;
-+	int reg, rate;
-+	const char *name = node->name;
-+
-+	of_property_read_string(node, "clock-output-names", &name);
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	reg = readl(base);
-+	iounmap(base);
-+
-+	/*
-+	 * The documentation does not indicate where this 24MHz clock is
-+	 * derived from.
-+	 */
-+	rate = 24000000;
-+
-+	if (reg & BIT(12))
-+		rate /= 13;
-+
-+	clk = clk_register_fixed_rate(NULL, name, NULL, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	return uniphier_reset_probe(pdev, uniphier_sld8_reset_data);
 +}
-+CLK_OF_DECLARE(aspeed_uart_clock, "aspeed,uart-clock",
-+	       aspeed_of_uart_clk_init);
++
++static struct platform_driver uniphier_sld8_reset_driver = {
++	.probe = uniphier_sld8_reset_probe,
++	.driver = {
++		.name = "uniphier-sld8-reset",
++	},
++};
++module_platform_driver(uniphier_sld8_reset_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-sLD8 Reset Controller Driver");
++MODULE_LICENSE("GPL");
 -- 
-2.8.1
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
