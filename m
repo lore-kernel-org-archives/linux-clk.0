@@ -1,76 +1,64 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-Date: Mon, 9 May 2016 11:47:28 +0100
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>,
-        <myungjoo.ham@samsung.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 2/4] clk: arizona: Add clock driver for the Arizona
- devices
-Message-ID: <20160509104728.GG1646@localhost.localdomain>
-References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1452252582-20834-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20160507005501.GN3492@codeaurora.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20160507005501.GN3492@codeaurora.org>
+In-Reply-To: <20160510050710.GC2790@vireshk-i7>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	<5731664D.1030909@rvc.renesas.com>
+	<573169CD.8050607@rvc.renesas.com>
+	<57316A4E.7040100@rvc.renesas.com>
+	<20160510050710.GC2790@vireshk-i7>
+Date: Tue, 10 May 2016 10:17:21 +0200
+Message-ID: <CAMuHMdWYrf4oZU-8YZ-v-MxznUwJZsqLcbRhiMK=CB2+UoR6uw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 06, 2016 at 05:55:01PM -0700, Stephen Boyd wrote:
-> I've applied this to clk-next but still have a question, see
-> below.
-> 
-> On 01/08, Charles Keepax wrote:
-> > diff --git a/drivers/clk/clk-arizona.c b/drivers/clk/clk-arizona.c
-> > new file mode 100644
-> > index 0000000..eaf2877
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-arizona.c
-> > +
-> > +static int arizona_clk_of_get_pdata(struct arizona *arizona)
-> > +{
-> > +	const char * const pins[] = { "mclk1", "mclk2" };
-> > +	struct clk *mclk;
-> > +	int i;
-> > +
-> > +	if (!of_property_read_bool(arizona->dev->of_node, "clocks"))
-> > +		return 0;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(pins); ++i) {
-> > +		mclk = of_clk_get_by_name(arizona->dev->of_node, pins[i]);
-> > +		if (IS_ERR(mclk))
-> > +			return PTR_ERR(mclk);
-> > +
-> > +		if (clk_get_rate(mclk) == CLK32K_RATE) {
-> > +			arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK1 + i;
-> > +			arizona->pdata.clk32k_parent = __clk_get_name(mclk);
-> > +		}
-> > +
-> > +		clk_put(mclk);
-> 
-> Could this be done through assigned parents instead of this rate
-> checking stuff? Presumably DT could tell us how the clk tree
-> should be configured.
-> 
+Hi Viresh,
 
-Apologies, I have been working on a v4 that includes these
-improvements. It does indeed look much nicer using assigned
-parents etc. I think it might be best to drop these for now until
-those are ready to send.
+On Tue, May 10, 2016 at 7:07 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 10-05-16, 11:57, Khiem Nguyen wrote:
+>> After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
+>> driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
+>> Hence, follow the implementation to support new R8A7795 SoC.
+>>
+>> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+>> ---
+>>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-The only problem I really have left to sort out before I can send
-it are some locking issues. It is quite tricky to get interaction
-between the clocking and SPI frameworks to play nicely. The SPI
-framework will sometimes punt the actually processing for the
-transfer to a worker thread which will often perform operations
-on clocks required for the SPI. Because this is a seperate
-thread it isn't handled by the re-enterant locking in the clock
-framework. I had been working around this using async transfers
-for the SPI, but even then I have since found you can get lockdep
-warnings because of the potential mutex inversion (SPI mutex and
-the clock one).
+Quoting Viresh when this file was introduced:
+| This is going to be done once per boot and this shouldn't hurt. And for new
+| platforms we may do things differently as they are going to use
+opp-v2 bindings.
 
-Any suggestions on this front would be greatly appreciated?
+As r8a7795/r8a7796 are not arm32 "shmobile", but arm64, perhaps we should
+use this new "opp-v2" binding instead? Has it been finalized?
 
-Thanks, Charles
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
