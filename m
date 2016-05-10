@@ -1,32 +1,51 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 0/2] Add meson8b clk81 clock gates
-Date: Wed, 11 May 2016 20:21:03 +0200
-Message-Id: <1462990865-22651-1-git-send-email-serveralex@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 19/27] ARM: dts: exynos: MCT is not an interrupt controller and extend length of iomap
+Date: Tue, 10 May 2016 22:09:22 +0200
+Message-Id: <1462910970-1812-20-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Amlogic meson8b clk81 clock 
-gates and is a prerequisite for enabling the ethernet support and other
-subsystems.
+Multi-Core Timer generates interrupts but it is not really an interrupt
+controller so remove the "interrupt-controller" and "interrupt-cells"
+properties. Additionally extend the length of mapped memory to cover all
+registers (last SFR is at 0x0A40).
 
-The patches are also part of the following patch series:
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-http://comments.gmane.org/gmane.linux.ports.arm.kernel/498959
-
-Alexander Müller (2):
-  ARM: clk: Amlogic: Add support for clock gates
-  ARM: clk: Amlogic: Add clk81 clock gates
-
- drivers/clk/meson/clkc.c                 |  18 +++
- drivers/clk/meson/clkc.h                 |  18 +++
- drivers/clk/meson/meson8b-clkc.c         | 196 +++++++++++++++++++++++++++++++
- include/dt-bindings/clock/meson8b-clkc.h |  99 +++++++++++++++-
- 4 files changed, 329 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 4b16a9376a24..872dadf0f2d4 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -263,9 +263,7 @@
+ 
+ 		mct: mct@101C0000 {
+ 			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0x800>;
+-			interrupt-controller;
+-			#interrupt-cells = <1>;
++			reg = <0x101C0000 0xB00>;
+ 			interrupt-parent = <&mct_map>;
+ 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+ 					<8>, <9>, <10>, <11>;
 -- 
 2.5.0
