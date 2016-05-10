@@ -1,95 +1,124 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 15 May 2016 21:18:32 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
-Message-ID: <20160515191832.GE27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
- <20160509093958.26e9549f8ce78888c0e9586a@free.fr>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="10jrOL3x2xqLmOsH"
-In-Reply-To: <20160509093958.26e9549f8ce78888c0e9586a@free.fr>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
+Date: Tue, 10 May 2016 22:09:30 +0200
+Message-Id: <1462910970-1812-28-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
+This still does not enable them on the board level though.
 
---10jrOL3x2xqLmOsH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-On Mon, May 09, 2016 at 09:39:58AM +0200, Jean-Francois Moine wrote:
-> On Sun,  8 May 2016 22:01:50 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > Add the list of clocks and resets found in the H3 CCU.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi-ng/Makefile        |   2 +
-> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++=
-++++++++
-> >  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
-> >  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
-> >  4 files changed, 1024 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> >  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
-> >  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
-ile
-> > index c794f57b6fb1..67ff6a92f124 100644
-> > --- a/drivers/clk/sunxi-ng/Makefile
-> > +++ b/drivers/clk/sunxi-ng/Makefile
-> > @@ -13,3 +13,5 @@ obj-y +=3D ccu_nkmp.o
-> >  obj-y +=3D ccu_nm.o
-> >  obj-y +=3D ccu_p.o
-> >  obj-y +=3D ccu_phase.o
-> > +
-> > +obj-y +=3D ccu-sun8i-h3.o
->=20
-> +obj-$(CONFIG_MACH_SUN8I) +=3D ccu-sun8i-h3.o
->=20
-> should be better.
-
-Indeed, changed.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---10jrOL3x2xqLmOsH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXOMuIAAoJEBx+YmzsjxAg2agP/1XJ/iNgYatRMPt6UiJmDwAK
-U8gIymEWDmm8uWZG/y6BpHdlt8iLCniKeOD0zxXxQIAufOFoEcJjGM98JGj91MQO
-5I+PwIAX0dV7nmcOLsJbTU3kLjWVVZm8SptG+D9Rgmr2owq2CWMbrYTIbdNd4sdY
-XODjPMZAynSXG8Owm/kV0W6SOs6L+fq/KNcrtA36gIN6iLCHrIwchouVfhClP6pK
-RHazRNQW8IVPBiFT/XLypt8RKNkgMBmwCeBEouj87z16XBYfNtYVXhwzRjLeMW7M
-Ri0IXaNpwbD0GhVnjflOgXjEcIVqG2npRm9pfSY+kST6Bbx3LBvq6K4MNKoMz26P
-Ib6GJ3bU917GLXoG0b0S/LpWSG7cnKyNk+nIdrT0TCzXp8gzF1JSMxCMKefcXQhc
-/sYdO39PDTBB1Hc94hHOS94NOKxwF22fhj0pp4IV0wdBwQ3RQR9lChTqvK/frVz1
-VlFsiuCxYCIE4Bee749fzPlI3xTCO39HN0Xb9ZJ5Pz9iEXeMhyzE1sqcQ0yoMSUa
-Fu6/uPOO+Mylsod4nzBb2FD286PNilE61mf23YPIfQKKYyFqz65CMNfBaludMePn
-n7a2fAVKm8fIYAy1gChDljv/BjLNfXIbCnLzfN1fiCn/ISwsf25DaMBo7uMfkxkd
-Gv4AZk4UrDyQHs8AN7UA
-=PTzT
------END PGP SIGNATURE-----
-
---10jrOL3x2xqLmOsH--
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index dd4d6d752865..ae64cb0a8efd 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -114,6 +114,9 @@
+ 			status = "disabled";
+ 		};
+ 
++		/* i2c_0-3 are defined in exynos5.dtsi */
++		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
++
+ 		pinctrl_0: pinctrl@13400000 {
+ 			compatible = "samsung,exynos5410-pinctrl";
+ 			reg = <0x13400000 0x1000>;
+@@ -146,6 +149,62 @@
+ 	};
+ };
+ 
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_bus>;
++};
++
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_bus>;
++};
++
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
++};
++
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
++};
++
++&hsi2c_4 {
++	clocks = <&clock CLK_USI0>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c4_hs_bus>;
++};
++
++&hsi2c_5 {
++	clocks = <&clock CLK_USI1>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c5_hs_bus>;
++};
++
++&hsi2c_6 {
++	clocks = <&clock CLK_USI2>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c6_hs_bus>;
++};
++
++&hsi2c_7 {
++	clocks = <&clock CLK_USI3>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c7_hs_bus>;
++};
++
+ &mct {
+ 	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+ 	clock-names = "fin_pll", "mct";
+@@ -156,6 +215,13 @@
+ 	clock-names = "timers";
+ };
+ 
++&rtc {
++	clocks = <&clock CLK_RTC>;
++	clock-names = "rtc";
++	interrupt-parent = <&pmu_system_controller>;
++	status = "disabled";
++};
++
+ &serial_0 {
+ 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 	clock-names = "uart", "clk_uart_baud0";
+-- 
+2.5.0
