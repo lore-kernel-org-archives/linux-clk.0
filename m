@@ -1,73 +1,136 @@
 Return-Path: <krzk@kernel.org>
-Subject: Re: [PATCH v2 04/22] clk: samsung: exynos5410: Provide fin_pll
- external fixed clock
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-5-git-send-email-krzk@kernel.org>
- <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Message-id: <573170FB.4010808@kernel.org>
-Date: Tue, 10 May 2016 07:26:19 +0200
-MIME-version: 1.0
-In-reply-to: <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid XU
+Date: Tue, 10 May 2016 22:09:03 +0200
+Message-Id: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/09/2016 10:19 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
->> Just like clock driver for Exynos542x/5800, provide the fixed clock here
->> so the clock bindings and their consumers would be consistent and
->> similar.
->>
->> However a clock named "fin_pll" is already provided by generic
->> fixed-clock and it is both referenced in the clock driver (by name) and
->> in DT (by phandle). To make the transition smooth, first introduce the
->> new external fixed clock here under temporary, different name and switch
->> internal users to it.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
-> 
-> [snip]
-> 
->>  
->> +/* Same as in Exynos5420 */
->> +static const struct of_device_id ext_clk_match[] __initconst = {
->> +	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
-> 
-> Since using designated initializers, I was about to say that there is no need
-> to explicitly set .data to 0 since omitted fields are implicitly initialized...
-> 
->> +	{ },
->> +};
->> +
->>  /* register exynos5410 clocks */
->>  static void __init exynos5410_clk_init(struct device_node *np)
->>  {
->> @@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
->>  
->>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
->>  
->> +	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
->> +			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
->> +			ext_clk_match);
->> +
-> 
-> ... but then I noticed that .data is used as exynos5x_fixed_rate_ext_clks
-> array index in samsung_clk_of_register_fixed_ext(). So makes sense to set
-> it explicitly to make the intent clear.
+Hi,
 
-Yes, that is the intention here. The '(void *)0' is a hint that clock
-needs frequency from DT.
+Patchset adds necessary clocks, reorganizes existing stuff and finally
+adds Odroid XU support.
 
-Thanks for review,
+
+Changes since v2
+================
+1. Got global-ack from Stephen for the clock changes. I think merging
+   everything through arm-soc might be the easiest but:
+   a. In such case I will prepare a tag with clock changes,
+   b. Anyway I will wait for response from Sylwester and Tomasz.
+2. Applied comments from Javier and added his Reviewed-by.
+3. Patch 22: added ack from Rob.
+4. Minor improvements in existing patches.
+5. Five new patches at the end: 23-27 (not reviewed yet).
+   Some of them could be squashed with existing ones but existing
+   changes got reviews. Although the final Odroid XU DTS works fine but
+   in general this is still work-in-progress so I suspect it will grow.
+   I am releasing it early following Linux concept. :)
+
+Patchset is available at my private repo @github:
+https://github.com/krzk/linux.git for-next/odroid-xu-v3
+
+(previous version is in for-next/odroid-xu-v2 branch, if someone would
+like to compare them)
+
+
+Changes since v1
+================
+1. A lot of new patches.
+2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
+3. New clocks, more reorganization.
+4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
+   and more complicated but this might help removing duplications
+   and keeping everything under control.
+
+
+
+Merging strategy
+================
+Complicated! The clock dt-bindings and driver changes can go to clock
+tree. However there are three DTS patches in the middle.
+a. This has to go in before adding "fin_pll_new" to clock driver:
+   - [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+
+b. This should go in before renaming "fin_pll_new" back to original name:
+   - [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+   - [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+
+The order of patches in the patchset is really how it should go in
+to reduce any bisectability glitches.
+
+
+Best regards,
 Krzysztof
+
+
+Krzysztof Kozlowski (27):
+  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+  ARM: dts: exynos: Add fin_pll node for clock driver
+  clk: samsung: exynos5410: Provide fin_pll external fixed clock
+  ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+  ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+  clk: samsung: exynos5410: Rename fin_pll from temporary to regular
+    name
+  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+    nodes
+  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+  ARM: dts: exynos: Move common nodes to exynos5.dtsi
+  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+    exynos5410.dtsi
+  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+  ARM: dts: exynos: Enable UART3 on Exynos5410
+  ARM: dts: exynos: MCT is not an interrupt controller and extend length
+    of iomap
+  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+  ARM: dts: exynos: Add USB to Exynos5410
+  ARM: dts: exynos: Add initial support for Odroid XU board
+  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+  clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+  ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
+  ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
+  ARM: dts: exynos: Add RTC and I2C to Exynos5410
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  | 1701 ++++++++---------
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   16 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  270 +--
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  | 1992 +++++++++-----------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
+ arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
+ drivers/clk/samsung/clk-exynos5410.c               |   61 +
+ include/dt-bindings/clock/exynos5410.h             |   73 +-
+ 17 files changed, 2758 insertions(+), 2225 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
+
+-- 
+2.5.0
