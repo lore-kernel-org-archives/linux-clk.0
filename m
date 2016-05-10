@@ -1,96 +1,43 @@
-Return-Path: <paulmck@linux.vnet.ibm.com>
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
-        rostedt@goodmis.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 omap 3/6] arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
-Date: Mon, 16 May 2016 11:50:05 -0700
-Message-Id: <1463424608-20237-3-git-send-email-paulmck@linux.vnet.ibm.com>
-In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
-References: <20160516184844.GA20144@linux.vnet.ibm.com>
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v5 0/6] Add support for rk818
+Date: Tue, 10 May 2016 15:18:54 +0200
+Message-Id: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds an _rcuidle suffix to a pair of trace events to
-prevent the following splat:
+Hello,
 
-> ===============================
-> [ INFO: suspicious RCU usage. ]
-> 4.6.0-rc5-next-20160426+ #1114 Not tainted
-> -------------------------------
-> include/trace/events/clk.h:59 suspicious rcu_dereference_check() usage!
->
-> other info that might help us debug this:
->
->
-> RCU used illegally from idle CPU!
-> rcu_scheduler_active = 1, debug_locks = 0
-> RCU used illegally from extended quiescent state!
-> 2 locks held by swapper/0/0:
->  #0:  (&oh->hwmod_key#30){......}, at: [<c0121b40>] omap_hwmod_idle+0x18/0x44
->  #1:  (enable_lock){......}, at: [<c0630998>] clk_enable_lock+0x18/0x124
->
-> stack backtrace:
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.6.0-rc5-next-20160426+ #1114
-> Hardware name: Generic OMAP36xx (Flattened Device Tree)
-> [<c0110290>] (unwind_backtrace) from [<c010c3a8>] (show_stack+0x10/0x14)
-> [<c010c3a8>] (show_stack) from [<c047fd68>] (dump_stack+0xb0/0xe4)
-> [<c047fd68>] (dump_stack) from [<c0631618>] (clk_core_disable+0x17c/0x348)
-> [<c0631618>] (clk_core_disable) from [<c0632774>] (clk_disable+0x24/0x30)
-> [<c0632774>] (clk_disable) from [<c0120590>] (_disable_clocks+0x18/0x7c)
-> [<c0120590>] (_disable_clocks) from [<c0121680>] (_idle+0x12c/0x230)
-> [<c0121680>] (_idle) from [<c0121b4c>] (omap_hwmod_idle+0x24/0x44)
-> [<c0121b4c>] (omap_hwmod_idle) from [<c0122c24>] (omap_device_idle+0x3c/0x90)
-> [<c0122c24>] (omap_device_idle) from [<c052cc00>] (__rpm_callback+0x2c/0x60)
-> [<c052cc00>] (__rpm_callback) from [<c052cc54>] (rpm_callback+0x20/0x80)
-> [<c052cc54>] (rpm_callback) from [<c052d150>] (rpm_suspend+0x100/0x768)
-> [<c052d150>] (rpm_suspend) from [<c052ec58>] (__pm_runtime_suspend+0x64/0x84)
-> [<c052ec58>] (__pm_runtime_suspend) from [<c04bf25c>] (omap2_gpio_prepare_for_idle+0x5
-> c/0x70)
-> [<c04bf25c>] (omap2_gpio_prepare_for_idle) from [<c0125568>] (omap_sram_idle+0x140/0x2
-> 44)
-> [<c0125568>] (omap_sram_idle) from [<c01269dc>] (omap3_enter_idle_bm+0xfc/0x1ec)
-> [<c01269dc>] (omap3_enter_idle_bm) from [<c0601bdc>] (cpuidle_enter_state+0x80/0x3d4)
-> [<c0601bdc>] (cpuidle_enter_state) from [<c0183b08>] (cpu_startup_entry+0x198/0x3a0)
-> [<c0183b08>] (cpu_startup_entry) from [<c0b00c0c>] (start_kernel+0x354/0x3c8)
-> [<c0b00c0c>] (start_kernel) from [<8000807c>] (0x8000807c)
+patches are based on top of
 
-Reported-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: <linux-omap@vger.kernel.org>
-Cc: <linux-arm-kernel@lists.infradead.org>
-Cc: <linux-clk@vger.kernel.org>
----
- drivers/clk/clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+commit d5623161accb ("mfd: rk808: Use devm_mfd_add_devices() for mfd_device registration")
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fb74dc1f7520..4fa43c02d682 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -682,12 +682,12 @@ static void clk_core_disable(struct clk_core *core)
- 	if (--core->enable_count > 0)
- 		return;
- 
--	trace_clk_disable(core);
-+	trace_clk_disable_rcuidle(core);
- 
- 	if (core->ops->disable)
- 		core->ops->disable(core->hw);
- 
--	trace_clk_disable_complete(core);
-+	trace_clk_disable_complete_rcuidle(core);
- 
- 	clk_core_disable(core->parent);
- }
+in linux-next.
+
+Changes since v4:
+- Added Acked-by from Mark Brown in patch 1
+- Dropped a patch from this series which was applied by Mark Brown
+  commit 129d7cf98f5c ("regulator: rk808: Add rk808_reg_ops_ranges for LDO3")
+
+Wadim Egorov (6):
+  regulator: rk808: Migrate to regulator core's simplified DT parsing
+    code
+  mfd: RK808: Add RK818 support
+  regulator: rk808: Add regulator driver for RK818
+  mfd: dt-bindings: Add RK818 device tree bindings document
+  clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
+  rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
+
+ Documentation/devicetree/bindings/mfd/rk808.txt |  37 ++-
+ drivers/clk/Kconfig                             |   4 +-
+ drivers/mfd/Kconfig                             |   4 +-
+ drivers/mfd/rk808.c                             | 231 ++++++++++++---
+ drivers/regulator/Kconfig                       |   4 +-
+ drivers/regulator/rk808-regulator.c             | 363 +++++++++++++-----------
+ drivers/rtc/Kconfig                             |   4 +-
+ include/linux/mfd/rk808.h                       | 162 ++++++++++-
+ 8 files changed, 590 insertions(+), 219 deletions(-)
+
 -- 
-2.5.2
+1.9.1
