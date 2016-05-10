@@ -1,62 +1,119 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 May 2016 15:11:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 01/16] clk: fix critical clock locking
-Message-ID: <20160509221146.GS3492@codeaurora.org>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-2-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [RFC PATCH 14/21] reset: uniphier: add reset driver for UniPhier
+ PH1-Pro4 SoC
+Date: Tue, 10 May 2016 18:50:55 +0900
+Message-Id: <1462873862-30940-15-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462737711-10017-2-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/08, Maxime Ripard wrote:
-> The critical clock handling in __clk_core_init isn't taking the enable lock
-> before calling clk_core_enable, which in turns triggers the warning in the
-> lockdep_assert_held call in that function when lockep is enabled.
-> 
-> Add the calls to clk_enable_lock/unlock to make sure it doesn't happen.
-> 
-> Fixes: 32b9b1096186 ("clk: Allow clocks to be marked as CRITICAL")
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
+This series is just for review.
+Please do not apply this patch.
 
-Why is this patch hiding in this series?
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
->  drivers/clk/clk.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index ce39add5a258..16a38df3c688 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2404,8 +2404,15 @@ static int __clk_core_init(struct clk_core *core)
->  		core->ops->init(core->hw);
->  
->  	if (core->flags & CLK_IS_CRITICAL) {
-> +		unsigned long flags;
-> +
-> +		clk_prepare_lock();
->  		clk_core_prepare(core);
-> +		clk_prepare_unlock();
+ drivers/reset/uniphier/Kconfig               |  4 +++
+ drivers/reset/uniphier/Makefile              |  1 +
+ drivers/reset/uniphier/reset-uniphier-pro4.c | 46 ++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-pro4.c
 
-It looks like we already hold the prepare lock at this point.
-
-> +
-> +		flags = clk_enable_lock();
->  		clk_core_enable(core);
-> +		clk_enable_unlock(flags);
-
-This seems correct though.
-
+diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
+index 875afd9..1633093 100644
+--- a/drivers/reset/uniphier/Kconfig
++++ b/drivers/reset/uniphier/Kconfig
+@@ -10,4 +10,8 @@ config RESET_UNIPHIER_LD4
+ 	tristate "Reset driver for UniPhier PH1-LD4 SoC"
+ 	default ARM
+ 
++config RESET_UNIPHIER_PRO4
++	tristate "Reset driver for UniPhier PH1-Pro4 SoC"
++	default ARM
++
+ endif
+diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
+index c99a420..d496fe8 100644
+--- a/drivers/reset/uniphier/Makefile
++++ b/drivers/reset/uniphier/Makefile
+@@ -1,3 +1,4 @@
+ obj-y					+= reset-uniphier-core.o
+ 
+ obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
++obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-pro4.c b/drivers/reset/uniphier/reset-uniphier-pro4.c
+new file mode 100644
+index 0000000..57ce253
+--- /dev/null
++++ b/drivers/reset/uniphier/reset-uniphier-pro4.c
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "reset-uniphier.h"
++
++static const struct uniphier_reset_data uniphier_pro4_reset_data[] = {
++	{
++		.id = 7,
++		.reg = 0x2000,
++		.mask = BIT(10),
++		.deassert_val = BIT(10),
++	},
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_pro4_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_pro4_reset_data);
++}
++
++static struct platform_driver uniphier_pro4_reset_driver = {
++	.probe = uniphier_pro4_reset_probe,
++	.driver = {
++		.name = "uniphier-pro4-reset",
++	},
++};
++module_platform_driver(uniphier_pro4_reset_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-Pro4 Reset Controller Driver");
++MODULE_LICENSE("GPL");
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
