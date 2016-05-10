@@ -1,49 +1,57 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-Date: Thu, 5 May 2016 09:37:48 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, zhengxing@rock-chips.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: rockchip: fix the rk3399 sdmmc sample / drv name
-Message-ID: <20160505163748.GA97052@google.com>
-References: <1462404985-27957-1-git-send-email-dianders@chromium.org>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 4/5] clk: hisilicon: add hisi_clk_unregister_* functions
+Date: Tue, 10 May 2016 17:19:12 +0800
+Message-ID: <1462871953-26606-5-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462404985-27957-1-git-send-email-dianders@chromium.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 04, 2016 at 04:36:25PM -0700, Douglas Anderson wrote:
-> The rk3399 clock table had a simple typo in it, calling the SDMMC sample
-> and drive clocks by the wrong name.  Fix this minor typo.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Add hisi_clk_unregister_* functions.
 
-LGTM.
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+---
+ drivers/clk/hisilicon/clk.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Tested-by: Brian Norris <briannorris@chromium.org>
-Acked-by: Brian Norris <briannorris@chromium.org>
-
-> ---
->  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index 5248726af86d..291543f52caa 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -894,8 +894,8 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->  			RK3399_CLKSEL_CON(16), 8, 3, MFLAGS, 0, 7, DFLAGS,
->  			RK3399_CLKGATE_CON(6), 1, GFLAGS),
->  
-> -	MMC(SCLK_SDMMC_DRV,     "emmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
-> -	MMC(SCLK_SDMMC_SAMPLE,  "emmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
-> +	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
-> +	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
->  
->  	MMC(SCLK_SDIO_DRV,      "sdio_drv",    "clk_sdio",  RK3399_SDIO_CON0,  1),
->  	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  1),
-> -- 
-> 2.8.0.rc3.226.g39d4020
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 2575329..4e1d1af 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -128,4 +128,25 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+ void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
+ 				int, struct hisi_clock_data *);
++
++#define hisi_clk_unregister(type) \
++static inline \
++void hisi_clk_unregister_##type(const struct hisi_##type##_clock *clks, \
++				int nums, struct hisi_clock_data *data) \
++{ \
++	struct clk **clocks = data->clk_data.clks; \
++	int i; \
++	for (i = 0; i < nums; i++) { \
++		int id = clks[i].id; \
++		if (clocks[id])  \
++			clk_unregister_##type(clocks[id]); \
++	} \
++}
++
++hisi_clk_unregister(fixed_rate)
++hisi_clk_unregister(fixed_factor)
++hisi_clk_unregister(mux)
++hisi_clk_unregister(divider)
++hisi_clk_unregister(gate)
++
+ #endif	/* __HISI_CLK_H */
+-- 
+1.9.1
