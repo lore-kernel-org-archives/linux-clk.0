@@ -1,80 +1,84 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from 212-186-180-163.static.surfer.at ([212.186.180.163]:55653 "EHLO
-	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754089AbcETHXY (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2016 03:23:24 -0400
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 1/2] clk: bcm2835: register clocks early
-Date: Fri, 20 May 2016 07:23:16 +0000
-Message-Id: <1463728997-8241-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
-References: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:33386 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751827AbcEJNzF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 09:55:05 -0400
+Message-ID: <1462888497.9155.9.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 12/21] reset: uniphier: add core support for
+ UniPhier reset driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 10 May 2016 15:54:57 +0200
+In-Reply-To: <1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	 <1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
+[...]
+> +static int uniphier_reset_update(struct reset_controller_dev *rcdev,
+> +				 unsigned long id, bool assert)
+> +{
+> +	struct uniphier_reset_priv *priv = to_uniphier_reset_priv(rcdev);
+> +	const struct uniphier_reset_data *p;
+> +	bool handled = false;
+> +
+> +	for (p = priv->data; p->id != UNIPHIER_RESET_ID_END; p++) {
+> +		unsigned int val;
+> +		int ret;
+> +
+> +		if (p->id != id)
+> +			continue;
+> +
+> +		val = p->deassert_val;
+> +		if (assert)
+> +			val = ~val;
+> +
+> +		ret = regmap_write_bits(priv->regmap, p->reg, p->mask, val);
 
-Register the clocks early during the boot process,
-so that special/critical clocks can get enabled early on
-in the boot process avoiding the risk of disabling a clock,
-pll_divider or pll when a claiming driver fails to install
-propperly - maybe it needs to defer.
+What is the difference between mask and deassert_val? Couldn't you just
+assign
+	val = assert ? 0 : p->mask;
+?
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+> +static const struct reset_control_ops uniphier_reset_ops = {
+> +	.assert = uniphier_reset_assert,
+> +	.deassert = uniphier_reset_deassert,
+> +	.status = uniphier_reset_status,
+> +};
+> +
+> +int uniphier_reset_probe(struct platform_device *pdev,
+> +			 const struct uniphier_reset_data *data)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct uniphier_reset_priv *priv;
+> +	const struct uniphier_reset_data *p;
+> +	struct regmap *regmap;
+> +	unsigned int nr_resets = 0;
+> +
+> +	/* parent should be MFD and syscon node */
+> +	regmap = syscon_node_to_regmap(dev->parent->of_node);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(dev, "failed to get regmap\n");
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 085e521..6aaeab4 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1825,6 +1825,7 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	const struct bcm2835_clk_desc *desc;
- 	const size_t asize = ARRAY_SIZE(clk_desc_array);
- 	size_t i;
-+	int err;
- 
- 	cprman = devm_kzalloc(dev,
- 			      sizeof(*cprman) + asize * sizeof(*clks),
-@@ -1855,8 +1856,15 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 			clks[i] = desc->clk_register(cprman, desc->data);
- 	}
- 
--	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
--				   &cprman->onecell);
-+	err = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
-+				  &cprman->onecell);
-+	if (err)
-+		return err;
-+
-+	/* note that we have registered all the clocks */
-+	dev_dbg(dev, "registered %d clocks\n", asize);
-+
-+	return 0;
- }
- 
- static const struct of_device_id bcm2835_clk_of_match[] = {
-@@ -1873,7 +1881,11 @@ static struct platform_driver bcm2835_clk_driver = {
- 	.probe          = bcm2835_clk_probe,
- };
- 
--builtin_platform_driver(bcm2835_clk_driver);
-+static int __init __bcm2835_clk_driver_init(void)
-+{
-+	return platform_driver_register(&bcm2835_clk_driver);
-+}
-+core_initcall(__bcm2835_clk_driver_init);
- 
- MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
- MODULE_DESCRIPTION("BCM2835 clock driver");
--- 
-2.1.4
+syscon_node_to_regmap can return different error codes. It might be
+helpful to use
+	dev_err(dev, "failed to get regmap: %d\n", PTR_ERR(regmap));
+here.
+
+regards
+Philipp
 
