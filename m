@@ -1,59 +1,119 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 24/27] clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
-Date: Tue, 10 May 2016 22:09:27 +0200
-Message-Id: <1462910970-1812-25-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Martin Sperl <kernel@martin.sperl.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/5] clk: bcm2835: add flags for mash and parent clocks
+In-Reply-To: <57319C89.7040705@martin.sperl.org>
+References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org> <87h9e6yb6i.fsf@eliezer.anholt.net> <57319C89.7040705@martin.sperl.org>
+Date: Tue, 10 May 2016 10:45:43 -0700
+Message-ID: <877ff1yfg8.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clocks for I2C, USI (HSI2C) and RTC to the Exynos5410 clock driver.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos5410.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Martin Sperl <kernel@martin.sperl.org> writes:
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 40775f678f02..8dd0d8f6703e 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -165,6 +165,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
- 
- static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
-+	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
- 
- 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
- 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
-@@ -193,6 +194,14 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- 	GATE(CLK_UART1, "uart1", "aclk66", GATE_IP_PERIC, 1, 0, 0),
- 	GATE(CLK_UART2, "uart2", "aclk66", GATE_IP_PERIC, 2, 0, 0),
- 	GATE(CLK_UART3, "uart3", "aclk66", GATE_IP_PERIC, 3, 0, 0),
-+	GATE(CLK_I2C0, "i2c0", "aclk66", GATE_IP_PERIC, 6, 0, 0),
-+	GATE(CLK_I2C1, "i2c1", "aclk66", GATE_IP_PERIC, 7, 0, 0),
-+	GATE(CLK_I2C2, "i2c2", "aclk66", GATE_IP_PERIC, 8, 0, 0),
-+	GATE(CLK_I2C3, "i2c3", "aclk66", GATE_IP_PERIC, 9, 0, 0),
-+	GATE(CLK_USI0, "usi0", "aclk66", GATE_IP_PERIC, 10, 0, 0),
-+	GATE(CLK_USI1, "usi1", "aclk66", GATE_IP_PERIC, 11, 0, 0),
-+	GATE(CLK_USI2, "usi2", "aclk66", GATE_IP_PERIC, 12, 0, 0),
-+	GATE(CLK_USI3, "usi3", "aclk66", GATE_IP_PERIC, 13, 0, 0),
- 	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
- 
- 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
--- 
-2.5.0
+> On 10.05.2016 03:05, Eric Anholt wrote:
+>> kernel@martin.sperl.org writes:
+>>
+>>> From: Martin Sperl <kernel@martin.sperl.org>
+>>>
+>>> Allow flags to be set on a per clock index basis, which control:
+>>> * the parent clocks selected when not setting clocks explicitly
+>>
+>> I don't think we need this other than avoiding PLLC.  What else do you
+>> want to filter, and why?
+> What about potentially disabling PLLA_per or PLLH_aux?
+> Under some circumstances it may make sense to avoid those clocks.
+> (or testdebug for that matter).
+
+PLLH and its descendents are only used by vc4, and the parent choice
+done by this driver for pllh is correct.
+
+I don't know what you mean by "potentially disabling PLLA_PER".
+
+We don't expose the testdebug parents, because they're of no use to us.
+
+>>> * the clock mode with regards to integer only or higher order mash
+>>
+>> Please provide justification in the commit message explaining why there
+>> is no obvious mash setting to just implement in clk-bcm2835.c, but that
+>> that a better policy can be encoded in the DT.
+>
+> The normal fractional divider will vary the effective period length
+> between int(div)/Fparent and (int(div)+1)/Fparent.
+>
+> So the device (say DAC or other) connected needs to support in
+> principle Fparent/int(div) as a clock.
+>
+> But for higher order mash the HW will spread the period length between:
+> (int(div)-3)/Fparent and (int(div)+4)/Fparent.
+>
+> This value may be outside of the frequencies supported by the attached
+> HW. That is why mash is not enabled by default for mash clocks - only
+> div.
+>
+> That is also why we need to have this configurable.
+>
+> Also obviously higher parent clock frequencies result in higher dividers
+> for the same target-frequency. So the above effect is less dramatic
+> when using plld_per (or pllc for that matter) compared to the main
+> 19.2MHz oscillator, as for 32bit stereo audio at 96kHz (equivalent to
+> 6144000Hz) in the first case we have a divider of 81.38 while for the
+> second (osc) case we have a divider of 3.125.
+>
+> The use of mash3 is impossible for osc but the use of mash 2 would
+> spread the frequencies between 9.6MHz (div=2) and 3.84MHz (div=5).
+>
+> For plld_per as parent using mash3 instead we get the range:
+> 6410256.4Hz (div=78) and 5882352.9Hz (div=85), which is a much more
+> acceptable range and should not impact the device that much.
+>
+> So enabling mash 3 by default is not in the best interest hence it is
+> not done.
+
+It sounds like you're optimizing for reducing frequency spread.  That
+sounds fairly easy to do in the parent-choice function.
+
+> As a side note: selection of parent oscillator and corresponding mash
+> may have distinct noise behavior on the same device, where for
+> 32bit*2@48k it is the main oscillator with mash3 while the second best
+> match would be pllc with mash2 - not mash3, which has the worsted SN
+> from all tested!
+
+But PLLC continues to be unusable, since it's changed at runtime, and
+evaluating its noise characteristics based on a snapshot of its
+frequency doesn't make any sense.
+
+> This behavior obviously changes with different "target frequencies"
+> so it may even be necessary to account for the different target
+> frequencies.
+
+This is why encoding mash in the DT doesn't make any sense to me.  You
+need a runtime policy for choosing the mash setting based on the
+frequency requested, so let's figure out what policy we actually want.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXMh5HAAoJELXWKTbR/J7ozw8P/iSujUtrkI2jyJtYcW2YDNw5
+m2L4QKl1OYwZYkU0EyTXBcCXzdS9t2biitoJSEREbN0zXEfTIwoAPKtwZLbDeBlA
+L2uXporjhUwuouphJFB4x4bqccmHGMJF1qPLzbRAavPA3Knd98qjcI6FWWo8TWYU
+t1zA6SXx+1lULHyVtS1N9dHFm7C3qEvsS87jG7upE2wL0w0HGKCnXIvNouPScjR9
+blGmnYKwmfyeOsb48Ssf3v8W7s8N1R42e1up6NPGk1xRZKlZQ/ijJhlahsBiH87h
+J1ZDKCnuiScTJcIp9qVkbbEefBNRWh/ednJyVfv+I3YssJ/JpEEzQjKcI6b0L+Jv
+4s4nmcjpn4Dxzret9HTgRK84pijLLPHx6LrHJotI1NpmaYl4VMGvTcDcYoV1J5Pw
+USzDQqGNFn8fAwE84ef5g3eClK9Gp2ArqiN9WVkDOEoChNu5yjIw5yQVhrfLWQz1
+JJBTnXnrvlfJbr9qaLqJjsGdU4hykzHS7IjTs9MMpp80F9rpk7BPWplhl0+OIuUb
+2Cfns3XA0lVUyHxyP3H8oFmpcA/XLflwByDktZ6eZOCu/sXfsE6eE9kHQOoYoBGu
+Eph9Pchg6TXURHnB/jiA+67kl6cb0ROhyQZpDIRFahU231Fbx+EDLXHL7z+YKoYd
+lKdcvdRCkdSKlVf6FsaW
+=MNZ9
+-----END PGP SIGNATURE-----
+--=-=-=--
