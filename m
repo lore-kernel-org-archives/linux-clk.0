@@ -1,59 +1,93 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 5/6] ARM: dts: exynos: Configure PWM, usb3503, PMIC and
- thermal on Odroid XU board
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-5-git-send-email-krzk@kernel.org>
- <1ec0f7fc-f6e0-e4d6-e424-43289bf31b16@osg.samsung.com>
- <CAJKOXPfDtp1GLCkQQSKmzRLs4qqwY9Y019rXpUXSeoYQny-sfA@mail.gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <372c8249-b19e-2488-beef-50a0423da757@osg.samsung.com>
-Date: Tue, 31 May 2016 16:10:09 -0400
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 2/5] clk: hisilicon: add hisi_clk_alloc function.
+Date: Tue, 10 May 2016 17:19:10 +0800
+Message-ID: <1462871953-26606-3-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPfDtp1GLCkQQSKmzRLs4qqwY9Y019rXpUXSeoYQny-sfA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Before, there was an ordering issue that the clock provider
+had been published in hisi_clk_init before it could provide
+valid clocks to consumers. hisi_clk_alloc is just used to
+allocate memory space for struct hisi_clock_data. It makes
+it possible to publish the provider after the clocks are ready.
 
-On 05/31/2016 04:05 PM, Krzysztof Kozlowski wrote:
-> On Tue, May 31, 2016 at 9:36 PM, Javier Martinez Canillas
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+---
+ drivers/clk/hisilicon/clk.c | 29 +++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/clk.h |  3 +++
+ 2 files changed, 32 insertions(+)
 
-[snip]
-
->>
->> I see that LDO 10, 12 and 15 are used by still marked as always-on. Did
->> you try not marking as always-on those or that also causes issues like
->> in the other regulators were you added comments about being always-on?
->>
->> Besides that, patch looks good to me.
-> 
-> The LDO10 is supplying few more elements (MIPI, HDMI, ADC and
-> something called EFNAND). Having it non-always-on still works but
-> maybe because I did not test these elements.
-> 
-> LDO12 and LDO15 supply also VDD10_HSIC and UHOST (used by USB2.0 ports
-> and attached on board: usb3503 and lan9730) so if it is not enabled by
-> USB 3.0, then they won't work. I guess the usb 2.0 driver should also
-> take regulators.
-> 
-> So overall the board works after removing always-on but it is not
-> properly described in DT so I prefer to leave them.
-> 
-
-Agreed, thanks a lot for your explanations.
-
-> Best regards,
-> Krzysztof
-
-Best regards,
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 9b15adb..78675d1 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -37,6 +37,35 @@
+ 
+ static DEFINE_SPINLOCK(hisi_clk_lock);
+ 
++struct hisi_clock_data *hisi_clk_alloc(struct platform_device *pdev,
++						int nr_clks)
++{
++	struct hisi_clock_data *clk_data;
++	struct resource *res;
++	struct clk **clk_table;
++
++	clk_data = devm_kmalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return NULL;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	clk_data->base = devm_ioremap(&pdev->dev,
++				res->start, resource_size(res));
++	if (!clk_data->base)
++		return NULL;
++
++	clk_table = devm_kmalloc(&pdev->dev, sizeof(struct clk *) * nr_clks,
++				GFP_KERNEL);
++	if (!clk_table)
++		return NULL;
++
++	clk_data->clk_data.clks = clk_table;
++	clk_data->clk_data.clk_num = nr_clks;
++
++	return clk_data;
++}
++EXPORT_SYMBOL_GPL(hisi_clk_alloc);
++
+ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 					     int nr_clks)
+ {
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 20d64af..5fc644f 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -30,6 +30,8 @@
+ #include <linux/io.h>
+ #include <linux/spinlock.h>
+ 
++struct platform_device;
++
+ struct hisi_clock_data {
+ 	struct clk_onecell_data	clk_data;
+ 	void __iomem		*base;
+@@ -110,6 +112,7 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+ 	const char *parent_name, unsigned long flags, void __iomem *reg,
+ 	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
+ 
++struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
+ struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+ void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
+ 				int, struct hisi_clock_data *);
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
