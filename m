@@ -1,37 +1,174 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [RFC PATCH 21/21] reset: uniphier: add reset driver for Peripheral
+ block on UniPhier SoCs
+Date: Tue, 10 May 2016 18:51:02 +0900
+Message-Id: <1462873862-30940-22-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <573166EB.70908@rvc.renesas.com>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-	<573166EB.70908@rvc.renesas.com>
-Date: Fri, 13 May 2016 10:55:07 +0200
-Message-ID: <CAMuHMdVoUT+FrrNn_VC2EcnqcYTubUXnYTHUKZAQ+sPW3QVixw@mail.gmail.com>
-Subject: Re: [RFC 2/4] clk: renesas: r8a7795: Add Z clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 10, 2016 at 6:43 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+This series is just for review.
+Please do not apply this patch.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Gr{oetje,eeting}s,
+ drivers/reset/uniphier/Kconfig               |   4 ++
+ drivers/reset/uniphier/Makefile              |   1 +
+ drivers/reset/uniphier/reset-uniphier-peri.c | 101 +++++++++++++++++++++++++++
+ 3 files changed, 106 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-peri.c
 
-                        Geert
+diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
+index a582938..d3e629e 100644
+--- a/drivers/reset/uniphier/Kconfig
++++ b/drivers/reset/uniphier/Kconfig
+@@ -38,4 +38,8 @@ config RESET_UNIPHIER_MIO
+ 	tristate "Reset driver for UniPhier Media I/O block"
+ 	default y
+ 
++config RESET_UNIPHIER_PERI
++	tristate "Reset driver for UniPhier Peripheral block"
++	default y
++
+ endif
+diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
+index e83bd14..65e9d2d 100644
+--- a/drivers/reset/uniphier/Makefile
++++ b/drivers/reset/uniphier/Makefile
+@@ -9,3 +9,4 @@ obj-$(CONFIG_RESET_UNIPHIER_LD11)	+= reset-uniphier-ld11.o
+ obj-$(CONFIG_RESET_UNIPHIER_LD20)	+= reset-uniphier-ld20.o
+ 
+ obj-$(CONFIG_RESET_UNIPHIER_MIO)	+= reset-uniphier-mio.o
++obj-$(CONFIG_RESET_UNIPHIER_PERI)	+= reset-uniphier-peri.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-peri.c b/drivers/reset/uniphier/reset-uniphier-peri.c
+new file mode 100644
+index 0000000..1ec1c16
+--- /dev/null
++++ b/drivers/reset/uniphier/reset-uniphier-peri.c
+@@ -0,0 +1,101 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "reset-uniphier.h"
++
++#define UNIPHIER_PERI_RESET_UART(ch, index)		\
++	{						\
++		.id = (index),				\
++		.reg = 0x114,				\
++		.mask = BIT(19 + ch),			\
++		.deassert_val = BIT(19 + ch),		\
++	}
++
++#define UNIPHIER_PERI_RESET_I2C(ch, index)		\
++	{						\
++		.id = (index),				\
++		.reg = 0x114,				\
++		.mask = BIT(5 + ch),			\
++		.deassert_val = BIT(5 + ch),		\
++	}
++
++#define UNIPHIER_PERI_RESET_FI2C(ch, index)		\
++	{						\
++		.id = (index),				\
++		.reg = 0x114,				\
++		.mask = BIT(24 + ch),			\
++		.deassert_val = BIT(24 + ch),		\
++	}
++
++static const struct uniphier_reset_data uniphier_ld4_peri_reset_data[] = {
++	UNIPHIER_PERI_RESET_UART(0, 0),
++	UNIPHIER_PERI_RESET_UART(1, 1),
++	UNIPHIER_PERI_RESET_UART(2, 2),
++	UNIPHIER_PERI_RESET_UART(3, 3),
++	UNIPHIER_PERI_RESET_I2C(0, 4),
++	UNIPHIER_PERI_RESET_I2C(1, 5),
++	UNIPHIER_PERI_RESET_I2C(2, 6),
++	UNIPHIER_PERI_RESET_I2C(3, 7),
++	UNIPHIER_PERI_RESET_I2C(4, 8),
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_ld4_peri_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_ld4_peri_reset_data);
++}
++
++static struct platform_driver uniphier_ld4_peri_reset_driver = {
++	.probe = uniphier_ld4_peri_reset_probe,
++	.driver = {
++		.name = "uniphier-ld4-peri-reset",
++	},
++};
++module_platform_driver(uniphier_ld4_peri_reset_driver);
++
++static const struct uniphier_reset_data uniphier_pro5_peri_reset_data[] = {
++	UNIPHIER_PERI_RESET_UART(0, 0),
++	UNIPHIER_PERI_RESET_UART(1, 1),
++	UNIPHIER_PERI_RESET_UART(2, 2),
++	UNIPHIER_PERI_RESET_UART(3, 3),
++	UNIPHIER_PERI_RESET_FI2C(0, 4),
++	UNIPHIER_PERI_RESET_FI2C(1, 5),
++	UNIPHIER_PERI_RESET_FI2C(2, 6),
++	UNIPHIER_PERI_RESET_FI2C(3, 7),
++	UNIPHIER_PERI_RESET_FI2C(4, 8),
++	UNIPHIER_PERI_RESET_FI2C(5, 9),
++	UNIPHIER_PERI_RESET_FI2C(6, 10),
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_pro5_peri_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_pro5_peri_reset_data);
++}
++
++static struct platform_driver uniphier_pro5_peri_reset_driver = {
++	.probe = uniphier_pro5_peri_reset_probe,
++	.driver = {
++		.name = "uniphier-pro5-peri-reset",
++	},
++};
++module_platform_driver(uniphier_pro5_peri_reset_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier Peripheral Reset Controller Driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
