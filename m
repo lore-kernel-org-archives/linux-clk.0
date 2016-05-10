@@ -1,100 +1,344 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 11 May 2016 10:49:06 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Vishnu Patekar
- <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
- Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 14/16] clk: sunxi-ng: Add N-K-M-P factor clock
-Message-Id: <20160511104906.988800e89f99d24a81f3cb43@free.fr>
-In-Reply-To: <1462737711-10017-15-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1462737711-10017-15-git-send-email-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 21/27] ARM: dts: exynos: Add USB to Exynos5410
+Date: Tue, 10 May 2016 22:09:24 +0200
+Message-Id: <1462910970-1812-22-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun,  8 May 2016 22:01:49 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Move USB 3.0 DWC and 2.0 EHCI/OHCI nodes from exynos5420.dtsi to
+exynos54xx.dtsi common for entire family. For Exynos542x/5800 this
+should not have functional impact but for Exynos5410 this effectively
+adds USB support.
 
-> Introduce support for clocks that use a combination of two linear
-> multipliers (N and K factors), one linear divider (M) and one power of two
-> divider (P).
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile   |   1 +
->  drivers/clk/sunxi-ng/ccu_nkmp.c | 157 ++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu_nkmp.h |  43 +++++++++++
->  3 files changed, 201 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nkmp.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nkmp.h
->=20
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index 2bb8bc22e907..c794f57b6fb1 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -9,6 +9,7 @@ obj-y +=3D ccu_mp.o
->  obj-y +=3D ccu_mux.o
->  obj-y +=3D ccu_nk.o
->  obj-y +=3D ccu_nkm.o
-> +obj-y +=3D ccu_nkmp.o
->  obj-y +=3D ccu_nm.o
->  obj-y +=3D ccu_p.o
->  obj-y +=3D ccu_phase.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_n=
-kmp.c
-> new file mode 100644
-> index 000000000000..b7da00773cd6
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-	[snip]
-> @@ -0,0 +1,157 @@
-	[snip]
-> +static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			   unsigned long parent_rate)
-> +{
-> +	struct ccu_nkmp *nkmp =3D hw_to_ccu_nkmp(hw);
-> +	unsigned long n, k, m, p;
-> +	unsigned long flags;
-> +	u32 reg;
-> +
-> +	ccu_nkmp_find_best(parent_rate, rate,
-> +			   1 << nkmp->n.width, 1 << nkmp->k.width,
-> +			   1 << nkmp->m.width, (1 << nkmp->p.width) - 1,
-> +			   &n, &k, &m, &p);
-> +
-> +	spin_lock_irqsave(nkmp->common.lock, flags);
-> +
-> +	reg =3D readl(nkmp->common.base + nkmp->common.reg);
-> +	reg &=3D ~GENMASK(nkmp->n.width + nkmp->n.shift, nkmp->n.shift);
-> +	reg &=3D ~GENMASK(nkmp->k.width + nkmp->k.shift, nkmp->k.shift);
-> +	reg &=3D ~GENMASK(nkmp->m.width + nkmp->m.shift, nkmp->m.shift);
-> +	reg &=3D ~GENMASK(nkmp->p.width + nkmp->p.shift, nkmp->p.shift);
-> +
-> +	reg |=3D (n - 1) << nkmp->m.shift;
-> +	reg |=3D (k - 1) << nkmp->m.shift;
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-	reg |=3D (n - 1) << nkmp->n.shift;
-	reg |=3D (k - 1) << nkmp->k.shift;
+---
 
-> +	reg |=3D (m - 1) << nkmp->m.shift;
-> +	reg |=3D p << nkmp->p.shift;
-> +
-> +	writel(reg, nkmp->common.base + nkmp->common.reg);
-> +
-> +	spin_unlock_irqrestore(nkmp->common.lock, flags);
-> +
-> +	ccu_helper_wait_for_lock(&nkmp->common, nkmp->lock);
-> +
-> +	return 0;
-> +}
-	[snip]
+TODO: lack of regulator causes errors:
+	usb usb4-port1: over-current condition
+?
+---
+ arch/arm/boot/dts/exynos5410.dtsi |  39 +++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi | 133 +++++++++++---------------------------
+ arch/arm/boot/dts/exynos54xx.dtsi |  79 ++++++++++++++++++++++
+ 3 files changed, 157 insertions(+), 94 deletions(-)
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 850343d3c2af..dd4d6d752865 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -185,4 +185,43 @@
+ 		  3 0 0x07000000 0x20000>;
+ };
+ 
++&usbdrd3_0 {
++	clocks = <&clock CLK_USBD300>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy0 {
++	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbdrd3_1 {
++	clocks = <&clock CLK_USBD301>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy1 {
++	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbhost1 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usbhost2 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usb2_phy {
++	clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,sysreg-phandle = <&sysreg_system_controller>;
++	samsung,pmureg-phandle = <&pmu_system_controller>;
++};
++
+ #include "exynos5410-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index ebf2ed3c5ff8..8fa65eb8027d 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -41,8 +41,6 @@
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		spi2 = &spi_2;
+-		usbdrdphy0 = &usbdrd_phy0;
+-		usbdrdphy1 = &usbdrd_phy1;
+ 	};
+ 
+ 	/*
+@@ -770,98 +768,6 @@
+ 			clock-names = "secss";
+ 		};
+ 
+-		usbdrd3_0: usb3-0 {
+-			compatible = "samsung,exynos5250-dwusb3";
+-			clocks = <&clock CLK_USBD300>;
+-			clock-names = "usbdrd30";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges;
+-
+-			usbdrd_dwc3_0: dwc3@12000000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x12000000 0x10000>;
+-				interrupts = <0 72 0>;
+-				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
+-				phy-names = "usb2-phy", "usb3-phy";
+-			};
+-		};
+-
+-		usbdrd_phy0: phy@12100000 {
+-			compatible = "samsung,exynos5420-usbdrd-phy";
+-			reg = <0x12100000 0x100>;
+-			clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+-			clock-names = "phy", "ref";
+-			samsung,pmu-syscon = <&pmu_system_controller>;
+-			#phy-cells = <1>;
+-		};
+-
+-		usbdrd3_1: usb3-1 {
+-			compatible = "samsung,exynos5250-dwusb3";
+-			clocks = <&clock CLK_USBD301>;
+-			clock-names = "usbdrd30";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges;
+-
+-			usbdrd_dwc3_1: dwc3@12400000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x12400000 0x10000>;
+-				interrupts = <0 73 0>;
+-				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
+-				phy-names = "usb2-phy", "usb3-phy";
+-			};
+-		};
+-
+-		usbdrd_phy1: phy@12500000 {
+-			compatible = "samsung,exynos5420-usbdrd-phy";
+-			reg = <0x12500000 0x100>;
+-			clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+-			clock-names = "phy", "ref";
+-			samsung,pmu-syscon = <&pmu_system_controller>;
+-			#phy-cells = <1>;
+-		};
+-
+-		usbhost2: usb@12110000 {
+-			compatible = "samsung,exynos4210-ehci";
+-			reg = <0x12110000 0x100>;
+-			interrupts = <0 71 0>;
+-
+-			clocks = <&clock CLK_USBH20>;
+-			clock-names = "usbhost";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			port@0 {
+-				reg = <0>;
+-				phys = <&usb2_phy 1>;
+-			};
+-		};
+-
+-		usbhost1: usb@12120000 {
+-			compatible = "samsung,exynos4210-ohci";
+-			reg = <0x12120000 0x100>;
+-			interrupts = <0 71 0>;
+-
+-			clocks = <&clock CLK_USBH20>;
+-			clock-names = "usbhost";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			port@0 {
+-				reg = <0>;
+-				phys = <&usb2_phy 1>;
+-			};
+-		};
+-
+-		usb2_phy: phy@12130000 {
+-			compatible = "samsung,exynos5250-usb2-phy";
+-			reg = <0x12130000 0x100>;
+-			clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
+-			clock-names = "phy", "ref";
+-			#phy-cells = <1>;
+-			samsung,sysreg-phandle = <&sysreg_system_controller>;
+-			samsung,pmureg-phandle = <&pmu_system_controller>;
+-		};
+-
+ 		sysmmu_g2dr: sysmmu@0x10A60000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x10A60000 0x1000>;
+@@ -1153,4 +1059,43 @@
+ 	clock-names = "uart", "clk_uart_baud0";
+ };
+ 
++&usbdrd3_0 {
++	clocks = <&clock CLK_USBD300>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy0 {
++	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbdrd3_1 {
++	clocks = <&clock CLK_USBD301>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy1 {
++	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbhost1 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usbhost2 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usb2_phy {
++	clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,sysreg-phandle = <&sysreg_system_controller>;
++	samsung,pmureg-phandle = <&pmu_system_controller>;
++};
++
+ #include "exynos5420-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 9ce625bd79c1..a9a062708237 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -20,6 +20,11 @@
+ / {
+ 	compatible = "samsung,exynos5";
+ 
++	aliases {
++		usbdrdphy0 = &usbdrd_phy0;
++		usbdrdphy1 = &usbdrd_phy1;
++	};
++
+ 	soc: soc {
+ 		sysram@02020000 {
+ 			compatible = "mmio-sram";
+@@ -64,5 +69,79 @@
+ 						<11 &gic 0 131 0>;
+ 			};
+ 		};
++
++		usbdrd3_0: usb3-0 {
++			compatible = "samsung,exynos5250-dwusb3";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			usbdrd_dwc3_0: dwc3@12000000 {
++				compatible = "snps,dwc3";
++				reg = <0x12000000 0x10000>;
++				interrupts = <0 72 0>;
++				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
++				phy-names = "usb2-phy", "usb3-phy";
++			};
++		};
++
++		usbdrd_phy0: phy@12100000 {
++			compatible = "samsung,exynos5420-usbdrd-phy";
++			reg = <0x12100000 0x100>;
++			#phy-cells = <1>;
++		};
++
++		usbdrd3_1: usb3-1 {
++			compatible = "samsung,exynos5250-dwusb3";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			usbdrd_dwc3_1: dwc3@12400000 {
++				compatible = "snps,dwc3";
++				reg = <0x12400000 0x10000>;
++				interrupts = <0 73 0>;
++				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
++				phy-names = "usb2-phy", "usb3-phy";
++			};
++		};
++
++		usbdrd_phy1: phy@12500000 {
++			compatible = "samsung,exynos5420-usbdrd-phy";
++			reg = <0x12500000 0x100>;
++			#phy-cells = <1>;
++		};
++
++		usbhost2: usb@12110000 {
++			compatible = "samsung,exynos4210-ehci";
++			reg = <0x12110000 0x100>;
++			interrupts = <0 71 0>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				phys = <&usb2_phy 1>;
++			};
++		};
++
++		usbhost1: usb@12120000 {
++			compatible = "samsung,exynos4210-ohci";
++			reg = <0x12120000 0x100>;
++			interrupts = <0 71 0>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				phys = <&usb2_phy 1>;
++			};
++		};
++
++		usb2_phy: phy@12130000 {
++			compatible = "samsung,exynos5250-usb2-phy";
++			reg = <0x12130000 0x100>;
++			#phy-cells = <1>;
++		};
+ 	};
+ };
+-- 
+2.5.0
