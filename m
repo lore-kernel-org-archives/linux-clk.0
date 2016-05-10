@@ -1,169 +1,188 @@
-Return-Path: <joel@jms.id.au>
-Return-Path: <joel@jms.id.au>
-From: Joel Stanley <joel@jms.id.au>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	jk@ozlabs.org,
-	benh@kernel.crashing.org,
-	arnd@arndb.de,
-	heiko@sntech.de
-Subject: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
-Date: Mon,  9 May 2016 22:01:49 +0930
-Message-Id: <1462797111-14271-3-git-send-email-joel@jms.id.au>
-In-Reply-To: <1462797111-14271-1-git-send-email-joel@jms.id.au>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 5/5] clk: hisilicon: hi3519: add driver remove path and fix some issues
+Date: Tue, 10 May 2016 17:19:13 +0800
+Message-ID: <1462871953-26606-6-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-A basic driver to create fixed rate clock devices from strapping
-registers.
+1. Add driver remove path.
+2. Fix some issues.
+   -Fix the ordering issue about clock provider being published.
+   -Add error checking upon registering clocks.
 
-The clocks on the ast2400 are derived from an external oscillator and
-the frequency of this can be derived from the strapping of the
-processor. The frequency of internal clocks can be derived from other
-registers in the SCU (System Control Unit).
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
- drivers/clk/Makefile        |   1 +
- drivers/clk/aspeed/Makefile |   1 +
- drivers/clk/aspeed/clk-g4.c | 109 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 111 insertions(+)
- create mode 100644 drivers/clk/aspeed/Makefile
- create mode 100644 drivers/clk/aspeed/clk-g4.c
+ drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 100 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 46869d696e4d..8eaaef013a28 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -84,3 +84,4 @@ obj-$(CONFIG_X86)			+= x86/
- obj-$(CONFIG_ARCH_ZX)			+= zte/
- obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
- obj-$(CONFIG_H8300)		+= h8300/
-+obj-$(CONFIG_ARCH_ASPEED)		+= aspeed/
-diff --git a/drivers/clk/aspeed/Makefile b/drivers/clk/aspeed/Makefile
-new file mode 100644
-index 000000000000..d3457fbe3019
---- /dev/null
-+++ b/drivers/clk/aspeed/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_MACH_ASPEED_G4) += clk-g4.o
-diff --git a/drivers/clk/aspeed/clk-g4.c b/drivers/clk/aspeed/clk-g4.c
-new file mode 100644
-index 000000000000..91677e9177f5
---- /dev/null
-+++ b/drivers/clk/aspeed/clk-g4.c
-@@ -0,0 +1,109 @@
-+/*
-+ * Copyright 2016 IBM Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the License, or (at your option) any later version.
-+ */
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+index 715c730..51b173e 100644
+--- a/drivers/clk/hisilicon/clk-hi3519.c
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -38,6 +38,11 @@
+ 
+ #define HI3519_NR_CLKS		128
+ 
++struct hi3519_crg_data {
++	struct hisi_clock_data *clk_data;
++	struct hisi_reset_controller *rstc;
++};
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of_address.h>
-+#include <linux/clkdev.h>
+ static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
+ 	{ HI3519_FIXED_24M, "24m", NULL, 0, 24000000, },
+ 	{ HI3519_FIXED_50M, "50m", NULL, 0, 50000000, },
+@@ -80,33 +85,105 @@ static const struct hisi_gate_clock hi3519_gate_clks[] = {
+ 		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
+ };
+ 
+-static int hi3519_clk_probe(struct platform_device *pdev)
++static struct hisi_clock_data *hi3519_clk_register(struct platform_device *pdev)
+ {
+-	struct device_node *np = pdev->dev.of_node;
+ 	struct hisi_clock_data *clk_data;
+-	struct hisi_reset_controller *rstc;
++	int ret;
+ 
+-	rstc = hisi_reset_init(np);
+-	if (!rstc)
++	clk_data = hisi_clk_alloc(pdev, HI3519_NR_CLKS);
++	if (!clk_data)
++		return ERR_PTR(-ENOMEM);
 +
-+static void __init aspeed_of_hpll_clk_init(struct device_node *node)
-+{
-+	struct clk *clk, *clkin_clk;
-+	void __iomem *base;
-+	int reg, rate, clkin;
-+	const char *name = node->name;
-+	const char *parent_name;
-+	const int rates[][4] = {
-+		{384, 360, 336, 408},
-+		{400, 375, 350, 425},
-+	};
++	ret = hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
++				     ARRAY_SIZE(hi3519_fixed_rate_clks),
++				     clk_data);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+	of_property_read_string(node, "clock-output-names", &name);
-+	parent_name = of_clk_get_parent_name(node, 0);
++	ret = hisi_clk_register_mux(hi3519_mux_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				clk_data);
++	if (ret)
++		goto unregister_fixed_rate;
 +
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	reg = readl(base);
-+	iounmap(base);
++	ret = hisi_clk_register_gate(hi3519_gate_clks,
++				ARRAY_SIZE(hi3519_gate_clks),
++				clk_data);
++	if (ret)
++		goto unregister_mux;
 +
-+	clkin_clk = of_clk_get(node, 0);
-+	if (IS_ERR(clkin_clk)) {
-+		pr_err("%s: of_clk_get failed\n", node->full_name);
-+		return;
-+	}
++	ret = of_clk_add_provider(pdev->dev.of_node,
++			of_clk_src_onecell_get, &clk_data->clk_data);
++	if (ret)
++		goto unregister_gate;
 +
-+	clkin = clk_get_rate(clkin_clk);
++	return clk_data;
 +
-+	reg = (reg >> 8) & 0x2;
++unregister_fixed_rate:
++	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
++				ARRAY_SIZE(hi3519_fixed_rate_clks),
++				clk_data);
 +
-+	if (clkin == 48000000 || clkin == 24000000)
-+		rate = rates[0][reg] * 1000000;
-+	else if (clkin == 25000000)
-+		rate = rates[1][reg] * 1000000;
-+	else {
-+		pr_err("%s: unknown clkin frequency %dHz\n",
-+				node->full_name, clkin);
-+		WARN_ON(1);
-+	}
-+
-+	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++unregister_mux:
++	hisi_clk_unregister_mux(hi3519_mux_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				clk_data);
++unregister_gate:
++	hisi_clk_unregister_gate(hi3519_gate_clks,
++				ARRAY_SIZE(hi3519_gate_clks),
++				clk_data);
++	return ERR_PTR(ret);
 +}
-+CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g4-hpll-clock",
-+	       aspeed_of_hpll_clk_init);
 +
-+static void __init aspeed_of_apb_clk_init(struct device_node *node)
++static void hi3519_clk_unregister(struct platform_device *pdev)
 +{
-+	struct clk *clk, *hpll_clk;
-+	void __iomem *base;
-+	int reg, rate;
-+	const char *name = node->name;
-+	const char *parent_name;
++	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
 +
-+	of_property_read_string(node, "clock-output-names", &name);
-+	parent_name = of_clk_get_parent_name(node, 0);
++	of_clk_del_provider(pdev->dev.of_node);
 +
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	reg = readl(base);
-+	iounmap(base);
-+
-+	hpll_clk = of_clk_get(node, 0);
-+	if (IS_ERR(hpll_clk)) {
-+		pr_err("%s: of_clk_get failed\n", node->full_name);
-+		return;
-+	}
-+
-+	reg = (reg >> 23) & 0x3;
-+	rate = clk_get_rate(hpll_clk) / (2 + 2 * reg);
-+
-+	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	hisi_clk_unregister_gate(hi3519_gate_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				crg->clk_data);
++	hisi_clk_unregister_mux(hi3519_mux_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				crg->clk_data);
++	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
++				ARRAY_SIZE(hi3519_fixed_rate_clks),
++				crg->clk_data);
 +}
-+CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g4-apb-clock",
-+	       aspeed_of_apb_clk_init);
++
++static int hi3519_clk_probe(struct platform_device *pdev)
++{
++	struct hi3519_crg_data *crg;
++
++	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
++	if (!crg)
++		return -ENOMEM;
++
++	crg->rstc = hisi_reset_init(pdev);
++	if (!crg->rstc)
+ 		return -ENOMEM;
+ 
+-	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
+-	if (!clk_data) {
+-		hisi_reset_exit(rstc);
+-		return -ENODEV;
++	crg->clk_data = hi3519_clk_register(pdev);
++	if (IS_ERR(crg->clk_data)) {
++		hisi_reset_exit(crg->rstc);
++		return PTR_ERR(crg->clk_data);
+ 	}
+ 
+-	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
+-				     ARRAY_SIZE(hi3519_fixed_rate_clks),
+-				     clk_data);
+-	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
+-					clk_data);
+-	hisi_clk_register_gate(hi3519_gate_clks,
+-			ARRAY_SIZE(hi3519_gate_clks), clk_data);
++	platform_set_drvdata(pdev, crg);
++	return 0;
++}
++
++static int hi3519_clk_remove(struct platform_device *pdev)
++{
++	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
+ 
++	hisi_reset_exit(crg->rstc);
++	hi3519_clk_unregister(pdev);
+ 	return 0;
+ }
+ 
++
+ static const struct of_device_id hi3519_clk_match_table[] = {
+ 	{ .compatible = "hisilicon,hi3519-crg" },
+ 	{ }
+@@ -115,6 +192,7 @@ MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
+ 
+ static struct platform_driver hi3519_clk_driver = {
+ 	.probe          = hi3519_clk_probe,
++	.remove		= hi3519_clk_remove,
+ 	.driver         = {
+ 		.name   = "hi3519-clk",
+ 		.of_match_table = hi3519_clk_match_table,
+@@ -127,5 +205,11 @@ static int __init hi3519_clk_init(void)
+ }
+ core_initcall(hi3519_clk_init);
+ 
++static void __exit hi3519_clk_exit(void)
++{
++	platform_driver_unregister(&hi3519_clk_driver);
++}
++module_exit(hi3519_clk_exit);
++
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
 -- 
-2.8.1
+1.9.1
