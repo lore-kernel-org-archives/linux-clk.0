@@ -1,103 +1,119 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 13 May 2016 09:50:00 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 01/16] clk: fix critical clock locking
-Message-ID: <20160513075000.GB3733@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-2-git-send-email-maxime.ripard@free-electrons.com>
- <20160509221146.GS3492@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [RFC PATCH 19/21] reset: uniphier: add reset driver for UniPhier
+ PH1-LD20 SoC
+Date: Tue, 10 May 2016 18:51:00 +0900
+Message-Id: <1462873862-30940-20-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xShVoZav8KYWC5Dk"
-In-Reply-To: <20160509221146.GS3492@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This series is just for review.
+Please do not apply this patch.
 
---xShVoZav8KYWC5Dk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Hi Stephen,
+ drivers/reset/uniphier/Kconfig               |  4 +++
+ drivers/reset/uniphier/Makefile              |  1 +
+ drivers/reset/uniphier/reset-uniphier-ld20.c | 46 ++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-ld20.c
 
-On Mon, May 09, 2016 at 03:11:46PM -0700, Stephen Boyd wrote:
-> On 05/08, Maxime Ripard wrote:
-> > The critical clock handling in __clk_core_init isn't taking the enable =
-lock
-> > before calling clk_core_enable, which in turns triggers the warning in =
-the
-> > lockdep_assert_held call in that function when lockep is enabled.
-> >=20
-> > Add the calls to clk_enable_lock/unlock to make sure it doesn't happen.
-> >=20
-> > Fixes: 32b9b1096186 ("clk: Allow clocks to be marked as CRITICAL")
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
->=20
-> Why is this patch hiding in this series?
+diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
+index d9a2123..8509e71 100644
+--- a/drivers/reset/uniphier/Kconfig
++++ b/drivers/reset/uniphier/Kconfig
+@@ -30,4 +30,8 @@ config RESET_UNIPHIER_LD11
+ 	tristate "Reset driver for UniPhier PH1-LD11 SoC"
+ 	default ARM
+ 
++config RESET_UNIPHIER_LD20
++	tristate "Reset driver for UniPhier PH1-LD20 SoC"
++	default ARM64
++
+ endif
+diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
+index f25f648..a33cb0a 100644
+--- a/drivers/reset/uniphier/Makefile
++++ b/drivers/reset/uniphier/Makefile
+@@ -6,3 +6,4 @@ obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
+ obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
+ obj-$(CONFIG_RESET_UNIPHIER_PXS2)	+= reset-uniphier-pxs2.o
+ obj-$(CONFIG_RESET_UNIPHIER_LD11)	+= reset-uniphier-ld11.o
++obj-$(CONFIG_RESET_UNIPHIER_LD20)	+= reset-uniphier-ld20.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-ld20.c b/drivers/reset/uniphier/reset-uniphier-ld20.c
+new file mode 100644
+index 0000000..8edda31
+--- /dev/null
++++ b/drivers/reset/uniphier/reset-uniphier-ld20.c
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "reset-uniphier.h"
++
++static const struct uniphier_reset_data uniphier_ld20_reset_data[] = {
++	{
++		.id = 7,
++		.reg = 0x200c,
++		.mask = BIT(8),
++		.deassert_val = BIT(8),
++	},
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_ld20_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_ld20_reset_data);
++}
++
++static struct platform_driver uniphier_ld20_reset_driver = {
++	.probe = uniphier_ld20_reset_probe,
++	.driver = {
++		.name = "uniphier-ld20-reset",
++	},
++};
++module_platform_driver(uniphier_ld20_reset_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-LD20 Reset Controller Driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
 
-Sorry, I discovered it while working on this, and somehow it slipped
-in there. I'll resend it separately.
 
->=20
-> >  drivers/clk/clk.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index ce39add5a258..16a38df3c688 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2404,8 +2404,15 @@ static int __clk_core_init(struct clk_core *core)
-> >  		core->ops->init(core->hw);
-> > =20
-> >  	if (core->flags & CLK_IS_CRITICAL) {
-> > +		unsigned long flags;
-> > +
-> > +		clk_prepare_lock();
-> >  		clk_core_prepare(core);
-> > +		clk_prepare_unlock();
->=20
-> It looks like we already hold the prepare lock at this point.
-
-You're right. I thought I removed it, but obviously I didn't.
-
-I'll send a v2.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---xShVoZav8KYWC5Dk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXNYcoAAoJEBx+YmzsjxAgjOgP/AyH2Qa+JZ/wVmdPJKO5cizR
-qEHtPxMkxCYLfzvdlsQmix7DePQqkLvWTq0YxzwyyAQnilrpJ991ywcQj0IF4XLU
-4o1cNoi8GH+V3BtbOvBEUnqtr3jdBQH6oZ7cRXL2J6nYNsj0NSIMeJOnnofLduLD
-9MY3JBn1RZ90M46E4RO1cyuGatwzL9q031EsfOecs3HSx+BFjGd+NCiNSts+TscD
-2Q6B4k+a1vYI58mPqpC4dkaQfXwgOZ5/6H8P9UmxlzdIHd3bzB+BXI7Lhm/2Ngkn
-MKi9PboEDGsBp5jtDIFobhAOoPhiX0XvQNHLPPlKQShgwO5JjS1MSRf5otpfzIqv
-A50WRyIKnKAI+p01qHG1IXt8XeCqcSAKbQmIdEsGigKhs6JrhSuZCoxpONQyCrcA
-jzber/lNq8itm3aYHkYkoHCzEU08AXCwhn4GABBp0BjbwGxnBLqzI/z8NIpbdCOW
-UrPFr9R4BEvFonjnOhDADsfs8CA2Ujl80A8ZZ19bTsdQNx38+pzDYVfLEiQxjKjd
-HMK5r4GgICZa0g/ol2V82fUHp8+aQRQa5JFC83U5WqO2vBunrgfTp0PZK0Q8bmiy
-5ax7nvrLGCSRhfL+x0B1gpPD/HnPdG7ZuQUcZUB5LOI7w3+9ZyBPsr4mI0aaVPq6
-SVIvdo7b06P4gvIBk/Ns
-=ImZV
------END PGP SIGNATURE-----
-
---xShVoZav8KYWC5Dk--
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
