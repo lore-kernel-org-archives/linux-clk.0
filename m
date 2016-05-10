@@ -1,258 +1,106 @@
-Return-Path: <gnaygnil@gmail.com>
-Return-Path: <gnaygnil@gmail.com>
-From: Yang Ling <gnaygnil@gmail.com>
-Date: Sun, 15 May 2016 15:03:04 +0800
-To: Kelvin Cheung <keguang.zhang@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/4] clk: add Loongson1C clock support
-Message-ID: <20160515070302.GA99380@ubuntu>
-References: <1463043564-21559-1-git-send-email-gnaygnil@gmail.com>
- <CAJhJPsV9HN=sgkg59ZvKiQ73ZmwRdZwQGvhwwf38jBzW7zUh+g@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:53177 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751816AbcEJJca (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 05:32:30 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+	<zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+	<yanghongwei@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 1/5] reset: hisilicon: change the definition of hisi_reset_init
+Date: Tue, 10 May 2016 17:19:09 +0800
+Message-ID: <1462871953-26606-2-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAJhJPsV9HN=sgkg59ZvKiQ73ZmwRdZwQGvhwwf38jBzW7zUh+g@mail.gmail.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 12, 2016 at 06:01:57PM +0800, Kelvin Cheung wrote:
-> Hi Ling,
-> The file clk-ls1x.c will be renamed to clk-loongson1.c.
-> You'd better rebase your changes base on the following patch.
-> https://patchwork.linux-mips.org/patch/13035/
-> 
-> 2016-05-12 16:59 GMT+08:00 Yang Ling <gnaygnil@gmail.com>:
-> 
-> > This adds clock support to Loongson1C SoC using the common clock
-> > infrastructure.
-> >
-> > Signed-off-by: Yang Ling <gnaygnil@gmail.com>
-> > ---
-> >  arch/mips/include/asm/mach-loongson32/regs-clk.h | 33 ++++++++++++
-> >  drivers/clk/clk-ls1x.c                           | 69
-> > +++++++++++++++++++++---
-> >  2 files changed, 95 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h
-> > b/arch/mips/include/asm/mach-loongson32/regs-clk.h
-> > index 1f5a715..2cef0e2 100644
-> > --- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
-> > +++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
-> > @@ -1,5 +1,7 @@
-> >  /*
-> >   * Copyright (c) 2011 Zhang, Keguang <keguang.zhang@gmail.com>
-> > + * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
-> > + * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
-> >   *
-> >   * Loongson 1 Clock Register Definitions.
-> >   *
-> > @@ -19,6 +21,7 @@
-> >  #define LS1X_CLK_PLL_DIV               LS1X_CLK_REG(0x4)
-> >
-> >  /* Clock PLL Divisor Register Bits */
-> > +#if defined(CONFIG_LOONGSON1_LS1B)
-> >  #define DIV_DC_EN                      (0x1 << 31)
-> >  #define DIV_DC_RST                     (0x1 << 30)
-> >  #define DIV_CPU_EN                     (0x1 << 25)
-> > @@ -48,4 +51,34 @@
-> >  #define BYPASS_DDR_WIDTH               1
-> >  #define BYPASS_CPU_WIDTH               1
-> >
-> > +#elif defined(CONFIG_LOONGSON1_LS1C)
-> > +
-> > +#define PLL_VALID                      (0x1 << 31)
-> > +#define FRAC_N                         (0xff << 16)
-> > +#define RST_TIME                       (0x3 << 2)
-> > +#define SDRAM_DIV                      (0x3 << 0)
-> > +
-> > +#define DIV_DC_EN                      (0x1 << 31)
-> > +#define DIV_DC                         (0x7f << 24)
-> > +#define DIV_CAM_EN                     (0x1 << 23)
-> > +#define DIV_CAM                                (0x7f << 16)
-> > +#define DIV_CPU_EN                     (0x1 << 15)
-> > +#define DIV_CPU                                (0x7f << 8)
-> > +#define DIV_DC_SEL_EN                  (0x1 << 5)
-> > +#define DIV_DC_SEL                     (0x1 << 4)
-> > +#define DIV_CAM_SEL_EN                 (0x1 << 3)
-> > +#define DIV_CAM_SEL                    (0x1 << 2)
-> > +#define DIV_CPU_SEL_EN                 (0x1 << 1)
-> > +#define DIV_CPU_SEL                    (0x1 << 0)
-> > +
-> > +#define DIV_DC_SHIFT                    24
-> > +#define DIV_CAM_SHIFT                   16
-> > +#define DIV_CPU_SHIFT                   8
-> > +
-> > +#define DIV_DC_WIDTH                    7
-> > +#define DIV_CPU_WIDTH                   7
-> > +#define DIV_DDR_WIDTH                   7
-> > +
-> > +#endif
-> > +
-> >  #endif /* __ASM_MACH_LOONGSON32_REGS_CLK_H */
-> > diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
-> > index d4c6198..746e653 100644
-> > --- a/drivers/clk/clk-ls1x.c
-> > +++ b/drivers/clk/clk-ls1x.c
-> > @@ -1,5 +1,7 @@
-> >  /*
-> >   * Copyright (c) 2012 Zhang, Keguang <keguang.zhang@gmail.com>
-> > + * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
-> > + * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
-> >   *
-> >   * This program is free software; you can redistribute  it and/or modify
-> > it
-> >   * under  the terms of  the GNU General  Public License as published by
-> > the
-> > @@ -15,8 +17,13 @@
-> >
-> >  #include <loongson1.h>
-> >
-> > +#if defined(CONFIG_LOONGSON1_LS1B)
-> >  #define OSC            (33 * 1000000)
-> >  #define DIV_APB                2
-> > +#elif defined(CONFIG_LOONGSON1_LS1C)
-> > +#define OSC            (24 * 1000000)
-> > +#define DIV_APB                1
-> > +#endif
-> >
-> >  static DEFINE_SPINLOCK(_lock);
-> >
-> > @@ -35,9 +42,15 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw
-> > *hw,
-> >         u32 pll, rate;
-> >
-> >         pll = __raw_readl(LS1X_CLK_PLL_FREQ);
-> > +#if defined(CONFIG_LOONGSON1_LS1B)
-> >         rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
-> >         rate *= OSC;
-> >         rate >>= 1;
-> > +#elif defined(CONFIG_LOONGSON1_LS1C)
-> > +       rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-> > +       rate *= OSC;
-> > +       rate >>= 2;
-> > +#endif
-> >
-> >         return rate;
-> >  }
-> > @@ -80,22 +93,25 @@ static struct clk *__init clk_register_pll(struct
-> > device *dev,
-> >         return clk;
-> >  }
-> >
-> > -static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk",
-> > };
-> > -static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk",
-> > };
-> > -static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
-> > +static const char * const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
-> > +static const char * const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
-> > +static const char * const dc_parents[] = { "dc_clk_div", "osc_clk", };
-> >
-> >  void __init ls1x_clk_init(void)
-> >  {
-> >         struct clk *clk;
-> > +       u32 reg;
-> > +       u32 div;
-> >
-> > -       clk = clk_register_fixed_rate(NULL, "osc_33m_clk", NULL,
-> > CLK_IS_ROOT,
-> > +       clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, CLK_IS_ROOT,
-> >                                       OSC);
-> > -       clk_register_clkdev(clk, "osc_33m_clk", NULL);
-> > +       clk_register_clkdev(clk, "osc_clk", NULL);
-> >
-> > -       /* clock derived from 33 MHz OSC clk */
-> > -       clk = clk_register_pll(NULL, "pll_clk", "osc_33m_clk", 0);
-> > +       /* clock derived from OSC clk */
-> > +       clk = clk_register_pll(NULL, "pll_clk", "osc_clk", 0);
-> >         clk_register_clkdev(clk, "pll_clk", NULL);
-> >
-> > +#if defined(CONFIG_LOONGSON1_LS1B)
-> >         /* clock derived from PLL clk */
-> >         /*                                 _____
-> >          *         _______________________|     |
-> > @@ -114,7 +130,23 @@ void __init ls1x_clk_init(void)
-> >                                CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
-> >                                BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0,
-> > &_lock);
-> >         clk_register_clkdev(clk, "cpu_clk", NULL);
-> > +#elif defined(CONFIG_LOONGSON1_LS1C)
-> > +       reg = __raw_readl(LS1X_CLK_PLL_DIV);
-> > +       if (reg & DIV_CPU_SEL) {
-> > +               if (reg & DIV_CPU_EN) {
-> > +                       clk = clk_register_divider(NULL, "cpu_clk",
-> > "pll_clk",
-> > +                                       CLK_SET_RATE_PARENT,
-> > LS1X_CLK_PLL_DIV,
-> > +                                       DIV_CPU_SHIFT, DIV_CPU_WIDTH,
-> > +                                       CLK_DIVIDER_ONE_BASED, &_lock);
-> > +               } else {
-> > +                       clk = clk_register_fixed_factor(NULL, "cpu_clk",
-> > +                                                       "pll_clk", 0, 1,
-> > 2);
-> > +               }
-> > +       }
-> > +       clk_register_clkdev(clk, "cpu_clk", NULL);
-> > +#endif
-> >
-> > +#if defined(CONFIG_LOONGSON1_LS1B)
-> >         /*                                 _____
-> >          *         _______________________|     |
-> >          * OSC ___/                       | MUX |___ DC  CLK
-> > @@ -130,7 +162,14 @@ void __init ls1x_clk_init(void)
-> >                                CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
-> >                                BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0,
-> > &_lock);
-> >         clk_register_clkdev(clk, "dc_clk", NULL);
-> > +#elif defined(CONFIG_LOONGSON1_LS1C)
-> > +       clk = clk_register_divider(NULL, "dc_clk", "pll_clk",
-> > +                       CLK_SET_RATE_PARENT, LS1X_CLK_PLL_DIV,
-> > DIV_DC_SHIFT,
-> > +                       DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
-> > +       clk_register_clkdev(clk, "dc_clk", NULL);
-> > +#endif
-> >
-> > +#if defined(CONFIG_LOONGSON1_LS1B)
-> >         /*                                 _____
-> >          *         _______________________|     |
-> >          * OSC ___/                       | MUX |___ DDR CLK
-> > @@ -146,6 +185,22 @@ void __init ls1x_clk_init(void)
-> >                                ARRAY_SIZE(ahb_parents),
-> >                                CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
-> >                                BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0,
-> > &_lock);
-> > +#elif defined(CONFIG_LOONGSON1_LS1C)
-> > +       reg = __raw_readl(LS1X_CLK_PLL_FREQ) & SDRAM_DIV;
-> > +       switch (reg) {
-> > +       case 0:
-> > +               div = 2;
-> > +               break;
-> > +       case 1:
-> > +               div = 4;
-> > +               break;
-> > +       case 2:
-> > +       case 3:
-> > +               div = 3;
-> > +               break;
-> > +       }
-> > +       clk = clk_register_fixed_factor(NULL, "ahb_clk", "cpu_clk", 0, 1,
-> > div);
-> > +#endif
-> >         clk_register_clkdev(clk, "ahb_clk", NULL);
-> >         clk_register_clkdev(clk, "stmmaceth", NULL);
-> >
-> > --
-> > 1.9.1
-> >
-> >
-> >
-> 
-> 
-> -- 
-> Best regards,
-> 
-> Kelvin Cheung
+Change the input arguments type to struct platform_device pointer.
 
-Well, I will apply the latest patchs in the next version.
-Thanks, Cheung.
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+---
+ drivers/clk/hisilicon/reset.c | 19 +++++++++----------
+ drivers/clk/hisilicon/reset.h |  5 +++--
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+index 6aa49c2..2a5015c 100644
+--- a/drivers/clk/hisilicon/reset.c
++++ b/drivers/clk/hisilicon/reset.c
+@@ -19,6 +19,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -98,25 +99,25 @@ static const struct reset_control_ops hisi_reset_ops = {
+ 	.deassert	= hisi_reset_deassert,
+ };
+ 
+-struct hisi_reset_controller *hisi_reset_init(struct device_node *np)
++struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
+ {
+ 	struct hisi_reset_controller *rstc;
++	struct resource *res;
+ 
+-	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
++	rstc = devm_kmalloc(&pdev->dev, sizeof(*rstc), GFP_KERNEL);
+ 	if (!rstc)
+ 		return NULL;
+ 
+-	rstc->membase = of_iomap(np, 0);
+-	if (!rstc->membase) {
+-		kfree(rstc);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	rstc->membase = devm_ioremap(&pdev->dev,
++				res->start, resource_size(res));
++	if (!rstc->membase)
+ 		return NULL;
+-	}
+ 
+ 	spin_lock_init(&rstc->lock);
+-
+ 	rstc->rcdev.owner = THIS_MODULE;
+ 	rstc->rcdev.ops = &hisi_reset_ops;
+-	rstc->rcdev.of_node = np;
++	rstc->rcdev.of_node = pdev->dev.of_node;
+ 	rstc->rcdev.of_reset_n_cells = 2;
+ 	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
+ 	reset_controller_register(&rstc->rcdev);
+@@ -128,7 +129,5 @@ EXPORT_SYMBOL_GPL(hisi_reset_init);
+ void hisi_reset_exit(struct hisi_reset_controller *rstc)
+ {
+ 	reset_controller_unregister(&rstc->rcdev);
+-	iounmap(rstc->membase);
+-	kfree(rstc);
+ }
+ EXPORT_SYMBOL_GPL(hisi_reset_exit);
+diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+index 677d773..9a69374 100644
+--- a/drivers/clk/hisilicon/reset.h
++++ b/drivers/clk/hisilicon/reset.h
+@@ -22,10 +22,11 @@ struct device_node;
+ struct hisi_reset_controller;
+ 
+ #ifdef CONFIG_RESET_CONTROLLER
+-struct hisi_reset_controller *hisi_reset_init(struct device_node *np);
++struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev);
+ void hisi_reset_exit(struct hisi_reset_controller *rstc);
+ #else
+-static inline hisi_reset_controller *hisi_reset_init(struct device_node *np)
++static inline
++struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
+ {
+ 	return 0;
+ }
+-- 
+1.9.1
+
