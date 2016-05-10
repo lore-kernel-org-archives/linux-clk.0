@@ -2,10 +2,10 @@ Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.o
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
  Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [RFC PATCH 13/21] reset: uniphier: add reset driver for UniPhier
- PH1-LD4 SoC
-Date: Tue, 10 May 2016 18:50:54 +0900
-Message-Id: <1462873862-30940-14-git-send-email-yamada.masahiro@socionext.com>
+Subject: [RFC PATCH 17/21] reset: uniphier: add reset driver for UniPhier
+ ProXstream2/PH1-LD6b SoC
+Date: Tue, 10 May 2016 18:50:58 +0900
+Message-Id: <1462873862-30940-18-git-send-email-yamada.masahiro@socionext.com>
 In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
@@ -29,38 +29,39 @@ Please do not apply this patch.
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- drivers/reset/uniphier/Kconfig              |  4 +++
- drivers/reset/uniphier/Makefile             |  2 ++
- drivers/reset/uniphier/reset-uniphier-ld4.c | 46 +++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
- create mode 100644 drivers/reset/uniphier/reset-uniphier-ld4.c
+ drivers/reset/uniphier/Kconfig               |  4 +++
+ drivers/reset/uniphier/Makefile              |  1 +
+ drivers/reset/uniphier/reset-uniphier-pxs2.c | 46 ++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-pxs2.c
 
 diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
-index e82f7a7..875afd9 100644
+index 92d9a5f..022aef4 100644
 --- a/drivers/reset/uniphier/Kconfig
 +++ b/drivers/reset/uniphier/Kconfig
-@@ -6,4 +6,8 @@ menuconfig RESET_UNIPHIER
+@@ -22,4 +22,8 @@ config RESET_UNIPHIER_PRO5
+ 	tristate "Reset driver for UniPhier PH1-Pro5 SoC"
+ 	default ARM
  
- if RESET_UNIPHIER
- 
-+config RESET_UNIPHIER_LD4
-+	tristate "Reset driver for UniPhier PH1-LD4 SoC"
++config RESET_UNIPHIER_PXS2
++	tristate "Reset driver for UniPhier ProXstream2/PH1-LD6b SoC"
 +	default ARM
 +
  endif
 diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
-index ba660bc..c99a420 100644
+index 537e3f8..50847db 100644
 --- a/drivers/reset/uniphier/Makefile
 +++ b/drivers/reset/uniphier/Makefile
-@@ -1 +1,3 @@
- obj-y					+= reset-uniphier-core.o
-+
-+obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
-diff --git a/drivers/reset/uniphier/reset-uniphier-ld4.c b/drivers/reset/uniphier/reset-uniphier-ld4.c
+@@ -4,3 +4,4 @@ obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
+ obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
+ obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
+ obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
++obj-$(CONFIG_RESET_UNIPHIER_PXS2)	+= reset-uniphier-pxs2.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-pxs2.c b/drivers/reset/uniphier/reset-uniphier-pxs2.c
 new file mode 100644
-index 0000000..be6e06c
+index 0000000..55d7273
 --- /dev/null
-+++ b/drivers/reset/uniphier/reset-uniphier-ld4.c
++++ b/drivers/reset/uniphier/reset-uniphier-pxs2.c
 @@ -0,0 +1,46 @@
 +/*
 + * Copyright (C) 2016 Socionext Inc.
@@ -82,7 +83,7 @@ index 0000000..be6e06c
 +
 +#include "reset-uniphier.h"
 +
-+static const struct uniphier_reset_data uniphier_ld4_reset_data[] = {
++static const struct uniphier_reset_data uniphier_pxs2_reset_data[] = {
 +	{
 +		.id = 7,
 +		.reg = 0x2000,
@@ -92,21 +93,21 @@ index 0000000..be6e06c
 +	{ .id = UNIPHIER_RESET_ID_END }
 +};
 +
-+static int uniphier_ld4_reset_probe(struct platform_device *pdev)
++static int uniphier_pxs2_reset_probe(struct platform_device *pdev)
 +{
-+	return uniphier_reset_probe(pdev, uniphier_ld4_reset_data);
++	return uniphier_reset_probe(pdev, uniphier_pxs2_reset_data);
 +}
 +
-+static struct platform_driver uniphier_ld4_reset_driver = {
-+	.probe = uniphier_ld4_reset_probe,
++static struct platform_driver uniphier_pxs2_reset_driver = {
++	.probe = uniphier_pxs2_reset_probe,
 +	.driver = {
-+		.name = "uniphier-ld4-reset",
++		.name = "uniphier-pxs2-reset",
 +	},
 +};
-+module_platform_driver(uniphier_ld4_reset_driver);
++module_platform_driver(uniphier_pxs2_reset_driver);
 +
 +MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-LD4 Reset Controller Driver");
++MODULE_DESCRIPTION("UniPhier ProXstream2 Reset Controller Driver");
 +MODULE_LICENSE("GPL");
 -- 
 1.9.1
