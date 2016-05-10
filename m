@@ -1,54 +1,119 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v3 4/4] mfd: arizona: Add device tree binding
- documentation for new clock driver
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org
-References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1452252582-20834-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <572D3B2C.8000304@codeaurora.org>
-Cc: myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@opensource.wolfsonmicro.com
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <572D3B7C.6040807@codeaurora.org>
-Date: Fri, 6 May 2016 17:49:00 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [RFC PATCH 16/21] reset: uniphier: add reset driver for UniPhier
+ PH1-Pro5 SoC
+Date: Tue, 10 May 2016 18:50:57 +0900
+Message-Id: <1462873862-30940-17-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <572D3B2C.8000304@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06/2016 05:47 PM, Stephen Boyd wrote:
-> On 01/08/2016 03:29 AM, Charles Keepax wrote:
->> Specify the device tree binding for the input clocks to Arizona devices.
->>
->> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
->>
->> No changes since v2.
->>
->> Thanks,
->> Charles
->>
->>  Documentation/devicetree/bindings/mfd/arizona.txt | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
->> index 18be0cb..39f76f8 100644
->> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
->> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
->> @@ -45,6 +45,13 @@ Optional properties:
->>  
->>    - wlf,reset : GPIO specifier for the GPIO controlling /RESET
->>  
->> +  - clocks: Should reference the clocks supplied on MCLK1 and MCLK2
->> +  - clock-names: Should contains two strings:
-> Can't this be clock-output-names instead? That's standard and already
-> accepted per clock-bindings.txt
->
+This series is just for review.
+Please do not apply this patch.
 
-Oh this is input, nevermind.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/reset/uniphier/Kconfig               |  4 +++
+ drivers/reset/uniphier/Makefile              |  1 +
+ drivers/reset/uniphier/reset-uniphier-pro5.c | 46 ++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-pro5.c
+
+diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
+index 307d563..92d9a5f 100644
+--- a/drivers/reset/uniphier/Kconfig
++++ b/drivers/reset/uniphier/Kconfig
+@@ -18,4 +18,8 @@ config RESET_UNIPHIER_SLD8
+ 	tristate "Reset driver for UniPhier PH1-sLD8 SoC"
+ 	default ARM
+ 
++config RESET_UNIPHIER_PRO5
++	tristate "Reset driver for UniPhier PH1-Pro5 SoC"
++	default ARM
++
+ endif
+diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
+index e1001c6..537e3f8 100644
+--- a/drivers/reset/uniphier/Makefile
++++ b/drivers/reset/uniphier/Makefile
+@@ -3,3 +3,4 @@ obj-y					+= reset-uniphier-core.o
+ obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
+ obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
+ obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
++obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-pro5.c b/drivers/reset/uniphier/reset-uniphier-pro5.c
+new file mode 100644
+index 0000000..dae6f54
+--- /dev/null
++++ b/drivers/reset/uniphier/reset-uniphier-pro5.c
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "reset-uniphier.h"
++
++static const struct uniphier_reset_data uniphier_pro5_reset_data[] = {
++	{
++		.id = 7,
++		.reg = 0x2000,
++		.mask = BIT(10),
++		.deassert_val = BIT(10),
++	},
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_pro5_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_pro5_reset_data);
++}
++
++static struct platform_driver uniphier_pro5_reset_driver = {
++	.probe = uniphier_pro5_reset_probe,
++	.driver = {
++		.name = "uniphier-pro5-reset",
++	},
++};
++module_platform_driver(uniphier_pro5_reset_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-Pro5 Reset Controller Driver");
++MODULE_LICENSE("GPL");
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
