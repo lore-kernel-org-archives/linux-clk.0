@@ -1,38 +1,38 @@
-Return-Path: <dianders@google.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 0/5] clk: hisilicon: Fix some problems of clk-hi3519
+Date: Tue, 10 May 2016 17:19:08 +0800
+Message-ID: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com>
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
-	<1462206982-10444-3-git-send-email-heiko@sntech.de>
-	<CAD=FV=X6at49s-8Wh3+RnLwNQr5RqDMvfJJF+TwvuhnurmQk1w@mail.gmail.com>
-Date: Thu, 5 May 2016 17:49:39 -0700
-Message-ID: <CAD=FV=WegPb3AMsUM+Rx_uZ3sMCGUFz-vEh_8WDTqTp1MHWOUQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
- parent changes
-From: Doug Anderson <dianders@chromium.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Xing Zheng <zhengxing@rock-chips.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	zhangqing <zhangqing@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+This patch is base on branch clk-hi3519 in clk tree. It mainly fixes the
+following issues:
+1. Add driver remove path.
+2. Fix the ordering issue about clock provider being published.
+3. Add error checking upon registering clocks. 
 
-On Thu, May 5, 2016 at 5:35 PM, Doug Anderson <dianders@chromium.org> wrote:
-> I guess we don't care about errors here?
->
-> ...maybe (?) we could ignore errors if we validated this rate change
-> with PRE_RATE_CHANGE before attempting to change the parent clock, but
-> I don't see the code doing this unless I missed it.
+Jiancheng Xue (5):
+  reset: hisilicon: change the definition of hisi_reset_init
+  clk: hisilicon: add hisi_clk_alloc function.
+  clk: hisilicon: add error processing for hisi_clk_register_* functions
+  clk: hisilicon: add hisi_clk_unregister_* functions
+  clk: hisilicon: hi3519: add driver remove path and fix some issues
 
-One other related thought: it seems like there should be code
-_somewhere_ that decides whether to adjust the child dividers before
-or after the parent clock changes.  Specifically if the parent clock
-is increasing in speed we probably want to slow down the child clock
-ahead of the parent's increase.  I don't see such code here, but again
-I'm pretty good at missing things unless they are slapping me in the
-face.  ;)
+ drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
+ drivers/clk/hisilicon/clk.c        |  89 ++++++++++++++++++++++++----
+ drivers/clk/hisilicon/clk.h        |  34 +++++++++--
+ drivers/clk/hisilicon/reset.c      |  19 +++---
+ drivers/clk/hisilicon/reset.h      |   5 +-
+ 5 files changed, 220 insertions(+), 43 deletions(-)
 
--Doug
+-- 
+1.9.1
