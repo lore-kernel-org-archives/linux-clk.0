@@ -14,35 +14,59 @@ To: Kukjin Kim <kgene@kernel.org>,
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 09/22] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
-Date: Sun, 15 May 2016 22:13:50 +0200
-Message-Id: <1463343243-26429-10-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v3 02/27] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+Date: Tue, 10 May 2016 22:09:05 +0200
+Message-Id: <1462910970-1812-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
-can be referenced by inheriting DTSI.
+Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
+Exynos5420 just in case in future these drivers were merged.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index c5d198c70b86..30a0b63b06c9 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -35,7 +35,7 @@
- 		reg = <0x10000000 0x100>;
- 	};
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 213f19e02870..34c8e96987a1 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2016 Krzysztof Kozlowski
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -27,16 +28,25 @@
+ #define CLK_SCLK_MMC0		132
+ #define CLK_SCLK_MMC1		133
+ #define CLK_SCLK_MMC2		134
++#define CLK_SCLK_USBD300	150
++#define CLK_SCLK_USBD301	151
++#define CLK_SCLK_USBPHY300	152
++#define CLK_SCLK_USBPHY301	153
++#define CLK_SCLK_PWM		155
  
--	memory-controller@12250000 {
-+	sromc: memory-controller@12250000 {
- 		compatible = "samsung,exynos4210-srom";
- 		reg = <0x12250000 0x14>;
- 	};
+ /* gate clocks */
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
+ #define CLK_UART3		260
++#define CLK_PWM			279
+ #define CLK_MCT			315
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
++#define CLK_USBH20		365
++#define CLK_USBD300		366
++#define CLK_USBD301		367
+ 
+ #define CLK_NR_CLKS		512
+ 
 -- 
 2.5.0
