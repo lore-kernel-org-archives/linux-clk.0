@@ -1,58 +1,73 @@
 Return-Path: <krzk@kernel.org>
+Subject: Re: [PATCH v2 04/22] clk: samsung: exynos5410: Provide fin_pll
+ external fixed clock
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-5-git-send-email-krzk@kernel.org>
+ <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 18/22] dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-Date: Sun, 15 May 2016 22:13:59 +0200
-Message-Id: <1463343243-26429-19-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Message-id: <573170FB.4010808@kernel.org>
+Date: Tue, 10 May 2016 07:26:19 +0200
+MIME-version: 1.0
+In-reply-to: <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for I2C, USI (HSI2C) and RTC clocks to Exynos5410. Use the same
-number as for Exynos5420 just in case in future these drivers were
-merged.
+On 05/09/2016 10:19 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+>> Just like clock driver for Exynos542x/5800, provide the fixed clock here
+>> so the clock bindings and their consumers would be consistent and
+>> similar.
+>>
+>> However a clock named "fin_pll" is already provided by generic
+>> fixed-clock and it is both referenced in the clock driver (by name) and
+>> in DT (by phandle). To make the transition smooth, first introduce the
+>> new external fixed clock here under temporary, different name and switch
+>> internal users to it.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+> 
+> [snip]
+> 
+>>  
+>> +/* Same as in Exynos5420 */
+>> +static const struct of_device_id ext_clk_match[] __initconst = {
+>> +	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
+> 
+> Since using designated initializers, I was about to say that there is no need
+> to explicitly set .data to 0 since omitted fields are implicitly initialized...
+> 
+>> +	{ },
+>> +};
+>> +
+>>  /* register exynos5410 clocks */
+>>  static void __init exynos5410_clk_init(struct device_node *np)
+>>  {
+>> @@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>>  
+>>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+>>  
+>> +	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
+>> +			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
+>> +			ext_clk_match);
+>> +
+> 
+> ... but then I noticed that .data is used as exynos5x_fixed_rate_ext_clks
+> array index in samsung_clk_of_register_fixed_ext(). So makes sense to set
+> it explicitly to make the intent clear.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- include/dt-bindings/clock/exynos5410.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Yes, that is the intention here. The '(void *)0' is a hint that clock
+needs frequency from DT.
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 34c8e96987a1..e94b7bbfd6af 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -38,9 +38,18 @@
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
-+#define CLK_I2C0		261
-+#define CLK_I2C1		262
-+#define CLK_I2C2		263
-+#define CLK_I2C3		264
-+#define CLK_USI0		265
-+#define CLK_USI1		266
-+#define CLK_USI2		267
-+#define CLK_USI3		268
- #define CLK_UART3		260
- #define CLK_PWM			279
- #define CLK_MCT			315
-+#define CLK_RTC			317
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
--- 
-2.5.0
+Thanks for review,
+Krzysztof
