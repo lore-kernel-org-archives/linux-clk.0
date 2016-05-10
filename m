@@ -1,52 +1,152 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1462846832.23126.1.camel@mtksdaap41>
-Subject: Re: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, John Crispin
-	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
-	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>
-Date: Tue, 10 May 2016 10:20:32 +0800
-In-Reply-To: <20160509221321.GT3492@codeaurora.org>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160506231229.GJ3492@codeaurora.org> <1462772426.5344.7.camel@mtksdaap41>
-	 <20160509221321.GT3492@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conuserg-10.nifty.com ([210.131.2.77]:37256 "EHLO
+	conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752606AbcEJJw7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 05:52:59 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Lee Jones <lee.jones@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [RFC PATCH 00/21] mfd, clock, reset: add UniPhier clock/reset driver support
+Date: Tue, 10 May 2016 18:50:41 +0900
+Message-Id: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2016-05-09 at 15:13 -0700, Stephen Boyd wrote:
-> On 05/09, James Liao wrote:
-> > Hi Stephen,
-> > 
-> > On Fri, 2016-05-06 at 16:12 -0700, Stephen Boyd wrote:
-> > > On 04/14, James Liao wrote:
-> > > > Some system clocks should be turned on by default on MT2701.
-> > > > This patch enable these clocks when related clocks have
-> > > > been registered.
-> > > > 
-> > > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > > ---
-> > > 
-> > > critical clks got merged now (sorry I'm slowly getting back to
-> > > looking at patches). Please use that flag.
-> > 
-> > I don't see critical clock support in v4.6-rc7. Is there a repo/branch
-> > that has critical clocks merged?
-> > 
-> 
-> Right, it's in clk-next in the clk tree.
 
-I got it. I'll try to use the new critical clock support.
+This series adds support for clock and reset (and MFD to populate them)
+for UniPhier SoCs.
+
+On UniPhier SoCs, one system control block contains various registers
+for clock, reset, and others in it.
+
+I consulted Arnd for better implementation for clock/reset drivers in such a case.
+https://lkml.org/lkml/2016/4/18/605
+
+After a while, I chose MFD approach and found it is a good fit in my case.
+
+So, here I intentionally included clock, reset, MFD in one patch series
+because they are related with one another.
+
+I have not completed this series.  Some known problems are:
+ - Binding document is missing
+ - I need to fill clock/reset tables a bit more.
+
+Please do not apply this series.
+
+But, this sereis should be enough for reviewing
+if my basic approach is OK or not.
+
+Your feedback is appreciated.
 
 
-Best regards,
 
-James
+Masahiro Yamada (21):
+  mfd: uniphier: add UniPhier MFD driver
+  clk: uniphier: add core support for UniPhier clock driver
+  clk: uniphier: add clock driver for UniPhier PH1-LD4 SoC
+  clk: uniphier: add clock driver for UniPhier PH1-Pro4 SoC
+  clk: uniphier: add clock driver for UniPhier PH1-sLD8 SoC
+  clk: uniphier: add clock driver for UniPhier PH1-Pro5 SoC
+  clk: uniphier: add clock driver for UniPhier ProXstream2/PH1-LD6b SoC
+  clk: uniphier: add clock driver for UniPhier PH1-LD11 SoC
+  clk: uniphier: add clock driver for UniPhier PH1-LD20 SoC
+  clk: uniphier: add clock driver for Media I/O block on UniPhier SoCs
+  clk: uniphier: add clock driver for Peripheral block on UniPhier SoCs
+  reset: uniphier: add core support for UniPhier reset driver
+  reset: uniphier: add reset driver for UniPhier PH1-LD4 SoC
+  reset: uniphier: add reset driver for UniPhier PH1-Pro4 SoC
+  reset: uniphier: add reset driver for UniPhier PH1-sLD8 SoC
+  reset: uniphier: add reset driver for UniPhier PH1-Pro5 SoC
+  reset: uniphier: add reset driver for UniPhier ProXstream2/PH1-LD6b
+    SoC
+  reset: uniphier: add reset driver for UniPhier PH1-LD11 SoC
+  reset: uniphier: add reset driver for UniPhier PH1-LD20 SoC
+  reset: uniphier: add reset driver for Media I/O block on UniPhier SoCs
+  reset: uniphier: add reset driver for Peripheral block on UniPhier
+    SoCs
+
+ MAINTAINERS                                      |   3 +
+ drivers/clk/uniphier/Kconfig                     |  45 +++++
+ drivers/clk/uniphier/Makefile                    |  16 ++
+ drivers/clk/uniphier/clk-uniphier-core.c         |  99 +++++++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-factor.c |  50 ++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-rate.c   |  49 ++++++
+ drivers/clk/uniphier/clk-uniphier-gate.c         |  98 +++++++++++
+ drivers/clk/uniphier/clk-uniphier-ld11.c         |  83 +++++++++
+ drivers/clk/uniphier/clk-uniphier-ld20.c         |  83 +++++++++
+ drivers/clk/uniphier/clk-uniphier-ld4.c          | 112 ++++++++++++
+ drivers/clk/uniphier/clk-uniphier-mio.c          | 215 +++++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-mux.c          |  96 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-peri.c         | 133 ++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-pro4.c         | 112 ++++++++++++
+ drivers/clk/uniphier/clk-uniphier-pro5.c         | 102 +++++++++++
+ drivers/clk/uniphier/clk-uniphier-pxs2.c         |  83 +++++++++
+ drivers/clk/uniphier/clk-uniphier-sld8.c         | 102 +++++++++++
+ drivers/clk/uniphier/clk-uniphier.h              |  89 ++++++++++
+ drivers/mfd/Kconfig                              |   9 +
+ drivers/mfd/Makefile                             |   1 +
+ drivers/mfd/uniphier-mfd.c                       | 214 ++++++++++++++++++++++
+ drivers/reset/Kconfig                            |   1 +
+ drivers/reset/Makefile                           |   1 +
+ drivers/reset/uniphier/Kconfig                   |  45 +++++
+ drivers/reset/uniphier/Makefile                  |  12 ++
+ drivers/reset/uniphier/reset-uniphier-core.c     | 151 ++++++++++++++++
+ drivers/reset/uniphier/reset-uniphier-ld11.c     |  46 +++++
+ drivers/reset/uniphier/reset-uniphier-ld20.c     |  46 +++++
+ drivers/reset/uniphier/reset-uniphier-ld4.c      |  46 +++++
+ drivers/reset/uniphier/reset-uniphier-mio.c      | 106 +++++++++++
+ drivers/reset/uniphier/reset-uniphier-peri.c     | 101 +++++++++++
+ drivers/reset/uniphier/reset-uniphier-pro4.c     |  46 +++++
+ drivers/reset/uniphier/reset-uniphier-pro5.c     |  46 +++++
+ drivers/reset/uniphier/reset-uniphier-pxs2.c     |  46 +++++
+ drivers/reset/uniphier/reset-uniphier-sld8.c     |  46 +++++
+ drivers/reset/uniphier/reset-uniphier.h          |  33 ++++
+ 36 files changed, 2566 insertions(+)
+ create mode 100644 drivers/clk/uniphier/Kconfig
+ create mode 100644 drivers/clk/uniphier/Makefile
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-ld11.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-ld20.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-ld4.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-pro4.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-pro5.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-pxs2.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-sld8.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+ create mode 100644 drivers/mfd/uniphier-mfd.c
+ create mode 100644 drivers/reset/uniphier/Kconfig
+ create mode 100644 drivers/reset/uniphier/Makefile
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-core.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-ld11.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-ld20.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-ld4.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-mio.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-peri.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-pro4.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-pro5.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-pxs2.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-sld8.c
+ create mode 100644 drivers/reset/uniphier/reset-uniphier.h
+
+-- 
+1.9.1
+
