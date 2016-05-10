@@ -1,96 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from e18.ny.us.ibm.com ([129.33.205.208]:57707 "EHLO
-	e18.ny.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754579AbcEPSuP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 14:50:15 -0400
-Received: from localhost
-	by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-clk@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 16 May 2016 14:50:15 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: [PATCH v2 omap 5/6] arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
-Date: Mon, 16 May 2016 11:50:07 -0700
-Message-Id: <1463424608-20237-5-git-send-email-paulmck@linux.vnet.ibm.com>
-In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
-References: <20160516184844.GA20144@linux.vnet.ibm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 10/27] ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+Date: Tue, 10 May 2016 22:09:13 +0200
+Message-Id: <1462910970-1812-11-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit applies another _rcuidle suffix to fix an RCU use from
-idle.
+For consistency lowercase node labels are used.
 
-> ===============================
-> [ INFO: suspicious RCU usage. ]
-> 4.6.0-rc5-next-20160426+ #1122 Not tainted
-> -------------------------------
-> include/trace/events/rpm.h:69 suspicious rcu_dereference_check() usage!
->
-> other info that might help us debug this:
->
->
-> RCU used illegally from idle CPU!
-> rcu_scheduler_active = 1, debug_locks = 0
-> RCU used illegally from extended quiescent state!
-> 1 lock held by swapper/0/0:
->  #0:  (&(&dev->power.lock)->rlock){-.-...}, at: [<c052e3dc>] __pm_runtime_resume+0x3c/0x64
->
-> stack backtrace:
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.6.0-rc5-next-20160426+ #1122
-> Hardware name: Generic OMAP36xx (Flattened Device Tree)
-> [<c0110290>] (unwind_backtrace) from [<c010c3a8>] (show_stack+0x10/0x14)
-> [<c010c3a8>] (show_stack) from [<c047fd68>] (dump_stack+0xb0/0xe4)
-> [<c047fd68>] (dump_stack) from [<c052e178>] (rpm_resume+0x5cc/0x7f4)
-> [<c052e178>] (rpm_resume) from [<c052e3ec>] (__pm_runtime_resume+0x4c/0x64)
-> [<c052e3ec>] (__pm_runtime_resume) from [<c04bf2c4>] (omap2_gpio_resume_after_idle+0x54/0x68)
-> [<c04bf2c4>] (omap2_gpio_resume_after_idle) from [<c01269dc>] (omap3_enter_idle_bm+0xfc/0x1ec)
-> [<c01269dc>] (omap3_enter_idle_bm) from [<c060198c>] (cpuidle_enter_state+0x80/0x3d4)
-> [<c060198c>] (cpuidle_enter_state) from [<c0183b08>] (cpu_startup_entry+0x198/0x3a0)
-> [<c0183b08>] (cpu_startup_entry) from [<c0b00c0c>] (start_kernel+0x354/0x3c8)
-> [<c0b00c0c>] (start_kernel) from [<8000807c>] (0x8000807c)
-
-Reported-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: <linux-omap@vger.kernel.org>
-Cc: <linux-arm-kernel@lists.infradead.org>
-Cc: <linux-pm@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/base/power/runtime.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index e4c2b8fdeff3..15b6d5b199d4 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -601,7 +601,7 @@ static int rpm_resume(struct device *dev, int rpmflags)
- 	struct device *parent = NULL;
- 	int retval = 0;
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 233149abfb62..58d3844ef923 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -35,28 +35,28 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
--	trace_rpm_resume(dev, rpmflags);
-+	trace_rpm_resume_rcuidle(dev, rpmflags);
+-		CPU0: cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x0>;
+ 			clock-frequency = <1600000000>;
+ 		};
  
-  repeat:
- 	if (dev->power.runtime_error)
-@@ -764,7 +764,7 @@ static int rpm_resume(struct device *dev, int rpmflags)
- 		spin_lock_irq(&dev->power.lock);
- 	}
+-		CPU1: cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x1>;
+ 			clock-frequency = <1600000000>;
+ 		};
  
--	trace_rpm_return_int(dev, _THIS_IP_, retval);
-+	trace_rpm_return_int_rcuidle(dev, _THIS_IP_, retval);
+-		CPU2: cpu@2 {
++		cpu2: cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x2>;
+ 			clock-frequency = <1600000000>;
+ 		};
  
- 	return retval;
- }
+-		CPU3: cpu@3 {
++		cpu3: cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x3>;
 -- 
-2.5.2
-
+2.5.0
