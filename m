@@ -1,89 +1,97 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 05/20] drm/sun4i: request exact rates to our parents
-Date: Mon, 16 May 2016 14:47:05 +0200
-Message-Id: <1463402840-17062-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 07/27] clk: samsung: exynos5410: Rename fin_pll from temporary to regular name
+Date: Tue, 10 May 2016 22:09:10 +0200
+Message-Id: <1462910970-1812-8-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Our pixel clock currently only tries to deal with the current parent rate.
+For smooth transition of fin_pll to clk-exynos5410.c from fixed-clock
+driver, initially it was named "fin_pll_new". Fix this here.
 
-While that works when the resolution is the same than the one already
-program, or when we can compute directly the rate from the current parent
-rate, it cannot work in most situation when we want to change the
-frequency, and we end up with an improper pixel clock rate, which obviously
-doesn't work as expected.
-
-Ask our parent for all the possible dividers if it can reach that
-frequency, and return the best parent rate to the clock framework so that
-we can use it.
-
-Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_dotclock.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5410.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-index 6c9c090a8006..1ddf6d7a7107 100644
---- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-@@ -72,14 +72,40 @@ static unsigned long sun4i_dclk_recalc_rate(struct clk_hw *hw,
- static long sun4i_dclk_round_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long *parent_rate)
- {
--	return *parent_rate / DIV_ROUND_CLOSEST(*parent_rate, rate);
-+	unsigned long best_parent = 0;
-+	u8 best_div = 1;
-+	int i;
-+
-+	for (i = 6; i < 127; i++) {
-+		unsigned long ideal = rate * i;
-+		unsigned long rounded;
-+
-+		rounded = clk_hw_round_rate(clk_hw_get_parent(hw),
-+					    ideal);
-+
-+		if (rounded == ideal) {
-+			best_parent = rounded;
-+			best_div = i;
-+			goto out;
-+		}
-+
-+		if ((rounded < ideal) && (rounded > best_parent)) {
-+			best_parent = rounded;
-+			best_div = i;
-+		}
-+	}
-+
-+out:
-+	*parent_rate = best_parent;
-+
-+	return best_parent / best_div;
- }
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 35f2cb36f7ef..a7d714435307 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -59,27 +59,27 @@ enum exynos5410_plls {
+ };
  
- static int sun4i_dclk_set_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long parent_rate)
- {
- 	struct sun4i_dclk *dclk = hw_to_dclk(hw);
--	int div = DIV_ROUND_CLOSEST(parent_rate, rate);
-+	u8 div = parent_rate / rate;
+ /* list of all parent clocks */
+-PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
+-PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
+-PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
+-PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
+-PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
++PNAME(apll_p)		= { "fin_pll", "fout_apll", };
++PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
++PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
++PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
++PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
  
- 	return regmap_update_bits(dclk->regmap, SUN4I_TCON0_DCLK_REG,
- 				  GENMASK(6, 0), div);
+ PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
+ PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
+ 
+-PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
+-PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
++PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
++PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
+ PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
+ 
+-PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
++PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
+ 			"none", "none", "sclk_mpll_bpll",
+ 			 "none", "none", "sclk_cpll" };
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock
+ 		exynos5x_fixed_rate_ext_clks[] __initdata = {
+-	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
++	FRATE(CLK_FIN_PLL, "fin_pll", NULL, 0, 0),
+ };
+ 
+ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
+@@ -174,15 +174,15 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+-	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
++	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+-	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
++	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
+ 		CPLL_CON0, NULL),
+-	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
++	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
+ 		MPLL_CON0, NULL),
+-	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
++	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+ 		BPLL_CON0, NULL),
+-	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
++	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
+ 		KPLL_CON0, NULL),
+ };
+ 
 -- 
-2.8.2
+2.5.0
