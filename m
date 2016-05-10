@@ -1,105 +1,50 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	zhengxing@rock-chips.com,
-	zhangqing@rock-chips.com,
-	tomeu.vizoso@collabora.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [RFC PATCH 1/3] clk: fix inconsistent use of req_rate
-Date: Mon,  2 May 2016 18:36:20 +0200
-Message-Id: <1462206982-10444-2-git-send-email-heiko@sntech.de>
-In-Reply-To: <1462206982-10444-1-git-send-email-heiko@sntech.de>
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+Return-Path: <krzk@kernel.org>
+Subject: Re: [PATCH v2 22/22] ARM: dts: exynos: Add initial support for Odroid
+ XU board
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-23-git-send-email-krzk@kernel.org>
+ <cbcb5657-8825-83cf-688f-d565ac7ecbab@osg.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Message-id: <57317333.5010309@kernel.org>
+Date: Tue, 10 May 2016 07:35:47 +0200
+MIME-version: 1.0
+In-reply-to: <cbcb5657-8825-83cf-688f-d565ac7ecbab@osg.samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The req_rate property seems to be made to hold the rate requested through
-clk_set_rate. Currently it gets initialized in clk_init to the clocks
-current rate and then adapted in clk_set_rate calls. Orphan clocks and
-their children get initialized to a rate of 0 and req_rate never gets
-re-set when these lose their orphan-status.
+On 05/10/2016 12:02 AM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
+>> The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
+>> from Samsung: the Exynos5410. Comparing now to more popular Odroid XU3
+>> the differences are:
+>> 1. Exynos5410 instead of 5422,
+>> 2. DisplayPort,
+>> 3. Main PMIC: Maxim 77802 instead of S2MPS11,
+>> 4. USB3503+LAN9730 instead of integrated LAN9514,
+>> 5. eMMC 4.5 instead of eMMC 5.0,
+>>
+>> This patch adds initial support for the XU board with working basic
+>> functions, eMMC/SD and USB (including attached ethernet adapter).
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+> 
+> This DTS has some TODO's, FIXME's and commented input supplies. Probably
+> this patch should had been an RFC? or you should mention about these in
+> the commit message to understand why are there.
 
-Initializing req_rate to the clocks rate also is unintuitive as it just
-copies the value that is already in the rate property and also looses the
-information if a component actually requested a specific rate.
+I have to clean it up or fix these notes. Actually I was quite surprised
+that board worked fine with this basic setup.
 
-So separate the requested rate and only set it in clk_core_set_rate_nolock
-when a real rate gets requested. The users of the req_rate __clk_put and
-clk_set_rate_range that adjust a clock based on that value use req_rate
-at first and fall back to rate if no rate had been requested now.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/clk.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f079ea4..65e0aad 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1507,8 +1507,10 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 		return 0;
- 
- 	/* bail early if nothing to do */
--	if (rate == clk_core_get_rate_nolock(core))
-+	if (rate == clk_core_get_rate_nolock(core)) {
-+		core->req_rate = req_rate;
- 		return 0;
-+	}
- 
- 	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
- 		return -EBUSY;
-@@ -1599,9 +1601,14 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 	clk_prepare_lock();
- 
- 	if (min != clk->min_rate || max != clk->max_rate) {
-+		unsigned long rate = clk->core->req_rate;
-+
-+		if (!rate)
-+			rate = clk->core->rate;
-+
- 		clk->min_rate = min;
- 		clk->max_rate = max;
--		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+		ret = clk_core_set_rate_nolock(clk->core, rate);
- 	}
- 
- 	clk_prepare_unlock();
-@@ -2379,7 +2386,7 @@ static int __clk_core_init(struct clk_core *core)
- 		rate = core->parent->rate;
- 	else
- 		rate = 0;
--	core->rate = core->req_rate = rate;
-+	core->rate = rate;
- 
- 	/*
- 	 * walk the list of orphan clocks and reparent any that newly finds a
-@@ -2809,6 +2816,7 @@ int __clk_get(struct clk *clk)
- 
- void __clk_put(struct clk *clk)
- {
-+	unsigned long rate;
- 	struct module *owner;
- 
- 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
-@@ -2817,9 +2825,13 @@ void __clk_put(struct clk *clk)
- 	clk_prepare_lock();
- 
- 	hlist_del(&clk->clks_node);
--	if (clk->min_rate > clk->core->req_rate ||
--	    clk->max_rate < clk->core->req_rate)
--		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+
-+	rate = clk->core->req_rate;
-+	if (!rate)
-+		rate = clk->core->rate;
-+
-+	if (clk->min_rate > rate || clk->max_rate < rate)
-+		clk_core_set_rate_nolock(clk->core, rate);
- 
- 	owner = clk->core->owner;
- 	kref_put(&clk->core->ref, __clk_release);
--- 
-2.8.0.rc3
+Best regards,
+Krzysztof
