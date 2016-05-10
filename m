@@ -1,238 +1,89 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 12/20] drm/sun4i: Add bridge support
-Date: Mon, 16 May 2016 14:47:12 +0200
-Message-Id: <1463402840-17062-13-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <w.egorov@phytec.de>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, dianders@chromium.org, zyw@rock-chips.com
+Subject: [PATCH v5 4/6] mfd: dt-bindings: Add RK818 device tree bindings document
+Date: Tue, 10 May 2016 15:18:58 +0200
+Message-Id: <1462886340-7893-5-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
+References: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Our RGB bus can be either connected to a bridge or a panel. While the panel
-support was already there, the bridge was not.
+Add device tree bindings documentation for Rockchip's RK818 PMIC.
 
-Fix that.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c  |  4 +--
- drivers/gpu/drm/sun4i/sun4i_rgb.c  | 56 +++++++++++++++++++++++++++-----------
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 48 ++++++++++++++++++++++++++++----
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 4 files changed, 86 insertions(+), 23 deletions(-)
+ Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 257d2b4f3645..1f9e00db747d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -268,8 +268,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 		}
- 
- 		/*
--		 * If the node is our TCON, the first port is used for our
--		 * panel, and will not be part of the
-+		 * If the node is our TCON, the first port is used for
-+		 * panel or bridges, and will not be part of the
- 		 * component framework.
- 		 */
- 		if (sun4i_drv_node_is_tcon(node)) {
-diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-index b46d2c15dc95..c3c611b08269 100644
---- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-@@ -161,7 +161,12 @@ static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
- 
- 	DRM_DEBUG_DRIVER("Enabling RGB output\n");
- 
--	drm_panel_enable(tcon->panel);
-+	if (!IS_ERR(tcon->panel))
-+		drm_panel_enable(tcon->panel);
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 4ca6aab..9636ae8 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -1,7 +1,11 @@
+-RK808 Power Management Integrated Circuit
++RK8XX Power Management Integrated Circuit
 +
-+	if (!IS_ERR(tcon->bridge))
-+		drm_bridge_enable(tcon->bridge);
++The rk8xx family current members:
++rk808
++rk818
+ 
+ Required properties:
+-- compatible: "rockchip,rk808"
++- compatible: "rockchip,rk808", "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+ - interrupts: the interrupt outputs of the controller.
+@@ -13,6 +17,8 @@ Optional properties:
+   default output clock name
+ - rockchip,system-power-controller: Telling whether or not this pmic is controlling
+   the system power.
 +
- 	sun4i_tcon_channel_enable(tcon, 0);
- }
++Optional RK808 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+ - vcc3-supply:  The input supply for DCDC_REG3
+@@ -29,7 +35,20 @@ Optional properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
  
-@@ -174,7 +179,12 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
- 	DRM_DEBUG_DRIVER("Disabling RGB output\n");
- 
- 	sun4i_tcon_channel_disable(tcon, 0);
--	drm_panel_disable(tcon->panel);
+-Regulators: All the regulators of RK808 to be instantiated shall be
++Optional RK818 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- boost-supply: The input supply for DCDC_BOOST
++- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
++- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
++- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
++- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
++- h_5v-supply:  The input supply for HDMI_SWITCH
++- usb-supply:   The input supply for OTG_SWITCH
 +
-+	if (!IS_ERR(tcon->bridge))
-+		drm_bridge_disable(tcon->bridge);
++Regulators: All the regulators of RK8XX to be instantiated shall be
+ listed in a child node named 'regulators'. Each regulator is represented
+ by a child node of the 'regulators' node.
+ 
+@@ -48,6 +67,18 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK818 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
 +
-+	if (!IS_ERR(tcon->panel))
-+		drm_panel_disable(tcon->panel);
- }
- 
- static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
-@@ -216,10 +226,6 @@ int sun4i_rgb_init(struct drm_device *drm)
- 	struct sun4i_rgb *rgb;
- 	int ret;
- 
--	/* If we don't have a panel, there's no point in going on */
--	if (IS_ERR(tcon->panel))
--		return -ENODEV;
--
- 	rgb = devm_kzalloc(drm->dev, sizeof(*rgb), GFP_KERNEL);
- 	if (!rgb)
- 		return -ENOMEM;
-@@ -240,19 +246,37 @@ int sun4i_rgb_init(struct drm_device *drm)
- 	/* The RGB encoder can only work with the TCON channel 0 */
- 	rgb->encoder.possible_crtcs = BIT(0);
- 
--	drm_connector_helper_add(&rgb->connector,
--				 &sun4i_rgb_con_helper_funcs);
--	ret = drm_connector_init(drm, &rgb->connector,
--				 &sun4i_rgb_con_funcs,
--				 DRM_MODE_CONNECTOR_Unknown);
--	if (ret) {
--		dev_err(drm->dev, "Couldn't initialise the rgb connector\n");
--		goto err_cleanup_connector;
-+	if (!IS_ERR(tcon->panel)) {
-+		drm_connector_helper_add(&rgb->connector,
-+					 &sun4i_rgb_con_helper_funcs);
-+		ret = drm_connector_init(drm, &rgb->connector,
-+					 &sun4i_rgb_con_funcs,
-+					 DRM_MODE_CONNECTOR_Unknown);
-+		if (ret) {
-+			dev_err(drm->dev, "Couldn't initialise the rgb connector\n");
-+			goto err_cleanup_connector;
-+		}
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REG
++	- HDMI_SWITCH
++	- OTG_SWITCH
 +
-+		drm_mode_connector_attach_encoder(&rgb->connector,
-+						  &rgb->encoder);
-+
-+		ret = drm_panel_attach(tcon->panel, &rgb->connector);
-+		if (ret) {
-+			dev_err(drm->dev, "Couldn't attach our panel\n");
-+			goto err_cleanup_connector;
-+		}
- 	}
- 
--	drm_mode_connector_attach_encoder(&rgb->connector, &rgb->encoder);
-+	if (!IS_ERR(tcon->bridge)) {
-+		rgb->encoder.bridge = tcon->bridge;
-+		tcon->bridge->encoder = &rgb->encoder;
- 
--	drm_panel_attach(tcon->panel, &rgb->connector);
-+		ret = drm_bridge_attach(drm, tcon->bridge);
-+		if (ret) {
-+			dev_err(drm->dev, "Couldn't attach our bridge\n");
-+			goto err_cleanup_connector;
-+		}
-+	}
- 
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index eed6a9e8d9a6..4618d98913b4 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -432,6 +432,40 @@ static struct drm_panel *sun4i_tcon_find_panel(struct device_node *node)
- 	return of_drm_find_panel(remote) ?: ERR_PTR(-EPROBE_DEFER);
- }
- 
-+static struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node)
-+{
-+	struct device_node *port, *remote, *child;
-+	struct device_node *end_node = NULL;
-+
-+	/* Inputs are listed first, then outputs */
-+	port = of_graph_get_port_by_id(node, 1);
-+
-+	/*
-+	 * Our first output is the RGB interface where the panel will
-+	 * be connected.
-+	 */
-+	for_each_child_of_node(port, child) {
-+		u32 reg;
-+
-+		of_property_read_u32(child, "reg", &reg);
-+		if (reg == 0)
-+			end_node = child;
-+	}
-+
-+	if (!end_node) {
-+		DRM_DEBUG_DRIVER("Missing bridge endpoint\n");
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	remote = of_graph_get_remote_port_parent(end_node);
-+	if (!remote) {
-+		DRM_DEBUG_DRIVER("Enable to parse remote node\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return of_drm_find_bridge(remote) ?: ERR_PTR(-EPROBE_DEFER);
-+}
-+
- static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 			   void *data)
- {
-@@ -485,8 +519,9 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	}
- 
- 	tcon->panel = sun4i_tcon_find_panel(dev->of_node);
--	if (IS_ERR(tcon->panel)) {
--		dev_info(dev, "No panel found... RGB output disabled\n");
-+	tcon->bridge = sun4i_tcon_find_bridge(dev->of_node);
-+	if (IS_ERR(tcon->panel) && IS_ERR(tcon->bridge)) {
-+		dev_info(dev, "No panel or bridge found... RGB output disabled\n");
- 		return 0;
- 	}
- 
-@@ -515,19 +550,22 @@ static struct component_ops sun4i_tcon_ops = {
- static int sun4i_tcon_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
-+	struct drm_bridge *bridge;
- 	struct drm_panel *panel;
- 
- 	/*
--	 * The panel is not ready.
-+	 * Neither the bridge or the panel is ready.
- 	 * Defer the probe.
- 	 */
- 	panel = sun4i_tcon_find_panel(node);
-+	bridge = sun4i_tcon_find_bridge(node);
- 
- 	/*
- 	 * If we don't have a panel endpoint, just go on
- 	 */
--	if (PTR_ERR(panel) == -EPROBE_DEFER) {
--		DRM_DEBUG_DRIVER("Still waiting for our panel. Deferring...\n");
-+	if ((PTR_ERR(panel) == -EPROBE_DEFER) &&
-+	    (PTR_ERR(bridge) == -EPROBE_DEFER)) {
-+		DRM_DEBUG_DRIVER("Still waiting for our panel/bridge. Deferring...\n");
- 		return -EPROBE_DEFER;
- 	}
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index 0e0b11db401b..31069027d7fb 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -162,6 +162,7 @@ struct sun4i_tcon {
- 	/* Platform adjustments */
- 	bool				has_mux;
- 
-+	struct drm_bridge		*bridge;
- 	struct drm_panel		*panel;
- };
- 
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
 -- 
-2.8.2
+1.9.1
