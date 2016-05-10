@@ -1,219 +1,67 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 11/16] clk: sunxi-ng: Add N-K-factor clock support
-Date: Sun,  8 May 2016 22:01:46 +0200
-Message-Id: <1462737711-10017-12-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
- Vishnu Patekar <vishnupatekar0510@gmail.com>,
- Andre Przywara <andre.przywara@arm.com>, Hans de Goede <hdegoede@redhat.com>,
- Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 10/21] clk: uniphier: add clock driver for Media I/O block on UniPhier SoCs
+Date: Tue, 10 May 2016 18:50:51 +0900
+Message-Id: <1462873862-30940-11-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that use a combination of two linear
-multipliers.
+This series is just for review.
+Please do not apply this patch.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/clk/sunxi-ng/Makefile |   1 +
- drivers/clk/sunxi-ng/ccu_nk.c | 147 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nk.h |  44 +++++++++++++
- 3 files changed, 192 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.h
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 09fce7467784..e29ddae99653 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -7,5 +7,6 @@ obj-y += ccu_gate.o
- obj-y += ccu_m.o
- obj-y += ccu_mp.o
- obj-y += ccu_mux.o
-+obj-y += ccu_nk.o
- obj-y += ccu_p.o
- obj-y += ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+ drivers/clk/uniphier/Kconfig            |   4 +
+ drivers/clk/uniphier/Makefile           |   2 +
+ drivers/clk/uniphier/clk-uniphier-mio.c | 215 ++++++++++++++++++++++++++++++++
+ 3 files changed, 221 insertions(+)
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+
+diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+index 6e0a311..895c4a0 100644
+--- a/drivers/clk/uniphier/Kconfig
++++ b/drivers/clk/uniphier/Kconfig
+@@ -34,4 +34,8 @@ config CLK_UNIPHIER_LD20
+ 	tristate "Clock driver for UniPhier PH1-LD20 SoC"
+ 	default ARM64
+ 
++config CLK_UNIPHIER_MIO
++	tristate "Clock driver for UniPhier Media I/O block"
++	default y
++
+ endif
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+index 59272a6..ae71f04 100644
+--- a/drivers/clk/uniphier/Makefile
++++ b/drivers/clk/uniphier/Makefile
+@@ -11,3 +11,5 @@ obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
+ obj-$(CONFIG_CLK_UNIPHIER_PXS2)	+= clk-uniphier-pxs2.o
+ obj-$(CONFIG_CLK_UNIPHIER_LD11)	+= clk-uniphier-ld11.o
+ obj-$(CONFIG_CLK_UNIPHIER_LD20)	+= clk-uniphier-ld20.o
++
++obj-$(CONFIG_CLK_UNIPHIER_MIO)	+= clk-uniphier-mio.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-mio.c b/drivers/clk/uniphier/clk-uniphier-mio.c
 new file mode 100644
-index 000000000000..46eede3e986e
+index 0000000..28691b7
 --- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -0,0 +1,147 @@
++++ b/drivers/clk/uniphier/clk-uniphier-mio.c
+@@ -0,0 +1,215 @@
 +/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_nk.h"
-+
-+void ccu_nk_find_best(unsigned long parent, unsigned long rate,
-+		      unsigned int max_n, unsigned int max_k,
-+		      unsigned int *n, unsigned int *k)
-+{
-+	unsigned long best_rate = 0;
-+	unsigned int best_k = 0, best_n =0;
-+	unsigned int _k, _n;
-+
-+	for (_k = 0; _k <= max_k; _k++) {
-+		for (_n = 0; _n <= max_n; _n++) {
-+			unsigned long tmp_rate = parent * _n * _k;
-+
-+			if (tmp_rate > rate)
-+				continue;
-+
-+			if ((rate - tmp_rate) < (rate - best_rate)) {
-+				best_rate = tmp_rate;
-+				best_k = _k;
-+				best_n = _n;
-+			}
-+		}
-+	}
-+
-+	*k = best_k;
-+	*n = best_n;
-+}
-+
-+static void ccu_nk_disable(struct clk_hw *hw)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_disable(&nk->common, nk->enable);
-+}
-+
-+static int ccu_nk_enable(struct clk_hw *hw)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_enable(&nk->common, nk->enable);
-+}
-+
-+static int ccu_nk_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_is_enabled(&nk->common, nk->enable);
-+}
-+
-+static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned long rate, n, k;
-+	u32 reg;
-+
-+	reg = readl(nk->common.base + nk->common.reg);
-+
-+	n = reg >> nk->n.shift;
-+	n &= (1 << nk->n.width) - 1;
-+
-+	k = reg >> nk->k.shift;
-+	k &= (1 << nk->k.width) - 1;
-+
-+	rate = parent_rate * (n + 1) * (k + 1);
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nk->fixed_post_div;
-+
-+	return rate;
-+}
-+
-+static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned int n, k;
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate * nk->fixed_post_div;
-+
-+	ccu_nk_find_best(*parent_rate, rate,
-+			 1 << nk->n.width, 1 << nk->k.width,
-+			 &n, &k);
-+
-+	rate = *parent_rate * n * k;
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nk->fixed_post_div;
-+
-+	return rate;
-+}
-+
-+static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned long flags;
-+	unsigned int n, k;
-+	u32 reg;
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate * nk->fixed_post_div;
-+
-+	ccu_nk_find_best(parent_rate, rate,
-+			 1 << nk->n.width, 1 << nk->k.width,
-+			 &n, &k);
-+
-+	spin_lock_irqsave(nk->common.lock, flags);
-+
-+	reg = readl(nk->common.base + nk->common.reg);
-+	reg &= ~GENMASK(nk->n.width + nk->n.shift, nk->n.shift);
-+	reg &= ~GENMASK(nk->k.width + nk->k.shift, nk->k.shift);
-+
-+	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
-+	       nk->common.base + nk->common.reg);
-+
-+	spin_unlock_irqrestore(nk->common.lock, flags);
-+
-+	ccu_helper_wait_for_lock(&nk->common, nk->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_nk_ops = {
-+	.disable	= ccu_nk_disable,
-+	.enable		= ccu_nk_enable,
-+	.is_enabled	= ccu_nk_is_enabled,
-+
-+	.recalc_rate	= ccu_nk_recalc_rate,
-+	.round_rate	= ccu_nk_round_rate,
-+	.set_rate	= ccu_nk_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.h b/drivers/clk/sunxi-ng/ccu_nk.h
-new file mode 100644
-index 000000000000..cdbbd45815c6
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nk.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -221,42 +69,205 @@ index 000000000000..cdbbd45815c6
 + * GNU General Public License for more details.
 + */
 +
-+#ifndef _CCU_NK_H_
-+#define _CCU_NK_H_
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
 +
-+#include <linux/clk-provider.h>
++#include "clk-uniphier.h"
 +
-+#include "ccu_common.h"
-+#include "ccu_factor.h"
++#define UNIPHIER_MIO_CLK_SD_FIXED					\
++	{								\
++		.name = "sd-44m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 44444444,				\
++		},							\
++	},								\
++	{								\
++		.name = "sd-33m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 33333333,				\
++		},							\
++	},								\
++	{								\
++		.name = "sd-50m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 50000000,				\
++		},							\
++	},								\
++	{								\
++		.name = "sd-67m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 66666666,				\
++		},							\
++	},								\
++	{								\
++		.name = "sd-100m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 100000000,			\
++		},							\
++	},								\
++	{								\
++		.name = "sd-40m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 40000000,				\
++		},							\
++	},								\
++	{								\
++		.name = "sd-25m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 25000000,				\
++		},							\
++	},								\
++	{								\
++		.name = "sd-22m",					\
++		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
++		.output_index = -1,					\
++		.data.rate = {						\
++			.fixed_rate = 22222222,				\
++		},							\
++	}
 +
-+struct ccu_nk {
-+	u16			reg;
-+	u32			enable;
-+	u32			lock;
++#define UNIPHIER_MIO_CLK_SD(ch, index)					\
++	{								\
++		.name = "sd" #ch "-sel",				\
++		.type = UNIPHIER_CLK_TYPE_MUX,				\
++		.output_index = -1,					\
++		.data.mux = {						\
++			.parent_names = {				\
++				"sd-44m",				\
++				"sd-33m",				\
++				"sd-50m",				\
++				"sd-67m",				\
++				"sd-100m",				\
++				"sd-40m",				\
++				"sd-25m",				\
++				"sd-22m",				\
++			},						\
++			.num_parents = 8,				\
++			.reg = 0x30 + 0x200 * ch,			\
++			.masks = {					\
++				0x00031000,				\
++				0x00031000,				\
++				0x00031000,				\
++				0x00031000,				\
++				0x00001300,				\
++				0x00001300,				\
++				0x00001300,				\
++				0x00001300,				\
++			},						\
++			.vals = {					\
++				0x00000000,				\
++				0x00010000,				\
++				0x00020000,				\
++				0x00030000,				\
++				0x00001000,				\
++				0x00001100,				\
++				0x00001200,				\
++				0x00001300,				\
++			},						\
++		},							\
++	},								\
++	{								\
++		.name = "sd" #ch,					\
++		.type = UNIPHIER_CLK_TYPE_GATE,				\
++		.output_index = (index),				\
++		.data.gate = {						\
++			.parent_name = "sd" #ch "-sel",			\
++			.reg = 0x20 + 0x200 * ch,			\
++			.mask = BIT(8),					\
++			.enable_val = BIT(8),				\
++		},							\
++	}
 +
-+	struct ccu_factor	n;
-+	struct ccu_factor	k;
++#define UNIPHIER_MIO_CLK_EHCI(ch, index)				\
++	{								\
++		.name = "ehci" #ch,					\
++		.type = UNIPHIER_CLK_TYPE_GATE,				\
++		.output_index = (index),				\
++		.data.gate = {						\
++			.parent_name = "ehci",				\
++			.reg = 0x20 + 0x200 * ch,			\
++			.mask = BIT(29) | BIT(28),			\
++			.enable_val = BIT(29) | BIT(28),		\
++		},							\
++	}
 +
-+	unsigned int		fixed_post_div;
++#define UNIPHIER_MIO_CLK_DMAC(index)					\
++	{								\
++		.name = "miodmac",					\
++		.type = UNIPHIER_CLK_TYPE_GATE,				\
++		.output_index = (index),				\
++		.data.gate = {						\
++			.parent_name = "stdmac",			\
++			.reg = 0x20,					\
++			.mask = BIT(25),				\
++			.enable_val = BIT(25),				\
++		},							\
++	}
 +
-+	struct ccu_common	common;
++static const struct uniphier_clk_data uniphier_ld4_mio_clk_data[] = {
++	UNIPHIER_MIO_CLK_SD_FIXED,
++	UNIPHIER_MIO_CLK_SD(0, 0),
++	UNIPHIER_MIO_CLK_SD(1, 1),
++	UNIPHIER_MIO_CLK_SD(2, 2),	/* for Pro4 */
++	UNIPHIER_MIO_CLK_DMAC(3),
++	UNIPHIER_MIO_CLK_EHCI(0, 4),
++	UNIPHIER_MIO_CLK_EHCI(1, 5),
++	UNIPHIER_MIO_CLK_EHCI(2, 6),	/* for LD4/sLD8 */
++	{ /* sentinel */ }
 +};
 +
-+static inline struct ccu_nk *hw_to_ccu_nk(struct clk_hw *hw)
++static int uniphier_ld4_mio_clk_probe(struct platform_device *pdev)
 +{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_nk, common);
++	return uniphier_clk_probe(pdev, uniphier_ld4_mio_clk_data);
 +}
 +
-+extern const struct clk_ops ccu_nk_ops;
++static struct platform_driver uniphier_ld4_mio_clk_driver = {
++	.probe = uniphier_ld4_mio_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-ld4-mio-clk",
++	},
++};
++module_platform_driver(uniphier_ld4_mio_clk_driver);
 +
-+#endif /* _CCU_NK_H_ */
++static const struct uniphier_clk_data uniphier_pro5_mio_clk_data[] = {
++	UNIPHIER_MIO_CLK_SD_FIXED,
++	UNIPHIER_MIO_CLK_SD(0, 0),
++	UNIPHIER_MIO_CLK_SD(1, 1),
++	{ /* sentinel */ }
++};
++
++static int uniphier_pro5_mio_clk_probe(struct platform_device *pdev)
++{
++	return uniphier_clk_probe(pdev, uniphier_pro5_mio_clk_data);
++}
++
++static struct platform_driver uniphier_pro5_mio_clk_driver = {
++	.probe = uniphier_pro5_mio_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-pro5-mio-clk",
++	},
++};
++module_platform_driver(uniphier_pro5_mio_clk_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier Media I/O Clock Driver");
++MODULE_LICENSE("GPL");
 -- 
-2.8.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
