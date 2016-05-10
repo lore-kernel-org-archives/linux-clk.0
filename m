@@ -1,119 +1,125 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [RFC PATCH 19/21] reset: uniphier: add reset driver for UniPhier
- PH1-LD20 SoC
-Date: Tue, 10 May 2016 18:51:00 +0900
-Message-Id: <1462873862-30940-20-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 04/27] clk: samsung: exynos5410: Provide fin_pll external fixed clock
+Date: Tue, 10 May 2016 22:09:07 +0200
+Message-Id: <1462910970-1812-5-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+Just like clock driver for Exynos542x/5800, provide the fixed clock here
+so the clock bindings and their consumers would be consistent and
+similar.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+However a clock named "fin_pll" is already provided by generic
+fixed-clock and it is both referenced in the clock driver (by name) and
+in DT (by phandle). To make the transition smooth, first introduce the
+new external fixed clock here under temporary, different name and switch
+internal users to it.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
+ drivers/clk/samsung/clk-exynos5410.c | 42 +++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 13 deletions(-)
 
- drivers/reset/uniphier/Kconfig               |  4 +++
- drivers/reset/uniphier/Makefile              |  1 +
- drivers/reset/uniphier/reset-uniphier-ld20.c | 46 ++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
- create mode 100644 drivers/reset/uniphier/reset-uniphier-ld20.c
-
-diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
-index d9a2123..8509e71 100644
---- a/drivers/reset/uniphier/Kconfig
-+++ b/drivers/reset/uniphier/Kconfig
-@@ -30,4 +30,8 @@ config RESET_UNIPHIER_LD11
- 	tristate "Reset driver for UniPhier PH1-LD11 SoC"
- 	default ARM
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index d5d5dcabc4a9..35f2cb36f7ef 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -59,23 +59,29 @@ enum exynos5410_plls {
+ };
  
-+config RESET_UNIPHIER_LD20
-+	tristate "Reset driver for UniPhier PH1-LD20 SoC"
-+	default ARM64
-+
- endif
-diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
-index f25f648..a33cb0a 100644
---- a/drivers/reset/uniphier/Makefile
-+++ b/drivers/reset/uniphier/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_RESET_UNIPHIER_SLD8)	+= reset-uniphier-sld8.o
- obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
- obj-$(CONFIG_RESET_UNIPHIER_PXS2)	+= reset-uniphier-pxs2.o
- obj-$(CONFIG_RESET_UNIPHIER_LD11)	+= reset-uniphier-ld11.o
-+obj-$(CONFIG_RESET_UNIPHIER_LD20)	+= reset-uniphier-ld20.o
-diff --git a/drivers/reset/uniphier/reset-uniphier-ld20.c b/drivers/reset/uniphier/reset-uniphier-ld20.c
-new file mode 100644
-index 0000000..8edda31
---- /dev/null
-+++ b/drivers/reset/uniphier/reset-uniphier-ld20.c
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "reset-uniphier.h"
-+
-+static const struct uniphier_reset_data uniphier_ld20_reset_data[] = {
-+	{
-+		.id = 7,
-+		.reg = 0x200c,
-+		.mask = BIT(8),
-+		.deassert_val = BIT(8),
-+	},
-+	{ .id = UNIPHIER_RESET_ID_END }
+ /* list of all parent clocks */
+-PNAME(apll_p)		= { "fin_pll", "fout_apll", };
+-PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
+-PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
+-PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
+-PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
++PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
++PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
++PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
++PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
++PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
+ 
+ PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
+ PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
+ 
+-PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
+-PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
++PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
++PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
+ PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
+ 
+-PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
++PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
+ 			"none", "none", "sclk_mpll_bpll",
+ 			 "none", "none", "sclk_cpll" };
+ 
++/* fixed rate clocks generated outside the soc */
++static struct samsung_fixed_rate_clock
++		exynos5x_fixed_rate_ext_clks[] __initdata = {
++	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
 +};
 +
-+static int uniphier_ld20_reset_probe(struct platform_device *pdev)
-+{
-+	return uniphier_reset_probe(pdev, uniphier_ld20_reset_data);
-+}
-+
-+static struct platform_driver uniphier_ld20_reset_driver = {
-+	.probe = uniphier_ld20_reset_probe,
-+	.driver = {
-+		.name = "uniphier-ld20-reset",
-+	},
+ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
+ 	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+@@ -168,18 +174,24 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+-	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
++	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
+ 		APLL_CON0, NULL),
+-	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
++	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
+ 		CPLL_CON0, NULL),
+-	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
++	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
+ 		MPLL_CON0, NULL),
+-	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
++	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
+ 		BPLL_CON0, NULL),
+-	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
++	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
+ 		KPLL_CON0, NULL),
+ };
+ 
++/* Same as in Exynos5420 */
++static const struct of_device_id ext_clk_match[] __initconst = {
++	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
++	{ },
 +};
-+module_platform_driver(uniphier_ld20_reset_driver);
 +
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-LD20 Reset Controller Driver");
-+MODULE_LICENSE("GPL");
+ /* register exynos5410 clocks */
+ static void __init exynos5410_clk_init(struct device_node *np)
+ {
+@@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+ 
++	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
++			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
++			ext_clk_match);
++
+ 	samsung_clk_register_pll(ctx, exynos5410_plls,
+ 			ARRAY_SIZE(exynos5410_plls), reg_base);
+ 
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.5.0
