@@ -1,69 +1,47 @@
-Return-Path: <smbarber@google.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:34887 "EHLO
+	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751231AbcEJFHP (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 01:07:15 -0400
+Received: by mail-pf0-f173.google.com with SMTP id 77so1213071pfv.2
+        for <linux-clk@vger.kernel.org>; Mon, 09 May 2016 22:07:15 -0700 (PDT)
+Date: Tue, 10 May 2016 10:37:10 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
+Message-ID: <20160510050710.GC2790@vireshk-i7>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+ <5731664D.1030909@rvc.renesas.com>
+ <573169CD.8050607@rvc.renesas.com>
+ <57316A4E.7040100@rvc.renesas.com>
 MIME-Version: 1.0
-Sender: smbarber@google.com
-In-Reply-To: <1464166316-22480-1-git-send-email-zhengxing@rock-chips.com>
-References: <1464166316-22480-1-git-send-email-zhengxing@rock-chips.com>
-From: Stephen Barber <smbarber@chromium.org>
-Date: Wed, 25 May 2016 17:07:01 -0700
-Message-ID: <CADR9n4_D2WdEvj8XdZ_yW4n5-K6jeDWkhZJbGbmeR59zvyUp+w@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: add a dummy clock for the watchdog pclk on rk3399
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org, Douglas Anderson <dianders@chromium.org>,
-	huangtao@rock-chips.com, elaine.zhang@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <57316A4E.7040100@rvc.renesas.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 25, 2016 at 1:51 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
-> Like rk3288, the pclk supplying the watchdog is controlled via the
-> SGRF register area. Additionally the SGRF isn't even writable in
-> every boot mode.
->
-> But still the clock control is available and in the future someone
-> might want to use it. Therefore define a simple clock for the time
-> being so that the watchdog driver can read its rate.
->
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+On 10-05-16, 11:57, Khiem Nguyen wrote:
+> After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
+> driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
+> Hence, follow the implementation to support new R8A7795 SoC.
+> 
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 > ---
->
->  drivers/clk/rockchip/clk-rk3399.c |    9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index 291543f..b6742fa 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -1498,6 +1498,7 @@ static void __init rk3399_clk_init(struct device_node *np)
->  {
->         struct rockchip_clk_provider *ctx;
->         void __iomem *reg_base;
-> +       struct clk *clk;
->
->         reg_base = of_iomap(np, 0);
->         if (!reg_base) {
-> @@ -1511,6 +1512,14 @@ static void __init rk3399_clk_init(struct device_node *np)
->                 return;
->         }
->
-> +       /* Watchdog pclk is controlled by RK3399 SECURE_GRF_SOC_CON3[8]. */
-> +       clk = clk_register_fixed_factor(NULL, "pclk_wdt", "pclk_alive", 0, 1, 1);
-> +       if (IS_ERR(clk))
-> +               pr_warn("%s: could not register clock pclk_wdt: %ld\n",
-> +                       __func__, PTR_ERR(clk));
-> +       else
-> +               rockchip_clk_add_lookup(ctx, clk, PCLK_WDT);
-> +
->         rockchip_clk_register_plls(ctx, rk3399_pll_clks,
->                                    ARRAY_SIZE(rk3399_pll_clks), -1);
->
-> --
-> 1.7.9.5
->
->
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Stephen Barber <smbarber@chromium.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Steve
+-- 
+viresh
