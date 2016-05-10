@@ -1,49 +1,61 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: samsung: Suppress unbinding to prevent theoretical
- attacks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <b71ecdbc-8650-a246-5e53-94eb620737ba@osg.samsung.com>
-Date: Fri, 20 May 2016 22:30:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 09/27] ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl nodes
+Date: Tue, 10 May 2016 22:09:12 +0200
+Message-Id: <1462910970-1812-10-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+The 'sd0_rclk' was put in the middle of SD1 nodes. Remove the confusion.
 
-On 05/17/2016 03:26 AM, Krzysztof Kozlowski wrote:
-> Although unbinding a driver requires root privileges but it still might
-> be used theoretically in certain attacks (by triggering NULL pointer
-> exception or memory corruption if driver does not provide proper remove
-> callbacks or core does not handle it).
-> 
-> Samsung clock drivers are essential for system operation so their
-> removal is not expected. More over, the Exynos3250 ISP clock driver does
-> not implement remove() driver callback and it is not buildable as
-> modules.
-> 
-> Suppress the unbind interface for Exynos3250 ISP and S3C2410 DCLK clock
-> drivers.
-> 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
-
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index 130563b2ca95..14beb7e07323 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -193,17 +193,17 @@
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
+-	sd1_clk: sd1-clk {
+-		samsung,pins = "gpc1-0";
++	sd0_rclk: sd0-rclk {
++		samsung,pins = "gpc0-7";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
++		samsung,pin-pud = <1>;
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
+-	sd0_rclk: sd0-rclk {
+-		samsung,pins = "gpc0-7";
++	sd1_clk: sd1-clk {
++		samsung,pins = "gpc1-0";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <1>;
++		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.5.0
