@@ -1,42 +1,198 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from e18.ny.us.ibm.com ([129.33.205.208]:57225 "EHLO
-	e18.ny.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754293AbcEPSsy (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 14:48:54 -0400
-Received: from localhost
-	by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-clk@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 16 May 2016 14:48:53 -0400
-Date: Mon, 16 May 2016 11:48:44 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
-	rostedt@goodmis.org
-Subject: [PATCH omap v2 0/6] Fix OMAP uses of RCU from idle loop
-Message-ID: <20160516184844.GA20144@linux.vnet.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 22/27] ARM: dts: exynos: Add initial support for Odroid XU board
+Date: Tue, 10 May 2016 22:09:25 +0200
+Message-Id: <1462910970-1812-23-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello!
+The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
+from Samsung: the Exynos5410. Comparing the board to more popular now
+Odroid XU3, the differences are:
+1. Exynos5410 instead of 5422,
+2. MIPI DSI LCD connector,
+3. Main PMIC: Maxim 77802 instead of S2MPS11,
+4. USB3503+LAN9730 instead of integrated LAN9514,
+5. eMMC 4.5 instead of eMMC 5.0,
 
-The following series fixes a number of uses of RCU from the idle loop.
-These are all due to tracing, so the fix is simply to append _rcuidle
-to the event-tracing call.
+This patch adds initial support for the XU board with working basic
+functions, eMMC/SD and USB (including attached ethernet adapter).
 
-Changes since v1: Fix commit-log subjects and add maintainers on CC.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ .../bindings/arm/samsung/samsung-boards.txt        |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          | 121 +++++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- arch/arm/kernel/smp.c             |    2 +-
- arch/arm/mach-omap2/powerdomain.c |    9 +++++----
- drivers/base/power/runtime.c      |   14 +++++++-------
- drivers/clk/clk.c                 |    8 ++++----
- 4 files changed, 17 insertions(+), 16 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+index f5deace2b380..0ea7f14ef294 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+@@ -47,6 +47,7 @@ Required root node properties:
+ 	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
+ 	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
+ 	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
++	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
+ 	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
+ 	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
+ 					 Odroid XU3 Lite board.
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5aeb10674370..9ed1c7abedb1 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5250-snow-rev5.dtb \
+ 	exynos5250-spring.dtb \
+ 	exynos5260-xyref5260.dtb \
++	exynos5410-odroidxu.dtb \
+ 	exynos5410-smdk5410.dtb \
+ 	exynos5420-arndale-octa.dtb \
+ 	exynos5420-peach-pit.dtb \
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+new file mode 100644
+index 000000000000..44ba00a6636f
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -0,0 +1,121 @@
++/*
++ * Hardkernel Odroid XU board device tree source
++ *
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2016 Krzysztof Kozlowski
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/dts-v1/;
++#include "exynos5410.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include "exynos54xx-odroidxu-leds.dtsi"
++
++/ {
++	model = "Hardkernel Odroid XU";
++	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
++
++	memory {
++		reg = <0x40000000 0x7ea00000>;
++	};
++
++	chosen {
++		linux,stdout-path = &serial_2;
++	};
++
++	emmc_pwrseq: pwrseq {
++		pinctrl-0 = <&emmc_nrst_pin>;
++		pinctrl-names = "default";
++		compatible = "mmc-pwrseq-emmc";
++		reset-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>;
++	};
++
++	fan0: pwm-fan {
++		compatible = "pwm-fan";
++		pwms = <&pwm 0 20972 0>;
++		cooling-min-state = <0>;
++		cooling-max-state = <3>;
++		#cooling-cells = <2>;
++		cooling-levels = <0 130 170 230>;
++	};
++
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
++		};
++	};
++
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
++};
++
++&mmc_0 {
++	status = "okay";
++	mmc-pwrseq = <&emmc_pwrseq>;
++	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	samsung,dw-mshc-hs400-timing = <0 2>;
++	samsung,read-strobe-delay = <90>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++};
++
++&mmc_2 {
++	status = "okay";
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++};
++
++&pinctrl_0 {
++	emmc_nrst_pin: emmc-nrst {
++		samsung,pins = "gpd1-0";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&serial_0 {
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&serial_2 {
++	status = "okay";
++};
++
++&serial_3 {
++	status = "okay";
++};
++
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++};
++
++&usbdrd_dwc3_1 {
++	dr_mode = "peripheral";
++};
+-- 
+2.5.0
