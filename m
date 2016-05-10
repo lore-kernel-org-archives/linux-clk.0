@@ -1,84 +1,126 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:33386 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751827AbcEJNzF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 09:55:05 -0400
-Message-ID: <1462888497.9155.9.camel@pengutronix.de>
-Subject: Re: [RFC PATCH 12/21] reset: uniphier: add core support for
- UniPhier reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Date: Tue, 10 May 2016 15:54:57 +0200
-In-Reply-To: <1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-	 <1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 11/27] ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+Date: Tue, 10 May 2016 22:09:14 +0200
+Message-Id: <1462910970-1812-12-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
-[...]
-> +static int uniphier_reset_update(struct reset_controller_dev *rcdev,
-> +				 unsigned long id, bool assert)
-> +{
-> +	struct uniphier_reset_priv *priv = to_uniphier_reset_priv(rcdev);
-> +	const struct uniphier_reset_data *p;
-> +	bool handled = false;
-> +
-> +	for (p = priv->data; p->id != UNIPHIER_RESET_ID_END; p++) {
-> +		unsigned int val;
-> +		int ret;
-> +
-> +		if (p->id != id)
-> +			continue;
-> +
-> +		val = p->deassert_val;
-> +		if (assert)
-> +			val = ~val;
-> +
-> +		ret = regmap_write_bits(priv->regmap, p->reg, p->mask, val);
+Configure the pinctrl for MMC0 (eMMC) and MMC2 (microSD card).
 
-What is the difference between mask and deassert_val? Couldn't you just
-assign
-	val = assert ? 0 : p->mask;
-?
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> +static const struct reset_control_ops uniphier_reset_ops = {
-> +	.assert = uniphier_reset_assert,
-> +	.deassert = uniphier_reset_deassert,
-> +	.status = uniphier_reset_status,
-> +};
-> +
-> +int uniphier_reset_probe(struct platform_device *pdev,
-> +			 const struct uniphier_reset_data *data)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct uniphier_reset_priv *priv;
-> +	const struct uniphier_reset_data *p;
-> +	struct regmap *regmap;
-> +	unsigned int nr_resets = 0;
-> +
-> +	/* parent should be MFD and syscon node */
-> +	regmap = syscon_node_to_regmap(dev->parent->of_node);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(dev, "failed to get regmap\n");
+---
 
-syscon_node_to_regmap can return different error codes. It might be
-helpful to use
-	dev_err(dev, "failed to get regmap: %d\n", PTR_ERR(regmap));
-here.
+Important changes since v2:
+1. Re-order the eMMC pins by pin-name, not by label.
+---
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 77 +++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-regards
-Philipp
-
+diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+index f9aa6bb55464..ddacafa1e907 100644
+--- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+@@ -277,6 +277,83 @@
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
++
++	sd0_clk: sd0-clk {
++		samsung,pins = "gpc0-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd0_cmd: sd0-cmd {
++		samsung,pins = "gpc0-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd0_cd: sd0-cd {
++		samsung,pins = "gpc0-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd0_bus1: sd0-bus-width1 {
++		samsung,pins = "gpc0-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd0_bus4: sd0-bus-width4 {
++		samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpc2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpc2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cd: sd2-cd {
++		samsung,pins = "gpc2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus1: sd2-bus-width1 {
++		samsung,pins = "gpc2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus4: sd2-bus-width4 {
++		samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd0_bus8: sd0-bus-width8 {
++		samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
+ };
+ 
+ &pinctrl_1 {
+-- 
+2.5.0
