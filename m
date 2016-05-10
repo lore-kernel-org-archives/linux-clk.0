@@ -1,34 +1,140 @@
-Return-Path: <matthijsvanduin@gmail.com>
-Return-Path: <matthijsvanduin@gmail.com>
-Date: Sun, 15 May 2016 06:05:01 +0200
-From: Matthijs van Duin <matthijsvanduin@gmail.com>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Nicolas Chauvet <kwizart@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>
-Subject: Re: [PATCH] clk: ti: Add support for basic clk_set_rate for dm814x
- and j5-eco ADPLL
-Message-ID: <20160515040501.GB20983@squirrel.local>
-References: <1463157653-9404-1-git-send-email-tony@atomide.com>
- <20160515040028.GA20983@squirrel.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160515040028.GA20983@squirrel.local>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 08/21] clk: uniphier: add clock driver for UniPhier PH1-LD11 SoC
+Date: Tue, 10 May 2016 18:50:49 +0900
+Message-Id: <1462873862-30940-9-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, May 15, 2016 at 06:00:28AM +0200, Matthijs van Duin wrote:
-> /*12*/  u16 postdiv;    // aka M2       1..31   1..127  (but see note below)
-> /*14*/  u16 mult;       // aka M        2..2047 2..4095
+This series is just for review.
+Please do not apply this patch.
 
-I just noticed that should have been
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> /*12*/  u16 postdiv;    // aka M2       1..31   1..127
-> /*14*/  u16 mult;       // aka M        2..2047 2..4095 (but see note below)
+ drivers/clk/uniphier/Kconfig             |  4 ++
+ drivers/clk/uniphier/Makefile            |  1 +
+ drivers/clk/uniphier/clk-uniphier-ld11.c | 83 ++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+)
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-ld11.c
 
-obviously :)
+diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+index d4a3d55..1746aea 100644
+--- a/drivers/clk/uniphier/Kconfig
++++ b/drivers/clk/uniphier/Kconfig
+@@ -26,4 +26,8 @@ config CLK_UNIPHIER_PXS2
+ 	tristate "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
+ 	default ARM
+ 
++config CLK_UNIPHIER_LD11
++	tristate "Clock driver for UniPhier PH1-LD11 SoC"
++	default ARM64
++
+ endif
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+index 20a274f..e056771 100644
+--- a/drivers/clk/uniphier/Makefile
++++ b/drivers/clk/uniphier/Makefile
+@@ -9,3 +9,4 @@ obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
+ obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
+ obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
+ obj-$(CONFIG_CLK_UNIPHIER_PXS2)	+= clk-uniphier-pxs2.o
++obj-$(CONFIG_CLK_UNIPHIER_LD11)	+= clk-uniphier-ld11.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-ld11.c b/drivers/clk/uniphier/clk-uniphier-ld11.c
+new file mode 100644
+index 0000000..5b8536a
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-ld11.c
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++
++#include "clk-uniphier.h"
++
++static const struct uniphier_clk_data uniphier_ld11_clk_data[] = {
++	{
++		.name = "spll",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "ref",
++			.mult = 80,
++			.div = 1,
++		},
++	},
++	{
++		.name = "uart",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 0,
++		.data.factor = {
++			.parent_name = "spll",
++			.mult = 1,
++			.div = 34,
++		},
++	},
++	{
++		.name = "fi2c",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 1,
++		.data.factor = {
++			.parent_name = "spll",
++			.mult = 1,
++			.div = 50,
++		},
++	},
++	{
++		.name = "stdmac",
++		.type = UNIPHIER_CLK_TYPE_GATE,
++		.output_index = 7,
++		.data.gate = {
++			.parent_name = NULL,
++			.reg = 0x200c,
++			.mask = BIT(8),
++			.enable_val = BIT(8),
++		},
++	},
++	{ /* sentinel */ }
++};
++
++static int uniphier_ld11_clk_probe(struct platform_device *pdev)
++{
++	return uniphier_clk_probe(pdev, uniphier_ld11_clk_data);
++}
++
++static struct platform_driver uniphier_ld11_clk_driver = {
++	.probe = uniphier_ld11_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-ld11-clk",
++	},
++};
++module_platform_driver(uniphier_ld11_clk_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-LD11 System Clock Driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
