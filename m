@@ -1,95 +1,169 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1462935089.28773.11.camel@mtksdaap41>
-Subject: Re: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
-	<mturquette@baylibre.com>, Lee Jones <lee.jones@linaro.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
-	John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>
-Date: Wed, 11 May 2016 10:51:29 +0800
-In-Reply-To: <20160509221321.GT3492@codeaurora.org>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160506231229.GJ3492@codeaurora.org> <1462772426.5344.7.camel@mtksdaap41>
-	 <20160509221321.GT3492@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 04/21] clk: uniphier: add clock driver for UniPhier PH1-Pro4 SoC
+Date: Tue, 10 May 2016 18:50:45 +0900
+Message-Id: <1462873862-30940-5-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Mike, Lee,
+This series is just for review.
+Please do not apply this patch.
 
-On Mon, 2016-05-09 at 15:13 -0700, Stephen Boyd wrote:
-> On 05/09, James Liao wrote:
-> > Hi Stephen,
-> > 
-> > On Fri, 2016-05-06 at 16:12 -0700, Stephen Boyd wrote:
-> > > On 04/14, James Liao wrote:
-> > > > Some system clocks should be turned on by default on MT2701.
-> > > > This patch enable these clocks when related clocks have
-> > > > been registered.
-> > > > 
-> > > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > > ---
-> > > 
-> > > critical clks got merged now (sorry I'm slowly getting back to
-> > > looking at patches). Please use that flag.
-> > 
-> > I don't see critical clock support in v4.6-rc7. Is there a repo/branch
-> > that has critical clocks merged?
-> > 
-> 
-> Right, it's in clk-next in the clk tree.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-I got the latest code from clk-next and tried to use CLK_IS_CRITICAL fro
-critical clocks. But There is something wrong with CLK_IS_CRITICAL. For
-example, if we set vdec_sel as a critical clock, we'll get the following
-result:
+ drivers/clk/uniphier/Kconfig             |   4 ++
+ drivers/clk/uniphier/Makefile            |   1 +
+ drivers/clk/uniphier/clk-uniphier-pro4.c | 112 +++++++++++++++++++++++++++++++
+ 3 files changed, 117 insertions(+)
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-pro4.c
 
-    vdecpll                               0            0
-       vdecpll_ck                         1            1
-          vdec_sel                        1            1
-
-vdec_sel and vdecpll_ck are TOPCKGEN clocks. vdecpll is a APMIXEDSYS
-PLL, which will be registered after TOPCKGEN clocks. The prepare and
-enable count are incorrect in this case.
-
-We may need to prepare/enable a parent clock if an enabled orphan clock
-re-parent to it. I tried the following modification and it can resolve
-this issue. But I'm not sure it's a correct place to enable parent
-clcoks. May I have your comment on this?
-
-------------------------------------------------------------
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ce39add..db1bc3a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
-        hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list,
-child_node) {
-                struct clk_core *parent = __clk_init_parent(orphan);
-
--               if (parent)
-+               if (parent) {
-                        clk_core_reparent(orphan, parent);
+diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+index f5a7fbb..d789e26 100644
+--- a/drivers/clk/uniphier/Kconfig
++++ b/drivers/clk/uniphier/Kconfig
+@@ -10,4 +10,8 @@ config CLK_UNIPHIER_LD4
+ 	tristate "Clock driver for UniPhier PH1-LD4 SoC"
+ 	default ARM
+ 
++config CLK_UNIPHIER_PRO4
++	tristate "Clock driver for UniPhier PH1-Pro4 SoC"
++	default ARM
 +
-+                       if (orphan->prepare_count)
-+                               clk_core_prepare(parent);
+ endif
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+index 2ca2070..ceed615 100644
+--- a/drivers/clk/uniphier/Makefile
++++ b/drivers/clk/uniphier/Makefile
+@@ -5,3 +5,4 @@ obj-y				+= clk-uniphier-gate.o
+ obj-y				+= clk-uniphier-mux.o
+ 
+ obj-$(CONFIG_CLK_UNIPHIER_LD4)	+= clk-uniphier-ld4.o
++obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-pro4.c b/drivers/clk/uniphier/clk-uniphier-pro4.c
+new file mode 100644
+index 0000000..e2ab185
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-pro4.c
+@@ -0,0 +1,112 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+                       if (orphan->enable_count )
-+                               clk_core_enable(parent);
-+               }
-        }
-
-        /*
-------------------------------------------------------------
-
-
-Best regards,
-
-James
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "clk-uniphier.h"
++
++static const struct uniphier_clk_data uniphier_pro4_clk_data[] = {
++	{
++		.name = "spll",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "ref",
++			.mult = 64,
++			.div = 1,
++		},
++	},
++	{
++		.name = "upll",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "ref",
++			.mult = 288,
++			.div = 25,
++		},
++	},
++	{
++		.name = "a2pll",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "upll",
++			.mult = 256,
++			.div = 125,
++		},
++	},
++	{
++		.name = "uart",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 0,
++		.data.factor = {
++			.parent_name = "a2pll",
++			.mult = 1,
++			.div = 8,
++		},
++	},
++	{
++		.name = "fi2c",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 1,
++		.data.factor = {
++			.parent_name = "spll",
++			.mult = 1,
++			.div = 32,
++		},
++	},
++	{
++		.name = "ehci",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 5,
++		.data.factor = {
++			.parent_name = "upll",
++			.mult = 1,
++			.div = 12,
++		},
++	},
++	{
++		.name = "stdmac",
++		.type = UNIPHIER_CLK_TYPE_GATE,
++		.output_index = 7,
++		.data.gate = {
++			.parent_name = "ref",
++			.reg = 0x2104,
++			.mask = BIT(10),
++			.enable_val = BIT(10),
++		},
++	},
++	{ /* sentinel */ }
++};
++
++static int uniphier_pro4_clk_probe(struct platform_device *pdev)
++{
++	return uniphier_clk_probe(pdev, uniphier_pro4_clk_data);
++}
++
++static struct platform_driver uniphier_pro4_clk_driver = {
++	.probe = uniphier_pro4_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-pro4-clk",
++	},
++};
++module_platform_driver(uniphier_pro4_clk_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PH1-Pro4 System Clock Driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
