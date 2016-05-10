@@ -1,65 +1,140 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-am1on0059.outbound.protection.outlook.com ([157.56.112.59]:40496
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750696AbcEZEFa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 26 May 2016 00:05:30 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-CC: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"Mark Rutland" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	"Bhupesh Sharma" <bhupesh.sharma@freescale.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	"Rob Herring" <robh+dt@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>
-Subject: RE: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for
- T4240-R1.0-R2.0
-Date: Thu, 26 May 2016 04:05:26 +0000
-Message-ID: <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-	 <4448030.Zs8fVnr3nm@wuerfel>
-	 <HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-	 <5159406.HOFrj7pRfW@wuerfel> <1462937186.16584.77.camel@buserror.net>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 07/21] clk: uniphier: add clock driver for UniPhier ProXstream2/PH1-LD6b SoC
+Date: Tue, 10 May 2016 18:50:48 +0900
+Message-Id: <1462873862-30940-8-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgVWZmZSwNCg0KQ291bGQgd2UgbWVyZ2UgdGhpcyBwYXRjaHNldD8gLi4uDQpJdCBoYXMgYmVl
-biBhIGxvbmcgdGltZSB0byB3YWl0IGZvciBBcm5kJ3MgcmVzcG9uc2UuLi4NCiANClRoYW5rcyBh
-IGxvdC4NCg0KDQpCZXN0IHJlZ2FyZHMsDQpZYW5nYm8gTHUNCg0KDQo+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+IEZyb206IFlhbmdibyBMdQ0KPiBTZW50OiBGcmlkYXksIE1heSAyMCwg
-MjAxNiAyOjA2IFBNDQo+IFRvOiAnU2NvdHQgV29vZCc7IEFybmQgQmVyZ21hbm47IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBDYzogbGludXhwcGMtZGV2QGxpc3RzLm96
-bGFicy5vcmc7IE1hcmsgUnV0bGFuZDsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IHVs
-Zi5oYW5zc29uQGxpbmFyby5vcmc7IFJ1c3NlbGwgS2luZzsgQmh1cGVzaA0KPiBTaGFybWE7IG5l
-dGRldkB2Z2VyLmtlcm5lbC5vcmc7IEpvZXJnIFJvZWRlbDsgS3VtYXIgR2FsYTsgbGludXgtDQo+
-IG1tY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFlhbmct
-TGVvIExpOw0KPiBpb21tdUBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZzsgUm9iIEhlcnJpbmc7
-IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7DQo+IENsYXVkaXUgTWFub2lsOyBTYW50b3NoIFNo
-aWxpbWthcjsgWGlhb2JvIFhpZTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gUWlhbmcg
-Wmhhbw0KPiBTdWJqZWN0OiBSRTogW3YxMCwgNy83XSBtbWM6IHNkaGNpLW9mLWVzZGhjOiBmaXgg
-aG9zdCB2ZXJzaW9uIGZvciBUNDI0MC0NCj4gUjEuMC1SMi4wDQo+IA0KPiBIaSBBcm5kLA0KPiAN
-Cj4gQW55IGNvbW1lbnRzPw0KPiBQbGVhc2UgcmVwbHkgd2hlbiB5b3Ugc2VlIHRoZSBlbWFpbCBz
-aW5jZSB3ZSB3YW50IHRoaXMgZVNESEMgaXNzdWUgdG8gYmUNCj4gZml4ZWQgc29vbi4NCj4gDQo+
-IEFsbCB0aGUgcGF0Y2hlcyBhcmUgRnJlZXNjYWxlLXNwZWNpZmljIGFuZCBpcyB0byBmaXggdGhl
-IGVTREhDIGRyaXZlci4NCj4gQ291bGQgd2UgbGV0IHRoZW0gbWVyZ2VkIGZpcnN0IGlmIHlvdSB3
-ZXJlIHRhbGtpbmcgYWJvdXQgYSBuZXcgd2F5IG9mDQo+IGFic3RyYWN0aW5nIGdldHRpbmcgU29D
-IHZlcnNpb24uDQo+IA0KPiANCj4gVGhhbmtzIDopDQo+IA0KPiANCj4gQmVzdCByZWdhcmRzLA0K
-PiBZYW5nYm8gTHUNCj4gDQoNCg==
+This series is just for review.
+Please do not apply this patch.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/clk/uniphier/Kconfig             |  4 ++
+ drivers/clk/uniphier/Makefile            |  1 +
+ drivers/clk/uniphier/clk-uniphier-pxs2.c | 83 ++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+)
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-pxs2.c
+
+diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+index de3fada..d4a3d55 100644
+--- a/drivers/clk/uniphier/Kconfig
++++ b/drivers/clk/uniphier/Kconfig
+@@ -22,4 +22,8 @@ config CLK_UNIPHIER_PRO5
+ 	tristate "Clock driver for UniPhier PH1-Pro5 SoC"
+ 	default ARM
+ 
++config CLK_UNIPHIER_PXS2
++	tristate "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
++	default ARM
++
+ endif
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+index d1edf30..20a274f 100644
+--- a/drivers/clk/uniphier/Makefile
++++ b/drivers/clk/uniphier/Makefile
+@@ -8,3 +8,4 @@ obj-$(CONFIG_CLK_UNIPHIER_LD4)	+= clk-uniphier-ld4.o
+ obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
+ obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
+ obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
++obj-$(CONFIG_CLK_UNIPHIER_PXS2)	+= clk-uniphier-pxs2.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-pxs2.c b/drivers/clk/uniphier/clk-uniphier-pxs2.c
+new file mode 100644
+index 0000000..07f7969
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-pxs2.c
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++
++#include "clk-uniphier.h"
++
++static const struct uniphier_clk_data uniphier_pxs2_clk_data[] = {
++	{
++		.name = "spll",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = -1,
++		.data.factor = {
++			.parent_name = "ref",
++			.mult = 96,
++			.div = 1,
++		},
++	},
++	{
++		.name = "uart",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 0,
++		.data.factor = {
++			.parent_name = "spll",
++			.mult = 1,
++			.div = 27,
++		},
++	},
++	{
++		.name = "fi2c",
++		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++		.output_index = 1,
++		.data.factor = {
++			.parent_name = "spll",
++			.mult = 1,
++			.div = 48,
++		},
++	},
++	{
++		.name = "stdmac",
++		.type = UNIPHIER_CLK_TYPE_GATE,
++		.output_index = 7,
++		.data.gate = {
++			.parent_name = NULL,
++			.reg = 0x2104,
++			.mask = BIT(10),
++			.enable_val = BIT(10),
++		},
++	},
++	{ /* sentinel */ }
++};
++
++static int uniphier_pxs2_clk_probe(struct platform_device *pdev)
++{
++	return uniphier_clk_probe(pdev, uniphier_pxs2_clk_data);
++}
++
++static struct platform_driver uniphier_pxs2_clk_driver = {
++	.probe = uniphier_pxs2_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-pxs2-clk",
++	},
++};
++module_platform_driver(uniphier_pxs2_clk_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier ProXstream2 System Clock Driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
