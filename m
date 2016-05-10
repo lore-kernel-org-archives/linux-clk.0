@@ -1,79 +1,282 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1463402840-17062-10-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-10-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 May 2016 11:52:10 +0800
-Message-ID: <CAGb2v655q_w8s7Eg8xnpzdX9PDxSEhRLvMu3bNOd==U4APgg0Q@mail.gmail.com>
-Subject: Re: [PATCH 09/20] drm/sun4i: defer only if we didn't find our panel
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 20/27] ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+Date: Tue, 10 May 2016 22:09:23 +0200
+Message-Id: <1462910970-1812-21-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The Exynos5410/542x/5800 are very similar designs. Create a new
+DTSI with common nodes to remove DTS duplication. Although currently
+only MCT and SysRAM are shared but in future more nodes will be added to
+the common file.
 
-On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Our code currently defers our probe on any error, even if we were not
-> expecting to have one at all.
->
-> Make sure we return -EPROBE_DEFER only when we were supposed to have a
-> panel, but it's not probed yet.
->
-> Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 9f19b0e08560..eed6a9e8d9a6 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -429,7 +429,7 @@ static struct drm_panel *sun4i_tcon_find_panel(struct device_node *node)
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       return of_drm_find_panel(remote);
-> +       return of_drm_find_panel(remote) ?: ERR_PTR(-EPROBE_DEFER);
+The patch should not have functional impact.
 
-There's also a typo in the DRM_DEBUG_DRIVER call a few lines up. Could you
-fix it as well?
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 55 ++++---------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 54 ++++---------------------------
+ arch/arm/boot/dts/exynos54xx.dtsi | 68 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 97 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
 
-ChenYu
-
->  }
->
->  static int sun4i_tcon_bind(struct device *dev, struct device *master,
-> @@ -522,12 +522,13 @@ static int sun4i_tcon_probe(struct platform_device *pdev)
->          * Defer the probe.
->          */
->         panel = sun4i_tcon_find_panel(node);
-> -       if (IS_ERR(panel)) {
-> -               /*
-> -                * If we don't have a panel endpoint, just go on
-> -                */
-> -               if (PTR_ERR(panel) != -ENODEV)
-> -                       return -EPROBE_DEFER;
-> +
-> +       /*
-> +        * If we don't have a panel endpoint, just go on
-> +        */
-> +       if (PTR_ERR(panel) == -EPROBE_DEFER) {
-> +               DRM_DEBUG_DRIVER("Still waiting for our panel. Deferring...\n");
-> +               return -EPROBE_DEFER;
->         }
->
->         return component_add(&pdev->dev, &sun4i_tcon_ops);
-> --
-> 2.8.2
->
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 62dc3b4aef93..850343d3c2af 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -13,8 +13,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-#include "skeleton.dtsi"
+-#include "exynos5.dtsi"
++#include "exynos54xx.dtsi"
+ #include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
+ 
+@@ -73,53 +72,6 @@
+ 			reg = <0x10040000 0x5000>;
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&interrupt_map>;
+-			interrupts = <0>, <1>, <2>, <3>,
+-				<4>, <5>, <6>, <7>,
+-				<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			interrupt_map: interrupt-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5410-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -194,6 +146,11 @@
+ 	};
+ };
+ 
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 872dadf0f2d4..ebf2ed3c5ff8 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -13,9 +13,8 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include "exynos54xx.dtsi"
+ #include <dt-bindings/clock/exynos5420.h>
+-#include "exynos5.dtsi"
+-
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+ 
+ / {
+@@ -181,24 +180,6 @@
+ 			};
+ 		};
+ 
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5420-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -261,34 +242,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&mct_map>;
+-			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+-					<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			mct_map: mct-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+ 		gsc_pd: power-domain@10044000 {
+ 			compatible = "samsung,exynos4210-pd";
+ 			reg = <0x10044000 0x20>;
+@@ -1163,6 +1116,11 @@
+ 	pinctrl-0 = <&i2c3_bus>;
+ };
+ 
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+new file mode 100644
+index 000000000000..9ce625bd79c1
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -0,0 +1,68 @@
++/*
++ * Samsung's Exynos54xx SoC series common device tree source
++ *
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2016 Krzysztof Kozlowski
++ *
++ * Device nodes common for Samsung Exynos5410/5420/5422/5800. Specific
++ * Exynos 54xx SoCs should include this file and customize it further
++ * (e.g. with clocks).
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "skeleton.dtsi"
++#include "exynos5.dtsi"
++
++/ {
++	compatible = "samsung,exynos5";
++
++	soc: soc {
++		sysram@02020000 {
++			compatible = "mmio-sram";
++			reg = <0x02020000 0x54000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0x02020000 0x54000>;
++
++			smp-sysram@0 {
++				compatible = "samsung,exynos4210-sysram";
++				reg = <0x0 0x1000>;
++			};
++
++			smp-sysram@53000 {
++				compatible = "samsung,exynos4210-sysram-ns";
++				reg = <0x53000 0x1000>;
++			};
++		};
++
++		mct: mct@101C0000 {
++			compatible = "samsung,exynos4210-mct";
++			reg = <0x101C0000 0xB00>;
++			interrupt-parent = <&mct_map>;
++			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
++					<8>, <9>, <10>, <11>;
++
++			mct_map: mct-map {
++				#interrupt-cells = <1>;
++				#address-cells = <0>;
++				#size-cells = <0>;
++				interrupt-map = <0 &combiner 23 3>,
++						<1 &combiner 23 4>,
++						<2 &combiner 25 2>,
++						<3 &combiner 25 3>,
++						<4 &gic 0 120 0>,
++						<5 &gic 0 121 0>,
++						<6 &gic 0 122 0>,
++						<7 &gic 0 123 0>,
++						<8 &gic 0 128 0>,
++						<9 &gic 0 129 0>,
++						<10 &gic 0 130 0>,
++						<11 &gic 0 131 0>;
++			};
++		};
++	};
++};
+-- 
+2.5.0
