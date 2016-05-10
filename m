@@ -1,41 +1,168 @@
-Return-Path: <khiem.nguyen.xt@rvc.renesas.com>
-Subject: [RFC 2/4] clk: renesas: r8a7795: Add Z clock
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>, Magnus
- Damm <damm+renesas@opensource.se>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <573166EB.70908@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:43:23 +0700
-MIME-Version: 1.0
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conuserg-10.nifty.com ([210.131.2.77]:34658 "EHLO
+	conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752045AbcEJJvw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 05:51:52 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 20/21] reset: uniphier: add reset driver for Media I/O block on UniPhier SoCs
+Date: Tue, 10 May 2016 18:51:01 +0900
+Message-Id: <1462873862-30940-21-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+This series is just for review.
+Please do not apply this patch.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-  drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
-  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c 
-b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index e53aff5..4120506 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -104,6 +104,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] 
-__initconst = {
-  	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
+ drivers/reset/uniphier/Kconfig              |   4 ++
+ drivers/reset/uniphier/Makefile             |   2 +
+ drivers/reset/uniphier/reset-uniphier-mio.c | 106 ++++++++++++++++++++++++++++
+ 3 files changed, 112 insertions(+)
+ create mode 100644 drivers/reset/uniphier/reset-uniphier-mio.c
 
-  	DEF_BASE("r",           R8A7795_CLK_R, CLK_TYPE_GEN3_R, CLK_RINT),
-+	DEF_BASE("z",           R8A7795_CLK_Z,   CLK_TYPE_GEN3_Z,   CLK_PLL0),
-  };
-
-  static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
+index 8509e71..a582938 100644
+--- a/drivers/reset/uniphier/Kconfig
++++ b/drivers/reset/uniphier/Kconfig
+@@ -34,4 +34,8 @@ config RESET_UNIPHIER_LD20
+ 	tristate "Reset driver for UniPhier PH1-LD20 SoC"
+ 	default ARM64
+ 
++config RESET_UNIPHIER_MIO
++	tristate "Reset driver for UniPhier Media I/O block"
++	default y
++
+ endif
+diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
+index a33cb0a..e83bd14 100644
+--- a/drivers/reset/uniphier/Makefile
++++ b/drivers/reset/uniphier/Makefile
+@@ -7,3 +7,5 @@ obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
+ obj-$(CONFIG_RESET_UNIPHIER_PXS2)	+= reset-uniphier-pxs2.o
+ obj-$(CONFIG_RESET_UNIPHIER_LD11)	+= reset-uniphier-ld11.o
+ obj-$(CONFIG_RESET_UNIPHIER_LD20)	+= reset-uniphier-ld20.o
++
++obj-$(CONFIG_RESET_UNIPHIER_MIO)	+= reset-uniphier-mio.o
+diff --git a/drivers/reset/uniphier/reset-uniphier-mio.c b/drivers/reset/uniphier/reset-uniphier-mio.c
+new file mode 100644
+index 0000000..f68a8cf
+--- /dev/null
++++ b/drivers/reset/uniphier/reset-uniphier-mio.c
+@@ -0,0 +1,106 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "reset-uniphier.h"
++
++#define UNIPHIER_MIO_RESET_SD(ch, index)		\
++	{						\
++		.id = (index),				\
++		.reg = 0x110 + 0x200 * (ch),		\
++		.mask = BIT(26) | BIT(0),		\
++		.deassert_val = BIT(26) | BIT(0),	\
++	}
++
++#define UNIPHIER_MIO_RESET_EMMC_HW_RESET(ch, index)	\
++	{						\
++		.id = (index),				\
++		.reg = 0x80 + 0x200 * (ch),		\
++		.mask = BIT(0),				\
++		.deassert_val = BIT(0),			\
++	}
++
++#define UNIPHIER_MIO_RESET_EHCI(ch, index)		\
++	{						\
++		.id = (index),				\
++		.reg = 0x110 + 0x200 * (ch),		\
++		.mask = BIT(24),			\
++		.deassert_val = BIT(24),		\
++	},						\
++	{						\
++		.id = (index),				\
++		.reg = 0x114 + 0x200 * (ch),		\
++		.mask = BIT(0),				\
++		.deassert_val = BIT(0),			\
++	}
++
++#define UNIPHIER_MIO_RESET_DMAC(index)			\
++	{						\
++		.id = (index),				\
++		.reg = 0x110,				\
++		.mask = BIT(17),			\
++		.deassert_val = BIT(17),		\
++	}
++
++static const struct uniphier_reset_data uniphier_ld4_mio_reset_data[] = {
++	UNIPHIER_MIO_RESET_SD(0, 0),
++	UNIPHIER_MIO_RESET_SD(1, 1),
++	UNIPHIER_MIO_RESET_SD(2, 2),
++	UNIPHIER_MIO_RESET_DMAC(3),
++	UNIPHIER_MIO_RESET_EHCI(0, 4),
++	UNIPHIER_MIO_RESET_EHCI(1, 5),
++	UNIPHIER_MIO_RESET_EHCI(2, 6),
++	UNIPHIER_MIO_RESET_EMMC_HW_RESET(1, 9),
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_ld4_mio_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_ld4_mio_reset_data);
++}
++
++static struct platform_driver uniphier_ld4_mio_reset_driver = {
++	.probe = uniphier_ld4_mio_reset_probe,
++	.driver = {
++		.name = "uniphier-ld4-mio-reset",
++	},
++};
++module_platform_driver(uniphier_ld4_mio_reset_driver);
++
++static const struct uniphier_reset_data uniphier_pro5_mio_reset_data[] = {
++	UNIPHIER_MIO_RESET_SD(0, 0),
++	UNIPHIER_MIO_RESET_SD(1, 1),
++	UNIPHIER_MIO_RESET_EMMC_HW_RESET(1, 9),
++	{ .id = UNIPHIER_RESET_ID_END }
++};
++
++static int uniphier_pro5_mio_reset_probe(struct platform_device *pdev)
++{
++	return uniphier_reset_probe(pdev, uniphier_pro5_mio_reset_data);
++}
++
++static struct platform_driver uniphier_pro5_mio_reset_driver = {
++	.probe = uniphier_pro5_mio_reset_probe,
++	.driver = {
++		.name = "uniphier-mio-reset",
++	},
++};
++module_platform_driver(uniphier_pro5_mio_reset_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier Media I/O Reset Controller Driver");
++MODULE_LICENSE("GPL");
 -- 
 1.9.1
+
