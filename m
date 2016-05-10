@@ -1,149 +1,55 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 03/16] clk: sunxi-ng: Add fixed factor clock support
-Date: Sun,  8 May 2016 22:01:38 +0200
-Message-Id: <1462737711-10017-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for Odroid
+ XU
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
+ <57316E10.2030300@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <671c34fa-fbb7-4499-8dbd-87957cd49e15@osg.samsung.com>
+Date: Tue, 10 May 2016 10:00:05 -0400
+MIME-Version: 1.0
+In-Reply-To: <57316E10.2030300@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks in the Allwinner SoCs clock units are direct, fixed,
-multipliers or dividers from their parent.
+Hello Krzysztof,
 
-Add support for such clocks.
+On 05/10/2016 01:13 AM, Krzysztof Kozlowski wrote:
+> On 05/10/2016 12:05 AM, Javier Martinez Canillas wrote:
+>> Hello Krzysztof,
+>>
+>> On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+>>>
+>>> Hi,
+>>>
+>>> Patchset adds necessary clocks, reorganizes existing stuff and finally
+>>> adds Odroid XU support.
+>>>
+>>
+>> Do you have a branch available so I can pull these patches and test in
+>> the Exynos5 boards I've access to?
+> 
+> Of course. It sits on my private repo, on Github:
+> https://github.com/krzk/linux
+> branch: for-next/odroid-xu-v2
+>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Makefile           |  2 ++
- drivers/clk/sunxi-ng/ccu_fixed_factor.c | 42 +++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_fixed_factor.h | 50 +++++++++++++++++++++++++++++++++
- 3 files changed, 94 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.h
+Thanks for the information, I'll give a try today.
+ 
+> Best regards,
+> Krzysztof
+> 
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index bd3461b0f38c..d76276736765 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,2 +1,4 @@
- obj-y += ccu_common.o
- obj-y += ccu_reset.o
-+
-+obj-y += ccu_fixed_factor.o
-diff --git a/drivers/clk/sunxi-ng/ccu_fixed_factor.c b/drivers/clk/sunxi-ng/ccu_fixed_factor.c
-new file mode 100644
-index 000000000000..75df8a854db5
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_fixed_factor.c
-@@ -0,0 +1,42 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_fixed_factor.h"
-+
-+static unsigned long ccu_fixed_factor_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct ccu_fixed_factor *fix = hw_to_ccu_fixed_factor(hw);
-+
-+	return parent_rate * fix->mult / fix->div;
-+}
-+
-+static long ccu_fixed_factor_round_rate(struct clk_hw *hw,
-+					unsigned long rate,
-+					unsigned long *parent_rate)
-+{
-+	struct ccu_fixed_factor *fix = hw_to_ccu_fixed_factor(hw);
-+
-+	return *parent_rate / fix->div * fix->mult;
-+}
-+
-+static int ccu_fixed_factor_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_fixed_factor_ops = {
-+	.recalc_rate	= ccu_fixed_factor_recalc_rate,
-+	.round_rate	= ccu_fixed_factor_round_rate,
-+	.set_rate	= ccu_fixed_factor_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_fixed_factor.h b/drivers/clk/sunxi-ng/ccu_fixed_factor.h
-new file mode 100644
-index 000000000000..4e53dbc9d10b
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_fixed_factor.h
-@@ -0,0 +1,50 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_FIXED_FACTOR_H_
-+#define _CCU_FIXED_FACTOR_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+
-+struct ccu_fixed_factor {
-+	u16			div;
-+	u16			mult;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_FIXED_FACTOR(_struct, _name, _parent,			\
-+			       _div, _mult, _flags)			\
-+	struct ccu_fixed_factor _struct = {				\
-+		.div	= _div,						\
-+		.mult	= _mult,					\
-+		.common	= {						\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_fixed_factor_ops, \
-+							_flags),	\
-+		},							\
-+	}
-+
-+static inline struct ccu_fixed_factor *hw_to_ccu_fixed_factor(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_fixed_factor, common);
-+}
-+
-+extern const struct clk_ops ccu_fixed_factor_ops;
-+
-+#endif /* _CCU_FIXED_FACTOR_H_ */
+Best regards,
 -- 
-2.8.2
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
