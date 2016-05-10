@@ -1,68 +1,72 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>
-Subject: [PATCH 00/11] Clock improvement for video playback
-Date: Wed, 18 May 2016 10:41:21 +0200
-Message-Id: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <plaes@plaes.org>
+Message-ID: <1462907459.9981.0.camel@plaes.org>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 01/11] clk: sunxi: Add display and
+ TCON0 clocks driver
+From: Priit Laes <plaes@plaes.org>
+To: sboyd@codeaurora.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, David Airlie
+ <airlied@linux.ie>,  Chen-Yu Tsai <wens@csie.org>, Rob Herring
+ <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,  Hans de Goede
+ <hdegoede@redhat.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  linux-sunxi@googlegroups.com,
+ dri-devel@lists.freedesktop.org, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Thomas Petazzoni
+ <thomas.petazzoni@free-electrons.com>, Alexander Kaplan
+ <alex@nextthing.co>,  Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Tue, 10 May 2016 22:10:59 +0300
+In-Reply-To: <20160509223924.GX3492@codeaurora.org>
+References: 
+	<1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+	 <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
+	 <20160506223002.GE3492@codeaurora.org> <20160508200308.GF6167@lukather>
+	 <20160509223238.GW3492@codeaurora.org>
+	 <20160509223924.GX3492@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This serie allows to increase video resolutions and make audio
-adjustment during a video playback.
+On Mon, 2016-05-09 at 15:39 -0700, Stephen Boyd wrote:
+> On 05/09, Stephen Boyd wrote:
+> > 
+> > 
+> > Ok I applied this one to clk-next.
+> > 
+> And I squashed this in to silence the following checker warning.
+> 
+> drivers/clk/sunxi/clk-sun4i-display.c:110:33: warning: Variable
+> length array is used.
+> 
+> ---8<---
+> diff --git a/drivers/clk/sunxi/clk-sun4i-display.c
+> b/drivers/clk/sunxi/clk-sun4i-display.c
+> index f02e250e64ed..f8ff6c4a5633 100644
+> --- a/drivers/clk/sunxi/clk-sun4i-display.c
+> +++ b/drivers/clk/sunxi/clk-sun4i-display.c
+> @@ -107,7 +107,7 @@ static int sun4i_a10_display_reset_xlate(struct
+> reset_controller_dev *rcdev,
+>  static void __init sun4i_a10_display_init(struct device_node *node,
+>  					  const struct
+> sun4i_a10_display_clk_data *data)
+>  {
+> -	const char *parents[data->parents];
+> +	const char *parents[4];
+>  	const char *clk_name = node->name;
+>  	struct reset_data *reset_data;
+>  	struct clk_divider *div = NULL;
+> @@ -126,8 +126,8 @@ static void __init sun4i_a10_display_init(struct
+> device_node *node,
+>  		return;
+>  	}
+>  
+> -	ret = of_clk_parent_fill(node, parents, data->parents);
+> -	if (ret != data->parents) {
+> +	ret = of_clk_parent_fill(node, parents,
+> ARRAY_SIZE(parents));
+> +	if (ret != ARRAY_SIZE(parents)) {
+>  		pr_err("%s: Could not retrieve the parents\n",
+> clk_name);
+>  		goto unmap;
+>  	}
 
-Gabriel Fernandez (11):
-  drivers: clk: st: Add fs660c32 synthesizer algorithm
-  drivers: clk: st: Add clock propagation for audio clocks
-  drivers: clk: st: Handle clkgenD2 clk synchronous mode
-  ARM: DT: STiH407: Add compatibility string on clkgend0 for audio
-    clocks
-  ARM: DT: STiH410: Add compatibility string on clkgend0 for audio
-    clocks
-  ARM: DT: STiH418: Add compatibility string on clkgend0 for audio
-    clocks
-  ARM: DT: STiH407: Enable synchronous clock mode on clkgend2
-  ARM: DT: STiH410: Enable synchronous clock mode on clkgend2
-  ARM: DT: STiH418: Enable synchronous clock mode on clkgend2
-  ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
-  ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-
- .../devicetree/bindings/clock/st/st,flexgen.txt    |   3 +
- arch/arm/boot/dts/stih407-clock.dtsi               |   4 +-
- arch/arm/boot/dts/stih407.dtsi                     |  16 ++-
- arch/arm/boot/dts/stih410-clock.dtsi               |   4 +-
- arch/arm/boot/dts/stih410.dtsi                     |  16 ++-
- arch/arm/boot/dts/stih418-clock.dtsi               |   4 +-
- drivers/clk/st/clk-flexgen.c                       |  61 +++++++-
- drivers/clk/st/clkgen-fsyn.c                       | 159 +++++++++++++++------
- 8 files changed, 211 insertions(+), 56 deletions(-)
-
--- 
-1.9.1
+This change breaks at least de_[bf]e clocks which have 3 clock parents.
