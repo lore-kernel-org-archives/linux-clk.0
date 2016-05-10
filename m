@@ -1,55 +1,60 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 18 May 2016 18:27:24 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Vishnu Patekar
- <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
- Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
-Message-Id: <20160518182724.bf9137a9c04ac670457fc083@free.fr>
-In-Reply-To: <20160518140200.GN27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
-	<20160513114559.786221e415ce5956e161dd5b@free.fr>
-	<20160518140200.GN27618@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 20/22] ARM: dts: exynos: Move common
+ Exynos5410/542x/5800 nodes to new DTSI
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <1462734367-5619-21-git-send-email-krzk@kernel.org>
+ <9e642e0d-87e1-4661-0233-acecf0082f24@osg.samsung.com>
+ <57317292.2080004@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <68ebff12-702d-106a-7ce7-5063f62f3bc1@osg.samsung.com>
+Date: Tue, 10 May 2016 08:51:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <57317292.2080004@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+Hello Krzysztof,
 
-Sorry, my previous mail was sent while not finished!
+On 05/10/2016 01:33 AM, Krzysztof Kozlowski wrote:
+> On 05/09/2016 11:53 PM, Javier Martinez Canillas wrote:
+>> Hello Krzysztof,
+>>
+>> On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
+>>> The Exynos5410/542x/5800 are very similar designs. Create new new
+>>
+>> s/new new/a new
+>>
+>>> DTSI with common nodes to remove DTS duplication. Although currently
+>>> only MCT and SysRAM are shared but in future more nodes will be added to
+>>> common file.
+>>>
+>>> The patch should not have functional impact.
+>>>
+>>
+>> A nice way to check this is to diff the disassembled compiled DTBs with
+>> and without the patch and making sure that the resulted DTS is the same.
+> 
+> Yes, that is what I've done. Recently there is a tool making that even
+> easier: dtx_diff.
+>
 
-On Wed, 18 May 2016 16:02:00 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+I didn't know we had such a tool in mainline now.
+Very useful, thanks a lot for the information.
+ 
+> Best regards,
+> Krzysztof
+> 
 
-> On Fri, May 13, 2016 at 11:45:59AM +0200, Jean-Francois Moine wrote:
-	[snip]
-> > > +static const char * const nand_parents[] =3D { "osc24M", "pll-periph=
-0",
-> > > +					     "pll-periph1" };
-> > > +static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", nand_parents, 0x=
-080,
-> > > +				  0, 4,		/* M */
-> > > +				  16, 2,	/* P */
-> > > +				  24, 2,	/* mux */
-> > > +				  BIT(31),	/* gate */
-> > > +				  0);
-> >=20
-> > The mux width is 2, meaning there may be 4 parents. Then, there may be
-> > an access out of the parent array (and same for mmcx and spix).
->=20
-> The mux relies on the number of parents registered in the clock
-> framework, which is 3 in this case, so that won't happen.
->=20
-> Or am I missing what you're saying?
-
-Sorry, at this time, I did not look yet at the macros.
-There is no problem here.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
