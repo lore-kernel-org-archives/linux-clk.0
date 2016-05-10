@@ -1,39 +1,41 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 1/2] clk: samsung: clkout: Add support for Exynos5410
-Date: Mon, 16 May 2016 10:26:47 +0200
-Message-id: <1463387208-9277-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <khiem.nguyen.xt@rvc.renesas.com>
+Subject: [RFC 2/4] clk: renesas: r8a7795: Add Z clock
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>, Magnus
+ Damm <damm+renesas@opensource.se>, Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
+From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Message-ID: <573166EB.70908@rvc.renesas.com>
+Date: Tue, 10 May 2016 11:43:23 +0700
+MIME-Version: 1.0
+In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add compatible for Exynos5410 so the PMU on this SoC would provide
-CLKOUT.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 2 ++
- 1 file changed, 2 insertions(+)
+  drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 7cd02ff37a1f..96fab6cfb202 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -151,6 +151,8 @@ static void __init exynos5_clkout_init(struct device_node *node)
- }
- CLK_OF_DECLARE(exynos5250_clkout, "samsung,exynos5250-pmu",
- 		exynos5_clkout_init);
-+CLK_OF_DECLARE(exynos5410_clkout, "samsung,exynos5410-pmu",
-+		exynos5_clkout_init);
- CLK_OF_DECLARE(exynos5420_clkout, "samsung,exynos5420-pmu",
- 		exynos5_clkout_init);
- CLK_OF_DECLARE(exynos5433_clkout, "samsung,exynos5433-pmu",
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c 
+b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index e53aff5..4120506 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -104,6 +104,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] 
+__initconst = {
+  	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
+
+  	DEF_BASE("r",           R8A7795_CLK_R, CLK_TYPE_GEN3_R, CLK_RINT),
++	DEF_BASE("z",           R8A7795_CLK_Z,   CLK_TYPE_GEN3_Z,   CLK_PLL0),
+  };
+
+  static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
 -- 
 1.9.1
