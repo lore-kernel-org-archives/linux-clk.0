@@ -1,72 +1,183 @@
-Return-Path: <plaes@plaes.org>
-Message-ID: <1462907459.9981.0.camel@plaes.org>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 01/11] clk: sunxi: Add display and
- TCON0 clocks driver
-From: Priit Laes <plaes@plaes.org>
-To: sboyd@codeaurora.org, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, David Airlie
- <airlied@linux.ie>,  Chen-Yu Tsai <wens@csie.org>, Rob Herring
- <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,  Hans de Goede
- <hdegoede@redhat.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  linux-sunxi@googlegroups.com,
- dri-devel@lists.freedesktop.org, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Thomas Petazzoni
- <thomas.petazzoni@free-electrons.com>, Alexander Kaplan
- <alex@nextthing.co>,  Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Tue, 10 May 2016 22:10:59 +0300
-In-Reply-To: <20160509223924.GX3492@codeaurora.org>
-References: 
-	<1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
-	 <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
-	 <20160506223002.GE3492@codeaurora.org> <20160508200308.GF6167@lukather>
-	 <20160509223238.GW3492@codeaurora.org>
-	 <20160509223924.GX3492@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <joel.stan@gmail.com>
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <20160509224953.GZ3492@codeaurora.org>
+References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+ <1462797111-14271-3-git-send-email-joel@jms.id.au> <20160509224953.GZ3492@codeaurora.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 10 May 2016 20:50:11 +0930
+Message-ID: <CACPK8Xfq=Pfy=7GYuS7LJs-CFJOimBUoHA=Y6NHb4=DRcOnvfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jeremy Kerr <jk@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2016-05-09 at 15:39 -0700, Stephen Boyd wrote:
-> On 05/09, Stephen Boyd wrote:
-> > 
-> > 
-> > Ok I applied this one to clk-next.
-> > 
-> And I squashed this in to silence the following checker warning.
-> 
-> drivers/clk/sunxi/clk-sun4i-display.c:110:33: warning: Variable
-> length array is used.
-> 
-> ---8<---
-> diff --git a/drivers/clk/sunxi/clk-sun4i-display.c
-> b/drivers/clk/sunxi/clk-sun4i-display.c
-> index f02e250e64ed..f8ff6c4a5633 100644
-> --- a/drivers/clk/sunxi/clk-sun4i-display.c
-> +++ b/drivers/clk/sunxi/clk-sun4i-display.c
-> @@ -107,7 +107,7 @@ static int sun4i_a10_display_reset_xlate(struct
-> reset_controller_dev *rcdev,
->  static void __init sun4i_a10_display_init(struct device_node *node,
->  					  const struct
-> sun4i_a10_display_clk_data *data)
->  {
-> -	const char *parents[data->parents];
-> +	const char *parents[4];
->  	const char *clk_name = node->name;
->  	struct reset_data *reset_data;
->  	struct clk_divider *div = NULL;
-> @@ -126,8 +126,8 @@ static void __init sun4i_a10_display_init(struct
-> device_node *node,
->  		return;
->  	}
->  
-> -	ret = of_clk_parent_fill(node, parents, data->parents);
-> -	if (ret != data->parents) {
-> +	ret = of_clk_parent_fill(node, parents,
-> ARRAY_SIZE(parents));
-> +	if (ret != ARRAY_SIZE(parents)) {
->  		pr_err("%s: Could not retrieve the parents\n",
-> clk_name);
->  		goto unmap;
->  	}
+On Tue, May 10, 2016 at 8:19 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/09, Joel Stanley wrote:
+>> diff --git a/drivers/clk/aspeed/clk-g4.c b/drivers/clk/aspeed/clk-g4.c
+>> new file mode 100644
+>> index 000000000000..91677e9177f5
+>> --- /dev/null
+>> +++ b/drivers/clk/aspeed/clk-g4.c
+>> @@ -0,0 +1,109 @@
+>> +/*
+>> + * Copyright 2016 IBM Corporation
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License
+>> + * as published by the Free Software Foundation; either version
+>> + * 2 of the License, or (at your option) any later version.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>
+> Hopefully this include isn't needed.
 
-This change breaks at least de_[bf]e clocks which have 3 clock parents.
+It was required for clk_get_rate in aspeed_of_pclk_clk_init. As I
+mention below, I reworked it to avoid this.
+
+>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/io.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/clkdev.h>
+>> +
+>> +static void __init aspeed_of_hpll_clk_init(struct device_node *node)
+>> +{
+>> +     struct clk *clk, *clkin_clk;
+>> +     void __iomem *base;
+>> +     int reg, rate, clkin;
+>> +     const char *name = node->name;
+>> +     const char *parent_name;
+>> +     const int rates[][4] = {
+>> +             {384, 360, 336, 408},
+>> +             {400, 375, 350, 425},
+>> +     };
+>> +
+>> +     of_property_read_string(node, "clock-output-names", &name);
+>> +     parent_name = of_clk_get_parent_name(node, 0);
+>> +
+>> +     base = of_iomap(node, 0);
+>> +     if (!base) {
+>> +             pr_err("%s: of_iomap failed\n", node->full_name);
+>> +             return;
+>> +     }
+>> +     reg = readl(base);
+>> +     iounmap(base);
+>> +
+>> +     clkin_clk = of_clk_get(node, 0);
+>> +     if (IS_ERR(clkin_clk)) {
+>> +             pr_err("%s: of_clk_get failed\n", node->full_name);
+>> +             return;
+>> +     }
+>> +
+>> +     clkin = clk_get_rate(clkin_clk);
+>> +
+>> +     reg = (reg >> 8) & 0x2;
+>> +
+>> +     if (clkin == 48000000 || clkin == 24000000)
+>> +             rate = rates[0][reg] * 1000000;
+>> +     else if (clkin == 25000000)
+>> +             rate = rates[1][reg] * 1000000;
+>> +     else {
+>> +             pr_err("%s: unknown clkin frequency %dHz\n",
+>> +                             node->full_name, clkin);
+>> +             WARN_ON(1);
+>> +     }
+>> +
+>> +     clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
+>
+> Please write a proper clk driver that sets clkin to be the parent
+> of this clk registered here and then calculates the frequency
+> based on the parent clk rate and the strapping registers via the
+> recalc rate callback.
+
+After a few goes I understood what you meant here.
+
+Is the pclk part okay? I modified the pclk part use a fixed factor
+clock instead of the fixed clock, so I could drop the pclk_get_rate
+call below.
+
+> Also please move this to a platform driver
+> instead of using CLK_OF_DECLARE assuming this isn't required for
+> any timers in the system.
+
+Can you clarify here? We do use the rate of pclk (the apb clock) in
+the clocksource driver to calculate our count_per_tick value.
+
+>
+>> +     if (IS_ERR(clk)) {
+>> +             pr_err("%s: failed to register clock\n", node->full_name);
+>> +             return;
+>> +     }
+>> +
+>> +     clk_register_clkdev(clk, NULL, name);
+>
+> Do you have clkdev users? If not then please drop this.
+
+I think the answer is no. I will drop.
+
+>> +     of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>> +}
+>> +CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g4-hpll-clock",
+>> +            aspeed_of_hpll_clk_init);
+>> +
+>> +static void __init aspeed_of_apb_clk_init(struct device_node *node)
+>> +{
+>> +     struct clk *clk, *hpll_clk;
+>> +     void __iomem *base;
+>> +     int reg, rate;
+>> +     const char *name = node->name;
+>> +     const char *parent_name;
+>> +
+>> +     of_property_read_string(node, "clock-output-names", &name);
+>> +     parent_name = of_clk_get_parent_name(node, 0);
+>> +
+>> +     base = of_iomap(node, 0);
+>> +     if (!base) {
+>> +             pr_err("%s: of_iomap failed\n", node->full_name);
+>> +             return;
+>> +     }
+>> +     reg = readl(base);
+>> +     iounmap(base);
+>> +
+>> +     hpll_clk = of_clk_get(node, 0);
+>> +     if (IS_ERR(hpll_clk)) {
+>> +             pr_err("%s: of_clk_get failed\n", node->full_name);
+>> +             return;
+>> +     }
+>> +
+>> +     reg = (reg >> 23) & 0x3;
+>> +     rate = clk_get_rate(hpll_clk) / (2 + 2 * reg);
+>> +
+>> +     clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
+>> +     if (IS_ERR(clk)) {
+>> +             pr_err("%s: failed to register clock\n", node->full_name);
+>> +             return;
+>> +     }
+>> +
+>> +     clk_register_clkdev(clk, NULL, name);
+>> +     of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>> +}
+>> +CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g4-apb-clock",
+>> +            aspeed_of_apb_clk_init);
+>
+> Following on Rob's comment, please combine this into one driver
+> instead of having different DT nodes for different clks that are
+> all really part of one clock controller hw block.
+
+Ok, I have had a go at this. In our case the clock registers are part
+of the "SCU" IP; a collection of disparate functions that happen to
+include clock control. Is syscon the right thing to use here?
+
+regmap = syscon_regmap_lookup_by_compatible("aspeed,ast2400-syscon-scu");
+ret = regmap_read(hpll->regmap, 0x70, &reg);
+
+Cheers,
+
+Joel
