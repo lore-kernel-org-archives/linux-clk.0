@@ -1,46 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 10:35:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: linux-clk@vger.kernel.org,
-	Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
-	Rob Herring <robh@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-	linux-snps-arc@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 1/2 v6] clk/axs10x: Add I2S PLL clock driver
-Message-ID: <20160506173531.GU3492@codeaurora.org>
-References: <cover.1461258787.git.joabreu@synopsys.com>
- <6bae37562ffc6c62c015e12b7bf6a35c9a3e734d.1461258787.git.joabreu@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <6bae37562ffc6c62c015e12b7bf6a35c9a3e734d.1461258787.git.joabreu@synopsys.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 06/27] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+Date: Tue, 10 May 2016 22:09:09 +0200
+Message-Id: <1462910970-1812-7-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/02, Jose Abreu wrote:
-> The ARC SDP I2S clock can be programmed using a
-> specific PLL.
-> 
-> This patch has the goal of adding a clock driver
-> that programs this PLL.
-> 
-> At this moment the rate values are hardcoded in
-> a table but in the future it would be ideal to
-> use a function which determines the PLL values
-> given the desired rate.
-> 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> ---
+All "fin_pll" clock users were switched to the new one, provided by
+Exynos5410 clock driver. Remove old DT node.
 
-Applied to clk-next
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 -------
+ 1 file changed, 7 deletions(-)
 
-I'm not applying the arc dts file (patch #2 in this series).
-
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index d7d658deeff4..377a679b454b 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -24,13 +24,6 @@
+ 		bootargs = "console=ttySAC2,115200";
+ 	};
+ 
+-	fin_pll: xxti {
+-		compatible = "fixed-clock";
+-		clock-frequency = <24000000>;
+-		clock-output-names = "fin_pll";
+-		#clock-cells = <0>;
+-	};
+-
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
