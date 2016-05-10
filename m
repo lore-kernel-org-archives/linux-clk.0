@@ -1,59 +1,52 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>
-Subject: [PATCH 06/20] drm/sun4i: allow dclk to modify its parent rate
-Date: Mon, 16 May 2016 14:47:06 +0200
-Message-Id: <1463402840-17062-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1462846832.23126.1.camel@mtksdaap41>
+Subject: Re: [PATCH v7 7/9] clk: mediatek: Enable critical clocks for MT2701
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, John Crispin
+	<blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Hauer
+	<kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>
+Date: Tue, 10 May 2016 10:20:32 +0800
+In-Reply-To: <20160509221321.GT3492@codeaurora.org>
+References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1460621514-65191-8-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160506231229.GJ3492@codeaurora.org> <1462772426.5344.7.camel@mtksdaap41>
+	 <20160509221321.GT3492@codeaurora.org>
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The pixel clock being only a divider of its parent clock, depending on the
-resolution, it's expected to change its parent rate. Add that flag so that
-the clock framework knows it.
+On Mon, 2016-05-09 at 15:13 -0700, Stephen Boyd wrote:
+> On 05/09, James Liao wrote:
+> > Hi Stephen,
+> > 
+> > On Fri, 2016-05-06 at 16:12 -0700, Stephen Boyd wrote:
+> > > On 04/14, James Liao wrote:
+> > > > Some system clocks should be turned on by default on MT2701.
+> > > > This patch enable these clocks when related clocks have
+> > > > been registered.
+> > > > 
+> > > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > > > ---
+> > > 
+> > > critical clks got merged now (sorry I'm slowly getting back to
+> > > looking at patches). Please use that flag.
+> > 
+> > I don't see critical clock support in v4.6-rc7. Is there a repo/branch
+> > that has critical clocks merged?
+> > 
+> 
+> Right, it's in clk-next in the clk tree.
 
-Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_dotclock.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-index 1ddf6d7a7107..5b3463197c48 100644
---- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-@@ -170,6 +170,7 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
- 	init.ops = &sun4i_dclk_ops;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_PARENT;
- 
- 	dclk->regmap = tcon->regs;
- 	dclk->hw.init = &init;
--- 
-2.8.2
+I got it. I'll try to use the new critical clock support.
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+
+James
