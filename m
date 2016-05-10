@@ -1,155 +1,417 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 May 2016 15:49:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	jk@ozlabs.org, benh@kernel.crashing.org, arnd@arndb.de,
-	heiko@sntech.de
-Subject: Re: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
-Message-ID: <20160509224953.GZ3492@codeaurora.org>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
- <1462797111-14271-3-git-send-email-joel@jms.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462797111-14271-3-git-send-email-joel@jms.id.au>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 13/27] ARM: dts: exynos: Move common nodes to exynos5.dtsi
+Date: Tue, 10 May 2016 22:09:16 +0200
+Message-Id: <1462910970-1812-14-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/09, Joel Stanley wrote:
-> diff --git a/drivers/clk/aspeed/clk-g4.c b/drivers/clk/aspeed/clk-g4.c
-> new file mode 100644
-> index 000000000000..91677e9177f5
-> --- /dev/null
-> +++ b/drivers/clk/aspeed/clk-g4.c
-> @@ -0,0 +1,109 @@
-> +/*
-> + * Copyright 2016 IBM Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the License, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/clk.h>
+Exynos5420 and Exynos5250 share some nodes: the PWM, syscon
+(sysreg_system_controller) and first four I2C controllers. Move them to
+parent DTSI to avoid duplication.
 
-Hopefully this include isn't needed.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/clkdev.h>
-> +
-> +static void __init aspeed_of_hpll_clk_init(struct device_node *node)
-> +{
-> +	struct clk *clk, *clkin_clk;
-> +	void __iomem *base;
-> +	int reg, rate, clkin;
-> +	const char *name = node->name;
-> +	const char *parent_name;
-> +	const int rates[][4] = {
-> +		{384, 360, 336, 408},
-> +		{400, 375, 350, 425},
-> +	};
-> +
-> +	of_property_read_string(node, "clock-output-names", &name);
-> +	parent_name = of_clk_get_parent_name(node, 0);
-> +
-> +	base = of_iomap(node, 0);
-> +	if (!base) {
-> +		pr_err("%s: of_iomap failed\n", node->full_name);
-> +		return;
-> +	}
-> +	reg = readl(base);
-> +	iounmap(base);
-> +
-> +	clkin_clk = of_clk_get(node, 0);
-> +	if (IS_ERR(clkin_clk)) {
-> +		pr_err("%s: of_clk_get failed\n", node->full_name);
-> +		return;
-> +	}
-> +
-> +	clkin = clk_get_rate(clkin_clk);
-> +
-> +	reg = (reg >> 8) & 0x2;
-> +
-> +	if (clkin == 48000000 || clkin == 24000000)
-> +		rate = rates[0][reg] * 1000000;
-> +	else if (clkin == 25000000)
-> +		rate = rates[1][reg] * 1000000;
-> +	else {
-> +		pr_err("%s: unknown clkin frequency %dHz\n",
-> +				node->full_name, clkin);
-> +		WARN_ON(1);
-> +	}
-> +
-> +	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
+---
 
-Please write a proper clk driver that sets clkin to be the parent
-of this clk registered here and then calculates the frequency
-based on the parent clk rate and the strapping registers via the
-recalc rate callback. Also please move this to a platform driver
-instead of using CLK_OF_DECLARE assuming this isn't required for
-any timers in the system.
+Important changes since v2:
+1. Move also i2c[0123] to exynos5.dtsi.
+---
+ arch/arm/boot/dts/exynos5.dtsi    |  56 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi | 108 ++++++++++++--------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 108 ++++++++++++--------------------------
+ 3 files changed, 124 insertions(+), 148 deletions(-)
 
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%s: failed to register clock\n", node->full_name);
-> +		return;
-> +	}
-> +
-> +	clk_register_clkdev(clk, NULL, name);
-
-Do you have clkdev users? If not then please drop this.
-
-> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +}
-> +CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g4-hpll-clock",
-> +	       aspeed_of_hpll_clk_init);
-> +
-> +static void __init aspeed_of_apb_clk_init(struct device_node *node)
-> +{
-> +	struct clk *clk, *hpll_clk;
-> +	void __iomem *base;
-> +	int reg, rate;
-> +	const char *name = node->name;
-> +	const char *parent_name;
-> +
-> +	of_property_read_string(node, "clock-output-names", &name);
-> +	parent_name = of_clk_get_parent_name(node, 0);
-> +
-> +	base = of_iomap(node, 0);
-> +	if (!base) {
-> +		pr_err("%s: of_iomap failed\n", node->full_name);
-> +		return;
-> +	}
-> +	reg = readl(base);
-> +	iounmap(base);
-> +
-> +	hpll_clk = of_clk_get(node, 0);
-> +	if (IS_ERR(hpll_clk)) {
-> +		pr_err("%s: of_clk_get failed\n", node->full_name);
-> +		return;
-> +	}
-> +
-> +	reg = (reg >> 23) & 0x3;
-> +	rate = clk_get_rate(hpll_clk) / (2 + 2 * reg);
-> +
-> +	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%s: failed to register clock\n", node->full_name);
-> +		return;
-> +	}
-> +
-> +	clk_register_clkdev(clk, NULL, name);
-> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +}
-> +CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g4-apb-clock",
-> +	       aspeed_of_apb_clk_init);
-
-Following on Rob's comment, please combine this into one driver
-instead of having different DT nodes for different clks that are
-all really part of one clock controller hw block.
-
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index d5c0f18a4223..c5d198c70b86 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -20,6 +20,10 @@
+ 	interrupt-parent = <&gic>;
+ 
+ 	aliases {
++		i2c0 = &i2c_0;
++		i2c1 = &i2c_1;
++		i2c2 = &i2c_2;
++		i2c3 = &i2c_3;
+ 		serial0 = &serial_0;
+ 		serial1 = &serial_1;
+ 		serial2 = &serial_2;
+@@ -63,6 +67,11 @@
+ 		interrupts = <1 9 0xf04>;
+ 	};
+ 
++	sysreg_system_controller: syscon@10050000 {
++		compatible = "samsung,exynos5-sysreg", "syscon";
++		reg = <0x10050000 0x5000>;
++	};
++
+ 	serial_0: serial@12C00000 {
+ 		compatible = "samsung,exynos4210-uart";
+ 		reg = <0x12C00000 0x100>;
+@@ -87,6 +96,53 @@
+ 		interrupts = <0 54 0>;
+ 	};
+ 
++	i2c_0: i2c@12C60000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C60000 0x100>;
++		interrupts = <0 56 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	i2c_1: i2c@12C70000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C70000 0x100>;
++		interrupts = <0 57 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	i2c_2: i2c@12C80000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C80000 0x100>;
++		interrupts = <0 58 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	i2c_3: i2c@12C90000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C90000 0x100>;
++		interrupts = <0 59 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	pwm: pwm@12DD0000 {
++		compatible = "samsung,exynos4210-pwm";
++		reg = <0x12DD0000 0x100>;
++		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
++		#pwm-cells = <3>;
++	};
++
+ 	rtc: rtc@101E0000 {
+ 		compatible = "samsung,s3c6410-rtc";
+ 		reg = <0x101E0000 0x100>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index c7158b2fb213..ae4970d1c74f 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -37,10 +37,6 @@
+ 		mshc1 = &mmc_1;
+ 		mshc2 = &mmc_2;
+ 		mshc3 = &mmc_3;
+-		i2c0 = &i2c_0;
+-		i2c1 = &i2c_1;
+-		i2c2 = &i2c_2;
+-		i2c3 = &i2c_3;
+ 		i2c4 = &i2c_4;
+ 		i2c5 = &i2c_5;
+ 		i2c6 = &i2c_6;
+@@ -235,11 +231,6 @@
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
+-	sysreg_system_controller: syscon@10050000 {
+-		compatible = "samsung,exynos5-sysreg", "syscon";
+-		reg = <0x10050000 0x5000>;
+-	};
+-
+ 	watchdog@101D0000 {
+ 		compatible = "samsung,exynos5250-wdt";
+ 		reg = <0x101D0000 0x100>;
+@@ -328,62 +319,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c_0: i2c@12C60000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C60000 0x100>;
+-		interrupts = <0 56 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C0>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c0_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_1: i2c@12C70000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C70000 0x100>;
+-		interrupts = <0 57 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C1>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c1_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_2: i2c@12C80000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C80000 0x100>;
+-		interrupts = <0 58 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C2>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c2_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_3: i2c@12C90000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C90000 0x100>;
+-		interrupts = <0 59 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C3>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c3_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
++	/* i2c_0-3 are defined in exynos5.dtsi */
+ 	i2c_4: i2c@12CA0000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12CA0000 0x100>;
+@@ -662,15 +598,6 @@
+ 		samsung,pmureg-phandle = <&pmu_system_controller>;
+ 	};
+ 
+-	pwm: pwm@12dd0000 {
+-		compatible = "samsung,exynos4210-pwm";
+-		reg = <0x12dd0000 0x100>;
+-		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+-		#pwm-cells = <3>;
+-		clocks = <&clock CLK_PWM>;
+-		clock-names = "timers";
+-	};
+-
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -1070,6 +997,39 @@
+ 	iommus = <&sysmmu_fimd1>;
+ };
+ 
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_bus>;
++};
++
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_bus>;
++};
++
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
++};
++
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
++};
++
++&pwm {
++	clocks = <&clock CLK_PWM>;
++	clock-names = "timers";
++};
++
+ &rtc {
+ 	clocks = <&clock CLK_RTC>;
+ 	clock-names = "rtc";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 549ebf23fee0..f2e8e6482888 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -30,10 +30,6 @@
+ 		pinctrl2 = &pinctrl_2;
+ 		pinctrl3 = &pinctrl_3;
+ 		pinctrl4 = &pinctrl_4;
+-		i2c0 = &i2c_0;
+-		i2c1 = &i2c_1;
+-		i2c2 = &i2c_2;
+-		i2c3 = &i2c_3;
+ 		i2c4 = &hsi2c_4;
+ 		i2c5 = &hsi2c_5;
+ 		i2c6 = &hsi2c_6;
+@@ -542,15 +538,6 @@
+ 		status = "disabled";
+ 	};
+ 
+-	pwm: pwm@12dd0000 {
+-		compatible = "samsung,exynos4210-pwm";
+-		reg = <0x12dd0000 0x100>;
+-		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+-		#pwm-cells = <3>;
+-		clocks = <&clock CLK_PWM>;
+-		clock-names = "timers";
+-	};
+-
+ 	dp_phy: dp-video-phy {
+ 		compatible = "samsung,exynos5420-dp-video-phy";
+ 		samsung,pmu-syscon = <&pmu_system_controller>;
+@@ -588,62 +575,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c_0: i2c@12C60000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C60000 0x100>;
+-		interrupts = <0 56 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C0>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c0_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_1: i2c@12C70000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C70000 0x100>;
+-		interrupts = <0 57 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C1>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c1_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_2: i2c@12C80000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C80000 0x100>;
+-		interrupts = <0 58 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C2>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c2_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_3: i2c@12C90000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C90000 0x100>;
+-		interrupts = <0 59 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C3>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c3_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
++	/* i2c_0-3 are defined in exynos5.dtsi */
+ 	hsi2c_4: i2c@12CA0000 {
+ 		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12CA0000 0x1000>;
+@@ -823,11 +755,6 @@
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
+-	sysreg_system_controller: syscon@10050000 {
+-		compatible = "samsung,exynos5-sysreg", "syscon";
+-		reg = <0x10050000 0x5000>;
+-	};
+-
+ 	tmu_cpu0: tmu@10060000 {
+ 		compatible = "samsung,exynos5420-tmu";
+ 		reg = <0x10060000 0x100>;
+@@ -1207,6 +1134,39 @@
+ 	iommu-names = "m0", "m1";
+ };
+ 
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_bus>;
++};
++
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_bus>;
++};
++
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
++};
++
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
++};
++
++&pwm {
++	clocks = <&clock CLK_PWM>;
++	clock-names = "timers";
++};
++
+ &rtc {
+ 	clocks = <&clock CLK_RTC>;
+ 	clock-names = "rtc";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
