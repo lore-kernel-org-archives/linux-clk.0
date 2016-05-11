@@ -1,79 +1,58 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
- <netdev@vger.kernel.org>
-Subject: [v9, 2/7] ARM64: dts: ls2080a: add device configuration node
-Date: Wed, 4 May 2016 11:24:29 +0800
-Message-ID: <1462332274-13744-3-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
-References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
- leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
- Rob Herring <robh+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
- Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:62236 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752285AbcEKMCm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 08:02:42 -0400
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 15/18] clk: samsung: exynos5433: Move PLL rates data to init
+ section
+Date: Wed, 11 May 2016 14:02:11 +0200
+Message-id: <1462968134-6085-15-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the dts node for device configuration unit that provides
-general purpose configuration and status for the device.
+The arrays with initialization data of PLLs can be moved to initconst
+section because they are referenced only from other initconst-level
+symbols.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-Changes for v5:
-	- Added this patch
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-Changes for v9:
-	- None
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 9d746c6..8724cf1 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -191,6 +191,12 @@
- 			clocks = <&sysclk>;
- 		};
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index f202a51ff99b..5993bd5ac6ba 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -693,7 +693,7 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+  * ATLAS_PLL & APOLLO_PLL & MEM0_PLL & MEM1_PLL & BUS_PLL & MFC_PLL
+  * & MPHY_PLL & G3D_PLL & DISP_PLL & ISP_PLL
+  */
+-static const struct samsung_pll_rate_table exynos5443_pll_rates[] = {
++static const struct samsung_pll_rate_table exynos5443_pll_rates[] __initconst = {
+ 	PLL_35XX_RATE(2500000000U, 625, 6,  0),
+ 	PLL_35XX_RATE(2400000000U, 500, 5,  0),
+ 	PLL_35XX_RATE(2300000000U, 575, 6,  0),
+@@ -744,7 +744,7 @@ static const struct samsung_pll_rate_table exynos5443_pll_rates[] = {
+ };
  
-+		dcfg: dcfg@1e00000 {
-+			compatible = "fsl,ls2080a-dcfg", "syscon";
-+			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
-+		};
-+
- 		serial0: serial@21c0500 {
- 			compatible = "fsl,ns16550", "ns16550a";
- 			reg = <0x0 0x21c0500 0x0 0x100>;
+ /* AUD_PLL */
+-static const struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
++static const struct samsung_pll_rate_table exynos5443_aud_pll_rates[] __initconst = {
+ 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
+ 	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
+ 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
 -- 
-2.1.0.27.g96db324
+1.9.1
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
