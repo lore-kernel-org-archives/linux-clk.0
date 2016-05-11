@@ -1,75 +1,39 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, James
- Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v8 08/10] reset: mediatek: Add MT2701 reset driver
-Date: Tue, 17 May 2016 13:05:09 +0800
-Message-ID: <1463461511-25019-9-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 23/27] dt-bindings: clock: Add I2C, HSI2C and RTC clock
+ IDs to Exynos5410
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+ <1462910970-1812-24-git-send-email-krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <ee0b3b8f-d499-c735-1b46-1710e2e91b59@osg.samsung.com>
+Date: Wed, 11 May 2016 08:31:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+In-Reply-To: <1462910970-1812-24-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+Hello Krzysztof,
 
-In infrasys and perifsys, there are many reset
-control bits for kinds of modules. These bits are
-used as actual reset controllers to be registered
-into kernel's generic reset controller framework.
+On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
+> Add IDs for I2C, USI (HSI2C) and RTC clocks to Exynos5410. Use the same
+> number as for Exynos5420 just in case in future these drivers were
+> merged.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/mediatek/clk-mt2701-hif.c | 2 ++
- drivers/clk/mediatek/clk-mt2701.c     | 4 ++++
- 2 files changed, 6 insertions(+)
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-index 3f6cea2..28014bf 100644
---- a/drivers/clk/mediatek/clk-mt2701-hif.c
-+++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-@@ -55,6 +55,8 @@ static void mtk_hifsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 1, 0x34);
- }
- 
- static const struct of_device_id of_match_clk_mt2701_hif[] = {
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 08a2954..b3cde20 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -791,6 +791,8 @@ static void mtk_infrasys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x30);
- }
- 
- static const struct mtk_gate_regs peri0_cg_regs = {
-@@ -911,6 +913,8 @@ static void mtk_pericfg_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x0);
- }
- 
- #define MT8590_PLL_FMAX		(2000 * MHZ)
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
