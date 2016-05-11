@@ -1,155 +1,154 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH 3/3] clk: samsung: exynos5433: add CPU clocks configuration
- data and instantiate CPU clocks
-Date: Tue, 24 May 2016 15:19:17 +0200
-Message-id: <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1462937186.16584.77.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Yangbo Lu <yangbo.lu@nxp.com>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>
+Date: Tue, 10 May 2016 22:26:26 -0500
+In-Reply-To: <5159406.HOFrj7pRfW@wuerfel>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+	 <4448030.Zs8fVnr3nm@wuerfel>
+	 <HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+	 <5159406.HOFrj7pRfW@wuerfel>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for
+ T4240-R1.0-R2.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the CPU clocks configuration data and instantiate the CPU clocks
-type for Exynos5433.
+On Thu, 2016-05-05 at 13:10 +0200, Arnd Bergmann wrote:
+> On Thursday 05 May 2016 09:41:32 Yangbo Lu wrote:
+> > > -----Original Message-----
+> > > From: Arnd Bergmann [mailto:arnd@arndb.de]
+> > > Sent: Thursday, May 05, 2016 4:32 PM
+> > > To: linuxppc-dev@lists.ozlabs.org
+> > > Cc: Yangbo Lu; linux-mmc@vger.kernel.org; devicetree@vger.kernel.org;
+> > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> > > linux-clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
+> > > foundation.org; netdev@vger.kernel.org; Mark Rutland;
+> > > ulf.hansson@linaro.org; Russell King; Bhupesh Sharma; Joerg Roedel;
+> > > Santosh Shilimkar; Yang-Leo Li; Scott Wood; Rob Herring; Claudiu Manoil;
+> > > Kumar Gala; Xiaobo Xie; Qiang Zhao
+> > > Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-
+> > > R1.0-R2.0
+> > > 
+> > > On Thursday 05 May 2016 11:12:30 Yangbo Lu wrote:
+> > > > IIRC, it is the same IP block as i.MX and Arnd's point is this won't
+> > > > even compile on !PPC. It is things like this that prevent sharing the
+> > > > driver.
+> > 
+> > The whole point of using the MMIO SVR instead of the PPC SPR is so that
+> > it will work on ARM...  The guts driver should build on any platform as
+> > long as OF is enabled, and if it doesn't find a node to bind to it will
+> > return 0 for SVR, and the eSDHC driver will continue (after printing an
+> > error that should be removed) without the ability to test for errata
+> > based on SVR.
+> 
+> It feels like a bad design to have to come up with a different
+> method for each SoC type here when they all do the same thing
+> and want to identify some variant of the chip to do device
+> specific quirks.
+> 
+> As far as I'm concerned, every driver in drivers/soc that needs to
+> export a symbol to be used by a device driver is an indication that
+> we don't have the right set of abstractions yet. There are cases
+> that are not worth abstracting because the functionality is rather
+> obscure and only a couple of drivers for one particular chip
+> ever need it.
+> 
+> Finding out the version of the SoC does not look like this case.
 
-Cc: Kukjin Kim <kgene@kernel.org>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 72 ++++++++++++++++++++++++++++++++----
- 1 file changed, 64 insertions(+), 8 deletions(-)
+I'm open to new ways of abstracting this, but can that please be discussed
+after these patches are merged?  This patchset is fixing a problem, the
+existing abstraction is unappealing and not widely adopted, a new abstraction
+is not ready, and we're only touching code for our hardware.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 6dd81ed..9ff6160 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -16,6 +16,7 @@
- #include <dt-bindings/clock/exynos5433.h>
- 
- #include "clk.h"
-+#include "clk-cpu.h"
- #include "clk-pll.h"
- 
- /*
-@@ -3509,7 +3510,8 @@ static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
- static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
- 	/* MUX_SEL_APOLLO0 */
- 	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
--			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT, 0),
-+			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT |
-+			CLK_RECALC_NEW_RATES, 0),
- 
- 	/* MUX_SEL_APOLLO1 */
- 	MUX(CLK_MOUT_BUS_PLL_APOLLO_USER, "mout_bus_pll_apollo_user",
-@@ -3590,9 +3592,27 @@ static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
- 			ENABLE_SCLK_APOLLO, 3, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_HPM_APOLLO, "sclk_hpm_apollo", "div_sclk_hpm_apollo",
- 			ENABLE_SCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
--	GATE(CLK_SCLK_APOLLO, "sclk_apollo", "div_apollo2",
--			ENABLE_SCLK_APOLLO, 0,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+};
-+
-+#define E5433_APOLLO_DIV0(cntclk, pclk_dbg, atclk, pclk, aclk) \
-+		(((cntclk) << 24) | ((pclk_dbg) << 20) | ((atclk) << 16) | \
-+		 ((pclk) << 12) | ((aclk) << 8))
-+
-+#define E5433_APOLLO_DIV1(hpm, copy) \
-+		(((hpm) << 4) | ((copy) << 0))
-+
-+static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst = {
-+	{ 1300000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{ 1200000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{ 1100000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{ 1000000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{  900000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{  800000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{  700000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
-+	{  600000, E5433_APOLLO_DIV0(3, 7, 7, 7, 1), E5433_APOLLO_DIV1(7, 1), },
-+	{  500000, E5433_APOLLO_DIV0(3, 7, 7, 7, 1), E5433_APOLLO_DIV1(7, 1), },
-+	{  400000, E5433_APOLLO_DIV0(3, 7, 7, 7, 1), E5433_APOLLO_DIV1(7, 1), },
-+	{  0 },
- };
- 
- static void __init exynos5433_cmu_apollo_init(struct device_node *np)
-@@ -3620,6 +3640,12 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
- 				 ARRAY_SIZE(apollo_div_clks));
- 	samsung_clk_register_gate(ctx, apollo_gate_clks,
- 				  ARRAY_SIZE(apollo_gate_clks));
-+
-+	exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
-+		mout_apollo_p[0], mout_apollo_p[1], 0x200,
-+		exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
-+		CLK_CPU_HAS_E5433_REGS_LAYOUT);
-+
- 	samsung_clk_sleep_init(reg_base, apollo_clk_regs,
- 			       ARRAY_SIZE(apollo_clk_regs));
- 
-@@ -3707,7 +3733,8 @@ static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
- static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
- 	/* MUX_SEL_ATLAS0 */
- 	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
--			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT, 0),
-+			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT |
-+			CLK_RECALC_NEW_RATES, 0),
- 
- 	/* MUX_SEL_ATLAS1 */
- 	MUX(CLK_MOUT_BUS_PLL_ATLAS_USER, "mout_bus_pll_atlas_user",
-@@ -3814,9 +3841,32 @@ static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
- 			ENABLE_SCLK_ATLAS, 2, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ATCLK, "atclk", "div_atclk_atlas",
- 			ENABLE_SCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
--	GATE(CLK_SCLK_ATLAS, "sclk_atlas", "div_atlas2",
--			ENABLE_SCLK_ATLAS, 0,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+};
-+
-+#define E5433_ATLAS_DIV0(cntclk, pclk_dbg, atclk, pclk, aclk) \
-+		(((cntclk) << 24) | ((pclk_dbg) << 20) | ((atclk) << 16) | \
-+		 ((pclk) << 12) | ((aclk) << 8))
-+
-+#define E5433_ATLAS_DIV1(hpm, copy) \
-+		(((hpm) << 4) | ((copy) << 0))
-+
-+static const struct exynos_cpuclk_cfg_data exynos5433_atlasclk_d[] __initconst = {
-+	{ 1900000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1800000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1700000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1600000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1500000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1400000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1300000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1200000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1100000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
-+	{ 1000000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
-+	{  900000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
-+	{  800000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
-+	{  700000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
-+	{  600000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
-+	{  500000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
-+	{  0 },
- };
- 
- static void __init exynos5433_cmu_atlas_init(struct device_node *np)
-@@ -3844,6 +3894,12 @@ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
- 				 ARRAY_SIZE(atlas_div_clks));
- 	samsung_clk_register_gate(ctx, atlas_gate_clks,
- 				  ARRAY_SIZE(atlas_gate_clks));
-+
-+	exynos_register_cpu_clock(ctx, CLK_SCLK_ATLAS, "atlasclk",
-+		mout_atlas_p[0], mout_atlas_p[1], 0x200,
-+		exynos5433_atlasclk_d, ARRAY_SIZE(exynos5433_atlasclk_d),
-+		CLK_CPU_HAS_E5433_REGS_LAYOUT);
-+
- 	samsung_clk_sleep_init(reg_base, atlas_clk_regs,
- 			       ARRAY_SIZE(atlas_clk_regs));
- 
--- 
-1.9.1
+Oh, and the existing abstraction isn't even "existing".  I don't see any
+examples where soc_device is being used like this -- or even any way for a
+driver (the one consuming the information, not the soc "driver") to get a
+reference to the soc_device that's been registered short of searching for the
+device object by name -- and you're asking for new functionality in
+drivers/base/soc.c.
+
+> > > I think the first four patches take care of building for ARM,
+> > > but the problem remains if you want to enable COMPILE_TEST as
+> > > we need for certain automated checking.
+> > 
+> > What specific problem is there with COMPILE_TEST?
+> 
+> COMPILE_TEST is solvable here and the way it is implemented in this
+> case (selecting FSL_GUTS from the driver) indeed looks like it works
+> correctly, but it's still awkward that this means building the
+> SoC specific ID stuff into the vmlinux binary for any driver that
+> uses something like that for a particular SoC.
+
+Please keep in mind that this is a Freescale-specific driver... it's not as if
+we're attaching this dependency to common SDHCI code.
+
+> 
+> > > > Dealing with Si revs is a common problem. We should have a
+> > > > common solution. There is soc_device for this purpose.
+> > > 
+> > > Exactly. The last time this came up, I think we agreed to implement a
+> > > helper using glob_match() on the soc_device strings. Unfortunately
+> > > this hasn't happened then, but I'd still prefer that over yet another
+> > > vendor-specific way of dealing with the generic issue.
+> > 
+> > soc_device would require encoding the SVR as a string and then decoding
+> > the string, which is more complicated and error prone than having
+> > platform-specific code test a platform-specific number. 
+> 
+> You already need to encode it as a string to register the soc_device,
+
+No we don't, because we don't already register a soc_device on arm64 or ppc
+(and it looks like whatever does get registered on at least some relevant
+arm32 chips is not particularly useful).
+
+> and the driver just needs to pass a glob string, so the only part that
+> is missing is the generic function that takes the string from the
+> driver and passes that to glob_match for the soc_device.
+
+"just"
+
+And what would the glob look like?
+
+I'd rather not write kernel code as if it were a shell/Perl script.
+
+> > And when would it get registered on arm64, which doesn't have
+> > platform code?
+> 
+> Whenever the soc driver is loaded, as is the case now. The match
+> function can return -EPROBE_DEFER if no SoC device is registered
+> yet.
+
+That's too late for some places where we need access to SVR, e.g. clock
+drivers (which use CLK_OF_DECLARE and are initialized very early, not as part
+of the driver model and thus can't defer).  Currently we have an #ifdef
+CONFIG_PPC for this in drivers/clk/clk-qoriq.c... Maybe we should have done
+that here as well, and saved some grief. :-)  At least until an erratum pops
+up on an ARM-based chip.
+
+And what happens if we're running on arm32, and thus the arch code already
+registered an soc_device with a different (and less useful) encoding?
+
+-Scott
