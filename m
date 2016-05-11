@@ -1,56 +1,116 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	zhengxing@rock-chips.com,
-	zhangqing@rock-chips.com,
-	tomeu.vizoso@collabora.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [RFC PATCH 3/3] clk: rockchip: make rk3399 vop dclks keep their rate on parent rate changes
-Date: Mon,  2 May 2016 18:36:22 +0200
-Message-Id: <1462206982-10444-4-git-send-email-heiko@sntech.de>
-In-Reply-To: <1462206982-10444-1-git-send-email-heiko@sntech.de>
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:52495 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751397AbcEKKel (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 06:34:41 -0400
+Message-ID: <1462962874.2924.20.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 12/21] reset: uniphier: add core support for
+ UniPhier reset driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Date: Wed, 11 May 2016 12:34:34 +0200
+In-Reply-To: <CAK7LNASpxbW81A7YGQuAqmBdBty4BC6Z8sko8YepXOPnVqSjAQ@mail.gmail.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	 <1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
+	 <1462888497.9155.9.camel@pengutronix.de>
+	 <CAK7LNASpxbW81A7YGQuAqmBdBty4BC6Z8sko8YepXOPnVqSjAQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3399 hdmi phy is supplied by the vpll directly and needs to adapt
-that frequency depending on the selected resolution on the hdmi output.
-For the hdmi-phy the vpll frequency is supplied unchanged without
-any dividers being present there.
+Am Mittwoch, den 11.05.2016, 11:46 +0900 schrieb Masahiro Yamada:
+> Hi Philipp,
+> 
+> 
+> 2016-05-10 22:54 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> > Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
+> > [...]
+> >> +static int uniphier_reset_update(struct reset_controller_dev *rcdev,
+> >> +                              unsigned long id, bool assert)
+> >> +{
+> >> +     struct uniphier_reset_priv *priv = to_uniphier_reset_priv(rcdev);
+> >> +     const struct uniphier_reset_data *p;
+> >> +     bool handled = false;
+> >> +
+> >> +     for (p = priv->data; p->id != UNIPHIER_RESET_ID_END; p++) {
+> >> +             unsigned int val;
+> >> +             int ret;
+> >> +
+> >> +             if (p->id != id)
+> >> +                     continue;
+> >> +
+> >> +             val = p->deassert_val;
+> >> +             if (assert)
+> >> +                     val = ~val;
+> >> +
+> >> +             ret = regmap_write_bits(priv->regmap, p->reg, p->mask, val);
+> >
+> > What is the difference between mask and deassert_val? Couldn't you just
+> > assign
+> >         val = assert ? 0 : p->mask;
+> > ?
+> 
+> 
+> I need to handle both active-high resets and active-low resets.
 
-The vpll also is one of the sources the general display clock of the
-visual output processor (vop) and as it is somewhat special for
-display operations possibly also the preferred pll source. Here a divider
-is available between the pll-mux and the vop clock, so that this part
-can adapt the resulting frequency if needed.
+I see. I hadn't seen any active-high resets in your lists yet. If you
+need them, you obviously can't simplify this much.
 
-So to keep the vop clock in line with the target rate, set the newly
-introduced CLK_KEEP_REQ_RATE flag for the dclk_vop clocks on rk3399.
+> I thought two ways to do that.
+> 
+> 
+> [1] Have mask and a flag indicating active-low/active-high,
+>     like follows:
+> 
+>      if (flag & UNIPHIER_RST_ACTIVE_LOW)
+>           assert = !assert;
+>      val = assert ? 0 : p->mask;
+> 
+> [2] Have mask and deassert_val as in this patch
+>
+> [1] cannot manage a case where one register contains
+> active-low bits and active-high bits mixed in it.
+> 
+> 
+> 
+> For example, let's say reset bits are BIT(1) and BIT(0).
+> 
+> [2] can solve this case as follows:
+> 
+> (a) If both bit1 and bit0 are active-high.
+>      .mask = BIT(1) | BIT(0);
+>      .deassert_val = 0;
+> 
+> (b) If bit1 is active-high and bit0 is active-low
+>      .mask = BIT(1) | BIT(0);
+>      .deassert_val =  BIT(0);
+> 
+> (c) If bit1 is active-low and bit0 is active-high
+>      .mask = BIT(1) | BIT(0);
+>      .deassert_val =  BIT(1);
+> 
+> (d) If both bit1 and bit0 are active-low
+>      .mask = BIT(1) | BIT(0);
+>      .deassert_val = BIT(1) | BIT(0);
+> 
+> 
+> I have not been hit by such a complicated case though.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In general it is a good idea not to add complexity for theoretical
+cases, on the other hand [1] isn't really much less complex. Can I ask
+you to invert the logic, though, and use assert_val instead?
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 5248726..4462a50 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -277,11 +277,11 @@ static struct rockchip_clk_branch rk3399_uart4_pmu_fracmux __initdata =
- 			RK3399_PMU_CLKSEL_CON(5), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rk3399_dclk_vop0_fracmux __initdata =
--	MUX(DCLK_VOP0, "dclk_vop0", mux_dclk_vop0_p, CLK_SET_RATE_PARENT,
-+	MUX(DCLK_VOP0, "dclk_vop0", mux_dclk_vop0_p, CLK_SET_RATE_PARENT | CLK_KEEP_REQ_RATE,
- 			RK3399_CLKSEL_CON(49), 11, 1, MFLAGS);
- 
- static struct rockchip_clk_branch rk3399_dclk_vop1_fracmux __initdata =
--	MUX(DCLK_VOP1, "dclk_vop1", mux_dclk_vop1_p, CLK_SET_RATE_PARENT,
-+	MUX(DCLK_VOP1, "dclk_vop1", mux_dclk_vop1_p, CLK_SET_RATE_PARENT | CLK_KEEP_REQ_RATE,
- 			RK3399_CLKSEL_CON(50), 11, 1, MFLAGS);
- 
- static struct rockchip_clk_branch rk3399_pmuclk_wifi_fracmux __initdata =
--- 
-2.8.0.rc3
+regards
+Philipp
+
