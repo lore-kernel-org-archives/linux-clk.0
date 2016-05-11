@@ -1,83 +1,70 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 9 May 2016 07:25:00 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v2] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Message-ID: <20160509052500.GB18753@ulmo.ba.sec>
-References: <1462566015-12306-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
-In-Reply-To: <1462566015-12306-1-git-send-email-rklein@nvidia.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 12/18] clk: samsung: exynos5440: Constify all clock initializers
+Date: Wed, 11 May 2016 14:02:08 +0200
+Message-id: <1462968134-6085-12-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+All of initialization data can be made const.
 
---p4qYPpj5QlsIQJ0K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5440.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-On Fri, May 06, 2016 at 04:20:15PM -0400, Rhyland Klein wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
->=20
-> Move the UTMIPLL initialization code from the clk-tegra<chip>.c
-> files into clk-pll.c and perform the initialization sequence when
-> PLLU is enabled.
->=20
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->=20
-> [rklein: Merged in some later fixes for potential deadlocks]
->=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
-> v2:
->  - Swapped out __clk_lookup for 2 calls to clk_hw_get_parent
->=20
->  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->  drivers/clk/tegra/clk.h          |  17 ++
->  6 files changed, 510 insertions(+), 597 deletions(-)
-
-The commit message should mention *why* this change is necessary. It's
-fairly obvious what you're doing by looking at the code, but the commit
-message is an opportunity to let others know why this is necessary or
-worthwhile. Does it fix a bug? Is this clean up? It seems important to
-me when you say "perform the initialization sequence when PLLU is
-enabled", but as it is I don't understand why.
-
-Thierry
-
---p4qYPpj5QlsIQJ0K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXMB8rAAoJEN0jrNd/PrOh228QAI1zVCq1KCgkMTY2+uxwLvPL
-TCYfnmFbbplz5k/curXpGQHE4MFixqWSAhqlR/tPniUXgqJg7fFbYnc+KCCTU0Fe
-Kyp+NkOXt54k5B5WGDp1SfRBCX5F2VkHhJLpjzGBKEC+4+D+ZAB8uWt0kOOfFEaR
-XKm8ViwiaRcwCbNuET7HjY5gBr/llxE+0diXizwmmJe9a7jJzb1nVtfi7ecaHv5a
-nZl1zoQ6by6Q5MRLedp2DGGw/m14ktjwUEUDoce0RMssTqFmvp1vsZBg1pJIYwoK
-NSHaN7dBrPmwKq+ZL51nt9iO0ww3QzuEABHon7reUYrT7USguP1mAwJcTvoOeywZ
-8qR1i9rms7EwJDjEk5Yw71X1MnzJwA1/0GtHlxXZ/2kd1CJ+j8BXZ+0rq4rXJnFd
-J2mFcridjklPY0m6geMpJdsufFStatIR9WBqE/WA6XYqXrzsfv69KJSHDYehl5UA
-RFv1HExRPdP0NFG1qnscJGW2ZjDlcYxudW1MunZCaMTPn+nveGheWduZfVXgKloE
-0lcp+RrUGtnJooiQkZNSt9eFN1QeGRkVWg/h25THe0Hhx2allUthQ3Sa3GpbzxA7
-SdkOHnWA5Pu0v/PQwumX0qJRh4w4rv1XMTOE7ZdIVBss0+7ybfJyBhQXN/8C9YwM
-t1JGd6IAJoJ3ZZCSnwOC
-=1AE6
------END PGP SIGNATURE-----
-
---p4qYPpj5QlsIQJ0K--
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index c57cff1e1798..f4fbe00b2a5b 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -35,7 +35,7 @@ static struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initda
+ };
+ 
+ /* fixed rate clocks */
+-static struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
++static const struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initconst = {
+ 	FRATE(0, "ppll", NULL, 0, 1000000000),
+ 	FRATE(0, "usb_phy0", NULL, 0, 60000000),
+ 	FRATE(0, "usb_phy1", NULL, 0, 60000000),
+@@ -44,26 +44,26 @@ static struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata =
+ };
+ 
+ /* fixed factor clocks */
+-static struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
++static const struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initconst = {
+ 	FFACTOR(0, "div250", "ppll", 1, 4, 0),
+ 	FFACTOR(0, "div200", "ppll", 1, 5, 0),
+ 	FFACTOR(0, "div125", "div250", 1, 2, 0),
+ };
+ 
+ /* mux clocks */
+-static struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
++static const struct samsung_mux_clock exynos5440_mux_clks[] __initconst = {
+ 	MUX(0, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
+ 	MUX_A(CLK_ARM_CLK, "arm_clk", mout_armclk_p,
+ 			CPU_CLK_STATUS, 0, 1, "armclk"),
+ };
+ 
+ /* divider clocks */
+-static struct samsung_div_clock exynos5440_div_clks[] __initdata = {
++static const struct samsung_div_clock exynos5440_div_clks[] __initconst = {
+ 	DIV(CLK_SPI_BAUD, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
+ };
+ 
+ /* gate clocks */
+-static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
++static const struct samsung_gate_clock exynos5440_gate_clks[] __initconst = {
+ 	GATE(CLK_PB0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
+ 	GATE(CLK_PR0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
+ 	GATE(CLK_PR1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
+-- 
+1.9.1
