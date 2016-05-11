@@ -1,133 +1,119 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20160523170129.GB27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-8-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v661dvdPKj9DWL7LWGgiDCEk7G-a_7jv5gb+KBMoWbR8Lg@mail.gmail.com> <20160523170129.GB27618@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 24 May 2016 17:01:46 +0800
-Message-ID: <CAGb2v641TqdnDLAET7NPFsAgB4d4aroCWOw8G85pbOJhNs-Rnw@mail.gmail.com>
-Subject: Re: [PATCH 07/16] clk: sunxi-ng: Add phase clock support
+Return-Path: <moinejf@free.fr>
+Date: Wed, 11 May 2016 10:45:56 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Vishnu Patekar
+ <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
+ Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 13/16] clk: sunxi-ng: Add N-K-M Factor clock
+Message-Id: <20160511104556.037a2c17e3a6a0503a26fbf0@free.fr>
+In-Reply-To: <1462737711-10017-14-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1462737711-10017-14-git-send-email-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 24, 2016 at 1:01 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Sun, May 22, 2016 at 12:43:48AM +0800, Chen-Yu Tsai wrote:
->> > +static int ccu_phase_set_phase(struct clk_hw *hw, int degrees)
->> > +{
->> > +       struct ccu_phase *phase = hw_to_ccu_phase(hw);
->> > +       struct clk_hw *parent, *pparent;
->> > +       unsigned int parent_rate, pparent_rate;
->>
->> grandparent(_rate) would be easier to understand.
->
-> Ack.
->
->>
->> > +       unsigned long flags;
->> > +       u32 reg;
->> > +       u8 delay;
->> > +
->> > +       /* Get our parent clock, it's the one that can adjust its rate */
->> > +       parent = clk_hw_get_parent(hw);
->> > +       if (!parent)
->> > +               return -EINVAL;
->> > +
->> > +       /* And its rate */
->> > +       parent_rate = clk_hw_get_rate(parent);
->> > +       if (!parent_rate)
->> > +               return -EINVAL;
->> > +
->> > +       /* Now, get our parent's parent (most likely some PLL) */
->> > +       pparent = clk_hw_get_parent(parent);
->> > +       if (!pparent)
->> > +               return -EINVAL;
->> > +
->> > +       /* And its rate */
->> > +       pparent_rate = clk_hw_get_rate(pparent);
->> > +       if (!pparent_rate)
->> > +               return -EINVAL;
->> > +
->> > +       if (degrees != 180) {
->> > +               u16 step, parent_div;
->> > +
->> > +               /* Get our parent divider */
->> > +               parent_div = pparent_rate / parent_rate;
->> > +
->> > +               /*
->> > +                * We can only outphase the clocks by multiple of the
->> > +                * PLL's period.
->> > +                *
->> > +                * Since our parent clock is only a divider, and the
->> > +                * formula to get the outphasing in degrees is deg =
->> > +                * 360 * delta / period
->> > +                *
->> > +                * If we simplify this formula, we can see that the
->> > +                * only thing that we're concerned about is the number
->> > +                * of period we want to outphase our clock from, and
->> > +                * the divider set by our parent clock.
->> > +                */
->> > +               step = DIV_ROUND_CLOSEST(360, parent_div);
->> > +               delay = DIV_ROUND_CLOSEST(degrees, step);
->>
->> Doesn't this mean some delay values are impossible to set?
->>
->> For instance, for PLL = 600 MHz and this clock = 50 MHz, div would be 12,
->> and a step would be 30 degrees. This means we can't ask for a delay of 6,
->> which is 180 degrees.
->>
->> For PLL = 600 MHz, clock = 100 MHz, div would be 6, and a step is 60
->> degrees. Therefor we can't ask for a delay of 3.
->
-> You don't ask for a delay, you ask for an outphasing in degrees. In
-> the hardware, in the register 0 means an outphasing of 180 degrees
-> (and this has been confirmed by Allwinner a while back). In the two
-> cases you point out, we would have two ways of achieving the same
-> thing, we prefer one over another, but I don't see how it's
-> problematic.
+On Sun,  8 May 2016 22:01:48 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-I guess I find the outphasing degrees not being increasing somewhat
-odd...
+> Introduce support for clocks that multiply and divide using two linear
+> multipliers and one linear divider.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/Makefile  |   1 +
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 144 +++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/sunxi-ng/ccu_nkm.h |  42 ++++++++++++
+>  3 files changed, 187 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index fba64c7f4fcd..2bb8bc22e907 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -8,6 +8,7 @@ obj-y +=3D ccu_m.o
+>  obj-y +=3D ccu_mp.o
+>  obj-y +=3D ccu_mux.o
+>  obj-y +=3D ccu_nk.o
+> +obj-y +=3D ccu_nkm.o
+>  obj-y +=3D ccu_nm.o
+>  obj-y +=3D ccu_p.o
+>  obj-y +=3D ccu_phase.o
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nk=
+m.c
+> new file mode 100644
+> index 000000000000..9019c7f6988c
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+	[snip]
+> @@ -0,0 +1,144 @@
+> +/*
+> + * Copyright (C) 2016 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/rational.h>
+> +
+> +#include "ccu_gate.h"
+> +#include "ccu_nkm.h"
+> +
+> +void ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+> +		       unsigned long max_n, unsigned long max_k, unsigned long max_m,
+> +		       unsigned long *n, unsigned long *k, unsigned long *m)
 
-> It's also a direct copy of the current code we have, which didn't
-> raise any objection, or had any known bugs.
+Should be static
 
-I had a hard time wrapping this around my head when I was working on
-the MMC DDR stuff. Allwinner's code directly asks for a delay, not a
-outphasing. I just checked and it seems I converted some values
-incorrectly. I need to do some more tests for the A80...
+	[snip]
 
-Thanks for the explanation.
+> +static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			   unsigned long parent_rate)
+> +{
+> +	struct ccu_nkm *nkm =3D hw_to_ccu_nkm(hw);
+> +	unsigned long n, k, m;
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	ccu_nkm_find_best(parent_rate, rate, 1 << nkm->n.width,
+> +			  1 << nkm->k.width, 1 << nkm->m.width,
+> +			  &n, &k, &m);
+> +
+> +	spin_lock_irqsave(nkm->common.lock, flags);
+> +
+> +	reg =3D readl(nkm->common.base + nkm->common.reg);
+> +	reg &=3D ~GENMASK(nkm->n.width + nkm->n.shift, nkm->n.shift);
+> +	reg &=3D ~GENMASK(nkm->k.width + nkm->k.shift, nkm->k.shift);
+> +	reg &=3D ~GENMASK(nkm->m.width + nkm->m.shift, nkm->m.shift);
+> +
+> +	reg |=3D (n - 1) << nkm->m.shift;
+> +	reg |=3D (k - 1) << nkm->m.shift;
+> +	reg |=3D (m - 1) << nkm->m.shift;
 
+	reg |=3D (n - 1) << nkm->n.shift;
+	reg |=3D (k - 1) << nkm->k.shift;
 
-Regards
-ChenYu
+> +
+> +	writel(reg, nkm->common.base + nkm->common.reg);
+> +
+> +	spin_unlock_irqrestore(nkm->common.lock, flags);
+> +
+> +	ccu_helper_wait_for_lock(&nkm->common, nkm->lock);
+> +
+> +	return 0;
+> +}
+	[snip]
 
->
->> > +struct ccu_phase {
->> > +       u8                      shift;
->> > +       u8                      width;
->>
->> Not sure why you used struct ccu_factor in the divider table clock,
->> but separate fields directly in ccu_phase here.
->
-> Because this is not meant for the same thing. ccu_factor is probably
-> going to go away anyway because of the dividers consolidation.
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
