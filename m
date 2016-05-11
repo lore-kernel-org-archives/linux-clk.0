@@ -1,47 +1,54 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 15/22] ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
-Date: Sun,  8 May 2016 21:06:00 +0200
-Message-Id: <1462734367-5619-16-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:41531 "EHLO
+	conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751076AbcEKBwP (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 21:52:15 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160510112622.GL19473@dell>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	<1462873862-30940-2-git-send-email-yamada.masahiro@socionext.com>
+	<20160510112622.GL19473@dell>
+Date: Wed, 11 May 2016 10:51:51 +0900
+Message-ID: <CAK7LNATmuN647=avdqAMahLU+9Bq4m4TkXe5f7q=pi8m=UrXBg@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/21] mfd: uniphier: add UniPhier MFD driver
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jiri Slaby <jslaby@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-clk@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2c-arbitrator node in exynos5250-snow-common used absolute path to
-reference other node (the i2c parent). Use phandle instead, because the
-depth of the other node may be changed (like moving it under 'soc'
-node).
+Hi Lee,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+2016-05-10 20:26 GMT+09:00 Lee Jones <lee.jones@linaro.org>:
+>> +};
+>> +MODULE_DEVICE_TABLE(of, uniphier_mfd_match);
+>
+> NACK.  Please do not mix MFD and DT registration.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index ddfe1f558c10..419d59da1751 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -61,7 +61,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		i2c-parent = <&{/i2c@12CA0000}>;
-+		i2c-parent = <&i2c_4>;
- 
- 		our-claim-gpio = <&gpf0 3 GPIO_ACTIVE_LOW>;
- 		their-claim-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
+OK, thanks for review.
+
+
+My basic thought was:
+
+  - Add an MFD node to my DTS only once.
+    If I need to expand it in the future, I will just
+    need to modify drivers/mtd/uniphier-mfd.c.
+    It is just kernel-internal modification, so it does not
+    bother DT binding at all.
+
+  - Simplify the node topology of DTS.
+
 -- 
-2.5.0
+Best Regards
+Masahiro Yamada
