@@ -1,57 +1,46 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH 4/5] clk: hisilicon: add hisi_clk_unregister_* functions
-Date: Tue, 10 May 2016 17:19:12 +0800
-Message-ID: <1462871953-26606-5-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 11 May 2016 11:40:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL] i.MX clock fixes for 4.6, take 2
+Message-ID: <20160511184023.GE3492@codeaurora.org>
+References: <20160503133605.GN5874@tiger>
+ <20160506180217.GW3492@codeaurora.org>
+ <20160511121512.GP5874@tiger>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160511121512.GP5874@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add hisi_clk_unregister_* functions.
+On 05/11, Shawn Guo wrote:
+> On Fri, May 06, 2016 at 11:02:17AM -0700, Stephen Boyd wrote:
+> > On 05/03, Shawn Guo wrote:
+> > > The following changes since commit 7196c52c9377df0175b510ff5896bda524f7345e:
+> > > 
+> > >   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6-2
+> > > 
+> > > for you to fetch changes up to 3397c2c45b1b6f54834dfeae30a73046f33ca943:
+> > > 
+> > >   ARM: dts: imx35: restore existing used clock enumeration (2016-04-18 12:37:21 +0800)
+> > > 
+> > > ----------------------------------------------------------------
+> > > The i.MX clock fixes for 4.6, take 2:
+> > >  - Fix the commit 3713e3f5e927 ("clk: imx35: define two clocks for rtc")
+> > >    which messed up the clock enumeration when adding new clock.
+> > 
+> > This commit wasn't introduced in this merge window, so I'm going
+> > to pull this into clk-next unless you have some justification.
+> 
+> That's fine.  Thanks, Stephen.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
----
- drivers/clk/hisilicon/clk.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Thanks. Pulled into clk-next.
 
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 2575329..4e1d1af 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -128,4 +128,25 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
- 				int, struct hisi_clock_data *);
-+
-+#define hisi_clk_unregister(type) \
-+static inline \
-+void hisi_clk_unregister_##type(const struct hisi_##type##_clock *clks, \
-+				int nums, struct hisi_clock_data *data) \
-+{ \
-+	struct clk **clocks = data->clk_data.clks; \
-+	int i; \
-+	for (i = 0; i < nums; i++) { \
-+		int id = clks[i].id; \
-+		if (clocks[id])  \
-+			clk_unregister_##type(clocks[id]); \
-+	} \
-+}
-+
-+hisi_clk_unregister(fixed_rate)
-+hisi_clk_unregister(fixed_factor)
-+hisi_clk_unregister(mux)
-+hisi_clk_unregister(divider)
-+hisi_clk_unregister(gate)
-+
- #endif	/* __HISI_CLK_H */
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
