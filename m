@@ -1,94 +1,37 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 07/22] clk: samsung: exynos5410: Rename fin_pll from temporary to regular name
-Date: Sun,  8 May 2016 21:05:52 +0200
-Message-Id: <1462734367-5619-8-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 24/27] clk: samsung: exynos5410: Add I2C, HSI2C and RTC
+ clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+ <1462910970-1812-25-git-send-email-krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <bbe92228-c544-a105-b1b2-82e2563018de@osg.samsung.com>
+Date: Wed, 11 May 2016 08:32:04 -0400
+MIME-Version: 1.0
+In-Reply-To: <1462910970-1812-25-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-For smooth transition of fin_pll to clk-exynos5410.c from fixed-clock
-driver, initially it was named "fin_pll_new". Fix this here.
+Hello Krzysztof,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos5410.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
+> Add clocks for I2C, USI (HSI2C) and RTC to the Exynos5410 clock driver.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 35f2cb36f7ef..a7d714435307 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -59,27 +59,27 @@ enum exynos5410_plls {
- };
- 
- /* list of all parent clocks */
--PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
--PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
--PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
--PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
--PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
-+PNAME(apll_p)		= { "fin_pll", "fout_apll", };
-+PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
-+PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
-+PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
-+PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
- 
- PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
- PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
- 
--PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
--PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
-+PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
-+PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
- PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
- 
--PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
-+PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
- 			"none", "none", "sclk_mpll_bpll",
- 			 "none", "none", "sclk_cpll" };
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock
- 		exynos5x_fixed_rate_ext_clks[] __initdata = {
--	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
-+	FRATE(CLK_FIN_PLL, "fin_pll", NULL, 0, 0),
- };
- 
- static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
-@@ -174,15 +174,15 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- };
- 
- static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
--	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
-+	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
--	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
-+	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
- 		CPLL_CON0, NULL),
--	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
-+	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
- 		MPLL_CON0, NULL),
--	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
-+	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
- 		BPLL_CON0, NULL),
--	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
-+	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
- 		KPLL_CON0, NULL),
- };
- 
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.5.0
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
