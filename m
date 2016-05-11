@@ -1,74 +1,112 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 02/20] clk: multiplier: Prevent the multiplier from under / over flowing
-Date: Mon, 16 May 2016 14:47:02 +0200
-Message-Id: <1463402840-17062-3-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 08/18] clk: samsung: exynos5250: Constify all clock initializers
+Date: Wed, 11 May 2016 14:02:04 +0200
+Message-id: <1462968134-6085-8-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In the current multiplier base clock implementation, if the
-CLK_SET_RATE_PARENT flag isn't set, the code will not make sure that the
-multiplier computed remains within the boundaries of our clock.
+All of initialization data can be made const.
 
-This means that if the clock we want to reach is below the parent rate,
-or if the multiplier is above the maximum that we can reach, we will end up
-with a completely bogus one that the clock cannot achieve.
-
-Fixes: f2e0a53271a4 ("clk: Add a basic multiplier clock")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/clk-multiplier.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos5250.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-index 9e449c7b751c..dc037c957acd 100644
---- a/drivers/clk/clk-multiplier.c
-+++ b/drivers/clk/clk-multiplier.c
-@@ -52,14 +52,28 @@ static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *best_parent_rate,
- 				u8 width, unsigned long flags)
- {
-+	struct clk_multiplier *mult = to_clk_multiplier(hw);
- 	unsigned long orig_parent_rate = *best_parent_rate;
- 	unsigned long parent_rate, current_rate, best_rate = ~0;
- 	unsigned int i, bestmult = 0;
-+	unsigned int maxmult = (1 << width) - 1;
-+
-+	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-+		bestmult = rate / orig_parent_rate;
-+
-+		/* Make sure we don't end up with a 0 multiplier */
-+		if ((bestmult == 0) &&
-+		    !(mult->flags & CLK_MULTIPLIER_ZERO_BYPASS))
-+			bestmult = 1;
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 837197db4ffb..f24001dcfb8a 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -117,7 +117,7 @@ static struct samsung_clk_reg_dump *exynos5250_save;
+  * list of controller registers to be saved and restored during a
+  * suspend/resume cycle.
+  */
+-static unsigned long exynos5250_clk_regs[] __initdata = {
++static const unsigned long exynos5250_clk_regs[] __initconst = {
+ 	SRC_CPU,
+ 	DIV_CPU0,
+ 	PWR_CTRL1,
+@@ -266,23 +266,23 @@ static struct samsung_fixed_rate_clock exynos5250_fixed_rate_ext_clks[] __initda
+ };
  
--	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT))
--		return rate / *best_parent_rate;
-+		/* Make sure we don't overflow the multiplier */
-+		if (bestmult > maxmult)
-+			bestmult = maxmult;
-+
-+		return bestmult;
-+	}
+ /* fixed rate clocks generated inside the soc */
+-static struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initdata = {
++static const struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initconst = {
+ 	FRATE(CLK_SCLK_HDMIPHY, "sclk_hdmiphy", NULL, 0, 24000000),
+ 	FRATE(0, "sclk_hdmi27m", NULL, 0, 27000000),
+ 	FRATE(0, "sclk_dptxphy", NULL, 0, 24000000),
+ 	FRATE(0, "sclk_uhostphy", NULL, 0, 48000000),
+ };
  
--	for (i = 1; i < ((1 << width) - 1); i++) {
-+	for (i = 1; i < maxmult; i++) {
- 		if (rate == orig_parent_rate * i) {
- 			/*
- 			 * This is the best case for us if we have a
+-static struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initdata = {
++static const struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initconst = {
+ 	FFACTOR(0, "fout_mplldiv2", "fout_mpll", 1, 2, 0),
+ 	FFACTOR(0, "fout_bplldiv2", "fout_bpll", 1, 2, 0),
+ };
+ 
+-static struct samsung_mux_clock exynos5250_pll_pmux_clks[] __initdata = {
++static const struct samsung_mux_clock exynos5250_pll_pmux_clks[] __initconst = {
+ 	MUX(0, "mout_vpllsrc", mout_vpllsrc_p, SRC_TOP2, 0, 1),
+ };
+ 
+-static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
++static const struct samsung_mux_clock exynos5250_mux_clks[] __initconst = {
+ 	/*
+ 	 * NOTE: Following table is sorted by (clock domain, register address,
+ 	 * bitfield shift) triplet in ascending order. When adding new entries,
+@@ -378,7 +378,7 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+ 	MUX(0, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
+ };
+ 
+-static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
++static const struct samsung_div_clock exynos5250_div_clks[] __initconst = {
+ 	/*
+ 	 * NOTE: Following table is sorted by (clock domain, register address,
+ 	 * bitfield shift) triplet in ascending order. When adding new entries,
+@@ -470,7 +470,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+ 	DIV(CLK_DIV_I2S2, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
+ };
+ 
+-static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
++static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 	/*
+ 	 * NOTE: Following table is sorted by (clock domain, register address,
+ 	 * bitfield shift) triplet in ascending order. When adding new entries,
+@@ -698,7 +698,7 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 			GATE_IP_ISP1, 7, 0, 0),
+ };
+ 
+-static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
++static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+ 	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
+@@ -707,7 +707,7 @@ static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
+ 	{ },
+ };
+ 
+-static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
++static const struct samsung_pll_rate_table epll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+ 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
+@@ -721,7 +721,7 @@ static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
+ 	{ },
+ };
+ 
+-static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
++static const struct samsung_pll_rate_table apll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_35XX_RATE(rate, m, p, s) */
+ 	PLL_35XX_RATE(1700000000, 425, 6, 0),
 -- 
-2.8.2
+1.9.1
