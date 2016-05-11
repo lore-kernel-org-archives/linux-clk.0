@@ -1,78 +1,354 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, shawn.lin@rock-chips.com, zhengxing@rock-chips.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc card initialization"
-Date: Tue, 17 May 2016 23:56:44 +0200
-Message-ID: <1546506.kPA2J5E1Tb@phil>
-In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
-References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] ARM: clk: Amlogic: Add clk81 clock gates
+Date: Wed, 11 May 2016 20:21:05 +0200
+Message-Id: <1462990865-22651-3-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1462990865-22651-1-git-send-email-serveralex@gmail.com>
+References: <1462990865-22651-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 12. Mai 2016, 11:03:16 schrieb Douglas Anderson:
-> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
-> before mmc card initialization").
-> 
-> Though not totally obvious from the commit message nor from the source
-> code, that commit appears to be trying to reset the "_drv" MMC clocks to
-> 90 degrees (note that the "_sample" MMC clocks have a shift of 0 so are
-> not touched).
-> 
-> The major problem here is that it doesn't properly reset things.  The
-> phase is a two bit field and the commit only touches one of the two
-> bits.  Thus the commit had the following affect:
-> - phase   0  => phase  90
-> - phase  90  => phase  90
-> - phase 180  => phase 270
-> - phase 270  => phase 270
-> 
-> Things get even weirder if you happen to have a bootloader that was
-> actually using delay elements (should be no reason to, but you never
-> know), since those are additional bits that weren't touched by the
-> original patch.
-> 
-> This is unlikely to be what we actually want.  Checking on rk3288-veyron
-> devices, I can see that the bootloader leaves these clocks as:
-> - emmc:  phase 180
-> - sdmmc: phase 90
-> - sdio0: phase 90
-> 
-> Thus on rk3288-veyron devices the commit we're reverting had the effect
-> of changing the eMMC clock to phase 270.  This probably explains the
-> scattered reports I've heard of eMMC devices not working on some veyron
-> devices when using the upstream kernel.
-> 
-> The original commit was presumably made because previously the kernel
-> didn't touch the "_drv" phase at all and relied on whatever value was
-> there when the kernel started.  If someone was using a bootloader that
-> touched the "_drv" phase then, indeed, we should have code in the kernel
-> to fix that.  ...and also, to get ideal timings, we should also have the
-> kernel change the phase depending on the speed mode.  In fact, that's
-> the subject of a recent patch I posted at
-> <https://patchwork.kernel.org/patch/9075141/>.
-> 
-> Ideally, we should take both the patch posted to dw_mmc and this
-> revert.  Since those will likely go through different trees, here I
-> describe behavior with the combos:
-> 
-> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
->    + other cases; might break someone with a strange bootloader that
->    sets the phase to 0 or one that uses delay elements (pretty
->    unpredicable what would happen in that case).
-> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
->    totally override the broken patch and fix everything.
-> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
->    any defaults from the clock code doesn't mattery.
-> 
-> Fixes: 7a03fe6f48f3 ("clk: rockchip: reset init state before mmc card
-> initialization") Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Add the clk81 clock gates and make them configurable via devicetree.
 
-I've tested this revert myself on rk3288-veyron-jerry and rk3288-firefly 
-[everything still works] and have put it temporarily into my clk-fixes branch 
-to hopefully get a report from kernelci for rk3288-rock2, but may drop it 
-again if necessary.
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/meson8b-clkc.c         | 196 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/meson8b-clkc.h |  99 +++++++++++++++-
+ 2 files changed, 293 insertions(+), 2 deletions(-)
 
-
-Heiko
+diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
+index 61f6d55..cb8148c 100644
+--- a/drivers/clk/meson/meson8b-clkc.c
++++ b/drivers/clk/meson/meson8b-clkc.c
+@@ -26,6 +26,9 @@
+ 
+ #define MESON8B_REG_CTL0_ADDR		0x0000
+ #define MESON8B_REG_SYS_CPU_CNTL1	0x015c
++#define MESON8B_REG_HHI_GCLK_MPEG0	0x0140
++#define MESON8B_REG_HHI_GCLK_MPEG1	0x0144
++#define MESON8B_REG_HHI_GCLK_MPEG2	0x0148
+ #define MESON8B_REG_HHI_MPEG		0x0174
+ #define MESON8B_REG_MALI		0x01b0
+ #define MESON8B_REG_PLL_FIXED		0x0280
+@@ -108,6 +111,7 @@ PNAME(p_cpu_clk)	= { "sys_pll" };
+ PNAME(p_clk81)		= { "fclk_div3", "fclk_div4", "fclk_div5" };
+ PNAME(p_mali)		= { "fclk_div3", "fclk_div4", "fclk_div5",
+ 			    "fclk_div7", "zero" };
++PNAME(p_clk81_gate)	= { "clk81" };
+ 
+ static u32 mux_table_clk81[]	= { 6, 5, 7 };
+ static u32 mux_table_mali[]	= { 6, 5, 7, 4, 0 };
+@@ -163,6 +167,198 @@ static const struct clk_conf meson8b_clk_confs[] __initconst = {
+ 		  CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED, &clk81_conf),
+ 	COMPOSITE(MESON8B_REG_MALI, CLKID_MALI, "mali", p_mali,
+ 		  CLK_IGNORE_UNUSED, &mali_conf),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_DDR, "ddr", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 0),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_DOS, "dos", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 1),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_0, "reserved0_0",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 2),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_1, "reserved0_1",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 3),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_AHB_BRIDGE, "ahb_bridge",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 4),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_ISA, "isa", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 5),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_PL310_CBUS, "pl310_cbus",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 6),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_PPERIPHS_TOP, "pperiphs_top",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 7),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_SPICC, "spicc", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 8),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_I2C, "i2c", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 9),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_SAR_ADC, "sar_adc", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 10),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_SMART_CARD_MPEG_DOMAIN,
++		"smart_card_mpeg_domain", p_clk81_gate, CLK_IGNORE_UNUSED, 11),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RANDOM_NUM_GEN, "random_num_gen",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 12),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_UART0, "uart0", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 13),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_SDHC, "sdhc", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 14),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_STREAM, "stream", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 15),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_ASYNC_FIFO, "async_fifo",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 16),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_SDIO, "sdio", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 17),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_AUD_BUF, "auf_buf", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 18),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_HIU_PARSER, "hiu_parser",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 19),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_2, "reserved0_2",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 20),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_3, "reserved0_3",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 21),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_4, "reserved0_4",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 22),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_ASSIST_MISC, "assist_misc",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 23),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_5, "reserved0_5",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 24),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_6, "reserved0_6",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 25),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_7, "reserved0_7",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 26),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_8, "reserved0_8",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 27),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_9, "reserved0_9",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 28),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_A, "reserved0_a",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 29),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_SPI, "api", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 30),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG0, CLKID_RESERVED0_B, "reserved0_b",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 31),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_1, "reserved1_1",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 0),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_2, "reserved1_2",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 1),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AUD_IN, "aud_in", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 2),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_ETHERNET, "ethernet",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 3),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_DEMUX, "demux", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 4),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_3, "reserved1_3",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 5),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_AI_TOP_GLUE,
++		"aiu_ai_top_glue", p_clk81_gate, CLK_IGNORE_UNUSED, 6),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_IEC958, "aiu_iec958",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 7),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_I2S_OUT, "aiu_i2s_out",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 8),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_AMCLK_MEASURE,
++		"aiu_amclk_measure", p_clk81_gate, CLK_IGNORE_UNUSED, 9),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_AIFIFO2, "aiu_aififo2",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 10),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_AUD_MIXER, "aiu_aud_mixer",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 11),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_MIXER_REG, "aiu_mixer_reg",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 12),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_ADC, "aiu_adc",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 13),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_BLK_MOV, "blk_mov",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 14),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AIU_TOP_LEVEL, "aiu_top_level",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 15),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_UART1, "uart1", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 16),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_4, "reserved1_4",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 17),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_5, "reserved1_5",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 18),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_6, "reserved1_6",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 19),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_GE2D, "ge2d", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 20),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_USB0, "usb0", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 21),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_USB1, "usb1", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 22),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESET, "reset", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 23),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_NAND, "nand", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 24),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_HIU_PARSER_TOP,
++		"hiu_parser_top", p_clk81_gate, CLK_IGNORE_UNUSED, 25),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_USB_GENERAL, "usb_general",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 26),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_RESERVED1_7, "reserved1_7",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 27),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_VDIN1, "vdin1", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 28),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_AHB_ARB0, "ahb_arb0",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 29),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_EFUSE, "efuse", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 30),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG1, CLKID_ROM_CLK, "rom_clk",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 31),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_0, "reserved2_0",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 0),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_AHB_DATA_BUS, "ahb_data_bus",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 1),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_AHB_CONTROL_BUS,
++		"ahb_control_bus", p_clk81_gate, CLK_IGNORE_UNUSED, 2),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_HDMI_INTR_SYNC,
++		"hdmi_intr_sync", p_clk81_gate, CLK_IGNORE_UNUSED, 3),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_HDMI_PCLK, "hdmi_pclk",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 4),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_1, "reserved2_1",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 5),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_2, "reserved2_2",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 6),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_3, "reserved2_3",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 7),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_MISC_USB1_TO_DDR,
++		"misc_usb1_to_ddr", p_clk81_gate, CLK_IGNORE_UNUSED, 8),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_MISC_USB0_TO_DDR,
++		"misc_usb0_to_ddr", p_clk81_gate, CLK_IGNORE_UNUSED, 9),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_4, "reserved2_4",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 10),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_MMC_PCLK, "mmc_pclk",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 11),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_MISC_DVIN, "misc_dvin",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 12),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_5, "reserved2_5",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 13),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_6, "reserved2_6",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 14),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_UART2, "uart2", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 15),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_7, "reserved2_7",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 16),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_8, "reserved2_8",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 17),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_9, "reserved2_9",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 18),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_A, "reserved2_a",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 19),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_B, "reserved2_b",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 20),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_C, "reserved2_c",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 21),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_SANA, "sana", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 22),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_D, "reserved2_d",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 23),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_E, "reserved2_e",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 24),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_VPU_INTR, "vpu_intr",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 25),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_SECURE_AHP_APB3,
++		"secure_ahp_apb3", p_clk81_gate, CLK_IGNORE_UNUSED, 26),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_F, "reserved2_f",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 27),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_10, "reserved2_10",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 28),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_TO_A9, "to_a9", p_clk81_gate,
++		CLK_IGNORE_UNUSED, 29),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_11, "reserved2_11",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 30),
++	GATE(MESON8B_REG_HHI_GCLK_MPEG2, CLKID_RESERVED2_12, "reserved2_12",
++		p_clk81_gate, CLK_IGNORE_UNUSED, 31),
+ };
+ 
+ static void __init meson8b_clkc_init(struct device_node *np)
+diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+index bd2720d..e7600e3 100644
+--- a/include/dt-bindings/clock/meson8b-clkc.h
++++ b/include/dt-bindings/clock/meson8b-clkc.h
+@@ -19,7 +19,102 @@
+ #define CLKID_MALI		11
+ #define CLKID_CPUCLK		12
+ #define CLKID_ZERO		13
+-
+-#define CLK_NR_CLKS		(CLKID_ZERO + 1)
++#define CLKID_DDR		14
++#define CLKID_DOS		15
++#define CLKID_RESERVED0_0	16
++#define CLKID_RESERVED0_1	17
++#define CLKID_AHB_BRIDGE	18
++#define CLKID_ISA		19
++#define CLKID_PL310_CBUS	20
++#define CLKID_PPERIPHS_TOP	21
++#define CLKID_SPICC		22
++#define CLKID_I2C		23
++#define CLKID_SAR_ADC		24
++#define CLKID_SMART_CARD_MPEG_DOMAIN 25
++#define CLKID_RANDOM_NUM_GEN	26
++#define CLKID_UART0		27
++#define CLKID_SDHC		28
++#define CLKID_STREAM		29
++#define CLKID_ASYNC_FIFO	30
++#define CLKID_SDIO		31
++#define CLKID_AUD_BUF		32
++#define CLKID_HIU_PARSER	33
++#define CLKID_RESERVED0_2	34
++#define CLKID_RESERVED0_3	35
++#define CLKID_RESERVED0_4	36
++#define CLKID_ASSIST_MISC	37
++#define CLKID_RESERVED0_5	38
++#define CLKID_RESERVED0_6	39
++#define CLKID_RESERVED0_7	40
++#define CLKID_RESERVED0_8	41
++#define CLKID_RESERVED0_9	42
++#define CLKID_RESERVED0_A	43
++#define CLKID_SPI		44
++#define CLKID_RESERVED0_B	45
++#define CLKID_RESERVED1_1	46
++#define CLKID_RESERVED1_2	47
++#define CLKID_AUD_IN		48
++#define CLKID_ETHERNET		49
++#define CLKID_DEMUX		50
++#define CLKID_RESERVED1_3	51
++#define CLKID_AIU_AI_TOP_GLUE	52
++#define CLKID_AIU_IEC958	53
++#define CLKID_AIU_I2S_OUT	54
++#define CLKID_AIU_AMCLK_MEASURE 55
++#define CLKID_AIU_AIFIFO2	56
++#define CLKID_AIU_AUD_MIXER	57
++#define CLKID_AIU_MIXER_REG	58
++#define CLKID_AIU_ADC		59
++#define CLKID_BLK_MOV		60
++#define CLKID_AIU_TOP_LEVEL	61
++#define CLKID_UART1		62
++#define CLKID_RESERVED1_4	63
++#define CLKID_RESERVED1_5	64
++#define CLKID_RESERVED1_6	65
++#define CLKID_GE2D		66
++#define CLKID_USB0		67
++#define CLKID_USB1		68
++#define CLKID_RESET		69
++#define CLKID_NAND		70
++#define CLKID_HIU_PARSER_TOP	71
++#define CLKID_USB_GENERAL	72
++#define CLKID_RESERVED1_7	73
++#define CLKID_VDIN1		74
++#define CLKID_AHB_ARB0		75
++#define CLKID_EFUSE		76
++#define CLKID_ROM_CLK		77
++#define CLKID_RESERVED2_0	78
++#define CLKID_AHB_DATA_BUS	79
++#define CLKID_AHB_CONTROL_BUS	80
++#define CLKID_HDMI_INTR_SYNC	81
++#define CLKID_HDMI_PCLK		82
++#define CLKID_RESERVED2_1	83
++#define CLKID_RESERVED2_2	84
++#define CLKID_RESERVED2_3	85
++#define CLKID_MISC_USB1_TO_DDR	86
++#define CLKID_MISC_USB0_TO_DDR	87
++#define CLKID_RESERVED2_4	88
++#define CLKID_MMC_PCLK		89
++#define CLKID_MISC_DVIN		90
++#define CLKID_RESERVED2_5	91
++#define CLKID_RESERVED2_6	92
++#define CLKID_UART2		93
++#define CLKID_RESERVED2_7	94
++#define CLKID_RESERVED2_8	95
++#define CLKID_RESERVED2_9	96
++#define CLKID_RESERVED2_A	97
++#define CLKID_RESERVED2_B	98
++#define CLKID_RESERVED2_C	99
++#define CLKID_SANA		100
++#define CLKID_RESERVED2_D	101
++#define CLKID_RESERVED2_E	102
++#define CLKID_VPU_INTR		103
++#define CLKID_SECURE_AHP_APB3	104
++#define CLKID_RESERVED2_F	105
++#define CLKID_RESERVED2_10	106
++#define CLKID_TO_A9		107
++#define CLKID_RESERVED2_11	108
++#define CLKID_RESERVED2_12	109
++#define CLK_NR_CLKS		110
+ 
+ #endif /* __MESON8B_CLKC_H */
+-- 
+2.5.0
