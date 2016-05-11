@@ -1,53 +1,63 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 03/27] ARM: dts: exynos: Add fin_pll node for clock driver
-Date: Tue, 10 May 2016 22:09:06 +0200
-Message-Id: <1462910970-1812-4-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34460 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751136AbcEKKeQ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 06:34:16 -0400
+Message-ID: <1462962853.2924.19.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 13/21] reset: uniphier: add reset driver for
+ UniPhier PH1-LD4 SoC
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 11 May 2016 12:34:13 +0200
+In-Reply-To: <CAK7LNASY=Kg-KOMue09_YRoxrBAnXP00oqG4AC2iQM1HJgLc7A@mail.gmail.com>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	 <1462873862-30940-14-git-send-email-yamada.masahiro@socionext.com>
+	 <1462883138.9155.3.camel@pengutronix.de>
+	 <CAK7LNASY=Kg-KOMue09_YRoxrBAnXP00oqG4AC2iQM1HJgLc7A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For consistency between Exynos5410 and Exynos542x/5800 switch to similar
-way of defining fin_pll/oscclk. Add a node early, before implementing
-this in driver to preserve bisectability.
+Hi Masahiro,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+Am Mittwoch, den 11.05.2016, 11:52 +0900 schrieb Masahiro Yamada:
+> Hi Philipp,
+> 
+> 
+> 2016-05-10 21:25 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> > Hi Masahiro,
+> >
+> > Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
+> >> This series is just for review.
+> >> Please do not apply this patch.
+> >>
+> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >
+> > No need for all these tiny drivers. If you probe from DT as Lee
+> > requests, you can let of_device_id.data point to a compatible specific
+> > uniphier_reset_data.
+> >
+> 
+> I will need to fill the table a bit more to complete this work,
+> but I do not think this reset driver will become as big as the clk driver.
+> (I guess it will be less than 1000 lines.)
+> 
+> If you prefer a single file for the whole of this SoC family,
+> I can squash all the files into one.
+> (I can split it if I need to do so in the future.)
 
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index 0f6429e1b75c..d7d658deeff4 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -31,6 +31,13 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
- 	firmware@02037000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x02037000 0x1000>;
--- 
-2.5.0
+I'm fine with split files if you think the complete lists are too long,
+but in that case export the uniphier_reset_data
+I don't care about the lists being in a single file so much as I'd
+prefer to avoid the duplicated boilerplate of one module_platform_driver
+per SoC family member.
+
+> 
+> 
+> 
+
+
