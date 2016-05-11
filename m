@@ -1,62 +1,142 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 0/2] ARM: dts: Fix imprecise external abort error when
- accessing Exynos MFC
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
- <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
- Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <d90b6245-1ed4-32c6-c98d-cc5f12601205@osg.samsung.com>
-Date: Wed, 25 May 2016 10:17:52 -0400
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:41294 "EHLO
+	conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751096AbcEKCqY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 22:46:24 -0400
 MIME-Version: 1.0
-In-Reply-To: <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1462888497.9155.9.camel@pengutronix.de>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	<1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
+	<1462888497.9155.9.camel@pengutronix.de>
+Date: Wed, 11 May 2016 11:46:10 +0900
+Message-ID: <CAK7LNASpxbW81A7YGQuAqmBdBty4BC6Z8sko8YepXOPnVqSjAQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 12/21] reset: uniphier: add core support for UniPhier
+ reset driver
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Marek,
+Hi Philipp,
 
-On 05/25/2016 02:51 AM, Marek Szyprowski wrote:
-> Hello,
-> 
-> 
-> On 2016-05-24 19:41, Javier Martinez Canillas wrote:
->> This series fixes an imprecise external abort error when accessing the
->> Exynos MFC registers due the power domain configuration requiring the
->> aclk333 clock to be enabled during a domain switch.
->>
->> There isn't a dependency between the clock and Linux Samsung SoC trees
->> because the CLK_ACLK333 clock ID is already defined so the patches can
->> be picked indepedently by the relevant subsystem maintainers.
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> I'm really curious what kind of async-bridge is there, but this patch
-> really fixes the problem with mfc power domain.
+
+2016-05-10 22:54 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
+> [...]
+>> +static int uniphier_reset_update(struct reset_controller_dev *rcdev,
+>> +                              unsigned long id, bool assert)
+>> +{
+>> +     struct uniphier_reset_priv *priv = to_uniphier_reset_priv(rcdev);
+>> +     const struct uniphier_reset_data *p;
+>> +     bool handled = false;
+>> +
+>> +     for (p = priv->data; p->id != UNIPHIER_RESET_ID_END; p++) {
+>> +             unsigned int val;
+>> +             int ret;
+>> +
+>> +             if (p->id != id)
+>> +                     continue;
+>> +
+>> +             val = p->deassert_val;
+>> +             if (assert)
+>> +                     val = ~val;
+>> +
+>> +             ret = regmap_write_bits(priv->regmap, p->reg, p->mask, val);
 >
+> What is the difference between mask and deassert_val? Couldn't you just
+> assign
+>         val = assert ? 0 : p->mask;
+> ?
 
-Yes, the Exynos manual is not that clear about what clocks have to remain
-enabled during a power domain switch for an IP block so maybe I got wrong.
 
-I see that the MFC block has an async-bridge in "Figure 15-1" at section 
-"15.2.1 NoC Probes in 5420 Bus". And I thought that since the IP block
-has an async-bridge, the clock needs to remain ungated when the PMU turn
-it on and off on a power domain switch.
+I need to handle both active-high resets and active-low resets.
 
-I chose that clock because "Figure 7-10 MFC Clock Diagram" at section
-"7.4.7 MFC Clock Diagram" shows that ACLK_333 is associated with the
-MFC internal buses, or at least that's my understanding.
+I thought two ways to do that.
 
-Best regards,
+
+[1] Have mask and a flag indicating active-low/active-high,
+    like follows:
+
+     if (flag & UNIPHIER_RST_ACTIVE_LOW)
+          assert = !assert;
+     val = assert ? 0 : p->mask;
+
+[2] Have mask and deassert_val as in this patch
+
+
+
+
+[1] cannot manage a case where one register contains
+active-low bits and active-high bits mixed in it.
+
+
+
+For example, let's say reset bits are BIT(1) and BIT(0).
+
+[2] can solve this case as follows:
+
+(a) If both bit1 and bit0 are active-high.
+     .mask = BIT(1) | BIT(0);
+     .deassert_val = 0;
+
+(b) If bit1 is active-high and bit0 is active-low
+     .mask = BIT(1) | BIT(0);
+     .deassert_val =  BIT(0);
+
+(c) If bit1 is active-low and bit0 is active-high
+     .mask = BIT(1) | BIT(0);
+     .deassert_val =  BIT(1);
+
+(d) If both bit1 and bit0 are active-low
+     .mask = BIT(1) | BIT(0);
+     .deassert_val = BIT(1) | BIT(0);
+
+
+I have not been hit by such a complicated case though.
+
+
+
+
+>> +static const struct reset_control_ops uniphier_reset_ops = {
+>> +     .assert = uniphier_reset_assert,
+>> +     .deassert = uniphier_reset_deassert,
+>> +     .status = uniphier_reset_status,
+>> +};
+>> +
+>> +int uniphier_reset_probe(struct platform_device *pdev,
+>> +                      const struct uniphier_reset_data *data)
+>> +{
+>> +     struct device *dev = &pdev->dev;
+>> +     struct uniphier_reset_priv *priv;
+>> +     const struct uniphier_reset_data *p;
+>> +     struct regmap *regmap;
+>> +     unsigned int nr_resets = 0;
+>> +
+>> +     /* parent should be MFD and syscon node */
+>> +     regmap = syscon_node_to_regmap(dev->parent->of_node);
+>> +     if (IS_ERR(regmap)) {
+>> +             dev_err(dev, "failed to get regmap\n");
+>
+> syscon_node_to_regmap can return different error codes. It might be
+> helpful to use
+>         dev_err(dev, "failed to get regmap: %d\n", PTR_ERR(regmap));
+> here.
+
+
+OK. Will do.
+
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Best Regards
+Masahiro Yamada
