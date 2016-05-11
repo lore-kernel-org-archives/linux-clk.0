@@ -1,57 +1,65 @@
 Return-Path: <k.kozlowski.k@gmail.com>
 Return-Path: <k.kozlowski.k@gmail.com>
-Date: Mon, 9 May 2016 19:30:38 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 11 May 2016 20:14:00 +0200
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: exynos5420: Remove useless check for
- return value of samsung_clk_init
-Message-ID: <20160509173038.GA2507@kozik-lap>
-References: <1462699496-16646-1-git-send-email-krzk@kernel.org>
- <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for
+ Odroid XU
+Message-ID: <20160511181400.GA8265@kozik-lap>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+ <09dcc771-40e2-8be0-de73-bc1db37d6804@osg.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
+In-Reply-To: <09dcc771-40e2-8be0-de73-bc1db37d6804@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 09, 2016 at 09:32:47AM -0400, Javier Martinez Canillas wrote:
+On Wed, May 11, 2016 at 11:41:34AM -0400, Javier Martinez Canillas wrote:
 > Hello Krzysztof,
 > 
-> On 05/08/2016 05:24 AM, Krzysztof Kozlowski wrote:
-> > The samsung_clk_init() cannot return NULL. Either it returns allocated
-> > memory or it panics.
+> On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
+> > Hi,
 > > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  drivers/clk/samsung/clk-exynos5420.c | 2 --
-> >  1 file changed, 2 deletions(-)
+> > Patchset adds necessary clocks, reorganizes existing stuff and finally
+> > adds Odroid XU support.
 > > 
-> > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> > index 92382cef9f90..770c0f007c6b 100644
-> > --- a/drivers/clk/samsung/clk-exynos5420.c
-> > +++ b/drivers/clk/samsung/clk-exynos5420.c
-> > @@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
-> >  	exynos5x_soc = soc;
-> >  
-> >  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
-> > -	if (!ctx)
-> > -		panic("%s: unable to allocate context.\n", __func__);
-> >
+> > 
+> > Changes since v2
+> > ================
+> > 1. Got global-ack from Stephen for the clock changes. I think merging
+> >    everything through arm-soc might be the easiest but:
+> >    a. In such case I will prepare a tag with clock changes,
+> >    b. Anyway I will wait for response from Sylwester and Tomasz.
+> > 2. Applied comments from Javier and added his Reviewed-by.
+> > 3. Patch 22: added ack from Rob.
+> > 4. Minor improvements in existing patches.
+> > 5. Five new patches at the end: 23-27 (not reviewed yet).
+> >    Some of them could be squashed with existing ones but existing
+> >    changes got reviews. Although the final Odroid XU DTS works fine but
+> >    in general this is still work-in-progress so I suspect it will grow.
+> >    I am releasing it early following Linux concept. :)
+> > 
+> > Patchset is available at my private repo @github:
+> > https://github.com/krzk/linux.git for-next/odroid-xu-v3
+> > 
 > 
-> Indeed, the check is superfluous. I see that most callers [0] currently
-> do the same, so probably makes sense to remove those too in this patch.
+> I have tested this branch on both an Exynos5422 Odroid XU4 board and an
+> Exynos5800 Peach Pi Chromebook. All the peripherals are working correctly.
 > 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> So for all patches affecting Exynos54xx/5800 (9,12,13,14,16,19,20,21,25):
+> 
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Thanks, I'll change this everywhere.
-
+Thanks!
 
 Best regards,
 Krzysztof
