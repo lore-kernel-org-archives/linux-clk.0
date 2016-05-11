@@ -1,67 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 11 May 2016 15:15:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Priit Laes <plaes@plaes.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 01/11] clk: sunxi: Add display and
- TCON0 clocks driver
-Message-ID: <20160511221541.GG3492@codeaurora.org>
-References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
- <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
- <20160506223002.GE3492@codeaurora.org>
- <20160508200308.GF6167@lukather>
- <20160509223238.GW3492@codeaurora.org>
- <20160509223924.GX3492@codeaurora.org>
- <1462907459.9981.0.camel@plaes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1462907459.9981.0.camel@plaes.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34623 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751908AbcEKKiC convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 11 May 2016 06:38:02 -0400
+Message-ID: <1462963078.2924.23.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 13/21] reset: uniphier: add reset driver for
+ UniPhier PH1-LD4 SoC
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 11 May 2016 12:37:58 +0200
+In-Reply-To: <1462962853.2924.19.camel@pengutronix.de>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	 <1462873862-30940-14-git-send-email-yamada.masahiro@socionext.com>
+	 <1462883138.9155.3.camel@pengutronix.de>
+	 <CAK7LNASY=Kg-KOMue09_YRoxrBAnXP00oqG4AC2iQM1HJgLc7A@mail.gmail.com>
+	 <1462962853.2924.19.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/10, Priit Laes wrote:
-> On Mon, 2016-05-09 at 15:39 -0700, Stephen Boyd wrote:
-> > On 05/09, Stephen Boyd wrote:
-> > > 
-> > > 
-> > > Ok I applied this one to clk-next.
-> > > 
-> > And I squashed this in to silence the following checker warning.
-> > 
-> > drivers/clk/sunxi/clk-sun4i-display.c:110:33: warning: Variable
-> > length array is used.
-> > 
-> > ---8<---
-> > diff --git a/drivers/clk/sunxi/clk-sun4i-display.c
-> > b/drivers/clk/sunxi/clk-sun4i-display.c
-> > index f02e250e64ed..f8ff6c4a5633 100644
-> > --- a/drivers/clk/sunxi/clk-sun4i-display.c
-> > +++ b/drivers/clk/sunxi/clk-sun4i-display.c
-> > @@ -107,7 +107,7 @@ static int sun4i_a10_display_reset_xlate(struct
-> > reset_controller_dev *rcdev,
-> >  static void __init sun4i_a10_display_init(struct device_node *node,
-> >  					  const struct
-> > sun4i_a10_display_clk_data *data)
-> >  {
-> > -	const char *parents[data->parents];
-> > +	const char *parents[4];
+Am Mittwoch, den 11.05.2016, 12:34 +0200 schrieb Philipp Zabel:
+> Hi Masahiro,
 > 
-> This change breaks at least de_[bf]e clocks which have 3 clock parents.
+> Am Mittwoch, den 11.05.2016, 11:52 +0900 schrieb Masahiro Yamada:
+> > Hi Philipp,
+> > 
+> > 
+> > 2016-05-10 21:25 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> > > Hi Masahiro,
+> > >
+> > > Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
+> > >> This series is just for review.
+> > >> Please do not apply this patch.
+> > >>
+> > >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > >
+> > > No need for all these tiny drivers. If you probe from DT as Lee
+> > > requests, you can let of_device_id.data point to a compatible specific
+> > > uniphier_reset_data.
+> > >
+> > 
+> > I will need to fill the table a bit more to complete this work,
+> > but I do not think this reset driver will become as big as the clk driver.
+> > (I guess it will be less than 1000 lines.)
+> > 
+> > If you prefer a single file for the whole of this SoC family,
+> > I can squash all the files into one.
+> > (I can split it if I need to do so in the future.)
 > 
+> I'm fine with split files if you think the complete lists are too long,
+> but in that case export the uniphier_reset_data
 
-I just used the largest data->parents number, which was 4. How
-does that break anything?
+"... and use them from a single platform driver." I wanted to add here
+before I tripped over the send button.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> I don't care about the lists being in a single file so much as I'd
+> prefer to avoid the duplicated boilerplate of one module_platform_driver
+> per SoC family member.
+
+best regards
+Philipp
