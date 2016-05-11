@@ -1,33 +1,48 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Roman Volkov <v1ron@mail.ru>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roman Volkov <rvolkov@v1ros.org>, Tony Prisk <linux@prisktech.co.nz>
-Subject: Re: [PATCH 2/2] clk/vt8500: Fix compilation warnings
-Date: Tue, 31 May 2016 22:15:38 +0200
-Message-ID: <30846983.uaNfNPJlta@wuerfel>
-In-Reply-To: <20160531213854.343e6129@v1ron-s7>
-References: <1464120473-1808-1-git-send-email-v1ron@mail.ru> <4814911.mY88HjlURn@wuerfel> <20160531213854.343e6129@v1ron-s7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 02/18] clk: samsung: exynos3250: Move platform driver and
+ of_device_id to init section
+Date: Wed, 11 May 2016 14:01:58 +0200
+Message-id: <1462968134-6085-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, May 31, 2016 9:38:54 PM CEST Roman Volkov wrote:
-> 
-> Arnd, your version is fine for me. We may apply it instead.
-> 
-> As you can see, I attached another patch where the logic for WM8650 is
-> completely reworked. This patch also removes the warning, that is why
-> fixing the wm8650 function is not necessary.
-> 
-> What about the WM8650 enhancement? Can I apply it on top of your
-> changes?
+The platform_driver and of_device_id structs can be moved to init
+section because they are referenced only from subsys_initcall-level
+function.
 
-I think the easiest way is if you pick up my patch and submit it together
-with your other patch as a series (keeping my From: line and adding your
-Signed-off-by: below mine).
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-My patch should probably go first so we can get it into linux-4.7, while
-I assume your other one is for 4.8? If we want both in 4.7, either order
-is fine.
-
-	Arnd
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 16575ee874cb..e26b04fea33b 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -1079,12 +1079,12 @@ static int __init exynos3250_cmu_isp_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
++static const struct of_device_id exynos3250_cmu_isp_of_match[] __initconst = {
+ 	{ .compatible = "samsung,exynos3250-cmu-isp", },
+ 	{ /* sentinel */ }
+ };
+ 
+-static struct platform_driver exynos3250_cmu_isp_driver = {
++static struct platform_driver exynos3250_cmu_isp_driver __initdata = {
+ 	.driver = {
+ 		.name = "exynos3250-cmu-isp",
+ 		.of_match_table = exynos3250_cmu_isp_of_match,
+-- 
+1.9.1
