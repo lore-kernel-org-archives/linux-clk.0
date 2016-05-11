@@ -1,37 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:44056 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753324AbcEROit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2016 10:38:49 -0400
-Subject: Re: [PATCH omap v2 0/6] Fix OMAP uses of RCU from idle loop
-To: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20160516184844.GA20144@linux.vnet.ibm.com>
-Cc: tony@atomide.com, mingo@kernel.org, rostedt@goodmis.org
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <573C7E6F.90001@roeck-us.net>
-Date: Wed, 18 May 2016 07:38:39 -0700
-MIME-Version: 1.0
-In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 01/18] clk: samsung: Constify clock init data with clock arrays
+Date: Wed, 11 May 2016 14:01:57 +0200
+Message-id: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/16/2016 11:48 AM, Paul E. McKenney wrote:
-> Hello!
->
-> The following series fixes a number of uses of RCU from the idle loop.
-> These are all due to tracing, so the fix is simply to append _rcuidle
-> to the event-tracing call.
->
-> Changes since v1: Fix commit-log subjects and add maintainers on CC.
->
+samsung_cmu_register_one() can accept pointer to const initialization
+data: struct samsung_cmu_info. The members of the latter can also be
+pointers to const data.
 
-For the series, on top of mainline (which now experiences the problem fixed
-by this series):
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk.c |  2 +-
+ drivers/clk/samsung/clk.h | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-Guenter
-
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index f38a6c49f744..e4d14589cc4a 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -381,7 +381,7 @@ static void samsung_clk_sleep_init(void __iomem *reg_base,
+  */
+ struct samsung_clk_provider * __init samsung_cmu_register_one(
+ 			struct device_node *np,
+-			struct samsung_cmu_info *cmu)
++			const struct samsung_cmu_info *cmu)
+ {
+ 	void __iomem *reg_base;
+ 	struct samsung_clk_provider *ctx;
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index aa872d2c5105..61db98dd01a2 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -330,28 +330,28 @@ struct samsung_clock_reg_cache {
+ 
+ struct samsung_cmu_info {
+ 	/* list of pll clocks and respective count */
+-	struct samsung_pll_clock *pll_clks;
++	const struct samsung_pll_clock *pll_clks;
+ 	unsigned int nr_pll_clks;
+ 	/* list of mux clocks and respective count */
+-	struct samsung_mux_clock *mux_clks;
++	const struct samsung_mux_clock *mux_clks;
+ 	unsigned int nr_mux_clks;
+ 	/* list of div clocks and respective count */
+-	struct samsung_div_clock *div_clks;
++	const struct samsung_div_clock *div_clks;
+ 	unsigned int nr_div_clks;
+ 	/* list of gate clocks and respective count */
+-	struct samsung_gate_clock *gate_clks;
++	const struct samsung_gate_clock *gate_clks;
+ 	unsigned int nr_gate_clks;
+ 	/* list of fixed clocks and respective count */
+-	struct samsung_fixed_rate_clock *fixed_clks;
++	const struct samsung_fixed_rate_clock *fixed_clks;
+ 	unsigned int nr_fixed_clks;
+ 	/* list of fixed factor clocks and respective count */
+-	struct samsung_fixed_factor_clock *fixed_factor_clks;
++	const struct samsung_fixed_factor_clock *fixed_factor_clks;
+ 	unsigned int nr_fixed_factor_clks;
+ 	/* total number of clocks with IDs assigned*/
+ 	unsigned int nr_clk_ids;
+ 
+ 	/* list and number of clocks registers */
+-	unsigned long *clk_regs;
++	const unsigned long *clk_regs;
+ 	unsigned int nr_clk_regs;
+ };
+ 
+@@ -395,7 +395,7 @@ extern void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 
+ extern struct samsung_clk_provider __init *samsung_cmu_register_one(
+ 			struct device_node *,
+-			struct samsung_cmu_info *);
++			const struct samsung_cmu_info *);
+ 
+ extern unsigned long _get_rate(const char *clk_name);
+ 
+-- 
+1.9.1
