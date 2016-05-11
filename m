@@ -1,44 +1,61 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH v1 02/14] clk: twl6040: Register the clock as of_clk_provider
-Date: Mon, 30 May 2016 11:55:10 +0300
-Message-ID: <20160530085522.30398-3-peter.ujfalusi@ti.com>
-In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid
+ XU
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Message-ID: <09dcc771-40e2-8be0-de73-bc1db37d6804@osg.samsung.com>
+Date: Wed, 11 May 2016 11:41:34 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-In order ot be able to use the pdmclk clock via DT it need to be registered
-as of_clk_provide.
-Since the twl6040 clock driver does not have it's own DT node, use the
-parent's node for registering.
+Hello Krzysztof,
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/clk/clk-twl6040.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Patchset adds necessary clocks, reorganizes existing stuff and finally
+> adds Odroid XU support.
+> 
+> 
+> Changes since v2
+> ================
+> 1. Got global-ack from Stephen for the clock changes. I think merging
+>    everything through arm-soc might be the easiest but:
+>    a. In such case I will prepare a tag with clock changes,
+>    b. Anyway I will wait for response from Sylwester and Tomasz.
+> 2. Applied comments from Javier and added his Reviewed-by.
+> 3. Patch 22: added ack from Rob.
+> 4. Minor improvements in existing patches.
+> 5. Five new patches at the end: 23-27 (not reviewed yet).
+>    Some of them could be squashed with existing ones but existing
+>    changes got reviews. Although the final Odroid XU DTS works fine but
+>    in general this is still work-in-progress so I suspect it will grow.
+>    I am releasing it early following Linux concept. :)
+> 
+> Patchset is available at my private repo @github:
+> https://github.com/krzk/linux.git for-next/odroid-xu-v3
+> 
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index e167e0bbaff5..6a2dbe6a1627 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -95,7 +95,8 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, clkdata);
- 
--	return 0;
-+	return of_clk_add_provider(pdev->dev.parent->of_node,
-+				   of_clk_src_simple_get, clkdata->clk);
- }
- 
- static struct platform_driver twl6040_clk_driver = {
+I have tested this branch on both an Exynos5422 Odroid XU4 board and an
+Exynos5800 Peach Pi Chromebook. All the peripherals are working correctly.
+
+So for all patches affecting Exynos54xx/5800 (9,12,13,14,16,19,20,21,25):
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.8.3
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
