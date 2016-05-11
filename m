@@ -1,65 +1,67 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 25 May 2016 12:24:09 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
-	benjamin.gaignard@st.com, vincent.abriou@st.com
-Subject: Re: [PATCH 02/11] drivers: clk: st: Add clock propagation for audio
- clocks
-Message-ID: <20160525172409.GA27913@rob-hp-laptop>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
- <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 11 May 2016 15:15:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Priit Laes <plaes@plaes.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 01/11] clk: sunxi: Add display and
+ TCON0 clocks driver
+Message-ID: <20160511221541.GG3492@codeaurora.org>
+References: <1461590572-4027-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1461590572-4027-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20160506223002.GE3492@codeaurora.org>
+ <20160508200308.GF6167@lukather>
+ <20160509223238.GW3492@codeaurora.org>
+ <20160509223924.GX3492@codeaurora.org>
+ <1462907459.9981.0.camel@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1462907459.9981.0.camel@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
-> This patch allows fine tuning of the quads FS for audio clocks
-> accuracy.
+On 05/10, Priit Laes wrote:
+> On Mon, 2016-05-09 at 15:39 -0700, Stephen Boyd wrote:
+> > On 05/09, Stephen Boyd wrote:
+> > > 
+> > > 
+> > > Ok I applied this one to clk-next.
+> > > 
+> > And I squashed this in to silence the following checker warning.
+> > 
+> > drivers/clk/sunxi/clk-sun4i-display.c:110:33: warning: Variable
+> > length array is used.
+> > 
+> > ---8<---
+> > diff --git a/drivers/clk/sunxi/clk-sun4i-display.c
+> > b/drivers/clk/sunxi/clk-sun4i-display.c
+> > index f02e250e64ed..f8ff6c4a5633 100644
+> > --- a/drivers/clk/sunxi/clk-sun4i-display.c
+> > +++ b/drivers/clk/sunxi/clk-sun4i-display.c
+> > @@ -107,7 +107,7 @@ static int sun4i_a10_display_reset_xlate(struct
+> > reset_controller_dev *rcdev,
+> >  static void __init sun4i_a10_display_init(struct device_node *node,
+> >  					  const struct
+> > sun4i_a10_display_clk_data *data)
+> >  {
+> > -	const char *parents[data->parents];
+> > +	const char *parents[4];
 > 
-> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> ---
->  .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
->  drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
->  2 files changed, 25 insertions(+)
+> This change breaks at least de_[bf]e clocks which have 3 clock parents.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-> index b7ee5c7..15b33c7 100644
-> --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-> +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-> @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
->  Required properties:
->  - compatible : shall be:
->    "st,flexgen"
-> +  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on parent)
 
-What do "d0" and "d2" refer to?
+I just used the largest data->parents number, which was 4. How
+does that break anything?
 
-This seems to indicate you have too much clock detail in the DT (with 
-individual clocks described) or not enough with genericish compatible 
-strings. What happens for the mext clock you need to adjust the flags 
-on? You should be able to make these adjustments without DT updates. 
-Perhaps you need a wider fixing of clock compatible strings.
-
-Rob
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
