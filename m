@@ -1,84 +1,67 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:31543 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249AbcEKMCk (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 08:02:40 -0400
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 16/20] ARM: sun5i: a13-olinuxino: Enable VGA bridge
-Date: Mon, 16 May 2016 14:47:16 +0200
-Message-Id: <1463402840-17062-17-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 16/18] clk: samsung: exynos5420: Move sleep init function and
+ PLL rates data to init section
+Date: Wed, 11 May 2016 14:02:12 +0200
+Message-id: <1462968134-6085-16-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have support for the VGA bridges using our DRM driver, enable
-the display engine for the Olimex A13-Olinuxino.
+The exynos5420_clk_sleep_init() function and arrays with initialization
+data of PLLs can be moved to init section because they are referenced
+only from other init-level symbols.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/sun5i-a13-olinuxino.dts | 34 +++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/clk/samsung/clk-exynos5420.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun5i-a13-olinuxino.dts b/arch/arm/boot/dts/sun5i-a13-olinuxino.dts
-index b3c234c65ea1..b3298d231258 100644
---- a/arch/arm/boot/dts/sun5i-a13-olinuxino.dts
-+++ b/arch/arm/boot/dts/sun5i-a13-olinuxino.dts
-@@ -72,6 +72,27 @@
- 			default-state = "on";
- 		};
- 	};
-+
-+	bridge {
-+		compatible = "dumb-vga-bridge";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			vga_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_vga>;
-+			};
-+		};
-+	};
-+};
-+
-+&be0 {
-+	status = "okay";
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index adb0ae4efb7a..79fb8557bcf3 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -306,7 +306,7 @@ static struct syscore_ops exynos5420_clk_syscore_ops = {
+ 	.resume = exynos5420_clk_resume,
  };
  
- &ehci0 {
-@@ -211,6 +232,19 @@
- 	status = "okay";
+-static void exynos5420_clk_sleep_init(void)
++static void __init exynos5420_clk_sleep_init(void)
+ {
+ 	exynos5x_save = samsung_clk_alloc_reg_dump(exynos5x_clk_regs,
+ 					ARRAY_SIZE(exynos5x_clk_regs));
+@@ -333,7 +333,7 @@ err_soc:
+ 	return;
+ }
+ #else
+-static void exynos5420_clk_sleep_init(void) {}
++static void __init exynos5420_clk_sleep_init(void) {}
+ #endif
+ 
+ /* list of all parent clocks */
+@@ -1219,7 +1219,7 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
  };
  
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_vga: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&vga_input>;
-+	};
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart1_pins_b>;
+-static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] = {
++static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+ 	PLL_35XX_RATE(2000000000, 250, 3, 0),
+ 	PLL_35XX_RATE(1900000000, 475, 6, 0),
+ 	PLL_35XX_RATE(1800000000, 225, 3, 0),
 -- 
-2.8.2
+1.9.1
+
