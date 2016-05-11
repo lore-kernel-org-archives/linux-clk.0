@@ -1,140 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ig0-f195.google.com ([209.85.213.195]:33943 "EHLO
-	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752319AbcEAUs3 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2016 16:48:29 -0400
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 11 May 2016 20:15:12 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL] i.MX clock fixes for 4.6, take 2
+Message-ID: <20160511121512.GP5874@tiger>
+References: <20160503133605.GN5874@tiger>
+ <20160506180217.GW3492@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1462079316-27771-7-git-send-email-ysato@users.sourceforge.jp>
-References: <1462079316-27771-1-git-send-email-ysato@users.sourceforge.jp>
-	<1462079316-27771-7-git-send-email-ysato@users.sourceforge.jp>
-Date: Sun, 1 May 2016 22:48:28 +0200
-Message-ID: <CAMuHMdXwC1CKmQ5X98-oGuZ1VAXYrR+vZsRa6qKPt6Cu9Q_-SA@mail.gmail.com>
-Subject: Re: [PATCH RESEND 06/12] clk: sh: SH7750/51 PLL and divider clock driver
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160506180217.GW3492@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sato-san,
+On Fri, May 06, 2016 at 11:02:17AM -0700, Stephen Boyd wrote:
+> On 05/03, Shawn Guo wrote:
+> > The following changes since commit 7196c52c9377df0175b510ff5896bda524f7345e:
+> > 
+> >   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6-2
+> > 
+> > for you to fetch changes up to 3397c2c45b1b6f54834dfeae30a73046f33ca943:
+> > 
+> >   ARM: dts: imx35: restore existing used clock enumeration (2016-04-18 12:37:21 +0800)
+> > 
+> > ----------------------------------------------------------------
+> > The i.MX clock fixes for 4.6, take 2:
+> >  - Fix the commit 3713e3f5e927 ("clk: imx35: define two clocks for rtc")
+> >    which messed up the clock enumeration when adding new clock.
+> 
+> This commit wasn't introduced in this merge window, so I'm going
+> to pull this into clk-next unless you have some justification.
 
-On Sun, May 1, 2016 at 7:08 AM, Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> ---
->  .../bindings/clock/renesas,sh-div-clock.txt        |  24 ++
->  .../bindings/clock/renesas,sh7750-div-clock.txt    |  27 ++
->  .../bindings/clock/renesas,sh7750-pll-clock.txt    |  26 ++
->  drivers/clk/Kconfig                                |   1 +
->  drivers/clk/Makefile                               |   3 +-
->  drivers/clk/sh/Kconfig                             |   5 +
->  drivers/clk/sh/Makefile                            |   2 +
->  drivers/clk/sh/clk-sh7750.c                        | 223 ++++++++++++++
->  drivers/clk/sh/clk-shdiv.c                         | 338 +++++++++++++++++++++
->  9 files changed, 648 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
->  create mode 100644 drivers/clk/sh/Kconfig
->  create mode 100644 drivers/clk/sh/Makefile
->  create mode 100644 drivers/clk/sh/clk-sh7750.c
->  create mode 100644 drivers/clk/sh/clk-shdiv.c
->
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
-> new file mode 100644
-> index 0000000..399e0da
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh-div-clock.txt
-> @@ -0,0 +1,24 @@
-> +* Renesas H8/300 divider clock
+That's fine.  Thanks, Stephen.
 
-[...]
-
-h8300?
-
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
-> new file mode 100644
-> index 0000000..8c57ab5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
-> @@ -0,0 +1,27 @@
-> +* Renesas SH7750/51 divider clock
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be "renesas,sh7750-div-clock"
-> +
-> +  - clocks: Reference to the parent clocks (mostly PLL)
-> +
-> +  - #clock-cells: Must be 0
-> +
-> +  - reg: Base address and length of the divide rate selector
-> +
-> +  - renesas,offset: bit offset of selector
-> +
-> +  - clock-output-names: The names of the clocks.
-> +
-> +Example
-> +-------
-> +
-> +        iclk: iclk {
-> +                compatible = "renesas,sh7750-div-clock";
-> +                clocks = <&pllclk>;
-> +                #clock-cells = <0>;
-> +                reg = <0xffc00000 2>;
-> +               renesas,offset = <6>;
-> +               clock-output-names = "ick";
-> +        };
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
-> new file mode 100644
-> index 0000000..06a3d31
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
-> @@ -0,0 +1,26 @@
-> +Renesas SH7750/51 PLL clock
-> +
-> +This device is Clock multiplyer
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be "renesas,sh7750-pll-clock"
-> +
-> +  - clocks: Reference to the parent clocks
-> +
-> +  - #clock-cells: Must be 0
-> +
-> +  - renesas,mult: PLL1 multiply rate
-> +
-> +  - reg: Two rate selector (FRQCR / WDT) register address
-> +
-> +Example
-> +-------
-> +
-> +        pllclk: pllclk {
-> +                compatible = "renesas,sh7750-pll-clock";
-> +                clocks = <&oclk>;
-> +                #clock-cells = <0>;
-> +               renesas,mult = <12>;
-> +                reg = <0xffc00000 2>, <0xffc00008 4>;
-> +        };
-
-As the registers of the PLL clock and the various div clocks are the
-same, I think it will be simpler to just write a single driver that provides
-all clocks, instead of describing all clocks in DT.
-
-Cfr. drivers/clk/renesas/*-cpg-mssr.c vs. drivers/clk/renesas/clk-rcar-gen2.c
-+ drivers/clk/renesas/clk-mstp.c + drivers/clk/renesas/clk-div6.c.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Shawn
