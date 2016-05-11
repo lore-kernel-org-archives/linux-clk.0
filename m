@@ -1,120 +1,50 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W
-Date: Mon, 30 May 2016 18:28:53 +0200
-Message-Id: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos3250: Move PLL rates data to init section
+Date: Wed, 11 May 2016 14:12:16 +0200
+Message-id: <1462968736-7568-1-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+The arrays with initialization data of PLLs can be moved to initconst
+section because they are referenced only from other initconst-level
+symbols.
 
-This patch series adds initial support for the Clock Pulse Generator and
-Module Standby and Software Reset modules on the Renesas R-Car M3-W
-SoC:
-  - Basic core clocks,
-  - SCIF2 (console) module clock,
-  - INTC-AP (GIC) module clock (disabled pending CLK_ENABLE_HAND_OFF).
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Support for more core and module clocks will be added incrementally.
-
-/sys/kernel/debug/clk/clk_summary output:
-
-       clock            enable_cnt  prepare_cnt        rate   accuracy   phase
-    ---------------------------------------------------------------------------
-     scif                        1            1    14745600          0 0
-     extalr                      0            0           0          0 0
-     extal                       1            1    16666666          0 0
-	cp                       0            0     8333333          0 0
-	.main                    1            1    16666666          0 0
-	   .pll4                 0            0  2399999904          0 0
-	   .pll3                 0            0  3199999872          0 0
-	   .pll2                 0            0  2399999904          0 0
-	   .pll1                 1            1  3199999872          0 0
-	      .pll1_div2         1            1  1599999936          0 0
-		 cl              0            0    33333332          0 0
-		 zx              0            0   799999968          0 0
-		 zt              0            0   399999984          0 0
-		 ztrd2           0            0   133333328          0 0
-		 ztr             0            0   266666656          0 0
-		 .s3             2            2   266666656          0 0
-		    s3d4         1            1    66666664          0 0
-		       scif2     2            2    66666664          0 0
-		    s3d2         0            0   133333328          0 0
-		    s3d1         2            2   266666656          0 0
-		       intc-ap   1            1   266666656          0 0
-		 .s2             0            0   399999984          0 0
-		    s2d4         0            0    99999996          0 0
-		    s2d2         0            0   199999992          0 0
-		    s2d1         0            0   399999984          0 0
-		 .s1             0            0   533333312          0 0
-		    s1d4         0            0   133333328          0 0
-		    s1d2         0            0   266666656          0 0
-		    s1d1         0            0   533333312          0 0
-		 .s0             0            0   799999968          0 0
-		    s0d12        0            0    66666664          0 0
-		    s0d8         0            0    99999996          0 0
-		    s0d6         0            0   133333328          0 0
-		    s0d4         0            0   199999992          0 0
-		    s0d3         0            0   266666656          0 0
-		    s0d2         0            0   399999984          0 0
-		    s0d1         0            0   799999968          0 0
-		 .pll1_div4      0            0   799999968          0 0
-	   .pll0                 0            0  2999999880          0 0
-
-Changes compared to v1:
-  - Add Acked-by, Tested-by.
-
-For your convenience, I've pushed this series to the
-topic/r8a7796-clk-v2 branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
-This has been tested on r8a7796/salvator-x, and the code (minus the
-acks, i.e. v1), has been part of renesas-drivers since 2016-05-10.
-
-I plan to queue this in my clk-renesas-for-v4.8 branch, and send a pull
-request later.
-
-Thanks!
-
-Geert Uytterhoeven (4):
-  clk: renesas: cpg-mssr: Document r8a7796 support
-  clk: renesas: Add r8a7796 CPG Core Clock Definitions
-  clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code
-  clk: renesas: cpg-mssr: Add support for R-Car M3-W
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
- drivers/clk/renesas/Kconfig                        |   1 +
- drivers/clk/renesas/Makefile                       |   3 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c             | 360 +--------------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c             | 192 +++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c                | 359 ++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h                |  43 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a7796-cpg-mssr.h       |  69 ++++
- 10 files changed, 682 insertions(+), 359 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7796-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.h
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
-
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 057c3f0d0e35..b2513959252d 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -669,7 +669,7 @@ static const struct samsung_gate_clock gate_clks[] __initconst = {
+ };
+ 
+ /* APLL & MPLL & BPLL & UPLL */
+-static const struct samsung_pll_rate_table exynos3250_pll_rates[] = {
++static const struct samsung_pll_rate_table exynos3250_pll_rates[] __initconst = {
+ 	PLL_35XX_RATE(1200000000, 400, 4, 1),
+ 	PLL_35XX_RATE(1100000000, 275, 3, 1),
+ 	PLL_35XX_RATE(1066000000, 533, 6, 1),
+@@ -691,7 +691,7 @@ static const struct samsung_pll_rate_table exynos3250_pll_rates[] = {
+ };
+ 
+ /* EPLL */
+-static const struct samsung_pll_rate_table exynos3250_epll_rates[] = {
++static const struct samsung_pll_rate_table exynos3250_epll_rates[] __initconst = {
+ 	PLL_36XX_RATE(800000000, 200, 3, 1,     0),
+ 	PLL_36XX_RATE(288000000,  96, 2, 2,     0),
+ 	PLL_36XX_RATE(192000000, 128, 2, 3,     0),
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
