@@ -1,57 +1,53 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 23/27] dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-Date: Tue, 10 May 2016 22:09:26 +0200
-Message-Id: <1462910970-1812-24-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:62314 "EHLO
+	conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751212AbcEKCwq (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 22:52:46 -0400
+MIME-Version: 1.0
+In-Reply-To: <1462883138.9155.3.camel@pengutronix.de>
+References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+	<1462873862-30940-14-git-send-email-yamada.masahiro@socionext.com>
+	<1462883138.9155.3.camel@pengutronix.de>
+Date: Wed, 11 May 2016 11:52:32 +0900
+Message-ID: <CAK7LNASY=Kg-KOMue09_YRoxrBAnXP00oqG4AC2iQM1HJgLc7A@mail.gmail.com>
+Subject: Re: [RFC PATCH 13/21] reset: uniphier: add reset driver for UniPhier
+ PH1-LD4 SoC
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for I2C, USI (HSI2C) and RTC clocks to Exynos5410. Use the same
-number as for Exynos5420 just in case in future these drivers were
-merged.
+Hi Philipp,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- include/dt-bindings/clock/exynos5410.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 34c8e96987a1..e94b7bbfd6af 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -38,9 +38,18 @@
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
-+#define CLK_I2C0		261
-+#define CLK_I2C1		262
-+#define CLK_I2C2		263
-+#define CLK_I2C3		264
-+#define CLK_USI0		265
-+#define CLK_USI1		266
-+#define CLK_USI2		267
-+#define CLK_USI3		268
- #define CLK_UART3		260
- #define CLK_PWM			279
- #define CLK_MCT			315
-+#define CLK_RTC			317
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
+2016-05-10 21:25 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> Hi Masahiro,
+>
+> Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
+>> This series is just for review.
+>> Please do not apply this patch.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> No need for all these tiny drivers. If you probe from DT as Lee
+> requests, you can let of_device_id.data point to a compatible specific
+> uniphier_reset_data.
+>
+
+I will need to fill the table a bit more to complete this work,
+but I do not think this reset driver will become as big as the clk driver.
+(I guess it will be less than 1000 lines.)
+
+If you prefer a single file for the whole of this SoC family,
+I can squash all the files into one.
+(I can split it if I need to do so in the future.)
+
+
+
 -- 
-2.5.0
+Best Regards
+Masahiro Yamada
