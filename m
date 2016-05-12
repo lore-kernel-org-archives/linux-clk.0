@@ -1,54 +1,80 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 10/11] clk: Show CRITICAL clks in clk_summary output
-Date: Wed, 25 May 2016 18:24:30 -0400
-Message-ID: <1464215071-28696-11-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
+From: Douglas Anderson <dianders@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-rockchip@lists.infradead.org,
+	shawn.lin@rock-chips.com,
+	zhengxing@rock-chips.com,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: rockchip: fix the rk3399 sdmmc sample shift
+Date: Thu, 12 May 2016 11:03:17 -0700
+Message-Id: <1463076197-15900-2-git-send-email-dianders@chromium.org>
+In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a '^' character to the beginning of clk entries that are for
-CRITICAL clks.
+Just like every other Rockhip device, the MMC "_sample" clocks should
+have a shift of 0, not a shift of 1.  The rk3399 TRM agrees.  Presumably
+these values were set to 0 because of a typo.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Things _sorta_ would have worked with the incorrect sample phase shift
+because of the register layout but wouldn't have been ideal and we would
+have skipped lots of phases.  Also: we would never actually enabled the
+fine delay unless we happened to have 128 or more delay elements.
+
+This is expected behavior before this patch:
+* Try to set:     0 degrees +   1 delay elements
+  Actually get:   0 degrees +   0 delay elements
+* Try to set:    90 degrees +   0 delay elements
+  Actually get: 180 degrees +   0 delay elements
+* Try to set:   180 degrees +   0 delay elements
+  Actually get:   0 degrees +   0 delay elements
+* Try to set:   270 degrees +   0 delay elements
+  Actually get: 180 degrees +   0 delay elements
+* Try to set:     0 degrees + 129 delay elements
+  Actually get:   0 degrees +   2 delay elements
+* Try to set:   180 degrees + 129 delay elements
+  Actually get:   0 degrees +   3 delay elements
+* Try to set:     0 degrees + 130 delay elements
+  Actually get:   0 degrees +   4 delay elements
+
+I verified that old code had a problem by turning on debug printouts and
+seeing that the old code would report this for one SD card I had:
+  Good phase range 347-101 (115 len)
+  Good phase range 202-326 (125 len)
+
+After my fix, it went down to one big good range for the same card.
+This is more expected:
+  Good phase range 189-1 (173 len)
+  Good phase range 82-85 (4 len)
+  Good phase range 166-168 (3 len)
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- drivers/clk/clk.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 874c7dd8ef66..22dd0ca1e491 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 	if (!c)
- 		return;
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 291543f52caa..14ff3e109e1e 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -895,10 +895,10 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(6), 1, GFLAGS),
  
--	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
--		   level * 3 + 1, "",
-+	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
-+		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
-+		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
- 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
-@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
+-	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
++	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 0),
  
- 	clk_prepare_unlock();
+ 	MMC(SCLK_SDIO_DRV,      "sdio_drv",    "clk_sdio",  RK3399_SDIO_CON0,  1),
+-	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  1),
++	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  0),
  
-+	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
-+
- 	return 0;
- }
- 
+ 	/* pcie */
+ 	COMPOSITE(SCLK_PCIE_PM, "clk_pcie_pm", mux_pll_src_cpll_gpll_npll_24m_p, 0,
 -- 
-1.9.1
+2.8.0.rc3.226.g39d4020
