@@ -1,40 +1,82 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 11 May 2016 20:15:12 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock fixes for 4.6, take 2
-Message-ID: <20160511121512.GP5874@tiger>
-References: <20160503133605.GN5874@tiger>
- <20160506180217.GW3492@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 12 May 2016 16:33:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
+Message-ID: <20160512233338.GM3492@codeaurora.org>
+References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+ <1462797111-14271-3-git-send-email-joel@jms.id.au>
+ <20160509224953.GZ3492@codeaurora.org>
+ <CACPK8Xfq=Pfy=7GYuS7LJs-CFJOimBUoHA=Y6NHb4=DRcOnvfQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160506180217.GW3492@codeaurora.org>
+In-Reply-To: <CACPK8Xfq=Pfy=7GYuS7LJs-CFJOimBUoHA=Y6NHb4=DRcOnvfQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 06, 2016 at 11:02:17AM -0700, Stephen Boyd wrote:
-> On 05/03, Shawn Guo wrote:
-> > The following changes since commit 7196c52c9377df0175b510ff5896bda524f7345e:
-> > 
-> >   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6-2
-> > 
-> > for you to fetch changes up to 3397c2c45b1b6f54834dfeae30a73046f33ca943:
-> > 
-> >   ARM: dts: imx35: restore existing used clock enumeration (2016-04-18 12:37:21 +0800)
-> > 
-> > ----------------------------------------------------------------
-> > The i.MX clock fixes for 4.6, take 2:
-> >  - Fix the commit 3713e3f5e927 ("clk: imx35: define two clocks for rtc")
-> >    which messed up the clock enumeration when adding new clock.
+On 05/10, Joel Stanley wrote:
+> On Tue, May 10, 2016 at 8:19 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > Please write a proper clk driver that sets clkin to be the parent
+> > of this clk registered here and then calculates the frequency
+> > based on the parent clk rate and the strapping registers via the
+> > recalc rate callback.
 > 
-> This commit wasn't introduced in this merge window, so I'm going
-> to pull this into clk-next unless you have some justification.
+> After a few goes I understood what you meant here.
+> 
+> Is the pclk part okay? I modified the pclk part use a fixed factor
+> clock instead of the fixed clock, so I could drop the pclk_get_rate
+> call below.
 
-That's fine.  Thanks, Stephen.
+Sorry what's the pclk part? Using a fixed factor is OK, as long
+as we don't have to call clk_get_rate() in this driver it's a
+better design.
 
-Shawn
+> 
+> > Also please move this to a platform driver
+> > instead of using CLK_OF_DECLARE assuming this isn't required for
+> > any timers in the system.
+> 
+> Can you clarify here? We do use the rate of pclk (the apb clock) in
+> the clocksource driver to calculate our count_per_tick value.
+
+Ok. I was hoping that this wasn't providing any clks required in
+the timer driver. Even if that's true, we could just register the
+part of the clk tree that needs to be ready for the timer from
+CLK_OF_DECLARE() and then register the other clks from a regular
+platform driver. Some people have already started doing this, so
+there are some examples around (clk/nxp/clk-lpc18xx-creg.c is one
+example).
+
+> > Following on Rob's comment, please combine this into one driver
+> > instead of having different DT nodes for different clks that are
+> > all really part of one clock controller hw block.
+> 
+> Ok, I have had a go at this. In our case the clock registers are part
+> of the "SCU" IP; a collection of disparate functions that happen to
+> include clock control. Is syscon the right thing to use here?
+> 
+> regmap = syscon_regmap_lookup_by_compatible("aspeed,ast2400-syscon-scu");
+> ret = regmap_read(hpll->regmap, 0x70, &reg);
+> 
+
+In that case I don't have a problem with a toplevel MFD node in
+DT with a child node for the clk part and a child node for other
+logical driver parts. Or it could all be one MFD driver and node
+that knows to add a clk device as a child of the MFD purely in
+software so that we can fork control of the clk part over to the
+drivers/clk directory. If you have the clk driver attach to some
+child device then you can always get the regmap from the parent
+MFD via the dev->parent pointer.
+
+Maybe Rob can chime in here too with the proper design, because
+I've seen both styles.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
