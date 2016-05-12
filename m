@@ -1,48 +1,219 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 20/22] ARM: dts: exynos: Move common
- Exynos5410/542x/5800 nodes to new DTSI
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-21-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <9e642e0d-87e1-4661-0233-acecf0082f24@osg.samsung.com>
-Date: Mon, 9 May 2016 17:53:09 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-21-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <842587420@qq.com>
+Sender: 842587420@qq.com
+From: Yang Ling <gnaygnil@gmail.com>
+To: ralf@linux-mips.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: chenhc@lemote.com,
+	gnaygnil@gmail.com,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/4] clk: add Loongson1C clock support
+Date: Thu, 12 May 2016 16:59:24 +0800
+Message-Id: <1463043564-21559-1-git-send-email-gnaygnil@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+This adds clock support to Loongson1C SoC using the common clock
+infrastructure.
 
-On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> The Exynos5410/542x/5800 are very similar designs. Create new new
+Signed-off-by: Yang Ling <gnaygnil@gmail.com>
+---
+ arch/mips/include/asm/mach-loongson32/regs-clk.h | 33 ++++++++++++
+ drivers/clk/clk-ls1x.c                           | 69 +++++++++++++++++++++---
+ 2 files changed, 95 insertions(+), 7 deletions(-)
 
-s/new new/a new
-
-> DTSI with common nodes to remove DTS duplication. Although currently
-> only MCT and SysRAM are shared but in future more nodes will be added to
-> common file.
-> 
-> The patch should not have functional impact.
-> 
-
-A nice way to check this is to diff the disassembled compiled DTBs with
-and without the patch and making sure that the resulted DTS is the same.
-
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+index 1f5a715..2cef0e2 100644
+--- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
++++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+@@ -1,5 +1,7 @@
+ /*
+  * Copyright (c) 2011 Zhang, Keguang <keguang.zhang@gmail.com>
++ * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
++ * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
+  *
+  * Loongson 1 Clock Register Definitions.
+  *
+@@ -19,6 +21,7 @@
+ #define LS1X_CLK_PLL_DIV		LS1X_CLK_REG(0x4)
  
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+ /* Clock PLL Divisor Register Bits */
++#if defined(CONFIG_LOONGSON1_LS1B)
+ #define DIV_DC_EN			(0x1 << 31)
+ #define DIV_DC_RST			(0x1 << 30)
+ #define DIV_CPU_EN			(0x1 << 25)
+@@ -48,4 +51,34 @@
+ #define BYPASS_DDR_WIDTH		1
+ #define BYPASS_CPU_WIDTH		1
+ 
++#elif defined(CONFIG_LOONGSON1_LS1C)
++
++#define PLL_VALID			(0x1 << 31)
++#define FRAC_N				(0xff << 16)
++#define RST_TIME			(0x3 << 2)
++#define SDRAM_DIV			(0x3 << 0)
++
++#define DIV_DC_EN			(0x1 << 31)
++#define DIV_DC				(0x7f << 24)
++#define DIV_CAM_EN			(0x1 << 23)
++#define DIV_CAM				(0x7f << 16)
++#define DIV_CPU_EN			(0x1 << 15)
++#define DIV_CPU				(0x7f << 8)
++#define DIV_DC_SEL_EN			(0x1 << 5)
++#define DIV_DC_SEL			(0x1 << 4)
++#define DIV_CAM_SEL_EN			(0x1 << 3)
++#define DIV_CAM_SEL			(0x1 << 2)
++#define DIV_CPU_SEL_EN			(0x1 << 1)
++#define DIV_CPU_SEL			(0x1 << 0)
++
++#define DIV_DC_SHIFT                    24
++#define DIV_CAM_SHIFT                   16
++#define DIV_CPU_SHIFT                   8
++
++#define DIV_DC_WIDTH                    7
++#define DIV_CPU_WIDTH                   7
++#define DIV_DDR_WIDTH                   7
++
++#endif
++
+ #endif /* __ASM_MACH_LOONGSON32_REGS_CLK_H */
+diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
+index d4c6198..746e653 100644
+--- a/drivers/clk/clk-ls1x.c
++++ b/drivers/clk/clk-ls1x.c
+@@ -1,5 +1,7 @@
+ /*
+  * Copyright (c) 2012 Zhang, Keguang <keguang.zhang@gmail.com>
++ * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
++ * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
+  *
+  * This program is free software; you can redistribute  it and/or modify it
+  * under  the terms of  the GNU General  Public License as published by the
+@@ -15,8 +17,13 @@
+ 
+ #include <loongson1.h>
+ 
++#if defined(CONFIG_LOONGSON1_LS1B)
+ #define OSC		(33 * 1000000)
+ #define DIV_APB		2
++#elif defined(CONFIG_LOONGSON1_LS1C)
++#define OSC		(24 * 1000000)
++#define DIV_APB		1
++#endif
+ 
+ static DEFINE_SPINLOCK(_lock);
+ 
+@@ -35,9 +42,15 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+ 	u32 pll, rate;
+ 
+ 	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
++#if defined(CONFIG_LOONGSON1_LS1B)
+ 	rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
+ 	rate *= OSC;
+ 	rate >>= 1;
++#elif defined(CONFIG_LOONGSON1_LS1C)
++	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
++	rate *= OSC;
++	rate >>= 2;
++#endif
+ 
+ 	return rate;
+ }
+@@ -80,22 +93,25 @@ static struct clk *__init clk_register_pll(struct device *dev,
+ 	return clk;
+ }
+ 
+-static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
+-static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
+-static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
++static const char * const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
++static const char * const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
++static const char * const dc_parents[] = { "dc_clk_div", "osc_clk", };
+ 
+ void __init ls1x_clk_init(void)
+ {
+ 	struct clk *clk;
++	u32 reg;
++	u32 div;
+ 
+-	clk = clk_register_fixed_rate(NULL, "osc_33m_clk", NULL, CLK_IS_ROOT,
++	clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, CLK_IS_ROOT,
+ 				      OSC);
+-	clk_register_clkdev(clk, "osc_33m_clk", NULL);
++	clk_register_clkdev(clk, "osc_clk", NULL);
+ 
+-	/* clock derived from 33 MHz OSC clk */
+-	clk = clk_register_pll(NULL, "pll_clk", "osc_33m_clk", 0);
++	/* clock derived from OSC clk */
++	clk = clk_register_pll(NULL, "pll_clk", "osc_clk", 0);
+ 	clk_register_clkdev(clk, "pll_clk", NULL);
+ 
++#if defined(CONFIG_LOONGSON1_LS1B)
+ 	/* clock derived from PLL clk */
+ 	/*                                 _____
+ 	 *         _______________________|     |
+@@ -114,7 +130,23 @@ void __init ls1x_clk_init(void)
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+ 			       BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0, &_lock);
+ 	clk_register_clkdev(clk, "cpu_clk", NULL);
++#elif defined(CONFIG_LOONGSON1_LS1C)
++	reg = __raw_readl(LS1X_CLK_PLL_DIV);
++	if (reg & DIV_CPU_SEL) {
++		if (reg & DIV_CPU_EN) {
++			clk = clk_register_divider(NULL, "cpu_clk", "pll_clk",
++					CLK_SET_RATE_PARENT, LS1X_CLK_PLL_DIV,
++					DIV_CPU_SHIFT, DIV_CPU_WIDTH,
++					CLK_DIVIDER_ONE_BASED, &_lock);
++		} else {
++			clk = clk_register_fixed_factor(NULL, "cpu_clk",
++							"pll_clk", 0, 1, 2);
++		}
++	}
++	clk_register_clkdev(clk, "cpu_clk", NULL);
++#endif
+ 
++#if defined(CONFIG_LOONGSON1_LS1B)
+ 	/*                                 _____
+ 	 *         _______________________|     |
+ 	 * OSC ___/                       | MUX |___ DC  CLK
+@@ -130,7 +162,14 @@ void __init ls1x_clk_init(void)
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+ 			       BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0, &_lock);
+ 	clk_register_clkdev(clk, "dc_clk", NULL);
++#elif defined(CONFIG_LOONGSON1_LS1C)
++	clk = clk_register_divider(NULL, "dc_clk", "pll_clk",
++			CLK_SET_RATE_PARENT, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
++			DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
++	clk_register_clkdev(clk, "dc_clk", NULL);
++#endif
+ 
++#if defined(CONFIG_LOONGSON1_LS1B)
+ 	/*                                 _____
+ 	 *         _______________________|     |
+ 	 * OSC ___/                       | MUX |___ DDR CLK
+@@ -146,6 +185,22 @@ void __init ls1x_clk_init(void)
+ 			       ARRAY_SIZE(ahb_parents),
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+ 			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
++#elif defined(CONFIG_LOONGSON1_LS1C)
++	reg = __raw_readl(LS1X_CLK_PLL_FREQ) & SDRAM_DIV;
++	switch (reg) {
++	case 0:
++		div = 2;
++		break;
++	case 1:
++		div = 4;
++		break;
++	case 2:
++	case 3:
++		div = 3;
++		break;
++	}
++	clk = clk_register_fixed_factor(NULL, "ahb_clk", "cpu_clk", 0, 1, div);
++#endif
+ 	clk_register_clkdev(clk, "ahb_clk", NULL);
+ 	clk_register_clkdev(clk, "stmmaceth", NULL);
+ 
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
