@@ -1,27 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp2-g21.free.fr ([212.27.42.2]:58204 "EHLO smtp2-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752485AbcEXLD4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 24 May 2016 07:03:56 -0400
-Subject: Re: [PATCH RESEND v4 5/9] MIPS: Loongson-1A: workaround of pll
- register's write-only property
-To: Binbin Zhou <zhoubb@lemote.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-References: <1463622432-10298-1-git-send-email-zhoubb@lemote.com>
-From: Mason <slash.tmp@free.fr>
-Message-ID: <57443510.4020105@free.fr>
-Date: Tue, 24 May 2016 13:03:44 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 12 May 2016 16:39:35 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: tony@atomide.com, paul@pwsan.com, mturquette@baylibre.com,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCHv2 00/28] ARM: OMAP2+: hwmod module clock type support
+Message-ID: <20160512233935.GN3492@codeaurora.org>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1463622432-10298-1-git-send-email-zhoubb@lemote.com>
-Content-Type: text/plain; charset=ISO-8859-1
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/05/2016 03:47, Binbin Zhou wrote:
+On 04/14, Tero Kristo wrote:
+> Hi,
+> 
+> v2 contains following changes in comparison to v1:
+> 
+> - Patch ordering changed a bit, clk/ti, mach-omap2, dts patches are now
+>   mostly grouped together, with the exception of the introduction of
+>   clock helper API, which is needed by everything else. Please note
+>   that the ordering must be preserved between mach-omap2/clk-driver/dts
+>   to avoid boot problems.
+> - Dropped hwmod data removal patches for now, this allows booting with
+>   either new or old DTS data.
+> - Fixed a typo in the hwmod clock driver timeout handling, the comparison
+>   for timeout against ktime_us_delta was wrong causing too short
+>   timeouts, this was apparent with cpuidle enabled on OMAP4
+> - Added patch #6 to fetch hwmod main clock based on the hwmod name itself,
+>   if found, ignore main_clk / clkctrl setup for the hwmod
+> - Added patch #7 to fix issue in omap2 timer caused by patch #6, with
+>   dynamic parsing of main clock, the hwmod must be setup before attempting
+>   to access main_clk.
 
-> +#ifdef CONIFG_CPU_LOONGSON1A
+What's the general design goal of this series? This cover letter
+is more like a change and test log instead of an overall argument
+for why the series should be merged so I'm left to piecing
+together the commit text from the 28 different patches. I suspect
+it's to get rid of DT_CLK macros and do something with hwmod in a
+more generic way, but that's all I got.
 
-As I pointed out last week, CONFIG is misspelled.
-
-Regards.
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
