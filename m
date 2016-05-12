@@ -1,153 +1,89 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 4/5] clk: bcm2835: allow setting clocks flags via the dt
-Date: Thu,  5 May 2016 15:53:27 +0000
-Message-Id: <1462463608-22940-5-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
-References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <briannorris@chromium.org>
+Return-Path: <briannorris@chromium.org>
+Date: Thu, 12 May 2016 16:10:23 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, zhengxing@rock-chips.com,
+	shawn.lin@rock-chips.com, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: rockchip: fix the rk3399 sdmmc sample shift
+Message-ID: <20160512231023.GA63308@google.com>
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+ <1463076197-15900-2-git-send-email-dianders@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1463076197-15900-2-git-send-email-dianders@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Thu, May 12, 2016 at 11:03:17AM -0700, Doug Anderson wrote:
+> Just like every other Rockhip device, the MMC "_sample" clocks should
+> have a shift of 0, not a shift of 1.  The rk3399 TRM agrees.  Presumably
+> these values were set to 0 because of a typo.
 
-Allow setting flags for each clock via the device tree.
+I'll semi-disagree about the TRM: the TRM doesn't seem to agree with
+itself, so it sometimes agrees with you and sometimes doesn't :)
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 57 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 47 insertions(+), 10 deletions(-)
+On page 79 of the 2nd (?) book, it looks like {SDMMC,SDIO}_CON{0,}[2:1]
+are {drv,sample}_degree. But on page 208 of the 1st book, those are put
+at bits [1:0].
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 8a44ebf..c80487e 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1125,7 +1125,8 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
- };
- 
- static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
--					const struct bcm2835_pll_data *data)
-+					const struct bcm2835_pll_data *data,
-+					u32 flags)
- {
- 	struct bcm2835_pll *pll;
- 	struct clk_init_data init;
-@@ -1152,7 +1153,8 @@ static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 
- static struct clk *
- bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
--			     const struct bcm2835_pll_divider_data *data)
-+			     const struct bcm2835_pll_divider_data *data,
-+			     u32 flags)
- {
- 	struct bcm2835_pll_divider *divider;
- 	struct clk_init_data init;
-@@ -1223,8 +1225,10 @@ static u32 bcm2835_register_clock_default_parents(
- 	struct device *dev,
- 	const struct bcm2835_clock_data *data);
- 
--static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
--					  const struct bcm2835_clock_data *data)
-+static struct clk *
-+bcm2835_register_clock(struct bcm2835_cprman *cprman,
-+		       const struct bcm2835_clock_data *data,
-+		       u32 flags)
- {
- 	struct bcm2835_clock *clock;
- 	struct clk_init_data init;
-@@ -1270,14 +1274,19 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	clock->cprman = cprman;
- 	clock->data = data;
- 	clock->hw.init = &init;
--	clock->flags = bcm2835_register_clock_default_parents(
--		cprman->dev, data);
-+
-+	clock->flags = flags;
-+	if ((clock->flags & (BIT(data->num_mux_parents) - 1)) == 0)
-+		clock->flags |= bcm2835_register_clock_default_parents(
-+			cprman->dev, data);
- 
- 	return devm_clk_register(cprman->dev, &clock->hw);
- }
- 
--static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
--					 const struct bcm2835_gate_data *data)
-+static struct clk *
-+bcm2835_register_gate(struct bcm2835_cprman *cprman,
-+		      const struct bcm2835_gate_data *data,
-+		      u32 flags)
- {
- 	return clk_register_gate(cprman->dev, data->name, data->parent,
- 				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
-@@ -1286,7 +1295,7 @@ static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
- }
- 
- typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
--					    const void *data);
-+					    const void *data, int flags);
- struct bcm2835_clk_desc {
- 	bcm2835_clk_register clk_register;
- 	const void *data;
-@@ -1861,6 +1870,10 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	const struct bcm2835_clk_desc *desc;
- 	const size_t asize = ARRAY_SIZE(clk_desc_array);
-+	u32 flags[asize], index;
-+	struct property *prop;
-+	const __be32 *cur;
-+	int ret;
- 	size_t i;
- 
- 	cprman = devm_kzalloc(dev,
-@@ -1869,6 +1882,29 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	if (!cprman)
- 		return -ENOMEM;
- 
-+	/* fill in flags from dt */
-+	memset(flags, 0, sizeof(flags));
-+	i = 0;
-+	of_property_for_each_u32(dev->of_node, "brcm,clock-index",
-+				 prop, cur, index) {
-+		if (index >= asize) {
-+			dev_err(dev,
-+				"clock-index %d in \"brcm,clock-index\" is out of bounds at position %d\n",
-+				index, i);
-+		} else {
-+			ret = of_property_read_u32_index(dev->of_node,
-+							 "brcm,clock-flags",
-+							 i, &flags[index]);
-+			if (ret) {
-+				dev_err(dev,
-+					"no value at position %d in \"brcm,clock-flags\" - %d\n",
-+					i, ret);
-+			}
-+		}
-+		/* increment index */
-+		i++;
-+	}
-+
- 	spin_lock_init(&cprman->regs_lock);
- 	cprman->dev = dev;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1889,7 +1925,8 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	for (i = 0; i < asize; i++) {
- 		desc = &clk_desc_array[i];
- 		if (desc->clk_register && desc->data)
--			clks[i] = desc->clk_register(cprman, desc->data);
-+			clks[i] = desc->clk_register(cprman, desc->data,
-+				flags[i]);
- 	}
- 
- 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
--- 
-2.1.4
+Perhaps we can get a straight answer from Rockchip though.
+
+Brian
+
+> Things _sorta_ would have worked with the incorrect sample phase shift
+> because of the register layout but wouldn't have been ideal and we would
+> have skipped lots of phases.  Also: we would never actually enabled the
+> fine delay unless we happened to have 128 or more delay elements.
+> 
+> This is expected behavior before this patch:
+> * Try to set:     0 degrees +   1 delay elements
+>   Actually get:   0 degrees +   0 delay elements
+> * Try to set:    90 degrees +   0 delay elements
+>   Actually get: 180 degrees +   0 delay elements
+> * Try to set:   180 degrees +   0 delay elements
+>   Actually get:   0 degrees +   0 delay elements
+> * Try to set:   270 degrees +   0 delay elements
+>   Actually get: 180 degrees +   0 delay elements
+> * Try to set:     0 degrees + 129 delay elements
+>   Actually get:   0 degrees +   2 delay elements
+> * Try to set:   180 degrees + 129 delay elements
+>   Actually get:   0 degrees +   3 delay elements
+> * Try to set:     0 degrees + 130 delay elements
+>   Actually get:   0 degrees +   4 delay elements
+> 
+> I verified that old code had a problem by turning on debug printouts and
+> seeing that the old code would report this for one SD card I had:
+>   Good phase range 347-101 (115 len)
+>   Good phase range 202-326 (125 len)
+> 
+> After my fix, it went down to one big good range for the same card.
+> This is more expected:
+>   Good phase range 189-1 (173 len)
+>   Good phase range 82-85 (4 len)
+>   Good phase range 166-168 (3 len)
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index 291543f52caa..14ff3e109e1e 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -895,10 +895,10 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>  			RK3399_CLKGATE_CON(6), 1, GFLAGS),
+>  
+>  	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
+> -	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
+> +	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 0),
+>  
+>  	MMC(SCLK_SDIO_DRV,      "sdio_drv",    "clk_sdio",  RK3399_SDIO_CON0,  1),
+> -	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  1),
+> +	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  0),
+>  
+>  	/* pcie */
+>  	COMPOSITE(SCLK_PCIE_PM, "clk_pcie_pm", mux_pll_src_cpll_gpll_npll_24m_p, 0,
