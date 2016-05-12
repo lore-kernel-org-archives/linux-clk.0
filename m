@@ -1,36 +1,60 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 18/22] ARM: dts: exynos: Enable UART3 on Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-19-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <abd835c4-efd4-8f49-88d5-d05680e42e4f@osg.samsung.com>
-Date: Mon, 9 May 2016 17:40:51 -0400
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, shawn.lin@rock-chips.com, zhengxing@rock-chips.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc card initialization"
+Date: Fri, 13 May 2016 01:41:11 +0200
+Message-ID: <2083095.luTHhmZ9EO@phil>
+In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-19-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Am Donnerstag, 12. Mai 2016, 11:03:16 schrieb Douglas Anderson:
 
-On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> Just like other Exynos5 family SoCs, this one has four UARTs. Configure
-> clocks for UART3 and enable it.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Not sure what the policy is for revert-subjects in the clock-tree, but I 
+guess
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+clk: rockchip: Revert "reset init state before mmc card initialization"
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+might look nicer?
+
+> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
+> before mmc card initialization").
+
+I've tested these two patches together with the dw_mmc one and everything 
+that worked before still works (tuning on veyron-jerry) and everything that 
+didn't work still doesn't work (tuning on firefly [likely a regulator issue]).
+
+And re-checking the code against the TRM I now also see the mask that is to 
+short (1 bit in the code vs. the actual 2 bits described in the manual)
+
+[...]
+
+> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
+>    + other cases; might break someone with a strange bootloader that
+>    sets the phase to 0 or one that uses delay elements (pretty
+>    unpredicable what would happen in that case).
+> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
+>    totally override the broken patch and fix everything.
+> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
+>    any defaults from the clock code doesn't mattery.
+
+I'm still trying to make up my mind on how to proceed - aka in which order 
+patches should get picked up.
+
+Going with the "if it isn't upstream it doesn't exist" mantra Rob wrote 
+somewhere some days ago, taking this revert should not hurt anything, as all 
+the non-veyron devices currently don't support any tuning at all.
+
+So I'd think except for the issue Shawn was originally trying to fix (for 
+some non-mainline board?) it should be possible to take this patch any time 
+independently of the dw_mmc part.
+
+If Stephen or Mike want to do this directly, this is
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+> Fixes: 7a03fe6f48f3 ("clk: rockchip: reset init state before mmc card
+> initialization")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
