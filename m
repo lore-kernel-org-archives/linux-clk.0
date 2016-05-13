@@ -1,76 +1,57 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/6] ARM: dts: exynos: Interrupt for USB DWC3-1 differs between Exynos5420 and 5410
-Date: Tue, 31 May 2016 20:39:02 +0200
-Message-Id: <1464719945-3417-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 00/28] ARM: OMAP2+: hwmod module clock type support
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
+ <20160512233935.GN3492@codeaurora.org>
+CC: <tony@atomide.com>, <paul@pwsan.com>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <5735B364.9000504@ti.com>
+Date: Fri, 13 May 2016 13:58:44 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160512233935.GN3492@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Exynos5410 the SPI interrupt for second USB DWC3 (called DRD: Dual
-Role Device) is different - 200 instead of 73.
+On 13/05/16 02:39, Stephen Boyd wrote:
+> On 04/14, Tero Kristo wrote:
+>> Hi,
+>>
+>> v2 contains following changes in comparison to v1:
+>>
+>> - Patch ordering changed a bit, clk/ti, mach-omap2, dts patches are now
+>>    mostly grouped together, with the exception of the introduction of
+>>    clock helper API, which is needed by everything else. Please note
+>>    that the ordering must be preserved between mach-omap2/clk-driver/dts
+>>    to avoid boot problems.
+>> - Dropped hwmod data removal patches for now, this allows booting with
+>>    either new or old DTS data.
+>> - Fixed a typo in the hwmod clock driver timeout handling, the comparison
+>>    for timeout against ktime_us_delta was wrong causing too short
+>>    timeouts, this was apparent with cpuidle enabled on OMAP4
+>> - Added patch #6 to fetch hwmod main clock based on the hwmod name itself,
+>>    if found, ignore main_clk / clkctrl setup for the hwmod
+>> - Added patch #7 to fix issue in omap2 timer caused by patch #6, with
+>>    dynamic parsing of main clock, the hwmod must be setup before attempting
+>>    to access main_clk.
+>
+> What's the general design goal of this series? This cover letter
+> is more like a change and test log instead of an overall argument
+> for why the series should be merged so I'm left to piecing
+> together the commit text from the 28 different patches. I suspect
+> it's to get rid of DT_CLK macros and do something with hwmod in a
+> more generic way, but that's all I got.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
- arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
- arch/arm/boot/dts/exynos54xx.dtsi | 1 -
- 3 files changed, 8 insertions(+), 1 deletion(-)
+Sorry I think this was lost someone along the series, and looking back I 
+did not explain it that well at any point either.
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index a937d9bdad90..994d16a44fe4 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -267,6 +267,10 @@
- 	clock-names = "usbdrd30";
- };
- 
-+&usbdrd_dwc3_1 {
-+	interrupts = <0 200 0>;
-+};
-+
- &usbdrd_phy1 {
- 	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
- 	clock-names = "phy", "ref";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8b1e706e9250..265747bb19d1 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1046,6 +1046,10 @@
- 	clock-names = "usbdrd30";
- };
- 
-+&usbdrd_dwc3_1 {
-+	interrupts = <0 73 0>;
-+};
-+
- &usbdrd_phy1 {
- 	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
- 	clock-names = "phy", "ref";
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index 44a8391c8524..0eb8aa31b7d9 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -141,7 +141,6 @@
- 			usbdrd_dwc3_1: dwc3@12400000 {
- 				compatible = "snps,dwc3";
- 				reg = <0x12400000 0x10000>;
--				interrupts = <0 73 0>;
- 				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
- 				phy-names = "usb2-phy", "usb3-phy";
- 			};
--- 
-2.7.4
+The major motivation of this series is to get rid of the hwmod database 
+from kernel eventually, Tony is working on an interconnect driver which 
+will provide most of the other functionality currently done by hwmod, 
+but he is going to depend on the clkctrl part being done with this 
+series. Another important aspect of the series is that hwmod clkctrl is 
+now done with proper clock nodes, which provides multiple benefits like 
+usecounting, better debugging capabilities, better hierarchy support etc.
+
+-Tero
