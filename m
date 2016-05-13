@@ -1,51 +1,57 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 08/14] ARM: dts: omap4-sdp: Add pdmclk binding for audio
-Date: Wed, 18 May 2016 16:46:30 +0300
-Message-ID: <1463579196-5484-9-git-send-email-peter.ujfalusi@ti.com>
-In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH v2 4/5] clk: hisilicon: add hisi_clk_unregister_* functions
+Date: Fri, 13 May 2016 10:05:54 +0800
+Message-ID: <1463105155-20385-5-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The twl6040 codec is generating the pdmclk, which is used by the McPDM as
-functional clock.
+Add hisi_clk_unregister_* functions.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
- arch/arm/boot/dts/omap4-sdp.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/hisilicon/clk.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
-index aae513265dc2..7e6cd2d8ed5d 100644
---- a/arch/arm/boot/dts/omap4-sdp.dts
-+++ b/arch/arm/boot/dts/omap4-sdp.dts
-@@ -367,6 +367,7 @@
- 
- 	twl6040: twl@4b {
- 		compatible = "ti,twl6040";
-+		#clock-cells = <0>;
- 		reg = <0x4b>;
- 
- 		pinctrl-names = "default";
-@@ -620,6 +621,10 @@
- &mcpdm {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mcpdm_pins>;
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 2575329..4e1d1af 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -128,4 +128,25 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+ void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
+ 				int, struct hisi_clock_data *);
 +
-+	clocks = <&twl6040>;
-+	clock-names = "pdmclk";
++#define hisi_clk_unregister(type) \
++static inline \
++void hisi_clk_unregister_##type(const struct hisi_##type##_clock *clks, \
++				int nums, struct hisi_clock_data *data) \
++{ \
++	struct clk **clocks = data->clk_data.clks; \
++	int i; \
++	for (i = 0; i < nums; i++) { \
++		int id = clks[i].id; \
++		if (clocks[id])  \
++			clk_unregister_##type(clocks[id]); \
++	} \
++}
 +
- 	status = "okay";
- };
- 
++hisi_clk_unregister(fixed_rate)
++hisi_clk_unregister(fixed_factor)
++hisi_clk_unregister(mux)
++hisi_clk_unregister(divider)
++hisi_clk_unregister(gate)
++
+ #endif	/* __HISI_CLK_H */
 -- 
-2.8.2
+1.9.1
