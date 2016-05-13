@@ -1,193 +1,44 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 04/16] clk: sunxi-ng: Add gate clock support
-Date: Sun,  8 May 2016 22:01:39 +0200
-Message-Id: <1462737711-10017-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <5731664D.1030909@rvc.renesas.com>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	<5731664D.1030909@rvc.renesas.com>
+Date: Fri, 13 May 2016 10:55:48 +0200
+Message-ID: <CAMuHMdXRajaf7C09mO8WKqYL8cF09i96eWdC_FXBef6XUxcasw@mail.gmail.com>
+Subject: Re: [RFC 0/4] Add Z clock support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks in the Allwinner SoCs clocks unit are just simple gates. Add
-support for those clocks.
+Hi Khiem,
 
-Since it's a feature that can also be found in more complex clocks, provide
-a bunch of helpers that can be reused later on.
+On Tue, May 10, 2016 at 6:40 AM, Khiem Nguyen
+<khiem.nguyen.xt@rvc.renesas.com> wrote:
+> This series adds Z clock support for R-Car Gen3.
+> It was written on top of "[PATCH 0/4] clk: renesas: cpg-mssr: Add support
+> for R-Car M3-W" series.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Makefile   |  1 +
- drivers/clk/sunxi-ng/ccu_gate.c | 82 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_gate.h | 53 ++++++++++++++++++++++++++
- 3 files changed, 136 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_gate.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_gate.h
+Thanks for your patch series!
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index d76276736765..fc01127b3b45 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -2,3 +2,4 @@ obj-y += ccu_common.o
- obj-y += ccu_reset.o
- 
- obj-y += ccu_fixed_factor.o
-+obj-y += ccu_gate.o
-diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu_gate.c
-new file mode 100644
-index 000000000000..1e98f8a33ac3
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_gate.c
-@@ -0,0 +1,82 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_gate.h"
-+
-+void ccu_gate_helper_disable(struct ccu_common *common, u32 gate)
-+{
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!(common->features & CCU_FEATURE_GATE))
-+		return;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	reg = readl(common->base + common->reg);
-+	writel(reg & ~gate, common->base + common->reg);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+}
-+
-+static void ccu_gate_disable(struct clk_hw *hw)
-+{
-+	struct ccu_gate *cg = hw_to_ccu_gate(hw);
-+
-+	return ccu_gate_helper_disable(&cg->common, cg->enable);
-+}
-+
-+int ccu_gate_helper_enable(struct ccu_common *common, u32 gate)
-+{
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!(common->features & CCU_FEATURE_GATE))
-+		return 0;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	reg = readl(common->base + common->reg);
-+	writel(reg | gate, common->base + common->reg);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int ccu_gate_enable(struct clk_hw *hw)
-+{
-+	struct ccu_gate *cg = hw_to_ccu_gate(hw);
-+
-+	return ccu_gate_helper_enable(&cg->common, cg->enable);
-+}
-+
-+int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate)
-+{
-+	if (!(common->features & CCU_FEATURE_GATE))
-+		return 1;
-+
-+	return readl(common->base + common->reg) & gate;
-+}
-+
-+static int ccu_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_gate *cg = hw_to_ccu_gate(hw);
-+
-+	return ccu_gate_helper_is_enabled(&cg->common, cg->enable);
-+}
-+
-+const struct clk_ops ccu_gate_ops = {
-+	.disable	= ccu_gate_disable,
-+	.enable		= ccu_gate_enable,
-+	.is_enabled	= ccu_gate_is_enabled,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_gate.h b/drivers/clk/sunxi-ng/ccu_gate.h
-new file mode 100644
-index 000000000000..8e15fa17bcc1
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_gate.h
-@@ -0,0 +1,53 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_GATE_H_
-+#define _CCU_GATE_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+
-+struct ccu_gate {
-+	u32			enable;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_GATE(_struct, _name, _parent, _reg, _gate, _flags)	\
-+	struct ccu_gate _struct = {					\
-+		.enable	= _gate,					\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_gate_ops,	\
-+							_flags),	\
-+		}							\
-+	}
-+
-+static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_gate, common);
-+}
-+
-+void ccu_gate_helper_disable(struct ccu_common *common, u32 gate);
-+int ccu_gate_helper_enable(struct ccu_common *common, u32 gate);
-+int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate);
-+
-+extern const struct clk_ops ccu_gate_ops;
-+
-+#endif /* _CCU_GATE_H_ */
--- 
-2.8.2
+Unfortunately it seems to be whitespace-damaged, and can't be applied
+without manual tweaking.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
