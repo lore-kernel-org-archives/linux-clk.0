@@ -1,36 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:60199 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751244AbcEJMZk (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 08:25:40 -0400
-Message-ID: <1462883138.9155.3.camel@pengutronix.de>
-Subject: Re: [RFC PATCH 13/21] reset: uniphier: add reset driver for
- UniPhier PH1-LD4 SoC
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 10 May 2016 14:25:38 +0200
-In-Reply-To: <1462873862-30940-14-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-	 <1462873862-30940-14-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH v2 2/5] clk: hisilicon: add hisi_clk_alloc function.
+Date: Fri, 13 May 2016 10:05:52 +0800
+Message-ID: <1463105155-20385-3-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Masahiro,
+Before, there was an ordering issue that the clock provider
+had been published in hisi_clk_init before it could provide
+valid clocks to consumers. hisi_clk_alloc is just used to
+allocate memory space for struct hisi_clock_data. It makes
+it possible to publish the provider after the clocks are ready.
 
-Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
-> This series is just for review.
-> Please do not apply this patch.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+---
+ drivers/clk/hisilicon/clk.c | 29 +++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/clk.h |  3 +++
+ 2 files changed, 32 insertions(+)
 
-No need for all these tiny drivers. If you probe from DT as Lee
-requests, you can let of_device_id.data point to a compatible specific
-uniphier_reset_data.
-
-regards
-Philipp
-
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 9b15adb..78675d1 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -37,6 +37,35 @@
+ 
+ static DEFINE_SPINLOCK(hisi_clk_lock);
+ 
++struct hisi_clock_data *hisi_clk_alloc(struct platform_device *pdev,
++						int nr_clks)
++{
++	struct hisi_clock_data *clk_data;
++	struct resource *res;
++	struct clk **clk_table;
++
++	clk_data = devm_kmalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return NULL;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	clk_data->base = devm_ioremap(&pdev->dev,
++				res->start, resource_size(res));
++	if (!clk_data->base)
++		return NULL;
++
++	clk_table = devm_kmalloc(&pdev->dev, sizeof(struct clk *) * nr_clks,
++				GFP_KERNEL);
++	if (!clk_table)
++		return NULL;
++
++	clk_data->clk_data.clks = clk_table;
++	clk_data->clk_data.clk_num = nr_clks;
++
++	return clk_data;
++}
++EXPORT_SYMBOL_GPL(hisi_clk_alloc);
++
+ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 					     int nr_clks)
+ {
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 20d64af..5fc644f 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -30,6 +30,8 @@
+ #include <linux/io.h>
+ #include <linux/spinlock.h>
+ 
++struct platform_device;
++
+ struct hisi_clock_data {
+ 	struct clk_onecell_data	clk_data;
+ 	void __iomem		*base;
+@@ -110,6 +112,7 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+ 	const char *parent_name, unsigned long flags, void __iomem *reg,
+ 	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
+ 
++struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
+ struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+ void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
+ 				int, struct hisi_clock_data *);
+-- 
+1.9.1
