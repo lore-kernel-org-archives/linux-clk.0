@@ -1,162 +1,55 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2] clk: samsung: Remove useless check for return value of samsung_clk_init
-Date: Mon,  9 May 2016 19:32:31 +0200
-Message-Id: <1462815151-14396-1-git-send-email-krzk@kernel.org>
+Return-Path: <Purna.Mandal@microchip.com>
+From: Purna Chandra Mandal <purna.mandal@microchip.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+	<linux-clk@vger.kernel.org>, Purna Chandra Mandal
+	<purna.mandal@microchip.com>, <devicetree@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala
+	<galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob
+ Herring <robh+dt@kernel.org>, Joshua Henderson
+	<joshua.henderson@microchip.com>, Pawel Moll <pawel.moll@arm.com>, Sandeep
+ Sheriker <sandeepsheriker.mallikarjun@microchip.com>, Mark Rutland
+	<mark.rutland@arm.com>
+Subject: [PATCH v11 0/3] PIC32MZDA Clock Driver
+Date: Fri, 13 May 2016 13:22:38 +0530
+Message-ID: <1463125961-10706-1-git-send-email-purna.mandal@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: purna.mandal@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The samsung_clk_init() cannot return NULL. Either it returns allocated
-memory or it panics.
+Clock bindings got acked and then essentially unacked, while the clock
+driver never made it upstream. In the meantime, the initial DTS file
+made it upstream. This latest patch series includes a patch to go back
+and correct the DTS files to reflect the new clock bindings in this
+patch series.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Note: Please pull this complete series through the MIPS tree.
 
----
+Purna Chandra Mandal (3):
+  dt/bindings/clk: Add PIC32 clock binding documentation.
+  clk: microchip: Add Microchip PIC32 clock driver.
+  MIPS: dts: pic32: Update dts to reflect new PIC32MZDA clk binding
 
-Changes since v1:
-1. Remove the check from most of other Samsung clock drivers (suggested
-   by Javier).
----
- drivers/clk/samsung/clk-exynos4.c    | 2 --
- drivers/clk/samsung/clk-exynos5250.c | 3 +--
- drivers/clk/samsung/clk-exynos5420.c | 2 --
- drivers/clk/samsung/clk-exynos5440.c | 2 --
- drivers/clk/samsung/clk-s3c2410.c    | 2 --
- drivers/clk/samsung/clk-s3c2412.c    | 2 --
- drivers/clk/samsung/clk-s3c2443.c    | 2 --
- drivers/clk/samsung/clk-s3c64xx.c    | 2 --
- drivers/clk/samsung/clk-s5pv210.c    | 2 --
- 9 files changed, 1 insertion(+), 18 deletions(-)
+ .../devicetree/bindings/clock/microchip,pic32.txt  |   39 +
+ arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi        |  236 -----
+ arch/mips/boot/dts/pic32/pic32mzda.dtsi            |   63 +-
+ arch/mips/boot/dts/pic32/pic32mzda_sk.dts          |    5 +-
+ drivers/clk/Kconfig                                |    3 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/microchip/Makefile                     |    2 +
+ drivers/clk/microchip/clk-core.c                   | 1031 ++++++++++++++++++++
+ drivers/clk/microchip/clk-core.h                   |   84 ++
+ drivers/clk/microchip/clk-pic32mzda.c              |  275 ++++++
+ include/dt-bindings/clock/microchip,pic32-clock.h  |   42 +
+ 11 files changed, 1522 insertions(+), 259 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
+ delete mode 100644 arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi
+ create mode 100644 drivers/clk/microchip/Makefile
+ create mode 100644 drivers/clk/microchip/clk-core.c
+ create mode 100644 drivers/clk/microchip/clk-core.h
+ create mode 100644 drivers/clk/microchip/clk-pic32mzda.c
+ create mode 100644 include/dt-bindings/clock/microchip,pic32-clock.h
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 7b3d0f975987..2f458233908b 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1450,8 +1450,6 @@ static void __init exynos4_clk_init(struct device_node *np,
- 		panic("%s: failed to map registers\n", __func__);
- 
- 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos4_fixed_rate_ext_clks,
- 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 837197db4ffb..d8621cf31786 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -805,8 +805,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 	}
- 
- 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
-+
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5250_fixed_rate_ext_clks,
- 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
- 			ext_clk_match);
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 92382cef9f90..770c0f007c6b 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 	exynos5x_soc = soc;
- 
- 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
- 			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-index c57cff1e1798..22c73d4a5ee3 100644
---- a/drivers/clk/samsung/clk-exynos5440.c
-+++ b/drivers/clk/samsung/clk-exynos5440.c
-@@ -125,8 +125,6 @@ static void __init exynos5440_clk_init(struct device_node *np)
- 	}
- 
- 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5440_fixed_rate_ext_clks,
- 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
-diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-index d7b011c1fcf8..d7a1e772d95a 100644
---- a/drivers/clk/samsung/clk-s3c2410.c
-+++ b/drivers/clk/samsung/clk-s3c2410.c
-@@ -374,8 +374,6 @@ void __init s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
- 	}
- 
- 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	/* Register external clocks only in non-dt cases */
- 	if (!np)
-diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-index effe3736ec6b..ec873ee15d37 100644
---- a/drivers/clk/samsung/clk-s3c2412.c
-+++ b/drivers/clk/samsung/clk-s3c2412.c
-@@ -265,8 +265,6 @@ void __init s3c2412_common_clk_init(struct device_node *np, unsigned long xti_f,
- 	}
- 
- 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	/* Register external clocks only in non-dt cases */
- 	if (!np)
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index 37562783b25e..5e24a17e10e6 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -400,8 +400,6 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 	}
- 
- 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	/* Register external clocks only in non-dt cases */
- 	if (!np)
-diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-index 60aa775bd374..a48bd5f17330 100644
---- a/drivers/clk/samsung/clk-s3c64xx.c
-+++ b/drivers/clk/samsung/clk-s3c64xx.c
-@@ -471,8 +471,6 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
- 	}
- 
- 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	/* Register external clocks. */
- 	if (!np)
-diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
-index 52302262045d..fd2725710a6f 100644
---- a/drivers/clk/samsung/clk-s5pv210.c
-+++ b/drivers/clk/samsung/clk-s5pv210.c
-@@ -784,8 +784,6 @@ static void __init __s5pv210_clk_init(struct device_node *np,
- 	struct samsung_clk_provider *ctx;
- 
- 	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
--	if (!ctx)
--		panic("%s: unable to allocate context.\n", __func__);
- 
- 	samsung_clk_register_mux(ctx, early_mux_clks,
- 					ARRAY_SIZE(early_mux_clks));
 -- 
-2.5.0
+1.8.3.1
