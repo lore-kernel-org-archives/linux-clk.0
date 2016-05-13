@@ -1,140 +1,135 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 08/21] clk: uniphier: add clock driver for UniPhier PH1-LD11 SoC
-Date: Tue, 10 May 2016 18:50:49 +0900
-Message-Id: <1462873862-30940-9-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.131]:42836 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751671AbcEMAUW (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2016 20:20:22 -0400
+Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc
+ card initialization"
+To: Douglas Anderson <dianders@chromium.org>,
+	Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <78aecdae-7b9b-d687-a8d3-44f476ddd73e@rock-chips.com>
+Date: Fri, 13 May 2016 08:19:54 +0800
+MIME-Version: 1.0
+In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+On 2016/5/13 2:03, Douglas Anderson wrote:
+> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
+> before mmc card initialization").
+>
+> Though not totally obvious from the commit message nor from the source
+> code, that commit appears to be trying to reset the "_drv" MMC clocks to
+> 90 degrees (note that the "_sample" MMC clocks have a shift of 0 so are
+> not touched).
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Hrrr...my fault, anyway it should be reverted in case of new register
+layout in the future.
 
- drivers/clk/uniphier/Kconfig             |  4 ++
- drivers/clk/uniphier/Makefile            |  1 +
- drivers/clk/uniphier/clk-uniphier-ld11.c | 83 ++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
- create mode 100644 drivers/clk/uniphier/clk-uniphier-ld11.c
+Have you found the difference of sample shift between rk3399 and former
+Socs?  Per Mobile Storage Host Controller section, it migrate from
+bit[1:0] to bit[2:1]...
 
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
-index d4a3d55..1746aea 100644
---- a/drivers/clk/uniphier/Kconfig
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -26,4 +26,8 @@ config CLK_UNIPHIER_PXS2
- 	tristate "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
- 	default ARM
- 
-+config CLK_UNIPHIER_LD11
-+	tristate "Clock driver for UniPhier PH1-LD11 SoC"
-+	default ARM64
-+
- endif
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-index 20a274f..e056771 100644
---- a/drivers/clk/uniphier/Makefile
-+++ b/drivers/clk/uniphier/Makefile
-@@ -9,3 +9,4 @@ obj-$(CONFIG_CLK_UNIPHIER_PRO4)	+= clk-uniphier-pro4.o
- obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
- obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
- obj-$(CONFIG_CLK_UNIPHIER_PXS2)	+= clk-uniphier-pxs2.o
-+obj-$(CONFIG_CLK_UNIPHIER_LD11)	+= clk-uniphier-ld11.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-ld11.c b/drivers/clk/uniphier/clk-uniphier-ld11.c
-new file mode 100644
-index 0000000..5b8536a
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-ld11.c
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-uniphier.h"
-+
-+static const struct uniphier_clk_data uniphier_ld11_clk_data[] = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "ref",
-+			.mult = 80,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 0,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 34,
-+		},
-+	},
-+	{
-+		.name = "fi2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 1,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 50,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 7,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x200c,
-+			.mask = BIT(8),
-+			.enable_val = BIT(8),
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static int uniphier_ld11_clk_probe(struct platform_device *pdev)
-+{
-+	return uniphier_clk_probe(pdev, uniphier_ld11_clk_data);
-+}
-+
-+static struct platform_driver uniphier_ld11_clk_driver = {
-+	.probe = uniphier_ld11_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-ld11-clk",
-+	},
-+};
-+module_platform_driver(uniphier_ld11_clk_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-LD11 System Clock Driver");
-+MODULE_LICENSE("GPL");
+Acutally there are three register layouts about sdmmc/sdio tuning
+stuff I found. Although just two types were upstreamed, it still
+caused difficulty. With your patch for dw_mmc to explictly assign
+dr_phase, we keep the phase policy better to be unstood and traced.
+
+Again sorry for commit 7a03fe6f48!
+
+>
+> The major problem here is that it doesn't properly reset things.  The
+> phase is a two bit field and the commit only touches one of the two
+> bits.  Thus the commit had the following affect:
+> - phase   0  => phase  90
+> - phase  90  => phase  90
+> - phase 180  => phase 270
+> - phase 270  => phase 270
+>
+> Things get even weirder if you happen to have a bootloader that was
+> actually using delay elements (should be no reason to, but you never
+> know), since those are additional bits that weren't touched by the
+> original patch.
+>
+> This is unlikely to be what we actually want.  Checking on rk3288-veyron
+> devices, I can see that the bootloader leaves these clocks as:
+> - emmc:  phase 180
+> - sdmmc: phase 90
+> - sdio0: phase 90
+>
+> Thus on rk3288-veyron devices the commit we're reverting had the effect
+> of changing the eMMC clock to phase 270.  This probably explains the
+> scattered reports I've heard of eMMC devices not working on some veyron
+> devices when using the upstream kernel.
+>
+> The original commit was presumably made because previously the kernel
+> didn't touch the "_drv" phase at all and relied on whatever value was
+> there when the kernel started.  If someone was using a bootloader that
+> touched the "_drv" phase then, indeed, we should have code in the kernel
+> to fix that.  ...and also, to get ideal timings, we should also have the
+> kernel change the phase depending on the speed mode.  In fact, that's
+> the subject of a recent patch I posted at
+> <https://patchwork.kernel.org/patch/9075141/>.
+>
+> Ideally, we should take both the patch posted to dw_mmc and this
+> revert.  Since those will likely go through different trees, here I
+> describe behavior with the combos:
+>
+> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
+>    + other cases; might break someone with a strange bootloader that
+>    sets the phase to 0 or one that uses delay elements (pretty
+>    unpredicable what would happen in that case).
+> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
+>    totally override the broken patch and fix everything.
+> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
+>    any defaults from the clock code doesn't mattery.
+>
+> Fixes: 7a03fe6f48f3 ("clk: rockchip: reset init state before mmc card initialization")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>  drivers/clk/rockchip/clk-mmc-phase.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+> index bc856f21f6b2..5b18265c2306 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -41,8 +41,6 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+>  #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>  #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>  #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+> -#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
+> -#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+>
+>  #define PSECS_PER_SEC 1000000000000LL
+>
+> @@ -162,15 +160,6 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>  	mmc_clock->reg = reg;
+>  	mmc_clock->shift = shift;
+>
+> -	/*
+> -	 * Assert init_state to soft reset the CLKGEN
+> -	 * for mmc tuning phase and degree
+> -	 */
+> -	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
+> -		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
+> -				     ROCKCHIP_MMC_INIT_STATE_RESET,
+> -				     mmc_clock->shift), mmc_clock->reg);
+> -
+>  	clk = clk_register(NULL, &mmc_clock->hw);
+>  	if (IS_ERR(clk))
+>  		kfree(mmc_clock);
+>
+
+
 -- 
-1.9.1
+Best Regards
+Shawn Lin
+
