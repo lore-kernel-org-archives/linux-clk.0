@@ -1,49 +1,147 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 10/22] ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
-Date: Sat, 28 May 2016 11:54:21 +0200
-Message-Id: <1464429273-23457-11-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <Purna.Mandal@microchip.com>
+From: Purna Chandra Mandal <purna.mandal@microchip.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+	<linux-clk@vger.kernel.org>, Purna Chandra Mandal
+	<purna.mandal@microchip.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, <devicetree@vger.kernel.org>, Kumar Gala
+	<galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob
+ Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
+	<mark.rutland@arm.com>
+Subject: [PATCH v11 1/3] dt/bindings/clk: Add PIC32 clock binding documentation.
+Date: Fri, 13 May 2016 13:22:39 +0530
+Message-ID: <1463125961-10706-2-git-send-email-purna.mandal@microchip.com>
+In-Reply-To: <1463125961-10706-1-git-send-email-purna.mandal@microchip.com>
+References: <1463125961-10706-1-git-send-email-purna.mandal@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: purna.mandal@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2c-arbitrator node in exynos5250-snow-common used absolute path to
-reference other node (the i2c parent). Use phandle instead, because the
-depth of the other node may be changed (like moving it under 'soc'
-node).
+Document the devicetree bindings for the clock driver found on Microchip
+PIC32 class devices.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Purna Chandra Mandal <purna.mandal@microchip.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
 ---
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Note: Please pull this complete series through the MIPS tree.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index ddfe1f558c10..419d59da1751 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -61,7 +61,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		i2c-parent = <&{/i2c@12CA0000}>;
-+		i2c-parent = <&i2c_4>;
- 
- 		our-claim-gpio = <&gpf0 3 GPIO_ACTIVE_LOW>;
- 		their-claim-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
+Changes in v11: None
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6:
+ - Update Microchip PIC32 clock binding document based on review
+ - Add header defining clocks
+
+Changes in v3: None
+Changes in v2:
+ - Force lowercase in PIC32 clock binding documentation
+
+ .../devicetree/bindings/clock/microchip,pic32.txt  | 39 ++++++++++++++++++++
+ include/dt-bindings/clock/microchip,pic32-clock.h  | 42 ++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
+ create mode 100644 include/dt-bindings/clock/microchip,pic32-clock.h
+
+diff --git a/Documentation/devicetree/bindings/clock/microchip,pic32.txt b/Documentation/devicetree/bindings/clock/microchip,pic32.txt
+new file mode 100644
+index 0000000..c93d88f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/microchip,pic32.txt
+@@ -0,0 +1,39 @@
++Microchip PIC32 Clock Controller Binding
++----------------------------------------
++Microchip clock controller is consists of few oscillators, PLL, multiplexer
++and few divider modules.
++
++This binding uses common clock bindings.
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: shall be "microchip,pic32mzda-clk".
++- reg: shall contain base address and length of clock registers.
++- #clock-cells: shall be 1.
++
++Optional properties:
++- microchip,pic32mzda-sosc: shall be added only if platform has
++  secondary oscillator connected.
++
++Example:
++	rootclk: clock-controller@1f801200 {
++		compatible = "microchip,pic32mzda-clk";
++		reg = <0x1f801200 0x200>;
++		#clock-cells = <1>;
++		/* optional */
++		microchip,pic32mzda-sosc;
++	};
++
++
++The clock consumer shall specify the desired clock-output of the clock
++controller (as defined in [2]) by specifying output-id in its "clock"
++phandle cell.
++[2] include/dt-bindings/clock/microchip,pic32-clock.h
++
++For example for UART2:
++uart2: serial@2 {
++	compatible = "microchip,pic32mzda-uart";
++	reg = <>;
++	interrupts = <>;
++	clocks = <&rootclk PB2CLK>;
++};
+diff --git a/include/dt-bindings/clock/microchip,pic32-clock.h b/include/dt-bindings/clock/microchip,pic32-clock.h
+new file mode 100644
+index 0000000..184647a6
+--- /dev/null
++++ b/include/dt-bindings/clock/microchip,pic32-clock.h
+@@ -0,0 +1,42 @@
++/*
++ * Purna Chandra Mandal,<purna.mandal@microchip.com>
++ * Copyright (C) 2015 Microchip Technology Inc.  All rights reserved.
++ *
++ * This program is free software; you can distribute it and/or modify it
++ * under the terms of the GNU General Public License (Version 2) as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * for more details.
++ */
++
++#ifndef _DT_BINDINGS_CLK_MICROCHIP_PIC32_H_
++#define _DT_BINDINGS_CLK_MICROCHIP_PIC32_H_
++
++/* clock output indices */
++#define POSCCLK		0
++#define FRCCLK		1
++#define BFRCCLK		2
++#define LPRCCLK		3
++#define SOSCCLK		4
++#define FRCDIVCLK	5
++#define PLLCLK		6
++#define SCLK		7
++#define PB1CLK		8
++#define PB2CLK		9
++#define PB3CLK		10
++#define PB4CLK		11
++#define PB5CLK		12
++#define PB6CLK		13
++#define PB7CLK		14
++#define REF1CLK		15
++#define REF2CLK		16
++#define REF3CLK		17
++#define REF4CLK		18
++#define REF5CLK		19
++#define UPLLCLK		20
++#define MAXCLKS		21
++
++#endif	/* _DT_BINDINGS_CLK_MICROCHIP_PIC32_H_ */
 -- 
-2.7.4
+1.8.3.1
