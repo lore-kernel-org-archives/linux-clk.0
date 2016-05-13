@@ -1,40 +1,231 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 3 May 2016 21:43:57 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de
-Subject: [GIT PULL] i.MX clock updates for 4.7, take 2
-Message-ID: <20160503134356.GO5874@tiger>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Return-Path: <moinejf@free.fr>
+Date: Fri, 13 May 2016 11:45:59 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Vishnu Patekar
+ <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
+ Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
+Message-Id: <20160513114559.786221e415ce5956e161dd5b@free.fr>
+In-Reply-To: <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 69c542e8022ca53c5fee664548163809eb1777c3:
+On Sun,  8 May 2016 22:01:50 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-  clk: imx: vf610: fix whitespace in vf610-clock.h (2016-04-12 09:31:08 +0800)
+> Add the list of clocks and resets found in the H3 CCU.
 
-are available in the git repository at:
+Hi Maxime,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.7-2
+Nice job. I like this new way for defining the sunxi clocks.
+But it does not yet fully work for the H3 (apart the other already
+signalled errors). See below.
 
-for you to fetch changes up to 92a847e3609a8d00bcbe8bdfacbcbbca03135410:
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/Makefile        |   2 +
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
+>  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
+>  4 files changed, 1024 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
+>  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index c794f57b6fb1..67ff6a92f124 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -13,3 +13,5 @@ obj-y +=3D ccu_nkmp.o
+>  obj-y +=3D ccu_nm.o
+>  obj-y +=3D ccu_p.o
+>  obj-y +=3D ccu_phase.o
+> +
+> +obj-y +=3D ccu-sun8i-h3.o
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/c=
+cu-sun8i-h3.c
+> new file mode 100644
+> index 000000000000..5ce699e95c32
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> @@ -0,0 +1,757 @@
+	[snip]
+> +static struct ccu_nkmp pll_cpux_clk =3D {
+> +	.enable		=3D BIT(31),
+> +	.lock		=3D BIT(28),
+> +
+> +	.m		=3D SUNXI_CLK_FACTOR(0, 2),
+> +	.k		=3D SUNXI_CLK_FACTOR(4, 2),
+> +	.n		=3D SUNXI_CLK_FACTOR(8, 5),
+> +	.p		=3D SUNXI_CLK_FACTOR(16, 2),
+> +
+> +	.common		=3D {
+> +		.reg		=3D 0x000,
+> +		.features	=3D CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
 
-  clk: imx7d: fix ahb clock mux 1 (2016-05-03 20:35:38 +0800)
+It seems to me that these flags are redondant with the .enable
+and .lock fields (always !=3D 0 when used).
 
-----------------------------------------------------------------
-The i.MX clock updates for 4.7, take 2:
- - Update clk-pllv3 driver to get it return correct frequency for
-   Ethernet PLL on i.MX7D.
- - Correct ahb clock mux settings for i.MX7D per latest hardware
-   document.
+> +		.hw.init	=3D SUNXI_HW_INIT("pll-cpux",
+> +						"osc24M",
+> +						&ccu_nkmp_ops,
+> +						0),
+> +	},
+> +};
 
-----------------------------------------------------------------
-Stefan Agner (2):
-      clk: imx: return correct frequency for Ethernet PLL
-      clk: imx7d: fix ahb clock mux 1
+The 'p' factor must be used only for very low rates (< 288MHz).
+I think that it should be ignored.
 
- drivers/clk/imx/clk-imx7d.c | 2 +-
- drivers/clk/imx/clk-pllv3.c | 9 ++++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+> +
+> +static struct ccu_nm pll_audio_base_clk =3D {
+> +	.enable		=3D BIT(31),
+> +	.lock		=3D BIT(28),
+> +
+> +	.m		=3D SUNXI_CLK_FACTOR(0, 5),
+> +	.n		=3D SUNXI_CLK_FACTOR(8, 7),
+> +
+> +	.common		=3D {
+> +		.reg		=3D 0x008,
+> +		.features	=3D CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
+> +		.hw.init	=3D SUNXI_HW_INIT("pll-audio-base",
+> +						"osc24M",
+> +						&ccu_nm_ops,
+> +						0),
+> +	},
+> +};
+> +
+> +static SUNXI_CCU_M(pll_audio_clk, "pll-audio", "pll-audio-base",
+> +		   0x008, 16, 4, 0);
+> +
+> +static SUNXI_CCU_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
+> +			      "pll-audio-base", 2, 1, 0);
+> +static SUNXI_CCU_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
+> +			      "pll-audio-base", 1, 1, 0);
+> +static SUNXI_CCU_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
+> +			      "pll-audio-base", 1, 2, 0);
+
+Forcing the post divider 'p' to 4 would simplify this PLL.
+
+> +
+> +static struct ccu_nm pll_video_clk =3D {
+> +	.enable		=3D BIT(31),
+> +	.lock		=3D BIT(28),
+> +
+> +	.m		=3D SUNXI_CLK_FACTOR(0, 4),
+> +	.n		=3D SUNXI_CLK_FACTOR(8, 7),
+> +
+> +	.common		=3D {
+> +		.reg		=3D 0x010,
+> +		.features	=3D CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
+> +		.hw.init	=3D SUNXI_HW_INIT("pll-video",
+> +						"osc24M",
+> +						&ccu_nm_ops,
+> +						0),
+> +	},
+> +};
+
+The legacy u-boot I use (lichee) forces this PLL to 297MHz in
+fractional mode (FRAC_CLK_OUT =3D 1 and PLL_MODE_SEL =3D 0).
+As these bits are not managed, getting the rate is false and setting it
+is not possible.
+
+	[snip]
+> +
+> +static struct ccu_nk pll_periph0_clk =3D {
+> +	.enable		=3D BIT(31),
+> +	.lock		=3D BIT(28),
+> +
+> +	.k		=3D SUNXI_CLK_FACTOR(4, 2),
+> +	.n		=3D SUNXI_CLK_FACTOR(8, 5),
+> +	.fixed_post_div	=3D 2,
+> +
+> +	.common		=3D {
+> +		.reg		=3D 0x028,
+> +		.features	=3D (CCU_FEATURE_GATE |
+> +				   CCU_FEATURE_LOCK |
+> +				   CCU_FEATURE_FIXED_POSTDIV),
+> +		.hw.init	=3D SUNXI_HW_INIT("pll-periph0",
+> +						"osc24M",
+> +						&ccu_nk_ops,
+> +						0),
+> +	},
+> +};
+
+As told previously, the H3 documentation says:
+
+ Note: The PLL Output should be fixed to 600MHz, it is not recommended to
+ vary this value arbitrarily.
+
+So, is it useful to offer the possibility to change the rate of this PLL
+(and same for pll-periph1)?
+(I force the rate in the DT with assigned-clock-rates to avoid any problem)
+
+> +
+> +static SUNXI_CCU_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
+> +			      "pll-periph0", 1, 2, 0);
+> +
+	[snip]
+> +static const char * const nand_parents[] =3D { "osc24M", "pll-periph0",
+> +					     "pll-periph1" };
+> +static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", nand_parents, 0x080,
+> +				  0, 4,		/* M */
+> +				  16, 2,	/* P */
+> +				  24, 2,	/* mux */
+> +				  BIT(31),	/* gate */
+> +				  0);
+
+The mux width is 2, meaning there may be 4 parents. Then, there may be
+an access out of the parent array (and same for mmcx and spix).
+
+> +
+> +static const char * const mmc0_parents[] =3D { "osc24M", "pll-periph0",
+> +					     "pll-periph1" };
+
+The parent tables of nand, mmcx and spix are the same. One table should
+be enough.
+
+> +static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc0_parents, 0x088,
+> +				  0, 4,		/* M */
+> +				  16, 2,	/* P */
+> +				  24, 2,	/* mux */
+> +				  BIT(31),	/* gate */
+> +				  0);
+> +
+> +static SUNXI_CCU_PHASE(mmc0_sample_clk, "mmc0_sample", "mmc0",
+> +		       0x088, 20, 3, 0);
+> +static SUNXI_CCU_PHASE(mmc0_output_clk, "mmc0_output", "mmc0",
+> +		       0x088, 8, 3, 0);
+	[snip]
+> +static const char * const i2s0_parents[] =3D { "pll-audio-8x", "pll-audi=
+o-4x",
+> +					     "pll-audio-2x" , "pll-audio" };
+> +static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s0_parents,
+> +			       0x0b0, 16, 2, BIT(31), 0);
+> +
+> +static const char * const i2s1_parents[] =3D { "pll-audio-8x", "pll-audi=
+o-4x",
+> +					     "pll-audio-2x" , "pll-audio" };
+> +static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s1_parents,
+> +			       0x0b4, 16, 2, BIT(31), 0);
+> +
+> +static const char * const i2s2_parents[] =3D { "pll-audio-8x", "pll-audi=
+o-4x",
+> +					     "pll-audio-2x" , "pll-audio" };
+> +static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s2_parents,
+> +			       0x0b8, 16, 2, BIT(31), 0);
+	[snip]
+
+Same parent tables.
+This occurs for other clocks.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
