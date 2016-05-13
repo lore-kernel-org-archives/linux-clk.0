@@ -1,48 +1,49 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
-Date: Sat, 28 May 2016 11:54:24 +0200
-Message-Id: <1464429273-23457-14-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <briannorris@chromium.org>
+Return-Path: <briannorris@chromium.org>
+From: Brian Norris <briannorris@chromium.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>,
+	Doug Anderson <dianders@chromium.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 2/2] clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src
+Date: Fri, 13 May 2016 11:42:17 -0700
+Message-Id: <1463164937-91089-2-git-send-email-briannorris@chromium.org>
+In-Reply-To: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Just like other Exynos5 family SoCs, this one has four UARTs. Configure
-clocks for UART3 and enable it.
+From: Xing Zheng <zhengxing@rock-chips.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+There was a typo, swapping 'c' <--> 'g'.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 0d555c5b7311..a81a03408a0a 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -218,7 +218,8 @@
- };
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 145756c4f3c8..9f86bfef70f7 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(13), 1, GFLAGS),
  
- &serial_3 {
--	status = "disabled";
-+	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-+	clock-names = "uart", "clk_uart_baud0";
- };
- 
- &sromc {
+ 	/* perihp */
+-	GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
++	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+-	GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
++	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(5), 1, GFLAGS),
+ 	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
 -- 
-2.7.4
+2.8.0.rc3.226.g39d4020
