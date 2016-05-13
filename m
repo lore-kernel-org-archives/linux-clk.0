@@ -1,102 +1,195 @@
-Return-Path: <moinejf@free.fr>
-Date: Mon, 9 May 2016 09:24:21 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Vishnu Patekar
- <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
- Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 12/16] clk: sunxi-ng: Add N-M-factor clock support
-Message-Id: <20160509092421.a36252139fd6b00b2cd32f24@free.fr>
-In-Reply-To: <1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <573166A8.1030101@rvc.renesas.com>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	<573166A8.1030101@rvc.renesas.com>
+Date: Fri, 13 May 2016 10:54:03 +0200
+Message-ID: <CAMuHMdV-N1WNju+n3ErQVKHqiofm+0RWUx+MQZZ8qjDr-q1w3g@mail.gmail.com>
+Subject: Re: [RFC 1/4] clk: renesas: rcar-gen3-cpg: Add Z clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun,  8 May 2016 22:01:47 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Hi Khiem,
 
-> Introduce support for clocks that multiply and divide using linear factor=
-s.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Tue, May 10, 2016 at 6:42 AM, Khiem Nguyen
+<khiem.nguyen.xt@rvc.renesas.com> wrote:
+> Base on Dien Pham work.
+>
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+
+Thanks for your patch!
+
 > ---
->  drivers/clk/sunxi-ng/Makefile |   1 +
->  drivers/clk/sunxi-ng/ccu_nm.c | 103 ++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu_nm.h |  41 +++++++++++++++++
->  3 files changed, 145 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
-	[snip]
-> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-> new file mode 100644
-> index 000000000000..268637db137b
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
-> @@ -0,0 +1,103 @@
-	[snip]
-> +static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			      unsigned long *parent_rate)
-> +{
-> +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
-> +	unsigned long n, m;
-> +
-> +	rational_best_approximation(rate, *parent_rate,
-> +				    nm->n.width, nm->m.width, &n, &m);
+>  drivers/clk/renesas/rcar-gen3-cpg.c | 143
+> ++++++++++++++++++++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen3-cpg.h |   1 +
+>  2 files changed, 144 insertions(+)
+>
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c
+> b/drivers/clk/renesas/rcar-gen3-cpg.c
+> index bb4f2f9..45209ac 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -28,6 +28,146 @@
+>  #define CPG_PLL2CR             0x002c
+>  #define CPG_PLL4CR             0x01f4
+>
+> +/** Modify for Z-clock
 
-Should be
-			1 << nm->n.width, 1 << nm->m.width, &n, &m);
+Please drop this comment
 
+> + *
+> -----------------------------------------------------------------------------
+> + * Z Clock
+> + *
+> + * Traits of this clock:
+> + * prepare - clk_prepare only ensures that parents are prepared
+> + * enable - clk_enable only ensures that parents are enabled
+> + * rate - rate is adjustable.  clk->rate = parent->rate * mult / 32
+> + * parent - fixed parent.  No clk_set_parent support
+> + */
+> +#define CPG_FRQCRB                     0x00000004
+> +#define CPG_FRQCRB_KICK                        BIT(31)
+> +#define CPG_FRQCRC                     0x000000e0
+> +#define CPG_FRQCRC_ZFC_MASK            (0x1f << 8)
+> +#define CPG_FRQCRC_ZFC_SHIFT           8
 > +
-> +	return *parent_rate * n / m;
-> +}
 > +
-> +static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			   unsigned long parent_rate)
-> +{
-> +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
-> +	unsigned long flags;
-> +	unsigned long n, m;
-> +	u32 reg;
-> +
-> +	rational_best_approximation(rate, parent_rate,
-> +				    nm->n.width, nm->m.width, &n, &m);
+> +struct cpg_z_clk {
+> +       struct clk_hw hw;
+> +       void __iomem *reg;
+> +       void __iomem *kick_reg;
 
-Idem
+I would just store the base address, and always use "zclk->base + CPG_FRQCRB"
+or "zclk->base + CPG_FRQCRC".
 
-> +
-> +	spin_lock_irqsave(nm->common.lock, flags);
-> +
-> +	reg =3D readl(nm->common.base + nm->common.reg);
-> +	reg &=3D ~GENMASK(nm->n.width + nm->n.shift, nm->n.shift);
-> +	reg &=3D ~GENMASK(nm->m.width + nm->m.shift, nm->m.shift);
-> +
-> +	writel(reg | ((m - 1) << nm->m.shift) | ((n - 1) << nm->n.shift),
-> +	       nm->common.base + nm->common.reg);
-> +
-> +	spin_unlock_irqrestore(nm->common.lock, flags);
-> +
-> +	ccu_helper_wait_for_lock(&nm->common, nm->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops ccu_nm_ops =3D {
-> +	.disable	=3D ccu_nm_disable,
-> +	.enable		=3D ccu_nm_enable,
-> +	.is_enabled	=3D ccu_nm_is_enabled,
-> +
-> +	.recalc_rate	=3D ccu_nm_recalc_rate,
-> +	.round_rate	=3D ccu_nm_round_rate,
-> +	.set_rate	=3D ccu_nm_set_rate,
 > +};
-	[snip]
+> +
+> +#define to_z_clk(_hw)  container_of(_hw, struct cpg_z_clk, hw)
+> +
+> +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+> +                                          unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int mult;
+> +       unsigned int val;
+> +       unsigned long rate;
+> +
+> +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+> +           >> CPG_FRQCRC_ZFC_SHIFT;
+> +       mult = 32 - val;
+> +
+> +       rate = div_u64((u64)parent_rate * mult + 16, 32);
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+The above also does rounding.
+
+> +       /* Round to closest value at 100MHz unit */
+> +       rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
+
+Why rounding to the closest 100MHz unit?
+
+> +       return rate;
+> +}
+> +
+> +static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                                unsigned long *parent_rate)
+> +{
+> +       unsigned long prate  = *parent_rate;
+> +       unsigned int mult;
+> +
+> +       if (!prate)
+> +               prate = 1;
+> +
+> +       mult = div_u64((u64)rate * 32 + prate/2, prate);
+
+DIV_ROUND_CLOSEST_ULL()
+
+> +       mult = clamp(mult, 1U, 32U);
+> +
+> +       return *parent_rate / 32 * mult;
+
+Doing the division first reduces accuracy.
+Please do the multiplication first (in 64-bit arithmetic).
+
+> +}
+> +
+> +static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                             unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int mult;
+> +       u32 val, kick;
+> +       unsigned int i;
+> +
+> +       mult = div_u64((u64)rate * 32 + parent_rate/2, parent_rate);
+
+DIV_ROUND_CLOSEST_ULL()
+
+> +}
+> +
+> +static const struct clk_ops cpg_z_clk_ops = {
+> +       .recalc_rate = cpg_z_clk_recalc_rate,
+> +       .round_rate = cpg_z_clk_round_rate,
+> +       .set_rate = cpg_z_clk_set_rate,
+> +};
+> +
+> +static struct clk * __init cpg_z_clk_register(const struct cpg_core_clk
+> *core,
+> +                                             void __iomem *base,
+> +                                             const char *parent_name)
+> +{
+> +       struct clk_init_data init;
+> +       struct cpg_z_clk *zclk;
+> +       struct clk *clk;
+> +
+> +       zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
+> +       if (!zclk)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = core->name;
+> +       init.ops = &cpg_z_clk_ops;
+> +       init.flags = CLK_SET_RATE_GATE;
+
+#define CLK_SET_RATE_GATE       BIT(0) /* must be gated across rate change */
+
+Given you don't implement clk_ops.disable() and clk_ops.unprepare(),
+CLK_SET_RATE_GATE doesn't sound like the right flag to use.
+
+> +       init.parent_names = &parent_name;
+> +       init.num_parents = 1;
+> +
+> +       zclk->reg = base + CPG_FRQCRC;
+> +       zclk->kick_reg = base + CPG_FRQCRB;
+> +       zclk->hw.init = &init;
+> +
+> +       clk = clk_register(NULL, &zclk->hw);
+> +       if (IS_ERR(clk))
+> +               kfree(zclk);
+> +
+> +       return clk;
+> +}
+> +
+> +/** End of modifying for Z-clock */
+
+Please drop this comment
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
