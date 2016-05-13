@@ -1,195 +1,55 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 17/22] ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
-Date: Sun,  8 May 2016 21:06:02 +0200
-Message-Id: <1462734367-5619-18-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50676 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751407AbcEMLVW (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2016 07:21:22 -0400
+Date: Fri, 13 May 2016 12:20:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
+	a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+	dianders@chromium.org, zyw@rock-chips.com
+Message-ID: <20160513112055.GE22038@sirena.org.uk>
+References: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
+ <1462886340-7893-4-git-send-email-w.egorov@phytec.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/2994txjAzEdQwm5"
+In-Reply-To: <1462886340-7893-4-git-send-email-w.egorov@phytec.de>
+Subject: Re: [PATCH v5 3/6] regulator: rk808: Add regulator driver for RK818
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The exynos5.dtsi is used for common nodes shared between Exynos5250 and
-Exynos542x. Since Exynos5410 is very similar to Exynos5420 it can
-include the common file as well to remove duplication and make
-everything more consistent.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5410-smdk5410.dts |   6 +-
- arch/arm/boot/dts/exynos5410.dtsi         | 103 ++++++++++--------------------
- 2 files changed, 35 insertions(+), 74 deletions(-)
+--/2994txjAzEdQwm5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index 377a679b454b..501f776f327d 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -102,14 +102,14 @@
- 	};
- };
- 
--&uart0 {
-+&serial_0 {
- 	status = "okay";
- };
- 
--&uart1 {
-+&serial_1 {
- 	status = "okay";
- };
- 
--&uart2 {
-+&serial_2 {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 58d3844ef923..c0540eb76271 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -14,6 +14,7 @@
-  */
- 
- #include "skeleton.dtsi"
-+#include "exynos5.dtsi"
- #include "exynos-syscon-restart.dtsi"
- #include <dt-bindings/clock/exynos5410.h>
- 
-@@ -26,9 +27,6 @@
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
--		serial0 = &uart0;
--		serial1 = &uart1;
--		serial2 = &uart2;
- 	};
- 
- 	cpus {
-@@ -70,49 +68,6 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		combiner: interrupt-controller@10440000 {
--			compatible = "samsung,exynos4210-combiner";
--			#interrupt-cells = <2>;
--			interrupt-controller;
--			samsung,combiner-nr = <32>;
--			reg = <0x10440000 0x1000>;
--			interrupts =	<0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--					<0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--					<0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--					<0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--					<0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
--					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
--					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
--					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
--		};
--
--		gic: interrupt-controller@10481000 {
--			compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
--			#interrupt-cells = <3>;
--			interrupt-controller;
--			reg =	<0x10481000 0x1000>,
--				<0x10482000 0x1000>,
--				<0x10484000 0x2000>,
--				<0x10486000 0x2000>;
--			interrupts = <1 9 0xf04>;
--		};
--
--		chipid@10000000 {
--			compatible = "samsung,exynos4210-chipid";
--			reg = <0x10000000 0x100>;
--		};
--
--		sromc: memory-controller@12250000 {
--			compatible = "samsung,exynos4210-srom";
--			reg = <0x12250000 0x14>;
--			#address-cells = <2>;
--			#size-cells = <1>;
--			ranges = <0 0 0x04000000 0x20000
--				  1 0 0x05000000 0x20000
--				  2 0 0x06000000 0x20000
--				  3 0 0x07000000 0x20000>;
--		};
--
- 		pmu_system_controller: system-controller@10040000 {
- 			compatible = "samsung,exynos5410-pmu", "syscon";
- 			reg = <0x10040000 0x5000>;
-@@ -236,34 +191,40 @@
- 			reg = <0x03860000 0x1000>;
- 			interrupts = <0 47 0>;
- 		};
-+	};
-+};
- 
--		uart0: serial@12C00000 {
--			compatible = "samsung,exynos4210-uart";
--			reg = <0x12C00000 0x100>;
--			interrupts = <0 51 0>;
--			clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
--			clock-names = "uart", "clk_uart_baud0";
--			status = "disabled";
--		};
-+&pwm {
-+	clocks = <&clock CLK_PWM>;
-+	clock-names = "timers";
-+};
- 
--		uart1: serial@12C10000 {
--			compatible = "samsung,exynos4210-uart";
--			reg = <0x12C10000 0x100>;
--			interrupts = <0 52 0>;
--			clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
--			clock-names = "uart", "clk_uart_baud0";
--			status = "disabled";
--		};
-+&serial_0 {
-+	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
- 
--		uart2: serial@12C20000 {
--			compatible = "samsung,exynos4210-uart";
--			reg = <0x12C20000 0x100>;
--			interrupts = <0 53 0>;
--			clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
--			clock-names = "uart", "clk_uart_baud0";
--			status = "disabled";
--		};
--	};
-+&serial_1 {
-+	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_2 {
-+	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_3 {
-+	status = "disabled";
-+};
-+
-+&sromc {
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+	ranges = <0 0 0x04000000 0x20000
-+		  1 0 0x05000000 0x20000
-+		  2 0 0x06000000 0x20000
-+		  3 0 0x07000000 0x20000>;
- };
- 
- #include "exynos5410-pinctrl.dtsi"
--- 
-2.5.0
+On Tue, May 10, 2016 at 03:18:57PM +0200, Wadim Egorov wrote:
+> Add support for the rk818 regulator. The regulator module consists
+> of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
+> power OTG and HDMI5V.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--/2994txjAzEdQwm5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXNbiWAAoJECTWi3JdVIfQ82IH/0WRYTRTlQk/OPon4FIaa0IO
+oBFGlMS/tz6UgBysOleM8JPoDrX4wKImWQHYurbJ8IGOqpGfScZ7o1g5h79t05RQ
+HABbHNz+BDHg49foowhQGAKBW7enpzIkKEbsXEj/Bt76g5l3Mdoj9Gzn6HuJILM4
+HmGm05lSdLtxJE1zXZXcl74MqAWRgbVA9jw+KoHOMnSumLLHso1vue5A+UtvJImE
+Q5J9L1BGjCyxXfGXWq7JAFtBcPPokFv/A3vbdsLMlHfFHYkZLHR74IAXWM2IIiSh
+NoaM234W/hluaDT+P4ftX45ZInqqo6S8KbEznQsTAuKMWopfgeu2L27C4vqbXBg=
+=hJT+
+-----END PGP SIGNATURE-----
+
+--/2994txjAzEdQwm5--
