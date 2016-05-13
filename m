@@ -1,30 +1,90 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: exynos5420: Set ID for aclk333 gate clock
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
- <1464111662-15336-2-git-send-email-javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
- Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <574C36E1.5000709@samsung.com>
-Date: Mon, 30 May 2016 14:49:37 +0200
-MIME-version: 1.0
-In-reply-to: <1464111662-15336-2-git-send-email-javier@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH 2/2] clk: rockchip: fix the rk3399 sdmmc sample shift
+To: Doug Anderson <dianders@chromium.org>
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+ <1463076197-15900-2-git-send-email-dianders@chromium.org>
+ <20160512231023.GA63308@google.com>
+ <84673e7c-dd64-b2ca-5c7c-5c7f34d239d8@rock-chips.com>
+ <CAD=FV=WEAOwhDDBHBtuzSz35i0XRZw4LbFEnFCFYd-4NVH5d-g@mail.gmail.com>
+Cc: shawn.lin@rock-chips.com, Brian Norris <briannorris@chromium.org>,
+ Heiko Stuebner <heiko@sntech.de>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Xing Zheng <zhengxing@rock-chips.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <0261c4b4-7398-fe15-5e26-f92bfbe79f3c@rock-chips.com>
+Date: Fri, 13 May 2016 15:46:54 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=WEAOwhDDBHBtuzSz35i0XRZw4LbFEnFCFYd-4NVH5d-g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/24/2016 07:41 PM, Javier Martinez Canillas wrote:
-> The aclk333 clock needs to be ungated during the MFC power domain switch,
-> so set the clock ID to allow the Exynos power domain logic to lookup this
-> clock if is defined in the MFC PD device tree node.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+在 2016/5/13 12:36, Doug Anderson 写道:
+> Shawn,
+>
+> On Thu, May 12, 2016 at 4:47 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>> 在 2016/5/13 7:10, Brian Norris 写道:
+>>>
+>>> On Thu, May 12, 2016 at 11:03:17AM -0700, Doug Anderson wrote:
+>>>>
+>>>> Just like every other Rockhip device, the MMC "_sample" clocks should
+>>>> have a shift of 0, not a shift of 1.  The rk3399 TRM agrees.  Presumably
+>>>> these values were set to 0 because of a typo.
+>>>
+>>>
+>>> I'll semi-disagree about the TRM: the TRM doesn't seem to agree with
+>>> itself, so it sometimes agrees with you and sometimes doesn't :)
+>>>
+>>> On page 79 of the 2nd (?) book, it looks like {SDMMC,SDIO}_CON{0,}[2:1]
+>>> are {drv,sample}_degree. But on page 208 of the 1st book, those are put
+>>> at bits [1:0].
+>>>
+>>
+>>
+>> Please refer to Mobile Strorage Host Controller section for anything
+>> about sdmmc/sdio. So shift should be 1.
+>>
+>> Sometime I also get bothered to address it. Anyway, I will always keep
+>> a eye on it from now on.....
+>
+> I still in general have mistrust for TRM docs for things like this.
+> Have you verified that this was an intentional change for rk3399, or
+> could it be a  typo?  Typically SoCs don't change this type of stuff
+> for no reason.
+>
 
-Thanks, patch applied.
+Typically it doesn't, but the reality is that {SDMMC,SDIO}_CON{0,}[2:1]
+for drv/sample_degree both. Obviously they want to make drv stuff the
+same layout as sampe stuff...
+
+> This should be possible to verify in one of two ways.  If the TRM has
+> a typo and things truly _do_ start at 0 instead of 1, then:
+>
+> 1. There will be roughly mirrors of valid ranges.
+> 2. Things won't match up if we change tuning to use 180 course offsets
+> and the rest fine offsets.
+>
+> It would be ideal if you could confirm with the chip guys, but if you
+
+I have checked it before Xing upstreamed the code, but as your question 
+on the TRM, I check it with the  chip guys again.
+
+So the answer is that drv/sample stuff should refer to  Mobile Strorage
+Host Controller section, and it will fit the future Socs from now on.
+
+
+> can't I'll try to do more tests tomorrow.
+
+
+
+>
+>
+>
+
+
+-- 
+Best Regards
+Shawn Lin
