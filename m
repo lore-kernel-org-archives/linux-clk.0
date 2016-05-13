@@ -1,79 +1,76 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain for Exynos5420
-Date: Tue, 24 May 2016 13:41:02 -0400
-Message-Id: <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
-In-Reply-To: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <2083095.luTHhmZ9EO@phil>
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+	<2083095.luTHhmZ9EO@phil>
+Date: Thu, 12 May 2016 19:11:25 -0700
+Message-ID: <CAD=FV=XVMQ025Z-+C4fVQUuof=9wnjvJKr2PtuJhxOVwo7TjSg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc
+ card initialization"
+From: Doug Anderson <dianders@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Shawn Lin <shawn.lin@rock-chips.com>,
+	Xing Zheng <zhengxing@rock-chips.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
-has to be ungated during a power domain switch. Trying to do it when the
-clock is gated will fail and lead to an imprecise external abort error
-when the driver tries to access the MFC registers with the PD disabled.
+Heiko,
 
-For example, if the s5p-mfc module is removed and the MFC PD turned off:
+On Thu, May 12, 2016 at 4:41 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Donnerstag, 12. Mai 2016, 11:03:16 schrieb Douglas Anderson:
+>
+> Not sure what the policy is for revert-subjects in the clock-tree, but I
+> guess
+>
+> clk: rockchip: Revert "reset init state before mmc card initialization"
+>
+> might look nicer?
 
-[  186.835606] Power domain power-domain@10044060 disable failed
-[  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
-[  186.837670] Power domain power-domain@10044060 disable failed
+Sure.  If you want me to re-post with that, let me know.  Else feel
+free to fix when applying.
 
-And when the module is inserted again:
 
-[ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
-[ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
-[ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-[ 2395.177441] pgd = ec3b4000
-[ 2395.177467] [00000000] *pgd=00000000
-[ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
-[ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
-[ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
-[ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
-[ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
-[ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
+>> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
+>> before mmc card initialization").
+>
+> I've tested these two patches together with the dw_mmc one and everything
+> that worked before still works (tuning on veyron-jerry) and everything that
+> didn't work still doesn't work (tuning on firefly [likely a regulator issue]).
+>
+> And re-checking the code against the TRM I now also see the mask that is to
+> short (1 bit in the code vs. the actual 2 bits described in the manual)
+>
+> [...]
+>
+>> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
+>>    + other cases; might break someone with a strange bootloader that
+>>    sets the phase to 0 or one that uses delay elements (pretty
+>>    unpredicable what would happen in that case).
+>> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
+>>    totally override the broken patch and fix everything.
+>> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
+>>    any defaults from the clock code doesn't mattery.
+>
+> I'm still trying to make up my mind on how to proceed - aka in which order
+> patches should get picked up.
+>
+> Going with the "if it isn't upstream it doesn't exist" mantra Rob wrote
+> somewhere some days ago, taking this revert should not hurt anything, as all
+> the non-veyron devices currently don't support any tuning at all.
 
-This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
-clock for the MFC power domain, so the PD configuration works properly.
+Note that this patch can still affect devices that don't use tuning.
+MMC Hold times are important not just for high speed modes but even
+for low speed modes.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
----
+> So I'd think except for the issue Shawn was originally trying to fix (for
+> some non-mainline board?) it should be possible to take this patch any time
+> independently of the dw_mmc part.
 
- arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4c8523471c65..f3e9d873633e 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -313,8 +313,9 @@
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
--		clock-names = "oscclk", "clk0";
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
-+			 <&clock CLK_ACLK333>;
-+		clock-names = "oscclk", "clk0","asb0";
- 		#power-domain-cells = <0>;
- 	};
- 
--- 
-2.5.5
+Yeah, just not sure.  Shawn: do you know which specific device you
+were trying to fix with the original patch?  Is it OK to revert for
+now until the dw_mmc patch lands?
