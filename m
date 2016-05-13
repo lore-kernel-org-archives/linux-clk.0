@@ -1,45 +1,37 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH 0/3] clk: samsung: add Exynos5433 CPU clocks
-Date: Tue, 24 May 2016 15:19:14 +0200
-Message-id: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <573166EB.70908@rvc.renesas.com>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	<573166EB.70908@rvc.renesas.com>
+Date: Fri, 13 May 2016 10:55:07 +0200
+Message-ID: <CAMuHMdVoUT+FrrNn_VC2EcnqcYTubUXnYTHUKZAQ+sPW3QVixw@mail.gmail.com>
+Subject: Re: [RFC 2/4] clk: renesas: r8a7795: Add Z clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Tue, May 10, 2016 at 6:43 AM, Khiem Nguyen
+<khiem.nguyen.xt@rvc.renesas.com> wrote:
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 
-The following patches add a support for CPU clocks for Exynos5433.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Please note that for full cpufreq-dt support there are also DTS and
-cpufreq-dt-platdev changes needed.  They will be sent separately
-later.
+Gr{oetje,eeting}s,
 
-Best regards,
+                        Geert
+
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Bartlomiej Zolnierkiewicz (3):
-  clk: samsung: exynos5433: prepare for adding CPU clocks
-  clk: samsung: cpu: prepare for adding Exynos5433 CPU clocks
-  clk: samsung: exynos5433: add CPU clocks configuration data and
-    instantiate CPU clocks
-
- drivers/clk/samsung/clk-cpu.c        | 131 +++++++++++++++++++++++++++++-
- drivers/clk/samsung/clk-cpu.h        |   4 +-
- drivers/clk/samsung/clk-exynos5433.c | 149 +++++++++++++++++++++++++++--------
- drivers/clk/samsung/clk.c            |  12 +--
- drivers/clk/samsung/clk.h            |   4 +
- 5 files changed, 258 insertions(+), 42 deletions(-)
-
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
