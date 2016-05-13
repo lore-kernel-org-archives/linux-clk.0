@@ -1,72 +1,37 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 02/27] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-Date: Tue, 10 May 2016 22:09:05 +0200
-Message-Id: <1462910970-1812-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+Date: Fri, 13 May 2016 12:43:25 -0700
+Message-ID: <CAD=FV=UjPy-n-53nhxr7yC1t1j+eD6pRt0_i5_6hhY=Rnz6xsw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: rockchip: mark rk3399 GIC clocks as critical
+From: Doug Anderson <dianders@chromium.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>, Xing Zheng <zhengxing@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
-Exynos5420 just in case in future these drivers were merged.
+Brian,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Fri, May 13, 2016 at 11:42 AM, Brian Norris <briannorris@chromium.org> wrote:
+> We never want to kill the GIC.
+>
+> Noticed when making other clock fixups, and seeing the newly-constructed
+> clock tree try to disable cpll, where we had this parent structure:
+>
+>   aclk_gic <------\
+>                   |--- aclk_gic_pre <-- cpll <-- pll_cpll
+>   aclk_gic_noc <--/
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>  drivers/clk/rockchip/clk-rk3399.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 213f19e02870..34c8e96987a1 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,16 +28,25 @@
- #define CLK_SCLK_MMC0		132
- #define CLK_SCLK_MMC1		133
- #define CLK_SCLK_MMC2		134
-+#define CLK_SCLK_USBD300	150
-+#define CLK_SCLK_USBD301	151
-+#define CLK_SCLK_USBPHY300	152
-+#define CLK_SCLK_USBPHY301	153
-+#define CLK_SCLK_PWM		155
- 
- /* gate clocks */
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
- #define CLK_UART3		260
-+#define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
-+#define CLK_USBH20		365
-+#define CLK_USBD300		366
-+#define CLK_USBD301		367
- 
- #define CLK_NR_CLKS		512
- 
--- 
-2.5.0
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
