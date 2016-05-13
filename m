@@ -1,178 +1,198 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 21/22] ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
-Date: Sat, 28 May 2016 11:54:32 +0200
-Message-Id: <1464429273-23457-22-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <yanghongwei@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH v2 3/5] clk: hisilicon: add error processing for hisi_clk_register_* functions
+Date: Fri, 13 May 2016 10:05:53 +0800
+Message-ID: <1463105155-20385-4-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add pincontrol groups for HSI2C (USI), I2C, PWM and UART to Exynos5410.
-This allows configuring these pins to specific functions.
+Add error processing for hisi_clk_register_* functions.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 133 ++++++++++++++++++++++++++++++
- 1 file changed, 133 insertions(+)
+ drivers/clk/hisilicon/clk.c | 60 +++++++++++++++++++++++++++++++++++++--------
+ drivers/clk/hisilicon/clk.h | 10 ++++----
+ 2 files changed, 55 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index ddacafa1e907..b58a0f29f42c 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -278,6 +278,139 @@
- 		#interrupt-cells = <2>;
- 	};
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 78675d1..9ba2d91 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -102,7 +102,7 @@ err:
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_init);
  
-+	uart0_data: uart0-data {
-+		samsung,pins = "gpa0-0", "gpa0-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
+-void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
++int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
+ 					 int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -116,14 +116,22 @@ void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+-			continue;
++			goto err;
+ 		}
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
 +
-+	uart0_fctl: uart0-fctl {
-+		samsung,pins = "gpa0-2", "gpa0-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++	return 0;
 +
-+	uart1_data: uart1-data {
-+		samsung,pins = "gpa0-4", "gpa0-5";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++err:
++	while (i--)
++		clk_unregister_fixed_rate(data->clk_data.clks[clks[i].id]);
 +
-+	uart1_fctl: uart1-fctl {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_rate);
+ 
+-void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
++int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
+ 					   int nums,
+ 					   struct hisi_clock_data *data)
+ {
+@@ -138,14 +146,22 @@ void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+-			continue;
++			goto err;
+ 		}
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
 +
-+	i2c2_bus: i2c2-bus {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
++	return 0;
 +
-+	uart2_data: uart2-data {
-+		samsung,pins = "gpa1-0", "gpa1-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++err:
++	while (i--)
++		clk_unregister_fixed_factor(data->clk_data.clks[clks[i].id]);
 +
-+	uart2_fctl: uart2-fctl {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_factor);
+ 
+-void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
++int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+ 				  int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -164,7 +180,7 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+-			continue;
++			goto err;
+ 		}
+ 
+ 		if (clks[i].alias)
+@@ -172,10 +188,18 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+ 
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
 +
-+	i2c3_bus: i2c3-bus {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
++	return 0;
 +
-+	uart3_data: uart3-data {
-+		samsung,pins = "gpa1-4", "gpa1-5";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++err:
++	while (i--)
++		clk_unregister_mux(data->clk_data.clks[clks[i].id]);
 +
-+	i2c4_hs_bus: i2c4-hs-bus {
-+		samsung,pins = "gpa2-0", "gpa2-1";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
+ 
+-void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
++int hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+ 				      int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -194,7 +218,7 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+-			continue;
++			goto err;
+ 		}
+ 
+ 		if (clks[i].alias)
+@@ -202,10 +226,18 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+ 
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
 +
-+	i2c5_hs_bus: i2c5-hs-bus {
-+		samsung,pins = "gpa2-2", "gpa2-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
++	return 0;
 +
-+	i2c6_hs_bus: i2c6-hs-bus {
-+		samsung,pins = "gpb1-3", "gpb1-4";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
++err:
++	while (i--)
++		clk_unregister_divider(data->clk_data.clks[clks[i].id]);
 +
-+	pwm0_out: pwm0-out {
-+		samsung,pins = "gpb2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_register_divider);
+ 
+-void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
++int hisi_clk_register_gate(const struct hisi_gate_clock *clks,
+ 				       int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -223,7 +255,7 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+-			continue;
++			goto err;
+ 		}
+ 
+ 		if (clks[i].alias)
+@@ -231,6 +263,14 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
+ 
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
 +
-+	pwm1_out: pwm1-out {
-+		samsung,pins = "gpb2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++	return 0;
 +
-+	pwm2_out: pwm2-out {
-+		samsung,pins = "gpb2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++err:
++	while (i--)
++		clk_unregister_gate(data->clk_data.clks[clks[i].id]);
 +
-+	pwm3_out: pwm3-out {
-+		samsung,pins = "gpb2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c7_hs_bus: i2c7-hs-bus {
-+		samsung,pins = "gpb2-2", "gpb2-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c0_bus: i2c0-bus {
-+		samsung,pins = "gpb3-0", "gpb3-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c1_bus: i2c1-bus {
-+		samsung,pins = "gpb3-2", "gpb3-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	sd0_clk: sd0-clk {
- 		samsung,pins = "gpc0-0";
- 		samsung,pin-function = <2>;
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_register_gate);
+ 
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 5fc644f..2575329 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -114,15 +114,15 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+ 
+ struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
+ struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+-void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
++int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
++int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
++int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
+ 				struct hisi_clock_data *);
+-void hisi_clk_register_divider(const struct hisi_divider_clock *,
++int hisi_clk_register_divider(const struct hisi_divider_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_gate(const struct hisi_gate_clock *,
++int hisi_clk_register_gate(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
 -- 
-2.7.4
+1.9.1
