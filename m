@@ -1,117 +1,102 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 15 May 2016 21:04:15 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 12/16] clk: sunxi-ng: Add N-M-factor clock support
-Message-ID: <20160515190415.GC27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
- <20160509092421.a36252139fd6b00b2cd32f24@free.fr>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.136]:47560 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753448AbcENDg2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2016 23:36:28 -0400
+Subject: Re: [PATCH 2/2] clk: rockchip: fix incorrect parent for rk3399's
+ {c,g}pll_aclk_perihp_src
+To: Doug Anderson <dianders@chromium.org>,
+	Brian Norris <briannorris@chromium.org>
+References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+ <1463164937-91089-2-git-send-email-briannorris@chromium.org>
+ <CAD=FV=XstYhqpStSGw5PObWvpsvd3Nwp_hfEE-56bpFoVUyu+g@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <57369D2E.3030002@rock-chips.com>
+Date: Sat, 14 May 2016 11:36:14 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nmemrqcdn5VTmUEE"
-In-Reply-To: <20160509092421.a36252139fd6b00b2cd32f24@free.fr>
+In-Reply-To: <CAD=FV=XstYhqpStSGw5PObWvpsvd3Nwp_hfEE-56bpFoVUyu+g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Doug,
 
---nmemrqcdn5VTmUEE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2016年05月14日 04:10, Doug Anderson wrote:
+> Hi,
+>
+> On Fri, May 13, 2016 at 11:42 AM, Brian Norris <briannorris@chromium.org> wrote:
+>> From: Xing Zheng <zhengxing@rock-chips.com>
+>>
+>> There was a typo, swapping 'c' <--> 'g'.
+>>
+>> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+>> Signed-off-by: Brian Norris <briannorris@chromium.org>
+>> ---
+>>   drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+>> index 145756c4f3c8..9f86bfef70f7 100644
+>> --- a/drivers/clk/rockchip/clk-rk3399.c
+>> +++ b/drivers/clk/rockchip/clk-rk3399.c
+>> @@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>>                          RK3399_CLKGATE_CON(13), 1, GFLAGS),
+>>
+>>          /* perihp */
+>> -       GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+>> +       GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+>>                          RK3399_CLKGATE_CON(5), 0, GFLAGS),
+>> -       GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+>> +       GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+>>                          RK3399_CLKGATE_CON(5), 1, GFLAGS),
+>>          COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
+>>                          RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
+> Definitely there was a bug since this table itself was inconsistent.
+> ...and I _think_ this fix is correct, but I'll note that the TRM has
+> more inconsistency here.
+>
+> In the big clock table 'CRU Clock Architecture Diagram', I see:
+>    CLK 4 is CPLL
+>    CLK 5 is GPLL
+>    CLK 125 is aclk_perihp_cpll_src and has 4 (CPLL) as source, with
+> g5[0] as the bit
+>    CLK 126 is aclk_perihp_gpll_src and has 5 (GPLL) as source, with
+> g5[1] as the bit
+>
+> In the definition of CRU_CLKGATE_CON5:
+>    bit 0 shows aclk_perihp_gpll_src_en
+>    bit 1 shows aclk_perihp_cpll_src_en
+>
+>
+> Thus the table shows CPLL as gate5[0] and GPLL as gate5[1].  The
+> register definition shows the opposite.  I'll tend to believe the
+> table over the register definition, but I figured I'd bring it up
+> anyway.
+>
+>
+> Xing Zheng: can you confirm that the table is correct and ask
+> documentation folks to fix the register definition for
+> CRU_CLKGATE_CON5?
+Yes, previously, our IC & DOC partner confirmed that the definition of 
+CRU_CLKGATE_CON5 should be:
+   bit 0 shows aclk_perihp_cpll_src_en
+   bit 1 shows aclk_perihp_gpll_src_en
 
-Hi,
+Sorry to the incorrect register definition, we will fix them and review 
+the TRM again.
 
-On Mon, May 09, 2016 at 09:24:21AM +0200, Jean-Francois Moine wrote:
-> On Sun,  8 May 2016 22:01:47 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > Introduce support for clocks that multiply and divide using linear fact=
-ors.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi-ng/Makefile |   1 +
-> >  drivers/clk/sunxi-ng/ccu_nm.c | 103 ++++++++++++++++++++++++++++++++++=
-++++++++
-> >  drivers/clk/sunxi-ng/ccu_nm.h |  41 +++++++++++++++++
-> >  3 files changed, 145 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
-> 	[snip]
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_n=
-m.c
-> > new file mode 100644
-> > index 000000000000..268637db137b
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu_nm.c
-> > @@ -0,0 +1,103 @@
-> 	[snip]
-> > +static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +			      unsigned long *parent_rate)
-> > +{
-> > +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
-> > +	unsigned long n, m;
-> > +
-> > +	rational_best_approximation(rate, *parent_rate,
-> > +				    nm->n.width, nm->m.width, &n, &m);
->=20
-> Should be
-> 			1 << nm->n.width, 1 << nm->m.width, &n, &m);
->=20
-> > +
-> > +	return *parent_rate * n / m;
-> > +}
-> > +
-> > +static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			   unsigned long parent_rate)
-> > +{
-> > +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
-> > +	unsigned long flags;
-> > +	unsigned long n, m;
-> > +	u32 reg;
-> > +
-> > +	rational_best_approximation(rate, parent_rate,
-> > +				    nm->n.width, nm->m.width, &n, &m);
->=20
-> Idem
+Thanks.
 
-Indeed, fixed.
+-- 
+- Xing Zheng
 
-Thanks!
-Maxime
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---nmemrqcdn5VTmUEE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXOMguAAoJEBx+YmzsjxAgjlMP/1a5rKAEmNU229/foVfakbWP
-nIJLAjPULDrozATaVzq+EVBhN1iRQk/GuSn26FWSZU5UUy1gSqKEy7qq1u9kRaPo
-RekLS6iQBPrzyz1f32Sj83YqRsMmU5AFuRa5mTmF2HowSvZO4ptfr8+So/vEz/0k
-h61h5pTjbstdBLv1d9SQyMnBM1Tq7BeeL7pdWoiOc+zeH9dFthoXvS7z/3YQLuEC
-AZ54CCPGr3JrfwdsmaLnleMke0kNSrH5OzyGZHLG/BwfVBgaMVmnGpbjQsVmXtFf
-31LhysRYCJleGmmglylXdyyfW0XR5L78/X7K/sM+R7KDXJEQZIK3Wb9bBdXA6ScV
-lL7UlGOYvkoDIxRldNDfXU59MlGkSdZ189PF2RJMEd5qX8dAIoGaTWbvkPxW6cro
-AMEOBUzKZlkdl817LG80W5OD0FU1l2SiWGTOAVsxw1GU3pc7hdpHuW1ee2IpEk22
-O+1Jm0aNsKcx8rs1YdrIHVXFTbpDtoT65SEy0b3Ds/apD52xc0jVU0IHBoqMG11d
-5EoMoUWJ/CITwTbZe874BJNfdU5xcCdmpvjxHqF8yb72F9mEz9KbmG5NLYebSSfT
-pz8rT44E4XdqPA8YtQ8A2EXta8o/axJGbqVsMACECKCJacNm+t6AfVr+BYtNL0Ri
-u+ysWw+TJUxI6rupYQ3P
-=gNDi
------END PGP SIGNATURE-----
-
---nmemrqcdn5VTmUEE--
