@@ -12,142 +12,38 @@ To: Kukjin Kim <kgene@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 13/22] ARM: dts: exynos: Move common nodes to exynos5.dtsi
-Date: Sun,  8 May 2016 21:05:58 +0200
-Message-Id: <1462734367-5619-14-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 10/22] ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+Date: Sun, 15 May 2016 22:13:51 +0200
+Message-Id: <1463343243-26429-11-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos5420 and Exynos5250 share some nodes: the PWM and syscon
-(sysreg_system_controller). Move them to parent DTSI to avoid
-duplication.
+The i2c-arbitrator node in exynos5250-snow-common used absolute path to
+reference other node (the i2c parent). Use phandle instead, because the
+depth of the other node may be changed (like moving it under 'soc'
+node).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi    | 12 ++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi | 19 +++++--------------
- arch/arm/boot/dts/exynos5420.dtsi | 19 +++++--------------
- 3 files changed, 22 insertions(+), 28 deletions(-)
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index d5c0f18a4223..fe901152f3ea 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -63,6 +63,11 @@
- 		interrupts = <1 9 0xf04>;
- 	};
- 
-+	sysreg_system_controller: syscon@10050000 {
-+		compatible = "samsung,exynos5-sysreg", "syscon";
-+		reg = <0x10050000 0x5000>;
-+	};
-+
- 	serial_0: serial@12C00000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x12C00000 0x100>;
-@@ -87,6 +92,13 @@
- 		interrupts = <0 54 0>;
- 	};
- 
-+	pwm: pwm@12DD0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12DD0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+	};
-+
- 	rtc: rtc@101E0000 {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x101E0000 0x100>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index c7158b2fb213..6762faaf12a8 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -235,11 +235,6 @@
- 		interrupt-parent = <&gic>;
- 	};
- 
--	sysreg_system_controller: syscon@10050000 {
--		compatible = "samsung,exynos5-sysreg", "syscon";
--		reg = <0x10050000 0x5000>;
--	};
--
- 	watchdog@101D0000 {
- 		compatible = "samsung,exynos5250-wdt";
- 		reg = <0x101D0000 0x100>;
-@@ -662,15 +657,6 @@
- 		samsung,pmureg-phandle = <&pmu_system_controller>;
- 	};
- 
--	pwm: pwm@12dd0000 {
--		compatible = "samsung,exynos4210-pwm";
--		reg = <0x12dd0000 0x100>;
--		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
--		#pwm-cells = <3>;
--		clocks = <&clock CLK_PWM>;
--		clock-names = "timers";
--	};
--
- 	amba {
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index ddfe1f558c10..419d59da1751 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -61,7 +61,7 @@
  		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -1070,6 +1056,11 @@
- 	iommus = <&sysmmu_fimd1>;
- };
+ 		#size-cells = <0>;
  
-+&pwm {
-+	clocks = <&clock CLK_PWM>;
-+	clock-names = "timers";
-+};
-+
- &rtc {
- 	clocks = <&clock CLK_RTC>;
- 	clock-names = "rtc";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4c8523471c65..f7322d87095f 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -542,15 +542,6 @@
- 		status = "disabled";
- 	};
+-		i2c-parent = <&{/i2c@12CA0000}>;
++		i2c-parent = <&i2c_4>;
  
--	pwm: pwm@12dd0000 {
--		compatible = "samsung,exynos4210-pwm";
--		reg = <0x12dd0000 0x100>;
--		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
--		#pwm-cells = <3>;
--		clocks = <&clock CLK_PWM>;
--		clock-names = "timers";
--	};
--
- 	dp_phy: dp-video-phy {
- 		compatible = "samsung,exynos5420-dp-video-phy";
- 		samsung,pmu-syscon = <&pmu_system_controller>;
-@@ -823,11 +814,6 @@
- 		interrupt-parent = <&gic>;
- 	};
- 
--	sysreg_system_controller: syscon@10050000 {
--		compatible = "samsung,exynos5-sysreg", "syscon";
--		reg = <0x10050000 0x5000>;
--	};
--
- 	tmu_cpu0: tmu@10060000 {
- 		compatible = "samsung,exynos5420-tmu";
- 		reg = <0x10060000 0x100>;
-@@ -1207,6 +1193,11 @@
- 	iommu-names = "m0", "m1";
- };
- 
-+&pwm {
-+	clocks = <&clock CLK_PWM>;
-+	clock-names = "timers";
-+};
-+
- &rtc {
- 	clocks = <&clock CLK_RTC>;
- 	clock-names = "rtc";
+ 		our-claim-gpio = <&gpf0 3 GPIO_ACTIVE_LOW>;
+ 		their-claim-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
 -- 
 2.5.0
