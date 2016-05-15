@@ -1,138 +1,72 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 5/5] clk: bcm2835: add support for BCM2835_CLOCK_FLAG_USE_MASH/INTEGER
-Date: Thu,  5 May 2016 15:53:28 +0000
-Message-Id: <1462463608-22940-6-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
-References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+Date: Sun, 15 May 2016 22:13:43 +0200
+Message-Id: <1463343243-26429-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
+Exynos5420 just in case in future these drivers were merged.
 
-Allow the use of higher order mash fractional divider modes
-and also allow to force the use of integer dividers.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c       | 57 +++++++++++++++++++++++++++++++++++--
- include/dt-bindings/clock/bcm2835.h |  7 +++++
- 2 files changed, 62 insertions(+), 2 deletions(-)
+ include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index c80487e..08140ad 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -130,6 +130,7 @@
- # define CM_BUSY			BIT(7)
- # define CM_BUSYD			BIT(8)
- # define CM_FRAC			BIT(9)
-+# define CM_MASH			BIT(10)
- # define CM_SRC_SHIFT			0
- # define CM_SRC_BITS			4
- # define CM_SRC_MASK			0xf
-@@ -888,6 +889,24 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 				 CM_DIV_FRAC_BITS - data->frac_bits);
- 	}
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 213f19e02870..34c8e96987a1 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2016 Krzysztof Kozlowski
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -27,16 +28,25 @@
+ #define CLK_SCLK_MMC0		132
+ #define CLK_SCLK_MMC1		133
+ #define CLK_SCLK_MMC2		134
++#define CLK_SCLK_USBD300	150
++#define CLK_SCLK_USBD301	151
++#define CLK_SCLK_USBPHY300	152
++#define CLK_SCLK_USBPHY301	153
++#define CLK_SCLK_PWM		155
  
-+	/* based on flags modify settings */
-+	switch (clock->flags & BCM2835_CLOCK_FLAG_USE_MASK) {
-+	case BCM2835_CLOCK_FLAG_USE_FRAC:
-+			break;
-+	case BCM2835_CLOCK_FLAG_USE_INTEGER:
-+		div &= GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
-+			       CM_DIV_FRAC_BITS);
-+		break;
-+	case BCM2835_CLOCK_FLAG_USE_MASH2:
-+		mindiv += 2 << CM_DIV_FRAC_BITS;
-+		maxdiv -= 1 << CM_DIV_FRAC_BITS;
-+		break;
-+	case BCM2835_CLOCK_FLAG_USE_MASH3:
-+		mindiv += 4 << CM_DIV_FRAC_BITS;
-+		maxdiv -= 3 << CM_DIV_FRAC_BITS;
-+		break;
-+	}
-+
- 	/* apply the clamping  limits */
- 	div = max_t(u32, div, mindiv);
- 	div = min_t(u32, div, maxdiv);
-@@ -996,8 +1015,26 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	 * clock this requirement should be take care of by the
- 	 * clk-framework.
- 	 */
--	ctl = cprman_read(cprman, data->ctl_reg) & ~CM_FRAC;
--	ctl |= (div & CM_DIV_FRAC_MASK) ? CM_FRAC : 0;
-+	ctl = cprman_read(cprman, data->ctl_reg) & ~(CM_FRAC | CM_MASH);
-+	if (div & CM_DIV_FRAC_MASK) {
-+		/*
-+		 * we never get to *MASH* for non-mash clock,
-+		 * as it is filtered in bcm2835_register_clock
-+		 * USE_INTEGER forces already choose_clock_div
-+		 * to apply the mask so that we do not get here
-+		 */
-+		switch (clock->flags & BCM2835_CLOCK_FLAG_USE_MASK) {
-+		case BCM2835_CLOCK_FLAG_USE_FRAC:
-+			ctl |= CM_FRAC;
-+			break;
-+		case BCM2835_CLOCK_FLAG_USE_MASH2:
-+			ctl |= CM_MASH;
-+			break;
-+		case BCM2835_CLOCK_FLAG_USE_MASH3:
-+			ctl |= CM_MASH | CM_FRAC;
-+			break;
-+		}
-+	}
- 	cprman_write(cprman, data->ctl_reg, ctl);
+ /* gate clocks */
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
+ #define CLK_UART3		260
++#define CLK_PWM			279
+ #define CLK_MCT			315
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
++#define CLK_USBH20		365
++#define CLK_USBD300		366
++#define CLK_USBD301		367
  
- 	cprman_write(cprman, data->div_reg, div);
-@@ -1280,6 +1317,22 @@ bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 		clock->flags |= bcm2835_register_clock_default_parents(
- 			cprman->dev, data);
+ #define CLK_NR_CLKS		512
  
-+	/* check for MASH flags when the clock is not a mash clock */
-+	if (!data->is_mash_clock) {
-+		switch (clock->flags & BCM2835_CLOCK_FLAG_USE_MASK) {
-+		case BCM2835_CLOCK_FLAG_USE_MASH2:
-+		case BCM2835_CLOCK_FLAG_USE_MASH3:
-+			dev_warn(cprman->dev,
-+				 "found mash2/mash3 flag for clock %s, which does not support mash\n",
-+				 data->name);
-+			clock->flags &= BCM2835_CLOCK_FLAG_USE_MASK;
-+			clock->flags |= BCM2835_CLOCK_FLAG_USE_FRAC;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
- 	return devm_clk_register(cprman->dev, &clock->hw);
- }
- 
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index e5396fe..5591bd1 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -90,3 +90,10 @@
- #define BCM2835_VPU_PARENT_PLLH_AUX	7
- #define BCM2835_VPU_PARENT_PLLC_CORE1	8
- #define BCM2835_VPU_PARENT_PLLC_CORE2	9
-+
-+/* additional clock flags */
-+#define BCM2835_CLOCK_FLAG_USE_FRAC	((0 << 31) | (0 << 30))
-+#define BCM2835_CLOCK_FLAG_USE_INTEGER	((0 << 31) | (1 << 30))
-+#define BCM2835_CLOCK_FLAG_USE_MASH2	((1 << 31) | (0 << 30))
-+#define BCM2835_CLOCK_FLAG_USE_MASH3	((1 << 31) | (1 << 30))
-+#define BCM2835_CLOCK_FLAG_USE_MASK	((1 << 31) | (1 << 30))
 -- 
-2.1.4
+2.5.0
