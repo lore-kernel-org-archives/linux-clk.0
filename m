@@ -1,109 +1,258 @@
-Return-Path: <wens@csie.org>
+Return-Path: <gnaygnil@gmail.com>
+Return-Path: <gnaygnil@gmail.com>
+From: Yang Ling <gnaygnil@gmail.com>
+Date: Sun, 15 May 2016 15:03:04 +0800
+To: Kelvin Cheung <keguang.zhang@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: add Loongson1C clock support
+Message-ID: <20160515070302.GA99380@ubuntu>
+References: <1463043564-21559-1-git-send-email-gnaygnil@gmail.com>
+ <CAJhJPsV9HN=sgkg59ZvKiQ73ZmwRdZwQGvhwwf38jBzW7zUh+g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
-References: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 22 May 2016 22:58:09 +0800
-Message-ID: <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com>
-Subject: Re: sunxi spi clock problem
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAJhJPsV9HN=sgkg59ZvKiQ73ZmwRdZwQGvhwwf38jBzW7zUh+g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Thu, May 12, 2016 at 06:01:57PM +0800, Kelvin Cheung wrote:
+> Hi Ling,
+> The file clk-ls1x.c will be renamed to clk-loongson1.c.
+> You'd better rebase your changes base on the following patch.
+> https://patchwork.linux-mips.org/patch/13035/
+> 
+> 2016-05-12 16:59 GMT+08:00 Yang Ling <gnaygnil@gmail.com>:
+> 
+> > This adds clock support to Loongson1C SoC using the common clock
+> > infrastructure.
+> >
+> > Signed-off-by: Yang Ling <gnaygnil@gmail.com>
+> > ---
+> >  arch/mips/include/asm/mach-loongson32/regs-clk.h | 33 ++++++++++++
+> >  drivers/clk/clk-ls1x.c                           | 69
+> > +++++++++++++++++++++---
+> >  2 files changed, 95 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h
+> > b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+> > index 1f5a715..2cef0e2 100644
+> > --- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
+> > +++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+> > @@ -1,5 +1,7 @@
+> >  /*
+> >   * Copyright (c) 2011 Zhang, Keguang <keguang.zhang@gmail.com>
+> > + * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
+> > + * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
+> >   *
+> >   * Loongson 1 Clock Register Definitions.
+> >   *
+> > @@ -19,6 +21,7 @@
+> >  #define LS1X_CLK_PLL_DIV               LS1X_CLK_REG(0x4)
+> >
+> >  /* Clock PLL Divisor Register Bits */
+> > +#if defined(CONFIG_LOONGSON1_LS1B)
+> >  #define DIV_DC_EN                      (0x1 << 31)
+> >  #define DIV_DC_RST                     (0x1 << 30)
+> >  #define DIV_CPU_EN                     (0x1 << 25)
+> > @@ -48,4 +51,34 @@
+> >  #define BYPASS_DDR_WIDTH               1
+> >  #define BYPASS_CPU_WIDTH               1
+> >
+> > +#elif defined(CONFIG_LOONGSON1_LS1C)
+> > +
+> > +#define PLL_VALID                      (0x1 << 31)
+> > +#define FRAC_N                         (0xff << 16)
+> > +#define RST_TIME                       (0x3 << 2)
+> > +#define SDRAM_DIV                      (0x3 << 0)
+> > +
+> > +#define DIV_DC_EN                      (0x1 << 31)
+> > +#define DIV_DC                         (0x7f << 24)
+> > +#define DIV_CAM_EN                     (0x1 << 23)
+> > +#define DIV_CAM                                (0x7f << 16)
+> > +#define DIV_CPU_EN                     (0x1 << 15)
+> > +#define DIV_CPU                                (0x7f << 8)
+> > +#define DIV_DC_SEL_EN                  (0x1 << 5)
+> > +#define DIV_DC_SEL                     (0x1 << 4)
+> > +#define DIV_CAM_SEL_EN                 (0x1 << 3)
+> > +#define DIV_CAM_SEL                    (0x1 << 2)
+> > +#define DIV_CPU_SEL_EN                 (0x1 << 1)
+> > +#define DIV_CPU_SEL                    (0x1 << 0)
+> > +
+> > +#define DIV_DC_SHIFT                    24
+> > +#define DIV_CAM_SHIFT                   16
+> > +#define DIV_CPU_SHIFT                   8
+> > +
+> > +#define DIV_DC_WIDTH                    7
+> > +#define DIV_CPU_WIDTH                   7
+> > +#define DIV_DDR_WIDTH                   7
+> > +
+> > +#endif
+> > +
+> >  #endif /* __ASM_MACH_LOONGSON32_REGS_CLK_H */
+> > diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
+> > index d4c6198..746e653 100644
+> > --- a/drivers/clk/clk-ls1x.c
+> > +++ b/drivers/clk/clk-ls1x.c
+> > @@ -1,5 +1,7 @@
+> >  /*
+> >   * Copyright (c) 2012 Zhang, Keguang <keguang.zhang@gmail.com>
+> > + * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
+> > + * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
+> >   *
+> >   * This program is free software; you can redistribute  it and/or modify
+> > it
+> >   * under  the terms of  the GNU General  Public License as published by
+> > the
+> > @@ -15,8 +17,13 @@
+> >
+> >  #include <loongson1.h>
+> >
+> > +#if defined(CONFIG_LOONGSON1_LS1B)
+> >  #define OSC            (33 * 1000000)
+> >  #define DIV_APB                2
+> > +#elif defined(CONFIG_LOONGSON1_LS1C)
+> > +#define OSC            (24 * 1000000)
+> > +#define DIV_APB                1
+> > +#endif
+> >
+> >  static DEFINE_SPINLOCK(_lock);
+> >
+> > @@ -35,9 +42,15 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw
+> > *hw,
+> >         u32 pll, rate;
+> >
+> >         pll = __raw_readl(LS1X_CLK_PLL_FREQ);
+> > +#if defined(CONFIG_LOONGSON1_LS1B)
+> >         rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
+> >         rate *= OSC;
+> >         rate >>= 1;
+> > +#elif defined(CONFIG_LOONGSON1_LS1C)
+> > +       rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
+> > +       rate *= OSC;
+> > +       rate >>= 2;
+> > +#endif
+> >
+> >         return rate;
+> >  }
+> > @@ -80,22 +93,25 @@ static struct clk *__init clk_register_pll(struct
+> > device *dev,
+> >         return clk;
+> >  }
+> >
+> > -static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk",
+> > };
+> > -static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk",
+> > };
+> > -static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
+> > +static const char * const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
+> > +static const char * const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
+> > +static const char * const dc_parents[] = { "dc_clk_div", "osc_clk", };
+> >
+> >  void __init ls1x_clk_init(void)
+> >  {
+> >         struct clk *clk;
+> > +       u32 reg;
+> > +       u32 div;
+> >
+> > -       clk = clk_register_fixed_rate(NULL, "osc_33m_clk", NULL,
+> > CLK_IS_ROOT,
+> > +       clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, CLK_IS_ROOT,
+> >                                       OSC);
+> > -       clk_register_clkdev(clk, "osc_33m_clk", NULL);
+> > +       clk_register_clkdev(clk, "osc_clk", NULL);
+> >
+> > -       /* clock derived from 33 MHz OSC clk */
+> > -       clk = clk_register_pll(NULL, "pll_clk", "osc_33m_clk", 0);
+> > +       /* clock derived from OSC clk */
+> > +       clk = clk_register_pll(NULL, "pll_clk", "osc_clk", 0);
+> >         clk_register_clkdev(clk, "pll_clk", NULL);
+> >
+> > +#if defined(CONFIG_LOONGSON1_LS1B)
+> >         /* clock derived from PLL clk */
+> >         /*                                 _____
+> >          *         _______________________|     |
+> > @@ -114,7 +130,23 @@ void __init ls1x_clk_init(void)
+> >                                CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+> >                                BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0,
+> > &_lock);
+> >         clk_register_clkdev(clk, "cpu_clk", NULL);
+> > +#elif defined(CONFIG_LOONGSON1_LS1C)
+> > +       reg = __raw_readl(LS1X_CLK_PLL_DIV);
+> > +       if (reg & DIV_CPU_SEL) {
+> > +               if (reg & DIV_CPU_EN) {
+> > +                       clk = clk_register_divider(NULL, "cpu_clk",
+> > "pll_clk",
+> > +                                       CLK_SET_RATE_PARENT,
+> > LS1X_CLK_PLL_DIV,
+> > +                                       DIV_CPU_SHIFT, DIV_CPU_WIDTH,
+> > +                                       CLK_DIVIDER_ONE_BASED, &_lock);
+> > +               } else {
+> > +                       clk = clk_register_fixed_factor(NULL, "cpu_clk",
+> > +                                                       "pll_clk", 0, 1,
+> > 2);
+> > +               }
+> > +       }
+> > +       clk_register_clkdev(clk, "cpu_clk", NULL);
+> > +#endif
+> >
+> > +#if defined(CONFIG_LOONGSON1_LS1B)
+> >         /*                                 _____
+> >          *         _______________________|     |
+> >          * OSC ___/                       | MUX |___ DC  CLK
+> > @@ -130,7 +162,14 @@ void __init ls1x_clk_init(void)
+> >                                CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+> >                                BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0,
+> > &_lock);
+> >         clk_register_clkdev(clk, "dc_clk", NULL);
+> > +#elif defined(CONFIG_LOONGSON1_LS1C)
+> > +       clk = clk_register_divider(NULL, "dc_clk", "pll_clk",
+> > +                       CLK_SET_RATE_PARENT, LS1X_CLK_PLL_DIV,
+> > DIV_DC_SHIFT,
+> > +                       DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
+> > +       clk_register_clkdev(clk, "dc_clk", NULL);
+> > +#endif
+> >
+> > +#if defined(CONFIG_LOONGSON1_LS1B)
+> >         /*                                 _____
+> >          *         _______________________|     |
+> >          * OSC ___/                       | MUX |___ DDR CLK
+> > @@ -146,6 +185,22 @@ void __init ls1x_clk_init(void)
+> >                                ARRAY_SIZE(ahb_parents),
+> >                                CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+> >                                BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0,
+> > &_lock);
+> > +#elif defined(CONFIG_LOONGSON1_LS1C)
+> > +       reg = __raw_readl(LS1X_CLK_PLL_FREQ) & SDRAM_DIV;
+> > +       switch (reg) {
+> > +       case 0:
+> > +               div = 2;
+> > +               break;
+> > +       case 1:
+> > +               div = 4;
+> > +               break;
+> > +       case 2:
+> > +       case 3:
+> > +               div = 3;
+> > +               break;
+> > +       }
+> > +       clk = clk_register_fixed_factor(NULL, "ahb_clk", "cpu_clk", 0, 1,
+> > div);
+> > +#endif
+> >         clk_register_clkdev(clk, "ahb_clk", NULL);
+> >         clk_register_clkdev(clk, "stmmaceth", NULL);
+> >
+> > --
+> > 1.9.1
+> >
+> >
+> >
+> 
+> 
+> -- 
+> Best regards,
+> 
+> Kelvin Cheung
 
-On Sun, May 22, 2016 at 10:18 PM, Michal Suchanek <hramrach@gmail.com> wrote:
-> Hello,
->
-> I tried running a spidev test program on linux 4.6 and I uncovered a
-> problem with the sunxi clk framework.
->
-> Basically the system would lock up after running the test program.
->
-> Digging deeper I found that it locks up with commit
-> [47284e3e0f3c427c93f8583549b6c938e8a18015] spi: sun4i: allow transfers
-> to set transmission speed
->
-> This exposes a problem with the test program. I try to set the SPI
-> sped to 1MHz but at other place the speed is multiplied by 1000 to
-> save typing zeros so the actual requested speed is 1GHz. This commit
-> probably allows that request to propagate leading to the observed
-> system lockup.
->
-> Given the parents OSC24M, pll6 and pll5 one of pll6 and pll5 is
-> probably set up at 2GHz (or both in turn because due to some rounding
-> neither goes fully up to 2GHz resulting in 864000000 SPI clock). Then
-> the system locks up.
-
-IIRC the mod clock does not propagate rate changes up the tree.
-But some output from the debugfs would be helpful. See below.
-
->
-> I can limit the speed in the SPI driver which is rated at 100MHz in
-> SoC manual (giving 200MHz pll) but the clk driver should probably
-> limit the clock setting to sane speeds itself.
->
-> I am not familiar with the sunxi-clk code and it has unfortunately no
-> debug prints which would show what is programmed to what speed.
-
-You can use /sys/kernel/debug/clk/clk_summary, provided you have
-debugfs built in and mounted.
-
-Regards
-ChenYu
-
->
-> Thanks
->
-> Michal
->
-> root@a10s:~/spidisp# ./spitest -r 50 -d -s 1000000 /dev/spidev2.0
-> Debug mode.
-> spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
-> spidev spi2.0: spi mode 0
-> spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
-> spidev spi2.0: msb first
-> spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
-> spidev spi2.0: 0 bits per word
-> spidev spi2.0: setup mode 0, 8 bits/w, 1000000000 Hz max --> 0
-> /dev/spidev2.0: spi mode 0x0, 8 bits per word, 1000000000 Hz maxspidev
-> spi2.0: mclk spi2 (24000000)
->
-> Sending 00
-> spidev spi2.0: mclk spi2 setting rate 2000000000Hz
-> spidev spi2.0: mclk spi2 (864000000)
-> spidev spi2.0: clkdiv 0 CDR2 0 regval 4096
-> spi_master spi2: spi2.0: timeout transferring 1 bytes@1000000000Hz for
-> 100(100)ms
-> spidev spi2.0: SPI transfer failed: -110
-> spi_master spi2: failed to transfer one message from queue
-> xfer: Connection timed out
-> buffer size: 1, result -110
-> buffer size: 1, result -110, Connection timed out
-> Sending
-> maximum buffer size: 0
-> Using gpio 50.
-> Writing gpio export 50 to /sys/class/gpio/export.
-> Reading gpio direction from /sys/class/gpio/gpio50/direction: in
->
-> Reading gpio inversion from /sys/class/gpio/gpio50/active_low: 0
->
-> Writing gpio direction in to /sys/class/gpio/gpio50/direction.
-> Reading gpio value from /sys/class/gpio/gpio50/value: 1
->
-> Writing gpio direction out to /sys/class/gpio/gpio50/direction.
-> Writing gpio value 0 to /sys/class/gpio/gpio50/value.
-> Writing gpio value 1 to /sys/class/gpio/gpio50/value.
-> Writing gpio value 0 to /sys/class/gpio/gpio50/value.
-> Writing gpio value 1 to /sys/class/gpio/gpio50/value.
-> Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> spidev spi2.0: mclk spi2 (864000000)
-> spidev spi2.0: mclk spi2 setting rate 2000000000Hz
-> spidev spi2.0: mclk spi2 (864000000)
-> spidev spi2.0: clkdiv 0 CDR2 0 regval 4096
+Well, I will apply the latest patchs in the next version.
+Thanks, Cheung.
