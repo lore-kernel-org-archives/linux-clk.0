@@ -1,119 +1,283 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14880 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753262AbcEZOcQ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2016 10:32:16 -0400
-Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
-To: Dmitry Osipenko <digetx@gmail.com>
-References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
- <572B47DE.1090804@nvidia.com>
- <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
- <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
- <5746B6F7.9040101@nvidia.com>
- <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	"Peter De Schrijver" <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <574708E8.3060308@nvidia.com>
-Date: Thu, 26 May 2016 15:32:08 +0100
-MIME-Version: 1.0
-In-Reply-To: <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 15/22] ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+Date: Sun, 15 May 2016 22:13:56 +0200
+Message-Id: <1463343243-26429-16-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The Exynos5410/542x/5800 are very similar designs. Create a new
+DTSI with common nodes to remove DTS duplication. Although currently
+only MCT and SysRAM are shared but in future more nodes will be added to
+the common file.
 
-On 26/05/16 12:42, Dmitry Osipenko wrote:
-> On 26.05.2016 11:42, Jon Hunter wrote:
->>
->> On 25/05/16 19:51, Dmitry Osipenko wrote:
->>> On 25.05.2016 18:09, Jon Hunter wrote:
->>
->> ...
->>
->>>> If you are able to reproduce this on v3.18, then it would be good if
->>>> you
->>>> could trace the CCF calls around this WARNING to see what is causing
->>>> the
->>>> contention.
->>>
->>> I managed to reproduce it with some CCF "tracing".
->>> Full kmsg log is here: https://bpaste.net/show/d8ab7b7534b7
->>>
->>> Looks like CPU freq governor thread yields during clk_set_rate() and
->>> then CPU idle kicks in, taking the same mutex.
->>
->> On the surface that sounds odd to me, but without understanding the
->> details, I guess I don't know if this is a valid thing to be doing or
->> even how that actually works!
->>
-> 
-> The reason of that happening should be that I'm using clk PRE/POST rate
-> change notifiers in my DVFS driver that takes other mutexes and they
-> could be locked, causing schedule. I haven't mentioned it before, sorry.
+The patch should not have functional impact.
 
-OK, but I am not sure how these "other mutexes" would be relevant here
-without any more details.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 55 ++++---------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 54 ++++---------------------------
+ arch/arm/boot/dts/exynos54xx.dtsi | 68 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 97 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
 
-> From drivers/clk/clk.c:
-> 
-> static struct task_struct *prepare_owner;
-> 
-> ...
-> 
-> /***           locking             ***/
-> static void clk_prepare_lock(void)
-> {
->     if (!mutex_trylock(&prepare_lock)) {
->         if (prepare_owner == current) {
->             prepare_refcnt++;
->             return;
->         }
->         mutex_lock(&prepare_lock);
->     }
-> 
-> You can see that it would lock the mutex if prepare_owner != current, in
-> my case it's idle thread != interactive gov. thread.
-
-Right, but that would imply that someone else is actively doing
-something with a clock. However, if we are entering LP2, then that
-implies that all CPUs are idle and so I still don't understand the
-scenario where this would be locked in that case. May be there is
-something I am overlooking here?
-
->>> However, cpufreq_interactive governor is android specific governor and
->>> isn't in upstream kernel yet. Quick googling shows that recent
->>> "upstreaming" patch uses same cpufreq_interactive_speedchange_task:
->>> https://lkml.org/lkml/2016/5/20/41
->>
->> Do you know if this version they are upstreaming could also yield during
->> the clk_set_rate()?
->>
-> 
-> I think it should be assumed that any clk_set_rate() potentially could.
-> Please correct me if I'm wrong.
-> 
->>> I'm not aware of other possibility to reproduce this issue, it needs
->>> some CCF interaction from a separate task. So the current upstream
->>> kernel shouldn't be affected, I guess.
->>
->> What still does not make sense to me is why any frequency changes have
->> not completed before we attempt to enter the LP2 state?
->>
-> Why not? I don't see any CPUIDLE <-> CPUFREQ interlocking. Do you think
-> it could be harmful somehow?
-
-Like I said before, I still don't understand that scenario that is
-causing this and without being able to fully understand it, I have no
-idea what the exact problem we are trying to fix here is.
-
-Cheers
-Jon
-
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 0edcd7022293..dba6875572f2 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -13,8 +13,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-#include "skeleton.dtsi"
+-#include "exynos5.dtsi"
++#include "exynos54xx.dtsi"
+ #include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
+ 
+@@ -73,53 +72,6 @@
+ 			reg = <0x10040000 0x5000>;
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&interrupt_map>;
+-			interrupts = <0>, <1>, <2>, <3>,
+-				<4>, <5>, <6>, <7>,
+-				<8>, <9>, <10>, <11>;
+-			clocks = <&fin_pll>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			interrupt_map: interrupt-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5410-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -194,6 +146,11 @@
+ 	};
+ };
+ 
++&mct {
++	clocks = <&fin_pll>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 872dadf0f2d4..ebf2ed3c5ff8 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -13,9 +13,8 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include "exynos54xx.dtsi"
+ #include <dt-bindings/clock/exynos5420.h>
+-#include "exynos5.dtsi"
+-
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+ 
+ / {
+@@ -181,24 +180,6 @@
+ 			};
+ 		};
+ 
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5420-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -261,34 +242,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&mct_map>;
+-			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+-					<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			mct_map: mct-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+ 		gsc_pd: power-domain@10044000 {
+ 			compatible = "samsung,exynos4210-pd";
+ 			reg = <0x10044000 0x20>;
+@@ -1163,6 +1116,11 @@
+ 	pinctrl-0 = <&i2c3_bus>;
+ };
+ 
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+new file mode 100644
+index 000000000000..9ce625bd79c1
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -0,0 +1,68 @@
++/*
++ * Samsung's Exynos54xx SoC series common device tree source
++ *
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2016 Krzysztof Kozlowski
++ *
++ * Device nodes common for Samsung Exynos5410/5420/5422/5800. Specific
++ * Exynos 54xx SoCs should include this file and customize it further
++ * (e.g. with clocks).
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "skeleton.dtsi"
++#include "exynos5.dtsi"
++
++/ {
++	compatible = "samsung,exynos5";
++
++	soc: soc {
++		sysram@02020000 {
++			compatible = "mmio-sram";
++			reg = <0x02020000 0x54000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0x02020000 0x54000>;
++
++			smp-sysram@0 {
++				compatible = "samsung,exynos4210-sysram";
++				reg = <0x0 0x1000>;
++			};
++
++			smp-sysram@53000 {
++				compatible = "samsung,exynos4210-sysram-ns";
++				reg = <0x53000 0x1000>;
++			};
++		};
++
++		mct: mct@101C0000 {
++			compatible = "samsung,exynos4210-mct";
++			reg = <0x101C0000 0xB00>;
++			interrupt-parent = <&mct_map>;
++			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
++					<8>, <9>, <10>, <11>;
++
++			mct_map: mct-map {
++				#interrupt-cells = <1>;
++				#address-cells = <0>;
++				#size-cells = <0>;
++				interrupt-map = <0 &combiner 23 3>,
++						<1 &combiner 23 4>,
++						<2 &combiner 25 2>,
++						<3 &combiner 25 3>,
++						<4 &gic 0 120 0>,
++						<5 &gic 0 121 0>,
++						<6 &gic 0 122 0>,
++						<7 &gic 0 123 0>,
++						<8 &gic 0 128 0>,
++						<9 &gic 0 129 0>,
++						<10 &gic 0 130 0>,
++						<11 &gic 0 131 0>;
++			};
++		};
++	};
++};
 -- 
-nvpublic
+2.5.0
