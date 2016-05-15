@@ -1,98 +1,197 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain
- for Exynos5420
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-kernel@vger.kernel.org
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
- <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
- <574558DF.1090000@samsung.com>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
- Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <32174210-ad4e-8fae-1142-80e06dcd319f@osg.samsung.com>
-Date: Wed, 25 May 2016 10:22:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <574558DF.1090000@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 12/22] ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+Date: Sun, 15 May 2016 22:13:53 +0200
+Message-Id: <1463343243-26429-13-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+The exynos5.dtsi is used for common nodes shared between Exynos5250 and
+Exynos542x. Since Exynos5410 is very similar to Exynos5420 it can
+include the common file as well to remove duplication and make
+everything more consistent.
 
-On 05/25/2016 03:48 AM, Krzysztof Kozlowski wrote:
-> On 05/24/2016 07:41 PM, Javier Martinez Canillas wrote:
->> The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
->> has to be ungated during a power domain switch. Trying to do it when the
->> clock is gated will fail and lead to an imprecise external abort error
->> when the driver tries to access the MFC registers with the PD disabled.
->>
->> For example, if the s5p-mfc module is removed and the MFC PD turned off:
->>
->> [  186.835606] Power domain power-domain@10044060 disable failed
->> [  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
->> [  186.837670] Power domain power-domain@10044060 disable failed
->>
->> And when the module is inserted again:
->>
->> [ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
->> [ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
->> [ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->> [ 2395.177441] pgd = ec3b4000
->> [ 2395.177467] [00000000] *pgd=00000000
->> [ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
->> [ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
->> [ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
->> [ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
->> [ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
->> [ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
->>
->> This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
->> clock for the MFC power domain, so the PD configuration works properly.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->>
->>  arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> Indeed patch #1 is not a hard dependency here because there are no other
-> asb clocks. It is entirely obvious but works fine.
->
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410-smdk5410.dts |   6 +-
+ arch/arm/boot/dts/exynos5410.dtsi         | 103 ++++++++++--------------------
+ 2 files changed, 35 insertions(+), 74 deletions(-)
 
-You are right, the reason why is not a hard dependency is because it fails
-anyways so this patch (which will make it fail due the clock being missed)
-won't have any effect.
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index 0f6429e1b75c..777fcf2edd79 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -102,14 +102,14 @@
+ 	};
+ };
  
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-
-Thanks!
-
-> Unless all other patches are meant to current fixes cycle (and/or
-> cc-stable), I do not plan to apply it now. I'll take it for v4.8, because:
-> 1. Your previous patches are needed. Without them bind/unbind won't work.
-> 2. This is not reproducible in a regular driver operation.
-> 3. It needs clock change to actually be useful.
-> 
-> Is it okay?
->
-
-Agreed, that's also why I didn't cc stable on this series.
+-&uart0 {
++&serial_0 {
+ 	status = "okay";
+ };
  
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
+-&uart1 {
++&serial_1 {
+ 	status = "okay";
+ };
+ 
+-&uart2 {
++&serial_2 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 8de8c644f42e..c8f2e4881667 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include "skeleton.dtsi"
++#include "exynos5.dtsi"
+ #include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
+ 
+@@ -26,9 +27,6 @@
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+ 		pinctrl3 = &pinctrl_3;
+-		serial0 = &uart0;
+-		serial1 = &uart1;
+-		serial2 = &uart2;
+ 	};
+ 
+ 	cpus {
+@@ -70,49 +68,6 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		combiner: interrupt-controller@10440000 {
+-			compatible = "samsung,exynos4210-combiner";
+-			#interrupt-cells = <2>;
+-			interrupt-controller;
+-			samsung,combiner-nr = <32>;
+-			reg = <0x10440000 0x1000>;
+-			interrupts =	<0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-					<0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-					<0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-					<0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+-					<0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
+-					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
+-					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
+-					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
+-		};
+-
+-		gic: interrupt-controller@10481000 {
+-			compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+-			#interrupt-cells = <3>;
+-			interrupt-controller;
+-			reg =	<0x10481000 0x1000>,
+-				<0x10482000 0x1000>,
+-				<0x10484000 0x2000>,
+-				<0x10486000 0x2000>;
+-			interrupts = <1 9 0xf04>;
+-		};
+-
+-		chipid@10000000 {
+-			compatible = "samsung,exynos4210-chipid";
+-			reg = <0x10000000 0x100>;
+-		};
+-
+-		sromc: memory-controller@12250000 {
+-			compatible = "samsung,exynos4210-srom";
+-			reg = <0x12250000 0x14>;
+-			#address-cells = <2>;
+-			#size-cells = <1>;
+-			ranges = <0 0 0x04000000 0x20000
+-				  1 0 0x05000000 0x20000
+-				  2 0 0x06000000 0x20000
+-				  3 0 0x07000000 0x20000>;
+-		};
+-
+ 		pmu_system_controller: system-controller@10040000 {
+ 			compatible = "samsung,exynos5410-pmu", "syscon";
+ 			reg = <0x10040000 0x5000>;
+@@ -236,34 +191,40 @@
+ 			reg = <0x03860000 0x1000>;
+ 			interrupts = <0 47 0>;
+ 		};
++	};
++};
+ 
+-		uart0: serial@12C00000 {
+-			compatible = "samsung,exynos4210-uart";
+-			reg = <0x12C00000 0x100>;
+-			interrupts = <0 51 0>;
+-			clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+-			clock-names = "uart", "clk_uart_baud0";
+-			status = "disabled";
+-		};
++&pwm {
++	clocks = <&clock CLK_PWM>;
++	clock-names = "timers";
++};
+ 
+-		uart1: serial@12C10000 {
+-			compatible = "samsung,exynos4210-uart";
+-			reg = <0x12C10000 0x100>;
+-			interrupts = <0 52 0>;
+-			clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+-			clock-names = "uart", "clk_uart_baud0";
+-			status = "disabled";
+-		};
++&serial_0 {
++	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
++	clock-names = "uart", "clk_uart_baud0";
++};
+ 
+-		uart2: serial@12C20000 {
+-			compatible = "samsung,exynos4210-uart";
+-			reg = <0x12C20000 0x100>;
+-			interrupts = <0 53 0>;
+-			clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+-			clock-names = "uart", "clk_uart_baud0";
+-			status = "disabled";
+-		};
+-	};
++&serial_1 {
++	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
++	clock-names = "uart", "clk_uart_baud0";
++};
++
++&serial_2 {
++	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
++	clock-names = "uart", "clk_uart_baud0";
++};
++
++&serial_3 {
++	status = "disabled";
++};
++
++&sromc {
++	#address-cells = <2>;
++	#size-cells = <1>;
++	ranges = <0 0 0x04000000 0x20000
++		  1 0 0x05000000 0x20000
++		  2 0 0x06000000 0x20000
++		  3 0 0x07000000 0x20000>;
+ };
+ 
+ #include "exynos5410-pinctrl.dtsi"
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.5.0
