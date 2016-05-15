@@ -1,249 +1,95 @@
 Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 15 May 2016 21:18:32 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 06/16] clk: sunxi-ng: Add divider table clock
-Date: Sun,  8 May 2016 22:01:41 +0200
-Message-Id: <1462737711-10017-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
+Message-ID: <20160515191832.GE27618@lukather>
 References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
+ <20160509093958.26e9549f8ce78888c0e9586a@free.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="10jrOL3x2xqLmOsH"
+In-Reply-To: <20160509093958.26e9549f8ce78888c0e9586a@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for clocks based on a divider tables.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Makefile        |   1 +
- drivers/clk/sunxi-ng/ccu_div_table.c | 117 +++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_div_table.h |  75 ++++++++++++++++++++++
- 3 files changed, 193 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_div_table.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_div_table.h
+--10jrOL3x2xqLmOsH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index aa5c411ff8ea..f20c6c8f217c 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,6 +1,7 @@
- obj-y += ccu_common.o
- obj-y += ccu_reset.o
- 
-+obj-y += ccu_div_table.o
- obj-y += ccu_fixed_factor.o
- obj-y += ccu_gate.o
- obj-y += ccu_mux.o
-diff --git a/drivers/clk/sunxi-ng/ccu_div_table.c b/drivers/clk/sunxi-ng/ccu_div_table.c
-new file mode 100644
-index 000000000000..cbfff0bd47e3
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_div_table.c
-@@ -0,0 +1,117 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_div_table.h"
-+#include "ccu_gate.h"
-+
-+static void ccu_div_table_find_best(unsigned long parent, unsigned long rate,
-+				    struct ccu_div_table *ct,
-+				    unsigned int *index)
-+{
-+	unsigned long best_rate = 0;
-+	unsigned int best_index = 0;
-+	unsigned int _index;
-+
-+	for (_index = 0; _index <= ct->num_divs; _index++) {
-+		unsigned long tmp_rate = parent / ct->table[_index];
-+
-+		if (tmp_rate > rate)
-+			continue;
-+
-+		if ((rate - tmp_rate) < (rate - best_rate)) {
-+			best_rate = tmp_rate;
-+			best_index = _index;
-+		}
-+	}
-+
-+	*index = best_index;
-+}
-+
-+static void ccu_div_table_disable(struct clk_hw *hw)
-+{
-+	struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-+
-+	return ccu_gate_helper_disable(&ct->common, ct->enable);
-+}
-+
-+static int ccu_div_table_enable(struct clk_hw *hw)
-+{
-+	struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-+
-+	return ccu_gate_helper_enable(&ct->common, ct->enable);
-+}
-+
-+static int ccu_div_table_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-+
-+	return ccu_gate_helper_is_enabled(&ct->common, ct->enable);
-+}
-+
-+static unsigned long ccu_div_table_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-+	unsigned long div;
-+	u32 reg;
-+
-+	reg = readl(ct->common.base + ct->common.reg);
-+
-+	div = reg >> ct->div.shift;
-+	div &= (1 << ct->div.width) - 1;
-+
-+	return parent_rate / ct->table[div];
-+}
-+
-+static long ccu_div_table_round_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long *parent_rate)
-+{
-+	struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-+	unsigned int index;
-+	
-+	ccu_div_table_find_best(*parent_rate, rate,
-+				ct, &index);
-+
-+	return *parent_rate / ct->table[index];
-+}
-+
-+static int ccu_div_table_set_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long parent_rate)
-+{
-+	struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-+	unsigned long flags;
-+	unsigned int index;
-+	u32 reg;
-+
-+	ccu_div_table_find_best(parent_rate, rate, ct, &index);
-+
-+	spin_lock_irqsave(ct->common.lock, flags);
-+
-+	reg = readl(ct->common.base + ct->common.reg);
-+	reg &= ~GENMASK(ct->div.width + ct->div.shift, ct->div.shift);
-+	writel(reg | ((ct->table[index]) << ct->div.shift),
-+	       ct->common.base + ct->common.reg);
-+
-+	spin_unlock_irqrestore(ct->common.lock, flags);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_div_table_ops = {
-+	.disable	= ccu_div_table_disable,
-+	.enable		= ccu_div_table_enable,
-+	.is_enabled	= ccu_div_table_is_enabled,
-+
-+	.recalc_rate	= ccu_div_table_recalc_rate,
-+	.round_rate	= ccu_div_table_round_rate,
-+	.set_rate	= ccu_div_table_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_div_table.h b/drivers/clk/sunxi-ng/ccu_div_table.h
-new file mode 100644
-index 000000000000..bd7da49087ed
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_div_table.h
-@@ -0,0 +1,75 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_DIV_TABLE_H_
-+#define _CCU_DIV_TABLE_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_factor.h"
-+
-+struct ccu_div_table {
-+	u32			enable;
-+
-+	u8			*table;
-+	int			num_divs;
-+
-+	struct ccu_factor	div;
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_DIV_TABLE(_struct, _name, _parent, _reg,		\
-+			    _shift, _width,				\
-+			    _table, _flags)				\
-+	struct ccu_div_table _struct = {				\
-+		.table		= _table,				\
-+		.num_divs	= ARRAY_SIZE(_table),			\
-+		.div		= SUNXI_CLK_FACTOR(_shift, _width),	\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_div_table_ops, \
-+							_flags),	\
-+		}							\
-+	}
-+
-+#define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
-+				      _shift, _width,			\
-+				      _table, _gate, _flags)		\
-+	struct ccu_div_table _struct = {				\
-+		.enable		= _gate,				\
-+		.table		= _table,				\
-+		.num_divs	= ARRAY_SIZE(_table),			\
-+		.div		= SUNXI_CLK_FACTOR(_shift, _width),	\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_div_table_ops, \
-+							_flags),	\
-+		}							\
-+	}
-+
-+static inline struct ccu_div_table *hw_to_ccu_div_table(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_div_table, common);
-+}
-+
-+extern const struct clk_ops ccu_div_table_ops;
-+
-+#endif /* _CCU_DIV_H_ */
--- 
-2.8.2
+On Mon, May 09, 2016 at 09:39:58AM +0200, Jean-Francois Moine wrote:
+> On Sun,  8 May 2016 22:01:50 +0200
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>=20
+> > Add the list of clocks and resets found in the H3 CCU.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/sunxi-ng/Makefile        |   2 +
+> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++=
+++++++++
+> >  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
+> >  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
+> >  4 files changed, 1024 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> >  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
+> >  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
+> >=20
+> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
+ile
+> > index c794f57b6fb1..67ff6a92f124 100644
+> > --- a/drivers/clk/sunxi-ng/Makefile
+> > +++ b/drivers/clk/sunxi-ng/Makefile
+> > @@ -13,3 +13,5 @@ obj-y +=3D ccu_nkmp.o
+> >  obj-y +=3D ccu_nm.o
+> >  obj-y +=3D ccu_p.o
+> >  obj-y +=3D ccu_phase.o
+> > +
+> > +obj-y +=3D ccu-sun8i-h3.o
+>=20
+> +obj-$(CONFIG_MACH_SUN8I) +=3D ccu-sun8i-h3.o
+>=20
+> should be better.
+
+Indeed, changed.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--10jrOL3x2xqLmOsH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXOMuIAAoJEBx+YmzsjxAg2agP/1XJ/iNgYatRMPt6UiJmDwAK
+U8gIymEWDmm8uWZG/y6BpHdlt8iLCniKeOD0zxXxQIAufOFoEcJjGM98JGj91MQO
+5I+PwIAX0dV7nmcOLsJbTU3kLjWVVZm8SptG+D9Rgmr2owq2CWMbrYTIbdNd4sdY
+XODjPMZAynSXG8Owm/kV0W6SOs6L+fq/KNcrtA36gIN6iLCHrIwchouVfhClP6pK
+RHazRNQW8IVPBiFT/XLypt8RKNkgMBmwCeBEouj87z16XBYfNtYVXhwzRjLeMW7M
+Ri0IXaNpwbD0GhVnjflOgXjEcIVqG2npRm9pfSY+kST6Bbx3LBvq6K4MNKoMz26P
+Ib6GJ3bU917GLXoG0b0S/LpWSG7cnKyNk+nIdrT0TCzXp8gzF1JSMxCMKefcXQhc
+/sYdO39PDTBB1Hc94hHOS94NOKxwF22fhj0pp4IV0wdBwQ3RQR9lChTqvK/frVz1
+VlFsiuCxYCIE4Bee749fzPlI3xTCO39HN0Xb9ZJ5Pz9iEXeMhyzE1sqcQ0yoMSUa
+Fu6/uPOO+Mylsod4nzBb2FD286PNilE61mf23YPIfQKKYyFqz65CMNfBaludMePn
+n7a2fAVKm8fIYAy1gChDljv/BjLNfXIbCnLzfN1fiCn/ISwsf25DaMBo7uMfkxkd
+Gv4AZk4UrDyQHs8AN7UA
+=PTzT
+-----END PGP SIGNATURE-----
+
+--10jrOL3x2xqLmOsH--
