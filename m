@@ -14,57 +14,39 @@ To: Kukjin Kim <kgene@kernel.org>,
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 10/27] ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
-Date: Tue, 10 May 2016 22:09:13 +0200
-Message-Id: <1462910970-1812-11-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 14/22] ARM: dts: exynos: MCT is not an interrupt controller and extend length of iomap
+Date: Sun, 15 May 2016 22:13:55 +0200
+Message-Id: <1463343243-26429-15-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-For consistency lowercase node labels are used.
+Multi-Core Timer generates interrupts but it is not really an interrupt
+controller so remove the "interrupt-controller" and "interrupt-cells"
+properties. Additionally extend the length of mapped memory to cover all
+registers (last SFR is at 0x0A40).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 233149abfb62..58d3844ef923 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -35,28 +35,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 4b16a9376a24..872dadf0f2d4 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -263,9 +263,7 @@
  
--		CPU0: cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU1: cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x1>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU2: cpu@2 {
-+		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x2>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU3: cpu@3 {
-+		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x3>;
+ 		mct: mct@101C0000 {
+ 			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0x800>;
+-			interrupt-controller;
+-			#interrupt-cells = <1>;
++			reg = <0x101C0000 0xB00>;
+ 			interrupt-parent = <&mct_map>;
+ 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+ 					<8>, <9>, <10>, <11>;
 -- 
 2.5.0
