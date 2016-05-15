@@ -1,95 +1,117 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain
- for Exynos5420
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- linux-kernel@vger.kernel.org
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
- <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
- Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <574558DF.1090000@samsung.com>
-Date: Wed, 25 May 2016 09:48:47 +0200
-MIME-version: 1.0
-In-reply-to: <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 15 May 2016 21:04:15 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 12/16] clk: sunxi-ng: Add N-M-factor clock support
+Message-ID: <20160515190415.GC27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-13-git-send-email-maxime.ripard@free-electrons.com>
+ <20160509092421.a36252139fd6b00b2cd32f24@free.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nmemrqcdn5VTmUEE"
+In-Reply-To: <20160509092421.a36252139fd6b00b2cd32f24@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/24/2016 07:41 PM, Javier Martinez Canillas wrote:
-> The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
-> has to be ungated during a power domain switch. Trying to do it when the
-> clock is gated will fail and lead to an imprecise external abort error
-> when the driver tries to access the MFC registers with the PD disabled.
-> 
-> For example, if the s5p-mfc module is removed and the MFC PD turned off:
-> 
-> [  186.835606] Power domain power-domain@10044060 disable failed
-> [  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
-> [  186.837670] Power domain power-domain@10044060 disable failed
-> 
-> And when the module is inserted again:
-> 
-> [ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
-> [ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
-> [ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-> [ 2395.177441] pgd = ec3b4000
-> [ 2395.177467] [00000000] *pgd=00000000
-> [ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
-> [ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
-> [ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
-> [ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
-> [ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
-> [ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
-> 
-> This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
-> clock for the MFC power domain, so the PD configuration works properly.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
->  arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Indeed patch #1 is not a hard dependency here because there are no other
-asb clocks. It is entirely obvious but works fine.
+--nmemrqcdn5VTmUEE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hi,
 
-Unless all other patches are meant to current fixes cycle (and/or
-cc-stable), I do not plan to apply it now. I'll take it for v4.8, because:
-1. Your previous patches are needed. Without them bind/unbind won't work.
-2. This is not reproducible in a regular driver operation.
-3. It needs clock change to actually be useful.
+On Mon, May 09, 2016 at 09:24:21AM +0200, Jean-Francois Moine wrote:
+> On Sun,  8 May 2016 22:01:47 +0200
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>=20
+> > Introduce support for clocks that multiply and divide using linear fact=
+ors.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/sunxi-ng/Makefile |   1 +
+> >  drivers/clk/sunxi-ng/ccu_nm.c | 103 ++++++++++++++++++++++++++++++++++=
+++++++++
+> >  drivers/clk/sunxi-ng/ccu_nm.h |  41 +++++++++++++++++
+> >  3 files changed, 145 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
+> 	[snip]
+> > diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_n=
+m.c
+> > new file mode 100644
+> > index 000000000000..268637db137b
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> > @@ -0,0 +1,103 @@
+> 	[snip]
+> > +static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +			      unsigned long *parent_rate)
+> > +{
+> > +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
+> > +	unsigned long n, m;
+> > +
+> > +	rational_best_approximation(rate, *parent_rate,
+> > +				    nm->n.width, nm->m.width, &n, &m);
+>=20
+> Should be
+> 			1 << nm->n.width, 1 << nm->m.width, &n, &m);
+>=20
+> > +
+> > +	return *parent_rate * n / m;
+> > +}
+> > +
+> > +static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +			   unsigned long parent_rate)
+> > +{
+> > +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
+> > +	unsigned long flags;
+> > +	unsigned long n, m;
+> > +	u32 reg;
+> > +
+> > +	rational_best_approximation(rate, parent_rate,
+> > +				    nm->n.width, nm->m.width, &n, &m);
+>=20
+> Idem
 
-Is it okay?
+Indeed, fixed.
 
-Best regards,
-Krzysztof
+Thanks!
+Maxime
 
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 4c8523471c65..f3e9d873633e 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -313,8 +313,9 @@
->  	mfc_pd: power-domain@10044060 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10044060 0x20>;
-> -		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
-> -		clock-names = "oscclk", "clk0";
-> +		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
-> +			 <&clock CLK_ACLK333>;
-> +		clock-names = "oscclk", "clk0","asb0";
->  		#power-domain-cells = <0>;
->  	};
->  
-> 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--nmemrqcdn5VTmUEE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXOMguAAoJEBx+YmzsjxAgjlMP/1a5rKAEmNU229/foVfakbWP
+nIJLAjPULDrozATaVzq+EVBhN1iRQk/GuSn26FWSZU5UUy1gSqKEy7qq1u9kRaPo
+RekLS6iQBPrzyz1f32Sj83YqRsMmU5AFuRa5mTmF2HowSvZO4ptfr8+So/vEz/0k
+h61h5pTjbstdBLv1d9SQyMnBM1Tq7BeeL7pdWoiOc+zeH9dFthoXvS7z/3YQLuEC
+AZ54CCPGr3JrfwdsmaLnleMke0kNSrH5OzyGZHLG/BwfVBgaMVmnGpbjQsVmXtFf
+31LhysRYCJleGmmglylXdyyfW0XR5L78/X7K/sM+R7KDXJEQZIK3Wb9bBdXA6ScV
+lL7UlGOYvkoDIxRldNDfXU59MlGkSdZ189PF2RJMEd5qX8dAIoGaTWbvkPxW6cro
+AMEOBUzKZlkdl817LG80W5OD0FU1l2SiWGTOAVsxw1GU3pc7hdpHuW1ee2IpEk22
+O+1Jm0aNsKcx8rs1YdrIHVXFTbpDtoT65SEy0b3Ds/apD52xc0jVU0IHBoqMG11d
+5EoMoUWJ/CITwTbZe874BJNfdU5xcCdmpvjxHqF8yb72F9mEz9KbmG5NLYebSSfT
+pz8rT44E4XdqPA8YtQ8A2EXta8o/axJGbqVsMACECKCJacNm+t6AfVr+BYtNL0Ri
+u+ysWw+TJUxI6rupYQ3P
+=gNDi
+-----END PGP SIGNATURE-----
+
+--nmemrqcdn5VTmUEE--
