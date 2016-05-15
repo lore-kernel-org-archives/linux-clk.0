@@ -1,24 +1,34 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: zhengxing@rock-chips.com, linux-rockchip@lists.infradead.org, briannorris@chromium.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: fix the rk3399 sdmmc sample / drv name
-Date: Sun, 08 May 2016 22:51:14 +0200
-Message-ID: <4645491.pfFL9jxaO2@phil>
-In-Reply-To: <1462404985-27957-1-git-send-email-dianders@chromium.org>
-References: <1462404985-27957-1-git-send-email-dianders@chromium.org>
+Return-Path: <matthijsvanduin@gmail.com>
+Return-Path: <matthijsvanduin@gmail.com>
+Date: Sun, 15 May 2016 06:05:01 +0200
+From: Matthijs van Duin <matthijsvanduin@gmail.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Nicolas Chauvet <kwizart@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>
+Subject: Re: [PATCH] clk: ti: Add support for basic clk_set_rate for dm814x
+ and j5-eco ADPLL
+Message-ID: <20160515040501.GB20983@squirrel.local>
+References: <1463157653-9404-1-git-send-email-tony@atomide.com>
+ <20160515040028.GA20983@squirrel.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160515040028.GA20983@squirrel.local>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 4. Mai 2016, 16:36:25 schrieb Douglas Anderson:
-> The rk3399 clock table had a simple typo in it, calling the SDMMC sample
-> and drive clocks by the wrong name.  Fix this minor typo.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On Sun, May 15, 2016 at 06:00:28AM +0200, Matthijs van Duin wrote:
+> /*12*/  u16 postdiv;    // aka M2       1..31   1..127  (but see note below)
+> /*14*/  u16 mult;       // aka M        2..2047 2..4095
 
-applied to my clk-branch
+I just noticed that should have been
 
+> /*12*/  u16 postdiv;    // aka M2       1..31   1..127
+> /*14*/  u16 mult;       // aka M        2..2047 2..4095 (but see note below)
 
-Thanks for catching this
-Heiko
+obviously :)
