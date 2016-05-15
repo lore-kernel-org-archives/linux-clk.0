@@ -1,261 +1,145 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1462737711-10017-14-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-14-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 23 May 2016 22:10:16 +0800
-Message-ID: <CAGb2v679v3AW5OC129ShjxU9fUK7xQEZvUzLf2qQHFGiU2AhMQ@mail.gmail.com>
-Subject: Re: [PATCH 13/16] clk: sunxi-ng: Add N-K-M Factor clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 20/22] ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
+Date: Sun, 15 May 2016 22:14:01 +0200
+Message-Id: <1463343243-26429-21-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The USI/HSI2C nodes can be mostly shared between Exynos5420 and
+Exynos5410 so move them to common DTSI.
 
-On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Introduce support for clocks that multiply and divide using two linear
-> multipliers and one linear divider.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile  |   1 +
->  drivers/clk/sunxi-ng/ccu_nkm.c | 144 +++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_nkm.h |  42 ++++++++++++
->  3 files changed, 187 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.h
->
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index fba64c7f4fcd..2bb8bc22e907 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -8,6 +8,7 @@ obj-y += ccu_m.o
->  obj-y += ccu_mp.o
->  obj-y += ccu_mux.o
->  obj-y += ccu_nk.o
-> +obj-y += ccu_nkm.o
->  obj-y += ccu_nm.o
->  obj-y += ccu_p.o
->  obj-y += ccu_phase.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> new file mode 100644
-> index 000000000000..9019c7f6988c
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -0,0 +1,144 @@
-> +/*
-> + * Copyright (C) 2016 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/rational.h>
-> +
-> +#include "ccu_gate.h"
-> +#include "ccu_nkm.h"
-> +
-> +void ccu_nkm_find_best(unsigned long parent, unsigned long rate,
-> +                      unsigned long max_n, unsigned long max_k, unsigned long max_m,
-> +                      unsigned long *n, unsigned long *k, unsigned long *m)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 32 ++++++++++++++++++++++++++----
+ arch/arm/boot/dts/exynos54xx.dtsi | 41 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+), 4 deletions(-)
 
-Would it be easier to just pass struct ccu_nkm* here?
-
-> +{
-> +       unsigned long best_rate = 0;
-> +       unsigned long best_n = 0, best_k = 0, best_m = 0;
-> +       unsigned long _n, _k, _m;
-> +
-> +       for (_k = 1; _k <= max_k; _k++) {
-> +               unsigned long tmp_rate;
-> +
-> +               rational_best_approximation(rate / _k, parent,
-> +                                           max_n, max_m, &_n, &_m);
-> +
-> +               tmp_rate = parent * _n * _k / _m;
-> +
-> +               if (tmp_rate > rate)
-> +                       continue;
-> +
-> +               if ((rate - tmp_rate) < (rate - best_rate)) {
-> +                       best_rate = tmp_rate;
-> +                       best_n = _n;
-> +                       best_k = _k;
-> +                       best_m = _m;
-> +               }
-> +       }
-> +
-> +       *n = best_n;
-> +       *k = best_k;
-> +       *m = best_m;
-> +}
-> +
-> +static void ccu_nkm_disable(struct clk_hw *hw)
-> +{
-> +       struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-> +
-> +       return ccu_gate_helper_disable(&nkm->common, nkm->enable);
-> +}
-> +
-> +static int ccu_nkm_enable(struct clk_hw *hw)
-> +{
-> +       struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-> +
-> +       return ccu_gate_helper_enable(&nkm->common, nkm->enable);
-> +}
-> +
-> +static int ccu_nkm_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-> +
-> +       return ccu_gate_helper_is_enabled(&nkm->common, nkm->enable);
-> +}
-> +
-> +static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
-> +                                       unsigned long parent_rate)
-> +{
-> +       struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-> +       unsigned long n, m, k;
-> +       u32 reg;
-> +
-> +       reg = readl(nkm->common.base + nkm->common.reg);
-> +
-> +       n = reg >> nkm->n.shift;
-> +       n &= (1 << nkm->n.width) - 1;
-> +
-> +       k = reg >> nkm->k.shift;
-> +       k &= (1 << nkm->k.width) - 1;
-> +
-> +       m = reg >> nkm->m.shift;
-> +       m &= (1 << nkm->m.width) - 1;
-> +
-> +       return parent_rate * (n + 1) * (k + 1) / (m + 1);
-> +}
-> +
-> +static long ccu_nkm_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                             unsigned long *parent_rate)
-> +{
-> +       struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-> +       unsigned long n, k, m;
-> +
-> +       ccu_nkm_find_best(*parent_rate, rate, 1 << nkm->n.width,
-> +                         1 << nkm->k.width, 1 << nkm->m.width,
-> +                         &n, &k, &m);
-> +
-> +       return *parent_rate * n * k / m;
-> +}
-> +
-> +static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                          unsigned long parent_rate)
-> +{
-> +       struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-> +       unsigned long n, k, m;
-> +       unsigned long flags;
-> +       u32 reg;
-> +
-> +       ccu_nkm_find_best(parent_rate, rate, 1 << nkm->n.width,
-> +                         1 << nkm->k.width, 1 << nkm->m.width,
-> +                         &n, &k, &m);
-> +
-> +       spin_lock_irqsave(nkm->common.lock, flags);
-> +
-> +       reg = readl(nkm->common.base + nkm->common.reg);
-> +       reg &= ~GENMASK(nkm->n.width + nkm->n.shift, nkm->n.shift);
-> +       reg &= ~GENMASK(nkm->k.width + nkm->k.shift, nkm->k.shift);
-> +       reg &= ~GENMASK(nkm->m.width + nkm->m.shift, nkm->m.shift);
-
-GENMASK(width + shift - 1, shift)
-
-> +
-> +       reg |= (n - 1) << nkm->m.shift;
-> +       reg |= (k - 1) << nkm->m.shift;
-> +       reg |= (m - 1) << nkm->m.shift;
-> +
-> +       writel(reg, nkm->common.base + nkm->common.reg);
-> +
-> +       spin_unlock_irqrestore(nkm->common.lock, flags);
-> +
-> +       ccu_helper_wait_for_lock(&nkm->common, nkm->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops ccu_nkm_ops = {
-> +       .disable        = ccu_nkm_disable,
-> +       .enable         = ccu_nkm_enable,
-> +       .is_enabled     = ccu_nkm_is_enabled,
-> +
-> +       .recalc_rate    = ccu_nkm_recalc_rate,
-> +       .round_rate     = ccu_nkm_round_rate,
-> +       .set_rate       = ccu_nkm_set_rate,
-> +};
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-> new file mode 100644
-> index 000000000000..1301e9f08305
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-> @@ -0,0 +1,42 @@
-> +/*
-> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_NKM_H_
-> +#define _CCU_NKM_H_
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_factor.h"
-> +#include "ccu_common.h"
-> +
-> +struct ccu_nkm {
-> +       u32                     enable;
-> +       u32                     lock;
-> +
-> +       struct ccu_factor       n;
-> +       struct ccu_factor       k;
-> +       struct ccu_factor       m;
-> +
-> +       struct ccu_common       common;
-> +};
-> +
-> +static inline struct ccu_nkm *hw_to_ccu_nkm(struct clk_hw *hw)
-> +{
-> +       struct ccu_common *common = hw_to_ccu_common(hw);
-> +
-> +       return container_of(common, struct ccu_nkm, common);
-> +}
-> +
-> +extern const struct clk_ops ccu_nkm_ops;
-
-No macro? I like the macros as they give the actual driver a more table-like
-look.
-
-Regards
-ChenYu
-
-> +
-> +#endif /* _CCU_NKM_H_ */
-> --
-> 2.8.2
->
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8fa65eb8027d..791243694aa5 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -29,10 +29,6 @@
+ 		pinctrl2 = &pinctrl_2;
+ 		pinctrl3 = &pinctrl_3;
+ 		pinctrl4 = &pinctrl_4;
+-		i2c4 = &hsi2c_4;
+-		i2c5 = &hsi2c_5;
+-		i2c6 = &hsi2c_6;
+-		i2c7 = &hsi2c_7;
+ 		i2c8 = &hsi2c_8;
+ 		i2c9 = &hsi2c_9;
+ 		i2c10 = &hsi2c_10;
+@@ -1022,6 +1018,34 @@
+ 	pinctrl-0 = <&i2c3_bus>;
+ };
+ 
++&hsi2c_4 {
++	clocks = <&clock CLK_USI0>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c4_hs_bus>;
++};
++
++&hsi2c_5 {
++	clocks = <&clock CLK_USI1>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c5_hs_bus>;
++};
++
++&hsi2c_6 {
++	clocks = <&clock CLK_USI2>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c6_hs_bus>;
++};
++
++&hsi2c_7 {
++	clocks = <&clock CLK_USI3>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c7_hs_bus>;
++};
++
+ &mct {
+ 	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+ 	clock-names = "fin_pll", "mct";
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index a9a062708237..317612089b50 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -21,6 +21,10 @@
+ 	compatible = "samsung,exynos5";
+ 
+ 	aliases {
++		i2c4 = &hsi2c_4;
++		i2c5 = &hsi2c_5;
++		i2c6 = &hsi2c_6;
++		i2c7 = &hsi2c_7;
+ 		usbdrdphy0 = &usbdrd_phy0;
+ 		usbdrdphy1 = &usbdrd_phy1;
+ 	};
+@@ -70,6 +74,43 @@
+ 			};
+ 		};
+ 
++		/* i2c_0-3 are defined in exynos5.dtsi */
++		hsi2c_4: i2c@12CA0000 {
++			compatible = "samsung,exynos5250-hsi2c";
++			reg = <0x12CA0000 0x1000>;
++			interrupts = <0 60 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		hsi2c_5: i2c@12CB0000 {
++			compatible = "samsung,exynos5250-hsi2c";
++			reg = <0x12CB0000 0x1000>;
++			interrupts = <0 61 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		hsi2c_6: i2c@12CC0000 {
++			compatible = "samsung,exynos5250-hsi2c";
++			reg = <0x12CC0000 0x1000>;
++			interrupts = <0 62 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		hsi2c_7: i2c@12CD0000 {
++			compatible = "samsung,exynos5250-hsi2c";
++			reg = <0x12CD0000 0x1000>;
++			interrupts = <0 63 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		usbdrd3_0: usb3-0 {
+ 			compatible = "samsung,exynos5250-dwusb3";
+ 			#address-cells = <1>;
+-- 
+2.5.0
