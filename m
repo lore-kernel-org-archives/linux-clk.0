@@ -1,119 +1,62 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>
-Subject: [PATCH 02/11] drivers: clk: st: Add clock propagation for audio clocks
-Date: Wed, 18 May 2016 10:41:23 +0200
-Message-Id: <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 04/22] ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl nodes
+Date: Sun, 15 May 2016 22:13:45 +0200
+Message-Id: <1463343243-26429-5-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch allows fine tuning of the quads FS for audio clocks
-accuracy.
+The 'sd0_rclk' was put in the middle of SD1 nodes. Remove the confusion.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
- drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-index b7ee5c7..15b33c7 100644
---- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-@@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
- Required properties:
- - compatible : shall be:
-   "st,flexgen"
-+  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on parent)
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index 130563b2ca95..14beb7e07323 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -193,17 +193,17 @@
+ 		samsung,pin-drv = <3>;
+ 	};
  
- - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
-   outputs).
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 627267c..3ff51ec 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -15,6 +15,10 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
+-	sd1_clk: sd1-clk {
+-		samsung,pins = "gpc1-0";
++	sd0_rclk: sd0-rclk {
++		samsung,pins = "gpc0-7";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
++		samsung,pin-pud = <1>;
+ 		samsung,pin-drv = <3>;
+ 	};
  
-+struct clkgen_data {
-+	unsigned long flags;
-+};
-+
- struct flexgen {
- 	struct clk_hw hw;
+-	sd0_rclk: sd0-rclk {
+-		samsung,pins = "gpc0-7";
++	sd1_clk: sd1-clk {
++		samsung,pins = "gpc1-0";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <1>;
++		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <3>;
+ 	};
  
-@@ -259,6 +263,18 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
- 	return parents;
- }
- 
-+static const struct clkgen_data clkgen_d0 = {
-+	.flags = CLK_SET_RATE_PARENT,
-+};
-+
-+static const struct of_device_id flexgen_of_match[] = {
-+	{
-+		.compatible = "st,stih407-clkgend0",
-+		.data = &clkgen_d0,
-+	},
-+	{}
-+};
-+
- static void __init st_of_flexgen_setup(struct device_node *np)
- {
- 	struct device_node *pnode;
-@@ -267,6 +283,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	const char **parents;
- 	int num_parents, i;
- 	spinlock_t *rlock = NULL;
-+	const struct of_device_id *match;
-+	struct clkgen_data *data = NULL;
- 	unsigned long flex_flags = 0;
- 	int ret;
- 
-@@ -282,6 +300,12 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	if (!parents)
- 		return;
- 
-+	match = of_match_node(flexgen_of_match, np);
-+	if (match) {
-+		data = (struct clkgen_data *)match->data;
-+		flex_flags = data->flags;
-+	}
-+
- 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
- 		goto err;
 -- 
-1.9.1
+2.5.0
