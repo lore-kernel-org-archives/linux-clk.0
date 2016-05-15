@@ -1,35 +1,86 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/6] dt-bindings: clock: Add TMU clock ID to Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <6ee898e7-3dcd-bdd8-0929-b196e6c80b77@osg.samsung.com>
-Date: Tue, 31 May 2016 14:53:13 -0400
+Return-Path: <matthijsvanduin@gmail.com>
+Return-Path: <matthijsvanduin@gmail.com>
+Date: Sun, 15 May 2016 06:00:28 +0200
+From: Matthijs van Duin <matthijsvanduin@gmail.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Nicolas Chauvet <kwizart@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>
+Subject: Re: [PATCH] clk: ti: Add support for basic clk_set_rate for dm814x
+ and j5-eco ADPLL
+Message-ID: <20160515040028.GA20983@squirrel.local>
+References: <1463157653-9404-1-git-send-email-tony@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1463157653-9404-1-git-send-email-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+On Fri, May 13, 2016 at 09:40:53AM -0700, Tony Lindgren wrote:
+> +#define TI_ADPLL_DIV_N_MAX		GENMASK(7, 0)
+> +#define TI_ADPLL_MULT_M_MAX		(GENMASK(11, 0) + 1)
 
-On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
-> Add ID for TMU clock to Exynos5410. Use the same number as for
-> Exynos5420 just in case in future these drivers were merged.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+These are PLL-type dependent, also the +1 is wrong since M isn't
+off-by-one like N and N2 are.  (consistency? who needs that anyway?)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Here's what my own header says:
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+			//		PLLS	PLLLJ
+/*10*/	u16 prediv;	// aka N	0..127	0..255	(off by one)
+/*12*/	u16 postdiv;	// aka M2	1..31	1..127  (but see note below)
+/*14*/	u16 mult;	// aka M	2..2047	2..4095
+/*16*/	u16 bypassdiv;	// aka N2	0..15	0..15	(off by one)
+
+the "note below" referred to being:
+
+// Using the fractional multiplier increases jitter (presumably more for PLLS
+// than for PLLLJ) and imposes constraints on the multiplier:
+//	PLLLJ:  mult < 4094
+//	PLLS:	mult < 2046 && mult >= 20
+// Other docs say mult > 100 is required for PLLS for max 2.5% period jitter.
+
+
+> +	/* Ratio for integer multiplier M and pre-divider N */
+> +	rational_best_approximation(rate, dcorate, TI_ADPLL_MULT_M_MAX,
+> +				    TI_ADPLL_DIV_N_MAX, &m, &n);
+
+I'm seeing all sorts of problems here...
+
+"dcorate" is a rather misleading name since I would expect that to
+refer to the rate of the dco, obviously, while in fact it's the input
+clock adjusted to account for an implicit factor of 2 (or 8 if you
+enable M4XEN, the utility of which I do not see).
+
+It makes no sense to use rational_best_approximation on the integer
+part and then calculate the fractional part separately.  Not only is the
+calculation wrong, it's needlessly complicated.  You could just have
+passed TI_ADPLL_MULT_M_MAX << 18 to rational_best_approximation and then
+split m into integer and fractional part.
+
+The biggest problem however is that the best rational approximation does
+not guarantee the refclk and dcoclk are within valid range.  This is
+unlikely to be a problem for PLLS, but PLLLJ has quite narrow ranges:
+0.5-2.5 MHz for refclk and 0.5-2.0 GHz for dcoclk.
+
+I don't really have much time right now to spend on this, I suggest
+checking previous threads on the 814x PLLs since I'm pretty sure the
+complications/constraints for setting them have been discussed.
+
+
+> + *                                            Maybe we can
+> + * make the SD_DIV_TARGET_MHZ configurable also?
+
+What use would it have?  All docs I've ever seen say sddiv must be set
+to ceil(dcoclk / 250_MHz) and none of the docs contain any background
+information whatsoever on how this thing works, so there's no informed
+way to choose an alternate value.
+
+> +	if ((sd >= TI814X_ADPLLJ_MIN_SD_DIV) &&
+> +	    (sd <= TI814X_ADPLLJ_MAX_SD_DIV)) {
+
+always true due to the limited range permitted for dcoclk.
