@@ -1,786 +1,339 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 17:10:56 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Purna Chandra Mandal <purna.mandal@microchip.com>
-Cc: linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-	Joshua Henderson <digitalpeer@digitalpeer.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Ralf Baechle <ralf@linux-mips.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v10 2/3] clk: microchip: Add PIC32 clock driver
-Message-ID: <20160507001056.GL3492@codeaurora.org>
-References: <1458731208-25333-1-git-send-email-purna.mandal@microchip.com>
- <1458731208-25333-3-git-send-email-purna.mandal@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1458731208-25333-3-git-send-email-purna.mandal@microchip.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 16/22] ARM: dts: exynos: Add USB to Exynos5410
+Date: Sun, 15 May 2016 22:13:57 +0200
+Message-Id: <1463343243-26429-17-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Mostly nitpicks, although I'm worried about the iomem casting and
-addition stuff. I suppose if those are fixed up at some later
-time then I'm fine with this going through MIPS tree.
+Move USB 3.0 DWC and 2.0 EHCI/OHCI nodes from exynos5420.dtsi to
+exynos54xx.dtsi common for entire family. For Exynos542x/5800 this
+should not have functional impact but for Exynos5410 this effectively
+adds USB support.
 
-On 03/23, Purna Chandra Mandal wrote:
-> +static int pbclk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			  unsigned long parent_rate)
-> +{
-> +	struct pic32_periph_clk *pb = clkhw_to_pbclk(hw);
-> +	unsigned long flags;
-> +	u32 v, div;
-> +	int err;
-> +
-> +	/* check & wait for DIV_READY */
-> +	err = readl_poll_timeout_atomic(pb->ctrl_reg, v, v & PB_DIV_READY,
-> +					1, LOCK_TIMEOUT_US);
-> +	if (err)
-> +		return err;
-> +
-> +	/* calculate clkdiv and best rate */
-> +	div = DIV_ROUND_CLOSEST(parent_rate, rate);
-> +
-> +	spin_lock_irqsave(&lock, flags);
-> +
-> +	/* apply new div */
-> +	v = readl(pb->ctrl_reg);
-> +	v &= ~PB_DIV_MASK;
-> +	v |= (div - 1);
-> +
-> +	pic32_syskey_unlock();
-> +
-> +	writel(v, pb->ctrl_reg);
-> +
-> +	spin_unlock_irqrestore(&lock, flags);
-> +
-> +	/* wait again, for pbdivready */
-> +	err = readl_poll_timeout_atomic(pb->ctrl_reg, v, v & PB_DIV_READY,
-> +					1, LOCK_TIMEOUT_US);
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410.dtsi |  39 +++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi | 133 +++++++++++---------------------------
+ arch/arm/boot/dts/exynos54xx.dtsi |  79 ++++++++++++++++++++++
+ 3 files changed, 157 insertions(+), 94 deletions(-)
 
-why atomic? The spinlock was released already.
-
-> +	if (err)
-> +		return err;
-> +
-> +	/* confirm that new div is applied correctly */
-> +	return (pbclk_read_pbdiv(pb) == div) ? 0 : -EBUSY;
-> +}
-> +
-> +const struct clk_ops pic32_pbclk_ops = {
-> +	.enable		= pbclk_enable,
-> +	.disable	= pbclk_disable,
-> +	.is_enabled	= pbclk_is_enabled,
-> +	.recalc_rate	= pbclk_recalc_rate,
-> +	.round_rate	= pbclk_round_rate,
-> +	.set_rate	= pbclk_set_rate,
-> +};
-> +
-> +struct clk *pic32_periph_clk_register(struct pic32_periph_clk *pbclk,
-> +				      void __iomem *clk_iobase)
-> +{
-> +	struct clk *clk;
-> +
-> +	pbclk->ctrl_reg += (ulong)clk_iobase;
-> +
-> +	clk = clk_register(NULL, &pbclk->hw);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%s: clk_register() failed\n", __func__);
-> +		return clk;
-> +	}
-> +
-> +	return clk;
-
-These two last lines are the same, just print an error and always
-return clk.
-
-> +}
-> +
-> +/* Reference Oscillator operations */
-> +#define clkhw_to_refosc(_hw)	container_of(_hw, struct pic32_ref_osc, hw)
-> +
-> +static int roclk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +
-> +	return readl(refo->regs) & REFO_ON;
-> +}
-> +
-> +static int roclk_enable(struct clk_hw *hw)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +
-> +	writel(REFO_ON | REFO_OE, PIC32_SET(refo->regs));
-> +	return 0;
-> +}
-> +
-> +static void roclk_disable(struct clk_hw *hw)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +
-> +	writel(REFO_ON | REFO_OE, PIC32_CLR(refo->regs));
-> +}
-> +
-> +static void roclk_init(struct clk_hw *hw)
-> +{
-> +	/* initialize clock in disabled state */
-> +	roclk_disable(hw);
-> +}
-> +
-> +static u8 roclk_get_parent(struct clk_hw *hw)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +	u32 v, i;
-> +
-> +	v = (readl(refo->regs) >> REFO_SEL_SHIFT) & REFO_SEL_MASK;
-> +
-> +	if (!refo->parent_map)
-> +		return (u8)v;
-> +
-> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++)
-> +		if (refo->parent_map[i] == v)
-> +			return (u8)i;
-
-That cast is implicit already.
-
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static unsigned long roclk_calc_rate(unsigned long parent_rate,
-> +				     u32 rodiv, u32 rotrim)
-> +{
-> +	u64 rate64;
-> +
-> +	/* fout = fin / [2 * {div + (trim / 512)}]
-> +	 *	= fin * 512 / [1024 * div + 2 * trim]
-> +	 *	= fin * 256 / (512 * div + trim)
-> +	 *	= (fin << 8) / ((div << 9) + trim)
-> +	 */
-> +	if (rotrim) {
-> +		rodiv = (rodiv << 9) + rotrim;
-> +		rate64 = parent_rate;
-> +		rate64 <<= 8;
-> +		do_div(rate64, rodiv);
-> +	} else if (rodiv) {
-> +		rate64 = parent_rate / (rodiv << 1);
-> +	} else {
-> +		rate64 = parent_rate;
-> +	}
-> +	return (unsigned long)rate64;
-> +}
-> +
-> +static void roclk_calc_div_trim(unsigned long rate,
-> +				unsigned long parent_rate,
-> +				u32 *rodiv_p, u32 *rotrim_p)
-> +{
-> +	u32 div, rotrim, rodiv;
-> +	u64 frac;
-> +
-> +	/* Find integer approximation of floating-point arithmetic.
-> +	 *      fout = fin / [2 * {rodiv + (rotrim / 512)}] ... (1)
-> +	 * i.e. fout = fin / 2 * DIV
-> +	 *      whereas DIV = rodiv + (rotrim / 512)
-> +	 *
-> +	 * Since kernel does not perform floating-point arithmatic so
-> +	 * (rotrim/512) will be zero. And DIV & rodiv will result same.
-> +	 *
-> +	 * ie. fout = (fin * 256) / [(512 * rodiv) + rotrim]  ... from (1)
-> +	 * ie. rotrim = ((fin * 256) / fout) - (512 * DIV)
-> +	 */
-> +	if (parent_rate <= rate) {
-> +		div = 0;
-> +		frac = 0;
-> +		rodiv = 0;
-> +		rotrim = 0;
-> +	} else {
-> +		div = parent_rate / (rate << 1);
-> +		frac = parent_rate;
-> +		frac <<= 8;
-> +		do_div(frac, rate);
-> +		frac -= (u64)(div << 9);
-> +
-> +		rodiv = (div > REFO_DIV_MASK) ? REFO_DIV_MASK : div;
-> +		rotrim = (frac >= REFO_TRIM_MAX) ? REFO_TRIM_MAX : frac;
-> +	}
-> +
-> +	if (rodiv_p)
-> +		*rodiv_p = rodiv;
-> +
-> +	if (rotrim_p)
-> +		*rotrim_p = rotrim;
-> +}
-> +
-> +static unsigned long roclk_recalc_rate(struct clk_hw *hw,
-> +				       unsigned long parent_rate)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +	u32 v, rodiv, rotrim;
-> +
-> +	/* get rodiv */
-> +	v = readl(refo->regs);
-> +	rodiv = (v >> REFO_DIV_SHIFT) & REFO_DIV_MASK;
-> +
-> +	/* get trim */
-> +	v = readl(refo->regs + REFO_TRIM_REG);
-> +	rotrim = (v >> REFO_TRIM_SHIFT) & REFO_TRIM_MASK;
-> +
-> +	return roclk_calc_rate(parent_rate, rodiv, rotrim);
-> +}
-> +
-> +static long roclk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			     unsigned long *parent_rate)
-> +{
-> +	u32 rotrim, rodiv;
-> +
-> +	/* calculate dividers for new rate */
-> +	roclk_calc_div_trim(rate, *parent_rate, &rodiv, &rotrim);
-> +
-> +	/* caclulate new rate (rounding) based on new rodiv & rotrim */
-> +	return roclk_calc_rate(*parent_rate, rodiv, rotrim);
-> +}
-> +
-> +static int roclk_determine_rate(struct clk_hw *hw,
-> +				struct clk_rate_request *req)
-> +{
-> +	struct clk_hw *parent_clk, *best_parent_clk = NULL;
-> +	unsigned int i, delta, best_delta = -1;
-> +	unsigned long parent_rate, best_parent_rate = 0;
-> +	unsigned long best = 0, nearest_rate;
-> +
-> +	/* find a parent which can generate nearest clkrate >= rate */
-> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-> +		/* get parent */
-> +		parent_clk = clk_hw_get_parent_by_index(hw, i);
-> +		if (!parent_clk)
-> +			continue;
-> +
-> +		/* skip if parent runs slower than target rate */
-> +		parent_rate = clk_hw_get_rate(parent_clk);
-> +		if (req->rate > parent_rate)
-> +			continue;
-> +
-> +		nearest_rate = roclk_round_rate(hw, req->rate, &parent_rate);
-> +		delta = abs(nearest_rate - req->rate);
-> +		if ((nearest_rate >= req->rate) && (delta < best_delta)) {
-> +			best_parent_clk = parent_clk;
-> +			best_parent_rate = parent_rate;
-> +			best = nearest_rate;
-> +			best_delta = delta;
-> +
-> +			if (delta == 0)
-> +				break;
-> +		}
-> +	}
-> +
-> +	/* if no match found, retain old rate */
-> +	if (!best_parent_clk) {
-> +		pr_err("%s:%s, no parent found for rate %lu.\n",
-> +		       __func__, clk_hw_get_name(hw), req->rate);
-> +		best_parent_clk = clk_hw_get_parent(hw);
-> +		best_parent_rate = clk_hw_get_rate(best_parent_clk);
-
-The core would already fill these things in by default so we
-don't really need to get it again.
-
-> +		best = clk_hw_get_rate(hw);
-> +	}
-> +
-> +	pr_debug("%s,rate %lu, best_parent(%s, %lu), best %lu, delta %d\n",
-> +		 clk_hw_get_name(hw), req->rate,
-> +		 clk_hw_get_name(best_parent_clk), best_parent_rate,
-> +		 best, best_delta);
-> +
-> +	if (req->best_parent_rate)
-> +		req->best_parent_rate = best_parent_rate;
-> +
-> +	if (req->best_parent_hw)
-> +		req->best_parent_hw = best_parent_clk;
-> +
-> +	return best;
-> +}
-> +
-> +static int roclk_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +	unsigned long flags;
-> +	u32 v;
-> +	int err;
-> +
-> +	if (refo->parent_map)
-> +		index = refo->parent_map[index];
-> +
-> +	/* wait until ACTIVE bit is zero or timeout */
-> +	err = readl_poll_timeout_atomic(refo->regs, v, !(v & REFO_ACTIVE),
-
-Why atomic?
-
-> +					1, LOCK_TIMEOUT_US);
-> +	if (err) {
-> +		pr_err("%s: poll failed, clk active\n", clk_hw_get_name(hw));
-> +		return err;
-> +	}
-> +
-> +	spin_lock_irqsave(&lock, flags);
-> +
-> +	pic32_syskey_unlock();
-> +
-> +	/* calculate & apply new */
-> +	v = readl(refo->regs);
-> +	v &= ~(REFO_SEL_MASK << REFO_SEL_SHIFT);
-> +	v |= index << REFO_SEL_SHIFT;
-> +
-> +	writel(v, refo->regs);
-> +
-> +	spin_unlock_irqrestore(&lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int roclk_set_rate_and_parent(struct clk_hw *hw,
-> +				     unsigned long rate,
-> +				     unsigned long parent_rate,
-> +				     u8 index)
-> +{
-> +	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> +	unsigned long flags;
-> +	u32 trim, rodiv, v;
-> +	int err;
-> +
-> +	/* calculate new rodiv & rotrim for new rate */
-> +	roclk_calc_div_trim(rate, parent_rate, &rodiv, &trim);
-> +
-> +	pr_debug("parent_rate = %lu, rate = %lu, div = %d, trim = %d\n",
-> +		 parent_rate, rate, rodiv, trim);
-> +
-> +	/* wait till source change is active */
-> +	err = readl_poll_timeout_atomic(refo->regs, v,
-
-Why atomic?
-
-> +					!(v & (REFO_ACTIVE | REFO_DIVSW_EN)),
-> +					1, LOCK_TIMEOUT_US);
-> +	if (err) {
-> +		pr_err("%s: poll timedout, clock is still active\n", __func__);
-> +		return err;
-> +	}
-> +
-> +	spin_lock_irqsave(&lock, flags);
-> +	v = readl(refo->regs);
-> +
-> +	pic32_syskey_unlock();
-> +
-> +	/* apply parent, if required */
-> +	if (refo->parent_map)
-> +		index = refo->parent_map[index];
-> +
-> +	v &= ~(REFO_SEL_MASK << REFO_SEL_SHIFT);
-> +	v |= index << REFO_SEL_SHIFT;
-> +
-> +	/* apply RODIV */
-> +	v &= ~(REFO_DIV_MASK << REFO_DIV_SHIFT);
-> +	v |= rodiv << REFO_DIV_SHIFT;
-> +	writel(v, refo->regs);
-> +
-> +	/* apply ROTRIM */
-> +	v = readl(refo->regs + REFO_TRIM_REG);
-> +	v &= ~(REFO_TRIM_MASK << REFO_TRIM_SHIFT);
-> +	v |= trim << REFO_TRIM_SHIFT;
-> +	writel(v, refo->regs + REFO_TRIM_REG);
-> +
-> +	/* enable & activate divider switching */
-> +	writel(REFO_ON | REFO_DIVSW_EN, PIC32_SET(refo->regs));
-> +
-> +	/* wait till divswen is in-progress */
-> +	err = readl_poll_timeout_atomic(refo->regs, v, !(v & REFO_DIVSW_EN),
-> +					1, LOCK_TIMEOUT_US);
-> +	/* leave the clk gated as it was */
-> +	writel(REFO_ON, PIC32_CLR(refo->regs));
-> +
-> +	spin_unlock_irqrestore(&lock, flags);
-> +
-> +	return err;
-> +}
-> +
-> +static int roclk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			  unsigned long parent_rate)
-> +{
-> +	u8 index = roclk_get_parent(hw);
-> +
-> +	return roclk_set_rate_and_parent(hw, rate, parent_rate, index);
-> +}
-> +
-> +const struct clk_ops pic32_roclk_ops = {
-> +	.enable			= roclk_enable,
-> +	.disable		= roclk_disable,
-> +	.is_enabled		= roclk_is_enabled,
-> +	.get_parent		= roclk_get_parent,
-> +	.set_parent		= roclk_set_parent,
-> +	.determine_rate		= roclk_determine_rate,
-> +	.recalc_rate		= roclk_recalc_rate,
-> +	.set_rate_and_parent	= roclk_set_rate_and_parent,
-> +	.set_rate		= roclk_set_rate,
-> +	.init			= roclk_init,
-> +};
-> +
-> +struct clk *pic32_refo_clk_register(struct pic32_ref_osc *refo,
-> +				    void __iomem *clk_iobase)
-> +{
-> +	struct clk *clk;
-> +
-> +	refo->regs += (ulong)clk_iobase;
-
-What happens if we do this and then the driver probe fails for
-some weird reason and we retry probe later? The whole += thing is
-not very appealing to me. We probably need some sort of
-descriptor structure that we generate the final structure out of
-and populate any required fields with.
-
-> +
-> +	clk = clk_register(NULL, &refo->hw);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%s: clk_register() failed\n", __func__);
-> +		return clk;
-> +	}
-> +
-> +	return clk;
-> +}
-> +
-> +#define clkhw_to_spll(_hw)	container_of(_hw, struct pic32_sys_pll, hw)
-> +
-> +static inline u32 spll_odiv_to_divider(u32 odiv)
-> +{
-> +	odiv = clamp_val(odiv, PLL_ODIV_MIN, PLL_ODIV_MAX);
-> +
-> +	return 1 << odiv;
-> +}
-> +
-> +static unsigned long spll_calc_mult_div(struct pic32_sys_pll *pll,
-> +					unsigned long rate,
-> +					unsigned long parent_rate,
-> +					u32 *mult_p, u32 *odiv_p)
-> +{
-> +	u32 mul, div, best_mul = 1, best_div = 1;
-> +	unsigned long new_rate, best_rate = rate;
-> +	unsigned int best_delta = -1, delta, match_found = 0;
-> +	u64 rate64;
-> +
-> +	parent_rate /= pll->idiv;
-> +
-> +	for (mul = 1; mul <= PLL_MULT_MAX; mul++) {
-> +		for (div = PLL_ODIV_MIN; div <= PLL_ODIV_MAX; div++) {
-> +			rate64 = parent_rate;
-> +			rate64 *= mul;
-> +			do_div(rate64, 1 << div);
-> +			new_rate = (u32)rate64;
-> +			delta = abs(rate - new_rate);
-> +			if ((new_rate >= rate) && (delta < best_delta)) {
-> +				best_delta = delta;
-> +				best_rate = new_rate;
-> +				best_mul = mul;
-> +				best_div = div;
-> +				match_found = 1;
-> +			}
-> +		}
-> +	}
-> +
-> +	if (!match_found) {
-> +		pr_warn("spll: no match found\n");
-> +		return 0;
-> +	}
-> +
-> +	pr_debug("rate %lu, par_rate %lu/mult %u, div %u, best_rate %lu\n",
-> +		 rate, parent_rate, best_mul, best_div, best_rate);
-> +
-> +	if (mult_p)
-> +		*mult_p = best_mul - 1;
-> +
-> +	if (odiv_p)
-> +		*odiv_p = best_div;
-> +
-> +	return best_rate;
-> +}
-> +
-> +static unsigned long spll_clk_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	struct pic32_sys_pll *pll = clkhw_to_spll(hw);
-> +	unsigned long pll_in_rate;
-> +	u32 mult, odiv, div, v;
-> +	u64 rate64;
-> +
-> +	v = readl(pll->ctrl_reg);
-> +	odiv = ((v >> PLL_ODIV_SHIFT) & PLL_ODIV_MASK);
-> +	mult = ((v >> PLL_MULT_SHIFT) & PLL_MULT_MASK) + 1;
-> +	div = spll_odiv_to_divider(odiv);
-> +
-> +	/* pll_in_rate = parent_rate / idiv
-> +	 * pll_out_rate = pll_in_rate * mult / div;
-> +	 */
-> +	pll_in_rate = parent_rate / pll->idiv;
-> +	rate64 = pll_in_rate;
-> +	rate64 *= mult;
-> +	do_div(rate64, div);
-> +
-> +	return (unsigned long)rate64;
-
-Cast is useless (it's implicit).
-
-> +}
-> +
-> +static long spll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *parent_rate)
-> +{
-> +	struct pic32_sys_pll *pll = clkhw_to_spll(hw);
-> +
-> +	return spll_calc_mult_div(pll, rate, *parent_rate, NULL, NULL);
-> +}
-> +
-> +static int spll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			     unsigned long parent_rate)
-> +{
-> +	struct pic32_sys_pll *pll = clkhw_to_spll(hw);
-> +	unsigned long ret, flags;
-> +	u32 mult, odiv, v;
-> +	int err;
-> +
-> +	ret = spll_calc_mult_div(pll, rate, parent_rate, &mult, &odiv);
-> +	if (!ret)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * We can't change SPLL counters when it is in-active use
-> +	 * by system clock. So ensure that PLL clock is not active
-> +	 * parent of SYSCLK before applying new counter/rate.
-> +	 */
-> +
-> +	/* Is spll_clk active parent of sys_clk ? */
-> +	if (unlikely(clk_hw_get_parent(pic32_sclk_hw) == hw)) {
-
-Why can't we use CLK_SET_RATE_GATE here?
-
-> +		pr_err("%s: failed, clk in-use\n", __func__);
-> +		return -EBUSY;
-> +	}
-> +
-> +	spin_lock_irqsave(&lock, flags);
-> +
-> +	/* apply new multiplier & divisor (read-modify-write) */
-> +	v = readl(pll->ctrl_reg);
-> +	v &= ~(PLL_MULT_MASK << PLL_MULT_SHIFT);
-> +	v &= ~(PLL_ODIV_MASK << PLL_ODIV_SHIFT);
-> +	v |= (mult << PLL_MULT_SHIFT) | (odiv << PLL_ODIV_SHIFT);
-> +
-> diff --git a/drivers/clk/microchip/clk-core.h b/drivers/clk/microchip/clk-core.h
-> new file mode 100644
-> index 0000000..276869a
-> --- /dev/null
-> +++ b/drivers/clk/microchip/clk-core.h
-> @@ -0,0 +1,78 @@
-> +/*
-> + * Purna Chandra Mandal,<purna.mandal@microchip.com>
-> + * Copyright (C) 2015 Microchip Technology Inc.  All rights reserved.
-> + *
-> + * This program is free software; you can distribute it and/or modify it
-> + * under the terms of the GNU General Public License (Version 2) as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-> + * for more details.
-> + */
-> +#ifndef __MICROCHIP_CLK_PIC32_H_
-> +#define __MICROCHIP_CLK_PIC32_H_
-> +
-> +struct clk_hw;
-
-Not sure why we forward declare this. struct clk_hw is not used
-as a pointer below, so we really need to include clk-provider.h
-here.
-
-> +
-> +/* System PLL clock */
-> +struct pic32_sys_pll {
-> +	struct clk_hw hw;
-> +	void __iomem *ctrl_reg;
-> +	void __iomem *status_reg;
-> +	u32 lock_mask;
-> +	u32 idiv; /* PLL iclk divider, treated fixed */
-> +};
-> +
-[..]
-> +#endif /* __MICROCHIP_CLK_PIC32_H_*/
-> diff --git a/drivers/clk/microchip/clk-pic32mzda.c b/drivers/clk/microchip/clk-pic32mzda.c
-> new file mode 100644
-> index 0000000..e92e581
-> --- /dev/null
-> +++ b/drivers/clk/microchip/clk-pic32mzda.c
-> @@ -0,0 +1,240 @@
-> +/*
-> + * Purna Chandra Mandal,<purna.mandal@microchip.com>
-> + * Copyright (C) 2015 Microchip Technology Inc.  All rights reserved.
-> + *
-> + * This program is free software; you can distribute it and/or modify it
-> + * under the terms of the GNU General Public License (Version 2) as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-> + * for more details.
-> + */
-> +#include <dt-bindings/clock/microchip,pic32-clock.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <asm/traps.h>
-> +
-> +#include "clk-core.h"
-> +
-> +static void __iomem *pic32_clk_iobase;
-> +static DEFINE_SPINLOCK(lock);
-
-Please use a better name. pic32_clk_lock? That way when we get
-the lockdep info it doesn't say 'lock'.
-
-> +
-> +/* FRC Postscaler */
-> +#define OSC_FRCDIV_MASK		0x07
-> +#define OSC_FRCDIV_SHIFT	24
-> +
-> +/* SPLL fields */
-> +#define PLL_ICLK_MASK		0x01
-> +#define PLL_ICLK_SHIFT		7
-> +
-[...]
-> +
-> +static struct pic32_sec_osc sosc_clk = {
-> +	.enable_reg = (void __iomem *)0x0,
-> +	.status_reg = (void __iomem *)0x1d0,
-> +	.enable_bitmask = BIT(1),
-> +	.status_bitmask = BIT(4),
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "sosc_clk",
-> +		.parent_names = NULL,
-> +		.num_parents = 0,
-
-This is static data so = 0 is pretty useless.
-
-> +		.flags = CLK_IS_ROOT,
-
-This flag is going away. Please don't use it.
-
-> +		.ops = &pic32_sosc_ops,
-> +	},
-> +};
-> +
-> +static int pic32_fscm_nmi(struct notifier_block *nb,
-> +			  unsigned long action, void *data)
-> +{
-> +	if (readl(pic32_clk_iobase) & BIT(2))
-
-Why can't we pass this to the notifier by making a wrapper
-structure to hold the iomem pointer and notifier block? That way
-we don't have a static global for this iomem region.
-
-> +		pr_err("pic32-clk: FSCM detected clk failure.\n");
-
-That's it? No recovery? Is this for debugging (i.e. pr_debug)? 
-
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static struct notifier_block failsafe_clk_notifier = {
-
-pic32_failsafe_clk_notifier?
-
-> +	.notifier_call = pic32_fscm_nmi,
-> +};
-> +
-> +static int pic32mzda_clk_probe(struct platform_device *pdev)
-> +{
-> +	const char *const pll_mux_parents[] = {"posc_clk", "frc_clk"};
-> +	struct device_node *np = pdev->dev.of_node;
-> +	static struct clk_onecell_data onecell_data;
-> +	static struct clk *clks[MAXCLKS];
-> +	struct clk *pll_mux_clk;
-> +	int nr_clks = 0, i;
-> +
-> +	pic32_clk_iobase = of_io_request_and_map(np, 0, of_node_full_name(np));
-> +	if (IS_ERR(pic32_clk_iobase))
-> +		panic("pic32-clk: failed to map registers\n");
-
-Just return an error? Panic in probe is not too nice.
-
-> +
-> +	/* register fixed rate clocks */
-> +	clks[POSCCLK] = clk_register_fixed_rate(NULL, "posc_clk", NULL,
-> +						CLK_IS_ROOT, 24000000);
-> +	clks[FRCCLK] =  clk_register_fixed_rate(NULL, "frc_clk", NULL,
-> +						CLK_IS_ROOT, 8000000);
-> +	clks[BFRCCLK] = clk_register_fixed_rate(NULL, "bfrc_clk", NULL,
-> +						CLK_IS_ROOT, 8000000);
-> +	clks[LPRCCLK] = clk_register_fixed_rate(NULL, "lprc_clk", NULL,
-> +						CLK_IS_ROOT, 32000);
-> +	clks[UPLLCLK] = clk_register_fixed_rate(NULL, "usbphy_clk", NULL,
-> +						CLK_IS_ROOT, 24000000);
-> +	/* fixed rate (optional) clock */
-> +	if (of_find_property(np, "microchip,pic32mzda-sosc", NULL)) {
-> +		pr_info("pic32-clk: dt requests SOSC.\n");
-> +		clks[SOSCCLK] = pic32_sosc_clk_register(&sosc_clk,
-> +							pic32_clk_iobase);
-> +	}
-> +	/* divider clock */
-> +	clks[FRCDIVCLK] = clk_register_divider(NULL, "frcdiv_clk",
-> +					       "frc_clk", 0,
-> +					       pic32_clk_iobase,
-> +					       OSC_FRCDIV_SHIFT,
-> +					       OSC_FRCDIV_MASK,
-> +					       CLK_DIVIDER_POWER_OF_TWO,
-> +					       &lock);
-> +	/* PLL ICLK mux */
-> +	pll_mux_clk = clk_register_mux(NULL, "spll_mux_clk",
-
-Please pass device to register functions. Who knows, we may
-start using that someday.
-
-> +				       pll_mux_parents, 2, 0,
-> +				       pic32_clk_iobase + 0x020,
-> +				       PLL_ICLK_SHIFT, 1, 0, &lock);
-> +	if (IS_ERR(pll_mux_clk))
-> +		panic("spll_mux_clk: clk register failed\n");
-> +	/* PLL */
-> +	clks[PLLCLK] = pic32_spll_clk_register(&sys_pll, pic32_clk_iobase);
-> +	/* SYSTEM clock */
-> +	clks[SCLK] = pic32_sys_clk_register(&sys_mux_clk, pic32_clk_iobase);
-> +	/* Peripheral bus clocks */
-> +	for (nr_clks = PB1CLK, i = 0; nr_clks <= PB7CLK; i++, nr_clks++)
-> +		clks[nr_clks] = pic32_periph_clk_register(&periph_clocks[i],
-> +							  pic32_clk_iobase);
-> +
-> +	/* Reference oscillator clock */
-> +	for (nr_clks = REF1CLK, i = 0; nr_clks <= REF5CLK; i++, nr_clks++)
-> +		clks[nr_clks] = pic32_refo_clk_register(&ref_clks[i],
-> +							pic32_clk_iobase);
-> +	/* register clkdev */
-> +	for (i = 0; i < MAXCLKS; i++) {
-> +		if (IS_ERR(clks[i]))
-> +			continue;
-> +		clk_register_clkdev(clks[i], NULL, __clk_get_name(clks[i]));
-> +	}
-> +	/* register clock provider */
-> +	onecell_data.clks = clks;
-> +	onecell_data.clk_num = MAXCLKS;
-> +	of_clk_add_provider(np, of_clk_src_onecell_get, &onecell_data);
-
-Check for errors please.
-
-> +
-> +	/* register NMI for failsafe clock monitor */
-> +	return register_nmi_notifier(&failsafe_clk_notifier);
-> +}
-
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index dba6875572f2..37bd8d419c5d 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -185,4 +185,43 @@
+ 		  3 0 0x07000000 0x20000>;
+ };
+ 
++&usbdrd3_0 {
++	clocks = <&clock CLK_USBD300>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy0 {
++	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbdrd3_1 {
++	clocks = <&clock CLK_USBD301>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy1 {
++	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbhost1 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usbhost2 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usb2_phy {
++	clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,sysreg-phandle = <&sysreg_system_controller>;
++	samsung,pmureg-phandle = <&pmu_system_controller>;
++};
++
+ #include "exynos5410-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index ebf2ed3c5ff8..8fa65eb8027d 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -41,8 +41,6 @@
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		spi2 = &spi_2;
+-		usbdrdphy0 = &usbdrd_phy0;
+-		usbdrdphy1 = &usbdrd_phy1;
+ 	};
+ 
+ 	/*
+@@ -770,98 +768,6 @@
+ 			clock-names = "secss";
+ 		};
+ 
+-		usbdrd3_0: usb3-0 {
+-			compatible = "samsung,exynos5250-dwusb3";
+-			clocks = <&clock CLK_USBD300>;
+-			clock-names = "usbdrd30";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges;
+-
+-			usbdrd_dwc3_0: dwc3@12000000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x12000000 0x10000>;
+-				interrupts = <0 72 0>;
+-				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
+-				phy-names = "usb2-phy", "usb3-phy";
+-			};
+-		};
+-
+-		usbdrd_phy0: phy@12100000 {
+-			compatible = "samsung,exynos5420-usbdrd-phy";
+-			reg = <0x12100000 0x100>;
+-			clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+-			clock-names = "phy", "ref";
+-			samsung,pmu-syscon = <&pmu_system_controller>;
+-			#phy-cells = <1>;
+-		};
+-
+-		usbdrd3_1: usb3-1 {
+-			compatible = "samsung,exynos5250-dwusb3";
+-			clocks = <&clock CLK_USBD301>;
+-			clock-names = "usbdrd30";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges;
+-
+-			usbdrd_dwc3_1: dwc3@12400000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x12400000 0x10000>;
+-				interrupts = <0 73 0>;
+-				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
+-				phy-names = "usb2-phy", "usb3-phy";
+-			};
+-		};
+-
+-		usbdrd_phy1: phy@12500000 {
+-			compatible = "samsung,exynos5420-usbdrd-phy";
+-			reg = <0x12500000 0x100>;
+-			clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+-			clock-names = "phy", "ref";
+-			samsung,pmu-syscon = <&pmu_system_controller>;
+-			#phy-cells = <1>;
+-		};
+-
+-		usbhost2: usb@12110000 {
+-			compatible = "samsung,exynos4210-ehci";
+-			reg = <0x12110000 0x100>;
+-			interrupts = <0 71 0>;
+-
+-			clocks = <&clock CLK_USBH20>;
+-			clock-names = "usbhost";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			port@0 {
+-				reg = <0>;
+-				phys = <&usb2_phy 1>;
+-			};
+-		};
+-
+-		usbhost1: usb@12120000 {
+-			compatible = "samsung,exynos4210-ohci";
+-			reg = <0x12120000 0x100>;
+-			interrupts = <0 71 0>;
+-
+-			clocks = <&clock CLK_USBH20>;
+-			clock-names = "usbhost";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			port@0 {
+-				reg = <0>;
+-				phys = <&usb2_phy 1>;
+-			};
+-		};
+-
+-		usb2_phy: phy@12130000 {
+-			compatible = "samsung,exynos5250-usb2-phy";
+-			reg = <0x12130000 0x100>;
+-			clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
+-			clock-names = "phy", "ref";
+-			#phy-cells = <1>;
+-			samsung,sysreg-phandle = <&sysreg_system_controller>;
+-			samsung,pmureg-phandle = <&pmu_system_controller>;
+-		};
+-
+ 		sysmmu_g2dr: sysmmu@0x10A60000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x10A60000 0x1000>;
+@@ -1153,4 +1059,43 @@
+ 	clock-names = "uart", "clk_uart_baud0";
+ };
+ 
++&usbdrd3_0 {
++	clocks = <&clock CLK_USBD300>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy0 {
++	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbdrd3_1 {
++	clocks = <&clock CLK_USBD301>;
++	clock-names = "usbdrd30";
++};
++
++&usbdrd_phy1 {
++	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
++	clock-names = "phy", "ref";
++	samsung,pmu-syscon = <&pmu_system_controller>;
++};
++
++&usbhost1 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usbhost2 {
++	clocks = <&clock CLK_USBH20>;
++	clock-names = "usbhost";
++};
++
++&usb2_phy {
++	clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
++	clock-names = "phy", "ref";
++	samsung,sysreg-phandle = <&sysreg_system_controller>;
++	samsung,pmureg-phandle = <&pmu_system_controller>;
++};
++
+ #include "exynos5420-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 9ce625bd79c1..a9a062708237 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -20,6 +20,11 @@
+ / {
+ 	compatible = "samsung,exynos5";
+ 
++	aliases {
++		usbdrdphy0 = &usbdrd_phy0;
++		usbdrdphy1 = &usbdrd_phy1;
++	};
++
+ 	soc: soc {
+ 		sysram@02020000 {
+ 			compatible = "mmio-sram";
+@@ -64,5 +69,79 @@
+ 						<11 &gic 0 131 0>;
+ 			};
+ 		};
++
++		usbdrd3_0: usb3-0 {
++			compatible = "samsung,exynos5250-dwusb3";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			usbdrd_dwc3_0: dwc3@12000000 {
++				compatible = "snps,dwc3";
++				reg = <0x12000000 0x10000>;
++				interrupts = <0 72 0>;
++				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
++				phy-names = "usb2-phy", "usb3-phy";
++			};
++		};
++
++		usbdrd_phy0: phy@12100000 {
++			compatible = "samsung,exynos5420-usbdrd-phy";
++			reg = <0x12100000 0x100>;
++			#phy-cells = <1>;
++		};
++
++		usbdrd3_1: usb3-1 {
++			compatible = "samsung,exynos5250-dwusb3";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			usbdrd_dwc3_1: dwc3@12400000 {
++				compatible = "snps,dwc3";
++				reg = <0x12400000 0x10000>;
++				interrupts = <0 73 0>;
++				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
++				phy-names = "usb2-phy", "usb3-phy";
++			};
++		};
++
++		usbdrd_phy1: phy@12500000 {
++			compatible = "samsung,exynos5420-usbdrd-phy";
++			reg = <0x12500000 0x100>;
++			#phy-cells = <1>;
++		};
++
++		usbhost2: usb@12110000 {
++			compatible = "samsung,exynos4210-ehci";
++			reg = <0x12110000 0x100>;
++			interrupts = <0 71 0>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				phys = <&usb2_phy 1>;
++			};
++		};
++
++		usbhost1: usb@12120000 {
++			compatible = "samsung,exynos4210-ohci";
++			reg = <0x12120000 0x100>;
++			interrupts = <0 71 0>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				phys = <&usb2_phy 1>;
++			};
++		};
++
++		usb2_phy: phy@12130000 {
++			compatible = "samsung,exynos5250-usb2-phy";
++			reg = <0x12130000 0x100>;
++			#phy-cells = <1>;
++		};
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
