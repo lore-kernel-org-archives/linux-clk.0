@@ -12,27 +12,30 @@ To: Kukjin Kim <kgene@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 14/22] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
-Date: Sun,  8 May 2016 21:05:59 +0200
-Message-Id: <1462734367-5619-15-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 09/22] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
+Date: Sun, 15 May 2016 22:13:50 +0200
+Message-Id: <1463343243-26429-10-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
 can be referenced by inheriting DTSI.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
  arch/arm/boot/dts/exynos5.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index fe901152f3ea..7c83dc6ef972 100644
+index c5d198c70b86..30a0b63b06c9 100644
 --- a/arch/arm/boot/dts/exynos5.dtsi
 +++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -31,7 +31,7 @@
+@@ -35,7 +35,7 @@
  		reg = <0x10000000 0x100>;
  	};
  
