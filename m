@@ -1,39 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 2 May 2016 17:37:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 04/13] clkdev: Add clk_hw based registration APIs
-Message-ID: <20160503003716.GH3492@codeaurora.org>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
- <1461277324-27185-5-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461277324-27185-5-git-send-email-sboyd@codeaurora.org>
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+Date: Sun, 15 May 2016 22:13:54 +0200
+Message-Id: <1463343243-26429-14-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/21, Stephen Boyd wrote:
-> Now that we have a clk registration API that doesn't return
-> struct clks, we need to have some way to hand out struct clks via
-> the clk_get() APIs that doesn't involve associating struct clk
-> pointers with a struct clk_lookup. Luckily, clkdev already
-> operates on struct clk_hw pointers, except for the registration
-> facing APIs where it converts struct clk pointers into struct
-> clk_hw pointers almost immediately.
-> 
-> Let's add clk_hw based registration APIs so that we can skip the
-> conversion step and provide a way for clk provider drivers to
-> operate exclusively on clk_hw structs. This way we clearly
-> split the API between consumers and providers.
-> 
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+Just like other Exynos5 family SoCs, this one has four UARTs. Configure
+clocks for UART3 and enable it.
 
-Applied to clk-next
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index c8f2e4881667..0edcd7022293 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -215,7 +215,8 @@
+ };
+ 
+ &serial_3 {
+-	status = "disabled";
++	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
++	clock-names = "uart", "clk_uart_baud0";
+ };
+ 
+ &sromc {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
