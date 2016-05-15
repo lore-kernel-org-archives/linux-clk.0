@@ -1,121 +1,194 @@
-Return-Path: <kernel@martin.sperl.org>
-Subject: Re: [PATCH 0/5] clk: bcm2835: add flags for mash and parent clocks
-To: Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
- <87h9e6yb6i.fsf@eliezer.anholt.net>
-From: Martin Sperl <kernel@martin.sperl.org>
-Message-ID: <57319C89.7040705@martin.sperl.org>
-Date: Tue, 10 May 2016 10:32:09 +0200
-MIME-Version: 1.0
-In-Reply-To: <87h9e6yb6i.fsf@eliezer.anholt.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 07/22] ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+Date: Sun, 15 May 2016 22:13:48 +0200
+Message-Id: <1463343243-26429-8-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The LED nodes can be shared between Odroid XU3, XU3-Lite and XU (not yet
+added) thus removing duplication.
 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 35 +----------------
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 35 +----------------
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi | 50 +++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+), 68 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
 
-On 10.05.2016 03:05, Eric Anholt wrote:
-> kernel@martin.sperl.org writes:
->
->> From: Martin Sperl <kernel@martin.sperl.org>
->>
->> Allow flags to be set on a per clock index basis, which control:
->> * the parent clocks selected when not setting clocks explicitly
->
-> I don't think we need this other than avoiding PLLC.  What else do you
-> want to filter, and why?
-What about potentially disabling PLLA_per or PLLH_aux?
-Under some circumstances it may make sense to avoid those clocks.
-(or testdebug for that matter).
-
-One of the reasons can be to avoid low dividers - see also mash below
-
->
->> * the clock mode with regards to integer only or higher order mash
->
-> Please provide justification in the commit message explaining why there
-> is no obvious mash setting to just implement in clk-bcm2835.c, but that
-> that a better policy can be encoded in the DT.
-
-The normal fractional divider will vary the effective period length
-between int(div)/Fparent and (int(div)+1)/Fparent.
-
-So the device (say DAC or other) connected needs to support in
-principle Fparent/int(div) as a clock.
-
-But for higher order mash the HW will spread the period length between:
-(int(div)-3)/Fparent and (int(div)+4)/Fparent.
-
-This value may be outside of the frequencies supported by the attached
-HW. That is why mash is not enabled by default for mash clocks - only
-div.
-
-That is also why we need to have this configurable.
-
-Also obviously higher parent clock frequencies result in higher dividers
-for the same target-frequency. So the above effect is less dramatic
-when using plld_per (or pllc for that matter) compared to the main
-19.2MHz oscillator, as for 32bit stereo audio at 96kHz (equivalent to
-6144000Hz) in the first case we have a divider of 81.38 while for the
-second (osc) case we have a divider of 3.125.
-
-The use of mash3 is impossible for osc but the use of mash 2 would
-spread the frequencies between 9.6MHz (div=2) and 3.84MHz (div=5).
-
-For plld_per as parent using mash3 instead we get the range:
-6410256.4Hz (div=78) and 5882352.9Hz (div=85), which is a much more
-acceptable range and should not impact the device that much.
-
-So enabling mash 3 by default is not in the best interest hence it is
-not done.
-
-This also shows why with some devices it may be preferable to configure
-that only pllc is used and then with mash 3.
-
-So this patchset tries to accomodate that - even if not in a
-perfect way - I would have preferred to have this in the dt-node that
-is claiming that clock, but I did not want to go that far (yet) adding
-another method to clock_op.
-
-To answer your comments on the patches themselves:
-I had also been investigating the use of "assigned-clock-parents".
-Something like this will not work:
-i2s@... {
-   clock = <&preman PCM>;
-   assigned-clocks = <&cprman PCM>, <&pcrman PCM>
-   assigned-clock-parents = <&osc>, <&cprman PLLD_PER>;
-}
-because what it does it:
-* call clk_set_parent(pcm, osc);
-* call clk_set_parent(pcm, plld_per);
-
-(if you add "assigned-clock-rates" into the mix then
-clk_set_rate(pcm, rate) is also called separately).
-
-So there is no way to "keep" track of the parent clocks we wanted
-assigned.
-
-As far as I can see the only thing that would work is to implement
-an extension to the dt that would define "assigned-clock-flags"
-and have a set_flags(struct clk_hw *, u32 flags) method in
-clk_ops.
-
-So maybe someone has some better ideas of how to solve this.
-
-Martin
-
-As a side note: selection of parent oscillator and corresponding mash
-may have distinct noise behavior on the same device, where for
-32bit*2@48k it is the main oscillator with mash3 while the second best
-match would be pllc with mash2 - not mash3, which has the worsted SN
-from all tested!
-
-This behavior obviously changes with different "target frequencies"
-so it may even be necessary to account for the different target
-frequencies.
-
-But that is for a different discussion.
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+index 2ae1cf41dcb6..03fa88c45426 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+@@ -14,44 +14,11 @@
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
+ #include "exynos5422-odroidxu3-audio.dtsi"
++#include "exynos54xx-odroidxu-leds.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3 Lite";
+ 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
+-
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		greenled {
+-			label = "green:mmc0";
+-			pwms = <&pwm 1 2000000 0>;
+-			pwm-names = "pwm1";
+-			/*
+-			 * Green LED is much brighter than the others
+-			 * so limit its max brightness
+-			 */
+-			max_brightness = <127>;
+-			linux,default-trigger = "mmc0";
+-		};
+-
+-		blueled {
+-			label = "blue:heartbeat";
+-			pwms = <&pwm 2 2000000 0>;
+-			pwm-names = "pwm2";
+-			max_brightness = <255>;
+-			linux,default-trigger = "heartbeat";
+-		};
+-	};
+-
+-	gpioleds {
+-		compatible = "gpio-leds";
+-		redled {
+-			label = "red:microSD";
+-			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+-			default-state = "off";
+-			linux,default-trigger = "mmc1";
+-		};
+-	};
+ };
+ 
+ &pwm {
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 432406db85de..9ed6564acfb0 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -13,44 +13,11 @@
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
+ #include "exynos5422-odroidxu3-audio.dtsi"
++#include "exynos54xx-odroidxu-leds.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3";
+ 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
+-
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		greenled {
+-			label = "green:mmc0";
+-			pwms = <&pwm 1 2000000 0>;
+-			pwm-names = "pwm1";
+-			/*
+-			 * Green LED is much brighter than the others
+-			 * so limit its max brightness
+-			 */
+-			max_brightness = <127>;
+-			linux,default-trigger = "mmc0";
+-		};
+-
+-		blueled {
+-			label = "blue:heartbeat";
+-			pwms = <&pwm 2 2000000 0>;
+-			pwm-names = "pwm2";
+-			max_brightness = <255>;
+-			linux,default-trigger = "heartbeat";
+-		};
+-	};
+-
+-	gpioleds {
+-		compatible = "gpio-leds";
+-		redled {
+-			label = "red:microSD";
+-			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+-			default-state = "off";
+-			linux,default-trigger = "mmc1";
+-		};
+-	};
+ };
+ 
+ &i2c_0 {
+diff --git a/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+new file mode 100644
+index 000000000000..0ed30206625c
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+@@ -0,0 +1,50 @@
++/*
++ * Hardkernel Odroid XU/XU3 LED device tree source
++ *
++ * Copyright (c) 2015,2016 Krzysztof Kozlowski
++ * Copyright (c) 2014 Collabora Ltd.
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	pwmleds {
++		compatible = "pwm-leds";
++
++		greenled {
++			label = "green:mmc0";
++			pwms = <&pwm 1 2000000 0>;
++			pwm-names = "pwm1";
++			/*
++			 * Green LED is much brighter than the others
++			 * so limit its max brightness
++			 */
++			max_brightness = <127>;
++			linux,default-trigger = "mmc0";
++		};
++
++		blueled {
++			label = "blue:heartbeat";
++			pwms = <&pwm 2 2000000 0>;
++			pwm-names = "pwm2";
++			max_brightness = <255>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	gpioleds {
++		compatible = "gpio-leds";
++		redled {
++			label = "red:microSD";
++			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
++			default-state = "off";
++			linux,default-trigger = "mmc1";
++		};
++	};
++};
+-- 
+2.5.0
