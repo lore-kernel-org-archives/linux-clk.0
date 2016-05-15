@@ -14,39 +14,47 @@ To: Kukjin Kim <kgene@kernel.org>,
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 14/22] ARM: dts: exynos: MCT is not an interrupt controller and extend length of iomap
-Date: Sat, 28 May 2016 11:54:25 +0200
-Message-Id: <1464429273-23457-15-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 19/22] clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+Date: Sun, 15 May 2016 22:14:00 +0200
+Message-Id: <1463343243-26429-20-git-send-email-krzk@kernel.org>
+In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Multi-Core Timer generates interrupts but it is not really an interrupt
-controller so remove the "interrupt-controller" and "interrupt-cells"
-properties. Additionally extend the length of mapped memory to cover all
-registers (last SFR is at 0x0A40).
+Add clocks for I2C, USI (HSI2C) and RTC to the Exynos5410 clock driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos5410.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4b16a9376a24..872dadf0f2d4 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -263,9 +263,7 @@
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 5f892128849a..6c2e59c576ee 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -159,6 +159,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
  
- 		mct: mct@101C0000 {
- 			compatible = "samsung,exynos4210-mct";
--			reg = <0x101C0000 0x800>;
--			interrupt-controller;
--			#interrupt-cells = <1>;
-+			reg = <0x101C0000 0xB00>;
- 			interrupt-parent = <&mct_map>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
- 					<8>, <9>, <10>, <11>;
+ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
++	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
+ 
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
+ 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+@@ -187,6 +188,14 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_UART1, "uart1", "aclk66", GATE_IP_PERIC, 1, 0, 0),
+ 	GATE(CLK_UART2, "uart2", "aclk66", GATE_IP_PERIC, 2, 0, 0),
+ 	GATE(CLK_UART3, "uart3", "aclk66", GATE_IP_PERIC, 3, 0, 0),
++	GATE(CLK_I2C0, "i2c0", "aclk66", GATE_IP_PERIC, 6, 0, 0),
++	GATE(CLK_I2C1, "i2c1", "aclk66", GATE_IP_PERIC, 7, 0, 0),
++	GATE(CLK_I2C2, "i2c2", "aclk66", GATE_IP_PERIC, 8, 0, 0),
++	GATE(CLK_I2C3, "i2c3", "aclk66", GATE_IP_PERIC, 9, 0, 0),
++	GATE(CLK_USI0, "usi0", "aclk66", GATE_IP_PERIC, 10, 0, 0),
++	GATE(CLK_USI1, "usi1", "aclk66", GATE_IP_PERIC, 11, 0, 0),
++	GATE(CLK_USI2, "usi2", "aclk66", GATE_IP_PERIC, 12, 0, 0),
++	GATE(CLK_USI3, "usi3", "aclk66", GATE_IP_PERIC, 13, 0, 0),
+ 	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
+ 
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
 -- 
-2.7.4
+2.5.0
