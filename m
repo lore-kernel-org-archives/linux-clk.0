@@ -1,168 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conuserg-10.nifty.com ([210.131.2.77]:34658 "EHLO
-	conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752045AbcEJJvw (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 05:51:52 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 20/21] reset: uniphier: add reset driver for Media I/O block on UniPhier SoCs
-Date: Tue, 10 May 2016 18:51:01 +0900
-Message-Id: <1462873862-30940-21-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 01/20] clk: fixed-factor: Pass clk rates change to the parent
+Date: Mon, 16 May 2016 14:47:01 +0200
+Message-Id: <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+A fixed factor clock, if it needs to change its rate, by definition do not
+have any choice but to modify its parent rate.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Add the CLK_SET_RATE_PARENT flag to that clock so that it can happen
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
+ drivers/clk/clk-fixed-factor.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/reset/uniphier/Kconfig              |   4 ++
- drivers/reset/uniphier/Makefile             |   2 +
- drivers/reset/uniphier/reset-uniphier-mio.c | 106 ++++++++++++++++++++++++++++
- 3 files changed, 112 insertions(+)
- create mode 100644 drivers/reset/uniphier/reset-uniphier-mio.c
-
-diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
-index 8509e71..a582938 100644
---- a/drivers/reset/uniphier/Kconfig
-+++ b/drivers/reset/uniphier/Kconfig
-@@ -34,4 +34,8 @@ config RESET_UNIPHIER_LD20
- 	tristate "Reset driver for UniPhier PH1-LD20 SoC"
- 	default ARM64
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 75cd6c792cb8..3363abd9b4ae 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -167,7 +167,8 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 	parent_name = of_clk_get_parent_name(node, 0);
  
-+config RESET_UNIPHIER_MIO
-+	tristate "Reset driver for UniPhier Media I/O block"
-+	default y
-+
- endif
-diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
-index a33cb0a..e83bd14 100644
---- a/drivers/reset/uniphier/Makefile
-+++ b/drivers/reset/uniphier/Makefile
-@@ -7,3 +7,5 @@ obj-$(CONFIG_RESET_UNIPHIER_PRO5)	+= reset-uniphier-pro5.o
- obj-$(CONFIG_RESET_UNIPHIER_PXS2)	+= reset-uniphier-pxs2.o
- obj-$(CONFIG_RESET_UNIPHIER_LD11)	+= reset-uniphier-ld11.o
- obj-$(CONFIG_RESET_UNIPHIER_LD20)	+= reset-uniphier-ld20.o
-+
-+obj-$(CONFIG_RESET_UNIPHIER_MIO)	+= reset-uniphier-mio.o
-diff --git a/drivers/reset/uniphier/reset-uniphier-mio.c b/drivers/reset/uniphier/reset-uniphier-mio.c
-new file mode 100644
-index 0000000..f68a8cf
---- /dev/null
-+++ b/drivers/reset/uniphier/reset-uniphier-mio.c
-@@ -0,0 +1,106 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "reset-uniphier.h"
-+
-+#define UNIPHIER_MIO_RESET_SD(ch, index)		\
-+	{						\
-+		.id = (index),				\
-+		.reg = 0x110 + 0x200 * (ch),		\
-+		.mask = BIT(26) | BIT(0),		\
-+		.deassert_val = BIT(26) | BIT(0),	\
-+	}
-+
-+#define UNIPHIER_MIO_RESET_EMMC_HW_RESET(ch, index)	\
-+	{						\
-+		.id = (index),				\
-+		.reg = 0x80 + 0x200 * (ch),		\
-+		.mask = BIT(0),				\
-+		.deassert_val = BIT(0),			\
-+	}
-+
-+#define UNIPHIER_MIO_RESET_EHCI(ch, index)		\
-+	{						\
-+		.id = (index),				\
-+		.reg = 0x110 + 0x200 * (ch),		\
-+		.mask = BIT(24),			\
-+		.deassert_val = BIT(24),		\
-+	},						\
-+	{						\
-+		.id = (index),				\
-+		.reg = 0x114 + 0x200 * (ch),		\
-+		.mask = BIT(0),				\
-+		.deassert_val = BIT(0),			\
-+	}
-+
-+#define UNIPHIER_MIO_RESET_DMAC(index)			\
-+	{						\
-+		.id = (index),				\
-+		.reg = 0x110,				\
-+		.mask = BIT(17),			\
-+		.deassert_val = BIT(17),		\
-+	}
-+
-+static const struct uniphier_reset_data uniphier_ld4_mio_reset_data[] = {
-+	UNIPHIER_MIO_RESET_SD(0, 0),
-+	UNIPHIER_MIO_RESET_SD(1, 1),
-+	UNIPHIER_MIO_RESET_SD(2, 2),
-+	UNIPHIER_MIO_RESET_DMAC(3),
-+	UNIPHIER_MIO_RESET_EHCI(0, 4),
-+	UNIPHIER_MIO_RESET_EHCI(1, 5),
-+	UNIPHIER_MIO_RESET_EHCI(2, 6),
-+	UNIPHIER_MIO_RESET_EMMC_HW_RESET(1, 9),
-+	{ .id = UNIPHIER_RESET_ID_END }
-+};
-+
-+static int uniphier_ld4_mio_reset_probe(struct platform_device *pdev)
-+{
-+	return uniphier_reset_probe(pdev, uniphier_ld4_mio_reset_data);
-+}
-+
-+static struct platform_driver uniphier_ld4_mio_reset_driver = {
-+	.probe = uniphier_ld4_mio_reset_probe,
-+	.driver = {
-+		.name = "uniphier-ld4-mio-reset",
-+	},
-+};
-+module_platform_driver(uniphier_ld4_mio_reset_driver);
-+
-+static const struct uniphier_reset_data uniphier_pro5_mio_reset_data[] = {
-+	UNIPHIER_MIO_RESET_SD(0, 0),
-+	UNIPHIER_MIO_RESET_SD(1, 1),
-+	UNIPHIER_MIO_RESET_EMMC_HW_RESET(1, 9),
-+	{ .id = UNIPHIER_RESET_ID_END }
-+};
-+
-+static int uniphier_pro5_mio_reset_probe(struct platform_device *pdev)
-+{
-+	return uniphier_reset_probe(pdev, uniphier_pro5_mio_reset_data);
-+}
-+
-+static struct platform_driver uniphier_pro5_mio_reset_driver = {
-+	.probe = uniphier_pro5_mio_reset_probe,
-+	.driver = {
-+		.name = "uniphier-mio-reset",
-+	},
-+};
-+module_platform_driver(uniphier_pro5_mio_reset_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier Media I/O Reset Controller Driver");
-+MODULE_LICENSE("GPL");
+-	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
++	clk = clk_register_fixed_factor(NULL, clk_name, parent_name,
++					CLK_SET_RATE_PARENT,
+ 					mult, div);
+ 	if (!IS_ERR(clk))
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
 -- 
-1.9.1
-
+2.8.2
