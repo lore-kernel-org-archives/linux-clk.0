@@ -1,50 +1,39 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 1/2] clk: exynos5420: Set ID for aclk333 gate clock
-Date: Tue, 24 May 2016 13:41:01 -0400
-Message-Id: <1464111662-15336-2-git-send-email-javier@osg.samsung.com>
-In-Reply-To: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 1/2] clk: samsung: clkout: Add support for Exynos5410
+Date: Mon, 16 May 2016 10:26:47 +0200
+Message-id: <1463387208-9277-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The aclk333 clock needs to be ungated during the MFC power domain switch,
-so set the clock ID to allow the Exynos power domain logic to lookup this
-clock if is defined in the MFC PD device tree node.
+Add compatible for Exynos5410 so the PMU on this SoC would provide
+CLKOUT.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
+ drivers/clk/samsung/clk-exynos-clkout.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 92382cef9f90..469bcae5de3a 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -946,7 +946,7 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
- 			GATE_BUS_TOP, 13, 0, 0),
- 	GATE(0, "aclk166", "mout_user_aclk166",
- 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
--	GATE(0, "aclk333", "mout_user_aclk333",
-+	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
- 			GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
- 			GATE_BUS_TOP, 16, 0, 0),
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 7cd02ff37a1f..96fab6cfb202 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -151,6 +151,8 @@ static void __init exynos5_clkout_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(exynos5250_clkout, "samsung,exynos5250-pmu",
+ 		exynos5_clkout_init);
++CLK_OF_DECLARE(exynos5410_clkout, "samsung,exynos5410-pmu",
++		exynos5_clkout_init);
+ CLK_OF_DECLARE(exynos5420_clkout, "samsung,exynos5420-pmu",
+ 		exynos5_clkout_init);
+ CLK_OF_DECLARE(exynos5433_clkout, "samsung,exynos5433-pmu",
 -- 
-2.5.5
+1.9.1
