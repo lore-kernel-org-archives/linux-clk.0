@@ -1,49 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 May 2016 15:13:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v7 8/9] clk: mediatek: Add config options for MT2701
- subsystem clocks
-Message-ID: <20160509221339.GU3492@codeaurora.org>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
- <1460621514-65191-9-git-send-email-jamesjj.liao@mediatek.com>
- <20160506230214.GH3492@codeaurora.org>
- <1462772246.5344.4.camel@mtksdaap41>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462772246.5344.4.camel@mtksdaap41>
+Return-Path: <moinejf@free.fr>
+Date: Mon, 16 May 2016 10:02:39 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Vishnu Patekar
+ <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>, Rob Herring
+ <robh+dt@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 02/16] clk: sunxi-ng: Add common infrastructure
+Message-Id: <20160516100239.a93a238b0d458b38a3689a95@free.fr>
+In-Reply-To: <20160515183122.GA27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1462737711-10017-3-git-send-email-maxime.ripard@free-electrons.com>
+	<CAGb2v67XWt6tjG_xXWgGatTaiN5uYQb2_Q6bgixMDUkHfVHLHg@mail.gmail.com>
+	<20160515183122.GA27618@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/09, James Liao wrote:
-> HI Stephen,
-> 
-> On Fri, 2016-05-06 at 16:02 -0700, Stephen Boyd wrote:
-> > On 04/14, James Liao wrote:
-> > > MT2701 subsystem clocks are optional and should be enabled only if
-> > > their subsystem drivers are ready to control these clocks.
-> > > 
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > ---
-> > 
-> > Why is this patch split off from the patch that introduces the
-> > file?
-> 
-> I was looking for comments about how to make subsystem clocks optional.
-> So I used a separated patch to do it. Is it an acceptable way to use
-> config options to enable subsystem clock support?
-> 
+On Sun, 15 May 2016 20:31:22 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Yes config options are fine.
+> > > +void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+> > > +{
+> > > +       u32 reg;
+> > > +
+> > > +       if (!(common->features & CCU_FEATURE_LOCK))
+> > > +               return;
+> > > +
+> > > +       WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg=
+, reg,
+> > > +                                          !(reg & lock), 0, 500));
+> >=20
+> >                                     no delay between reads? ^
+>=20
+> Yes, I intended it to be a simple busy waiting loop since I don't
+> expect it to be very long. Do yu have any more data on how much time
+> it usually takes?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I have a Soc in which the rate of the audio clock is stable after a
+good second.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
