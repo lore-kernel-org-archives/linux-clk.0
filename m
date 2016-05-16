@@ -1,97 +1,311 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 07/27] clk: samsung: exynos5410: Rename fin_pll from temporary to regular name
-Date: Tue, 10 May 2016 22:09:10 +0200
-Message-Id: <1462910970-1812-8-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 13/20] drm/bridge: Add RGB to VGA bridge support
+Date: Mon, 16 May 2016 14:47:13 +0200
+Message-Id: <1463402840-17062-14-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-For smooth transition of fin_pll to clk-exynos5410.c from fixed-clock
-driver, initially it was named "fin_pll_new". Fix this here.
+Some boards have an entirely passive RGB to VGA bridge, based on either
+DACs or resistor ladders.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Those might or might not have an i2c bus routed to the VGA connector in
+order to access the screen EDIDs.
+
+Add a bridge that doesn't do anything but expose the modes available on the
+screen, either based on the EDIDs if available, or based on the XGA
+standards.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/samsung/clk-exynos5410.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ .../bindings/display/bridge/dumb-vga.txt           |  40 +++++
+ drivers/gpu/drm/bridge/Kconfig                     |   6 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/dumb-vga.c                  | 186 +++++++++++++++++++++
+ 4 files changed, 233 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
+ create mode 100644 drivers/gpu/drm/bridge/dumb-vga.c
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 35f2cb36f7ef..a7d714435307 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -59,27 +59,27 @@ enum exynos5410_plls {
- };
+diff --git a/Documentation/devicetree/bindings/display/bridge/dumb-vga.txt b/Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
+new file mode 100644
+index 000000000000..757f04de97f3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
+@@ -0,0 +1,40 @@
++Passive RGB to VGA bridge
++-------------------------
++
++This binding is aimed for entirely passive RGB to VGA bridges that do not
++require any configuration.
++
++Required properties:
++
++- compatible: Should be "dumb-vga-bridge"
++
++Optional properties:
++
++- ddc-i2c-bus: phandle to the i2c bus used to communicate with the monitor
++
++Required nodes:
++
++This device has one video port. Its connection is modelled using the OF
++graph bindings specified in Documentation/devicetree/bindings/graph.txt. This
++connection is meant to be the RGB input bus.
++
++
++Example
++-------
++
++bridge {
++        compatible = "dumb-vga-bridge";
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        port@0 {
++                reg = <0>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                vga_input: endpoint@0 {
++                        reg = <0>;
++                        remote-endpoint = <&tcon0_out_vga>;
++               };
++        };
++};
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 8f7423f18da5..cf279956cbec 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -17,6 +17,12 @@ config DRM_ANALOGIX_ANX78XX
+ 	  the HDMI output of an application processor to MyDP
+ 	  or DisplayPort.
  
- /* list of all parent clocks */
--PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
--PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
--PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
--PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
--PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
-+PNAME(apll_p)		= { "fin_pll", "fout_apll", };
-+PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
-+PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
-+PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
-+PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
++config DRM_DUMB_VGA
++	tristate "Dumb RGB to VGA Bridge support"
++	select DRM_KMS_HELPER
++	help
++	  Support for passive RGB to VGA bridges
++
+ config DRM_DW_HDMI
+ 	tristate
+ 	select DRM_KMS_HELPER
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index 96b13b30e6ab..63f21120e8f8 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -1,6 +1,7 @@
+ ccflags-y := -Iinclude/drm
  
- PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
- PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
- 
--PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
--PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
-+PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
-+PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
- PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
- 
--PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
-+PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
- 			"none", "none", "sclk_mpll_bpll",
- 			 "none", "none", "sclk_cpll" };
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock
- 		exynos5x_fixed_rate_ext_clks[] __initdata = {
--	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
-+	FRATE(CLK_FIN_PLL, "fin_pll", NULL, 0, 0),
- };
- 
- static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
-@@ -174,15 +174,15 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- };
- 
- static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
--	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
-+	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
--	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
-+	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
- 		CPLL_CON0, NULL),
--	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
-+	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
- 		MPLL_CON0, NULL),
--	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
-+	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
- 		BPLL_CON0, NULL),
--	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
-+	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
- 		KPLL_CON0, NULL),
- };
- 
+ obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
++obj-$(CONFIG_DRM_DUMB_VGA) += dumb-vga.o
+ obj-$(CONFIG_DRM_DW_HDMI) += dw-hdmi.o
+ obj-$(CONFIG_DRM_DW_HDMI_AHB_AUDIO) += dw-hdmi-ahb-audio.o
+ obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
+diff --git a/drivers/gpu/drm/bridge/dumb-vga.c b/drivers/gpu/drm/bridge/dumb-vga.c
+new file mode 100644
+index 000000000000..2864fa535bf8
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/dumb-vga.c
+@@ -0,0 +1,186 @@
++
++#include <linux/module.h>
++
++#include <drm/drmP.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_crtc_helper.h>
++
++struct dumb_vga {
++	struct drm_bridge	bridge;
++	struct drm_connector	connector;
++
++	struct i2c_adapter	*ddc;
++};
++
++static inline struct dumb_vga *
++drm_bridge_to_dumb_vga(struct drm_bridge *bridge)
++{
++	return container_of(bridge, struct dumb_vga, bridge);
++}
++
++static inline struct dumb_vga *
++drm_connector_to_dumb_vga(struct drm_connector *connector)
++{
++	return container_of(connector, struct dumb_vga, connector);
++}
++
++static int dumb_vga_get_modes(struct drm_connector *connector)
++{
++	struct dumb_vga *vga = drm_connector_to_dumb_vga(connector);
++	struct edid *edid;
++	int ret;
++
++	if (!vga->ddc)
++		goto fallback;
++
++	edid = drm_get_edid(connector, vga->ddc);
++	if (!edid) {
++		DRM_INFO("EDID readout failed, falling back to standard modes\n");
++		goto fallback;
++	}
++
++	drm_mode_connector_update_edid_property(connector, edid);
++	return drm_add_edid_modes(connector, edid);
++
++fallback:
++	/*
++	 * In case we cannot retrieve the EDIDs (broken or missing i2c
++	 * bus), fallback on the XGA standards
++	 */
++	ret = drm_add_modes_noedid(connector, 1920, 1200);
++
++	/* And prefer a mode pretty much anyone can handle */
++	drm_set_preferred_mode(connector, 1024, 768);
++
++	return ret;
++}
++
++static struct drm_encoder *
++dumb_vga_best_encoder(struct drm_connector *connector)
++{
++	struct dumb_vga *vga = drm_connector_to_dumb_vga(connector);
++
++	return vga->bridge.encoder;
++}
++
++static struct drm_connector_helper_funcs dumb_vga_con_helper_funcs = {
++	.get_modes	= dumb_vga_get_modes,
++	.best_encoder	= dumb_vga_best_encoder,
++};
++
++static enum drm_connector_status
++dumb_vga_connector_detect(struct drm_connector *connector, bool force)
++{
++	return connector_status_connected;
++}
++
++static void
++dumb_vga_connector_destroy(struct drm_connector *connector)
++{
++	drm_connector_cleanup(connector);
++}
++
++static struct drm_connector_funcs dumb_vga_con_funcs = {
++	.dpms			= drm_atomic_helper_connector_dpms,
++	.detect			= dumb_vga_connector_detect,
++	.fill_modes		= drm_helper_probe_single_connector_modes,
++	.destroy		= dumb_vga_connector_destroy,
++	.reset			= drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
++};
++
++static int dumb_vga_attach(struct drm_bridge *bridge)
++{
++	struct dumb_vga *vga = drm_bridge_to_dumb_vga(bridge);
++	int ret;
++
++	if (!bridge->encoder) {
++		DRM_ERROR("Missing encoder\n");
++		return -ENODEV;
++	}
++
++	drm_connector_helper_add(&vga->connector,
++				 &dumb_vga_con_helper_funcs);
++	ret = drm_connector_init(bridge->dev, &vga->connector,
++				 &dumb_vga_con_funcs, DRM_MODE_CONNECTOR_VGA);
++	if (ret) {
++		DRM_ERROR("Failed to initialize connector\n");
++		return ret;
++	}
++
++	drm_mode_connector_attach_encoder(&vga->connector,
++					  bridge->encoder);
++
++	return 0;
++}
++
++static void dumb_vga_nop(struct drm_bridge *bridge) {};
++
++static struct drm_bridge_funcs dumb_vga_bridge_funcs = {
++	.attach		= dumb_vga_attach,
++	.enable		= dumb_vga_nop,
++	.disable	= dumb_vga_nop,
++	.pre_enable	= dumb_vga_nop,
++	.post_disable	= dumb_vga_nop,
++};
++
++static int dumb_vga_probe(struct platform_device *pdev)
++{
++	struct dumb_vga *vga;
++	struct device_node *ddc;
++
++	vga = devm_kzalloc(&pdev->dev, sizeof(*vga), GFP_KERNEL);
++	if (!vga)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, vga);
++
++	ddc = of_parse_phandle(pdev->dev.of_node, "ddc-i2c-bus", 0);
++	if (ddc) {
++		vga->ddc = of_find_i2c_adapter_by_node(ddc);
++		of_node_put(ddc);
++
++		if (!vga->ddc) {
++			dev_err(&pdev->dev, "Couldn't retrieve i2c bus\n");
++			return -EPROBE_DEFER;
++		}
++	} else {
++		dev_info(&pdev->dev,
++			 "No i2c bus specified... Disabling EDID readout\n");
++	}
++
++	vga->bridge.funcs = &dumb_vga_bridge_funcs;
++	vga->bridge.of_node = pdev->dev.of_node;
++
++	return drm_bridge_add(&vga->bridge);
++}
++
++static int dumb_vga_remove(struct platform_device *pdev)
++{
++	struct dumb_vga *vga = platform_get_drvdata(pdev);
++
++	drm_bridge_remove(&vga->bridge);
++
++	return 0;
++}
++
++static const struct of_device_id dumb_vga_match[] = {
++	{ .compatible = "dumb-vga-bridge" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, dumb_vga_match);
++
++struct platform_driver dumb_vga_driver = {
++	.probe	= dumb_vga_probe,
++	.remove	= dumb_vga_remove,
++	.driver		= {
++		.name		= "dumb-vga-bridge",
++		.of_match_table	= dumb_vga_match,
++	},
++};
++module_platform_driver(dumb_vga_driver);
++
++MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
++MODULE_DESCRIPTION("Dumb RGB to VGA bridge driver");
++MODULE_LICENSE("GPL");
 -- 
-2.5.0
+2.8.2
