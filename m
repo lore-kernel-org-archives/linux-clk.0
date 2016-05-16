@@ -1,68 +1,61 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 10/22] ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
-Date: Sun,  8 May 2016 21:05:55 +0200
-Message-Id: <1462734367-5619-11-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>
+Subject: [PATCH 08/20] drm/sun4i: rgb: panel is an error pointer
+Date: Mon, 16 May 2016 14:47:08 +0200
+Message-Id: <1463402840-17062-9-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fro consistency lowercase node labels are used.
+In case of an error, our pointer to the drm_panel structure attached to our
+encoder will hold an error pointer, not a NULL pointer.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Make sure we check the right thing.
+
+Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_rgb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 233149abfb62..58d3844ef923 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -35,28 +35,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+index 923f55039cb1..b46d2c15dc95 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
++++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+@@ -217,7 +217,7 @@ int sun4i_rgb_init(struct drm_device *drm)
+ 	int ret;
  
--		CPU0: cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
- 			clock-frequency = <1600000000>;
- 		};
+ 	/* If we don't have a panel, there's no point in going on */
+-	if (!tcon->panel)
++	if (IS_ERR(tcon->panel))
+ 		return -ENODEV;
  
--		CPU1: cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x1>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU2: cpu@2 {
-+		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x2>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU3: cpu@3 {
-+		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x3>;
+ 	rgb = devm_kzalloc(drm->dev, sizeof(*rgb), GFP_KERNEL);
 -- 
-2.5.0
+2.8.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
