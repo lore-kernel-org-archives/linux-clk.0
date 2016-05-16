@@ -1,44 +1,70 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 05/11] pwm: tegra-dfll: Add driver for Tegra DFLL PWM
- controller
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-6-git-send-email-pchiu@nvidia.com>
- <20160422125513.GJ9047@ulmo.ba.sec> <20160506231532.GK3492@codeaurora.org>
-Cc: Penny Chiu <pchiu@nvidia.com>, gnurou@gmail.com, pdeschrijver@nvidia.com,
- pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
- mturquette@baylibre.com, linux-tegra@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <572D26E7.2060406@wwwdotorg.org>
-Date: Fri, 6 May 2016 17:21:11 -0600
-MIME-Version: 1.0
-In-Reply-To: <20160506231532.GK3492@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 04/20] clk: sunxi: display: Add per-clock flags
+Date: Mon, 16 May 2016 14:47:04 +0200
+Message-Id: <1463402840-17062-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06/2016 05:15 PM, Stephen Boyd wrote:
-> On 04/22, Thierry Reding wrote:
->> On Fri, Apr 22, 2016 at 06:31:05PM +0800, Penny Chiu wrote:
->>> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
->>> new file mode 100644
->>> index 0000000..bd0d247
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
->>> @@ -0,0 +1,48 @@
->>> +Tegra SoC DFLL PWM controller
->>
->> Stephen, we have in the past used tegra124 in names, even if the IP was
->> already included in tegra114, but we never supported it on Tegra114 and
->> hence couldn't even verify that the binding was valid. Any preference as
->> to the name in this particular case?
->
-> You meant Stephen Warren right? I don't care either way.
+The TCON channel 0 clock that is the parent clock of our pixel clock is
+expected to change its rate depending on the resolution we want to output
+in our display engine.
 
-Sorry, I wasn't really paying attention to patches.
+However, since it's only a mux, the only way it can do that is by changing
+its parents rate.
 
-Yes, using "124" seems to make sense; we can always expand the binding 
-to cover "114" later if there's any demand.
+Allow to give flags in our display clocks description, and add the
+CLK_SET_RATE_PARENT flag for the TCON channel 0 flag.
+
+Fixes: a3b4956ee6d9 ("clk: sunxi: display: Add per-clock flags")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-sun4i-display.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
+index 445a7498d6df..9780fac6d029 100644
+--- a/drivers/clk/sunxi/clk-sun4i-display.c
++++ b/drivers/clk/sunxi/clk-sun4i-display.c
+@@ -33,6 +33,8 @@ struct sun4i_a10_display_clk_data {
+ 
+ 	u8	width_div;
+ 	u8	width_mux;
++
++	u32	flags;
+ };
+ 
+ struct reset_data {
+@@ -166,7 +168,7 @@ static void __init sun4i_a10_display_init(struct device_node *node,
+ 				     data->has_div ? &div->hw : NULL,
+ 				     data->has_div ? &clk_divider_ops : NULL,
+ 				     &gate->hw, &clk_gate_ops,
+-				     0);
++				     data->flags);
+ 	if (IS_ERR(clk)) {
+ 		pr_err("%s: Couldn't register the clock\n", clk_name);
+ 		goto free_div;
+@@ -232,6 +234,7 @@ static const struct sun4i_a10_display_clk_data sun4i_a10_tcon_ch0_data __initcon
+ 	.offset_rst	= 29,
+ 	.offset_mux	= 24,
+ 	.width_mux	= 2,
++	.flags		= CLK_SET_RATE_PARENT,
+ };
+ 
+ static void __init sun4i_a10_tcon_ch0_setup(struct device_node *node)
+-- 
+2.8.2
