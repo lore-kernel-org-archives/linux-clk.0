@@ -1,75 +1,87 @@
-Return-Path: <fcooperwork@gmail.com>
-Return-Path: <fcooperwork@gmail.com>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com,
-	robh+dt@kernel.org,
-	tony@atomide.com,
-	linux@arm.linux.org.uk,
-	paul@pwsan.com,
-	t-kristo@ti.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	vigneshr@ti.com,
-	nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v8 1/9] clk: ti: am335x/am4372: Add tbclk to pwm node
-Date: Tue,  3 May 2016 10:56:47 -0500
-Message-Id: <1462291015-1919-2-git-send-email-fcooper@ti.com>
-In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 11/20] drm/sun4i: Convert to connector register helpers
+Date: Mon, 16 May 2016 14:47:11 +0200
+Message-Id: <1463402840-17062-12-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
-to the time-based clk.
+Now that connector register helpers have been created, switch to them.
 
-Do not remove similar entries for ehrpwm node. Later patches will switch
-from using ehrpwm node name to pwm. But to maintain ABI compatibility we
-shouldn't remove the old entries.
-
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/ti/clk-33xx.c | 3 +++
- drivers/clk/ti/clk-43xx.c | 6 ++++++
- 2 files changed, 9 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 31 ++-----------------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index ef2ec64..0e47d95 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
- 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
- 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
- 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
-+	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-+	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-+	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
- 	{ .node_name = NULL },
- };
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index af62b24c39b1..257d2b4f3645 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -24,34 +24,6 @@
+ #include "sun4i_layer.h"
+ #include "sun4i_tcon.h"
  
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-index 097fc90..7255aa8 100644
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
- 	DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
- 	DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
- 	DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
-+	DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-+	DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-+	DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
-+	DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
-+	DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
-+	DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
- 	{ .node_name = NULL },
- };
+-static int sun4i_drv_connector_plug_all(struct drm_device *drm)
+-{
+-	struct drm_connector *connector, *failed;
+-	int ret;
+-
+-	mutex_lock(&drm->mode_config.mutex);
+-	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
+-		ret = drm_connector_register(connector);
+-		if (ret) {
+-			failed = connector;
+-			goto err;
+-		}
+-	}
+-	mutex_unlock(&drm->mode_config.mutex);
+-	return 0;
+-
+-err:
+-	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
+-		if (failed == connector)
+-			break;
+-
+-		drm_connector_unregister(connector);
+-	}
+-	mutex_unlock(&drm->mode_config.mutex);
+-
+-	return ret;
+-}
+-
+ static int sun4i_drv_enable_vblank(struct drm_device *drm, unsigned int pipe)
+ {
+ 	struct sun4i_drv *drv = drm->dev_private;
+@@ -206,7 +178,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 	if (ret)
+ 		goto free_drm;
  
+-	ret = sun4i_drv_connector_plug_all(drm);
++	ret = drm_connector_register_all(drm);
+ 	if (ret)
+ 		goto unregister_drm;
+ 
+@@ -223,6 +195,7 @@ static void sun4i_drv_unbind(struct device *dev)
+ {
+ 	struct drm_device *drm = dev_get_drvdata(dev);
+ 
++	drm_connector_unregister_all(drm);
+ 	drm_dev_unregister(drm);
+ 	drm_kms_helper_poll_fini(drm);
+ 	sun4i_framebuffer_free(drm);
 -- 
-2.7.0
+2.8.2
