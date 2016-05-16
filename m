@@ -1,65 +1,87 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 02/11] clk: tegra20: Mark required clks as CRITICAL
-Date: Wed, 25 May 2016 18:24:22 -0400
-Message-ID: <1464215071-28696-3-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 00/20] drm: Add Support for Passive RGB to VGA bridges
+Date: Mon, 16 May 2016 14:47:00 +0200
+Message-Id: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Mark clks that are required to be on as CRITICAL clks.
+Hi,
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra20.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+This serie is about adding support for the RGB to VGA bridge found in
+the A13-Olinuxino and the CHIP VGA adapter.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cbd60e9..4a60a25d7e61 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -715,13 +715,15 @@ static void tegra20_super_clk_init(void)
- 
- 	/* CCLK */
- 	clk = tegra_clk_register_super_mux("cclk", cclk_parents,
--			      ARRAY_SIZE(cclk_parents), CLK_SET_RATE_PARENT,
-+			      ARRAY_SIZE(cclk_parents),
-+			      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			      clk_base + CCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
- 	clks[TEGRA20_CLK_CCLK] = clk;
- 
- 	/* SCLK */
- 	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
--			      ARRAY_SIZE(sclk_parents), CLK_SET_RATE_PARENT,
-+			      ARRAY_SIZE(sclk_parents),
-+			      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			      clk_base + SCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
- 	clks[TEGRA20_CLK_SCLK] = clk;
- 
-@@ -814,11 +816,11 @@ static void __init tegra20_periph_clk_init(void)
- 	/* emc */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
-+			       CLK_SET_RATE_NO_REPARENT | CLK_IS_CRITICAL,
- 			       clk_base + CLK_SOURCE_EMC,
- 			       30, 2, 0, &emc_lock);
--	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
--				    57, periph_clk_enb_refcnt);
-+	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base,
-+				    CLK_IS_CRITICAL, 57, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_EMC] = clk;
- 
- 	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+Both these boards rely on an entirely passive bridge made out of
+resitor ladders that do not require any initialisation. The only thing
+needed is to get the timings from the screen if available (and if not,
+fall back on XGA standards), set up the display pipeline to output on
+the RGB bus with the proper timings, and you're done.
+
+This serie also fixes a bunch of bugs uncovered when trying to
+increase the resolution, and hence the pixel clock, of our
+pipeline. It also fixes a few bugs in the DRM driver itself that went
+unnoticed before.
+
+Let me know what you think,
+Maxime
+
+Maxime Ripard (20):
+  clk: fixed-factor: Pass clk rates change to the parent
+  clk: multiplier: Prevent the multiplier from under / over flowing
+  clk: sunxi: tcon-ch1: Do not return a negative error in get_parent
+  clk: sunxi: display: Add per-clock flags
+  drm/sun4i: request exact rates to our parents
+  drm/sun4i: allow dclk to modify its parent rate
+  drm/sun4i: rgb: Validate the clock rate
+  drm/sun4i: rgb: panel is an error pointer
+  drm/sun4i: defer only if we didn't find our panel
+  drm/sun4i: remove simplefb at probe
+  drm/sun4i: Convert to connector register helpers
+  drm/sun4i: Add bridge support
+  drm/bridge: Add RGB to VGA bridge support
+  ARM: sun5i: a13: Add LCD pins
+  ARM: sun5i: Move display blocks to A13
+  ARM: sun5i: a13-olinuxino: Enable VGA bridge
+  ARM: multi_v7: Enable sun4i DRM driver
+  ARM: multi_v7: enable VGA bridge
+  ARM: sunxi: Enable sun4i DRM driver
+  ARM: sunxi: Enable VGA bridge
+
+ .../bindings/display/bridge/dumb-vga.txt           |  40 +++++
+ arch/arm/boot/dts/sun5i-a13-olinuxino.dts          |  34 ++++
+ arch/arm/boot/dts/sun5i-a13.dtsi                   | 122 ++++++++++++++
+ arch/arm/boot/dts/sun5i-r8.dtsi                    | 120 +------------
+ arch/arm/configs/multi_v7_defconfig                |   2 +
+ arch/arm/configs/sunxi_defconfig                   |   3 +
+ drivers/clk/clk-fixed-factor.c                     |   3 +-
+ drivers/clk/clk-multiplier.c                       |  20 ++-
+ drivers/clk/sunxi/clk-sun4i-display.c              |   5 +-
+ drivers/clk/sunxi/clk-sun4i-tcon-ch1.c             |   3 -
+ drivers/gpu/drm/bridge/Kconfig                     |   6 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/dumb-vga.c                  | 186 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_dotclock.c             |  31 +++-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  54 +++---
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |  70 ++++++--
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  59 +++++--
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+ 18 files changed, 578 insertions(+), 182 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
+ create mode 100644 drivers/gpu/drm/bridge/dumb-vga.c
+
 -- 
-1.9.1
+2.8.2
