@@ -1,139 +1,89 @@
-Return-Path: <kernel@martin.sperl.org>
-Subject: Re: [PATCH 0/5] clk: bcm2835: add flags for mash and parent clocks
-To: Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <1462463608-22940-1-git-send-email-kernel@martin.sperl.org>
- <87h9e6yb6i.fsf@eliezer.anholt.net> <57319C89.7040705@martin.sperl.org>
- <877ff1yfg8.fsf@eliezer.anholt.net>
-From: Martin Sperl <kernel@martin.sperl.org>
-Message-ID: <57344AAF.8000205@martin.sperl.org>
-Date: Thu, 12 May 2016 11:19:43 +0200
-MIME-Version: 1.0
-In-Reply-To: <877ff1yfg8.fsf@eliezer.anholt.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 05/20] drm/sun4i: request exact rates to our parents
+Date: Mon, 16 May 2016 14:47:05 +0200
+Message-Id: <1463402840-17062-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Our pixel clock currently only tries to deal with the current parent rate.
 
+While that works when the resolution is the same than the one already
+program, or when we can compute directly the rate from the current parent
+rate, it cannot work in most situation when we want to change the
+frequency, and we end up with an improper pixel clock rate, which obviously
+doesn't work as expected.
 
-On 10.05.2016 19:45, Eric Anholt wrote:
-> Martin Sperl <kernel@martin.sperl.org> writes:
->
->> On 10.05.2016 03:05, Eric Anholt wrote:
->>> kernel@martin.sperl.org writes:
->>>
->>>> From: Martin Sperl <kernel@martin.sperl.org>
->>>>
->>>> Allow flags to be set on a per clock index basis, which control:
->>>> * the parent clocks selected when not setting clocks explicitly
->>>
->>> I don't think we need this other than avoiding PLLC.  What else do you
->>> want to filter, and why?
->> What about potentially disabling PLLA_per or PLLH_aux?
->> Under some circumstances it may make sense to avoid those clocks.
->> (or testdebug for that matter).
->
-> PLLH and its descendents are only used by vc4, and the parent choice
-> done by this driver for pllh is correct.
->
-> I don't know what you mean by "potentially disabling PLLA_PER".
->
-> We don't expose the testdebug parents, because they're of no use to us.
-For all practical purposes we still have all the clocks as potential
-parents during automatic clock selection - and that includes:
-PLLA_PER, PLLH_AUX and TESTDEBUGX.
+Ask our parent for all the possible dividers if it can reach that
+frequency, and return the best parent rate to the clock framework so that
+we can use it.
 
-Not all of them are enabled, but some are - so If I select an i2s 
-frequency of "3903125" then plla_per will get used with a divider of 2.
+Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_dotclock.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
->>>> * the clock mode with regards to integer only or higher order mash
->>>
->>> Please provide justification in the commit message explaining why there
->>> is no obvious mash setting to just implement in clk-bcm2835.c, but that
->>> that a better policy can be encoded in the DT.
->>
->> The normal fractional divider will vary the effective period length
->> between int(div)/Fparent and (int(div)+1)/Fparent.
->>
->> So the device (say DAC or other) connected needs to support in
->> principle Fparent/int(div) as a clock.
->>
->> But for higher order mash the HW will spread the period length between:
->> (int(div)-3)/Fparent and (int(div)+4)/Fparent.
->>
->> This value may be outside of the frequencies supported by the attached
->> HW. That is why mash is not enabled by default for mash clocks - only
->> div.
->>
->> That is also why we need to have this configurable.
->>
->> Also obviously higher parent clock frequencies result in higher dividers
->> for the same target-frequency. So the above effect is less dramatic
->> when using plld_per (or pllc for that matter) compared to the main
->> 19.2MHz oscillator, as for 32bit stereo audio at 96kHz (equivalent to
->> 6144000Hz) in the first case we have a divider of 81.38 while for the
->> second (osc) case we have a divider of 3.125.
->>
->> The use of mash3 is impossible for osc but the use of mash 2 would
->> spread the frequencies between 9.6MHz (div=2) and 3.84MHz (div=5).
->>
->> For plld_per as parent using mash3 instead we get the range:
->> 6410256.4Hz (div=78) and 5882352.9Hz (div=85), which is a much more
->> acceptable range and should not impact the device that much.
->>
->> So enabling mash 3 by default is not in the best interest hence it is
->> not done.
->
-> It sounds like you're optimizing for reducing frequency spread.  That
-> sounds fairly easy to do in the parent-choice function.
-
-You misunderstand my argument here!
-
-I know that it may be automated, but you may have different devices
-connected to: i2s/pcm, pwm, gp and slim.
-
-Some of them need the audio spreading, while others need a stable
-waveform - as mentioned mash3 varies the period between:
-(divi-2)/fparent and (divi+4)/fparent in discrete steps
-For this the worsted case is a requested frequency that results
-in a divider between 4 and 5.
-
-Also some DAC require a STABLE clock waveform on i2s with
-specific requirements for ton/(ton+toff) between 40% and 60%,
-as they have their own internal PLL, while others do not need
-this kind of behavior and can handle variable period-length.
-But then these DAC still have a minimum period length, which we
-may not exceed.
-
-So making an automatic selection is not possible hence
-we need a means to configure the supported mash level
-to get the best results in all cases.
-
->
->> As a side note: selection of parent oscillator and corresponding mash
->> may have distinct noise behavior on the same device, where for
->> 32bit*2@48k it is the main oscillator with mash3 while the second best
->> match would be pllc with mash2 - not mash3, which has the worsted SN
->> from all tested!
->
-> But PLLC continues to be unusable, since it's changed at runtime, and
-> evaluating its noise characteristics based on a snapshot of its
-> frequency doesn't make any sense.
-That was a general side note not necessarily related to PLLC.
-But this may be better handled by a generic clock driver
-similar to clk-fixed-factor.
-
->
->> This behavior obviously changes with different "target frequencies"
->> so it may even be necessary to account for the different target
->> frequencies.
->
-> This is why encoding mash in the DT doesn't make any sense to me.  You
-> need a runtime policy for choosing the mash setting based on the
-> frequency requested, so let's figure out what policy we actually want.
-See the argument of different devices/DAC with different requirements.
-There is no way for any of this to work automatically and make every
-client happy.
+diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+index 6c9c090a8006..1ddf6d7a7107 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
++++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+@@ -72,14 +72,40 @@ static unsigned long sun4i_dclk_recalc_rate(struct clk_hw *hw,
+ static long sun4i_dclk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long *parent_rate)
+ {
+-	return *parent_rate / DIV_ROUND_CLOSEST(*parent_rate, rate);
++	unsigned long best_parent = 0;
++	u8 best_div = 1;
++	int i;
++
++	for (i = 6; i < 127; i++) {
++		unsigned long ideal = rate * i;
++		unsigned long rounded;
++
++		rounded = clk_hw_round_rate(clk_hw_get_parent(hw),
++					    ideal);
++
++		if (rounded == ideal) {
++			best_parent = rounded;
++			best_div = i;
++			goto out;
++		}
++
++		if ((rounded < ideal) && (rounded > best_parent)) {
++			best_parent = rounded;
++			best_div = i;
++		}
++	}
++
++out:
++	*parent_rate = best_parent;
++
++	return best_parent / best_div;
+ }
+ 
+ static int sun4i_dclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long parent_rate)
+ {
+ 	struct sun4i_dclk *dclk = hw_to_dclk(hw);
+-	int div = DIV_ROUND_CLOSEST(parent_rate, rate);
++	u8 div = parent_rate / rate;
+ 
+ 	return regmap_update_bits(dclk->regmap, SUN4I_TCON0_DCLK_REG,
+ 				  GENMASK(6, 0), div);
+-- 
+2.8.2
