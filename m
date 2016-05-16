@@ -1,41 +1,43 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 9 May 2016 08:44:59 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-	mturquette@baylibre.com, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.wolfsonmicro.com
-Subject: Re: [PATCH v3 3/4] mfd: arizona: Switch to using clock driver for
- 32k clock
-Message-ID: <20160509074459.GD8324@dell>
-References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1452252582-20834-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20160507005510.GO3492@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160507005510.GO3492@codeaurora.org>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 2/2] ARM: dts: exynos: Enable CLKOUT on Exynos5410
+Date: Mon, 16 May 2016 10:26:48 +0200
+Message-id: <1463387208-9277-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1463387208-9277-1-git-send-email-k.kozlowski@samsung.com>
+References: <1463387208-9277-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 06 May 2016, Stephen Boyd wrote:
+The CLKOUT (which control is provided by PMU) is necessary for some of
+the drivers using this as a clock, e.g. usb3503 USB HUB on Odroid XU
+board.
 
-> On 01/08, Charles Keepax wrote:
-> > Now we have a clock driver that can control the 32k clock use this
-> > rather than directly controlling the 32k clock from the MFD device.
-> > 
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > ---
-> 
-> Applied to clk-next
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-If you're going to take the set though the clk tree, don't forget to
-sent out a pull-request of the immutable branch you created.  If
-you're not happy to do that, drop the patch and I'll happily oblige.
-
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index e9564ab5b5d3..f1effd3f03c4 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -70,6 +70,9 @@
+ 		pmu_system_controller: system-controller@10040000 {
+ 			compatible = "samsung,exynos5410-pmu", "syscon";
+ 			reg = <0x10040000 0x5000>;
++			clock-names = "clkout16";
++			clocks = <&fin_pll>;
++			#clock-cells = <1>;
+ 		};
+ 
+ 		clock: clock-controller@10010000 {
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
