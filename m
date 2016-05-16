@@ -1,68 +1,93 @@
-Return-Path: <fcooperwork@gmail.com>
-Return-Path: <fcooperwork@gmail.com>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com,
-	robh+dt@kernel.org,
-	tony@atomide.com,
-	linux@arm.linux.org.uk,
-	paul@pwsan.com,
-	t-kristo@ti.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	vigneshr@ti.com,
-	nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to use proper unit address
-Date: Tue,  3 May 2016 10:56:50 -0500
-Message-Id: <1462291015-1919-5-git-send-email-fcooper@ti.com>
-In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+Return-Path: <paulmck@linux.vnet.ibm.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
+        rostedt@goodmis.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 omap 6/6] arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle
+Date: Mon, 16 May 2016 11:50:08 -0700
+Message-Id: <1463424608-20237-6-git-send-email-paulmck@linux.vnet.ibm.com>
+In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
+References: <20160516184844.GA20144@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace unit address from 0 to the proper physical address. Also insure
-that the unit address matches the reg property address.
+This commit fixes the RCU use-from-idle bug corresponding the following
+splat:
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> [ INFO: suspicious RCU usage. ]
+> 4.6.0-rc5-next-20160426+ #1127 Not tainted
+> -------------------------------
+> include/trace/events/clk.h:45 suspicious rcu_dereference_check() usage!
+>
+> other info that might help us debug this:
+>
+>
+> RCU used illegally from idle CPU!
+> rcu_scheduler_active = 1, debug_locks = 0
+> RCU used illegally from extended quiescent state!
+> 2 locks held by swapper/0/0:
+>  #0:  (&oh->hwmod_key#30){......}, at: [<c0121afc>] omap_hwmod_enable+0x18/0x44
+>  #1:  (enable_lock){......}, at: [<c0630684>] clk_enable_lock+0x18/0x124
+>
+> stack backtrace:
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.6.0-rc5-next-20160426+ #1127
+> Hardware name: Generic OMAP36xx (Flattened Device Tree)
+> [<c0110290>] (unwind_backtrace) from [<c010c3a8>] (show_stack+0x10/0x14)
+> [<c010c3a8>] (show_stack) from [<c047fd68>] (dump_stack+0xb0/0xe4)
+> [<c047fd68>] (dump_stack) from [<c06315c0>] (clk_core_enable+0x1e0/0x36c)
+> [<c06315c0>] (clk_core_enable) from [<c0632298>] (clk_enable+0x1c/0x38)
+> [<c0632298>] (clk_enable) from [<c01204e0>] (_enable_clocks+0x18/0x7c)
+> [<c01204e0>] (_enable_clocks) from [<c012137c>] (_enable+0x114/0x2ec)
+> [<c012137c>] (_enable) from [<c0121b08>] (omap_hwmod_enable+0x24/0x44)
+> [<c0121b08>] (omap_hwmod_enable) from [<c0122ad0>] (omap_device_enable+0x3c/0x90)
+> [<c0122ad0>] (omap_device_enable) from [<c0122b34>] (_od_runtime_resume+0x10/0x38)
+> [<c0122b34>] (_od_runtime_resume) from [<c052cc00>] (__rpm_callback+0x2c/0x60)
+> [<c052cc00>] (__rpm_callback) from [<c052cc54>] (rpm_callback+0x20/0x80)
+> [<c052cc54>] (rpm_callback) from [<c052df7c>] (rpm_resume+0x3d0/0x6f0)
+> [<c052df7c>] (rpm_resume) from [<c052e2e8>] (__pm_runtime_resume+0x4c/0x64)
+> [<c052e2e8>] (__pm_runtime_resume) from [<c04bf2c4>] (omap2_gpio_resume_after_idle+0x54/0x68)
+> [<c04bf2c4>] (omap2_gpio_resume_after_idle) from [<c01269dc>] (omap3_enter_idle_bm+0xfc/0x1ec)
+> [<c01269dc>] (omap3_enter_idle_bm) from [<c0601888>] (cpuidle_enter_state+0x80/0x3d4)
+> [<c0601888>] (cpuidle_enter_state) from [<c0183b08>] (cpu_startup_entry+0x198/0x3a0)
+> [<c0183b08>] (cpu_startup_entry) from [<c0b00c0c>] (start_kernel+0x354/0x3c8)
+> [<c0b00c0c>] (start_kernel) from [<8000807c>] (0x8000807c)
+
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: <linux-omap@vger.kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>
+Cc: <linux-clk@vger.kernel.org>
 ---
- Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-index 788da6c..0d47354 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-@@ -16,22 +16,22 @@ Optional properties:
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 4fa43c02d682..ec83f404c1d2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -735,12 +735,12 @@ static int clk_core_enable(struct clk_core *core)
+ 		if (ret)
+ 			return ret;
  
- Example:
+-		trace_clk_enable(core);
++		trace_clk_enable_rcuidle(core);
  
--ecap0: ecap@0 { /* ECAP on am33xx */
-+ecap0: ecap@48300100 { /* ECAP on am33xx */
- 	compatible = "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
- 	reg = <0x48300100 0x80>;
- 	ti,hwmods = "ecap0";
- };
+ 		if (core->ops->enable)
+ 			ret = core->ops->enable(core->hw);
  
--ecap0: ecap@0 { /* ECAP on am4372 */
-+ecap0: ecap@48300100 { /* ECAP on am4372 */
- 	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
- 	reg = <0x48300100 0x80>;
- 	ti,hwmods = "ecap0";
- };
+-		trace_clk_enable_complete(core);
++		trace_clk_enable_complete_rcuidle(core);
  
--ecap0: ecap@0 { /* ECAP on da850 */
-+ecap0: ecap@1f06000 { /* ECAP on da850 */
- 	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
- 	#pwm-cells = <3>;
--	reg = <0x306000 0x80>;
-+	reg = <0x1f06000 0x80>;
- };
+ 		if (ret) {
+ 			clk_core_disable(core->parent);
 -- 
-2.7.0
+2.5.2
