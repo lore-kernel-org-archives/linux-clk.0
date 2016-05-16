@@ -1,47 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:38164 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752705AbcEPMrf (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 08:47:35 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 18/20] ARM: multi_v7: enable VGA bridge
-Date: Mon, 16 May 2016 14:47:18 +0200
-Message-Id: <1463402840-17062-19-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <moinejf@free.fr>
+Date: Mon, 16 May 2016 15:15:01 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Vishnu Patekar
+ <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>, Rob Herring
+ <robh+dt@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 03/16] clk: sunxi-ng: Add fixed factor clock support
+Message-Id: <20160516151501.0dccc69384c08d6d646acac1@free.fr>
+In-Reply-To: <CAGb2v65LcXnMj7B-0q2MYESM9vGd9k-yChjvFdX--EivSYdVJg@mail.gmail.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1462737711-10017-4-git-send-email-maxime.ripard@free-electrons.com>
+	<CAGb2v65LcXnMj7B-0q2MYESM9vGd9k-yChjvFdX--EivSYdVJg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the RGB to VGA bridge driver in the defconfig
+On Mon, 9 May 2016 18:05:20 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> > +}
+> > +
+> > +static long ccu_fixed_factor_round_rate(struct clk_hw *hw,
+> > +                                       unsigned long rate,
+> > +                                       unsigned long *parent_rate)
+> > +{
+> > +       struct ccu_fixed_factor *fix =3D hw_to_ccu_fixed_factor(hw);
+> > +
+> > +       return *parent_rate / fix->div * fix->mult;
+>=20
+> Why is this the other way around? With integer math it shouldn't be
+> interchangeable. (Though it seems clk_fixed_factor does the same...)
+>=20
+> Also, clk_fixed_factor handles CLK_SET_RATE_PARENT. Do we need to do the
+> same here?
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 80591f3e867e..5987688dea81 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -536,6 +536,7 @@ CONFIG_DRM=y
- CONFIG_DRM_I2C_ADV7511=m
- # CONFIG_DRM_I2C_CH7006 is not set
- # CONFIG_DRM_I2C_SIL164 is not set
-+CONFIG_DRM_DUMB_VGA=m
- CONFIG_DRM_NXP_PTN3460=m
- CONFIG_DRM_PARADE_PS8622=m
- CONFIG_DRM_NOUVEAU=m
--- 
-2.8.2
+Agree. Otherwise, sound in the H3 does not work.
 
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
