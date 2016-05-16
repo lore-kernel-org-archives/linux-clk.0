@@ -1,60 +1,32 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 20/22] ARM: dts: exynos: Move common
- Exynos5410/542x/5800 nodes to new DTSI
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-21-git-send-email-krzk@kernel.org>
- <9e642e0d-87e1-4661-0233-acecf0082f24@osg.samsung.com>
- <57317292.2080004@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <68ebff12-702d-106a-7ce7-5063f62f3bc1@osg.samsung.com>
-Date: Tue, 10 May 2016 08:51:30 -0400
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <57317292.2080004@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1463402840-17062-4-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-4-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 17 May 2016 00:05:18 +0800
+Message-ID: <CAGb2v64GxTFnnx40Jy9Cz9e+c+T2j2QcbFznZ4-Lm-tdHFgcXg@mail.gmail.com>
+Subject: Re: [PATCH 03/20] clk: sunxi: tcon-ch1: Do not return a negative
+ error in get_parent
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	devicetree <devicetree@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
-
-On 05/10/2016 01:33 AM, Krzysztof Kozlowski wrote:
-> On 05/09/2016 11:53 PM, Javier Martinez Canillas wrote:
->> Hello Krzysztof,
->>
->> On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
->>> The Exynos5410/542x/5800 are very similar designs. Create new new
->>
->> s/new new/a new
->>
->>> DTSI with common nodes to remove DTS duplication. Although currently
->>> only MCT and SysRAM are shared but in future more nodes will be added to
->>> common file.
->>>
->>> The patch should not have functional impact.
->>>
->>
->> A nice way to check this is to diff the disassembled compiled DTBs with
->> and without the patch and making sure that the resulted DTS is the same.
-> 
-> Yes, that is what I've done. Recently there is a tool making that even
-> easier: dtx_diff.
+On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> get_parent is supposed to return an unsigned 8 bit integer, so returning
+> -EINVAL is a bad idea.
 >
+> Remove it.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-I didn't know we had such a tool in mainline now.
-Very useful, thanks a lot for the information.
- 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Acked-by: Chen-Yu Tsai <wens@csie.org>
