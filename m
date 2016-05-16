@@ -1,113 +1,96 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:55416 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751352AbcELXra (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2016 19:47:30 -0400
-Subject: Re: [PATCH 2/2] clk: rockchip: fix the rk3399 sdmmc sample shift
-To: Brian Norris <briannorris@chromium.org>,
-	Douglas Anderson <dianders@chromium.org>
-References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
- <1463076197-15900-2-git-send-email-dianders@chromium.org>
- <20160512231023.GA63308@google.com>
-Cc: shawn.lin@rock-chips.com, Heiko Stuebner <heiko@sntech.de>,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	zhengxing@rock-chips.com, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <84673e7c-dd64-b2ca-5c7c-5c7f34d239d8@rock-chips.com>
-Date: Fri, 13 May 2016 07:47:02 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160512231023.GA63308@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Received: from e18.ny.us.ibm.com ([129.33.205.208]:57707 "EHLO
+	e18.ny.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754579AbcEPSuP (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 14:50:15 -0400
+Received: from localhost
+	by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-clk@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Mon, 16 May 2016 14:50:15 -0400
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: [PATCH v2 omap 5/6] arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
+Date: Mon, 16 May 2016 11:50:07 -0700
+Message-Id: <1463424608-20237-5-git-send-email-paulmck@linux.vnet.ibm.com>
+In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
+References: <20160516184844.GA20144@linux.vnet.ibm.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2016/5/13 7:10, Brian Norris 写道:
-> On Thu, May 12, 2016 at 11:03:17AM -0700, Doug Anderson wrote:
->> Just like every other Rockhip device, the MMC "_sample" clocks should
->> have a shift of 0, not a shift of 1.  The rk3399 TRM agrees.  Presumably
->> these values were set to 0 because of a typo.
->
-> I'll semi-disagree about the TRM: the TRM doesn't seem to agree with
-> itself, so it sometimes agrees with you and sometimes doesn't :)
->
-> On page 79 of the 2nd (?) book, it looks like {SDMMC,SDIO}_CON{0,}[2:1]
-> are {drv,sample}_degree. But on page 208 of the 1st book, those are put
-> at bits [1:0].
->
+This commit applies another _rcuidle suffix to fix an RCU use from
+idle.
 
-
-Please refer to Mobile Strorage Host Controller section for anything
-about sdmmc/sdio. So shift should be 1.
-
-Sometime I also get bothered to address it. Anyway, I will always keep
-a eye on it from now on.....
-
-> Perhaps we can get a straight answer from Rockchip though.
+> ===============================
+> [ INFO: suspicious RCU usage. ]
+> 4.6.0-rc5-next-20160426+ #1122 Not tainted
+> -------------------------------
+> include/trace/events/rpm.h:69 suspicious rcu_dereference_check() usage!
 >
-> Brian
->
->> Things _sorta_ would have worked with the incorrect sample phase shift
->> because of the register layout but wouldn't have been ideal and we would
->> have skipped lots of phases.  Also: we would never actually enabled the
->> fine delay unless we happened to have 128 or more delay elements.
->>
->> This is expected behavior before this patch:
->> * Try to set:     0 degrees +   1 delay elements
->>   Actually get:   0 degrees +   0 delay elements
->> * Try to set:    90 degrees +   0 delay elements
->>   Actually get: 180 degrees +   0 delay elements
->> * Try to set:   180 degrees +   0 delay elements
->>   Actually get:   0 degrees +   0 delay elements
->> * Try to set:   270 degrees +   0 delay elements
->>   Actually get: 180 degrees +   0 delay elements
->> * Try to set:     0 degrees + 129 delay elements
->>   Actually get:   0 degrees +   2 delay elements
->> * Try to set:   180 degrees + 129 delay elements
->>   Actually get:   0 degrees +   3 delay elements
->> * Try to set:     0 degrees + 130 delay elements
->>   Actually get:   0 degrees +   4 delay elements
->>
->> I verified that old code had a problem by turning on debug printouts and
->> seeing that the old code would report this for one SD card I had:
->>   Good phase range 347-101 (115 len)
->>   Good phase range 202-326 (125 len)
->>
->> After my fix, it went down to one big good range for the same card.
->> This is more expected:
->>   Good phase range 189-1 (173 len)
->>   Good phase range 82-85 (4 len)
->>   Good phase range 166-168 (3 len)
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
->> index 291543f52caa..14ff3e109e1e 100644
->> --- a/drivers/clk/rockchip/clk-rk3399.c
->> +++ b/drivers/clk/rockchip/clk-rk3399.c
->> @@ -895,10 +895,10 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->>  			RK3399_CLKGATE_CON(6), 1, GFLAGS),
->>
->>  	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
->> -	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
->> +	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 0),
->>
->>  	MMC(SCLK_SDIO_DRV,      "sdio_drv",    "clk_sdio",  RK3399_SDIO_CON0,  1),
->> -	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  1),
->> +	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  0),
->>
->>  	/* pcie */
->>  	COMPOSITE(SCLK_PCIE_PM, "clk_pcie_pm", mux_pll_src_cpll_gpll_npll_24m_p, 0,
+> other info that might help us debug this:
 >
 >
+> RCU used illegally from idle CPU!
+> rcu_scheduler_active = 1, debug_locks = 0
+> RCU used illegally from extended quiescent state!
+> 1 lock held by swapper/0/0:
+>  #0:  (&(&dev->power.lock)->rlock){-.-...}, at: [<c052e3dc>] __pm_runtime_resume+0x3c/0x64
 >
+> stack backtrace:
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.6.0-rc5-next-20160426+ #1122
+> Hardware name: Generic OMAP36xx (Flattened Device Tree)
+> [<c0110290>] (unwind_backtrace) from [<c010c3a8>] (show_stack+0x10/0x14)
+> [<c010c3a8>] (show_stack) from [<c047fd68>] (dump_stack+0xb0/0xe4)
+> [<c047fd68>] (dump_stack) from [<c052e178>] (rpm_resume+0x5cc/0x7f4)
+> [<c052e178>] (rpm_resume) from [<c052e3ec>] (__pm_runtime_resume+0x4c/0x64)
+> [<c052e3ec>] (__pm_runtime_resume) from [<c04bf2c4>] (omap2_gpio_resume_after_idle+0x54/0x68)
+> [<c04bf2c4>] (omap2_gpio_resume_after_idle) from [<c01269dc>] (omap3_enter_idle_bm+0xfc/0x1ec)
+> [<c01269dc>] (omap3_enter_idle_bm) from [<c060198c>] (cpuidle_enter_state+0x80/0x3d4)
+> [<c060198c>] (cpuidle_enter_state) from [<c0183b08>] (cpu_startup_entry+0x198/0x3a0)
+> [<c0183b08>] (cpu_startup_entry) from [<c0b00c0c>] (start_kernel+0x354/0x3c8)
+> [<c0b00c0c>] (start_kernel) from [<8000807c>] (0x8000807c)
 
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: <linux-omap@vger.kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>
+Cc: <linux-pm@vger.kernel.org>
+---
+ drivers/base/power/runtime.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index e4c2b8fdeff3..15b6d5b199d4 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -601,7 +601,7 @@ static int rpm_resume(struct device *dev, int rpmflags)
+ 	struct device *parent = NULL;
+ 	int retval = 0;
+ 
+-	trace_rpm_resume(dev, rpmflags);
++	trace_rpm_resume_rcuidle(dev, rpmflags);
+ 
+  repeat:
+ 	if (dev->power.runtime_error)
+@@ -764,7 +764,7 @@ static int rpm_resume(struct device *dev, int rpmflags)
+ 		spin_lock_irq(&dev->power.lock);
+ 	}
+ 
+-	trace_rpm_return_int(dev, _THIS_IP_, retval);
++	trace_rpm_return_int_rcuidle(dev, _THIS_IP_, retval);
+ 
+ 	return retval;
+ }
 -- 
-Best Regards
-Shawn Lin
+2.5.2
 
