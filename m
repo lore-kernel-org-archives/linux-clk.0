@@ -1,62 +1,42 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:38416 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755495AbcECKgt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2016 06:36:49 -0400
-Date: Tue, 3 May 2016 11:36:40 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 04/13] clkdev: Add clk_hw based registration APIs
-Message-ID: <20160503103640.GO19428@n2100.arm.linux.org.uk>
-References: <1461277324-27185-1-git-send-email-sboyd@codeaurora.org>
- <1461277324-27185-5-git-send-email-sboyd@codeaurora.org>
- <20160503003716.GH3492@codeaurora.org>
+Received: from e18.ny.us.ibm.com ([129.33.205.208]:57225 "EHLO
+	e18.ny.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754293AbcEPSsy (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 14:48:54 -0400
+Received: from localhost
+	by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-clk@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Mon, 16 May 2016 14:48:53 -0400
+Date: Mon, 16 May 2016 11:48:44 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
+	rostedt@goodmis.org
+Subject: [PATCH omap v2 0/6] Fix OMAP uses of RCU from idle loop
+Message-ID: <20160516184844.GA20144@linux.vnet.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160503003716.GH3492@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 02, 2016 at 05:37:16PM -0700, Stephen Boyd wrote:
-> On 04/21, Stephen Boyd wrote:
-> > Now that we have a clk registration API that doesn't return
-> > struct clks, we need to have some way to hand out struct clks via
-> > the clk_get() APIs that doesn't involve associating struct clk
-> > pointers with a struct clk_lookup. Luckily, clkdev already
-> > operates on struct clk_hw pointers, except for the registration
-> > facing APIs where it converts struct clk pointers into struct
-> > clk_hw pointers almost immediately.
-> > 
-> > Let's add clk_hw based registration APIs so that we can skip the
-> > conversion step and provide a way for clk provider drivers to
-> > operate exclusively on clk_hw structs. This way we clearly
-> > split the API between consumers and providers.
-> > 
-> > Cc: Russell King <linux@arm.linux.org.uk>
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > ---
-> 
-> Applied to clk-next
+Hello!
 
-It would have been nice if you could wait a little longer.  As I've just
-explained in another email, I've been away last weekend from Thursday
-21st through until Tuesday 26th.  I then spent Wednesday and Thursday
-catching up with the resulting backlog of email, and last weekend (30th
-through to the 2nd May) was a bank holiday weekend in the UK.  So
-there's only been _one_ day that I could have looked at your patches,
-but unfortunately the little matter of doing stuff for paying customers
-got in the way.
+The following series fixes a number of uses of RCU from the idle loop.
+These are all due to tracing, so the fix is simply to append _rcuidle
+to the event-tracing call.
 
-A little more patience would have been nice.
+Changes since v1: Fix commit-log subjects and add maintainers on CC.
 
-I'll try to look at them this evening.
+							Thanx, Paul
 
-Thanks.
+------------------------------------------------------------------------
 
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+ arch/arm/kernel/smp.c             |    2 +-
+ arch/arm/mach-omap2/powerdomain.c |    9 +++++----
+ drivers/base/power/runtime.c      |   14 +++++++-------
+ drivers/clk/clk.c                 |    8 ++++----
+ 4 files changed, 17 insertions(+), 16 deletions(-)
+
