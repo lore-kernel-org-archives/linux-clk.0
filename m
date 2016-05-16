@@ -1,321 +1,47 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:38137 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753646AbcEPMrf (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 08:47:35 -0400
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 21/22] ARM: dts: exynos: Add USB to Exynos5410
-Date: Sun,  8 May 2016 21:06:06 +0200
-Message-Id: <1462734367-5619-22-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 17/20] ARM: multi_v7: Enable sun4i DRM driver
+Date: Mon, 16 May 2016 14:47:17 +0200
+Message-Id: <1463402840-17062-18-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move USB 3.0 DWC and 2.0 EHCI/OHCI nodes from exynos5420.dtsi to
-exynos54xx.dtsi common for entire family. For Exynos542x/5800 this
-should not have functional impact but for Exynos5410 this effectively
-adds USB support.
+Enable the new DRM driver in the multi_v7 defconfig
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-TODO: lack of regulator causes errors:
-	usb usb4-port1: over-current condition
-?
----
- arch/arm/boot/dts/exynos5410.dtsi |  39 ++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi | 131 ++++++++++++--------------------------
- arch/arm/boot/dts/exynos54xx.dtsi |  74 +++++++++++++++++++++
- 3 files changed, 152 insertions(+), 92 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 850343d3c2af..dd4d6d752865 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -185,4 +185,43 @@
- 		  3 0 0x07000000 0x20000>;
- };
- 
-+&usbdrd3_0 {
-+	clocks = <&clock CLK_USBD300>;
-+	clock-names = "usbdrd30";
-+};
-+
-+&usbdrd_phy0 {
-+	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
-+	clock-names = "phy", "ref";
-+	samsung,pmu-syscon = <&pmu_system_controller>;
-+};
-+
-+&usbdrd3_1 {
-+	clocks = <&clock CLK_USBD301>;
-+	clock-names = "usbdrd30";
-+};
-+
-+&usbdrd_phy1 {
-+	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
-+	clock-names = "phy", "ref";
-+	samsung,pmu-syscon = <&pmu_system_controller>;
-+};
-+
-+&usbhost1 {
-+	clocks = <&clock CLK_USBH20>;
-+	clock-names = "usbhost";
-+};
-+
-+&usbhost2 {
-+	clocks = <&clock CLK_USBH20>;
-+	clock-names = "usbhost";
-+};
-+
-+&usb2_phy {
-+	clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
-+	clock-names = "phy", "ref";
-+	samsung,sysreg-phandle = <&sysreg_system_controller>;
-+	samsung,pmureg-phandle = <&pmu_system_controller>;
-+};
-+
- #include "exynos5410-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 750571f838f2..ebf1dbec5070 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -829,98 +829,6 @@
- 			clock-names = "secss";
- 		};
- 
--		usbdrd3_0: usb3-0 {
--			compatible = "samsung,exynos5250-dwusb3";
--			clocks = <&clock CLK_USBD300>;
--			clock-names = "usbdrd30";
--			#address-cells = <1>;
--			#size-cells = <1>;
--			ranges;
--
--			usbdrd_dwc3_0: dwc3@12000000 {
--				compatible = "snps,dwc3";
--				reg = <0x12000000 0x10000>;
--				interrupts = <0 72 0>;
--				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
--				phy-names = "usb2-phy", "usb3-phy";
--			};
--		};
--
--		usbdrd_phy0: phy@12100000 {
--			compatible = "samsung,exynos5420-usbdrd-phy";
--			reg = <0x12100000 0x100>;
--			clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
--			clock-names = "phy", "ref";
--			samsung,pmu-syscon = <&pmu_system_controller>;
--			#phy-cells = <1>;
--		};
--
--		usbdrd3_1: usb3-1 {
--			compatible = "samsung,exynos5250-dwusb3";
--			clocks = <&clock CLK_USBD301>;
--			clock-names = "usbdrd30";
--			#address-cells = <1>;
--			#size-cells = <1>;
--			ranges;
--
--			usbdrd_dwc3_1: dwc3@12400000 {
--				compatible = "snps,dwc3";
--				reg = <0x12400000 0x10000>;
--				interrupts = <0 73 0>;
--				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
--				phy-names = "usb2-phy", "usb3-phy";
--			};
--		};
--
--		usbdrd_phy1: phy@12500000 {
--			compatible = "samsung,exynos5420-usbdrd-phy";
--			reg = <0x12500000 0x100>;
--			clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
--			clock-names = "phy", "ref";
--			samsung,pmu-syscon = <&pmu_system_controller>;
--			#phy-cells = <1>;
--		};
--
--		usbhost2: usb@12110000 {
--			compatible = "samsung,exynos4210-ehci";
--			reg = <0x12110000 0x100>;
--			interrupts = <0 71 0>;
--
--			clocks = <&clock CLK_USBH20>;
--			clock-names = "usbhost";
--			#address-cells = <1>;
--			#size-cells = <0>;
--			port@0 {
--				reg = <0>;
--				phys = <&usb2_phy 1>;
--			};
--		};
--
--		usbhost1: usb@12120000 {
--			compatible = "samsung,exynos4210-ohci";
--			reg = <0x12120000 0x100>;
--			interrupts = <0 71 0>;
--
--			clocks = <&clock CLK_USBH20>;
--			clock-names = "usbhost";
--			#address-cells = <1>;
--			#size-cells = <0>;
--			port@0 {
--				reg = <0>;
--				phys = <&usb2_phy 1>;
--			};
--		};
--
--		usb2_phy: phy@12130000 {
--			compatible = "samsung,exynos5250-usb2-phy";
--			reg = <0x12130000 0x100>;
--			clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
--			clock-names = "phy", "ref";
--			#phy-cells = <1>;
--			samsung,sysreg-phandle = <&sysreg_system_controller>;
--			samsung,pmureg-phandle = <&pmu_system_controller>;
--		};
--
- 		sysmmu_g2dr: sysmmu@0x10A60000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x10A60000 0x1000>;
-@@ -1184,4 +1092,43 @@
- 	clock-names = "uart", "clk_uart_baud0";
- };
- 
-+&usbdrd3_0 {
-+	clocks = <&clock CLK_USBD300>;
-+	clock-names = "usbdrd30";
-+};
-+
-+&usbdrd_phy0 {
-+	clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
-+	clock-names = "phy", "ref";
-+	samsung,pmu-syscon = <&pmu_system_controller>;
-+};
-+
-+&usbdrd3_1 {
-+	clocks = <&clock CLK_USBD301>;
-+	clock-names = "usbdrd30";
-+};
-+
-+&usbdrd_phy1 {
-+	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
-+	clock-names = "phy", "ref";
-+	samsung,pmu-syscon = <&pmu_system_controller>;
-+};
-+
-+&usbhost1 {
-+	clocks = <&clock CLK_USBH20>;
-+	clock-names = "usbhost";
-+};
-+
-+&usbhost2 {
-+	clocks = <&clock CLK_USBH20>;
-+	clock-names = "usbhost";
-+};
-+
-+&usb2_phy {
-+	clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
-+	clock-names = "phy", "ref";
-+	samsung,sysreg-phandle = <&sysreg_system_controller>;
-+	samsung,pmureg-phandle = <&pmu_system_controller>;
-+};
-+
- #include "exynos5420-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index 9ce625bd79c1..0f3b8735849e 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -64,5 +64,79 @@
- 						<11 &gic 0 131 0>;
- 			};
- 		};
-+
-+		usbdrd3_0: usb3-0 {
-+			compatible = "samsung,exynos5250-dwusb3";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			usbdrd_dwc3_0: dwc3@12000000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x12000000 0x10000>;
-+				interrupts = <0 72 0>;
-+				phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+			};
-+		};
-+
-+		usbdrd_phy0: phy@12100000 {
-+			compatible = "samsung,exynos5420-usbdrd-phy";
-+			reg = <0x12100000 0x100>;
-+			#phy-cells = <1>;
-+		};
-+
-+		usbdrd3_1: usb3-1 {
-+			compatible = "samsung,exynos5250-dwusb3";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			usbdrd_dwc3_1: dwc3@12400000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x12400000 0x10000>;
-+				interrupts = <0 73 0>;
-+				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+			};
-+		};
-+
-+		usbdrd_phy1: phy@12500000 {
-+			compatible = "samsung,exynos5420-usbdrd-phy";
-+			reg = <0x12500000 0x100>;
-+			#phy-cells = <1>;
-+		};
-+
-+		usbhost2: usb@12110000 {
-+			compatible = "samsung,exynos4210-ehci";
-+			reg = <0x12110000 0x100>;
-+			interrupts = <0 71 0>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				reg = <0>;
-+				phys = <&usb2_phy 1>;
-+			};
-+		};
-+
-+		usbhost1: usb@12120000 {
-+			compatible = "samsung,exynos4210-ohci";
-+			reg = <0x12120000 0x100>;
-+			interrupts = <0 71 0>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				reg = <0>;
-+				phys = <&usb2_phy 1>;
-+			};
-+		};
-+
-+		usb2_phy: phy@12130000 {
-+			compatible = "samsung,exynos5250-usb2-phy";
-+			reg = <0x12130000 0x100>;
-+			#phy-cells = <1>;
-+		};
- 	};
- };
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index f7e0d49b515a..80591f3e867e 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -552,6 +552,7 @@ CONFIG_DRM_ATMEL_HLCDC=m
+ CONFIG_DRM_RCAR_DU=m
+ CONFIG_DRM_RCAR_HDMI=y
+ CONFIG_DRM_RCAR_LVDS=y
++CONFIG_DRM_SUN4I=m
+ CONFIG_DRM_TEGRA=y
+ CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
+ CONFIG_DRM_PANEL_SIMPLE=y
 -- 
-2.5.0
+2.8.2
+
