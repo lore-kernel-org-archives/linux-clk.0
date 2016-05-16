@@ -1,43 +1,55 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: zhengxing@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	briannorris@chromium.org,
-	Douglas Anderson <dianders@chromium.org>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: fix the rk3399 sdmmc sample / drv name
-Date: Wed,  4 May 2016 16:36:25 -0700
-Message-Id: <1462404985-27957-1-git-send-email-dianders@chromium.org>
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 14/20] ARM: sun5i: a13: Add LCD pins
+Date: Mon, 16 May 2016 14:47:14 +0200
+Message-Id: <1463402840-17062-15-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3399 clock table had a simple typo in it, calling the SDMMC sample
-and drive clocks by the wrong name.  Fix this minor typo.
+The RGB bus can be used in several configurations, one of which being the
+RGB666.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Add a pinctrl group for that case.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/sun5i-a13.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 5248726af86d..291543f52caa 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -894,8 +894,8 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(16), 8, 3, MFLAGS, 0, 7, DFLAGS,
- 			RK3399_CLKGATE_CON(6), 1, GFLAGS),
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index 263d46dbc7e6..79b5d513c142 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -237,6 +237,16 @@
+ &pio {
+ 	compatible = "allwinner,sun5i-a13-pinctrl";
  
--	MMC(SCLK_SDMMC_DRV,     "emmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
--	MMC(SCLK_SDMMC_SAMPLE,  "emmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
-+	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
-+	MMC(SCLK_SDMMC_SAMPLE,  "sdmmc_sample", "clk_sdmmc", RK3399_SDMMC_CON1, 1),
- 
- 	MMC(SCLK_SDIO_DRV,      "sdio_drv",    "clk_sdio",  RK3399_SDIO_CON0,  1),
- 	MMC(SCLK_SDIO_SAMPLE,   "sdio_sample", "clk_sdio",  RK3399_SDIO_CON1,  1),
++	lcd_rgb666_pins: lcd_rgb666@0 {
++		allwinner,pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
++				 "PD10", "PD11", "PD12", "PD13", "PD14", "PD15",
++				 "PD18", "PD19", "PD20", "PD21", "PD22", "PD23",
++				 "PD24", "PD25", "PD26", "PD27";
++		allwinner,function = "lcd0";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++
+ 	uart1_pins_a: uart1@0 {
+ 		allwinner,pins = "PE10", "PE11";
+ 		allwinner,function = "uart1";
 -- 
-2.8.0.rc3.226.g39d4020
+2.8.2
