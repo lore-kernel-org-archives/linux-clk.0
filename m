@@ -1,62 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:33173 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751730AbcEJFHu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 01:07:50 -0400
-Received: by mail-pa0-f42.google.com with SMTP id xk12so1237118pac.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 May 2016 22:07:50 -0700 (PDT)
-Date: Tue, 10 May 2016 10:37:46 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] cpufreq: rcar: Add support for R8A7796 SoC
-Message-ID: <20160510050746.GD2790@vireshk-i7>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <5731664D.1030909@rvc.renesas.com>
- <573169CD.8050607@rvc.renesas.com>
- <57316A4E.7040100@rvc.renesas.com>
- <57316AB0.5040004@rvc.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <57316AB0.5040004@rvc.renesas.com>
-Sender: linux-clk-owner@vger.kernel.org
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 03/20] clk: sunxi: tcon-ch1: Do not return a negative error in get_parent
+Date: Mon, 16 May 2016 14:47:03 +0200
+Message-Id: <1463402840-17062-4-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10-05-16, 11:59, Khiem Nguyen wrote:
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
-> b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index 32f6dda..7d038fd 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -54,6 +54,7 @@ static const struct of_device_id machines[] __initconst =
-> {
->  	{ .compatible = "renesas,r8a7793", },
->  	{ .compatible = "renesas,r8a7794", },
->  	{ .compatible = "renesas,r8a7795", },
-> +	{ .compatible = "renesas,r8a7796", },
->  	{ .compatible = "renesas,sh73a0", },
-> 
->  	{ .compatible = "rockchip,rk2928", },
+get_parent is supposed to return an unsigned 8 bit integer, so returning
+-EINVAL is a bad idea.
 
-Well, you could have done that in the same patch. But I don't mind two patches
-now.
+Remove it.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-sun4i-tcon-ch1.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+index 98a4582de56a..248585238b1c 100644
+--- a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
++++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+@@ -85,9 +85,6 @@ static u8 tcon_ch1_get_parent(struct clk_hw *hw)
+ 	reg = readl(tclk->reg) >> TCON_CH1_SCLK2_MUX_SHIFT;
+ 	reg &= reg >> TCON_CH1_SCLK2_MUX_MASK;
+ 
+-	if (reg >= num_parents)
+-		return -EINVAL;
+-
+ 	return reg;
+ }
+ 
 -- 
-viresh
+2.8.2
