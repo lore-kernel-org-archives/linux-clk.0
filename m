@@ -1,58 +1,79 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 10 May 2016 13:49:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
-Message-ID: <20160510081907.GB3016@vireshk-i7>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <5731664D.1030909@rvc.renesas.com>
- <573169CD.8050607@rvc.renesas.com>
- <57316A4E.7040100@rvc.renesas.com>
- <20160510050710.GC2790@vireshk-i7>
- <CAMuHMdWYrf4oZU-8YZ-v-MxznUwJZsqLcbRhiMK=CB2+UoR6uw@mail.gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdWYrf4oZU-8YZ-v-MxznUwJZsqLcbRhiMK=CB2+UoR6uw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1463402840-17062-5-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-5-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 16 May 2016 23:21:41 +0800
+Message-ID: <CAGb2v66-GzV=1wrJnHBObLVPVHPk87o0PaJtNyYasp2wFsZabw@mail.gmail.com>
+Subject: Re: [PATCH 04/20] clk: sunxi: display: Add per-clock flags
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10-05-16, 10:17, Geert Uytterhoeven wrote:
-> Hi Viresh,
-> 
-> On Tue, May 10, 2016 at 7:07 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On 10-05-16, 11:57, Khiem Nguyen wrote:
-> >> After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
-> >> driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
-> >> Hence, follow the implementation to support new R8A7795 SoC.
-> >>
-> >> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> >> ---
-> >>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Quoting Viresh when this file was introduced:
-> | This is going to be done once per boot and this shouldn't hurt. And for new
-> | platforms we may do things differently as they are going to use
-> opp-v2 bindings.
-> 
-> As r8a7795/r8a7796 are not arm32 "shmobile", but arm64, perhaps we should
-> use this new "opp-v2" binding instead? Has it been finalized?
+Hi,
 
-Yeah, that would be preferred.
+On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The TCON channel 0 clock that is the parent clock of our pixel clock is
+> expected to change its rate depending on the resolution we want to output
+> in our display engine.
+>
+> However, since it's only a mux, the only way it can do that is by changing
+> its parents rate.
+>
+> Allow to give flags in our display clocks description, and add the
+> CLK_SET_RATE_PARENT flag for the TCON channel 0 flag.
+>
+> Fixes: a3b4956ee6d9 ("clk: sunxi: display: Add per-clock flags")
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi/clk-sun4i-display.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
+> index 445a7498d6df..9780fac6d029 100644
+> --- a/drivers/clk/sunxi/clk-sun4i-display.c
+> +++ b/drivers/clk/sunxi/clk-sun4i-display.c
+> @@ -33,6 +33,8 @@ struct sun4i_a10_display_clk_data {
+>
+>         u8      width_div;
+>         u8      width_mux;
+> +
 
--- 
-viresh
+Don't really need this separator, but I'm ok either way.
+
+> +       u32     flags;
+>  };
+>
+>  struct reset_data {
+> @@ -166,7 +168,7 @@ static void __init sun4i_a10_display_init(struct device_node *node,
+>                                      data->has_div ? &div->hw : NULL,
+>                                      data->has_div ? &clk_divider_ops : NULL,
+>                                      &gate->hw, &clk_gate_ops,
+> -                                    0);
+> +                                    data->flags);
+>         if (IS_ERR(clk)) {
+>                 pr_err("%s: Couldn't register the clock\n", clk_name);
+>                 goto free_div;
+> @@ -232,6 +234,7 @@ static const struct sun4i_a10_display_clk_data sun4i_a10_tcon_ch0_data __initcon
+>         .offset_rst     = 29,
+>         .offset_mux     = 24,
+>         .width_mux      = 2,
+> +       .flags          = CLK_SET_RATE_PARENT,
+>  };
+>
+>  static void __init sun4i_a10_tcon_ch0_setup(struct device_node *node)
+> --
+> 2.8.2
+>
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
