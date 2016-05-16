@@ -1,168 +1,73 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH v1 03/14] clk: twl6040: Rename the driver and use consistent names in the code
-Date: Mon, 30 May 2016 11:55:11 +0300
-Message-ID: <20160530085522.30398-4-peter.ujfalusi@ti.com>
-In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:38159 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753618AbcEPMre (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 08:47:34 -0400
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 09/20] drm/sun4i: defer only if we didn't find our panel
+Date: Mon, 16 May 2016 14:47:09 +0200
+Message-Id: <1463402840-17062-10-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver is to provide the functional clock to OMAP4/5 McPDM. The clock
-is named as pdmclk in the documentations so change the function names,
-structure names and variables to align with this.
-At the same time rename the driver from "twl6040-clk" to "twl6040-pdmclk".
-This can be done w/o regression since the clock driver is not in use at
-the moment, the MFD core driver is not even registering the device for it.
+Our code currently defers our probe on any error, even if we were not
+expecting to have one at all.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Make sure we return -EPROBE_DEFER only when we were supposed to have a
+panel, but it's not probed yet.
+
+Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/clk-twl6040.c | 77 +++++++++++++++++++++++++++--------------------
- 1 file changed, 45 insertions(+), 32 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 6a2dbe6a1627..c98b1ec76f54 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -26,60 +26,73 @@
- #include <linux/mfd/twl6040.h>
- #include <linux/clk-provider.h>
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 9f19b0e08560..eed6a9e8d9a6 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -429,7 +429,7 @@ static struct drm_panel *sun4i_tcon_find_panel(struct device_node *node)
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
--struct twl6040_clk {
-+struct twl6040_pdmclk {
- 	struct twl6040 *twl6040;
- 	struct device *dev;
--	struct clk_hw mcpdm_fclk;
-+	struct clk_hw pdmclk_hw;
- 	struct clk *clk;
- 	int enabled;
- };
- 
--static int twl6040_bitclk_is_prepared(struct clk_hw *hw)
-+static int twl6040_pdmclk_is_prepared(struct clk_hw *hw)
- {
--	struct twl6040_clk *twl6040_clk = container_of(hw, struct twl6040_clk,
--						       mcpdm_fclk);
--	return twl6040_clk->enabled;
-+	struct twl6040_pdmclk *pdmclk = container_of(hw, struct twl6040_pdmclk,
-+						     pdmclk_hw);
-+
-+	return pdmclk->enabled;
+-	return of_drm_find_panel(remote);
++	return of_drm_find_panel(remote) ?: ERR_PTR(-EPROBE_DEFER);
  }
  
--static int twl6040_bitclk_prepare(struct clk_hw *hw)
-+static int twl6040_pdmclk_prepare(struct clk_hw *hw)
- {
--	struct twl6040_clk *twl6040_clk = container_of(hw, struct twl6040_clk,
--						       mcpdm_fclk);
-+	struct twl6040_pdmclk *pdmclk = container_of(hw, struct twl6040_pdmclk,
-+						     pdmclk_hw);
- 	int ret;
- 
--	ret = twl6040_power(twl6040_clk->twl6040, 1);
-+	ret = twl6040_power(pdmclk->twl6040, 1);
- 	if (!ret)
--		twl6040_clk->enabled = 1;
-+		pdmclk->enabled = 1;
- 
- 	return ret;
- }
- 
--static void twl6040_bitclk_unprepare(struct clk_hw *hw)
-+static void twl6040_pdmclk_unprepare(struct clk_hw *hw)
- {
--	struct twl6040_clk *twl6040_clk = container_of(hw, struct twl6040_clk,
--						       mcpdm_fclk);
-+	struct twl6040_pdmclk *pdmclk = container_of(hw, struct twl6040_pdmclk,
-+						     pdmclk_hw);
- 	int ret;
- 
--	ret = twl6040_power(twl6040_clk->twl6040, 0);
-+	ret = twl6040_power(pdmclk->twl6040, 0);
- 	if (!ret)
--		twl6040_clk->enabled = 0;
-+		pdmclk->enabled = 0;
+ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+@@ -522,12 +522,13 @@ static int sun4i_tcon_probe(struct platform_device *pdev)
+ 	 * Defer the probe.
+ 	 */
+ 	panel = sun4i_tcon_find_panel(node);
+-	if (IS_ERR(panel)) {
+-		/*
+-		 * If we don't have a panel endpoint, just go on
+-		 */
+-		if (PTR_ERR(panel) != -ENODEV)
+-			return -EPROBE_DEFER;
 +
-+}
-+
-+static unsigned long twl6040_pdmclk_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct twl6040_pdmclk *pdmclk = container_of(hw, struct twl6040_pdmclk,
-+						     pdmclk_hw);
-+
-+	return twl6040_get_sysclk(pdmclk->twl6040);
- }
++	/*
++	 * If we don't have a panel endpoint, just go on
++	 */
++	if (PTR_ERR(panel) == -EPROBE_DEFER) {
++		DRM_DEBUG_DRIVER("Still waiting for our panel. Deferring...\n");
++		return -EPROBE_DEFER;
+ 	}
  
--static const struct clk_ops twl6040_mcpdm_ops = {
--	.is_prepared = twl6040_bitclk_is_prepared,
--	.prepare = twl6040_bitclk_prepare,
--	.unprepare = twl6040_bitclk_unprepare,
-+static const struct clk_ops twl6040_pdmclk_ops = {
-+	.is_prepared = twl6040_pdmclk_is_prepared,
-+	.prepare = twl6040_pdmclk_prepare,
-+	.unprepare = twl6040_pdmclk_unprepare,
-+	.recalc_rate = twl6040_pdmclk_recalc_rate,
- };
- 
--static struct clk_init_data wm831x_clkout_init = {
--	.name = "mcpdm_fclk",
--	.ops = &twl6040_mcpdm_ops,
-+static struct clk_init_data twl6040_pdmclk_init = {
-+	.name = "pdmclk",
-+	.ops = &twl6040_pdmclk_ops,
-+	.flags = CLK_GET_RATE_NOCACHE,
- };
- 
--static int twl6040_clk_probe(struct platform_device *pdev)
-+static int twl6040_pdmclk_probe(struct platform_device *pdev)
- {
- 	struct twl6040 *twl6040 = dev_get_drvdata(pdev->dev.parent);
--	struct twl6040_clk *clkdata;
-+	struct twl6040_pdmclk *clkdata;
- 
- 	clkdata = devm_kzalloc(&pdev->dev, sizeof(*clkdata), GFP_KERNEL);
- 	if (!clkdata)
-@@ -88,8 +101,8 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- 	clkdata->dev = &pdev->dev;
- 	clkdata->twl6040 = twl6040;
- 
--	clkdata->mcpdm_fclk.init = &wm831x_clkout_init;
--	clkdata->clk = devm_clk_register(&pdev->dev, &clkdata->mcpdm_fclk);
-+	clkdata->pdmclk_hw.init = &twl6040_pdmclk_init;
-+	clkdata->clk = devm_clk_register(&pdev->dev, &clkdata->pdmclk_hw);
- 	if (IS_ERR(clkdata->clk))
- 		return PTR_ERR(clkdata->clk);
- 
-@@ -99,16 +112,16 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- 				   of_clk_src_simple_get, clkdata->clk);
- }
- 
--static struct platform_driver twl6040_clk_driver = {
-+static struct platform_driver twl6040_pdmclk_driver = {
- 	.driver = {
--		.name = "twl6040-clk",
-+		.name = "twl6040-pdmclk",
- 	},
--	.probe = twl6040_clk_probe,
-+	.probe = twl6040_pdmclk_probe,
- };
- 
--module_platform_driver(twl6040_clk_driver);
-+module_platform_driver(twl6040_pdmclk_driver);
- 
- MODULE_DESCRIPTION("TWL6040 clock driver for McPDM functional clock");
- MODULE_AUTHOR("Peter Ujfalusi <peter.ujfalusi@ti.com>");
--MODULE_ALIAS("platform:twl6040-clk");
-+MODULE_ALIAS("platform:twl6040-pdmclk");
- MODULE_LICENSE("GPL");
+ 	return component_add(&pdev->dev, &sun4i_tcon_ops);
 -- 
-2.8.3
+2.8.2
+
