@@ -1,85 +1,96 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
- <netdev@vger.kernel.org>
-Subject: [v9, 4/7] dt: move guts devicetree doc out of powerpc directory
-Date: Wed, 4 May 2016 11:24:31 +0800
-Message-ID: <1462332274-13744-5-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
-References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
- leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
- Rob Herring <robh+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
- Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <paulmck@linux.vnet.ibm.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: tony@atomide.com, mingo@kernel.org, linux@roeck-us.net,
+        rostedt@goodmis.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 omap 3/6] arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
+Date: Mon, 16 May 2016 11:50:05 -0700
+Message-Id: <1463424608-20237-3-git-send-email-paulmck@linux.vnet.ibm.com>
+In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
+References: <20160516184844.GA20144@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
-since it's used by not only PowerPC but also ARM. And add a specification
-for 'little-endian' property.
+This commit adds an _rcuidle suffix to a pair of trace events to
+prevent the following splat:
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes for v4:
-	- Added this patch
-Changes for v5:
-	- Modified the description for little-endian property
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Rob Herring'
-Changes for v9:
-	- None
----
- Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
- 1 file changed, 3 insertions(+)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+> ===============================
+> [ INFO: suspicious RCU usage. ]
+> 4.6.0-rc5-next-20160426+ #1114 Not tainted
+> -------------------------------
+> include/trace/events/clk.h:59 suspicious rcu_dereference_check() usage!
+>
+> other info that might help us debug this:
+>
+>
+> RCU used illegally from idle CPU!
+> rcu_scheduler_active = 1, debug_locks = 0
+> RCU used illegally from extended quiescent state!
+> 2 locks held by swapper/0/0:
+>  #0:  (&oh->hwmod_key#30){......}, at: [<c0121b40>] omap_hwmod_idle+0x18/0x44
+>  #1:  (enable_lock){......}, at: [<c0630998>] clk_enable_lock+0x18/0x124
+>
+> stack backtrace:
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.6.0-rc5-next-20160426+ #1114
+> Hardware name: Generic OMAP36xx (Flattened Device Tree)
+> [<c0110290>] (unwind_backtrace) from [<c010c3a8>] (show_stack+0x10/0x14)
+> [<c010c3a8>] (show_stack) from [<c047fd68>] (dump_stack+0xb0/0xe4)
+> [<c047fd68>] (dump_stack) from [<c0631618>] (clk_core_disable+0x17c/0x348)
+> [<c0631618>] (clk_core_disable) from [<c0632774>] (clk_disable+0x24/0x30)
+> [<c0632774>] (clk_disable) from [<c0120590>] (_disable_clocks+0x18/0x7c)
+> [<c0120590>] (_disable_clocks) from [<c0121680>] (_idle+0x12c/0x230)
+> [<c0121680>] (_idle) from [<c0121b4c>] (omap_hwmod_idle+0x24/0x44)
+> [<c0121b4c>] (omap_hwmod_idle) from [<c0122c24>] (omap_device_idle+0x3c/0x90)
+> [<c0122c24>] (omap_device_idle) from [<c052cc00>] (__rpm_callback+0x2c/0x60)
+> [<c052cc00>] (__rpm_callback) from [<c052cc54>] (rpm_callback+0x20/0x80)
+> [<c052cc54>] (rpm_callback) from [<c052d150>] (rpm_suspend+0x100/0x768)
+> [<c052d150>] (rpm_suspend) from [<c052ec58>] (__pm_runtime_suspend+0x64/0x84)
+> [<c052ec58>] (__pm_runtime_suspend) from [<c04bf25c>] (omap2_gpio_prepare_for_idle+0x5
+> c/0x70)
+> [<c04bf25c>] (omap2_gpio_prepare_for_idle) from [<c0125568>] (omap_sram_idle+0x140/0x2
+> 44)
+> [<c0125568>] (omap_sram_idle) from [<c01269dc>] (omap3_enter_idle_bm+0xfc/0x1ec)
+> [<c01269dc>] (omap3_enter_idle_bm) from [<c0601bdc>] (cpuidle_enter_state+0x80/0x3d4)
+> [<c0601bdc>] (cpuidle_enter_state) from [<c0183b08>] (cpu_startup_entry+0x198/0x3a0)
+> [<c0183b08>] (cpu_startup_entry) from [<c0b00c0c>] (start_kernel+0x354/0x3c8)
+> [<c0b00c0c>] (start_kernel) from [<8000807c>] (0x8000807c)
 
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-similarity index 91%
-rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
-index b71b203..07adca9 100644
---- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-@@ -25,6 +25,9 @@ Recommended properties:
-  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
-    registers, for those SOCs that have a PAMU device.
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: <linux-omap@vger.kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>
+Cc: <linux-clk@vger.kernel.org>
+---
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fb74dc1f7520..4fa43c02d682 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -682,12 +682,12 @@ static void clk_core_disable(struct clk_core *core)
+ 	if (--core->enable_count > 0)
+ 		return;
  
-+ - little-endian : Indicates that the global utilities block is little
-+   endian. The default is big endian.
-+
- Examples:
- 	global-utilities@e0000 {	/* global utilities block */
- 		compatible = "fsl,mpc8548-guts";
+-	trace_clk_disable(core);
++	trace_clk_disable_rcuidle(core);
+ 
+ 	if (core->ops->disable)
+ 		core->ops->disable(core->hw);
+ 
+-	trace_clk_disable_complete(core);
++	trace_clk_disable_complete_rcuidle(core);
+ 
+ 	clk_core_disable(core->parent);
+ }
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.5.2
