@@ -1,134 +1,97 @@
-Return-Path: <v1ron@mail.ru>
-From: Roman Volkov <v1ron@mail.ru>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 16 May 2016 22:15:09 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Roman Volkov <rvolkov@v1ros.org>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: [PATCH 1/2] clk/vt8500: Rework wm8650_find_pll_bits()
-Date: Tue, 24 May 2016 23:07:52 +0300
-Message-Id: <1464120473-1808-2-git-send-email-v1ron@mail.ru>
-In-Reply-To: <1464120473-1808-1-git-send-email-v1ron@mail.ru>
-References: <1464120473-1808-1-git-send-email-v1ron@mail.ru>
+	Hans de Goede <hdegoede@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 02/16] clk: sunxi-ng: Add common infrastructure
+Message-ID: <20160516201509.GL27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-3-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v67XWt6tjG_xXWgGatTaiN5uYQb2_Q6bgixMDUkHfVHLHg@mail.gmail.com>
+ <20160515183122.GA27618@lukather>
+ <20160516100239.a93a238b0d458b38a3689a95@free.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DH4/xewco2zMcht6"
+In-Reply-To: <20160516100239.a93a238b0d458b38a3689a95@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Roman Volkov <rvolkov@v1ros.org>
 
-WM8650 has the following limitation in the clock architecture:
+--DH4/xewco2zMcht6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-600MHz >= (M * parent) / P >= 300MHz
+Hi Jean-Francois,
 
-Where M is multiplier and P is divisor 1 (refer to the source code
-comment). This information can be found in the WMT's GPL source. The
-algorithm from this change is optimized, performance increase is about
-10000 times per the user-mode testing application.
+On Mon, May 16, 2016 at 10:02:39AM +0200, Jean-Francois Moine wrote:
+> On Sun, 15 May 2016 20:31:22 +0200
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>=20
+> > > > +void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+> > > > +{
+> > > > +       u32 reg;
+> > > > +
+> > > > +       if (!(common->features & CCU_FEATURE_LOCK))
+> > > > +               return;
+> > > > +
+> > > > +       WARN_ON(readl_relaxed_poll_timeout(common->base + common->r=
+eg, reg,
+> > > > +                                          !(reg & lock), 0, 500));
+> > >=20
+> > >                                     no delay between reads? ^
+> >=20
+> > Yes, I intended it to be a simple busy waiting loop since I don't
+> > expect it to be very long. Do yu have any more data on how much time
+> > it usually takes?
+>=20
+> I have a Soc in which the rate of the audio clock is stable after a
+> good second.
 
-The following GCC warnings are fixed inside the function:
+You mean before the clock is actually stable, or before the lock bit
+is cleared?
 
-'best_div2', 'best_div1', 'best_mul' may be used uninitialized in
-this function [-Wmaybe-uninitialized]
+Which SoC is it? As far as I've seen, only the H3 allows to configure
+the stable time, and while by default it will take 16us, you can
+configure as high as 66ms (which is still way higher than the current
+limit).
 
-Fixes: 090341b0a95d ("clk: vt8500: fix sign of possible PLL values")
-Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
----
- drivers/clk/clk-vt8500.c | 77 +++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 40 deletions(-)
+Thanks!
+Maxime
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index b0f76a84f1e9..77650f19a9b6 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -383,52 +383,49 @@ static int vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 	return 0;
- }
- 
--static int wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
--				u32 *multiplier, u32 *divisor1, u32 *divisor2)
-+/*
-+ * M * parent [O1] => / P [O2] => / D [O3]
-+ * Where O1 is 900MHz...3GHz;
-+ * O2 is 600MHz >= (M * parent) / P >= 300MHz;
-+ * M is 36...120 [25MHz parent]; D is 1 or 2 or 4 or 8.
-+ * Possible ranges (O3):
-+ * D = 8: 37,5MHz...75MHz
-+ * D = 4: 75MHz...150MHz
-+ * D = 2: 150MHz...300MHz
-+ * D = 1: 300MHz...600MHz
-+ */
-+static int wm8650_find_pll_bits(unsigned long rate,
-+	unsigned long parent_rate, u32 *multiplier, u32 *divisor1,
-+	u32 *divisor2)
- {
--	u32 mul, div1;
--	int div2;
--	u32 best_mul, best_div1, best_div2;
--	unsigned long tclk, rate_err, best_err;
-+	unsigned long O1, min_err, rate_err;
- 
--	best_err = (unsigned long)-1;
--
--	/* Find the closest match (lower or equal to requested) */
--	for (div1 = 5; div1 >= 3; div1--)
--		for (div2 = 3; div2 >= 0; div2--)
--			for (mul = 3; mul <= 1023; mul++) {
--				tclk = parent_rate * mul / (div1 * (1 << div2));
--				if (tclk > rate)
--					continue;
--				/* error will always be +ve */
--				rate_err = rate - tclk;
--				if (rate_err == 0) {
--					*multiplier = mul;
--					*divisor1 = div1;
--					*divisor2 = div2;
--					return 0;
--				}
--
--				if (rate_err < best_err) {
--					best_err = rate_err;
--					best_mul = mul;
--					best_div1 = div1;
--					best_div2 = div2;
--				}
--			}
--
--	if (best_err == (unsigned long)-1) {
--		pr_warn("%s: impossible rate %lu\n", __func__, rate);
-+	if (!parent_rate || (rate < 37500000) || (rate > 600000000))
- 		return -EINVAL;
-+
-+	*divisor2 = rate <= 75000000 ? 3 : rate <= 150000000 ? 2 :
-+					   rate <= 300000000 ? 1 : 0;
-+	/*
-+	 * Divisor P cannot be calculated. Test all divisors and find where M
-+	 * will be as close as possible to the requested rate.
-+	 */
-+	min_err = ULONG_MAX;
-+	for (*divisor1 = 5; *divisor1 >= 3; (*divisor1)--) {
-+		O1 = rate * *divisor1 * (1 << (*divisor2));
-+		rate_err = O1 % parent_rate;
-+		if (rate_err < min_err) {
-+			*multiplier = O1 / parent_rate;
-+			if (rate_err == 0)
-+				return 0;
-+
-+			min_err = rate_err;
-+		}
- 	}
- 
--	/* if we got here, it wasn't an exact match */
--	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
--							rate - best_err);
--	*multiplier = best_mul;
--	*divisor1 = best_div1;
--	*divisor2 = best_div2;
-+	if ((*multiplier < 3) || (*multiplier > 1023))
-+		return -EINVAL;
- 
-+	pr_warn("%s: rate error is %lu\n", __func__, min_err);
- 	return 0;
- }
- 
--- 
-2.8.0
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--DH4/xewco2zMcht6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXOipNAAoJEBx+YmzsjxAgCqwP/j1PkGapNuw9KPTpkr4yEa9g
+887RwL7od9toDFCxuDYAr8XZm8XbZ4TobEaX62AZdg+yqzzqBinV2uEmeyQUbg0O
+4gI4GylMDfK4W6QdoYt0uSqHNmeYCniEtVRqu1wo7257jy/sLryexMa/oEr7Sab5
+V5LNANvEXQr4hLqBs0De1/3Ve8e+JsHKKLknwlHR2NQVxdGpr/rNnjJHPVWcfDs9
+6EQ0YU0rx5T0E1deXVQOw8gNEHVAmfDBAPevtg5xMrk27lZnFjSZqmk6FOHIKtZ7
+45Qb97T2+FZhb9agu8sMLBLQZcH3+82OaL3BDDzzdFB79FKWk5FCoS6JgnQcKS+Z
+7UWgiNrYdK3yWtkiCIGXVDIRxglfb5ndJaG/JWmAtbg+fOHEt/aBmnGeHhyUqCPi
+8nqzxzyyh5/wPWmCDG+EQB1gBSwFPykuE/1wIgmNPPl8YQwdRHZ8KfNJvZnpsBSE
+5GLzXFSS9YJ563Py0mIAuJwG50F7ldzQigjZcQDkKN8EJDyUldS1V3iLb9iQZehg
+rayQpiNLP8bXdRlAqxxb17UwHzStTTcg8AmMgpqZqbIxr6Q6dtLhKXGP9d3J+PBL
+6zd+VzBSzkIKk3eHIaCst8q6wjICnfC26WzMEAiTtTjdV0az3t3dErB1/w9gLmC1
++nY9mfTdrCynQFJgQ5Qr
+=O4x1
+-----END PGP SIGNATURE-----
+
+--DH4/xewco2zMcht6--
