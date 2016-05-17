@@ -1,48 +1,32 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:51614 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752634AbcEMCS5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2016 22:18:57 -0400
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-	<zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-	<yanghongwei@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 0/5] clk: hisilicon: Fix some problems of clk-hi3519
-Date: Fri, 13 May 2016 10:05:50 +0800
-Message-ID: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Doug Anderson <dianders@chromium.org>, Brian Norris <computersforpeace@gmail.com>, Xing Zheng <zhengxing@rock-chips.com>
+Subject: Re: [PATCH 1/2] clk: rockchip: mark rk3399 GIC clocks as critical
+Date: Tue, 17 May 2016 23:10:51 +0200
+Message-ID: <2111538.t2M7m4hXj2@phil>
+In-Reply-To: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch is base on branch clk-hi3519 in clk tree. It mainly fixes the
-following issues:
-1. Add driver remove path.
-2. Fix the ordering issue about clock provider being published.
-3. Add error checking upon registering clocks. 
+Am Freitag, 13. Mai 2016, 11:42:16 schrieb Brian Norris:
+> We never want to kill the GIC.
+> 
+> Noticed when making other clock fixups, and seeing the newly-constructed
+> clock tree try to disable cpll, where we had this parent structure:
+> 
+>   aclk_gic <------\
+> 
+>                   |--- aclk_gic_pre <-- cpll <-- pll_cpll
+> 
+>   aclk_gic_noc <--/
+> 
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-change log
-v2:
--Redivided patches to make sure every patch can be compiled successfully.
+applied both patches to my clk-fixes branch with Dougs review-tags.
 
-Jiancheng Xue (5):
-  reset: hisilicon: change the definition of hisi_reset_init
-  clk: hisilicon: add hisi_clk_alloc function.
-  clk: hisilicon: add error processing for hisi_clk_register_* functions
-  clk: hisilicon: add hisi_clk_unregister_* functions
-  clk: hisilicon: hi3519: add driver remove path and fix some issues
 
- drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
- drivers/clk/hisilicon/clk.c        |  89 ++++++++++++++++++++++++----
- drivers/clk/hisilicon/clk.h        |  34 +++++++++--
- drivers/clk/hisilicon/reset.c      |  19 +++---
- drivers/clk/hisilicon/reset.h      |   5 +-
- 5 files changed, 220 insertions(+), 43 deletions(-)
-
--- 
-1.9.1
-
+Thanks
+Heiko
