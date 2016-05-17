@@ -1,223 +1,52 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 14/16] clk: sunxi-ng: Add N-K-M-P factor clock
-Date: Sun,  8 May 2016 22:01:49 +0200
-Message-Id: <1462737711-10017-15-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, James
+ Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v8 07/10] reset: mediatek: Add MT2701 reset controller dt-binding file
+Date: Tue, 17 May 2016 13:05:08 +0800
+Message-ID: <1463461511-25019-8-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that use a combination of two linear
-multipliers (N and K factors), one linear divider (M) and one power of two
-divider (P).
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
+
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/clk/sunxi-ng/Makefile   |   1 +
- drivers/clk/sunxi-ng/ccu_nkmp.c | 157 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nkmp.h |  43 +++++++++++
- 3 files changed, 201 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkmp.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkmp.h
+ include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 2bb8bc22e907..c794f57b6fb1 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -9,6 +9,7 @@ obj-y += ccu_mp.o
- obj-y += ccu_mux.o
- obj-y += ccu_nk.o
- obj-y += ccu_nkm.o
-+obj-y += ccu_nkmp.o
- obj-y += ccu_nm.o
- obj-y += ccu_p.o
- obj-y += ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
 new file mode 100644
-index 000000000000..b7da00773cd6
+index 0000000..aaf0305
 --- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -0,0 +1,157 @@
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -0,0 +1,83 @@
 +/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_nkmp.h"
-+
-+void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
-+			unsigned long max_n, unsigned long max_k,
-+			unsigned long max_m, unsigned long max_p,
-+			unsigned long *n, unsigned long *k,
-+			unsigned long *m, unsigned long *p)
-+{
-+	unsigned long best_rate = 0;
-+	unsigned long best_n = 0, best_k = 0, best_m = 0, best_p = 0;
-+	unsigned long _n, _k, _m, _p;
-+
-+	for (_k = 1; _k <= max_k; _k++) {
-+		for (_p = 0; _p <= max_p; _p++) {
-+			unsigned long tmp_rate;
-+
-+			rational_best_approximation(rate / _k, parent << _p,
-+						    max_n, max_m, &_n, &_m);
-+
-+			tmp_rate = (parent * _n * _k >> _p) / _m;
-+
-+			if (tmp_rate > rate)
-+				continue;
-+
-+			if ((rate - tmp_rate) < (rate - best_rate)) {
-+				best_rate = tmp_rate;
-+				best_n = _n;
-+				best_k = _k;
-+				best_m = _m;
-+				best_p = _p;
-+			}
-+		}
-+	}
-+
-+	*n = best_n;
-+	*k = best_k;
-+	*m = best_m;
-+	*p = best_p;
-+}
-+
-+static void ccu_nkmp_disable(struct clk_hw *hw)
-+{
-+	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+
-+	return ccu_gate_helper_disable(&nkmp->common, nkmp->enable);
-+}
-+
-+static int ccu_nkmp_enable(struct clk_hw *hw)
-+{
-+	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+
-+	return ccu_gate_helper_enable(&nkmp->common, nkmp->enable);
-+}
-+
-+static int ccu_nkmp_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+
-+	return ccu_gate_helper_is_enabled(&nkmp->common, nkmp->enable);
-+}
-+
-+static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+	unsigned long n, m, k, p;
-+	u32 reg;
-+
-+	reg = readl(nkmp->common.base + nkmp->common.reg);
-+
-+	n = reg >> nkmp->n.shift;
-+	n &= (1 << nkmp->n.width) - 1;
-+
-+	k = reg >> nkmp->k.shift;
-+	k &= (1 << nkmp->k.width) - 1;
-+
-+	m = reg >> nkmp->m.shift;
-+	m &= (1 << nkmp->m.width) - 1;
-+
-+	p = reg >> nkmp->p.shift;
-+	p &= (1 << nkmp->p.width) - 1;
-+
-+	return (parent_rate * (n + 1) * (k + 1) >> p) / (m + 1);
-+}
-+
-+static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+	unsigned long n, k, m, p;
-+
-+	ccu_nkmp_find_best(*parent_rate, rate,
-+			   1 << nkmp->n.width, 1 << nkmp->k.width,
-+			   1 << nkmp->m.width, (1 << nkmp->p.width) - 1,
-+			   &n, &k, &m, &p);
-+
-+	return (*parent_rate * n * k >> p) / m;
-+}
-+
-+static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+	unsigned long n, k, m, p;
-+	unsigned long flags;
-+	u32 reg;
-+
-+	ccu_nkmp_find_best(parent_rate, rate,
-+			   1 << nkmp->n.width, 1 << nkmp->k.width,
-+			   1 << nkmp->m.width, (1 << nkmp->p.width) - 1,
-+			   &n, &k, &m, &p);
-+
-+	spin_lock_irqsave(nkmp->common.lock, flags);
-+
-+	reg = readl(nkmp->common.base + nkmp->common.reg);
-+	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift, nkmp->n.shift);
-+	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift, nkmp->k.shift);
-+	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift, nkmp->m.shift);
-+	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift, nkmp->p.shift);
-+
-+	reg |= (n - 1) << nkmp->m.shift;
-+	reg |= (k - 1) << nkmp->m.shift;
-+	reg |= (m - 1) << nkmp->m.shift;
-+	reg |= p << nkmp->p.shift;
-+
-+	writel(reg, nkmp->common.base + nkmp->common.reg);
-+
-+	spin_unlock_irqrestore(nkmp->common.lock, flags);
-+
-+	ccu_helper_wait_for_lock(&nkmp->common, nkmp->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_nkmp_ops = {
-+	.disable	= ccu_nkmp_disable,
-+	.enable		= ccu_nkmp_enable,
-+	.is_enabled	= ccu_nkmp_is_enabled,
-+
-+	.recalc_rate	= ccu_nkmp_recalc_rate,
-+	.round_rate	= ccu_nkmp_round_rate,
-+	.set_rate	= ccu_nkmp_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
-new file mode 100644
-index 000000000000..8a91f2c837a4
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -225,35 +54,75 @@ index 000000000000..8a91f2c837a4
 + * GNU General Public License for more details.
 + */
 +
-+#ifndef _CCU_NKMP_H_
-+#define _CCU_NKMP_H_
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
 +
-+#include <linux/clk-provider.h>
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
 +
-+#include "ccu_factor.h"
-+#include "ccu_common.h"
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
 +
-+struct ccu_nkmp {
-+	u32			enable;
-+	u32			lock;
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
 +
-+	struct ccu_factor	n;
-+	struct ccu_factor	k;
-+	struct ccu_factor	m;
-+	struct ccu_factor	p;
++/* HIFSYS resets */
++#define MT2701_HIFSYS_UHOST0_RST		3
++#define MT2701_HIFSYS_UHOST1_RST		4
++#define MT2701_HIFSYS_UPHY0_RST			21
++#define MT2701_HIFSYS_UPHY1_RST			22
++#define MT2701_HIFSYS_PCIE0_RST			24
++#define MT2701_HIFSYS_PCIE1_RST			25
++#define MT2701_HIFSYS_PCIE2_RST			26
 +
-+	struct ccu_common	common;
-+};
-+
-+static inline struct ccu_nkmp *hw_to_ccu_nkmp(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_nkmp, common);
-+}
-+
-+extern const struct clk_ops ccu_nkmp_ops;
-+
-+#endif /* _CCU_NKMP_H_ */
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
 -- 
-2.8.2
+1.9.1
