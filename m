@@ -1,178 +1,119 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 00/16] clk: sunxi: introduce "modern" clock support
-Date: Sun,  8 May 2016 22:01:35 +0200
-Message-Id: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v8 02/10] clk: mediatek: remove __init from clk registration functions
+Date: Tue, 17 May 2016 13:05:03 +0800
+Message-ID: <1463461511-25019-3-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: James Liao <jamesjj.liao@mediatek.com>
 
-This is an attempt at introducing clock support for the Allwinner SoCs
-following the current model used by pretty much all the other SoCs.
+Remove __init from functions that will be used by init functions
+that support probe deferral.
 
-Such a conversion has been suggested on a regular basis by Mike and
-Stephen, and here is a first implementation.
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/mediatek/clk-gate.c |  2 +-
+ drivers/clk/mediatek/clk-mtk.c  | 12 ++++++------
+ drivers/clk/mediatek/clk-pll.c  |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-This new approach has a good number of advantages, some due to the new
-binding itself, some due to the lessons learned with the current code
-we have.
-
-Beside from having a binding similar to the other SoCs, which helps
-developper hopping from one SoC to the other, it also reduces the
-amount of binding review that needs to be done, something that Rob
-already complained about a few times.
-Now that we are following the DT-as-an-ABI rule, the new binding will
-also make our life way easier, since we reduce the exposed surface
-greatly. The former binding, while making quite easy to mix and match
-clocks when bringing up new SoCs, was also exposing way too much
-implementation details that would hold us back when wanting to
-refactor, consolidate, or fix some shortcomings in the current
-implementation. In the new approach, the only thing that we're
-exposing is the clock index, meaning that we can change the
-implementation as much as we want.
-
-This rewrite is also the occasion to layer things up quite differently
-in our clock core.
-
-The current code had a bunch of shortcomings. Most of the code was
-relying on our clk-factor code, which was factoring away a few things
-like the clock registration, ie boilerplate, but didn't factor the
-logic to compute a clock rate, while the huge majority are computed
-from some variation of a formula, which could actually be shared.
-
-Which meant that every time we had to add new code to help clk-factors
-compute the actual factors used, even though a clock with the same
-formual was probably already supported. This eventually lead to a huge
-number of clocks driver patches, and to review, which is also
-something Stephen complained about.
-
-The new approach takes a different approach by adding a bunch of clock
-drivers based on the formula they use to compute their rate and / or
-the features they have (mux, gate, etc.). The SoC will only have to
-provide the data for the driver to know how many options it has,
-without adding any extra code.
-
-To reduce the amount of code duplication between those drivers, a
-bunch of helpers have also been introduced to deal with the common
-features (pre-dividers, gate, muxes, etc.). This will also be very
-easy to extend to support new features missing for now (mostly the
-fractional stuff as of today).
-
-Since this is a complete rewrite, it probably has a bunch of bugs
-and/or limitations not yet found. My plan would be to start using that
-approach on the A64, A83T and H3 which are in their early support
-stage to be the test-bed for this new framework, before switching the
-older and more featureful SoCs to it eventually.
-
-Because of the DT ABI, the older drivers will remain in-tree
-obviously, otherwise things would break pretty badly.
-
-The current code has been tested on the H3 and an Orange Pi PC,
-including making sure that MMC still works, so the general approach
-seems ok.
-
-Let me know what you think,
-Maxime
-
-Maxime Ripard (16):
-  clk: fix critical clock locking
-  clk: sunxi-ng: Add common infrastructure
-  clk: sunxi-ng: Add fixed factor clock support
-  clk: sunxi-ng: Add gate clock support
-  clk: sunxi-ng: Add mux clock support
-  clk: sunxi-ng: Add divider table clock
-  clk: sunxi-ng: Add phase clock support
-  clk: sunxi-ng: Add M-factor clock support
-  clk: sunxi-ng: Add P-factor clock support
-  clk: sunxi-ng: Add M-P factor clock support
-  clk: sunxi-ng: Add N-K-factor clock support
-  clk: sunxi-ng: Add N-M-factor clock support
-  clk: sunxi-ng: Add N-K-M Factor clock
-  clk: sunxi-ng: Add N-K-M-P factor clock
-  clk: sunxi-ng: Add H3 clocks
-  ARM: dt: sun8i: switch the H3 to the new CCU driver
-
- arch/arm/boot/dts/sun8i-h3.dtsi         | 310 +++----------
- drivers/clk/Makefile                    |   1 +
- drivers/clk/clk.c                       |   7 +
- drivers/clk/sunxi-ng/Makefile           |  17 +
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c     | 757 ++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_common.c       | 108 +++++
- drivers/clk/sunxi-ng/ccu_common.h       |  74 ++++
- drivers/clk/sunxi-ng/ccu_div_table.c    | 117 +++++
- drivers/clk/sunxi-ng/ccu_div_table.h    |  75 ++++
- drivers/clk/sunxi-ng/ccu_factor.h       |  15 +
- drivers/clk/sunxi-ng/ccu_fixed_factor.c |  42 ++
- drivers/clk/sunxi-ng/ccu_fixed_factor.h |  50 +++
- drivers/clk/sunxi-ng/ccu_gate.c         |  82 ++++
- drivers/clk/sunxi-ng/ccu_gate.h         |  53 +++
- drivers/clk/sunxi-ng/ccu_m.c            | 135 ++++++
- drivers/clk/sunxi-ng/ccu_m.h            | 101 +++++
- drivers/clk/sunxi-ng/ccu_mp.c           | 158 +++++++
- drivers/clk/sunxi-ng/ccu_mp.h           |  79 ++++
- drivers/clk/sunxi-ng/ccu_mux.c          | 187 ++++++++
- drivers/clk/sunxi-ng/ccu_mux.h          |  92 ++++
- drivers/clk/sunxi-ng/ccu_nk.c           | 147 +++++++
- drivers/clk/sunxi-ng/ccu_nk.h           |  44 ++
- drivers/clk/sunxi-ng/ccu_nkm.c          | 144 ++++++
- drivers/clk/sunxi-ng/ccu_nkm.h          |  42 ++
- drivers/clk/sunxi-ng/ccu_nkmp.c         | 157 +++++++
- drivers/clk/sunxi-ng/ccu_nkmp.h         |  43 ++
- drivers/clk/sunxi-ng/ccu_nm.c           | 103 +++++
- drivers/clk/sunxi-ng/ccu_nm.h           |  41 ++
- drivers/clk/sunxi-ng/ccu_p.c            | 141 ++++++
- drivers/clk/sunxi-ng/ccu_p.h            |  40 ++
- drivers/clk/sunxi-ng/ccu_phase.c        | 126 ++++++
- drivers/clk/sunxi-ng/ccu_phase.h        |  50 +++
- drivers/clk/sunxi-ng/ccu_reset.c        |  55 +++
- drivers/clk/sunxi-ng/ccu_reset.h        |  40 ++
- include/dt-bindings/clock/sun8i-h3.h    | 162 +++++++
- include/dt-bindings/reset/sun8i-h3.h    | 103 +++++
- 36 files changed, 3646 insertions(+), 252 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/Makefile
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_common.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_common.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_div_table.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_div_table.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_factor.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_fixed_factor.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_gate.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_gate.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_m.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_m.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_mp.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_mp.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_mux.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_mux.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkmp.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkmp.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_p.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_p.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_phase.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_phase.h
- create mode 100644 drivers/clk/sunxi-ng/ccu_reset.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_reset.h
- create mode 100644 include/dt-bindings/clock/sun8i-h3.h
- create mode 100644 include/dt-bindings/reset/sun8i-h3.h
-
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index 2a76901..d8787bf 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -97,7 +97,7 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
+ 	.disable	= mtk_cg_disable_inv,
+ };
+ 
+-struct clk * __init mtk_clk_register_gate(
++struct clk *mtk_clk_register_gate(
+ 		const char *name,
+ 		const char *parent_name,
+ 		struct regmap *regmap,
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 5ada644..bb30f70 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -24,7 +24,7 @@
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+ 
+-struct clk_onecell_data * __init mtk_alloc_clk_data(unsigned int clk_num)
++struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
+ {
+ 	int i;
+ 	struct clk_onecell_data *clk_data;
+@@ -49,7 +49,7 @@ err_out:
+ 	return NULL;
+ }
+ 
+-void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
++void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+ 	int i;
+@@ -72,7 +72,7 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+ 	}
+ }
+ 
+-void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
++void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+ 	int i;
+@@ -95,7 +95,7 @@ void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+ 	}
+ }
+ 
+-int __init mtk_clk_register_gates(struct device_node *node,
++int mtk_clk_register_gates(struct device_node *node,
+ 		const struct mtk_gate *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+@@ -135,7 +135,7 @@ int __init mtk_clk_register_gates(struct device_node *node,
+ 	return 0;
+ }
+ 
+-struct clk * __init mtk_clk_register_composite(const struct mtk_composite *mc,
++struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+ 	struct clk *clk;
+@@ -222,7 +222,7 @@ err_out:
+ 	return ERR_PTR(ret);
+ }
+ 
+-void __init mtk_clk_register_composites(const struct mtk_composite *mcs,
++void mtk_clk_register_composites(const struct mtk_composite *mcs,
+ 		int num, void __iomem *base, spinlock_t *lock,
+ 		struct clk_onecell_data *clk_data)
+ {
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index 966cab1..0c2deac 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -313,7 +313,7 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
+ 	return clk;
+ }
+ 
+-void __init mtk_clk_register_plls(struct device_node *node,
++void mtk_clk_register_plls(struct device_node *node,
+ 		const struct mtk_pll_data *plls, int num_plls, struct clk_onecell_data *clk_data)
+ {
+ 	void __iomem *base;
 -- 
-2.8.2
+1.9.1
