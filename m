@@ -1,57 +1,47 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 4/5] clk: hisilicon: add hisi_clk_unregister_* functions
-Date: Fri, 13 May 2016 10:05:54 +0800
-Message-ID: <1463105155-20385-5-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1463105155-20385-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <Purna.Mandal@microchip.com>
+From: Purna Chandra Mandal <purna.mandal@microchip.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Purna
+ Chandra Mandal <purna.mandal@microchip.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 01/11] clk: microchip: use readl_poll_timeout() in pbclk_set_rate().
+Date: Tue, 17 May 2016 10:35:50 +0530
+Message-ID: <1463461560-9629-1-git-send-email-purna.mandal@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: purna.mandal@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add hisi_clk_unregister_* functions.
+pbclk_set_rate() is using readl_poll_timeout_atomic() even
+though spinlock is released. Fix it by replacing with
+readl_poll_timeout().
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Signed-off-by: Purna Chandra Mandal <purna.mandal@microchip.com>
 ---
- drivers/clk/hisilicon/clk.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Note: Please pull this complete series through the MIPS tree.
 
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 2575329..4e1d1af 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -128,4 +128,25 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
- 				int, struct hisi_clock_data *);
-+
-+#define hisi_clk_unregister(type) \
-+static inline \
-+void hisi_clk_unregister_##type(const struct hisi_##type##_clock *clks, \
-+				int nums, struct hisi_clock_data *data) \
-+{ \
-+	struct clk **clocks = data->clk_data.clks; \
-+	int i; \
-+	for (i = 0; i < nums; i++) { \
-+		int id = clks[i].id; \
-+		if (clocks[id])  \
-+			clk_unregister_##type(clocks[id]); \
-+	} \
-+}
-+
-+hisi_clk_unregister(fixed_rate)
-+hisi_clk_unregister(fixed_factor)
-+hisi_clk_unregister(mux)
-+hisi_clk_unregister(divider)
-+hisi_clk_unregister(gate)
-+
- #endif	/* __HISI_CLK_H */
+---
+
+ drivers/clk/microchip/clk-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
+index ca85cea..c3b3014 100644
+--- a/drivers/clk/microchip/clk-core.c
++++ b/drivers/clk/microchip/clk-core.c
+@@ -199,9 +199,9 @@ static int pbclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	spin_unlock_irqrestore(&pb->core->reg_lock, flags);
+ 
+-	/* wait again, for pbdivready */
+-	err = readl_poll_timeout_atomic(pb->ctrl_reg, v, v & PB_DIV_READY,
+-					1, LOCK_TIMEOUT_US);
++	/* wait again for DIV_READY */
++	err = readl_poll_timeout(pb->ctrl_reg, v, v & PB_DIV_READY,
++				 1, LOCK_TIMEOUT_US);
+ 	if (err)
+ 		return err;
+ 
 -- 
-1.9.1
+1.8.3.1
