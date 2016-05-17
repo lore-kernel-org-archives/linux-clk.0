@@ -1,73 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:48186 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932526AbcETJjG (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2016 05:39:06 -0400
-Date: Fri, 20 May 2016 11:38:46 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mickael GARDET <m.gardet@overkiz.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: at91 slow clock with an external crystal (on Atmel SAM9G25)
-Message-ID: <20160520113846.5df0be05@bbrezillon>
-In-Reply-To: <9cf2f9be-7f76-ca65-f2cf-ca0d20de6d2f@overkiz.com>
-References: <9cf2f9be-7f76-ca65-f2cf-ca0d20de6d2f@overkiz.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v8 01/10] clk: fix initial state of critical clock's parents
+Date: Tue, 17 May 2016 13:05:02 +0800
+Message-ID: <1463461511-25019-2-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-+ Atmel and clk maintainers.
+From: James Liao <jamesjj.liao@mediatek.com>
 
-Hi Mickael,
+This patch fixed wrong state of parent clocks if they are registered
+after critical clocks.
 
-Please use get_maintainer.pl (or the MAINTAINERS file) to find people
-you should send your questions too
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/clk.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-On Wed, 18 May 2016 10:04:35 +0200
-Mickael GARDET <m.gardet@overkiz.com> wrote:
-
-> Hi,
-> 
-> I have one question about usage of slow clock with an external crystal 
-> (on Atmel SAM9G25).
-> 
-> All work fine If I set CONFIG_SCLK=y in at91bootstrap but we wouldn't 
-> update at91bootstrap.
-
-Yes, the 'external crystal'/'internal RC osc' selection is currently
-done in at91bootstrap, and Linux just use what has been configured by
-the bootstrap.
-
-> 
-> If I force usage of external crystal (like this [1]) it work 
-> for me but what's the recommended way to do this ?
-
-I'd rather see something more generic for mainline, but you can keep it
-in your own tree ;).
-
-IMHO, the proper solution would be to add a min_accuracy field in
-struct clk_rate_request (and a clk_set_min_accuracy() helper), implement
-->determine_rate() in clk-slow.c to find the parent matching this
-constraint, and patch all users of the slow clk to set this constraint
-to something appropriate (100ppm ?).
-
-At least, slow clock users should check if the accuracy provided by the
-slow clock match what they expect and complain if it's not the case
-(it's already doable thanks to the clk_get_accuracy() function).
-
-Best Regards,
-
-Boris
-
-> [1]http://code.bulix.org/kpzu92-98883
-
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ce39add..bf80e39 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
+ 
+-		if (parent)
++		if (parent) {
+ 			clk_core_reparent(orphan, parent);
++
++			if (orphan->prepare_count)
++				clk_core_prepare(parent);
++
++			if (orphan->enable_count)
++				clk_core_enable(parent);
++		}
+ 	}
+ 
+ 	/*
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.9.1
