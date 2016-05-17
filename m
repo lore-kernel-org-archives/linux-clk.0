@@ -1,298 +1,67 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 15/20] ARM: sun5i: Move display blocks to A13
-Date: Mon, 16 May 2016 14:47:15 +0200
-Message-Id: <1463402840-17062-16-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] clk: samsung: Suppress unbinding to prevent theoretical attacks
+Date: Tue, 17 May 2016 09:26:14 +0200
+Message-id: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Most of the display engine is shared between the R8 and the A13. Move the
-common parts to the Á13 DTSI.
+Although unbinding a driver requires root privileges but it still might
+be used theoretically in certain attacks (by triggering NULL pointer
+exception or memory corruption if driver does not provide proper remove
+callbacks or core does not handle it).
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Samsung clock drivers are essential for system operation so their
+removal is not expected. More over, the Exynos3250 ISP clock driver does
+not implement remove() driver callback and it is not buildable as
+modules.
+
+Suppress the unbind interface for Exynos3250 ISP and S3C2410 DCLK clock
+drivers.
+
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/sun5i-a13.dtsi | 112 ++++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/sun5i-r8.dtsi  | 120 ++-------------------------------------
- 2 files changed, 117 insertions(+), 115 deletions(-)
+ drivers/clk/samsung/clk-exynos3250.c   | 1 +
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 5 +++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 79b5d513c142..e012890e0cf2 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -207,7 +207,50 @@
- 		};
- 	};
- 
-+	display-engine {
-+		compatible = "allwinner,sun5i-a13-display-engine";
-+		allwinner,pipelines = <&fe0>;
-+	};
-+
- 	soc@01c00000 {
-+		tcon0: lcd-controller@01c0c000 {
-+			compatible = "allwinner,sun5i-a13-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <44>;
-+			resets = <&tcon_ch0_clk 1>;
-+			reset-names = "lcd";
-+			clocks = <&ahb_gates 36>,
-+				 <&tcon_ch0_clk>,
-+				 <&tcon_ch1_clk>;
-+			clock-names = "ahb",
-+				      "tcon-ch0",
-+				      "tcon-ch1";
-+			clock-output-names = "tcon-pixel-clock";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_be0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&be0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		pwm: pwm@01c20e00 {
- 			compatible = "allwinner,sun5i-a13-pwm";
- 			reg = <0x01c20e00 0xc>;
-@@ -215,6 +258,75 @@
- 			#pwm-cells = <3>;
- 			status = "disabled";
- 		};
-+
-+		fe0: display-frontend@01e00000 {
-+			compatible = "allwinner,sun5i-a13-display-frontend";
-+			reg = <0x01e00000 0x20000>;
-+			interrupts = <47>;
-+			clocks = <&ahb_gates 46>, <&de_fe_clk>,
-+				 <&dram_gates 25>;
-+			clock-names = "ahb", "mod",
-+				      "ram";
-+			resets = <&de_fe_clk>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				fe0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					fe0_out_be0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&be0_in_fe0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		be0: display-backend@01e60000 {
-+			compatible = "allwinner,sun5i-a13-display-backend";
-+			reg = <0x01e60000 0x10000>;
-+			clocks = <&ahb_gates 44>, <&de_be_clk>,
-+				 <&dram_gates 26>;
-+			clock-names = "ahb", "mod",
-+				      "ram";
-+			resets = <&de_be_clk>;
-+			status = "disabled";
-+
-+			assigned-clocks = <&de_be_clk>;
-+			assigned-clock-rates = <300000000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				be0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					be0_in_fe0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&fe0_out_be0>;
-+					};
-+				};
-+
-+				be0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					be0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_be0>;
-+					};
-+				};
-+			};
-+		};
- 	};
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 16575ee874cb..dc4d493e61c2 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -1087,6 +1087,7 @@ static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
+ static struct platform_driver exynos3250_cmu_isp_driver = {
+ 	.driver = {
+ 		.name = "exynos3250-cmu-isp",
++		.suppress_bind_attrs = true,
+ 		.of_match_table = exynos3250_cmu_isp_of_match,
+ 	},
  };
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index ec6fb14d951c..ae9a595c72d0 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -428,8 +428,9 @@ MODULE_DEVICE_TABLE(platform, s3c24xx_dclk_driver_ids);
  
-diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-index c04cf690b858..8b058f53b7dc 100644
---- a/arch/arm/boot/dts/sun5i-r8.dtsi
-+++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-@@ -76,122 +76,12 @@
- 				};
- 			};
- 		};
--
--		tcon0: lcd-controller@01c0c000 {
--			compatible = "allwinner,sun5i-a13-tcon";
--			reg = <0x01c0c000 0x1000>;
--			interrupts = <44>;
--			resets = <&tcon_ch0_clk 1>;
--			reset-names = "lcd";
--			clocks = <&ahb_gates 36>,
--				 <&tcon_ch0_clk>,
--				 <&tcon_ch1_clk>;
--			clock-names = "ahb",
--				      "tcon-ch0",
--				      "tcon-ch1";
--			clock-output-names = "tcon-pixel-clock";
--			status = "disabled";
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
--				tcon0_in: port@0 {
--					#address-cells = <1>;
--					#size-cells = <0>;
--					reg = <0>;
--
--					tcon0_in_be0: endpoint@0 {
--						reg = <0>;
--						remote-endpoint = <&be0_out_tcon0>;
--					};
--				};
--
--				tcon0_out: port@1 {
--					#address-cells = <1>;
--					#size-cells = <0>;
--					reg = <1>;
--
--					tcon0_out_tve0: endpoint@1 {
--						reg = <1>;
--						remote-endpoint = <&tve0_in_tcon0>;
--					};
--				};
--			};
--		};
--
--		fe0: display-frontend@01e00000 {
--			compatible = "allwinner,sun5i-a13-display-frontend";
--			reg = <0x01e00000 0x20000>;
--			interrupts = <47>;
--			clocks = <&ahb_gates 46>, <&de_fe_clk>,
--				 <&dram_gates 25>;
--			clock-names = "ahb", "mod",
--				      "ram";
--			resets = <&de_fe_clk>;
--			status = "disabled";
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
--				fe0_out: port@1 {
--					#address-cells = <1>;
--					#size-cells = <0>;
--					reg = <1>;
--
--					fe0_out_be0: endpoint@0 {
--						reg = <0>;
--						remote-endpoint = <&be0_in_fe0>;
--					};
--				};
--			};
--		};
--
--		be0: display-backend@01e60000 {
--			compatible = "allwinner,sun5i-a13-display-backend";
--			reg = <0x01e60000 0x10000>;
--			clocks = <&ahb_gates 44>, <&de_be_clk>,
--				 <&dram_gates 26>;
--			clock-names = "ahb", "mod",
--				      "ram";
--			resets = <&de_be_clk>;
--			status = "disabled";
--
--			assigned-clocks = <&de_be_clk>;
--			assigned-clock-rates = <300000000>;
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
--				be0_in: port@0 {
--					#address-cells = <1>;
--					#size-cells = <0>;
--					reg = <0>;
--
--					be0_in_fe0: endpoint@0 {
--						reg = <0>;
--						remote-endpoint = <&fe0_out_be0>;
--					};
--				};
--
--				be0_out: port@1 {
--					#address-cells = <1>;
--					#size-cells = <0>;
--					reg = <1>;
--
--					be0_out_tcon0: endpoint@0 {
--						reg = <0>;
--						remote-endpoint = <&tcon0_in_be0>;
--					};
--				};
--			};
--		};
- 	};
-+};
- 
--	display-engine {
--		compatible = "allwinner,sun5i-a13-display-engine";
--		allwinner,pipelines = <&fe0>;
-+&tcon0_out {
-+	tcon0_out_tve0: endpoint@1 {
-+		reg = <1>;
-+		remote-endpoint = <&tve0_in_tcon0>;
- 	};
- };
+ static struct platform_driver s3c24xx_dclk_driver = {
+ 	.driver = {
+-		.name		= "s3c24xx-dclk",
+-		.pm		= &s3c24xx_dclk_pm_ops,
++		.name			= "s3c24xx-dclk",
++		.pm			= &s3c24xx_dclk_pm_ops,
++		.suppress_bind_attrs	= true,
+ 	},
+ 	.probe = s3c24xx_dclk_probe,
+ 	.remove = s3c24xx_dclk_remove,
 -- 
-2.8.2
+1.9.1
