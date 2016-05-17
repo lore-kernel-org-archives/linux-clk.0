@@ -1,100 +1,39 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 13/14] ASoC: omap-mcpdm: Support for suspend resume
-Date: Wed, 18 May 2016 16:46:35 +0300
-Message-ID: <1463579196-5484-14-git-send-email-peter.ujfalusi@ti.com>
-In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jun.nie@linaro.org>
+Return-Path: <jun.nie@linaro.org>
+From: Jun Nie <jun.nie@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH v2] clk: Add is_enabled sanity check
+Date: Tue, 17 May 2016 10:03:42 +0800
+Message-Id: <1463450622-13960-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Implement ASoC's suspend and resume callbacks.
-Since McPDM does not use pcm_trigger for start and stop of the stream due
-to strict sequencing needs with the twl6040, the callbacks will stop and
-restart the McPDM in case the board suspended during audio activity.
+If .enable and .disable is implemented, we must implement .is_enabled
+per document. Otherwise, clk_disable_unused_subtree will not disable
+the unused clock if the .is_enabled is not implemented, unecessary
+power consumption happens on the clock as a result.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
- sound/soc/omap/omap-mcpdm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/clk/clk.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 11bd07cdce22..74d6e6fdcfd0 100644
---- a/sound/soc/omap/omap-mcpdm.c
-+++ b/sound/soc/omap/omap-mcpdm.c
-@@ -66,6 +66,9 @@ struct omap_mcpdm {
- 	/* McPDM needs to be restarted due to runtime reconfiguration */
- 	bool restart;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fb74dc1..55f5c44 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2305,6 +2305,10 @@ static int __clk_core_init(struct clk_core *core)
+ 		goto out;
+ 	}
  
-+	/* pm state for suspend/resume handling */
-+	int pm_active_count;
++	if (core->ops->enable && !core->ops->is_enabled)
++		pr_warn("Warning: %s %s must implement .is_enabled\n",
++			__func__, core->name);
 +
- 	struct snd_dmaengine_dai_dma_data dma_data[2];
- };
- 
-@@ -422,12 +425,55 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int omap_mcpdm_suspend(struct snd_soc_dai *dai)
-+{
-+	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+
-+	if (dai->active) {
-+		omap_mcpdm_stop(mcpdm);
-+		omap_mcpdm_close_streams(mcpdm);
-+	}
-+
-+	mcpdm->pm_active_count = 0;
-+	while (pm_runtime_active(mcpdm->dev)) {
-+		pm_runtime_put_sync(mcpdm->dev);
-+		mcpdm->pm_active_count++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int omap_mcpdm_resume(struct snd_soc_dai *dai)
-+{
-+	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+
-+	if (mcpdm->pm_active_count) {
-+		while (mcpdm->pm_active_count--)
-+			pm_runtime_get_sync(mcpdm->dev);
-+
-+		if (dai->active) {
-+			omap_mcpdm_open_streams(mcpdm);
-+			omap_mcpdm_start(mcpdm);
-+		}
-+	}
-+
-+
-+	return 0;
-+}
-+#else
-+#define omap_mcpdm_suspend NULL
-+#define omap_mcpdm_resume NULL
-+#endif
-+
- #define OMAP_MCPDM_RATES	(SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000)
- #define OMAP_MCPDM_FORMATS	SNDRV_PCM_FMTBIT_S32_LE
- 
- static struct snd_soc_dai_driver omap_mcpdm_dai = {
- 	.probe = omap_mcpdm_probe,
- 	.remove = omap_mcpdm_remove,
-+	.suspend = omap_mcpdm_suspend,
-+	.resume = omap_mcpdm_resume,
- 	.probe_order = SND_SOC_COMP_ORDER_LATE,
- 	.remove_order = SND_SOC_COMP_ORDER_EARLY,
- 	.playback = {
+ 	/* throw a WARN if any entries in parent_names are NULL */
+ 	for (i = 0; i < core->num_parents; i++)
+ 		WARN(!core->parent_names[i],
 -- 
-2.8.2
+2.7.4
