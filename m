@@ -1,30 +1,119 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
- FSYS0} blocks clock
-To: Alim Akhtar <alim.akhtar@samsung.com>
-References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
- <570F4BE0.1010102@samsung.com> <5710E082.2050303@samsung.com>
- <5711180A.8030809@samsung.com> <57454054.1010001@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-arm-kernel@lists.infradead.org, thomas.ab@samsung.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
- tomasz.figa@gmail.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5745831E.2060004@samsung.com>
-Date: Wed, 25 May 2016 12:49:02 +0200
-MIME-version: 1.0
-In-reply-to: <57454054.1010001@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>
+Subject: [PATCH 02/11] drivers: clk: st: Add clock propagation for audio clocks
+Date: Wed, 18 May 2016 10:41:23 +0200
+Message-Id: <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alim,
+This patch allows fine tuning of the quads FS for audio clocks
+accuracy.
 
-On 05/25/2016 08:04 AM, Alim Akhtar wrote:
-> Looks like this patch is not available on your tree.
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
+ drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-Thanks for the reminder, I'll apply it next week, after 3.7-rc1 is released.
-
+diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+index b7ee5c7..15b33c7 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+@@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
+ Required properties:
+ - compatible : shall be:
+   "st,flexgen"
++  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on parent)
+ 
+ - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
+   outputs).
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 627267c..3ff51ec 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -15,6 +15,10 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
++struct clkgen_data {
++	unsigned long flags;
++};
++
+ struct flexgen {
+ 	struct clk_hw hw;
+ 
+@@ -259,6 +263,18 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+ 	return parents;
+ }
+ 
++static const struct clkgen_data clkgen_d0 = {
++	.flags = CLK_SET_RATE_PARENT,
++};
++
++static const struct of_device_id flexgen_of_match[] = {
++	{
++		.compatible = "st,stih407-clkgend0",
++		.data = &clkgen_d0,
++	},
++	{}
++};
++
+ static void __init st_of_flexgen_setup(struct device_node *np)
+ {
+ 	struct device_node *pnode;
+@@ -267,6 +283,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	const char **parents;
+ 	int num_parents, i;
+ 	spinlock_t *rlock = NULL;
++	const struct of_device_id *match;
++	struct clkgen_data *data = NULL;
+ 	unsigned long flex_flags = 0;
+ 	int ret;
+ 
+@@ -282,6 +300,12 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	if (!parents)
+ 		return;
+ 
++	match = of_match_node(flexgen_of_match, np);
++	if (match) {
++		data = (struct clkgen_data *)match->data;
++		flex_flags = data->flags;
++	}
++
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+ 		goto err;
 -- 
-Regards,
-Sylwester
+1.9.1
