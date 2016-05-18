@@ -1,311 +1,120 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 13/20] drm/bridge: Add RGB to VGA bridge support
-Date: Mon, 16 May 2016 14:47:13 +0200
-Message-Id: <1463402840-17062-14-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:42963 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751169AbcERH01 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2016 03:26:27 -0400
+Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc
+ card initialization"
+To: Douglas Anderson <dianders@chromium.org>,
+	Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org
+References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <573C18D8.5050508@rock-chips.com>
+Date: Wed, 18 May 2016 15:25:12 +0800
+MIME-Version: 1.0
+In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some boards have an entirely passive RGB to VGA bridge, based on either
-DACs or resistor ladders.
+On 2016-5-13 2:03, Douglas Anderson wrote:
+> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
+> before mmc card initialization").
+>
+> Though not totally obvious from the commit message nor from the source
+> code, that commit appears to be trying to reset the "_drv" MMC clocks to
+> 90 degrees (note that the "_sample" MMC clocks have a shift of 0 so are
+> not touched).
+>
+> The major problem here is that it doesn't properly reset things.  The
+> phase is a two bit field and the commit only touches one of the two
+> bits.  Thus the commit had the following affect:
+> - phase   0  => phase  90
+> - phase  90  => phase  90
+> - phase 180  => phase 270
+> - phase 270  => phase 270
+>
+> Things get even weirder if you happen to have a bootloader that was
+> actually using delay elements (should be no reason to, but you never
+> know), since those are additional bits that weren't touched by the
+> original patch.
+>
+> This is unlikely to be what we actually want.  Checking on rk3288-veyron
+> devices, I can see that the bootloader leaves these clocks as:
+> - emmc:  phase 180
+> - sdmmc: phase 90
+> - sdio0: phase 90
+>
+> Thus on rk3288-veyron devices the commit we're reverting had the effect
+> of changing the eMMC clock to phase 270.  This probably explains the
+> scattered reports I've heard of eMMC devices not working on some veyron
+> devices when using the upstream kernel.
+>
+> The original commit was presumably made because previously the kernel
+> didn't touch the "_drv" phase at all and relied on whatever value was
+> there when the kernel started.  If someone was using a bootloader that
+> touched the "_drv" phase then, indeed, we should have code in the kernel
+> to fix that.  ...and also, to get ideal timings, we should also have the
+> kernel change the phase depending on the speed mode.  In fact, that's
+> the subject of a recent patch I posted at
+> <https://patchwork.kernel.org/patch/9075141/>.
+>
+> Ideally, we should take both the patch posted to dw_mmc and this
+> revert.  Since those will likely go through different trees, here I
+> describe behavior with the combos:
+>
+> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
+>     + other cases; might break someone with a strange bootloader that
+>     sets the phase to 0 or one that uses delay elements (pretty
+>     unpredicable what would happen in that case).
+> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
+>     totally override the broken patch and fix everything.
+> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
+>     any defaults from the clock code doesn't mattery.
+>
+> Fixes: 7a03fe6f48f3 ("clk: rockchip: reset init state before mmc card initialization")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Those might or might not have an i2c bus routed to the VGA connector in
-order to access the screen EDIDs.
+Thanks for this fix.
 
-Add a bridge that doesn't do anything but expose the modes available on the
-screen, either based on the EDIDs if available, or based on the XGA
-standards.
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- .../bindings/display/bridge/dumb-vga.txt           |  40 +++++
- drivers/gpu/drm/bridge/Kconfig                     |   6 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/dumb-vga.c                  | 186 +++++++++++++++++++++
- 4 files changed, 233 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
- create mode 100644 drivers/gpu/drm/bridge/dumb-vga.c
+> ---
+>   drivers/clk/rockchip/clk-mmc-phase.c | 11 -----------
+>   1 file changed, 11 deletions(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+> index bc856f21f6b2..5b18265c2306 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -41,8 +41,6 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+>   #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>   #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>   #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+> -#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
+> -#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+>
+>   #define PSECS_PER_SEC 1000000000000LL
+>
+> @@ -162,15 +160,6 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>   	mmc_clock->reg = reg;
+>   	mmc_clock->shift = shift;
+>
+> -	/*
+> -	 * Assert init_state to soft reset the CLKGEN
+> -	 * for mmc tuning phase and degree
+> -	 */
+> -	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
+> -		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
+> -				     ROCKCHIP_MMC_INIT_STATE_RESET,
+> -				     mmc_clock->shift), mmc_clock->reg);
+> -
+>   	clk = clk_register(NULL, &mmc_clock->hw);
+>   	if (IS_ERR(clk))
+>   		kfree(mmc_clock);
+>
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/dumb-vga.txt b/Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
-new file mode 100644
-index 000000000000..757f04de97f3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/dumb-vga.txt
-@@ -0,0 +1,40 @@
-+Passive RGB to VGA bridge
-+-------------------------
-+
-+This binding is aimed for entirely passive RGB to VGA bridges that do not
-+require any configuration.
-+
-+Required properties:
-+
-+- compatible: Should be "dumb-vga-bridge"
-+
-+Optional properties:
-+
-+- ddc-i2c-bus: phandle to the i2c bus used to communicate with the monitor
-+
-+Required nodes:
-+
-+This device has one video port. Its connection is modelled using the OF
-+graph bindings specified in Documentation/devicetree/bindings/graph.txt. This
-+connection is meant to be the RGB input bus.
-+
-+
-+Example
-+-------
-+
-+bridge {
-+        compatible = "dumb-vga-bridge";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        port@0 {
-+                reg = <0>;
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                vga_input: endpoint@0 {
-+                        reg = <0>;
-+                        remote-endpoint = <&tcon0_out_vga>;
-+               };
-+        };
-+};
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 8f7423f18da5..cf279956cbec 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -17,6 +17,12 @@ config DRM_ANALOGIX_ANX78XX
- 	  the HDMI output of an application processor to MyDP
- 	  or DisplayPort.
- 
-+config DRM_DUMB_VGA
-+	tristate "Dumb RGB to VGA Bridge support"
-+	select DRM_KMS_HELPER
-+	help
-+	  Support for passive RGB to VGA bridges
-+
- config DRM_DW_HDMI
- 	tristate
- 	select DRM_KMS_HELPER
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 96b13b30e6ab..63f21120e8f8 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -1,6 +1,7 @@
- ccflags-y := -Iinclude/drm
- 
- obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
-+obj-$(CONFIG_DRM_DUMB_VGA) += dumb-vga.o
- obj-$(CONFIG_DRM_DW_HDMI) += dw-hdmi.o
- obj-$(CONFIG_DRM_DW_HDMI_AHB_AUDIO) += dw-hdmi-ahb-audio.o
- obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
-diff --git a/drivers/gpu/drm/bridge/dumb-vga.c b/drivers/gpu/drm/bridge/dumb-vga.c
-new file mode 100644
-index 000000000000..2864fa535bf8
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/dumb-vga.c
-@@ -0,0 +1,186 @@
-+
-+#include <linux/module.h>
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_crtc_helper.h>
-+
-+struct dumb_vga {
-+	struct drm_bridge	bridge;
-+	struct drm_connector	connector;
-+
-+	struct i2c_adapter	*ddc;
-+};
-+
-+static inline struct dumb_vga *
-+drm_bridge_to_dumb_vga(struct drm_bridge *bridge)
-+{
-+	return container_of(bridge, struct dumb_vga, bridge);
-+}
-+
-+static inline struct dumb_vga *
-+drm_connector_to_dumb_vga(struct drm_connector *connector)
-+{
-+	return container_of(connector, struct dumb_vga, connector);
-+}
-+
-+static int dumb_vga_get_modes(struct drm_connector *connector)
-+{
-+	struct dumb_vga *vga = drm_connector_to_dumb_vga(connector);
-+	struct edid *edid;
-+	int ret;
-+
-+	if (!vga->ddc)
-+		goto fallback;
-+
-+	edid = drm_get_edid(connector, vga->ddc);
-+	if (!edid) {
-+		DRM_INFO("EDID readout failed, falling back to standard modes\n");
-+		goto fallback;
-+	}
-+
-+	drm_mode_connector_update_edid_property(connector, edid);
-+	return drm_add_edid_modes(connector, edid);
-+
-+fallback:
-+	/*
-+	 * In case we cannot retrieve the EDIDs (broken or missing i2c
-+	 * bus), fallback on the XGA standards
-+	 */
-+	ret = drm_add_modes_noedid(connector, 1920, 1200);
-+
-+	/* And prefer a mode pretty much anyone can handle */
-+	drm_set_preferred_mode(connector, 1024, 768);
-+
-+	return ret;
-+}
-+
-+static struct drm_encoder *
-+dumb_vga_best_encoder(struct drm_connector *connector)
-+{
-+	struct dumb_vga *vga = drm_connector_to_dumb_vga(connector);
-+
-+	return vga->bridge.encoder;
-+}
-+
-+static struct drm_connector_helper_funcs dumb_vga_con_helper_funcs = {
-+	.get_modes	= dumb_vga_get_modes,
-+	.best_encoder	= dumb_vga_best_encoder,
-+};
-+
-+static enum drm_connector_status
-+dumb_vga_connector_detect(struct drm_connector *connector, bool force)
-+{
-+	return connector_status_connected;
-+}
-+
-+static void
-+dumb_vga_connector_destroy(struct drm_connector *connector)
-+{
-+	drm_connector_cleanup(connector);
-+}
-+
-+static struct drm_connector_funcs dumb_vga_con_funcs = {
-+	.dpms			= drm_atomic_helper_connector_dpms,
-+	.detect			= dumb_vga_connector_detect,
-+	.fill_modes		= drm_helper_probe_single_connector_modes,
-+	.destroy		= dumb_vga_connector_destroy,
-+	.reset			= drm_atomic_helper_connector_reset,
-+	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
-+};
-+
-+static int dumb_vga_attach(struct drm_bridge *bridge)
-+{
-+	struct dumb_vga *vga = drm_bridge_to_dumb_vga(bridge);
-+	int ret;
-+
-+	if (!bridge->encoder) {
-+		DRM_ERROR("Missing encoder\n");
-+		return -ENODEV;
-+	}
-+
-+	drm_connector_helper_add(&vga->connector,
-+				 &dumb_vga_con_helper_funcs);
-+	ret = drm_connector_init(bridge->dev, &vga->connector,
-+				 &dumb_vga_con_funcs, DRM_MODE_CONNECTOR_VGA);
-+	if (ret) {
-+		DRM_ERROR("Failed to initialize connector\n");
-+		return ret;
-+	}
-+
-+	drm_mode_connector_attach_encoder(&vga->connector,
-+					  bridge->encoder);
-+
-+	return 0;
-+}
-+
-+static void dumb_vga_nop(struct drm_bridge *bridge) {};
-+
-+static struct drm_bridge_funcs dumb_vga_bridge_funcs = {
-+	.attach		= dumb_vga_attach,
-+	.enable		= dumb_vga_nop,
-+	.disable	= dumb_vga_nop,
-+	.pre_enable	= dumb_vga_nop,
-+	.post_disable	= dumb_vga_nop,
-+};
-+
-+static int dumb_vga_probe(struct platform_device *pdev)
-+{
-+	struct dumb_vga *vga;
-+	struct device_node *ddc;
-+
-+	vga = devm_kzalloc(&pdev->dev, sizeof(*vga), GFP_KERNEL);
-+	if (!vga)
-+		return -ENOMEM;
-+	platform_set_drvdata(pdev, vga);
-+
-+	ddc = of_parse_phandle(pdev->dev.of_node, "ddc-i2c-bus", 0);
-+	if (ddc) {
-+		vga->ddc = of_find_i2c_adapter_by_node(ddc);
-+		of_node_put(ddc);
-+
-+		if (!vga->ddc) {
-+			dev_err(&pdev->dev, "Couldn't retrieve i2c bus\n");
-+			return -EPROBE_DEFER;
-+		}
-+	} else {
-+		dev_info(&pdev->dev,
-+			 "No i2c bus specified... Disabling EDID readout\n");
-+	}
-+
-+	vga->bridge.funcs = &dumb_vga_bridge_funcs;
-+	vga->bridge.of_node = pdev->dev.of_node;
-+
-+	return drm_bridge_add(&vga->bridge);
-+}
-+
-+static int dumb_vga_remove(struct platform_device *pdev)
-+{
-+	struct dumb_vga *vga = platform_get_drvdata(pdev);
-+
-+	drm_bridge_remove(&vga->bridge);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id dumb_vga_match[] = {
-+	{ .compatible = "dumb-vga-bridge" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, dumb_vga_match);
-+
-+struct platform_driver dumb_vga_driver = {
-+	.probe	= dumb_vga_probe,
-+	.remove	= dumb_vga_remove,
-+	.driver		= {
-+		.name		= "dumb-vga-bridge",
-+		.of_match_table	= dumb_vga_match,
-+	},
-+};
-+module_platform_driver(dumb_vga_driver);
-+
-+MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
-+MODULE_DESCRIPTION("Dumb RGB to VGA bridge driver");
-+MODULE_LICENSE("GPL");
--- 
-2.8.2
