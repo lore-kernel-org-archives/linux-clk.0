@@ -1,92 +1,38 @@
-Return-Path: <hramrach@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:45237 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751386AbcERXbq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 18 May 2016 19:31:46 -0400
+Date: Wed, 18 May 2016 18:31:41 -0500
+From: Rob Herring <robh@kernel.org>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, tony@atomide.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	t-kristo@ti.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org
+Subject: Re: [PATCH 14/14] ASoC: omap-mcpdm: Add support for pdmclk clock
+ handling
+Message-ID: <20160518233141.GA10395@rob-hp-laptop>
+References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+ <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-From: Michal Suchanek <hramrach@gmail.com>
-Date: Sun, 22 May 2016 16:18:20 +0200
-Message-ID: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
-Subject: sunxi spi clock problem
-To: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Wed, May 18, 2016 at 04:46:36PM +0300, Peter Ujfalusi wrote:
+> McPDM module receives it's functional clock from external source. This
+> clock is the pdmclk provided by the twl6040 audio IC. If the clock is not
+> available all register accesses to McPDM fails and the module is not
+> operational.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+>  Documentation/devicetree/bindings/sound/omap-mcpdm.txt | 10 ++++++++++
+>  sound/soc/omap/omap-mcpdm.c                            | 17 +++++++++++++++++
+>  2 files changed, 27 insertions(+)
 
-I tried running a spidev test program on linux 4.6 and I uncovered a
-problem with the sunxi clk framework.
-
-Basically the system would lock up after running the test program.
-
-Digging deeper I found that it locks up with commit
-[47284e3e0f3c427c93f8583549b6c938e8a18015] spi: sun4i: allow transfers
-to set transmission speed
-
-This exposes a problem with the test program. I try to set the SPI
-sped to 1MHz but at other place the speed is multiplied by 1000 to
-save typing zeros so the actual requested speed is 1GHz. This commit
-probably allows that request to propagate leading to the observed
-system lockup.
-
-Given the parents OSC24M, pll6 and pll5 one of pll6 and pll5 is
-probably set up at 2GHz (or both in turn because due to some rounding
-neither goes fully up to 2GHz resulting in 864000000 SPI clock). Then
-the system locks up.
-
-I can limit the speed in the SPI driver which is rated at 100MHz in
-SoC manual (giving 200MHz pll) but the clk driver should probably
-limit the clock setting to sane speeds itself.
-
-I am not familiar with the sunxi-clk code and it has unfortunately no
-debug prints which would show what is programmed to what speed.
-
-Thanks
-
-Michal
-
-root@a10s:~/spidisp# ./spitest -r 50 -d -s 1000000 /dev/spidev2.0
-Debug mode.
-spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
-spidev spi2.0: spi mode 0
-spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
-spidev spi2.0: msb first
-spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
-spidev spi2.0: 0 bits per word
-spidev spi2.0: setup mode 0, 8 bits/w, 1000000000 Hz max --> 0
-/dev/spidev2.0: spi mode 0x0, 8 bits per word, 1000000000 Hz maxspidev
-spi2.0: mclk spi2 (24000000)
-
-Sending 00
-spidev spi2.0: mclk spi2 setting rate 2000000000Hz
-spidev spi2.0: mclk spi2 (864000000)
-spidev spi2.0: clkdiv 0 CDR2 0 regval 4096
-spi_master spi2: spi2.0: timeout transferring 1 bytes@1000000000Hz for
-100(100)ms
-spidev spi2.0: SPI transfer failed: -110
-spi_master spi2: failed to transfer one message from queue
-xfer: Connection timed out
-buffer size: 1, result -110
-buffer size: 1, result -110, Connection timed out
-Sending
-maximum buffer size: 0
-Using gpio 50.
-Writing gpio export 50 to /sys/class/gpio/export.
-Reading gpio direction from /sys/class/gpio/gpio50/direction: in
-
-Reading gpio inversion from /sys/class/gpio/gpio50/active_low: 0
-
-Writing gpio direction in to /sys/class/gpio/gpio50/direction.
-Reading gpio value from /sys/class/gpio/gpio50/value: 1
-
-Writing gpio direction out to /sys/class/gpio/gpio50/direction.
-Writing gpio value 0 to /sys/class/gpio/gpio50/value.
-Writing gpio value 1 to /sys/class/gpio/gpio50/value.
-Writing gpio value 0 to /sys/class/gpio/gpio50/value.
-Writing gpio value 1 to /sys/class/gpio/gpio50/value.
-Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-spidev spi2.0: mclk spi2 (864000000)
-spidev spi2.0: mclk spi2 setting rate 2000000000Hz
-spidev spi2.0: mclk spi2 (864000000)
-spidev spi2.0: clkdiv 0 CDR2 0 regval 4096
+Acked-by: Rob Herring <robh@kernel.org>
