@@ -1,52 +1,72 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	zhengxing@rock-chips.com,
-	zhangqing@rock-chips.com,
-	tomeu.vizoso@collabora.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [RFC PATCH 0/3] clk: attempt to keep requested rate on parent changes
-Date: Mon,  2 May 2016 18:36:19 +0200
-Message-Id: <1462206982-10444-1-git-send-email-heiko@sntech.de>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH 05/14] mfd: twl6040: Register child device for twl6040-pdmclk
+Date: Wed, 18 May 2016 16:46:27 +0300
+Message-ID: <1463579196-5484-6-git-send-email-peter.ujfalusi@ti.com>
+In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-I remember reading about people discussing that problem in the past, but
-haven't been able to find another approach to it yet [or I'm just blind
-as happens to often].
+The McPDM in OMAP4/5 is using the pdmclk from twl6040 as functional clock.
+The twl6040-pdmclk driver provides a clock which can be used to make sure
+that the pdmclk is active when the McPDM is in use.
 
-Our problem is the following clock structure:
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+ Documentation/devicetree/bindings/mfd/twl6040.txt | 1 +
+ drivers/mfd/twl6040.c                             | 5 +++++
+ include/linux/mfd/twl6040.h                       | 2 +-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-[anotherPLL]
-    |
-    ------ [div] ----- dclk_vop
-    |
-[   vpll   ] --------- hdmi_phy
-
-
-We need to set the vpll dynamically but still want to retain
-
-The other option that comes to mind, would be to have a clock-notifier,
-in the drm driver, but calling clk_set_rate from their looks like it
-shouldn't work due to the prepare mutex already being held.
-
-
-The whole thing is labeled RFC because while it works for us and solves
-the problem, I'm not sure if I'm overlooking some important aspect or
-am interferring with some other planned approach for that issue.
-
-
-Heiko Stuebner (3):
-  clk: fix inconsistent use of req_rate
-  clk: adjust clocks to their requested rate after parent changes
-  clk: rockchip: make rk3399 vop dclks keep their rate on parent rate changes
-
- drivers/clk/clk.c                 | 37 +++++++++++++++++++++++++++++--------
- drivers/clk/rockchip/clk-rk3399.c |  4 ++--
- include/linux/clk-provider.h      |  1 +
- 3 files changed, 32 insertions(+), 10 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
+index e6afdfa3543d..9a98ee7c323d 100644
+--- a/Documentation/devicetree/bindings/mfd/twl6040.txt
++++ b/Documentation/devicetree/bindings/mfd/twl6040.txt
+@@ -12,6 +12,7 @@ Required properties:
+ - interrupt-parent: The parent interrupt controller
+ - gpio-controller:
+ - #gpio-cells = <1>: twl6040 provides GPO lines.
++- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
+ - twl6040,audpwron-gpio: Power on GPIO line for the twl6040
+ 
+ - vio-supply: Regulator for the twl6040 VIO supply
+diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
+index 2596546553aa..873628a1bd79 100644
+--- a/drivers/mfd/twl6040.c
++++ b/drivers/mfd/twl6040.c
+@@ -782,6 +782,11 @@ static int twl6040_probe(struct i2c_client *client,
+ 	cell->name = "twl6040-gpo";
+ 	children++;
+ 
++	/* PDM clock support  */
++	cell = &twl6040->cells[children];
++	cell->name = "twl6040-pdmclk";
++	children++;
++
+ 	/* The chip is powered down so mark regmap to cache only and dirty */
+ 	regcache_cache_only(twl6040->regmap, true);
+ 	regcache_mark_dirty(twl6040->regmap);
+diff --git a/include/linux/mfd/twl6040.h b/include/linux/mfd/twl6040.h
+index 8015db974157..ef0bb07c3f3d 100644
+--- a/include/linux/mfd/twl6040.h
++++ b/include/linux/mfd/twl6040.h
+@@ -168,7 +168,7 @@
+ #define TWL6040_VIBROCDET		0x20
+ #define TWL6040_TSHUTDET                0x40
+ 
+-#define TWL6040_CELLS			3
++#define TWL6040_CELLS			4
+ 
+ #define TWL6040_REV_ES1_0		0x00
+ #define TWL6040_REV_ES1_1		0x01 /* Rev ES1.1 and ES1.2 */
 -- 
-2.8.0.rc3
+2.8.2
