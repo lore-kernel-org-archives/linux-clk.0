@@ -7,130 +7,52 @@ CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <alsa-devel@alsa-project.org>
-Subject: [PATCH v1 14/14] ASoC: omap-mcpdm: Add support for pdmclk clock handling
-Date: Mon, 30 May 2016 11:55:22 +0300
-Message-ID: <20160530085522.30398-15-peter.ujfalusi@ti.com>
-In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+Subject: [PATCH 12/14] ASoC: omap-mcpdm: Move the WD enable write inside omap_mcpdm_open_streams()
+Date: Wed, 18 May 2016 16:46:34 +0300
+Message-ID: <1463579196-5484-13-git-send-email-peter.ujfalusi@ti.com>
+In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-McPDM module receives it's functional clock from external source. This
-clock is the pdmclk provided by the twl6040 audio IC. If the clock is not
-available all register accesses to McPDM fails and the module is not
-operational.
+The DS4_WD_EN bit is only touched before calling omap_mcpdm_open_streams().
+Move it inside of that function for simplicity.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/sound/omap-mcpdm.txt       | 10 ++++++++
- sound/soc/omap/omap-mcpdm.c                        | 27 ++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+ sound/soc/omap/omap-mcpdm.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/omap-mcpdm.txt b/Documentation/devicetree/bindings/sound/omap-mcpdm.txt
-index 0741dff048dd..6f6c2f8e908d 100644
---- a/Documentation/devicetree/bindings/sound/omap-mcpdm.txt
-+++ b/Documentation/devicetree/bindings/sound/omap-mcpdm.txt
-@@ -8,6 +8,8 @@ Required properties:
- - interrupts: Interrupt number for McPDM
- - interrupt-parent: The parent interrupt controller
- - ti,hwmods: Name of the hwmod associated to the McPDM
-+- clocks:  phandle for the pdmclk provider, likely <&twl6040>
-+- clock-names: Must be "pdmclk"
- 
- Example:
- 
-@@ -19,3 +21,11 @@ mcpdm: mcpdm@40132000 {
- 	interrupt-parent = <&gic>;
- 	ti,hwmods = "mcpdm";
- };
-+
-+In board DTS file the pdmclk needs to be added:
-+
-+&mcpdm {
-+	clocks = <&twl6040>;
-+	clock-names = "pdmclk";
-+	status = "okay";
-+};
 diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 74d6e6fdcfd0..2d2119e7d094 100644
+index b837265ac3e9..11bd07cdce22 100644
 --- a/sound/soc/omap/omap-mcpdm.c
 +++ b/sound/soc/omap/omap-mcpdm.c
-@@ -31,6 +31,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/clk.h>
- #include <linux/slab.h>
- #include <linux/pm_runtime.h>
- #include <linux/of_device.h>
-@@ -54,6 +55,7 @@ struct omap_mcpdm {
- 	unsigned long phys_base;
- 	void __iomem *io_base;
- 	int irq;
-+	struct clk *pdmclk;
- 
- 	struct mutex mutex;
- 
-@@ -388,6 +390,12 @@ static int omap_mcpdm_probe(struct snd_soc_dai *dai)
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
- 	int ret;
- 
-+	ret = clk_prepare_enable(mcpdm->pdmclk);
-+	if (!ret) {
-+		dev_err(mcpdm->dev, "Failed to enable PDMCLK: %d\n", ret);
-+		return ret;
-+	}
-+
- 	pm_runtime_enable(mcpdm->dev);
- 
- 	/* Disable lines while request is ongoing */
-@@ -422,6 +430,7 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
- 
- 	pm_runtime_disable(mcpdm->dev);
- 
-+	clk_disable_unprepare(mcpdm->pdmclk);
- 	return 0;
- }
- 
-@@ -441,12 +450,21 @@ static int omap_mcpdm_suspend(struct snd_soc_dai *dai)
- 		mcpdm->pm_active_count++;
- 	}
- 
-+	clk_disable_unprepare(mcpdm->pdmclk);
-+
- 	return 0;
- }
- 
- static int omap_mcpdm_resume(struct snd_soc_dai *dai)
+@@ -173,6 +173,10 @@ static inline int omap_mcpdm_active(struct omap_mcpdm *mcpdm)
+  */
+ static void omap_mcpdm_open_streams(struct omap_mcpdm *mcpdm)
  {
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+	int ret;
++	u32 ctrl = omap_mcpdm_read(mcpdm, MCPDM_REG_CTRL);
 +
-+	ret = clk_prepare_enable(mcpdm->pdmclk);
-+	if (!ret) {
-+		dev_err(mcpdm->dev, "Failed to enable PDMCLK: %d\n", ret);
-+		return ret;
-+	}
- 
- 	if (mcpdm->pm_active_count) {
- 		while (mcpdm->pm_active_count--)
-@@ -541,6 +559,15 @@ static int asoc_mcpdm_probe(struct platform_device *pdev)
- 
- 	mcpdm->dev = &pdev->dev;
- 
-+	mcpdm->pdmclk = devm_clk_get(&pdev->dev, "pdmclk");
-+	if (IS_ERR(mcpdm->pdmclk)) {
-+		if (PTR_ERR(mcpdm->pdmclk) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		dev_warn(&pdev->dev, "Error getting pdmclk (%ld)!\n",
-+			 PTR_ERR(mcpdm->pdmclk));
-+		mcpdm->pdmclk = NULL;
-+	}
++	omap_mcpdm_write(mcpdm, MCPDM_REG_CTRL, ctrl | MCPDM_WD_EN);
 +
- 	ret =  devm_snd_soc_register_component(&pdev->dev,
- 					       &omap_mcpdm_component,
- 					       &omap_mcpdm_dai, 1);
+ 	omap_mcpdm_write(mcpdm, MCPDM_REG_IRQENABLE_SET,
+ 			MCPDM_DN_IRQ_EMPTY | MCPDM_DN_IRQ_FULL |
+ 			MCPDM_UP_IRQ_EMPTY | MCPDM_UP_IRQ_FULL);
+@@ -258,12 +262,9 @@ static int omap_mcpdm_dai_startup(struct snd_pcm_substream *substream,
+ 
+ 	mutex_lock(&mcpdm->mutex);
+ 
+-	if (!dai->active) {
+-		u32 ctrl = omap_mcpdm_read(mcpdm, MCPDM_REG_CTRL);
+-
+-		omap_mcpdm_write(mcpdm, MCPDM_REG_CTRL, ctrl | MCPDM_WD_EN);
++	if (!dai->active)
+ 		omap_mcpdm_open_streams(mcpdm);
+-	}
++
+ 	mutex_unlock(&mcpdm->mutex);
+ 
+ 	return 0;
 -- 
-2.8.3
+2.8.2
