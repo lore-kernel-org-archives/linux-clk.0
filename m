@@ -1,52 +1,90 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 06/27] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
-Date: Tue, 10 May 2016 22:09:09 +0200
-Message-Id: <1462910970-1812-7-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>
+Subject: [PATCH 11/11] ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+Date: Wed, 18 May 2016 10:41:32 +0200
+Message-Id: <1463560892-7209-12-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-All "fin_pll" clock users were switched to the new one, provided by
-Exynos5410 clock driver. Remove old DT node.
+It is necessary to properly configure these clocks in order
+to address 720p and 1080p HDMI resolution.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 -------
- 1 file changed, 7 deletions(-)
+ arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index d7d658deeff4..377a679b454b 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -24,13 +24,6 @@
- 		bootargs = "console=ttySAC2,115200";
- 	};
+diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
+index 18ed1ad..7eec729 100644
+--- a/arch/arm/boot/dts/stih410.dtsi
++++ b/arch/arm/boot/dts/stih410.dtsi
+@@ -103,7 +103,10 @@
+ 			#size-cells = <1>;
  
--	fin_pll: xxti {
--		compatible = "fixed-clock";
--		clock-frequency = <24000000>;
--		clock-output-names = "fin_pll";
--		#clock-cells = <0>;
--	};
--
- 	fixed-rate-clocks {
- 		oscclk {
- 			compatible = "samsung,exynos5420-oscclk";
+ 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
+-					  <&clk_s_d2_quadfs 0>,
++					  <&clk_s_d2_quadfs 1>,
++					  <&clk_s_c0_pll1 0>,
++					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
++					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
+@@ -113,14 +116,21 @@
+ 
+ 			assigned-clock-parents = <0>,
+ 						 <0>,
++						 <0>,
++						 <&clk_s_c0_pll1 0>,
++						 <&clk_s_c0_pll1 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+-						 <&clk_s_d2_quadfs 0>,
++						 <&clk_s_d2_quadfs 1>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>;
+ 
+-			assigned-clock-rates = <297000000>, <297000000>;
++			assigned-clock-rates = <297000000>,
++					       <108000000>,
++					       <0>,
++					       <400000000>,
++					       <400000000>;
+ 
+ 			ranges;
+ 
 -- 
-2.5.0
+1.9.1
