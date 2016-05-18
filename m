@@ -1,53 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:8920 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751176AbcEJE7a (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 00:59:30 -0400
-Subject: [PATCH 2/2] cpufreq: rcar: Add support for R8A7796 SoC
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <5731664D.1030909@rvc.renesas.com> <573169CD.8050607@rvc.renesas.com>
- <57316A4E.7040100@rvc.renesas.com>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <57316AB0.5040004@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:59:28 +0700
-MIME-Version: 1.0
-In-Reply-To: <57316A4E.7040100@rvc.renesas.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>
+Subject: [PATCH 05/11] ARM: DT: STiH410: Add compatibility string on clkgend0 for audio clocks
+Date: Wed, 18 May 2016 10:41:26 +0200
+Message-Id: <1463560892-7209-6-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH410
+
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
-  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
-  1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c 
-b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 32f6dda..7d038fd 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -54,6 +54,7 @@ static const struct of_device_id machines[] 
-__initconst = {
-  	{ .compatible = "renesas,r8a7793", },
-  	{ .compatible = "renesas,r8a7794", },
-  	{ .compatible = "renesas,r8a7795", },
-+	{ .compatible = "renesas,r8a7796", },
-  	{ .compatible = "renesas,sh73a0", },
-
-  	{ .compatible = "rockchip,rk2928", },
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index d1f2aca..c265e54 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -226,7 +226,7 @@
+ 
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,stih407-clkgend0", "st,flexgen";
+ 
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
 -- 
 1.9.1
-
