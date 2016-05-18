@@ -1,47 +1,37 @@
-Return-Path: <Purna.Mandal@microchip.com>
-From: Purna Chandra Mandal <purna.mandal@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Purna
- Chandra Mandal <purna.mandal@microchip.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH 01/11] clk: microchip: use readl_poll_timeout() in pbclk_set_rate().
-Date: Tue, 17 May 2016 10:35:50 +0530
-Message-ID: <1463461560-9629-1-git-send-email-purna.mandal@microchip.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:44056 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753324AbcEROit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2016 10:38:49 -0400
+Subject: Re: [PATCH omap v2 0/6] Fix OMAP uses of RCU from idle loop
+To: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20160516184844.GA20144@linux.vnet.ibm.com>
+Cc: tony@atomide.com, mingo@kernel.org, rostedt@goodmis.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <573C7E6F.90001@roeck-us.net>
+Date: Wed, 18 May 2016 07:38:39 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: purna.mandal@microchip.com
+In-Reply-To: <20160516184844.GA20144@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-pbclk_set_rate() is using readl_poll_timeout_atomic() even
-though spinlock is released. Fix it by replacing with
-readl_poll_timeout().
+On 05/16/2016 11:48 AM, Paul E. McKenney wrote:
+> Hello!
+>
+> The following series fixes a number of uses of RCU from the idle loop.
+> These are all due to tracing, so the fix is simply to append _rcuidle
+> to the event-tracing call.
+>
+> Changes since v1: Fix commit-log subjects and add maintainers on CC.
+>
 
-Signed-off-by: Purna Chandra Mandal <purna.mandal@microchip.com>
----
-Note: Please pull this complete series through the MIPS tree.
+For the series, on top of mainline (which now experiences the problem fixed
+by this series):
 
----
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
- drivers/clk/microchip/clk-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Guenter
 
-diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
-index ca85cea..c3b3014 100644
---- a/drivers/clk/microchip/clk-core.c
-+++ b/drivers/clk/microchip/clk-core.c
-@@ -199,9 +199,9 @@ static int pbclk_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	spin_unlock_irqrestore(&pb->core->reg_lock, flags);
- 
--	/* wait again, for pbdivready */
--	err = readl_poll_timeout_atomic(pb->ctrl_reg, v, v & PB_DIV_READY,
--					1, LOCK_TIMEOUT_US);
-+	/* wait again for DIV_READY */
-+	err = readl_poll_timeout(pb->ctrl_reg, v, v & PB_DIV_READY,
-+				 1, LOCK_TIMEOUT_US);
- 	if (err)
- 		return err;
- 
--- 
-1.8.3.1
