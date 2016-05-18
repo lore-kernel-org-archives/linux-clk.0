@@ -1,38 +1,51 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH 0/5] clk: hisilicon: Fix some problems of clk-hi3519
-Date: Tue, 10 May 2016 17:19:08 +0800
-Message-ID: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH 10/14] ARM: dts: omap4-duovero: Add pdmclk binding for audio
+Date: Wed, 18 May 2016 16:46:32 +0300
+Message-ID: <1463579196-5484-11-git-send-email-peter.ujfalusi@ti.com>
+In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch is base on branch clk-hi3519 in clk tree. It mainly fixes the
-following issues:
-1. Add driver remove path.
-2. Fix the ordering issue about clock provider being published.
-3. Add error checking upon registering clocks. 
+The twl6040 codec is generating the pdmclk, which is used by the McPDM as
+functional clock.
 
-Jiancheng Xue (5):
-  reset: hisilicon: change the definition of hisi_reset_init
-  clk: hisilicon: add hisi_clk_alloc function.
-  clk: hisilicon: add error processing for hisi_clk_register_* functions
-  clk: hisilicon: add hisi_clk_unregister_* functions
-  clk: hisilicon: hi3519: add driver remove path and fix some issues
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+ arch/arm/boot/dts/omap4-duovero.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
- drivers/clk/hisilicon/clk.c        |  89 ++++++++++++++++++++++++----
- drivers/clk/hisilicon/clk.h        |  34 +++++++++--
- drivers/clk/hisilicon/reset.c      |  19 +++---
- drivers/clk/hisilicon/reset.h      |   5 +-
- 5 files changed, 220 insertions(+), 43 deletions(-)
-
+diff --git a/arch/arm/boot/dts/omap4-duovero.dtsi b/arch/arm/boot/dts/omap4-duovero.dtsi
+index f2a94fa62552..a90b582e4c3f 100644
+--- a/arch/arm/boot/dts/omap4-duovero.dtsi
++++ b/arch/arm/boot/dts/omap4-duovero.dtsi
+@@ -177,6 +177,7 @@
+ 
+ 	twl6040: twl@4b {
+ 		compatible = "ti,twl6040";
++		#clock-cells = <0>;
+ 		reg = <0x4b>;
+ 		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;		/* IRQ_SYS_2N cascaded to gic */
+ 		ti,audpwron-gpio = <&gpio6 0 GPIO_ACTIVE_HIGH>;		/* gpio_160 */
+@@ -207,6 +208,10 @@
+ &mcpdm {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mcpdm_pins>;
++
++	clocks = <&twl6040>;
++	clock-names = "pdmclk";
++
+ 	status = "okay";
+ };
+ 
 -- 
-1.9.1
+2.8.2
