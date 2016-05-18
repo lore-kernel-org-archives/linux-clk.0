@@ -1,36 +1,28 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 16:02:14 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v7 8/9] clk: mediatek: Add config options for MT2701
- subsystem clocks
-Message-ID: <20160506230214.GH3492@codeaurora.org>
-References: <1460621514-65191-1-git-send-email-jamesjj.liao@mediatek.com>
- <1460621514-65191-9-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <gnurou@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1460621514-65191-9-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1463432860-906-1-git-send-email-rklein@nvidia.com>
+References: <1463432860-906-1-git-send-email-rklein@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Date: Wed, 18 May 2016 13:02:21 +0900
+Message-ID: <CAAVeFuLmjZ3vN0Q-7T=kEw_d4P1uS7mBmirpttXkPC+isKELYg@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: tegra: Initialize UTMIPLL when enabling PLLU
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Michael Turguette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/14, James Liao wrote:
-> MT2701 subsystem clocks are optional and should be enabled only if
-> their subsystem drivers are ready to control these clocks.
-> 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
+On Tue, May 17, 2016 at 6:07 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
 
-Why is this patch split off from the patch that introduces the
-file?
+...
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> generations. For instance, in clk-tegra124.c, it used to have:
+>
+> when the correct shift to use is present in the new version:
+>
+> which matches the Tegra124 TRM register definition.
+
+Seems like the examples are missing?
