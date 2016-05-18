@@ -1,119 +1,47 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v8 02/10] clk: mediatek: remove __init from clk registration functions
-Date: Tue, 17 May 2016 13:05:03 +0800
-Message-ID: <1463461511-25019-3-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from e19.ny.us.ibm.com ([129.33.205.209]:33183 "EHLO
+	e19.ny.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752072AbcERS4j (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2016 14:56:39 -0400
+Received: from localhost
+	by e19.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-clk@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Wed, 18 May 2016 14:56:38 -0400
+Date: Wed, 18 May 2016 11:56:38 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, tony@atomide.com, mingo@kernel.org,
+	rostedt@goodmis.org
+Subject: Re: [PATCH omap v2 0/6] Fix OMAP uses of RCU from idle loop
+Message-ID: <20160518185638.GD3528@linux.vnet.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20160516184844.GA20144@linux.vnet.ibm.com>
+ <573C7E6F.90001@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <573C7E6F.90001@roeck-us.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+On Wed, May 18, 2016 at 07:38:39AM -0700, Guenter Roeck wrote:
+> On 05/16/2016 11:48 AM, Paul E. McKenney wrote:
+> >Hello!
+> >
+> >The following series fixes a number of uses of RCU from the idle loop.
+> >These are all due to tracing, so the fix is simply to append _rcuidle
+> >to the event-tracing call.
+> >
+> >Changes since v1: Fix commit-log subjects and add maintainers on CC.
+> >
+> 
+> For the series, on top of mainline (which now experiences the problem fixed
+> by this series):
+> 
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-Remove __init from functions that will be used by init functions
-that support probe deferral.
+Applied, thank you!  And fixed the line-wrapping while I was at it.  ;-)
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/mediatek/clk-gate.c |  2 +-
- drivers/clk/mediatek/clk-mtk.c  | 12 ++++++------
- drivers/clk/mediatek/clk-pll.c  |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+							Thanx, Paul
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 2a76901..d8787bf 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -97,7 +97,7 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
- 	.disable	= mtk_cg_disable_inv,
- };
- 
--struct clk * __init mtk_clk_register_gate(
-+struct clk *mtk_clk_register_gate(
- 		const char *name,
- 		const char *parent_name,
- 		struct regmap *regmap,
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 5ada644..bb30f70 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -24,7 +24,7 @@
- #include "clk-mtk.h"
- #include "clk-gate.h"
- 
--struct clk_onecell_data * __init mtk_alloc_clk_data(unsigned int clk_num)
-+struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
- {
- 	int i;
- 	struct clk_onecell_data *clk_data;
-@@ -49,7 +49,7 @@ err_out:
- 	return NULL;
- }
- 
--void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
-+void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
- 	int i;
-@@ -72,7 +72,7 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
- 	}
- }
- 
--void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
-+void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
- 	int i;
-@@ -95,7 +95,7 @@ void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
- 	}
- }
- 
--int __init mtk_clk_register_gates(struct device_node *node,
-+int mtk_clk_register_gates(struct device_node *node,
- 		const struct mtk_gate *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
-@@ -135,7 +135,7 @@ int __init mtk_clk_register_gates(struct device_node *node,
- 	return 0;
- }
- 
--struct clk * __init mtk_clk_register_composite(const struct mtk_composite *mc,
-+struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
- 	struct clk *clk;
-@@ -222,7 +222,7 @@ err_out:
- 	return ERR_PTR(ret);
- }
- 
--void __init mtk_clk_register_composites(const struct mtk_composite *mcs,
-+void mtk_clk_register_composites(const struct mtk_composite *mcs,
- 		int num, void __iomem *base, spinlock_t *lock,
- 		struct clk_onecell_data *clk_data)
- {
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index 966cab1..0c2deac 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -313,7 +313,7 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 	return clk;
- }
- 
--void __init mtk_clk_register_plls(struct device_node *node,
-+void mtk_clk_register_plls(struct device_node *node,
- 		const struct mtk_pll_data *plls, int num_plls, struct clk_onecell_data *clk_data)
- {
- 	void __iomem *base;
--- 
-1.9.1
