@@ -1,38 +1,30 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 21/22] ARM: dts: exynos: Add USB to Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-22-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <419e078b-a0c5-e7a6-0bea-9961147380d5@osg.samsung.com>
-Date: Mon, 9 May 2016 17:55:16 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 19 May 2016 14:10:15 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: fix critical clock locking
+Message-ID: <20160519211015.GQ3492@codeaurora.org>
+References: <1463126431-29071-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-22-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1463126431-29071-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
-
-On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> Move USB 3.0 DWC and 2.0 EHCI/OHCI nodes from exynos5420.dtsi to
-> exynos54xx.dtsi common for entire family. For Exynos542x/5800 this
-> should not have functional impact but for Exynos5410 this effectively
-> adds USB support.
+On 05/13, Maxime Ripard wrote:
+> The critical clock handling in __clk_core_init isn't taking the enable lock
+> before calling clk_core_enable, which in turns triggers the warning in the
+> lockdep_assert_held call in that function when lockep is enabled.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Add the calls to clk_enable_lock/unlock to make sure it doesn't happen.
 > 
+> Fixes: 32b9b1096186 ("clk: Allow clocks to be marked as CRITICAL")
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> 
+> ---
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Applied to clk-next
 
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
