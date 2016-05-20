@@ -1,54 +1,44 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
-Date: Fri, 27 May 2016 16:38:13 -0400
-Message-ID: <1464381494-27096-11-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 0/2] ARM: bcm2835: probe clock and sdram driver early
+Date: Fri, 20 May 2016 07:23:15 +0000
+Message-Id: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a '^' character to the beginning of clk entries that are for
-CRITICAL clks.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/clk.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Probe the clock and sdram driver early during the boot process.
+This is done to minimize the risk that the PLLD_CORE0 or PLLD
+clocks get disabled by another driver.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 874c7dd8ef66..22dd0ca1e491 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 	if (!c)
- 		return;
- 
--	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
--		   level * 3 + 1, "",
-+	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
-+		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
-+		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
- 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
-@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 
- 	clk_prepare_unlock();
- 
-+	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
-+
- 	return 0;
- }
- 
--- 
-1.9.1
+Such a situation results in the SDRAM stopping to work, which
+we can trigger easily with current kernels when there are only a
+few clocks enabled.
+
+Right now both drivers are registered with core_initcall.
+I am unsure if there is any link-ordering that could
+impact us - if such is the case we will need to move the
+priorities of one of the drivers slightly. Recommendations?
+
+Note that this patchset requires the sdram memory driver patch
+to be applied first.
+
+Martin Sperl (2):
+  clk: bcm2835: register clocks early
+  memory: bcm2835: enable driver early in the boot process
+
+ drivers/clk/bcm/clk-bcm2835.c  | 18 +++++++++++++++---
+ drivers/memory/bcm2835-sdram.c | 10 +++++++++-
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+--
+2.1.4
