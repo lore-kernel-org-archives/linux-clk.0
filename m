@@ -1,90 +1,60 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>
-Subject: [PATCH 11/11] ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-Date: Wed, 18 May 2016 10:41:32 +0200
-Message-Id: <1463560892-7209-12-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 2/2] memory: bcm2835: enable driver early in the boot process
+Date: Fri, 20 May 2016 07:23:17 +0000
+Message-Id: <1463728997-8241-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
+References: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-It is necessary to properly configure these clocks in order
-to address 720p and 1080p HDMI resolution.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Enable the critical sdram-clocks early during the boot process,
+so that these clocks (and their PLLs) can not get disabled
+when a different driver disables its clocks again because
+it failed to probe propperly (maybe deferred).
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/memory/bcm2835-sdram.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-index 18ed1ad..7eec729 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -103,7 +103,10 @@
- 			#size-cells = <1>;
+diff --git a/drivers/memory/bcm2835-sdram.c b/drivers/memory/bcm2835-sdram.c
+index 9d8cce2..7b6406d 100644
+--- a/drivers/memory/bcm2835-sdram.c
++++ b/drivers/memory/bcm2835-sdram.c
+@@ -431,6 +431,9 @@ static int bcm2835_sdram_probe(struct platform_device *pdev)
+ 	/* setup debugfs */
+ 	bcm2835_sdram_debugfs(pdev);
  
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
--					  <&clk_s_d2_quadfs 0>,
-+					  <&clk_s_d2_quadfs 1>,
-+					  <&clk_s_c0_pll1 0>,
-+					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
-+					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
-@@ -113,14 +116,21 @@
++	/* note that we have registered sdram */
++	dev_dbg(&pdev->dev, "registered sdram\n");
++
+ 	return 0;
+ }
  
- 			assigned-clock-parents = <0>,
- 						 <0>,
-+						 <0>,
-+						 <&clk_s_c0_pll1 0>,
-+						 <&clk_s_c0_pll1 0>,
- 						 <&clk_s_d2_quadfs 0>,
--						 <&clk_s_d2_quadfs 0>,
-+						 <&clk_s_d2_quadfs 1>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>;
+@@ -457,7 +460,12 @@ static struct platform_driver bcm2835_sdram_driver = {
+ 		.of_match_table = bcm2835_sdram_of_match_table,
+ 	},
+ };
+-module_platform_driver(bcm2835_sdram_driver);
++
++static int __init __bcm2835_sdram_driver_init(void)
++{
++	return platform_driver_register(&bcm2835_sdram_driver);
++}
++core_initcall_sync(__bcm2835_sdram_driver_init);
  
--			assigned-clock-rates = <297000000>, <297000000>;
-+			assigned-clock-rates = <297000000>,
-+					       <108000000>,
-+					       <0>,
-+					       <400000000>,
-+					       <400000000>;
- 
- 			ranges;
- 
+ MODULE_AUTHOR("Martin Sperl");
+ MODULE_DESCRIPTION("sdram driver for bcm2835 chip");
 -- 
-1.9.1
+2.1.4
