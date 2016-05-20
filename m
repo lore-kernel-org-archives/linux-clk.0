@@ -1,73 +1,197 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Thu, 26 May 2016 10:16:59 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 13/20] drm/bridge: Add RGB to VGA bridge support
-Message-ID: <20160526091659.GG19428@n2100.arm.linux.org.uk>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-14-git-send-email-maxime.ripard@free-electrons.com>
- <1773896.kpi58ilqqm@avalon>
- <20160526085330.GM9232@lukather>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for
+ T4240-R1.0-R2.0
+Date: Fri, 20 May 2016 06:05:45 +0000
+Message-ID: <HE1PR04MB08891B37898C97E1800D701EF84B0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+ <4448030.Zs8fVnr3nm@wuerfel>
+ <HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+ <5159406.HOFrj7pRfW@wuerfel> <1462937186.16584.77.camel@buserror.net>
+In-Reply-To: <1462937186.16584.77.camel@buserror.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160526085330.GM9232@lukather>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+ Russell King <linux@arm.linux.org.uk>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Yang-Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Rob
+ Herring <robh+dt@kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Xiaobo Xie <xiaobo.xie@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 26, 2016 at 10:53:30AM +0200, Maxime Ripard wrote:
-> Hi Laurent,
+Hi Arnd,
+
+Any comments? 
+Please reply when you see the email since we want this eSDHC issue to be fixed soon.
+
+All the patches are Freescale-specific and is to fix the eSDHC driver.
+Could we let them merged first if you were talking about a new way of abstracting getting SoC version.
+
+
+Thanks :)
+
+
+Best regards,
+Yangbo Lu
+
+> -----Original Message-----
+> From: Scott Wood [mailto:oss@buserror.net]
+> Sent: Wednesday, May 11, 2016 11:26 AM
+> To: Arnd Bergmann; linux-arm-kernel@lists.infradead.org
+> Cc: Yangbo Lu; linuxppc-dev@lists.ozlabs.org; Mark Rutland;
+> devicetree@vger.kernel.org; ulf.hansson@linaro.org; Russell King; Bhupesh
+> Sharma; netdev@vger.kernel.org; Joerg Roedel; Kumar Gala; linux-
+> mmc@vger.kernel.org; linux-kernel@vger.kernel.org; Yang-Leo Li;
+> iommu@lists.linux-foundation.org; Rob Herring; linux-i2c@vger.kernel.org;
+> Claudiu Manoil; Santosh Shilimkar; Xiaobo Xie; linux-clk@vger.kernel.org;
+> Qiang Zhao
+> Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-
+> R1.0-R2.0
 > 
-> On Mon, May 16, 2016 at 04:24:15PM +0300, Laurent Pinchart wrote:
-> > Hi Maxime,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Monday 16 May 2016 14:47:13 Maxime Ripard wrote:
-> > > +fallback:
-> > > +	/*
-> > > +	 * In case we cannot retrieve the EDIDs (broken or missing i2c
-> > > +	 * bus), fallback on the XGA standards
-> > > +	 */
-> > > +	ret = drm_add_modes_noedid(connector, 1920, 1200);
-> > 
-> > The DRM core adds modes up to 1024x768 in 
-> > drm_helper_probe_single_connector_modes(). I wonder if it really makes sense 
-> > to override that in drivers, compared to increasing the maximum resolution in 
-> > the core. What we can reasonable expect from a VGA monitor doesn't really 
-> > depend on which display engine it is connected to.
+> On Thu, 2016-05-05 at 13:10 +0200, Arnd Bergmann wrote:
+> > On Thursday 05 May 2016 09:41:32 Yangbo Lu wrote:
+> > > > -----Original Message-----
+> > > > From: Arnd Bergmann [mailto:arnd@arndb.de]
+> > > > Sent: Thursday, May 05, 2016 4:32 PM
+> > > > To: linuxppc-dev@lists.ozlabs.org
+> > > > Cc: Yangbo Lu; linux-mmc@vger.kernel.org;
+> > > > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > > > linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org;
+> > > > linux-i2c@vger.kernel.org; iommu@lists.linux- foundation.org;
+> > > > netdev@vger.kernel.org; Mark Rutland; ulf.hansson@linaro.org;
+> > > > Russell King; Bhupesh Sharma; Joerg Roedel; Santosh Shilimkar;
+> > > > Yang-Leo Li; Scott Wood; Rob Herring; Claudiu Manoil; Kumar Gala;
+> > > > Xiaobo Xie; Qiang Zhao
+> > > > Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for
+> > > > T4240-
+> > > > R1.0-R2.0
+> > > >
+> > > > On Thursday 05 May 2016 11:12:30 Yangbo Lu wrote:
+> > > > > IIRC, it is the same IP block as i.MX and Arnd's point is this
+> > > > > won't even compile on !PPC. It is things like this that prevent
+> > > > > sharing the driver.
+> > >
+> > > The whole point of using the MMIO SVR instead of the PPC SPR is so
+> > > that it will work on ARM...  The guts driver should build on any
+> > > platform as long as OF is enabled, and if it doesn't find a node to
+> > > bind to it will return 0 for SVR, and the eSDHC driver will continue
+> > > (after printing an error that should be removed) without the ability
+> > > to test for errata based on SVR.
+> >
+> > It feels like a bad design to have to come up with a different method
+> > for each SoC type here when they all do the same thing and want to
+> > identify some variant of the chip to do device specific quirks.
+> >
+> > As far as I'm concerned, every driver in drivers/soc that needs to
+> > export a symbol to be used by a device driver is an indication that we
+> > don't have the right set of abstractions yet. There are cases that are
+> > not worth abstracting because the functionality is rather obscure and
+> > only a couple of drivers for one particular chip ever need it.
+> >
+> > Finding out the version of the SoC does not look like this case.
 > 
-> Actually, I would expect it to come from the connectors. Nowadays, the
-> core add modes that might not even be relevant at all for a given
-> connector. Take TV as an example, there's not a single TV output that
-> can reach 1024x768, but actually rely on very different resolutions.
-
-There is the requirement to support 640x480 almost universally.
-
-> > Would it make sense to add an optional GPIO-based connection detection to this 
-> > driver ?
+> I'm open to new ways of abstracting this, but can that please be
+> discussed after these patches are merged?  This patchset is fixing a
+> problem, the existing abstraction is unappealing and not widely adopted,
+> a new abstraction is not ready, and we're only touching code for our
+> hardware.
 > 
-> I asked for it in our prototypes, and apparently, doing VGA cable
-> detection is really non-trivial, so I don't really expect it to be
-> found in a lot of designs.
+> Oh, and the existing abstraction isn't even "existing".  I don't see any
+> examples where soc_device is being used like this -- or even any way for
+> a driver (the one consuming the information, not the soc "driver") to get
+> a reference to the soc_device that's been registered short of searching
+> for the device object by name -- and you're asking for new functionality
+> in drivers/base/soc.c.
+> 
+> > > > I think the first four patches take care of building for ARM, but
+> > > > the problem remains if you want to enable COMPILE_TEST as we need
+> > > > for certain automated checking.
+> > >
+> > > What specific problem is there with COMPILE_TEST?
+> >
+> > COMPILE_TEST is solvable here and the way it is implemented in this
+> > case (selecting FSL_GUTS from the driver) indeed looks like it works
+> > correctly, but it's still awkward that this means building the SoC
+> > specific ID stuff into the vmlinux binary for any driver that uses
+> > something like that for a particular SoC.
+> 
+> Please keep in mind that this is a Freescale-specific driver... it's not
+> as if we're attaching this dependency to common SDHCI code.
+> 
+> >
+> > > > > Dealing with Si revs is a common problem. We should have a
+> > > > > common solution. There is soc_device for this purpose.
+> > > >
+> > > > Exactly. The last time this came up, I think we agreed to
+> > > > implement a helper using glob_match() on the soc_device strings.
+> > > > Unfortunately this hasn't happened then, but I'd still prefer that
+> > > > over yet another vendor-specific way of dealing with the generic
+> issue.
+> > >
+> > > soc_device would require encoding the SVR as a string and then
+> > > decoding the string, which is more complicated and error prone than
+> > > having platform-specific code test a platform-specific number.
+> >
+> > You already need to encode it as a string to register the soc_device,
+> 
+> No we don't, because we don't already register a soc_device on arm64 or
+> ppc (and it looks like whatever does get registered on at least some
+> relevant
+> arm32 chips is not particularly useful).
+> 
+> > and the driver just needs to pass a glob string, so the only part that
+> > is missing is the generic function that takes the string from the
+> > driver and passes that to glob_match for the soc_device.
+> 
+> "just"
+> 
+> And what would the glob look like?
+> 
+> I'd rather not write kernel code as if it were a shell/Perl script.
+> 
+> > > And when would it get registered on arm64, which doesn't have
+> > > platform code?
+> >
+> > Whenever the soc driver is loaded, as is the case now. The match
+> > function can return -EPROBE_DEFER if no SoC device is registered yet.
+> 
+> That's too late for some places where we need access to SVR, e.g. clock
+> drivers (which use CLK_OF_DECLARE and are initialized very early, not as
+> part of the driver model and thus can't defer).  Currently we have an
+> #ifdef CONFIG_PPC for this in drivers/clk/clk-qoriq.c... Maybe we should
+> have done that here as well, and saved some grief. :-)  At least until an
+> erratum pops up on an ARM-based chip.
+> 
+> And what happens if we're running on arm32, and thus the arch code
+> already registered an soc_device with a different (and less useful)
+> encoding?
+> 
+> -Scott
 
-... and prone to problems.  Intel designs try to measure the termination
-resistance to detect whether something is connected (they pulse the RGB
-signals and measure the current.)  This mostly works fine, except if you
-have some KVM boxes which can make this very unreliable.
-
-I ended up replacing the bipolar transistors switching the RGB signals
-in my KVM switch with FETs because of this problem.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
