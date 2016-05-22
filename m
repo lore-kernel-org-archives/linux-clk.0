@@ -1,147 +1,186 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 15 May 2016 21:08:18 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 13/16] clk: sunxi-ng: Add N-K-M Factor clock
-Message-ID: <20160515190818.GD27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-14-git-send-email-maxime.ripard@free-electrons.com>
- <20160511104556.037a2c17e3a6a0503a26fbf0@free.fr>
+Return-Path: <hramrach@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mJm6k4Vb/yFcL9ZU"
-In-Reply-To: <20160511104556.037a2c17e3a6a0503a26fbf0@free.fr>
+In-Reply-To: <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com>
+References: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
+ <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com>
+From: Michal Suchanek <hramrach@gmail.com>
+Date: Sun, 22 May 2016 18:41:18 +0200
+Message-ID: <CAOMqctRS6sEcQ9sy7dqX_TH4gsRiywCN1nUJiQtXAa7NtoboOw@mail.gmail.com>
+Subject: Re: sunxi spi clock problem
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
---mJm6k4Vb/yFcL9ZU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The debugfs output shows that spi2 is reparented under pll5 and the
+pll5 frequency remains unchanged.
 
-On Wed, May 11, 2016 at 10:45:56AM +0200, Jean-Francois Moine wrote:
-> On Sun,  8 May 2016 22:01:48 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > Introduce support for clocks that multiply and divide using two linear
-> > multipliers and one linear divider.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi-ng/Makefile  |   1 +
-> >  drivers/clk/sunxi-ng/ccu_nkm.c | 144 +++++++++++++++++++++++++++++++++=
-++++++++
-> >  drivers/clk/sunxi-ng/ccu_nkm.h |  42 ++++++++++++
-> >  3 files changed, 187 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.c
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.h
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
-ile
-> > index fba64c7f4fcd..2bb8bc22e907 100644
-> > --- a/drivers/clk/sunxi-ng/Makefile
-> > +++ b/drivers/clk/sunxi-ng/Makefile
-> > @@ -8,6 +8,7 @@ obj-y +=3D ccu_m.o
-> >  obj-y +=3D ccu_mp.o
-> >  obj-y +=3D ccu_mux.o
-> >  obj-y +=3D ccu_nk.o
-> > +obj-y +=3D ccu_nkm.o
-> >  obj-y +=3D ccu_nm.o
-> >  obj-y +=3D ccu_p.o
-> >  obj-y +=3D ccu_phase.o
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_=
-nkm.c
-> > new file mode 100644
-> > index 000000000000..9019c7f6988c
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> 	[snip]
-> > @@ -0,0 +1,144 @@
-> > +/*
-> > + * Copyright (C) 2016 Maxime Ripard
-> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation; either version 2 of
-> > + * the License, or (at your option) any later version.
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/rational.h>
-> > +
-> > +#include "ccu_gate.h"
-> > +#include "ccu_nkm.h"
-> > +
-> > +void ccu_nkm_find_best(unsigned long parent, unsigned long rate,
-> > +		       unsigned long max_n, unsigned long max_k, unsigned long max_m,
-> > +		       unsigned long *n, unsigned long *k, unsigned long *m)
->=20
-> Should be static
->=20
-> 	[snip]
->=20
-> > +static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			   unsigned long parent_rate)
-> > +{
-> > +	struct ccu_nkm *nkm =3D hw_to_ccu_nkm(hw);
-> > +	unsigned long n, k, m;
-> > +	unsigned long flags;
-> > +	u32 reg;
-> > +
-> > +	ccu_nkm_find_best(parent_rate, rate, 1 << nkm->n.width,
-> > +			  1 << nkm->k.width, 1 << nkm->m.width,
-> > +			  &n, &k, &m);
-> > +
-> > +	spin_lock_irqsave(nkm->common.lock, flags);
-> > +
-> > +	reg =3D readl(nkm->common.base + nkm->common.reg);
-> > +	reg &=3D ~GENMASK(nkm->n.width + nkm->n.shift, nkm->n.shift);
-> > +	reg &=3D ~GENMASK(nkm->k.width + nkm->k.shift, nkm->k.shift);
-> > +	reg &=3D ~GENMASK(nkm->m.width + nkm->m.shift, nkm->m.shift);
-> > +
-> > +	reg |=3D (n - 1) << nkm->m.shift;
-> > +	reg |=3D (k - 1) << nkm->m.shift;
-> > +	reg |=3D (m - 1) << nkm->m.shift;
->=20
-> 	reg |=3D (n - 1) << nkm->n.shift;
-> 	reg |=3D (k - 1) << nkm->k.shift;
+The request to get a 2GHz clock for spi is fulfilled on best-effort
+basis by giving the 864MHz pll5 clock which should theoretically
+result in 432MHz SPI clock.
 
-Good catches, thanks!
-Maxime
+On 22 May 2016 at 16:58, Chen-Yu Tsai <wens@csie.org> wrote:
+> Hi,
+>
+> On Sun, May 22, 2016 at 10:18 PM, Michal Suchanek <hramrach@gmail.com> wrote:
+>> Hello,
+>>
+>> I tried running a spidev test program on linux 4.6 and I uncovered a
+>> problem with the sunxi clk framework.
+>>
+>> Basically the system would lock up after running the test program.
+>>
+>> Digging deeper I found that it locks up with commit
+>> [47284e3e0f3c427c93f8583549b6c938e8a18015] spi: sun4i: allow transfers
+>> to set transmission speed
+>>
+>> This exposes a problem with the test program. I try to set the SPI
+>> sped to 1MHz but at other place the speed is multiplied by 1000 to
+>> save typing zeros so the actual requested speed is 1GHz. This commit
+>> probably allows that request to propagate leading to the observed
+>> system lockup.
+>>
+>> Given the parents OSC24M, pll6 and pll5 one of pll6 and pll5 is
+>> probably set up at 2GHz (or both in turn because due to some rounding
+>> neither goes fully up to 2GHz resulting in 864000000 SPI clock). Then
+>> the system locks up.
+>
+> IIRC the mod clock does not propagate rate changes up the tree.
+> But some output from the debugfs would be helpful. See below.
+>
+>>
+>> I can limit the speed in the SPI driver which is rated at 100MHz in
+>> SoC manual (giving 200MHz pll) but the clk driver should probably
+>> limit the clock setting to sane speeds itself.
+>>
+>> I am not familiar with the sunxi-clk code and it has unfortunately no
+>> debug prints which would show what is programmed to what speed.
+>
+> You can use /sys/kernel/debug/clk/clk_summary, provided you have
+> debugfs built in and mounted.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+root@a10s:~/spidisp# ./spitest -d -s 1000000 /dev/spidev2.0
+Debug mode.
+/dev/spidev2.0: spi mode 0x0, 8 bits per word, 1000000000 Hz max
+Sending 00
+   clock                         enable_cnt  prepare_cnt        rate
+accuracy   phase
+----------------------------------------------------------------------------------------
+ osc32k                                   0            0       32768
+       0 0
+ osc24M                                   6            6    24000000
+       0 0
+    ir0                                   0            0    24000000
+       0 0
+    spi2                                  0            0    24000000
+       0 0
+    spi1                                  0            0    24000000
+       0 0
+    spi0                                  0            0    24000000
+       0 0
+...
+spi_master spi2: spi2.0: timeout transferring 1 bytes@1000000000Hz for
+100(100)ms
+spidev spi2.0: SPI transfer failed: -110
+spi_master spi2: failed to transfer one message from queue
+...
+    pll5                                  1            1   864000000
+       0 0
+       pll5_other                         0            0   864000000
+       0 0
+       pll5_ddr                           1            1   432000000
+       0 0
+...
+xfer: Connection timed out
+buffer size: 1, result -110
+buffer size: 1, result -110, Connection timed out
+Sending
+   clock                         enable_cnt  prepare_cnt        rate
+accuracy   phase
+----------------------------------------------------------------------------------------
+ osc32k                                   0            0       32768
+       0 0
+ osc24M                                   6            6    24000000
+       0 0
+    ir0                                   0            0    24000000
+       0 0
+    spi1                                  0            0    24000000
+       0 0
+    spi0                                  0            0    24000000
+       0 0
+    ss                                    0            0    24000000
+       0 0
+...
+    pll5                                  1            1   864000000
+       0 0
+       pll5_other                         0            0   864000000
+       0 0
+          spi2                            0            0   864000000
+       0 0
+       pll5_ddr                           1            1   432000000
+       0 0
+...
+maximum buffer size: 0
+Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+...
+    pll5                                  1            1   864000000
+       0 0
+       pll5_other                         0            0   864000000
+       0 0
+          spi2                            0            0   864000000
+       0 0
+       pll5_ddr                           1            1   432000000
+       0 0
+    pll4                                  0            0   384000000
+       0 0
+    pll2-prediv                           0
 
---mJm6k4Vb/yFcL9ZU
-Content-Type: application/pgp-signature; name="signature.asc"
+The system locks up here before finishing the output from debugfs and
+actually starting the transfer printed above.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Thanks
 
-iQIcBAEBAgAGBQJXOMkiAAoJEBx+YmzsjxAgJAsP/jgfIHlf6U6V4HUPOoHw07NY
-N8yVAx+Bho2utRNfytLjWzkC7HITq6KWmVMvbYmXbVwrDhV7WCYijFkCW+dvO5Xz
-jEWNFx/xby5VrTevLoDV6L7qxEq4xzk1jWypv/duAg6x4j+KfY+5mo6e3xrf2RPN
-w6DcaCu2OxZObzHQrsNc/futoDGubkgXhpiJl74ZZkW2AK28aXnLbZAD/P+Ld9x5
-8HxiVnd6HYjyJq2bilCDy8P0RxtSLndUPMencnqNyMPf2uuKmwy2OH1/XLd6Hbmv
-j7sBGu61ziW8cGb/gNmsoxHINgQjbYHJfmlDjNNYOEuWQmdQHR/FAStxYFMV8BxE
-ZkugFUPogaG3EHIciQjzmHgF5DFeBB4u+Jzwt9YcHJImsovcs9aBCfmvErxbLpgm
-fRiaFB/VyQFELlMKRg61tbJgMed8p86AiT8DSOq7N4hulrhweL+omYQPJuYRHe5t
-fj+8T6Rftc2QYNZqPMLcWVmRZkoQTKXjMxpoYo57EG+lOZN9v47MWBKiok4Vv9tC
-5PChUQJboBc3ffmYze1w2odib1HvAUpWrhfqk5vYi94enCSScj8D+yDJZ8iPUEA4
-HYIbWsfdZIvOCw+cAPUrWPRDXkiByhFLzhC5EJ1NyN0UW3A0ApSflnaEe4vfRu51
-TeqdSKXIOv2Lun33X52n
-=K6Oi
------END PGP SIGNATURE-----
+Michal
 
---mJm6k4Vb/yFcL9ZU--
+---
+
+The diff between the two full outputs shows only spi2 changed:
+
+--- clk1.txt    2016-05-22 18:38:24.890906037 +0200
++++ clk2.txt    2016-05-22 18:38:15.891003130 +0200
+@@ -3,7 +3,6 @@
+  osc32k                                   0            0       32768
+        0 0
+  osc24M                                   6            6    24000000
+        0 0
+     ir0                                   0            0    24000000
+        0 0
+-    spi2                                  0            0    24000000
+        0 0
+     spi1                                  0            0    24000000
+        0 0
+     spi0                                  0            0    24000000
+        0 0
+     ss                                    0            0    24000000
+        0 0
+@@ -69,6 +68,7 @@
+        pll6_sata                          0            0   100000000
+        0 0
+     pll5                                  1            1   864000000
+        0 0
+        pll5_other                         0            0   864000000
+        0 0
++          spi2                            0            0   864000000
+        0 0
+        pll5_ddr                           1            1   432000000
+        0 0
+     pll4                                  0            0   384000000
+        0 0
+     pll2-prediv                           0            0     1500000
+        0 0
