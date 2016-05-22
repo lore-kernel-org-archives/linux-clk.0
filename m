@@ -1,61 +1,154 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>
-Subject: [PATCH 08/20] drm/sun4i: rgb: panel is an error pointer
-Date: Mon, 16 May 2016 14:47:08 +0200
-Message-Id: <1463402840-17062-9-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <hramrach@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <CAOMqctRS6sEcQ9sy7dqX_TH4gsRiywCN1nUJiQtXAa7NtoboOw@mail.gmail.com>
+References: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
+ <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com> <CAOMqctRS6sEcQ9sy7dqX_TH4gsRiywCN1nUJiQtXAa7NtoboOw@mail.gmail.com>
+From: Michal Suchanek <hramrach@gmail.com>
+Date: Sun, 22 May 2016 18:59:26 +0200
+Message-ID: <CAOMqctSt613dRA5=Ss=rA8-8L+vHJ9YK_m4SMdqV7DxTymXxNQ@mail.gmail.com>
+Subject: Re: sunxi spi clock problem
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-In case of an error, our pointer to the drm_panel structure attached to our
-encoder will hold an error pointer, not a NULL pointer.
+On 22 May 2016 at 18:41, Michal Suchanek <hramrach@gmail.com> wrote:
+> Hello,
+>
+> The debugfs output shows that spi2 is reparented under pll5 and the
+> pll5 frequency remains unchanged.
+>
+> The request to get a 2GHz clock for spi is fulfilled on best-effort
+> basis by giving the 864MHz pll5 clock which should theoretically
+> result in 432MHz SPI clock.
+>
+> On 22 May 2016 at 16:58, Chen-Yu Tsai <wens@csie.org> wrote:
+>> Hi,
+>>
+>> On Sun, May 22, 2016 at 10:18 PM, Michal Suchanek <hramrach@gmail.com> wrote:
+>>> Hello,
+>>>
+>>> I tried running a spidev test program on linux 4.6 and I uncovered a
+>>> problem with the sunxi clk framework.
+>>>
+>>> Basically the system would lock up after running the test program.
+>>>
+>>> Digging deeper I found that it locks up with commit
+>>> [47284e3e0f3c427c93f8583549b6c938e8a18015] spi: sun4i: allow transfers
+>>> to set transmission speed
+>>>
+>>> This exposes a problem with the test program. I try to set the SPI
+>>> sped to 1MHz but at other place the speed is multiplied by 1000 to
+>>> save typing zeros so the actual requested speed is 1GHz. This commit
+>>> probably allows that request to propagate leading to the observed
+>>> system lockup.
+>>>
+>>> Given the parents OSC24M, pll6 and pll5 one of pll6 and pll5 is
+>>> probably set up at 2GHz (or both in turn because due to some rounding
+>>> neither goes fully up to 2GHz resulting in 864000000 SPI clock). Then
+>>> the system locks up.
+>>
+>> IIRC the mod clock does not propagate rate changes up the tree.
+>> But some output from the debugfs would be helpful. See below.
+>>
+>>>
+>>> I can limit the speed in the SPI driver which is rated at 100MHz in
+>>> SoC manual (giving 200MHz pll) but the clk driver should probably
+>>> limit the clock setting to sane speeds itself.
+>>>
+>>> I am not familiar with the sunxi-clk code and it has unfortunately no
+>>> debug prints which would show what is programmed to what speed.
+>>
+>> You can use /sys/kernel/debug/clk/clk_summary, provided you have
+>> debugfs built in and mounted.
+>
+> root@a10s:~/spidisp# ./spitest -d -s 1000000 /dev/spidev2.0
+> Debug mode.
+> /dev/spidev2.0: spi mode 0x0, 8 bits per word, 1000000000 Hz max
+> Sending 00
+>    clock                         enable_cnt  prepare_cnt        rate
+> accuracy   phase
+> ----------------------------------------------------------------------------------------
+>  osc32k                                   0            0       32768
+>        0 0
+>  osc24M                                   6            6    24000000
+>        0 0
+>     ir0                                   0            0    24000000
+>        0 0
+>     spi2                                  0            0    24000000
+>        0 0
+>     spi1                                  0            0    24000000
+>        0 0
+>     spi0                                  0            0    24000000
+>        0 0
+> ...
+> spi_master spi2: spi2.0: timeout transferring 1 bytes@1000000000Hz for
+> 100(100)ms
+> spidev spi2.0: SPI transfer failed: -110
+> spi_master spi2: failed to transfer one message from queue
+> ...
+>     pll5                                  1            1   864000000
+>        0 0
+>        pll5_other                         0            0   864000000
+>        0 0
+>        pll5_ddr                           1            1   432000000
+>        0 0
+> ...
+> xfer: Connection timed out
+> buffer size: 1, result -110
+> buffer size: 1, result -110, Connection timed out
+> Sending
+>    clock                         enable_cnt  prepare_cnt        rate
+> accuracy   phase
+> ----------------------------------------------------------------------------------------
+>  osc32k                                   0            0       32768
+>        0 0
+>  osc24M                                   6            6    24000000
+>        0 0
+>     ir0                                   0            0    24000000
+>        0 0
+>     spi1                                  0            0    24000000
+>        0 0
+>     spi0                                  0            0    24000000
+>        0 0
+>     ss                                    0            0    24000000
+>        0 0
+> ...
+>     pll5                                  1            1   864000000
+>        0 0
+>        pll5_other                         0            0   864000000
+>        0 0
+>           spi2                            0            0   864000000
+>        0 0
+>        pll5_ddr                           1            1   432000000
+>        0 0
+> ...
+> maximum buffer size: 0
+> Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ...
+>     pll5                                  1            1   864000000
+>        0 0
+>        pll5_other                         0            0   864000000
+>        0 0
+>           spi2                            0            0   864000000
+>        0 0
+>        pll5_ddr                           1            1   432000000
+>        0 0
+>     pll4                                  0            0   384000000
+>        0 0
+>     pll2-prediv                           0
+>
+> The system locks up here before finishing the output from debugfs and
+> actually starting the transfer printed above.
+>
 
-Make sure we check the right thing.
+Actually the serial console speed is limited so the system might be
+doing something else already while transferring this debug output.
 
-Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_rgb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-index 923f55039cb1..b46d2c15dc95 100644
---- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-@@ -217,7 +217,7 @@ int sun4i_rgb_init(struct drm_device *drm)
- 	int ret;
- 
- 	/* If we don't have a panel, there's no point in going on */
--	if (!tcon->panel)
-+	if (IS_ERR(tcon->panel))
- 		return -ENODEV;
- 
- 	rgb = devm_kzalloc(drm->dev, sizeof(*rgb), GFP_KERNEL);
--- 
-2.8.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Michal
