@@ -1,105 +1,109 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 9 May 2016 15:09:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 22/22] ARM: dts: exynos: Add initial support for
- Odroid XU board
-Message-ID: <20160509200936.GA24252@rob-hp-laptop>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-23-git-send-email-krzk@kernel.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462734367-5619-23-git-send-email-krzk@kernel.org>
+In-Reply-To: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
+References: <CAOMqctQKNWz3mYPMModLTZ-hj38GxHqa3mBmDhbfTZz0zJ-CUw@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 22 May 2016 22:58:09 +0800
+Message-ID: <CAGb2v64gYov-tKENkeu0Mf+-qev49JnmR-Q94YvOMHwHti3djQ@mail.gmail.com>
+Subject: Re: sunxi spi clock problem
+To: Michal Suchanek <hramrach@gmail.com>
+Cc: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, May 08, 2016 at 09:06:07PM +0200, Krzysztof Kozlowski wrote:
-> The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
-> from Samsung: the Exynos5410. Comparing now to more popular Odroid XU3
-> the differences are:
-> 1. Exynos5410 instead of 5422,
-> 2. DisplayPort,
-> 3. Main PMIC: Maxim 77802 instead of S2MPS11,
-> 4. USB3503+LAN9730 instead of integrated LAN9514,
-> 5. eMMC 4.5 instead of eMMC 5.0,
-> 
-> This patch adds initial support for the XU board with working basic
-> functions, eMMC/SD and USB (including attached ethernet adapter).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   1 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos5410-odroidxu.dts          | 166 +++++++++++++++++++++
->  3 files changed, 168 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index f5deace2b380..0ea7f14ef294 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -47,6 +47,7 @@ Required root node properties:
->  	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
->  	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
->  	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-> +	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
->  	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
->  	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
->  					 Odroid XU3 Lite board.
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 5aeb10674370..9ed1c7abedb1 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
->  	exynos5250-snow-rev5.dtb \
->  	exynos5250-spring.dtb \
->  	exynos5260-xyref5260.dtb \
-> +	exynos5410-odroidxu.dtb \
->  	exynos5410-smdk5410.dtb \
->  	exynos5420-arndale-octa.dtb \
->  	exynos5420-peach-pit.dtb \
-> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> new file mode 100644
-> index 000000000000..b0cbd53aeea9
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> @@ -0,0 +1,166 @@
-> +/*
-> + * Hardkernel Odroid XU3 board device tree source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + * Copyright (c) 2016 Krzysztof Kozlowski
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos5410.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include "exynos54xx-odroidxu-leds.dtsi"
-> +
-> +/ {
-> +	model = "Hardkernel Odroid XU";
-> +	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
-> +
-> +	memory {
-> +		reg = <0x40000000 0x7EA00000>;
+Hi,
 
-lowercase hex please.
+On Sun, May 22, 2016 at 10:18 PM, Michal Suchanek <hramrach@gmail.com> wrote:
+> Hello,
+>
+> I tried running a spidev test program on linux 4.6 and I uncovered a
+> problem with the sunxi clk framework.
+>
+> Basically the system would lock up after running the test program.
+>
+> Digging deeper I found that it locks up with commit
+> [47284e3e0f3c427c93f8583549b6c938e8a18015] spi: sun4i: allow transfers
+> to set transmission speed
+>
+> This exposes a problem with the test program. I try to set the SPI
+> sped to 1MHz but at other place the speed is multiplied by 1000 to
+> save typing zeros so the actual requested speed is 1GHz. This commit
+> probably allows that request to propagate leading to the observed
+> system lockup.
+>
+> Given the parents OSC24M, pll6 and pll5 one of pll6 and pll5 is
+> probably set up at 2GHz (or both in turn because due to some rounding
+> neither goes fully up to 2GHz resulting in 864000000 SPI clock). Then
+> the system locks up.
 
-With that,
+IIRC the mod clock does not propagate rate changes up the tree.
+But some output from the debugfs would be helpful. See below.
 
-Acked-by: Rob Herring <robh@kernel.org>
+>
+> I can limit the speed in the SPI driver which is rated at 100MHz in
+> SoC manual (giving 200MHz pll) but the clk driver should probably
+> limit the clock setting to sane speeds itself.
+>
+> I am not familiar with the sunxi-clk code and it has unfortunately no
+> debug prints which would show what is programmed to what speed.
+
+You can use /sys/kernel/debug/clk/clk_summary, provided you have
+debugfs built in and mounted.
+
+Regards
+ChenYu
+
+>
+> Thanks
+>
+> Michal
+>
+> root@a10s:~/spidisp# ./spitest -r 50 -d -s 1000000 /dev/spidev2.0
+> Debug mode.
+> spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
+> spidev spi2.0: spi mode 0
+> spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
+> spidev spi2.0: msb first
+> spidev spi2.0: setup mode 0, 8 bits/w, 40000000 Hz max --> 0
+> spidev spi2.0: 0 bits per word
+> spidev spi2.0: setup mode 0, 8 bits/w, 1000000000 Hz max --> 0
+> /dev/spidev2.0: spi mode 0x0, 8 bits per word, 1000000000 Hz maxspidev
+> spi2.0: mclk spi2 (24000000)
+>
+> Sending 00
+> spidev spi2.0: mclk spi2 setting rate 2000000000Hz
+> spidev spi2.0: mclk spi2 (864000000)
+> spidev spi2.0: clkdiv 0 CDR2 0 regval 4096
+> spi_master spi2: spi2.0: timeout transferring 1 bytes@1000000000Hz for
+> 100(100)ms
+> spidev spi2.0: SPI transfer failed: -110
+> spi_master spi2: failed to transfer one message from queue
+> xfer: Connection timed out
+> buffer size: 1, result -110
+> buffer size: 1, result -110, Connection timed out
+> Sending
+> maximum buffer size: 0
+> Using gpio 50.
+> Writing gpio export 50 to /sys/class/gpio/export.
+> Reading gpio direction from /sys/class/gpio/gpio50/direction: in
+>
+> Reading gpio inversion from /sys/class/gpio/gpio50/active_low: 0
+>
+> Writing gpio direction in to /sys/class/gpio/gpio50/direction.
+> Reading gpio value from /sys/class/gpio/gpio50/value: 1
+>
+> Writing gpio direction out to /sys/class/gpio/gpio50/direction.
+> Writing gpio value 0 to /sys/class/gpio/gpio50/value.
+> Writing gpio value 1 to /sys/class/gpio/gpio50/value.
+> Writing gpio value 0 to /sys/class/gpio/gpio50/value.
+> Writing gpio value 1 to /sys/class/gpio/gpio50/value.
+> Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> spidev spi2.0: mclk spi2 (864000000)
+> spidev spi2.0: mclk spi2 setting rate 2000000000Hz
+> spidev spi2.0: mclk spi2 (864000000)
+> spidev spi2.0: clkdiv 0 CDR2 0 regval 4096
