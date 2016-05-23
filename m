@@ -1,260 +1,369 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1462737711-10017-8-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-8-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 22 May 2016 00:43:48 +0800
-Message-ID: <CAGb2v661dvdPKj9DWL7LWGgiDCEk7G-a_7jv5gb+KBMoWbR8Lg@mail.gmail.com>
-Subject: Re: [PATCH 07/16] clk: sunxi-ng: Add phase clock support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 23 May 2016 19:18:45 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
 	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 10/16] clk: sunxi-ng: Add M-P factor clock support
+Message-ID: <20160523171845.GC27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-11-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v67F3UvSCYDTxeLkCJL3FzmcpkogM4RAQgDseXMJDv7bUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+te1M04ZWIfilseV"
+In-Reply-To: <CAGb2v67F3UvSCYDTxeLkCJL3FzmcpkogM4RAQgDseXMJDv7bUw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
+
+
+--+te1M04ZWIfilseV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add support for the clocks in the CCU that introduce a phase shift from
-> their parent clock.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile    |   1 +
->  drivers/clk/sunxi-ng/ccu_phase.c | 126 +++++++++++++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_phase.h |  50 ++++++++++++++++
->  3 files changed, 177 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_phase.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_phase.h
->
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index f20c6c8f217c..a47a3bbdf285 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -5,3 +5,4 @@ obj-y += ccu_div_table.o
->  obj-y += ccu_fixed_factor.o
->  obj-y += ccu_gate.o
->  obj-y += ccu_mux.o
-> +obj-y += ccu_phase.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_phase.c b/drivers/clk/sunxi-ng/ccu_phase.c
-> new file mode 100644
-> index 000000000000..cf0f0b20115c
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_phase.c
-> @@ -0,0 +1,126 @@
-> +/*
-> + * Copyright (C) 2016 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include "ccu_phase.h"
-> +
-> +static int ccu_phase_get_phase(struct clk_hw *hw)
-> +{
-> +       struct ccu_phase *phase = hw_to_ccu_phase(hw);
-> +       struct clk_hw *parent, *pparent;
-> +       unsigned int parent_rate, pparent_rate;
-> +       u16 step, parent_div;
-> +       u32 reg;
-> +       u8 delay;
-> +
-> +       reg = readl(phase->common.base + phase->common.reg);
-> +       delay = (reg >> phase->shift);
-> +       delay &= (1 << phase->width) - 1;
-> +
-> +       if (!delay)
-> +               return 180;
+On Mon, May 23, 2016 at 09:45:16PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Introduce support for the clocks that combine a linear divider and a
+> > power-of-two based one.
+>=20
+> A description or formula in the source code (for those of us that forget)
+> would be nice. :)
 
-I don't understand why a "no delay" would be 180 phase. More on this below.
+Ack :)
 
-> +
-> +       /* Get our parent clock, it's the one that can adjust its rate */
-> +       parent = clk_hw_get_parent(hw);
-> +       if (!parent)
-> +               return -EINVAL;
-> +
-> +       /* And its rate */
-> +       parent_rate = clk_hw_get_rate(parent);
-> +       if (!parent_rate)
-> +               return -EINVAL;
-> +
-> +       /* Now, get our parent's parent (most likely some PLL) */
-> +       pparent = clk_hw_get_parent(parent);
-> +       if (!pparent)
-> +               return -EINVAL;
-> +
-> +       /* And its rate */
-> +       pparent_rate = clk_hw_get_rate(pparent);
-> +       if (!pparent_rate)
-> +               return -EINVAL;
-> +
-> +       /* Get our parent clock divider */
-> +       parent_div = pparent_rate / parent_rate;
-> +
-> +       step = DIV_ROUND_CLOSEST(360, parent_div);
-> +       return delay * step;
-> +}
-> +
-> +static int ccu_phase_set_phase(struct clk_hw *hw, int degrees)
-> +{
-> +       struct ccu_phase *phase = hw_to_ccu_phase(hw);
-> +       struct clk_hw *parent, *pparent;
-> +       unsigned int parent_rate, pparent_rate;
+>=20
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/sunxi-ng/Makefile |   1 +
+> >  drivers/clk/sunxi-ng/ccu_mp.c | 158 ++++++++++++++++++++++++++++++++++=
+++++++++
+> >  drivers/clk/sunxi-ng/ccu_mp.h |  79 +++++++++++++++++++++
+> >  3 files changed, 238 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu_mp.c
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu_mp.h
+> >
+> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
+ile
+> > index 063c50f35ad4..09fce7467784 100644
+> > --- a/drivers/clk/sunxi-ng/Makefile
+> > +++ b/drivers/clk/sunxi-ng/Makefile
+> > @@ -5,6 +5,7 @@ obj-y +=3D ccu_div_table.o
+> >  obj-y +=3D ccu_fixed_factor.o
+> >  obj-y +=3D ccu_gate.o
+> >  obj-y +=3D ccu_m.o
+> > +obj-y +=3D ccu_mp.o
+> >  obj-y +=3D ccu_mux.o
+> >  obj-y +=3D ccu_p.o
+> >  obj-y +=3D ccu_phase.o
+> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_m=
+p.c
+> > new file mode 100644
+> > index 000000000000..7181188deba7
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> > @@ -0,0 +1,158 @@
+> > +/*
+> > + * Copyright (C) 2016 Maxime Ripard
+> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation; either version 2 of
+> > + * the License, or (at your option) any later version.
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +
+> > +#include "ccu_gate.h"
+> > +#include "ccu_mp.h"
+> > +
+> > +static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
+> > +                            unsigned int max_m, unsigned int max_p,
+> > +                            unsigned int *m, unsigned int *p)
+> > +{
+> > +       unsigned long best_rate =3D 0;
+> > +       unsigned int best_m =3D 0, best_p =3D 0;
+> > +       unsigned int _m, _p;
+> > +
+> > +       for (_p =3D 0; _p <=3D max_p; _p++) {
+> > +               for (_m =3D 1; _m <=3D max_m; _m++) {
+> > +                       unsigned long tmp_rate =3D (parent >> _p) / _m;
+> > +
+> > +                       if (tmp_rate > rate)
+> > +                               continue;
+> > +
+> > +                       if ((rate - tmp_rate) < (rate - best_rate)) {
+> > +                               best_rate =3D tmp_rate;
+> > +                               best_m =3D _m;
+> > +                               best_p =3D _p;
+> > +                       }
+> > +               }
+> > +       }
+> > +
+> > +       *m =3D best_m;
+> > +       *p =3D best_p;
+> > +}
+> > +
+> > +static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+> > +                                      unsigned long parent_rate,
+> > +                                      unsigned long rate,
+> > +                                      void *data)
+> > +{
+> > +       struct ccu_mp *cmp =3D data;
+> > +       unsigned int m, p;
+> > +
+> > +       ccu_mp_find_best(parent_rate, rate,
+> > +                        1 << cmp->m.width, (1 << cmp->p.width) - 1,
+> > +                        &m, &p);
+> > +
+> > +       return (parent_rate >> p) / m;
+> > +}
+> > +
+> > +static void ccu_mp_disable(struct clk_hw *hw)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +
+> > +       return ccu_gate_helper_disable(&cmp->common, cmp->enable);
+> > +}
+> > +
+> > +static int ccu_mp_enable(struct clk_hw *hw)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +
+> > +       return ccu_gate_helper_enable(&cmp->common, cmp->enable);
+> > +}
+> > +
+> > +static int ccu_mp_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +
+> > +       return ccu_gate_helper_is_enabled(&cmp->common, cmp->enable);
+> > +}
+> > +
+> > +static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+> > +                                       unsigned long parent_rate)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +       unsigned int m, p;
+> > +       u32 reg;
+> > +
+> > +       reg =3D readl(cmp->common.base + cmp->common.reg);
+> > +
+> > +       m =3D reg >> cmp->m.shift;
+> > +       m &=3D (1 << cmp->m.width) - 1;
+> > +
+> > +       p =3D reg >> cmp->p.shift;
+> > +       p &=3D (1 << cmp->p.width) - 1;
+> > +
+> > +       return (parent_rate >> p) / (m + 1);
+> > +}
+> > +
+> > +static int ccu_mp_determine_rate(struct clk_hw *hw,
+> > +                                struct clk_rate_request *req)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +
+> > +       return ccu_mux_helper_determine_rate(&cmp->common, &cmp->mux,
+> > +                                            req, ccu_mp_round_rate, cm=
+p);
+> > +}
+> > +
+> > +static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +                          unsigned long parent_rate)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +       unsigned long flags;
+> > +       unsigned int m, p;
+> > +       u32 reg;
+> > +
+> > +       ccu_mp_find_best(parent_rate, rate,
+> > +                        1 << cmp->m.width, (1 << cmp->p.width) - 1,
+> > +                        &m, &p);
+> > +
+> > +
+> > +       spin_lock_irqsave(cmp->common.lock, flags);
+> > +
+> > +       reg =3D readl(cmp->common.base + cmp->common.reg);
+> > +       reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift, cmp->m.shift);
+> > +       reg &=3D ~GENMASK(cmp->p.width + cmp->p.shift, cmp->p.shift);
+>=20
+> width + shift - 1 ? IIRC GENMASK is inclusive at both ends.
 
-grandparent(_rate) would be easier to understand.
+Indeed, will fix.
 
-> +       unsigned long flags;
-> +       u32 reg;
-> +       u8 delay;
-> +
-> +       /* Get our parent clock, it's the one that can adjust its rate */
-> +       parent = clk_hw_get_parent(hw);
-> +       if (!parent)
-> +               return -EINVAL;
-> +
-> +       /* And its rate */
-> +       parent_rate = clk_hw_get_rate(parent);
-> +       if (!parent_rate)
-> +               return -EINVAL;
-> +
-> +       /* Now, get our parent's parent (most likely some PLL) */
-> +       pparent = clk_hw_get_parent(parent);
-> +       if (!pparent)
-> +               return -EINVAL;
-> +
-> +       /* And its rate */
-> +       pparent_rate = clk_hw_get_rate(pparent);
-> +       if (!pparent_rate)
-> +               return -EINVAL;
-> +
-> +       if (degrees != 180) {
-> +               u16 step, parent_div;
-> +
-> +               /* Get our parent divider */
-> +               parent_div = pparent_rate / parent_rate;
-> +
-> +               /*
-> +                * We can only outphase the clocks by multiple of the
-> +                * PLL's period.
-> +                *
-> +                * Since our parent clock is only a divider, and the
-> +                * formula to get the outphasing in degrees is deg =
-> +                * 360 * delta / period
-> +                *
-> +                * If we simplify this formula, we can see that the
-> +                * only thing that we're concerned about is the number
-> +                * of period we want to outphase our clock from, and
-> +                * the divider set by our parent clock.
-> +                */
-> +               step = DIV_ROUND_CLOSEST(360, parent_div);
-> +               delay = DIV_ROUND_CLOSEST(degrees, step);
+>=20
+> > +
+> > +       writel(reg | (p << cmp->p.shift) | ((m - 1) << cmp->m.shift),
+> > +              cmp->common.base + cmp->common.reg);
+> > +
+> > +       spin_unlock_irqrestore(cmp->common.lock, flags);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static u8 ccu_mp_get_parent(struct clk_hw *hw)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +
+> > +       return ccu_mux_helper_get_parent(&cmp->common, &cmp->mux);
+> > +}
+> > +
+> > +static int ccu_mp_set_parent(struct clk_hw *hw, u8 index)
+> > +{
+> > +       struct ccu_mp *cmp =3D hw_to_ccu_mp(hw);
+> > +
+> > +       return ccu_mux_helper_set_parent(&cmp->common, &cmp->mux, index=
+);
+> > +}
+> > +
+> > +const struct clk_ops ccu_mp_ops =3D {
+> > +       .disable        =3D ccu_mp_disable,
+> > +       .enable         =3D ccu_mp_enable,
+> > +       .is_enabled     =3D ccu_mp_is_enabled,
+> > +
+> > +       .get_parent     =3D ccu_mp_get_parent,
+> > +       .set_parent     =3D ccu_mp_set_parent,
+> > +
+> > +       .determine_rate =3D ccu_mp_determine_rate,
+> > +       .recalc_rate    =3D ccu_mp_recalc_rate,
+> > +       .set_rate       =3D ccu_mp_set_rate,
+> > +};
+> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_m=
+p.h
+> > new file mode 100644
+> > index 000000000000..95da9c46cd4f
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu_mp.h
+> > @@ -0,0 +1,79 @@
+> > +/*
+> > + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
+> > + *
+> > + * This software is licensed under the terms of the GNU General Public
+> > + * License version 2, as published by the Free Software Foundation, and
+> > + * may be copied, distributed, and modified under those terms.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#ifndef _CCU_MP_H_
+> > +#define _CCU_MP_H_
+> > +
+> > +#include <linux/clk-provider.h>
+> > +
+> > +#include "ccu_common.h"
+> > +#include "ccu_factor.h"
+> > +#include "ccu_mux.h"
+> > +
+> > +struct ccu_mp {
+> > +       u32                     enable;
+> > +
+> > +       struct ccu_factor       m;
+> > +       struct ccu_factor       p;
+> > +       struct ccu_mux_internal mux;
+> > +       struct ccu_common       common;
+> > +};
+> > +
+> > +#define SUNXI_CCU_MP_WITH_MUX(_struct, _name, _parents, _reg,         =
+ \
+> > +                             _mshift, _mwidth,                        =
+ \
+> > +                             _pshift, _pwidth,                        =
+ \
+> > +                             _muxshift, _muxwidth,                    =
+ \
+> > +                             _flags)                                  =
+ \
+> > +       struct ccu_mp _struct =3D {                                    =
+   \
+> > +               .m      =3D SUNXI_CLK_FACTOR(_mshift, _mwidth),        =
+   \
+> > +               .p      =3D SUNXI_CLK_FACTOR(_pshift, _pwidth),        =
+   \
+> > +               .mux    =3D SUNXI_CLK_MUX(_muxshift, _muxwidth),       =
+   \
+> > +               .common =3D {                                          =
+   \
+> > +                       .reg            =3D _reg,                      =
+   \
+> > +                       .hw.init        =3D SUNXI_HW_INIT_PARENTS(_name=
+,  \
+> > +                                                               _parent=
+s, \
+> > +                                                               &ccu_mp=
+_ops, \
+> > +                                                               _flags)=
+, \
+> > +               }                                                      =
+ \
+> > +       }
+>=20
+> Use the latter to simplify this one?
+>=20
+> > +
+> > +#define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,    =
+ \
+>=20
+> We could merge _struct with _name ...
+>=20
+> > +                                  _mshift, _mwidth,                   =
+ \
+> > +                                  _pshift, _pwidth,                   =
+ \
+> > +                                  _muxshift, _muxwidth,               =
+ \
+> > +                                  _gate, _flags)                      =
+ \
+> > +       struct ccu_mp _struct =3D {                                    =
+   \
+>=20
+> and have struct ccu_mp _name##_clk =3D {
 
-Doesn't this mean some delay values are impossible to set?
+Unfortunately, that prevents to use dashes as clock names, which is
+something we've done in the past. Having a separate name allows us to
+use whatever we want.
 
-For instance, for PLL = 600 MHz and this clock = 50 MHz, div would be 12,
-and a step would be 30 degrees. This means we can't ask for a delay of 6,
-which is 180 degrees.
+Maxime
 
-For PLL = 600 MHz, clock = 100 MHz, div would be 6, and a step is 60
-degrees. Therefor we can't ask for a delay of 3.
+---
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Does this make sense?
+--+te1M04ZWIfilseV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +       } else {
-> +               delay = 0;
-> +       }
-> +
-> +       spin_lock_irqsave(phase->common.lock, flags);
-> +       reg = readl(phase->common.base + phase->common.reg);
-> +       reg &= ~GENMASK(phase->width + phase->shift, phase->shift);
-> +       writel(reg | (delay << phase->shift),
-> +              phase->common.base + phase->common.reg);
-> +       spin_unlock_irqrestore(phase->common.lock, flags);
-> +
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops ccu_phase_ops = {
-> +       .get_phase      = ccu_phase_get_phase,
-> +       .set_phase      = ccu_phase_set_phase,
-> +};
-> diff --git a/drivers/clk/sunxi-ng/ccu_phase.h b/drivers/clk/sunxi-ng/ccu_phase.h
-> new file mode 100644
-> index 000000000000..e28b4e58a819
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_phase.h
-> @@ -0,0 +1,50 @@
-> +/*
-> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_PHASE_H_
-> +#define _CCU_PHASE_H_
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_common.h"
-> +
-> +struct ccu_phase {
-> +       u8                      shift;
-> +       u8                      width;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Not sure why you used struct ccu_factor in the divider table clock,
-but separate fields directly in ccu_phase here.
+iQIcBAEBAgAGBQJXQzt1AAoJEBx+YmzsjxAgd18P/RHDcF0waQlmYuLJMlkjN8O8
+QTMhMDpsMRYA8Sk8akQMvNvHEPCkv24m4FdZ7/a+q/Www6gCKHLutznOalxnss/4
+BINaWOAoMJvn66QNb+lQgPPpegnRQP9j/IwClHMdL+GHkQJmCAGaTBs/zjDEkEem
+D8d1LcHzyG6icJK0EduvpGt1g7s49t/NsLRcSswHVe+LS26UPy5qc7Fi68Uof4VT
+LyUQmyz1a3M4p7akkZ2Bx9JxJRlYQ+G+KW5UroNuSxOdMqmv3TiDIsx0K41rCZVO
+iqpUXMwgr9JH/jwHNSNMMXv+XhH8olV5NAoiJxLt5j3qfjh2dNZfJrlZrTXsIMVD
+937fNQa8e9MjObqYlQoVXP/WVlNmf79zojzDrlIoEvAk9Gn8N7Z2albcDVVT1gbI
+MXdrTcWQCmpv7tvY1zJJAHAxojEuZNK4YxQFa831wPUA8J4PYSlW5AWUUqfJvO9F
++v/zq4iTRlDSQ+nSbgQPQDS5tcEXmuJ8a2Mzp3iJEp74gohlcq1qRsaS9rpfvT9Z
+PbOOvu+vy1F1CerAfzdBgOC12diGgpMYkosoPzQ7LxifqfnrNTgHKFB4rdQceqU2
+aKQBRN++sKEI3tZMPbgO6UN/Hj7zTLhKvltXmev3kdyetcXMZ1A6Zs9HYxAHMTSU
+AdamQb8AVbpS6R5F8adM
+=9fd0
+-----END PGP SIGNATURE-----
 
-Regards
-ChenYu
-
-> +
-> +       struct ccu_common       common;
-> +};
-> +
-> +#define SUNXI_CCU_PHASE(_struct, _name, _parent, _reg, _shift, _width, _flags) \
-> +       struct ccu_phase _struct = {                                    \
-> +               .shift  = _shift,                                       \
-> +               .width  = _width,                                       \
-> +               .common = {                                             \
-> +                       .reg            = _reg,                         \
-> +                       .hw.init        = SUNXI_HW_INIT(_name,          \
-> +                                                       _parent,        \
-> +                                                       &ccu_phase_ops, \
-> +                                                       _flags),        \
-> +               }                                                       \
-> +       }
-> +
-> +static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
-> +{
-> +       struct ccu_common *common = hw_to_ccu_common(hw);
-> +
-> +       return container_of(common, struct ccu_phase, common);
-> +}
-> +
-> +extern const struct clk_ops ccu_phase_ops;
-> +
-> +#endif /* _CCU_PHASE_H_ */
-> --
-> 2.8.2
->
+--+te1M04ZWIfilseV--
