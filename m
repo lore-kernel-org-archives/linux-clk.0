@@ -1,78 +1,47 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 1/5] clk: qcom: ipq4019: Modified the fixed clock rate to proper values
-Date: Mon, 30 May 2016 20:02:34 +0530
-Message-Id: <1464618758-20965-2-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
-References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/2] ARM: dts: Fix imprecise external abort error when accessing Exynos MFC
+Date: Tue, 24 May 2016 13:41:00 -0400
+Message-Id: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Modified the fixed clock rate initialization in the IPQ4019 clock
-probe function with correct values.
+Hello,
 
-Also some of the fixed clocks entries were not added in the current
-driver file so added the same.
+This series fixes an imprecise external abort error when accessing the
+Exynos MFC registers due the power domain configuration requiring the
+aclk333 clock to be enabled during a domain switch.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq4019.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+There isn't a dependency between the clock and Linux Samsung SoC trees
+because the CLK_ACLK333 clock ID is already defined so the patches can
+be picked indepedently by the relevant subsystem maintainers.
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 3cd1af0..db24cb8 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -80,7 +80,7 @@ static struct parent_map gcc_xo_sdcc1_500_map[] = {
- 
- static const char * const gcc_xo_sdcc1_500[] = {
- 	"xo",
--	"ddrpll",
-+	"ddrpllsdcc",
- 	"fepll500",
- };
- 
-@@ -1317,13 +1317,15 @@ static int gcc_ipq4019_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 
--	clk_register_fixed_rate(dev, "fepll125", "xo", 0, 200000000);
--	clk_register_fixed_rate(dev, "fepll125dly", "xo", 0, 200000000);
--	clk_register_fixed_rate(dev, "fepllwcss2g", "xo", 0, 200000000);
--	clk_register_fixed_rate(dev, "fepllwcss5g", "xo", 0, 200000000);
-+	clk_register_fixed_rate(dev, "fepll125", "xo", 0, 125000000);
-+	clk_register_fixed_rate(dev, "fepll125dly", "xo", 0, 125000000);
-+	clk_register_fixed_rate(dev, "fepllwcss2g", "xo", 0, 250000000);
-+	clk_register_fixed_rate(dev, "fepllwcss5g", "xo", 0, 250000000);
- 	clk_register_fixed_rate(dev, "fepll200", "xo", 0, 200000000);
--	clk_register_fixed_rate(dev, "fepll500", "xo", 0, 200000000);
-+	clk_register_fixed_rate(dev, "fepll500", "xo", 0, 500000000);
- 	clk_register_fixed_rate(dev, "ddrpllapss", "xo", 0, 666000000);
-+	clk_register_fixed_rate(dev, "ddrpllsdcc", "xo", 0, 193000000);
-+	clk_register_fixed_rate(dev, "pcnoc_clk_src", "xo", 0, 100000000);
- 
- 	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
- }
+Best regards,
+Javier
+
+
+Javier Martinez Canillas (2):
+  clk: exynos5420: Set ID for aclk333 gate clock
+  ARM: dts: Add async-bridge clock to MFC power domain for Exynos5420
+
+ arch/arm/boot/dts/exynos5420.dtsi    | 5 +++--
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.5
