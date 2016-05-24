@@ -1,53 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-	netdev@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	ulf.hansson@linaro.org, Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	Scott Wood <oss@buserror.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
-	Qiang Zhao <qiang.zhao@nxp.com>
-Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Thu, 05 May 2016 10:31:36 +0200
-Message-ID: <4448030.Zs8fVnr3nm@wuerfel>
-In-Reply-To: <1462417950-46796-8-git-send-email-yangbo.lu@nxp.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <1462417950-46796-8-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 1/2] clk: exynos5420: Set ID for aclk333 gate clock
+Date: Tue, 24 May 2016 13:41:01 -0400
+Message-Id: <1464111662-15336-2-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 05 May 2016 11:12:30 Yangbo Lu wrote:
-> 
-> +       fsl_guts_init();
-> +       svr = fsl_guts_get_svr();
-> +       if (svr) {
-> +               esdhc->soc_ver = SVR_SOC_VER(svr);
-> +               esdhc->soc_rev = SVR_REV(svr);
-> +       } else {
-> +               dev_err(&pdev->dev, "Failed to get SVR value!\n");
-> +       }
-> +
-> 
+The aclk333 clock needs to be ungated during the MFC power domain switch,
+so set the clock ID to allow the Exynos power domain logic to lookup this
+clock if is defined in the MFC PD device tree node.
 
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
 
-Sorry for jumping in again after not participating in the discussion for the
-past few versions.
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What happened to my suggestion of making this a platform-independent interface
-to avoid the link time dependency?
-
-Specifically, why not add an exported function to drivers/base/soc.c that
-uses glob_match() for comparing a string in the device driver to the ID
-of the SoC that is set by whatever SoC identifying driver the platform
-has?
-
-	Arnd
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 92382cef9f90..469bcae5de3a 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -946,7 +946,7 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
+ 			GATE_BUS_TOP, 13, 0, 0),
+ 	GATE(0, "aclk166", "mout_user_aclk166",
+ 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
+-	GATE(0, "aclk333", "mout_user_aclk333",
++	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
+ 			GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
+ 			GATE_BUS_TOP, 16, 0, 0),
+-- 
+2.5.5
