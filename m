@@ -1,67 +1,98 @@
-Return-Path: <dianders@google.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 24 May 2016 23:07:33 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 10/16] clk: sunxi-ng: Add M-P factor clock support
+Message-ID: <20160524210733.GK27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-11-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v67F3UvSCYDTxeLkCJL3FzmcpkogM4RAQgDseXMJDv7bUw@mail.gmail.com>
+ <20160523171845.GC27618@lukather>
+ <CAGb2v65GbZosmh56Z7wBa5gHOe1Ox2Jz3tcOq1kugBHO54OvbQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4828628.D4nfByUg7D@diego>
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
-	<572B4AF8.6070509@collabora.com>
-	<4828628.D4nfByUg7D@diego>
-Date: Thu, 5 May 2016 17:46:59 -0700
-Message-ID: <CAD=FV=XFGHqB8RY1TwMBPds_kLjjxwMHiAAf-Mnzf6NCOvVCHg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] clk: attempt to keep requested rate on parent changes
-From: Doug Anderson <dianders@google.com>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Xing Zheng <zhengxing@rock-chips.com>,
-	zhangqing <zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QCcB5JEkX2RALVsX"
+In-Reply-To: <CAGb2v65GbZosmh56Z7wBa5gHOe1Ox2Jz3tcOq1kugBHO54OvbQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
+
+
+--QCcB5JEkX2RALVsX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Thu, May 5, 2016 at 8:07 AM, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
->> Besides that, do you know already if it would solve the conflicts
->> described by Doug in the thread below?
->>
->> http://thread.gmane.org/gmane.linux.kernel/1820653/focus=3D3298
->
-> I think the big issue on the rk3288 is, who is actually in charge of
-> controlling the npll frequency.
->
-> On the rk3399 the vpll is supplied unmodified to the hdmiphy, while as a
-> dclk_vop source it goes through a divider first. So it's pretty clear tha=
-t the
-> hdmiphy will control the core frequency while other users need to adapt t=
-o
-> what they get.
->
-> On the rk3288 the npll is a possible source to both the hdmi- as well as =
-the
-> edp-clock (and some others as well), so when it gets adapted dynamically,=
- wo
-> is going to be in charge and who needs to adapt ... and how do we set thi=
-s
-> hierarchy.
+On Tue, May 24, 2016 at 12:14:09PM +0800, Chen-Yu Tsai wrote:
+> >> > +#define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg, =
+    \
+> >>
+> >> We could merge _struct with _name ...
+> >>
+> >> > +                                  _mshift, _mwidth,                =
+    \
+> >> > +                                  _pshift, _pwidth,                =
+    \
+> >> > +                                  _muxshift, _muxwidth,            =
+    \
+> >> > +                                  _gate, _flags)                   =
+    \
+> >> > +       struct ccu_mp _struct =3D {                                 =
+      \
+> >>
+> >> and have struct ccu_mp _name##_clk =3D {
+> >
+> > Unfortunately, that prevents to use dashes as clock names, which is
+> > something we've done in the past. Having a separate name allows us to
+> > use whatever we want.
+>=20
+> We could do some replacement in the register function, but that seems
+> hackish
 
-Yeah, I don't think it fully solves the rk3288 problem, though
-probably you'd end up in a better shape than today.
+Indeed
 
-Specifically:
+> Also I noticed we aren't using clock-output-names from the DT
+> anymore?
 
-1. It assumes that the last requester of the rate is the one who gets
-to specify it.  That's fine in the master-slave relationship that
-Heiko describes for rk3399, but not so great for the peer-peer
-relationship of NPLL uses on rk3288.  Said another way: on rk3399 it's
-clear that HDMI decides the rate and the VOP has to deal with it, but
-on rk3288 you've got two equals both wanting their own rate.
+Yep, there's just too many clocks to be practical, and you have to
+have the name in the source code anyway for the parenting
+relationships.
 
-2. It's unclear exactly how well the different users of the VOP would
-be able to cope with arbitrary rate changes since it really depends on
-what's connected on the other end.
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-In general it seems like the rule for two peers should be that the
-first requester should keep its rate and the 2nd requester should just
-have to deal with it, unless the first requester added special code to
-validate that the new rate was OK.
+--QCcB5JEkX2RALVsX
+Content-Type: application/pgp-signature; name="signature.asc"
 
--Doug
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXRMKVAAoJEBx+YmzsjxAgaxAP+gKFirLGph56kDkxeoJfPWI3
+H8OEtiI1CS+7pMnKIXyzw6dR2RgLu05i0AjLAbh6MzWZVo6/h6AlGqi43olmGvqE
+d0kULySVmAYGiTCkRu4CPiFIbGsnHQsdQb05O0liXP/yP99u1sdCMbvUnVtxzguq
+K0yKYIcv7JN3cyHVXoZzCCgggmoskZGEvqclaZsSXNJxBFwMZG73DyNV7k4YkG9q
+v+QsQUtg6ZkTCP+veED2IJ1nh68wN3kBKuyPapXeC9JN9csGkztXCUgO2N7JyMHH
+FuBXJs7SBcmyLAqbTeHhGHCiQWv2AhDx+P8ndsTi/L89/9lIulvG6hx1yjmWoVJz
+fd2jP1yh3iuoQ7vvNJEZHhEngtMr7JOQQAbCR5ww9Ec8yv6k53UJPwgbSyPx7Mhm
+JddHXzXdVYsOLbU2stsb+0SoZp5zdDMsNSXtcYhF6R85bgZeLxoT6S1kGwKhL3H/
+eUg5ihuNnJOpqCZ7EkTvwTorOf2gj5MbLh5AndMinfAPoJVF98a6/I+GhrjAHd5g
+RyHxM0b7lJu/495S6xs84wEsMdvewcTWCFHVHs1NqBbO2XsLYTv7aL/IVoOjgW/K
+iQjUSLFYB8Y4G5uGPIMkkEFcYpyqO4YEsYd9PFe98IyLS02D2xhfWKbM3DvwOv0a
+soPodWpRSnD8gbuENhKt
+=W/b+
+-----END PGP SIGNATURE-----
+
+--QCcB5JEkX2RALVsX--
