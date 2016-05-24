@@ -1,73 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:38159 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753618AbcEPMre (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 08:47:34 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <v1ron@mail.ru>
+From: Roman Volkov <v1ron@mail.ru>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 09/20] drm/sun4i: defer only if we didn't find our panel
-Date: Mon, 16 May 2016 14:47:09 +0200
-Message-Id: <1463402840-17062-10-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+	Michael Turquette <mturquette@baylibre.com>,
+	Roman Volkov <rvolkov@v1ros.org>,
+	Tony Prisk <linux@prisktech.co.nz>
+Subject: [PATCH 2/2] clk/vt8500: Fix compilation warnings
+Date: Tue, 24 May 2016 23:07:53 +0300
+Message-Id: <1464120473-1808-3-git-send-email-v1ron@mail.ru>
+In-Reply-To: <1464120473-1808-1-git-send-email-v1ron@mail.ru>
+References: <1464120473-1808-1-git-send-email-v1ron@mail.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-Our code currently defers our probe on any error, even if we were not
-expecting to have one at all.
+From: Roman Volkov <rvolkov@v1ros.org>
 
-Make sure we return -EPROBE_DEFER only when we were supposed to have a
-panel, but it's not probed yet.
+GCC 5.3.0 still throws the following warnings for functions
+wm8750_find_pll_bits() and wm8850_find_pll_bits():
 
-Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+warning: 'best_div2' may be used uninitialized in this function
+warning: 'best_div1' may be used uninitialized in this function
+warning: 'best_mul' may be used uninitialized in this function
+
+These warnings are false positives, the variables are controlled
+by checking the value of the variable 'best_err' which is -1 by
+default. It is safe to initialize all these variables to zero.
+
+Fixes: 090341b0a95d ("clk: vt8500: fix sign of possible PLL values")
+Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/clk/clk-vt8500.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 9f19b0e08560..eed6a9e8d9a6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -429,7 +429,7 @@ static struct drm_panel *sun4i_tcon_find_panel(struct device_node *node)
- 		return ERR_PTR(-EINVAL);
- 	}
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index 77650f19a9b6..7c970d7c0a6a 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -461,7 +461,7 @@ static int wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ {
+ 	u32 mul;
+ 	int div1, div2;
+-	u32 best_mul, best_div1, best_div2;
++	u32 best_mul = 0, best_div1 = 0, best_div2 = 0;
+ 	unsigned long tclk, rate_err, best_err;
  
--	return of_drm_find_panel(remote);
-+	return of_drm_find_panel(remote) ?: ERR_PTR(-EPROBE_DEFER);
- }
+ 	best_err = (unsigned long)-1;
+@@ -513,7 +513,7 @@ static int wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ {
+ 	u32 mul;
+ 	int div1, div2;
+-	u32 best_mul, best_div1, best_div2;
++	u32 best_mul = 0, best_div1 = 0, best_div2 = 0;
+ 	unsigned long tclk, rate_err, best_err;
  
- static int sun4i_tcon_bind(struct device *dev, struct device *master,
-@@ -522,12 +522,13 @@ static int sun4i_tcon_probe(struct platform_device *pdev)
- 	 * Defer the probe.
- 	 */
- 	panel = sun4i_tcon_find_panel(node);
--	if (IS_ERR(panel)) {
--		/*
--		 * If we don't have a panel endpoint, just go on
--		 */
--		if (PTR_ERR(panel) != -ENODEV)
--			return -EPROBE_DEFER;
-+
-+	/*
-+	 * If we don't have a panel endpoint, just go on
-+	 */
-+	if (PTR_ERR(panel) == -EPROBE_DEFER) {
-+		DRM_DEBUG_DRIVER("Still waiting for our panel. Deferring...\n");
-+		return -EPROBE_DEFER;
- 	}
- 
- 	return component_add(&pdev->dev, &sun4i_tcon_ops);
+ 	best_err = (unsigned long)-1;
 -- 
-2.8.2
-
+2.8.0
