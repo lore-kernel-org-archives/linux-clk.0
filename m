@@ -1,432 +1,311 @@
-Return-Path: <fcooperwork@gmail.com>
-Return-Path: <fcooperwork@gmail.com>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: thierry.reding@gmail.com,
-	robh+dt@kernel.org,
-	tony@atomide.com,
-	linux@arm.linux.org.uk,
-	paul@pwsan.com,
-	t-kristo@ti.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	vigneshr@ti.com,
-	nsekhar@ti.com
-Cc: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: [PATCH v8 8/9] ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
-Date: Tue,  3 May 2016 10:56:54 -0500
-Message-Id: <1462291015-1919-9-git-send-email-fcooper@ti.com>
-In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20160523171845.GC27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-11-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v67F3UvSCYDTxeLkCJL3FzmcpkogM4RAQgDseXMJDv7bUw@mail.gmail.com> <20160523171845.GC27618@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 24 May 2016 12:14:09 +0800
+Message-ID: <CAGb2v65GbZosmh56Z7wBa5gHOe1Ox2Jz3tcOq1kugBHO54OvbQ@mail.gmail.com>
+Subject: Re: [PATCH 10/16] clk: sunxi-ng: Add M-P factor clock support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Devices that utilize the OCP registers and/or PRCM registers and
-register bit fields should be modeled using hwmod. Since eQEP, ePWM and
-eCAP don't fall under this category, remove their hwmod entries.
+Hi,
 
-Instead these clocks simply use the clock that is passed through by its
-parent PWMSS. Therefore, PWMSS handles the clock for itself and its
-subdevices.
+On Tue, May 24, 2016 at 1:18 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Mon, May 23, 2016 at 09:45:16PM +0800, Chen-Yu Tsai wrote:
+>> Hi,
+>>
+>> On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > Introduce support for the clocks that combine a linear divider and a
+>> > power-of-two based one.
+>>
+>> A description or formula in the source code (for those of us that forget)
+>> would be nice. :)
+>
+> Ack :)
+>
+>>
+>> >
+>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > ---
+>> >  drivers/clk/sunxi-ng/Makefile |   1 +
+>> >  drivers/clk/sunxi-ng/ccu_mp.c | 158 ++++++++++++++++++++++++++++++++++++++++++
+>> >  drivers/clk/sunxi-ng/ccu_mp.h |  79 +++++++++++++++++++++
+>> >  3 files changed, 238 insertions(+)
+>> >  create mode 100644 drivers/clk/sunxi-ng/ccu_mp.c
+>> >  create mode 100644 drivers/clk/sunxi-ng/ccu_mp.h
+>> >
+>> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+>> > index 063c50f35ad4..09fce7467784 100644
+>> > --- a/drivers/clk/sunxi-ng/Makefile
+>> > +++ b/drivers/clk/sunxi-ng/Makefile
+>> > @@ -5,6 +5,7 @@ obj-y += ccu_div_table.o
+>> >  obj-y += ccu_fixed_factor.o
+>> >  obj-y += ccu_gate.o
+>> >  obj-y += ccu_m.o
+>> > +obj-y += ccu_mp.o
+>> >  obj-y += ccu_mux.o
+>> >  obj-y += ccu_p.o
+>> >  obj-y += ccu_phase.o
+>> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+>> > new file mode 100644
+>> > index 000000000000..7181188deba7
+>> > --- /dev/null
+>> > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+>> > @@ -0,0 +1,158 @@
+>> > +/*
+>> > + * Copyright (C) 2016 Maxime Ripard
+>> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > + *
+>> > + * This program is free software; you can redistribute it and/or
+>> > + * modify it under the terms of the GNU General Public License as
+>> > + * published by the Free Software Foundation; either version 2 of
+>> > + * the License, or (at your option) any later version.
+>> > + */
+>> > +
+>> > +#include <linux/clk-provider.h>
+>> > +
+>> > +#include "ccu_gate.h"
+>> > +#include "ccu_mp.h"
+>> > +
+>> > +static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
+>> > +                            unsigned int max_m, unsigned int max_p,
+>> > +                            unsigned int *m, unsigned int *p)
+>> > +{
+>> > +       unsigned long best_rate = 0;
+>> > +       unsigned int best_m = 0, best_p = 0;
+>> > +       unsigned int _m, _p;
+>> > +
+>> > +       for (_p = 0; _p <= max_p; _p++) {
+>> > +               for (_m = 1; _m <= max_m; _m++) {
+>> > +                       unsigned long tmp_rate = (parent >> _p) / _m;
+>> > +
+>> > +                       if (tmp_rate > rate)
+>> > +                               continue;
+>> > +
+>> > +                       if ((rate - tmp_rate) < (rate - best_rate)) {
+>> > +                               best_rate = tmp_rate;
+>> > +                               best_m = _m;
+>> > +                               best_p = _p;
+>> > +                       }
+>> > +               }
+>> > +       }
+>> > +
+>> > +       *m = best_m;
+>> > +       *p = best_p;
+>> > +}
+>> > +
+>> > +static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+>> > +                                      unsigned long parent_rate,
+>> > +                                      unsigned long rate,
+>> > +                                      void *data)
+>> > +{
+>> > +       struct ccu_mp *cmp = data;
+>> > +       unsigned int m, p;
+>> > +
+>> > +       ccu_mp_find_best(parent_rate, rate,
+>> > +                        1 << cmp->m.width, (1 << cmp->p.width) - 1,
+>> > +                        &m, &p);
+>> > +
+>> > +       return (parent_rate >> p) / m;
+>> > +}
+>> > +
+>> > +static void ccu_mp_disable(struct clk_hw *hw)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +
+>> > +       return ccu_gate_helper_disable(&cmp->common, cmp->enable);
+>> > +}
+>> > +
+>> > +static int ccu_mp_enable(struct clk_hw *hw)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +
+>> > +       return ccu_gate_helper_enable(&cmp->common, cmp->enable);
+>> > +}
+>> > +
+>> > +static int ccu_mp_is_enabled(struct clk_hw *hw)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +
+>> > +       return ccu_gate_helper_is_enabled(&cmp->common, cmp->enable);
+>> > +}
+>> > +
+>> > +static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+>> > +                                       unsigned long parent_rate)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +       unsigned int m, p;
+>> > +       u32 reg;
+>> > +
+>> > +       reg = readl(cmp->common.base + cmp->common.reg);
+>> > +
+>> > +       m = reg >> cmp->m.shift;
+>> > +       m &= (1 << cmp->m.width) - 1;
+>> > +
+>> > +       p = reg >> cmp->p.shift;
+>> > +       p &= (1 << cmp->p.width) - 1;
+>> > +
+>> > +       return (parent_rate >> p) / (m + 1);
+>> > +}
+>> > +
+>> > +static int ccu_mp_determine_rate(struct clk_hw *hw,
+>> > +                                struct clk_rate_request *req)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +
+>> > +       return ccu_mux_helper_determine_rate(&cmp->common, &cmp->mux,
+>> > +                                            req, ccu_mp_round_rate, cmp);
+>> > +}
+>> > +
+>> > +static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+>> > +                          unsigned long parent_rate)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +       unsigned long flags;
+>> > +       unsigned int m, p;
+>> > +       u32 reg;
+>> > +
+>> > +       ccu_mp_find_best(parent_rate, rate,
+>> > +                        1 << cmp->m.width, (1 << cmp->p.width) - 1,
+>> > +                        &m, &p);
+>> > +
+>> > +
+>> > +       spin_lock_irqsave(cmp->common.lock, flags);
+>> > +
+>> > +       reg = readl(cmp->common.base + cmp->common.reg);
+>> > +       reg &= ~GENMASK(cmp->m.width + cmp->m.shift, cmp->m.shift);
+>> > +       reg &= ~GENMASK(cmp->p.width + cmp->p.shift, cmp->p.shift);
+>>
+>> width + shift - 1 ? IIRC GENMASK is inclusive at both ends.
+>
+> Indeed, will fix.
+>
+>>
+>> > +
+>> > +       writel(reg | (p << cmp->p.shift) | ((m - 1) << cmp->m.shift),
+>> > +              cmp->common.base + cmp->common.reg);
+>> > +
+>> > +       spin_unlock_irqrestore(cmp->common.lock, flags);
+>> > +
+>> > +       return 0;
+>> > +}
+>> > +
+>> > +static u8 ccu_mp_get_parent(struct clk_hw *hw)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +
+>> > +       return ccu_mux_helper_get_parent(&cmp->common, &cmp->mux);
+>> > +}
+>> > +
+>> > +static int ccu_mp_set_parent(struct clk_hw *hw, u8 index)
+>> > +{
+>> > +       struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+>> > +
+>> > +       return ccu_mux_helper_set_parent(&cmp->common, &cmp->mux, index);
+>> > +}
+>> > +
+>> > +const struct clk_ops ccu_mp_ops = {
+>> > +       .disable        = ccu_mp_disable,
+>> > +       .enable         = ccu_mp_enable,
+>> > +       .is_enabled     = ccu_mp_is_enabled,
+>> > +
+>> > +       .get_parent     = ccu_mp_get_parent,
+>> > +       .set_parent     = ccu_mp_set_parent,
+>> > +
+>> > +       .determine_rate = ccu_mp_determine_rate,
+>> > +       .recalc_rate    = ccu_mp_recalc_rate,
+>> > +       .set_rate       = ccu_mp_set_rate,
+>> > +};
+>> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+>> > new file mode 100644
+>> > index 000000000000..95da9c46cd4f
+>> > --- /dev/null
+>> > +++ b/drivers/clk/sunxi-ng/ccu_mp.h
+>> > @@ -0,0 +1,79 @@
+>> > +/*
+>> > + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
+>> > + *
+>> > + * This software is licensed under the terms of the GNU General Public
+>> > + * License version 2, as published by the Free Software Foundation, and
+>> > + * may be copied, distributed, and modified under those terms.
+>> > + *
+>> > + * This program is distributed in the hope that it will be useful,
+>> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> > + * GNU General Public License for more details.
+>> > + */
+>> > +
+>> > +#ifndef _CCU_MP_H_
+>> > +#define _CCU_MP_H_
+>> > +
+>> > +#include <linux/clk-provider.h>
+>> > +
+>> > +#include "ccu_common.h"
+>> > +#include "ccu_factor.h"
+>> > +#include "ccu_mux.h"
+>> > +
+>> > +struct ccu_mp {
+>> > +       u32                     enable;
+>> > +
+>> > +       struct ccu_factor       m;
+>> > +       struct ccu_factor       p;
+>> > +       struct ccu_mux_internal mux;
+>> > +       struct ccu_common       common;
+>> > +};
+>> > +
+>> > +#define SUNXI_CCU_MP_WITH_MUX(_struct, _name, _parents, _reg,          \
+>> > +                             _mshift, _mwidth,                         \
+>> > +                             _pshift, _pwidth,                         \
+>> > +                             _muxshift, _muxwidth,                     \
+>> > +                             _flags)                                   \
+>> > +       struct ccu_mp _struct = {                                       \
+>> > +               .m      = SUNXI_CLK_FACTOR(_mshift, _mwidth),           \
+>> > +               .p      = SUNXI_CLK_FACTOR(_pshift, _pwidth),           \
+>> > +               .mux    = SUNXI_CLK_MUX(_muxshift, _muxwidth),          \
+>> > +               .common = {                                             \
+>> > +                       .reg            = _reg,                         \
+>> > +                       .hw.init        = SUNXI_HW_INIT_PARENTS(_name,  \
+>> > +                                                               _parents, \
+>> > +                                                               &ccu_mp_ops, \
+>> > +                                                               _flags), \
+>> > +               }                                                       \
+>> > +       }
+>>
+>> Use the latter to simplify this one?
+>>
+>> > +
+>> > +#define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,     \
+>>
+>> We could merge _struct with _name ...
+>>
+>> > +                                  _mshift, _mwidth,                    \
+>> > +                                  _pshift, _pwidth,                    \
+>> > +                                  _muxshift, _muxwidth,                \
+>> > +                                  _gate, _flags)                       \
+>> > +       struct ccu_mp _struct = {                                       \
+>>
+>> and have struct ccu_mp _name##_clk = {
+>
+> Unfortunately, that prevents to use dashes as clock names, which is
+> something we've done in the past. Having a separate name allows us to
+> use whatever we want.
 
-Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-Acked-by: Paul Walmsley <paul@pwsan.com>
----
- .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
- .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 -----------------
- .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 ----------------------
- arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
- arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 --------------
- 5 files changed, 229 deletions(-)
+We could do some replacement in the register function, but that seems
+hackish. Also I noticed we aren't using clock-output-names from the DT
+anymore?
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
-index 7f73796..d3e61d1 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
-@@ -36,17 +36,8 @@ extern struct omap_hwmod_ocp_if am33xx_l4_per__gpio3;
- extern struct omap_hwmod_ocp_if am33xx_cpgmac0__mdio;
- extern struct omap_hwmod_ocp_if am33xx_l4_ls__elm;
- extern struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss0;
--extern struct omap_hwmod_ocp_if am33xx_epwmss0__ecap0;
--extern struct omap_hwmod_ocp_if am33xx_epwmss0__eqep0;
--extern struct omap_hwmod_ocp_if am33xx_epwmss0__ehrpwm0;
- extern struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss1;
--extern struct omap_hwmod_ocp_if am33xx_epwmss1__ecap1;
--extern struct omap_hwmod_ocp_if am33xx_epwmss1__eqep1;
--extern struct omap_hwmod_ocp_if am33xx_epwmss1__ehrpwm1;
- extern struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss2;
--extern struct omap_hwmod_ocp_if am33xx_epwmss2__ecap2;
--extern struct omap_hwmod_ocp_if am33xx_epwmss2__eqep2;
--extern struct omap_hwmod_ocp_if am33xx_epwmss2__ehrpwm2;
- extern struct omap_hwmod_ocp_if am33xx_l3_s__gpmc;
- extern struct omap_hwmod_ocp_if am33xx_l4_per__i2c2;
- extern struct omap_hwmod_ocp_if am33xx_l4_per__i2c3;
-@@ -98,17 +89,8 @@ extern struct omap_hwmod am33xx_dcan0_hwmod;
- extern struct omap_hwmod am33xx_dcan1_hwmod;
- extern struct omap_hwmod am33xx_elm_hwmod;
- extern struct omap_hwmod am33xx_epwmss0_hwmod;
--extern struct omap_hwmod am33xx_ecap0_hwmod;
--extern struct omap_hwmod am33xx_eqep0_hwmod;
--extern struct omap_hwmod am33xx_ehrpwm0_hwmod;
- extern struct omap_hwmod am33xx_epwmss1_hwmod;
--extern struct omap_hwmod am33xx_ecap1_hwmod;
--extern struct omap_hwmod am33xx_eqep1_hwmod;
--extern struct omap_hwmod am33xx_ehrpwm1_hwmod;
- extern struct omap_hwmod am33xx_epwmss2_hwmod;
--extern struct omap_hwmod am33xx_ecap2_hwmod;
--extern struct omap_hwmod am33xx_eqep2_hwmod;
--extern struct omap_hwmod am33xx_ehrpwm2_hwmod;
- extern struct omap_hwmod am33xx_gpio1_hwmod;
- extern struct omap_hwmod am33xx_gpio2_hwmod;
- extern struct omap_hwmod am33xx_gpio3_hwmod;
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
-index 1c210cb..10dff2f 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
-@@ -176,28 +176,6 @@ struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss0 = {
- 	.user		= OCP_USER_MPU,
- };
- 
--struct omap_hwmod_ocp_if am33xx_epwmss0__ecap0 = {
--	.master		= &am33xx_epwmss0_hwmod,
--	.slave		= &am33xx_ecap0_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--struct omap_hwmod_ocp_if am33xx_epwmss0__eqep0 = {
--	.master		= &am33xx_epwmss0_hwmod,
--	.slave		= &am33xx_eqep0_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--struct omap_hwmod_ocp_if am33xx_epwmss0__ehrpwm0 = {
--	.master		= &am33xx_epwmss0_hwmod,
--	.slave		= &am33xx_ehrpwm0_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--
- static struct omap_hwmod_addr_space am33xx_epwmss1_addr_space[] = {
- 	{
- 		.pa_start	= 0x48302000,
-@@ -215,27 +193,6 @@ struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss1 = {
- 	.user		= OCP_USER_MPU,
- };
- 
--struct omap_hwmod_ocp_if am33xx_epwmss1__ecap1 = {
--	.master		= &am33xx_epwmss1_hwmod,
--	.slave		= &am33xx_ecap1_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--struct omap_hwmod_ocp_if am33xx_epwmss1__eqep1 = {
--	.master		= &am33xx_epwmss1_hwmod,
--	.slave		= &am33xx_eqep1_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--struct omap_hwmod_ocp_if am33xx_epwmss1__ehrpwm1 = {
--	.master		= &am33xx_epwmss1_hwmod,
--	.slave		= &am33xx_ehrpwm1_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
- static struct omap_hwmod_addr_space am33xx_epwmss2_addr_space[] = {
- 	{
- 		.pa_start	= 0x48304000,
-@@ -253,27 +210,6 @@ struct omap_hwmod_ocp_if am33xx_l4_ls__epwmss2 = {
- 	.user		= OCP_USER_MPU,
- };
- 
--struct omap_hwmod_ocp_if am33xx_epwmss2__ecap2 = {
--	.master		= &am33xx_epwmss2_hwmod,
--	.slave		= &am33xx_ecap2_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--struct omap_hwmod_ocp_if am33xx_epwmss2__eqep2 = {
--	.master		= &am33xx_epwmss2_hwmod,
--	.slave		= &am33xx_eqep2_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
--struct omap_hwmod_ocp_if am33xx_epwmss2__ehrpwm2 = {
--	.master		= &am33xx_epwmss2_hwmod,
--	.slave		= &am33xx_ehrpwm2_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
- /* l3s cfg -> gpmc */
- struct omap_hwmod_ocp_if am33xx_l3_s__gpmc = {
- 	.master		= &am33xx_l3_s_hwmod,
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-index aed3362..6a73b6c 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-@@ -449,18 +449,6 @@ struct omap_hwmod_class am33xx_epwmss_hwmod_class = {
- 	.sysc		= &am33xx_epwmss_sysc,
- };
- 
--static struct omap_hwmod_class am33xx_ecap_hwmod_class = {
--	.name		= "ecap",
--};
--
--static struct omap_hwmod_class am33xx_eqep_hwmod_class = {
--	.name		= "eqep",
--};
--
--struct omap_hwmod_class am33xx_ehrpwm_hwmod_class = {
--	.name		= "ehrpwm",
--};
--
- /* epwmss0 */
- struct omap_hwmod am33xx_epwmss0_hwmod = {
- 	.name		= "epwmss0",
-@@ -474,30 +462,6 @@ struct omap_hwmod am33xx_epwmss0_hwmod = {
- 	},
- };
- 
--/* ecap0 */
--struct omap_hwmod am33xx_ecap0_hwmod = {
--	.name		= "ecap0",
--	.class		= &am33xx_ecap_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
--/* eqep0 */
--struct omap_hwmod am33xx_eqep0_hwmod = {
--	.name		= "eqep0",
--	.class		= &am33xx_eqep_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
--/* ehrpwm0 */
--struct omap_hwmod am33xx_ehrpwm0_hwmod = {
--	.name		= "ehrpwm0",
--	.class		= &am33xx_ehrpwm_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
- /* epwmss1 */
- struct omap_hwmod am33xx_epwmss1_hwmod = {
- 	.name		= "epwmss1",
-@@ -511,30 +475,6 @@ struct omap_hwmod am33xx_epwmss1_hwmod = {
- 	},
- };
- 
--/* ecap1 */
--struct omap_hwmod am33xx_ecap1_hwmod = {
--	.name		= "ecap1",
--	.class		= &am33xx_ecap_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
--/* eqep1 */
--struct omap_hwmod am33xx_eqep1_hwmod = {
--	.name		= "eqep1",
--	.class		= &am33xx_eqep_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
--/* ehrpwm1 */
--struct omap_hwmod am33xx_ehrpwm1_hwmod = {
--	.name		= "ehrpwm1",
--	.class		= &am33xx_ehrpwm_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
- /* epwmss2 */
- struct omap_hwmod am33xx_epwmss2_hwmod = {
- 	.name		= "epwmss2",
-@@ -548,30 +488,6 @@ struct omap_hwmod am33xx_epwmss2_hwmod = {
- 	},
- };
- 
--/* ecap2 */
--struct omap_hwmod am33xx_ecap2_hwmod = {
--	.name		= "ecap2",
--	.class		= &am33xx_ecap_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
--/* eqep2 */
--struct omap_hwmod am33xx_eqep2_hwmod = {
--	.name		= "eqep2",
--	.class		= &am33xx_eqep_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
--/* ehrpwm2 */
--struct omap_hwmod am33xx_ehrpwm2_hwmod = {
--	.name		= "ehrpwm2",
--	.class		= &am33xx_ehrpwm_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
- /*
-  * 'gpio' class: for gpio 0,1,2,3
-  */
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
-index cc0791d..e1c2025 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
-@@ -593,17 +593,8 @@ static struct omap_hwmod_ocp_if *am33xx_hwmod_ocp_ifs[] __initdata = {
- 	&am33xx_l4_ls__spinlock,
- 	&am33xx_l4_ls__elm,
- 	&am33xx_l4_ls__epwmss0,
--	&am33xx_epwmss0__ecap0,
--	&am33xx_epwmss0__eqep0,
--	&am33xx_epwmss0__ehrpwm0,
- 	&am33xx_l4_ls__epwmss1,
--	&am33xx_epwmss1__ecap1,
--	&am33xx_epwmss1__eqep1,
--	&am33xx_epwmss1__ehrpwm1,
- 	&am33xx_l4_ls__epwmss2,
--	&am33xx_epwmss2__ecap2,
--	&am33xx_epwmss2__eqep2,
--	&am33xx_epwmss2__ehrpwm2,
- 	&am33xx_l3_s__gpmc,
- 	&am33xx_l3_main__lcdc,
- 	&am33xx_l4_ls__mcspi0,
-diff --git a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-index 97fd399..61f2f30 100644
---- a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-@@ -202,13 +202,6 @@ static struct omap_hwmod am43xx_epwmss3_hwmod = {
- 	},
- };
- 
--static struct omap_hwmod am43xx_ehrpwm3_hwmod = {
--	.name		= "ehrpwm3",
--	.class		= &am33xx_ehrpwm_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
- static struct omap_hwmod am43xx_epwmss4_hwmod = {
- 	.name		= "epwmss4",
- 	.class		= &am33xx_epwmss_hwmod_class,
-@@ -222,13 +215,6 @@ static struct omap_hwmod am43xx_epwmss4_hwmod = {
- 	},
- };
- 
--static struct omap_hwmod am43xx_ehrpwm4_hwmod = {
--	.name		= "ehrpwm4",
--	.class		= &am33xx_ehrpwm_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
- static struct omap_hwmod am43xx_epwmss5_hwmod = {
- 	.name		= "epwmss5",
- 	.class		= &am33xx_epwmss_hwmod_class,
-@@ -242,13 +228,6 @@ static struct omap_hwmod am43xx_epwmss5_hwmod = {
- 	},
- };
- 
--static struct omap_hwmod am43xx_ehrpwm5_hwmod = {
--	.name		= "ehrpwm5",
--	.class		= &am33xx_ehrpwm_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.main_clk	= "l4ls_gclk",
--};
--
- static struct omap_hwmod am43xx_spi2_hwmod = {
- 	.name		= "spi2",
- 	.class		= &am33xx_spi_hwmod_class,
-@@ -744,13 +723,6 @@ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss3 = {
- 	.user		= OCP_USER_MPU,
- };
- 
--static struct omap_hwmod_ocp_if am43xx_epwmss3__ehrpwm3 = {
--	.master		= &am43xx_epwmss3_hwmod,
--	.slave		= &am43xx_ehrpwm3_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
- static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss4 = {
- 	.master		= &am33xx_l4_ls_hwmod,
- 	.slave		= &am43xx_epwmss4_hwmod,
-@@ -758,13 +730,6 @@ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss4 = {
- 	.user		= OCP_USER_MPU,
- };
- 
--static struct omap_hwmod_ocp_if am43xx_epwmss4__ehrpwm4 = {
--	.master		= &am43xx_epwmss4_hwmod,
--	.slave		= &am43xx_ehrpwm4_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
- static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss5 = {
- 	.master		= &am33xx_l4_ls_hwmod,
- 	.slave		= &am43xx_epwmss5_hwmod,
-@@ -772,13 +737,6 @@ static struct omap_hwmod_ocp_if am43xx_l4_ls__epwmss5 = {
- 	.user		= OCP_USER_MPU,
- };
- 
--static struct omap_hwmod_ocp_if am43xx_epwmss5__ehrpwm5 = {
--	.master		= &am43xx_epwmss5_hwmod,
--	.slave		= &am43xx_ehrpwm5_hwmod,
--	.clk		= "l4ls_gclk",
--	.user		= OCP_USER_MPU,
--};
--
- static struct omap_hwmod_ocp_if am43xx_l4_ls__mcspi2 = {
- 	.master		= &am33xx_l4_ls_hwmod,
- 	.slave		= &am43xx_spi2_hwmod,
-@@ -919,11 +877,8 @@ static struct omap_hwmod_ocp_if *am43xx_hwmod_ocp_ifs[] __initdata = {
- 	&am43xx_l4_ls__timer10,
- 	&am43xx_l4_ls__timer11,
- 	&am43xx_l4_ls__epwmss3,
--	&am43xx_epwmss3__ehrpwm3,
- 	&am43xx_l4_ls__epwmss4,
--	&am43xx_epwmss4__ehrpwm4,
- 	&am43xx_l4_ls__epwmss5,
--	&am43xx_epwmss5__ehrpwm5,
- 	&am43xx_l4_ls__mcspi2,
- 	&am43xx_l4_ls__mcspi3,
- 	&am43xx_l4_ls__mcspi4,
-@@ -982,17 +937,8 @@ static struct omap_hwmod_ocp_if *am43xx_hwmod_ocp_ifs[] __initdata = {
- 	&am33xx_l4_ls__spinlock,
- 	&am33xx_l4_ls__elm,
- 	&am33xx_l4_ls__epwmss0,
--	&am33xx_epwmss0__ecap0,
--	&am33xx_epwmss0__eqep0,
--	&am33xx_epwmss0__ehrpwm0,
- 	&am33xx_l4_ls__epwmss1,
--	&am33xx_epwmss1__ecap1,
--	&am33xx_epwmss1__eqep1,
--	&am33xx_epwmss1__ehrpwm1,
- 	&am33xx_l4_ls__epwmss2,
--	&am33xx_epwmss2__ecap2,
--	&am33xx_epwmss2__eqep2,
--	&am33xx_epwmss2__ehrpwm2,
- 	&am33xx_l3_s__gpmc,
- 	&am33xx_l4_ls__mcspi0,
- 	&am33xx_l4_ls__mcspi1,
--- 
-2.7.0
+ChenYu
