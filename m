@@ -1,63 +1,133 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>
-Subject: [PATCH 09/11] ARM: DT: STiH418: Enable synchronous clock mode on clkgend2
-Date: Wed, 18 May 2016 10:41:30 +0200
-Message-Id: <1463560892-7209-10-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20160523170129.GB27618@lukather>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-8-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v661dvdPKj9DWL7LWGgiDCEk7G-a_7jv5gb+KBMoWbR8Lg@mail.gmail.com> <20160523170129.GB27618@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 24 May 2016 17:01:46 +0800
+Message-ID: <CAGb2v641TqdnDLAET7NPFsAgB4d4aroCWOw8G85pbOJhNs-Rnw@mail.gmail.com>
+Subject: Re: [PATCH 07/16] clk: sunxi-ng: Add phase clock support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a compatibility string on clkgend2 to allow the clock
-driver to handle the synchronous/asynchronous modes of STiH418
+On Tue, May 24, 2016 at 1:01 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Sun, May 22, 2016 at 12:43:48AM +0800, Chen-Yu Tsai wrote:
+>> > +static int ccu_phase_set_phase(struct clk_hw *hw, int degrees)
+>> > +{
+>> > +       struct ccu_phase *phase = hw_to_ccu_phase(hw);
+>> > +       struct clk_hw *parent, *pparent;
+>> > +       unsigned int parent_rate, pparent_rate;
+>>
+>> grandparent(_rate) would be easier to understand.
+>
+> Ack.
+>
+>>
+>> > +       unsigned long flags;
+>> > +       u32 reg;
+>> > +       u8 delay;
+>> > +
+>> > +       /* Get our parent clock, it's the one that can adjust its rate */
+>> > +       parent = clk_hw_get_parent(hw);
+>> > +       if (!parent)
+>> > +               return -EINVAL;
+>> > +
+>> > +       /* And its rate */
+>> > +       parent_rate = clk_hw_get_rate(parent);
+>> > +       if (!parent_rate)
+>> > +               return -EINVAL;
+>> > +
+>> > +       /* Now, get our parent's parent (most likely some PLL) */
+>> > +       pparent = clk_hw_get_parent(parent);
+>> > +       if (!pparent)
+>> > +               return -EINVAL;
+>> > +
+>> > +       /* And its rate */
+>> > +       pparent_rate = clk_hw_get_rate(pparent);
+>> > +       if (!pparent_rate)
+>> > +               return -EINVAL;
+>> > +
+>> > +       if (degrees != 180) {
+>> > +               u16 step, parent_div;
+>> > +
+>> > +               /* Get our parent divider */
+>> > +               parent_div = pparent_rate / parent_rate;
+>> > +
+>> > +               /*
+>> > +                * We can only outphase the clocks by multiple of the
+>> > +                * PLL's period.
+>> > +                *
+>> > +                * Since our parent clock is only a divider, and the
+>> > +                * formula to get the outphasing in degrees is deg =
+>> > +                * 360 * delta / period
+>> > +                *
+>> > +                * If we simplify this formula, we can see that the
+>> > +                * only thing that we're concerned about is the number
+>> > +                * of period we want to outphase our clock from, and
+>> > +                * the divider set by our parent clock.
+>> > +                */
+>> > +               step = DIV_ROUND_CLOSEST(360, parent_div);
+>> > +               delay = DIV_ROUND_CLOSEST(degrees, step);
+>>
+>> Doesn't this mean some delay values are impossible to set?
+>>
+>> For instance, for PLL = 600 MHz and this clock = 50 MHz, div would be 12,
+>> and a step would be 30 degrees. This means we can't ask for a delay of 6,
+>> which is 180 degrees.
+>>
+>> For PLL = 600 MHz, clock = 100 MHz, div would be 6, and a step is 60
+>> degrees. Therefor we can't ask for a delay of 3.
+>
+> You don't ask for a delay, you ask for an outphasing in degrees. In
+> the hardware, in the register 0 means an outphasing of 180 degrees
+> (and this has been confirmed by Allwinner a while back). In the two
+> cases you point out, we would have two ways of achieving the same
+> thing, we prefer one over another, but I don't see how it's
+> problematic.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I guess I find the outphasing degrees not being increasing somewhat
+odd...
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 9740f41..4ae70a7 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -271,7 +271,7 @@
- 
- 			clk_s_d2_flexgen: clk-s-d2-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,stih407-clkgend2", "st,flexgen";
- 
- 				clocks = <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>,
--- 
-1.9.1
+> It's also a direct copy of the current code we have, which didn't
+> raise any objection, or had any known bugs.
+
+I had a hard time wrapping this around my head when I was working on
+the MMC DDR stuff. Allwinner's code directly asks for a delay, not a
+outphasing. I just checked and it seems I converted some values
+incorrectly. I need to do some more tests for the A80...
+
+Thanks for the explanation.
+
+
+Regards
+ChenYu
+
+>
+>> > +struct ccu_phase {
+>> > +       u8                      shift;
+>> > +       u8                      width;
+>>
+>> Not sure why you used struct ccu_factor in the divider table clock,
+>> but separate fields directly in ccu_phase here.
+>
+> Because this is not meant for the same thing. ccu_factor is probably
+> going to go away anyway because of the dividers consolidation.
+>
+> Thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
