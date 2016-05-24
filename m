@@ -1,337 +1,155 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:59642 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1162056AbcEaIjX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 31 May 2016 04:39:23 -0400
-Message-Id: <bbf3cefa47323660ead5ebdafe63f382fea06f39.1464680865.git.moinejf@free.fr>
-In-Reply-To: <cover.1464680865.git.moinejf@free.fr>
-References: <cover.1464680865.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 31 May 2016 09:26:38 +0200
-Subject: [PATCH RFC 1/2] clk: sunxi-ng: Add the A83T and A80 PLL clocks
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH 3/3] clk: samsung: exynos5433: add CPU clocks configuration
+ data and instantiate CPU clocks
+Date: Tue, 24 May 2016 15:19:17 +0200
+Message-id: <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T and A80 SoCs have unique settings of their PLL clocks.
+Add the CPU clocks configuration data and instantiate the CPU clocks
+type for Exynos5433.
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+Cc: Kukjin Kim <kgene@kernel.org>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/clk/sunxi-ng/ccu_ndmp.c | 247 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_ndmp.h |  45 ++++++++
- 2 files changed, 292 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.h
+ drivers/clk/samsung/clk-exynos5433.c | 72 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 64 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_ndmp.c b/drivers/clk/sunxi-ng/ccu_ndmp.c
-new file mode 100644
-index 0000000..079b155
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_ndmp.c
-@@ -0,0 +1,247 @@
-+/*
-+ * PLL clocks of sun8iw6 (A83T) and sun9iw1 (A80)
-+ *
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * The clock rates are computed as:
-+ *	rate = parent_rate / d1 * n / d2 / m >> p
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+#include <linux/iopoll.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_ndmp.h"
-+
-+static void ccu_ndmp_disable(struct clk_hw *hw)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+
-+	return ccu_gate_helper_disable(&ndmp->common, ndmp->enable);
-+}
-+
-+static int ccu_ndmp_enable(struct clk_hw *hw)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+
-+	return ccu_gate_helper_enable(&ndmp->common, ndmp->enable);
-+}
-+
-+static int ccu_ndmp_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+
-+	return ccu_gate_helper_is_enabled(&ndmp->common, ndmp->enable);
-+}
-+
-+static unsigned long ccu_ndmp_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+	int n, d1, d2, m, p;
-+	unsigned long rate;
-+	u32 reg;
-+
-+	reg = readl(ndmp->common.base + ndmp->common.reg);
-+
-+	rate = parent_rate;
-+
-+	if (ndmp->d1.shift) {
-+		d1 = reg >> ndmp->d1.shift;
-+		d1 &= (1 << ndmp->d1.width) - 1;
-+		rate /= (d1 + 1);
-+	}
-+
-+	n = reg >> ndmp->n.shift;
-+	n &= (1 << ndmp->n.width) - 1;
-+	if (!(ndmp->common.features & CCU_FEATURE_N0))
-+		n++;
-+	rate *= n;
-+
-+	if (ndmp->d2.shift) {
-+		d2 = reg >> ndmp->d2.shift;
-+		d2 &= (1 << ndmp->d2.width) - 1;
-+		rate /= (d2 + 1);
-+	}
-+
-+	if (ndmp->m.shift) {
-+		m = reg >> ndmp->m.shift;
-+		m &= (1 << ndmp->m.width) - 1;
-+		rate /= (m + 1);
-+	}
-+
-+	if (ndmp->p.shift) {
-+		p = reg >> ndmp->p.shift;
-+		p &= (1 << ndmp->p.width) - 1;
-+		rate >>= p;
-+	}
-+
-+	return rate;
-+}
-+
-+/* d1 and d2 may be only 1 or 2 */
-+static int ccu_ndmp_get_fact(struct ccu_ndmp *ndmp,
-+			unsigned long rate, unsigned long prate,
-+			int *p_n, int *p_d1, int *p_d2, int *p_m, int *p_p)
-+{
-+	int n, d1, d2, m, p, d;
-+	unsigned long t;
-+
-+	/* m implies only n, d1, d2 and m (pll-audio) */
-+	/* Setting d1=1 and d2=2 keeps n and m small enough
-+	 *	with error < 5/10000 */
-+	/* As only 2 rates are used, this could be simplified:
-+	 *	22579200Hz => n = 32, m = 17
-+	 *	24576000Hz => n = 43, m = 21
-+	 */
-+	if (ndmp->m.shift) {
-+		long unsigned int lun, lum;
-+
-+		d1 = 0 + 1;
-+		d2 = 1 + 1;
-+		t = prate / 2;
-+		rational_best_approximation(rate, t,
-+					1 << ndmp->n.width,
-+					1 << ndmp->m.width,
-+					&lun, &lum);
-+		if (lum == 0)
-+			return -EINVAL;
-+		n = lun;
-+		m = lum;
-+		p = 0;
-+
-+	/* no d1 implies n alone (pll-cxcpux) */
-+	} else if (!ndmp->d1.shift) {
-+		d1 = d2 = 0 + 1;
-+		n = rate / prate;
-+		m = 1;
-+		p = 0;
-+
-+	/* p implies only n, d1 and p (pll-videox) */
-+	} else if (ndmp->m.shift) {
-+		d2 = 0 + 1;
-+		d = 2 + ndmp->p.width;
-+		n = rate / (prate / (1 << d));
-+		if (n < 12) {
-+			n *= 2;
-+			d++;
-+		}
-+		while (n >= 12 * 2 && !(n & 1)) {
-+			n /= 2;
-+			if (--d == 0)
-+				break;
-+		}
-+		if (d <= 1) {
-+			d1 = d + 1;
-+			p = 0;
-+		} else {
-+			d1 = 1 + 1;
-+			p = d - 1;
-+		}
-+		m = 1;
-+
-+	/* only n, d1 and d2 (other plls) */
-+	} else {
-+		t = prate / 4;
-+		n = rate / t;
-+		if (n < 12) {
-+			n *= 4;
-+			d1 = d2 = 0 + 1;
-+		} else if (n >= 12 * 2 && !(n & 1)) {
-+			if (n >= 12 * 4 && !(n % 4)) {
-+				n /= 4;
-+				d1 = d2 = 0 + 1;
-+			} else {
-+				n /= 2;
-+				d1 = 0 + 1;
-+				d2 = 1 + 1;
-+			}
-+		} else {
-+			d1 = d2 = 1 + 1;
-+		}
-+		if (n > (1 << ndmp->n.width))
-+			return -EINVAL;
-+		m = 1;
-+		p = 0;
-+	}
-+
-+	if (n < 12 || n > (1 << ndmp->n.width))
-+		return -EINVAL;
-+
-+	*p_n = n;
-+	*p_d1 = d1;
-+	*p_d2 = d2;
-+	*p_m = m;
-+	*p_p = p;
-+
-+	return 0;
-+}
-+
-+static long ccu_ndmp_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+	int n, d1, d2, m, p, ret;
-+
-+	ret = ccu_ndmp_get_fact(ndmp, rate, *parent_rate,
-+				&n, &d1, &d2, &m, &p);
-+	if (!ret)
-+		return 0;
-+
-+	return *parent_rate / d1 * n / d2 / m >> p;
-+}
-+
-+static int ccu_ndmp_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+	unsigned long flags;
-+	int n, d1, d2, m, p, ret;
-+	u32 reg;
-+
-+	ret = ccu_ndmp_get_fact(ndmp, rate, parent_rate,
-+				&n, &d1, &d2, &m, &p);
-+	if (!ret)
-+		return ret;
-+	if (!(ndmp->common.features & CCU_FEATURE_N0))
-+		n--;
-+
-+	spin_lock_irqsave(ndmp->common.lock, flags);
-+
-+	reg = readl(ndmp->common.base + ndmp->common.reg) &
-+		~((((1 << ndmp->n.width) - 1) << ndmp->n.shift) |
-+		  (((1 << ndmp->d1.width) - 1) << ndmp->d1.shift) |
-+		  (((1 << ndmp->d2.width) - 1) << ndmp->d2.shift) |
-+		  (((1 << ndmp->m.width) - 1) << ndmp->m.shift) |
-+		  (((1 << ndmp->p.width) - 1) << ndmp->p.shift));
-+
-+	writel(reg | (n << ndmp->n.shift) |
-+			((d1 - 1) << ndmp->d1.shift) |
-+			((d2 - 1) << ndmp->d2.shift) |
-+			((m - 1) << ndmp->m.shift) |
-+			(p << ndmp->p.shift),
-+	       ndmp->common.base + ndmp->common.reg);
-+
-+	spin_unlock_irqrestore(ndmp->common.lock, flags);
-+
-+	WARN_ON(readl_relaxed_poll_timeout(ndmp->common.base + ndmp->reg_lock,
-+					   reg, !(reg & ndmp->lock), 50, 500));
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_ndmp_ops = {
-+	.disable	= ccu_ndmp_disable,
-+	.enable		= ccu_ndmp_enable,
-+	.is_enabled	= ccu_ndmp_is_enabled,
-+
-+	.recalc_rate	= ccu_ndmp_recalc_rate,
-+	.round_rate	= ccu_ndmp_round_rate,
-+	.set_rate	= ccu_ndmp_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_ndmp.h b/drivers/clk/sunxi-ng/ccu_ndmp.h
-new file mode 100644
-index 0000000..bb47127
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_ndmp.h
-@@ -0,0 +1,45 @@
-+/*
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_NDMP_H_
-+#define _CCU_NDMP_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_factor.h"
-+#include "ccu_common.h"
-+
-+struct ccu_ndmp {
-+	u32			enable;
-+	u32			lock;
-+	int			reg_lock;
-+
-+	struct ccu_factor	n;
-+	struct ccu_factor	d1;
-+	struct ccu_factor	d2;
-+	struct ccu_factor	m;
-+	struct ccu_factor	p;
-+
-+	struct ccu_common	common;
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 6dd81ed..9ff6160 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -16,6 +16,7 @@
+ #include <dt-bindings/clock/exynos5433.h>
+ 
+ #include "clk.h"
++#include "clk-cpu.h"
+ #include "clk-pll.h"
+ 
+ /*
+@@ -3509,7 +3510,8 @@ static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
+ static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
+ 	/* MUX_SEL_APOLLO0 */
+ 	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
+-			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT, 0),
++			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT |
++			CLK_RECALC_NEW_RATES, 0),
+ 
+ 	/* MUX_SEL_APOLLO1 */
+ 	MUX(CLK_MOUT_BUS_PLL_APOLLO_USER, "mout_bus_pll_apollo_user",
+@@ -3590,9 +3592,27 @@ static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_APOLLO, 3, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_HPM_APOLLO, "sclk_hpm_apollo", "div_sclk_hpm_apollo",
+ 			ENABLE_SCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
+-	GATE(CLK_SCLK_APOLLO, "sclk_apollo", "div_apollo2",
+-			ENABLE_SCLK_APOLLO, 0,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
 +};
 +
-+static inline struct ccu_ndmp *hw_to_ccu_ndmp(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
++#define E5433_APOLLO_DIV0(cntclk, pclk_dbg, atclk, pclk, aclk) \
++		(((cntclk) << 24) | ((pclk_dbg) << 20) | ((atclk) << 16) | \
++		 ((pclk) << 12) | ((aclk) << 8))
 +
-+	return container_of(common, struct ccu_ndmp, common);
-+}
++#define E5433_APOLLO_DIV1(hpm, copy) \
++		(((hpm) << 4) | ((copy) << 0))
 +
-+extern const struct clk_ops ccu_ndmp_ops;
++static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst = {
++	{ 1300000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{ 1200000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{ 1100000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{ 1000000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{  900000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{  800000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{  700000, E5433_APOLLO_DIV0(3, 7, 7, 7, 2), E5433_APOLLO_DIV1(7, 1), },
++	{  600000, E5433_APOLLO_DIV0(3, 7, 7, 7, 1), E5433_APOLLO_DIV1(7, 1), },
++	{  500000, E5433_APOLLO_DIV0(3, 7, 7, 7, 1), E5433_APOLLO_DIV1(7, 1), },
++	{  400000, E5433_APOLLO_DIV0(3, 7, 7, 7, 1), E5433_APOLLO_DIV1(7, 1), },
++	{  0 },
+ };
+ 
+ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
+@@ -3620,6 +3640,12 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
+ 				 ARRAY_SIZE(apollo_div_clks));
+ 	samsung_clk_register_gate(ctx, apollo_gate_clks,
+ 				  ARRAY_SIZE(apollo_gate_clks));
 +
-+#endif /* _CCU_NDMP_H_ */
++	exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
++		mout_apollo_p[0], mout_apollo_p[1], 0x200,
++		exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
++		CLK_CPU_HAS_E5433_REGS_LAYOUT);
++
+ 	samsung_clk_sleep_init(reg_base, apollo_clk_regs,
+ 			       ARRAY_SIZE(apollo_clk_regs));
+ 
+@@ -3707,7 +3733,8 @@ static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
+ static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
+ 	/* MUX_SEL_ATLAS0 */
+ 	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
+-			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT, 0),
++			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT |
++			CLK_RECALC_NEW_RATES, 0),
+ 
+ 	/* MUX_SEL_ATLAS1 */
+ 	MUX(CLK_MOUT_BUS_PLL_ATLAS_USER, "mout_bus_pll_atlas_user",
+@@ -3814,9 +3841,32 @@ static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_ATLAS, 2, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ATCLK, "atclk", "div_atclk_atlas",
+ 			ENABLE_SCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
+-	GATE(CLK_SCLK_ATLAS, "sclk_atlas", "div_atlas2",
+-			ENABLE_SCLK_ATLAS, 0,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++};
++
++#define E5433_ATLAS_DIV0(cntclk, pclk_dbg, atclk, pclk, aclk) \
++		(((cntclk) << 24) | ((pclk_dbg) << 20) | ((atclk) << 16) | \
++		 ((pclk) << 12) | ((aclk) << 8))
++
++#define E5433_ATLAS_DIV1(hpm, copy) \
++		(((hpm) << 4) | ((copy) << 0))
++
++static const struct exynos_cpuclk_cfg_data exynos5433_atlasclk_d[] __initconst = {
++	{ 1900000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
++	{ 1800000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
++	{ 1700000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
++	{ 1600000, E5433_ATLAS_DIV0(7, 7, 7, 7, 4), E5433_ATLAS_DIV1(7, 1), },
++	{ 1500000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
++	{ 1400000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
++	{ 1300000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
++	{ 1200000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
++	{ 1100000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
++	{ 1000000, E5433_ATLAS_DIV0(7, 7, 7, 7, 3), E5433_ATLAS_DIV1(7, 1), },
++	{  900000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
++	{  800000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
++	{  700000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
++	{  600000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
++	{  500000, E5433_ATLAS_DIV0(7, 7, 7, 7, 2), E5433_ATLAS_DIV1(7, 1), },
++	{  0 },
+ };
+ 
+ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
+@@ -3844,6 +3894,12 @@ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
+ 				 ARRAY_SIZE(atlas_div_clks));
+ 	samsung_clk_register_gate(ctx, atlas_gate_clks,
+ 				  ARRAY_SIZE(atlas_gate_clks));
++
++	exynos_register_cpu_clock(ctx, CLK_SCLK_ATLAS, "atlasclk",
++		mout_atlas_p[0], mout_atlas_p[1], 0x200,
++		exynos5433_atlasclk_d, ARRAY_SIZE(exynos5433_atlasclk_d),
++		CLK_CPU_HAS_E5433_REGS_LAYOUT);
++
+ 	samsung_clk_sleep_init(reg_base, atlas_clk_regs,
+ 			       ARRAY_SIZE(atlas_clk_regs));
+ 
 -- 
-2.8.3
-
+1.9.1
