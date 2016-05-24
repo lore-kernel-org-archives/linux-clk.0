@@ -1,212 +1,214 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 20/22] ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
-Date: Sat, 28 May 2016 11:54:31 +0200
-Message-Id: <1464429273-23457-21-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH 2/3] clk: samsung: cpu: prepare for adding Exynos5433 CPU clocks
+Date: Tue, 24 May 2016 15:19:16 +0200
+Message-id: <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The USI/HSI2C nodes can be mostly shared between Exynos5420 and
-Exynos5410 so move them to common DTSI.
+Exynos5433 uses different register layout for CPU clock registers
+than earlier SoCs so add new code for handling this layout.  Also
+add new CLK_CPU_HAS_E5433_REGS_LAYOUT flag to request using it.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+There should be no functional change resulting from this patch.
 
+Cc: Kukjin Kim <kgene@kernel.org>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
+ drivers/clk/samsung/clk-cpu.c | 131 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/samsung/clk-cpu.h |   4 +-
+ 2 files changed, 133 insertions(+), 2 deletions(-)
 
-Change since v4:
-1. Remove the nodes in exynos5420.dtsi (before they were actually just
-   copied instead of moving).
-2. Use lower-case for hex.
----
- arch/arm/boot/dts/exynos5420.dtsi | 85 +++++++++++++--------------------------
- arch/arm/boot/dts/exynos54xx.dtsi | 41 +++++++++++++++++++
- 2 files changed, 69 insertions(+), 57 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8fa65eb8027d..8b1e706e9250 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -29,10 +29,6 @@
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
- 		pinctrl4 = &pinctrl_4;
--		i2c4 = &hsi2c_4;
--		i2c5 = &hsi2c_5;
--		i2c6 = &hsi2c_6;
--		i2c7 = &hsi2c_7;
- 		i2c8 = &hsi2c_8;
- 		i2c9 = &hsi2c_9;
- 		i2c10 = &hsi2c_10;
-@@ -526,59 +522,6 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 813003d..8bf7e80 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -45,6 +45,13 @@
+ #define E4210_DIV_STAT_CPU0	0x400
+ #define E4210_DIV_STAT_CPU1	0x404
  
--		/* i2c_0-3 are defined in exynos5.dtsi */
--		hsi2c_4: i2c@12CA0000 {
--			compatible = "samsung,exynos5250-hsi2c";
--			reg = <0x12CA0000 0x1000>;
--			interrupts = <0 60 0>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&i2c4_hs_bus>;
--			clocks = <&clock CLK_USI0>;
--			clock-names = "hsi2c";
--			status = "disabled";
--		};
--
--		hsi2c_5: i2c@12CB0000 {
--			compatible = "samsung,exynos5250-hsi2c";
--			reg = <0x12CB0000 0x1000>;
--			interrupts = <0 61 0>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&i2c5_hs_bus>;
--			clocks = <&clock CLK_USI1>;
--			clock-names = "hsi2c";
--			status = "disabled";
--		};
--
--		hsi2c_6: i2c@12CC0000 {
--			compatible = "samsung,exynos5250-hsi2c";
--			reg = <0x12CC0000 0x1000>;
--			interrupts = <0 62 0>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&i2c6_hs_bus>;
--			clocks = <&clock CLK_USI2>;
--			clock-names = "hsi2c";
--			status = "disabled";
--		};
--
--		hsi2c_7: i2c@12CD0000 {
--			compatible = "samsung,exynos5250-hsi2c";
--			reg = <0x12CD0000 0x1000>;
--			interrupts = <0 63 0>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&i2c7_hs_bus>;
--			clocks = <&clock CLK_USI3>;
--			clock-names = "hsi2c";
--			status = "disabled";
--		};
--
- 		hsi2c_8: i2c@12E00000 {
- 			compatible = "samsung,exynos5250-hsi2c";
- 			reg = <0x12E00000 0x1000>;
-@@ -1022,6 +965,34 @@
- 	pinctrl-0 = <&i2c3_bus>;
++#define E5433_MUX_SEL2		0x008
++#define E5433_MUX_STAT2		0x208
++#define E5433_DIV_CPU0		0x400
++#define E5433_DIV_CPU1		0x404
++#define E5433_DIV_STAT_CPU0	0x500
++#define E5433_DIV_STAT_CPU1	0x504
++
+ #define E4210_DIV0_RATIO0_MASK	0x7
+ #define E4210_DIV1_HPM_MASK	(0x7 << 4)
+ #define E4210_DIV1_COPY_MASK	(0x7 << 0)
+@@ -253,6 +260,102 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ }
+ 
+ /*
++ * Helper function to set the 'safe' dividers for the CPU clock. The parameters
++ * div and mask contain the divider value and the register bit mask of the
++ * dividers to be programmed.
++ */
++static void exynos5433_set_safe_div(void __iomem *base, unsigned long div,
++					unsigned long mask)
++{
++	unsigned long div0;
++
++	div0 = readl(base + E5433_DIV_CPU0);
++	div0 = (div0 & ~mask) | (div & mask);
++	writel(div0, base + E5433_DIV_CPU0);
++	wait_until_divider_stable(base + E5433_DIV_STAT_CPU0, mask);
++}
++
++/* handler for pre-rate change notification from parent clock */
++static int exynos5433_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
++			struct exynos_cpuclk *cpuclk, void __iomem *base)
++{
++	const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
++	unsigned long alt_prate = clk_get_rate(cpuclk->alt_parent);
++	unsigned long alt_div = 0, alt_div_mask = DIV_MASK;
++	unsigned long div0, div1 = 0, mux_reg;
++	unsigned long flags;
++
++	/* find out the divider values to use for clock data */
++	while ((cfg_data->prate * 1000) != ndata->new_rate) {
++		if (cfg_data->prate == 0)
++			return -EINVAL;
++		cfg_data++;
++	}
++
++	spin_lock_irqsave(cpuclk->lock, flags);
++
++	/*
++	 * For the selected PLL clock frequency, get the pre-defined divider
++	 * values.
++	 */
++	div0 = cfg_data->div0;
++	div1 = cfg_data->div1;
++
++	/*
++	 * If the old parent clock speed is less than the clock speed of
++	 * the alternate parent, then it should be ensured that at no point
++	 * the armclk speed is more than the old_prate until the dividers are
++	 * set.  Also workaround the issue of the dividers being set to lower
++	 * values before the parent clock speed is set to new lower speed
++	 * (this can result in too high speed of armclk output clocks).
++	 */
++	if (alt_prate > ndata->old_rate || ndata->old_rate > ndata->new_rate) {
++		unsigned long tmp_rate = min(ndata->old_rate, ndata->new_rate);
++
++		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
++		WARN_ON(alt_div >= MAX_DIV);
++
++		exynos5433_set_safe_div(base, alt_div, alt_div_mask);
++		div0 |= alt_div;
++	}
++
++	/* select the alternate parent */
++	mux_reg = readl(base + E5433_MUX_SEL2);
++	writel(mux_reg | 1, base + E5433_MUX_SEL2);
++	wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 2);
++
++	/* alternate parent is active now. set the dividers */
++	writel(div0, base + E5433_DIV_CPU0);
++	wait_until_divider_stable(base + E5433_DIV_STAT_CPU0, DIV_MASK_ALL);
++
++	writel(div1, base + E5433_DIV_CPU1);
++	wait_until_divider_stable(base + E5433_DIV_STAT_CPU1, DIV_MASK_ALL);
++
++	spin_unlock_irqrestore(cpuclk->lock, flags);
++	return 0;
++}
++
++/* handler for post-rate change notification from parent clock */
++static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
++			struct exynos_cpuclk *cpuclk, void __iomem *base)
++{
++	unsigned long div = 0, div_mask = DIV_MASK;
++	unsigned long mux_reg;
++	unsigned long flags;
++
++	spin_lock_irqsave(cpuclk->lock, flags);
++
++	/* select apll as the alternate parent */
++	mux_reg = readl(base + E5433_MUX_SEL2);
++	writel(mux_reg & ~1, base + E5433_MUX_SEL2);
++	wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 1);
++
++	exynos5433_set_safe_div(base, div, div_mask);
++	spin_unlock_irqrestore(cpuclk->lock, flags);
++	return 0;
++}
++
++/*
+  * This notifier function is called for the pre-rate and post-rate change
+  * notifications of the parent clock of cpuclk.
+  */
+@@ -275,6 +378,29 @@ static int exynos_cpuclk_notifier_cb(struct notifier_block *nb,
+ 	return notifier_from_errno(err);
+ }
+ 
++/*
++ * This notifier function is called for the pre-rate and post-rate change
++ * notifications of the parent clock of cpuclk.
++ */
++static int exynos5433_cpuclk_notifier_cb(struct notifier_block *nb,
++				unsigned long event, void *data)
++{
++	struct clk_notifier_data *ndata = data;
++	struct exynos_cpuclk *cpuclk;
++	void __iomem *base;
++	int err = 0;
++
++	cpuclk = container_of(nb, struct exynos_cpuclk, clk_nb);
++	base = cpuclk->ctrl_base;
++
++	if (event == PRE_RATE_CHANGE)
++		err = exynos5433_cpuclk_pre_rate_change(ndata, cpuclk, base);
++	else if (event == POST_RATE_CHANGE)
++		err = exynos5433_cpuclk_post_rate_change(ndata, cpuclk, base);
++
++	return notifier_from_errno(err);
++}
++
+ /* helper function to register a CPU clock */
+ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 		unsigned int lookup_id, const char *name, const char *parent,
+@@ -301,7 +427,10 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 	cpuclk->ctrl_base = ctx->reg_base + offset;
+ 	cpuclk->lock = &ctx->lock;
+ 	cpuclk->flags = flags;
+-	cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
++	if (flags & CLK_CPU_HAS_E5433_REGS_LAYOUT)
++		cpuclk->clk_nb.notifier_call = exynos5433_cpuclk_notifier_cb;
++	else
++		cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
+ 
+ 	cpuclk->alt_parent = __clk_lookup(alt_parent);
+ 	if (!cpuclk->alt_parent) {
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index 37874d3..d4b6b51 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -57,10 +57,12 @@ struct exynos_cpuclk {
+ 	struct notifier_block			clk_nb;
+ 	unsigned long				flags;
+ 
+-/* The CPU clock registers has DIV1 configuration register */
++/* The CPU clock registers have DIV1 configuration register */
+ #define CLK_CPU_HAS_DIV1		(1 << 0)
+ /* When ALT parent is active, debug clocks need safe divider values */
+ #define CLK_CPU_NEEDS_DEBUG_ALT_DIV	(1 << 1)
++/* The CPU clock registers have Exynos5433-compatible layout */
++#define CLK_CPU_HAS_E5433_REGS_LAYOUT	(1 << 2)
  };
  
-+&hsi2c_4 {
-+	clocks = <&clock CLK_USI0>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_hs_bus>;
-+};
-+
-+&hsi2c_5 {
-+	clocks = <&clock CLK_USI1>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c5_hs_bus>;
-+};
-+
-+&hsi2c_6 {
-+	clocks = <&clock CLK_USI2>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c6_hs_bus>;
-+};
-+
-+&hsi2c_7 {
-+	clocks = <&clock CLK_USI3>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c7_hs_bus>;
-+};
-+
- &mct {
- 	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
- 	clock-names = "fin_pll", "mct";
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index e01d068d4c38..44a8391c8524 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -21,6 +21,10 @@
- 	compatible = "samsung,exynos5";
- 
- 	aliases {
-+		i2c4 = &hsi2c_4;
-+		i2c5 = &hsi2c_5;
-+		i2c6 = &hsi2c_6;
-+		i2c7 = &hsi2c_7;
- 		usbdrdphy0 = &usbdrd_phy0;
- 		usbdrdphy1 = &usbdrd_phy1;
- 	};
-@@ -70,6 +74,43 @@
- 			};
- 		};
- 
-+		/* i2c_0-3 are defined in exynos5.dtsi */
-+		hsi2c_4: i2c@12ca0000 {
-+			compatible = "samsung,exynos5250-hsi2c";
-+			reg = <0x12ca0000 0x1000>;
-+			interrupts = <0 60 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		hsi2c_5: i2c@12cb0000 {
-+			compatible = "samsung,exynos5250-hsi2c";
-+			reg = <0x12cb0000 0x1000>;
-+			interrupts = <0 61 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		hsi2c_6: i2c@12cc0000 {
-+			compatible = "samsung,exynos5250-hsi2c";
-+			reg = <0x12cc0000 0x1000>;
-+			interrupts = <0 62 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		hsi2c_7: i2c@12cd0000 {
-+			compatible = "samsung,exynos5250-hsi2c";
-+			reg = <0x12cd0000 0x1000>;
-+			interrupts = <0 63 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		usbdrd3_0: usb3-0 {
- 			compatible = "samsung,exynos5250-dwusb3";
- 			#address-cells = <1>;
+ extern int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
 -- 
-2.7.4
+1.9.1
