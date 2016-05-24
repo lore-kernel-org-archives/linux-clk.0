@@ -1,60 +1,79 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, shawn.lin@rock-chips.com, zhengxing@rock-chips.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Revert "clk: rockchip: reset init state before mmc card initialization"
-Date: Fri, 13 May 2016 01:41:11 +0200
-Message-ID: <2083095.luTHhmZ9EO@phil>
-In-Reply-To: <1463076197-15900-1-git-send-email-dianders@chromium.org>
-References: <1463076197-15900-1-git-send-email-dianders@chromium.org>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH 00/11] Clock improvement for video playback
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas
+ Kandagatla <srinivas.kandagatla@gmail.com>,
+        Maxime Coquelin
+	<maxime.coquelin@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Russell
+ King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <benjamin.gaignard@st.com>,
+        <vincent.abriou@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <5744056A.7020606@st.com>
+Date: Tue, 24 May 2016 09:40:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 12. Mai 2016, 11:03:16 schrieb Douglas Anderson:
+Hello Gabriel,
 
-Not sure what the policy is for revert-subjects in the clock-tree, but I 
-guess
+Tested with success on stih407 family platforms
 
-clk: rockchip: Revert "reset init state before mmc card initialization"
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Tested-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-might look nicer?
+Regards
+Arnaud
 
-> This reverts commit 7a03fe6f48f3 ("clk: rockchip: reset init state
-> before mmc card initialization").
-
-I've tested these two patches together with the dw_mmc one and everything 
-that worked before still works (tuning on veyron-jerry) and everything that 
-didn't work still doesn't work (tuning on firefly [likely a regulator issue]).
-
-And re-checking the code against the TRM I now also see the mask that is to 
-short (1 bit in the code vs. the actual 2 bits described in the manual)
-
-[...]
-
-> 1. Just this revert: likely will fix rk3288-veyron eMMC on some devices
->    + other cases; might break someone with a strange bootloader that
->    sets the phase to 0 or one that uses delay elements (pretty
->    unpredicable what would happen in that case).
-> 2. Just dw_mmc patch: fixes everyone.  Effectly the dw_mmc patch will
->    totally override the broken patch and fix everything.
-> 3. Both patches: fixes everyone.  Once dw_mmc is initting properly then
->    any defaults from the clock code doesn't mattery.
-
-I'm still trying to make up my mind on how to proceed - aka in which order 
-patches should get picked up.
-
-Going with the "if it isn't upstream it doesn't exist" mantra Rob wrote 
-somewhere some days ago, taking this revert should not hurt anything, as all 
-the non-veyron devices currently don't support any tuning at all.
-
-So I'd think except for the issue Shawn was originally trying to fix (for 
-some non-mainline board?) it should be possible to take this patch any time 
-independently of the dw_mmc part.
-
-If Stephen or Mike want to do this directly, this is
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-> Fixes: 7a03fe6f48f3 ("clk: rockchip: reset init state before mmc card
-> initialization")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On 05/18/2016 10:41 AM, Gabriel Fernandez wrote:
+> This serie allows to increase video resolutions and make audio
+> adjustment during a video playback.
+> 
+> Gabriel Fernandez (11):
+>   drivers: clk: st: Add fs660c32 synthesizer algorithm
+>   drivers: clk: st: Add clock propagation for audio clocks
+>   drivers: clk: st: Handle clkgenD2 clk synchronous mode
+>   ARM: DT: STiH407: Add compatibility string on clkgend0 for audio
+>     clocks
+>   ARM: DT: STiH410: Add compatibility string on clkgend0 for audio
+>     clocks
+>   ARM: DT: STiH418: Add compatibility string on clkgend0 for audio
+>     clocks
+>   ARM: DT: STiH407: Enable synchronous clock mode on clkgend2
+>   ARM: DT: STiH410: Enable synchronous clock mode on clkgend2
+>   ARM: DT: STiH418: Enable synchronous clock mode on clkgend2
+>   ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
+>   ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+> 
+>  .../devicetree/bindings/clock/st/st,flexgen.txt    |   3 +
+>  arch/arm/boot/dts/stih407-clock.dtsi               |   4 +-
+>  arch/arm/boot/dts/stih407.dtsi                     |  16 ++-
+>  arch/arm/boot/dts/stih410-clock.dtsi               |   4 +-
+>  arch/arm/boot/dts/stih410.dtsi                     |  16 ++-
+>  arch/arm/boot/dts/stih418-clock.dtsi               |   4 +-
+>  drivers/clk/st/clk-flexgen.c                       |  61 +++++++-
+>  drivers/clk/st/clkgen-fsyn.c                       | 159 +++++++++++++++------
+>  8 files changed, 211 insertions(+), 56 deletions(-)
+> 
