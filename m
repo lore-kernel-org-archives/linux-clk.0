@@ -1,27 +1,27 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 6 May 2016 15:56:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/7] clk: rockchip: cleanup some code duplication
-Message-ID: <20160506225645.GG3492@codeaurora.org>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp2-g21.free.fr ([212.27.42.2]:58204 "EHLO smtp2-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752485AbcEXLD4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 24 May 2016 07:03:56 -0400
+Subject: Re: [PATCH RESEND v4 5/9] MIPS: Loongson-1A: workaround of pll
+ register's write-only property
+To: Binbin Zhou <zhoubb@lemote.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+References: <1463622432-10298-1-git-send-email-zhoubb@lemote.com>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <57443510.4020105@free.fr>
+Date: Tue, 24 May 2016 13:03:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461849075-8310-1-git-send-email-heiko@sntech.de>
+In-Reply-To: <1463622432-10298-1-git-send-email-zhoubb@lemote.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/28, Heiko Stuebner wrote:
-> This tries to generalize code paths that contain some (nearly)
-> duplicate code. While it's only a bit noticeable now for 3 different
-> plls, the effect should be more pronounced when the next pll-type
-> shows up.
-> 
+On 19/05/2016 03:47, Binbin Zhou wrote:
 
-Looks ok. Are you sending another pull? Or I can apply them
-directly.
+> +#ifdef CONIFG_CPU_LOONGSON1A
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+As I pointed out last week, CONFIG is misspelled.
+
+Regards.
+
