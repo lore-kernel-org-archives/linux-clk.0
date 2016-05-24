@@ -1,140 +1,79 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 09/21] clk: uniphier: add clock driver for UniPhier PH1-LD20 SoC
-Date: Tue, 10 May 2016 18:50:50 +0900
-Message-Id: <1462873862-30940-10-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain for Exynos5420
+Date: Tue, 24 May 2016 13:41:02 -0400
+Message-Id: <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
+has to be ungated during a power domain switch. Trying to do it when the
+clock is gated will fail and lead to an imprecise external abort error
+when the driver tries to access the MFC registers with the PD disabled.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+For example, if the s5p-mfc module is removed and the MFC PD turned off:
+
+[  186.835606] Power domain power-domain@10044060 disable failed
+[  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
+[  186.837670] Power domain power-domain@10044060 disable failed
+
+And when the module is inserted again:
+
+[ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
+[ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
+[ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+[ 2395.177441] pgd = ec3b4000
+[ 2395.177467] [00000000] *pgd=00000000
+[ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
+[ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
+[ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
+[ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
+[ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
+[ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
+
+This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
+clock for the MFC power domain, so the PD configuration works properly.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
 
- drivers/clk/uniphier/Kconfig             |  4 ++
- drivers/clk/uniphier/Makefile            |  1 +
- drivers/clk/uniphier/clk-uniphier-ld20.c | 83 ++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
- create mode 100644 drivers/clk/uniphier/clk-uniphier-ld20.c
+ arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
-index 1746aea..6e0a311 100644
---- a/drivers/clk/uniphier/Kconfig
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -30,4 +30,8 @@ config CLK_UNIPHIER_LD11
- 	tristate "Clock driver for UniPhier PH1-LD11 SoC"
- 	default ARM64
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 4c8523471c65..f3e9d873633e 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -313,8 +313,9 @@
+ 	mfc_pd: power-domain@10044060 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044060 0x20>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
+-		clock-names = "oscclk", "clk0";
++		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
++			 <&clock CLK_ACLK333>;
++		clock-names = "oscclk", "clk0","asb0";
+ 		#power-domain-cells = <0>;
+ 	};
  
-+config CLK_UNIPHIER_LD20
-+	tristate "Clock driver for UniPhier PH1-LD20 SoC"
-+	default ARM64
-+
- endif
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-index e056771..59272a6 100644
---- a/drivers/clk/uniphier/Makefile
-+++ b/drivers/clk/uniphier/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_CLK_UNIPHIER_SLD8)	+= clk-uniphier-sld8.o
- obj-$(CONFIG_CLK_UNIPHIER_PRO5)	+= clk-uniphier-pro5.o
- obj-$(CONFIG_CLK_UNIPHIER_PXS2)	+= clk-uniphier-pxs2.o
- obj-$(CONFIG_CLK_UNIPHIER_LD11)	+= clk-uniphier-ld11.o
-+obj-$(CONFIG_CLK_UNIPHIER_LD20)	+= clk-uniphier-ld20.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-ld20.c b/drivers/clk/uniphier/clk-uniphier-ld20.c
-new file mode 100644
-index 0000000..a15a59b
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-ld20.c
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-uniphier.h"
-+
-+static const struct uniphier_clk_data uniphier_ld20_clk_data[] = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "ref",
-+			.mult = 80,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 0,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 34,
-+		},
-+	},
-+	{
-+		.name = "fi2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 1,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 50,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 7,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x200c,
-+			.mask = BIT(8),
-+			.enable_val = BIT(8),
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static int uniphier_ld20_clk_probe(struct platform_device *pdev)
-+{
-+	return uniphier_clk_probe(pdev, uniphier_ld20_clk_data);
-+}
-+
-+static struct platform_driver uniphier_ld20_clk_driver = {
-+	.probe = uniphier_ld20_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-ld20-clk",
-+	},
-+};
-+module_platform_driver(uniphier_ld20_clk_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-LD20 System Clock Driver");
-+MODULE_LICENSE("GPL");
 -- 
-1.9.1
+2.5.5
