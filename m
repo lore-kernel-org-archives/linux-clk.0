@@ -1,136 +1,96 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid XU
-Date: Tue, 10 May 2016 22:09:03 +0200
-Message-Id: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5782 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751817AbcEYPJh (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2016 11:09:37 -0400
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Dmitry Osipenko <digetx@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"Alexandre Courbot" <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5745C02A.20308@nvidia.com>
+Date: Wed, 25 May 2016 16:09:30 +0100
+MIME-Version: 1.0
+In-Reply-To: <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-Patchset adds necessary clocks, reorganizes existing stuff and finally
-adds Odroid XU support.
+On 05/05/16 15:24, Dmitry Osipenko wrote:
+> Hello, Jon!
+> 
+> On 05.05.2016 16:17, Jon Hunter wrote:
+>>
+>> Thanks for the report. I have been unable to reproduce this, but then I
+>> don't see my tegra20 entering LP2 during cpuidle. I did force my tegra20
+>> into LP2 during suspend which will exercise the same code but I did not
+>> trigger this either. However, from looking at the code it does appear
+>> that we could hit this.
+>>
+> 
+> As I wrote before, it's quite difficult to reproduce.
 
+So far I have been unable to reproduce this. I did noticed that in the
+upstream kernel we disable LP2 on Tegra20 if PCIE is enabled (see
+arch/arm/mach-tegra/cpuidle-tegra20.c) ...
 
-Changes since v2
-================
-1. Got global-ack from Stephen for the clock changes. I think merging
-   everything through arm-soc might be the easiest but:
-   a. In such case I will prepare a tag with clock changes,
-   b. Anyway I will wait for response from Sylwester and Tomasz.
-2. Applied comments from Javier and added his Reviewed-by.
-3. Patch 22: added ack from Rob.
-4. Minor improvements in existing patches.
-5. Five new patches at the end: 23-27 (not reviewed yet).
-   Some of them could be squashed with existing ones but existing
-   changes got reviews. Although the final Odroid XU DTS works fine but
-   in general this is still work-in-progress so I suspect it will grow.
-   I am releasing it early following Linux concept. :)
+ /*
+  * Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
+  * they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
+  * this, simply disable LP2 if the PCI driver and DT node are both enabled.
+  */
+ void tegra20_cpuidle_pcie_irqs_in_use(void)
+ {
+         pr_info_once(
+                 "Disabling cpuidle LP2 state, since PCIe IRQs are in use\n");
+         tegra_idle_driver.states[1].disabled = true;
+ }
 
-Patchset is available at my private repo @github:
-https://github.com/krzk/linux.git for-next/odroid-xu-v3
+Even if I remove this and verify that I can enter LP2, I have been unable
+to reproduce this. I know that you said that it is difficult to reproduce
+and there needs to be a specific workload, however, from looking at the 
+code I am trying to understand the situation that would trigger this. 
 
-(previous version is in for-next/odroid-xu-v2 branch, if someone would
-like to compare them)
+Your backtrace shows ...
 
+[    3.430853] [<c0850fcc>] (dump_stack) from [<c00411f8>] (__schedule_bug+0x50/0x64)
+[    3.431079] [<c00411f8>] (__schedule_bug) from [<c08553a8>] (__schedule+0x5c8/0x688)
+[    3.431453] [<c08553a8>] (__schedule) from [<c08558f4>] (schedule_preempt_disabled+0x24/0x34)
+[    3.431835] [<c08558f4>] (schedule_preempt_disabled) from [<c0856f24>] (__mutex_lock_slowpath+0xbc/0x170)
+[    3.432204] [<c0856f24>] (__mutex_lock_slowpath) from [<c0857024>] (mutex_lock+0x4c/0x50)
+[    3.432427] [<c0857024>] (mutex_lock) from [<c0610368>] (clk_prepare_lock+0x88/0xfc)
+[    3.432800] [<c0610368>] (clk_prepare_lock) from [<c0611034>] (clk_get_rate+0xc/0x60)
+[    3.433177] [<c0611034>] (clk_get_rate) from [<c034f10c>] (tegra_pmc_enter_suspend_mode+0x188/0x20c)
+[    3.433580] [<c034f10c>] (tegra_pmc_enter_suspend_mode) from [<c0020d48>] (tegra_idle_lp2_last+0xc/0x40)
+[    3.433795] [<c0020d48>] (tegra_idle_lp2_last) from [<c0021e1c>] (tegra20_idle_lp2_coupled+0x118/0x1fc)
+[    3.434171] [<c0021e1c>] (tegra20_idle_lp2_coupled) from [<c055ec24>] (cpuidle_enter_state+0x3c/0x160)
+[    3.434551] [<c055ec24>] (cpuidle_enter_state) from [<c0560ce8>] (cpuidle_enter_state_coupled+0x3dc/0x3f4)
+[    3.434959] [<c0560ce8>] (cpuidle_enter_state_coupled) from [<c0055f1c>] (cpu_startup_entry+0x240/0x288)
+[    3.435340] [<c0055f1c>] (cpu_startup_entry) from [<c0b29c84>] (start_kernel+0x3b4/0x3c0)
+[    3.435557] [<c0b29c84>] (start_kernel) from [<00008074>] (0x8074)
 
-Changes since v1
-================
-1. A lot of new patches.
-2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
-3. New clocks, more reorganization.
-4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
-   and more complicated but this might help removing duplications
-   and keeping everything under control.
+... however, when we call tegra_idle_lp2_last(), CPU1 should be down and
+so I would not expect that the call to mutex_trylock() in clk_get_rate() 
+would fail (ie. return 0 for contention) at this point and cause us to
+call mutex_lock and sleep. Therefore, I am wondering if there could be
+another bug in the v3.18 kernel that you are using that could be
+triggering this. 
 
+If you are able to reproduce this on v3.18, then it would be good if you
+could trace the CCF calls around this WARNING to see what is causing the 
+contention.
 
-
-Merging strategy
-================
-Complicated! The clock dt-bindings and driver changes can go to clock
-tree. However there are three DTS patches in the middle.
-a. This has to go in before adding "fin_pll_new" to clock driver:
-   - [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
-
-b. This should go in before renaming "fin_pll_new" back to original name:
-   - [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new fin_pll clock
-   - [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
-
-The order of patches in the patchset is really how it should go in
-to reduce any bisectability glitches.
-
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (27):
-  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-  ARM: dts: exynos: Add fin_pll node for clock driver
-  clk: samsung: exynos5410: Provide fin_pll external fixed clock
-  ARM: dts: exynos: Switch MCT node to a new fin_pll clock
-  ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
-  clk: samsung: exynos5410: Rename fin_pll from temporary to regular
-    name
-  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
-  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
-    nodes
-  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
-  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
-  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
-  ARM: dts: exynos: Move common nodes to exynos5.dtsi
-  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
-    exynos5410.dtsi
-  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
-  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
-  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
-  ARM: dts: exynos: Enable UART3 on Exynos5410
-  ARM: dts: exynos: MCT is not an interrupt controller and extend length
-    of iomap
-  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
-  ARM: dts: exynos: Add USB to Exynos5410
-  ARM: dts: exynos: Add initial support for Odroid XU board
-  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-  clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
-  ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
-  ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
-  ARM: dts: exynos: Add RTC and I2C to Exynos5410
-
- .../bindings/arm/samsung/samsung-boards.txt        |    1 +
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
- arch/arm/boot/dts/exynos5250.dtsi                  | 1701 ++++++++---------
- arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
- arch/arm/boot/dts/exynos5410-smdk5410.dts          |   16 +-
- arch/arm/boot/dts/exynos5410.dtsi                  |  270 +--
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
- arch/arm/boot/dts/exynos5420.dtsi                  | 1992 +++++++++-----------
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
- arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
- arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
- arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
- drivers/clk/samsung/clk-exynos5410.c               |   61 +
- include/dt-bindings/clock/exynos5410.h             |   73 +-
- 17 files changed, 2758 insertions(+), 2225 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
- create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
- create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
+Cheers
+Jon
 
 -- 
-2.5.0
+nvpublic
