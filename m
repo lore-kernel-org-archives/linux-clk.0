@@ -1,92 +1,98 @@
-Return-Path: <khiem.nguyen.xt@rvc.renesas.com>
-Subject: [RFC 4/4] arm64: dts: r8a7795: Add Z clock scaling support
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <573166EB.70908@rvc.renesas.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>, Magnus
- Damm <damm+renesas@opensource.se>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <5731678E.3080003@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:46:06 +0700
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain
+ for Exynos5420
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-kernel@vger.kernel.org
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+ <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
+ <574558DF.1090000@samsung.com>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+ Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <32174210-ad4e-8fae-1142-80e06dcd319f@osg.samsung.com>
+Date: Wed, 25 May 2016 10:22:02 -0400
 MIME-Version: 1.0
-In-Reply-To: <573166EB.70908@rvc.renesas.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <574558DF.1090000@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds Z clock scaling support for CA57 in R8A7795 SoC.
-An OPP table is created with the supported frequency scaling.
+Hello Krzysztof,
 
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
----
-  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 26 ++++++++++++++++++++++++++
-  1 file changed, 26 insertions(+)
+On 05/25/2016 03:48 AM, Krzysztof Kozlowski wrote:
+> On 05/24/2016 07:41 PM, Javier Martinez Canillas wrote:
+>> The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
+>> has to be ungated during a power domain switch. Trying to do it when the
+>> clock is gated will fail and lead to an imprecise external abort error
+>> when the driver tries to access the MFC registers with the PD disabled.
+>>
+>> For example, if the s5p-mfc module is removed and the MFC PD turned off:
+>>
+>> [  186.835606] Power domain power-domain@10044060 disable failed
+>> [  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
+>> [  186.837670] Power domain power-domain@10044060 disable failed
+>>
+>> And when the module is inserted again:
+>>
+>> [ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
+>> [ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
+>> [ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+>> [ 2395.177441] pgd = ec3b4000
+>> [ 2395.177467] [00000000] *pgd=00000000
+>> [ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
+>> [ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
+>> [ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
+>> [ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> [ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
+>> [ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
+>> [ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
+>>
+>> This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
+>> clock for the MFC power domain, so the PD configuration works properly.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> ---
+>>
+>>  arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> Indeed patch #1 is not a hard dependency here because there are no other
+> asb clocks. It is entirely obvious but works fine.
+>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi 
-b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7181db0..041d0f2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -43,6 +43,8 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-  		};
+You are right, the reason why is not a hard dependency is because it fails
+anyways so this patch (which will make it fail due the clock being missed)
+won't have any effect.
+ 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
 
-  		a57_1: cpu@1 {
-@@ -52,6 +54,7 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-  		};
-  		a57_2: cpu@2 {
-  			compatible = "arm,cortex-a57","arm,armv8";
-@@ -60,6 +63,7 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-  		};
-  		a57_3: cpu@3 {
-  			compatible = "arm,cortex-a57","arm,armv8";
-@@ -68,6 +72,28 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-+		};
-+	};
-+
-+	cluster0_opp_tb0: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-  		};
-  	};
+Thanks!
 
+> Unless all other patches are meant to current fixes cycle (and/or
+> cc-stable), I do not plan to apply it now. I'll take it for v4.8, because:
+> 1. Your previous patches are needed. Without them bind/unbind won't work.
+> 2. This is not reproducible in a regular driver operation.
+> 3. It needs clock change to actually be useful.
+> 
+> Is it okay?
+>
+
+Agreed, that's also why I didn't cc stable on this series.
+ 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
