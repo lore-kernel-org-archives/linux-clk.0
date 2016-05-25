@@ -1,242 +1,62 @@
-Return-Path: <joel@jms.id.au>
-Return-Path: <joel@jms.id.au>
-From: Joel Stanley <joel@jms.id.au>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	jk@ozlabs.org,
-	benh@kernel.crashing.org,
-	arnd@arndb.de,
-	heiko@sntech.de
-Subject: [PATCH 3/4] drvers/clk: Support fifth generation Aspeed SoCs
-Date: Mon,  9 May 2016 22:01:50 +0930
-Message-Id: <1462797111-14271-4-git-send-email-joel@jms.id.au>
-In-Reply-To: <1462797111-14271-1-git-send-email-joel@jms.id.au>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 0/2] ARM: dts: Fix imprecise external abort error when
+ accessing Exynos MFC
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+ <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+ Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <d90b6245-1ed4-32c6-c98d-cc5f12601205@osg.samsung.com>
+Date: Wed, 25 May 2016 10:17:52 -0400
+MIME-Version: 1.0
+In-Reply-To: <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-A basic driver to create fixed rate clock devices from strapping
-registers.
+Hello Marek,
 
-Like the ast2400, the ast2500 clocks are derived from an external
-oscillator and the frequency of this can be determined from the
-strapping of the processor.
+On 05/25/2016 02:51 AM, Marek Szyprowski wrote:
+> Hello,
+> 
+> 
+> On 2016-05-24 19:41, Javier Martinez Canillas wrote:
+>> This series fixes an imprecise external abort error when accessing the
+>> Exynos MFC registers due the power domain configuration requiring the
+>> aclk333 clock to be enabled during a domain switch.
+>>
+>> There isn't a dependency between the clock and Linux Samsung SoC trees
+>> because the CLK_ACLK333 clock ID is already defined so the patches can
+>> be picked indepedently by the relevant subsystem maintainers.
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> I'm really curious what kind of async-bridge is there, but this patch
+> really fixes the problem with mfc power domain.
+>
 
-The frequency of internal clocks can be derived from other registers in
-the SCU (System Control Unit). The layout of the internal clocks is a
-bit different to the ast2400, as are the divisor reigisters, so it has
-it's own driver.
+Yes, the Exynos manual is not that clear about what clocks have to remain
+enabled during a power domain switch for an IP block so maybe I got wrong.
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/aspeed/Makefile |   1 +
- drivers/clk/aspeed/clk-g5.c | 189 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 190 insertions(+)
- create mode 100644 drivers/clk/aspeed/clk-g5.c
+I see that the MFC block has an async-bridge in "Figure 15-1" at section 
+"15.2.1 NoC Probes in 5420 Bus". And I thought that since the IP block
+has an async-bridge, the clock needs to remain ungated when the PMU turn
+it on and off on a power domain switch.
 
-diff --git a/drivers/clk/aspeed/Makefile b/drivers/clk/aspeed/Makefile
-index d3457fbe3019..9ddb0f8f4356 100644
---- a/drivers/clk/aspeed/Makefile
-+++ b/drivers/clk/aspeed/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_MACH_ASPEED_G4) += clk-g4.o
-+obj-$(CONFIG_MACH_ASPEED_G5) += clk-g5.o
-diff --git a/drivers/clk/aspeed/clk-g5.c b/drivers/clk/aspeed/clk-g5.c
-new file mode 100644
-index 000000000000..812fd9accf30
---- /dev/null
-+++ b/drivers/clk/aspeed/clk-g5.c
-@@ -0,0 +1,189 @@
-+/*
-+ * Copyright 2016 IBM Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of_address.h>
-+#include <linux/clkdev.h>
-+
-+static void __init aspeed_of_clkin_clk_init(struct device_node *node)
-+{
-+	struct clk *clk;
-+	void __iomem *base;
-+	int reg, rate;
-+	const char *name = node->name;
-+
-+	of_property_read_string(node, "clock-output-names", &name);
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	/* Strap register SCU70 */
-+	reg = readl(base) & BIT(23);
-+	iounmap(base);
-+
-+	if (reg)
-+		rate = 25 * 1000 * 1000;
-+	else
-+		rate = 24 * 1000 * 1000;
-+
-+	clk = clk_register_fixed_rate(NULL, name, NULL, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(aspeed_clkin_clock, "aspeed,g5-clkin-clock",
-+	       aspeed_of_clkin_clk_init);
-+
-+
-+static void __init aspeed_of_hpll_clk_init(struct device_node *node)
-+{
-+	struct clk *clk, *clkin_clk;
-+	void __iomem *base;
-+	int reg, rate, clkin;
-+	const char *name = node->name;
-+	const char *parent_name;
-+
-+	of_property_read_string(node, "clock-output-names", &name);
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	/* H-PLL parameter register SCU24 */
-+	reg = readl(base);
-+	iounmap(base);
-+
-+	clkin_clk = of_clk_get(node, 0);
-+	if (IS_ERR(clkin_clk)) {
-+		pr_err("%s: of_clk_get failed\n", node->full_name);
-+		return;
-+	}
-+
-+	clkin = clk_get_rate(clkin_clk);
-+
-+	if (reg & BIT(21)) {
-+		rate = 0;
-+	} else if (reg & BIT(20)) {
-+		rate = clkin;
-+	} else {
-+		int p = (reg >> 13) & 0x3f;
-+		int m = (reg >> 5) & 0xff;
-+		int n = reg & 0x1f;
-+
-+		rate = clkin * ((m + 1) / (n + 1)) / (p + 1);
-+	}
-+
-+	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g5-hpll-clock",
-+	       aspeed_of_hpll_clk_init);
-+
-+
-+static void __init aspeed_of_ahb_clk_init(struct device_node *node)
-+{
-+	struct clk *clk, *hpll_clk;
-+	void __iomem *base;
-+	int reg, rate, hpll;
-+	const char *name = node->name;
-+	const char *parent_name;
-+
-+	of_property_read_string(node, "clock-output-names", &name);
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	/* Strap register SCU70 */
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	reg = (readl(base) >> 9) & 0x03;
-+	iounmap(base);
-+
-+	/* A value of zero is undefined */
-+	WARN_ON(reg == 0);
-+
-+	hpll_clk = of_clk_get(node, 0);
-+	if (IS_ERR(hpll_clk)) {
-+		pr_err("%s: of_clk_get failed\n", node->full_name);
-+		return;
-+	}
-+
-+	hpll = clk_get_rate(hpll_clk);
-+
-+	rate = hpll / 2 / (reg + 1);
-+
-+	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(aspeed_ahb_clock, "aspeed,g5-ahb-clock",
-+	       aspeed_of_ahb_clk_init);
-+
-+
-+static void __init aspeed_of_apb_clk_init(struct device_node *node)
-+{
-+	struct clk *clk, *hpll_clk;
-+	void __iomem *base;
-+	int reg, rate;
-+	const char *name = node->name;
-+	const char *parent_name;
-+
-+	of_property_read_string(node, "clock-output-names", &name);
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	/* Clock selection register SCU08 */
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: of_iomap failed\n", node->full_name);
-+		return;
-+	}
-+	reg = readl(base) >> 23 & 0x3;
-+	iounmap(base);
-+
-+	hpll_clk = of_clk_get(node, 0);
-+	if (IS_ERR(hpll_clk)) {
-+		pr_err("%s: of_clk_get failed\n", node->full_name);
-+		return;
-+	}
-+
-+	rate = clk_get_rate(hpll_clk) / (4 * (reg + 1));
-+
-+	clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock\n", node->full_name);
-+		return;
-+	}
-+
-+	clk_register_clkdev(clk, NULL, name);
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g5-apb-clock",
-+	       aspeed_of_apb_clk_init);
+I chose that clock because "Figure 7-10 MFC Clock Diagram" at section
+"7.4.7 MFC Clock Diagram" shows that ACLK_333 is associated with the
+MFC internal buses, or at least that's my understanding.
+
+Best regards,
 -- 
-2.8.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
