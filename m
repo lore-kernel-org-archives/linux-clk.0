@@ -1,45 +1,54 @@
-Return-Path: <krzk@kernel.org>
-Subject: Re: [PATCH v2 20/22] ARM: dts: exynos: Move common
- Exynos5410/542x/5800 nodes to new DTSI
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-21-git-send-email-krzk@kernel.org>
- <9e642e0d-87e1-4661-0233-acecf0082f24@osg.samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Message-id: <57317292.2080004@kernel.org>
-Date: Tue, 10 May 2016 07:33:06 +0200
-MIME-version: 1.0
-In-reply-to: <9e642e0d-87e1-4661-0233-acecf0082f24@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 00/11] Switch to using CRITICAL clks for Tegra
+Date: Wed, 25 May 2016 18:24:20 -0400
+Message-ID: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/09/2016 11:53 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
->> The Exynos5410/542x/5800 are very similar designs. Create new new
-> 
-> s/new new/a new
-> 
->> DTSI with common nodes to remove DTS duplication. Although currently
->> only MCT and SysRAM are shared but in future more nodes will be added to
->> common file.
->>
->> The patch should not have functional impact.
->>
-> 
-> A nice way to check this is to diff the disassembled compiled DTBs with
-> and without the patch and making sure that the resulted DTS is the same.
+Switch to defining clks that need to be on as CRITICAL rather than
+using the init_tables defined to enable clks. Some of these may be
+able to be converted to HAND_OFF clks, when that is supported.
 
-Yes, that is what I've done. Recently there is a tool making that even
-easier: dtx_diff.
+I added a patch to mark CRITICAL clks in the clk_summary table, figuring
+it would be handy to be able to easily tell what clks are CRITICAL
+through the table.
 
-Best regards,
-Krzysztof
+I added a warning for using the init_table to enable clks. I considered
+removing it entirely, but I thought phasing it out might be better.
+
+Rhyland Klein (11):
+  clk: tegra: Switch to using critical/handoff clks
+  clk: tegra20: Mark required clks as CRITICAL
+  clk: tegra20: clean up init_table
+  clk: tegra30: Mark certain clks as critical
+  clk: tegra30: clean up init_table
+  clk: tegra114: clean up init_table
+  clk: tegra124: clean up init_table
+  clk: tegra210: Mark required clks as CRITICAL
+  clk: tegra210: clean up init_table
+  clk: Show CRITICAL clks in clk_summary output
+  clk: tegra: WARN if clk in the init_table has enable
+
+ drivers/clk/clk.c                        |  7 ++++--
+ drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++------
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 12 ++++++----
+ drivers/clk/tegra/clk-tegra114.c         | 11 ++++-----
+ drivers/clk/tegra/clk-tegra124.c         | 19 ++++++---------
+ drivers/clk/tegra/clk-tegra20.c          | 41 +++++++++++++++-----------------
+ drivers/clk/tegra/clk-tegra210.c         | 28 ++++++++--------------
+ drivers/clk/tegra/clk-tegra30.c          | 28 ++++++++--------------
+ drivers/clk/tegra/clk.c                  |  5 ++++
+ 9 files changed, 81 insertions(+), 91 deletions(-)
+
+-- 
+1.9.1
