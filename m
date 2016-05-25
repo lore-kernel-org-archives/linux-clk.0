@@ -1,219 +1,63 @@
-Return-Path: <842587420@qq.com>
-Sender: 842587420@qq.com
-From: Yang Ling <gnaygnil@gmail.com>
-To: ralf@linux-mips.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: chenhc@lemote.com,
-	gnaygnil@gmail.com,
-	linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/4] clk: add Loongson1C clock support
-Date: Thu, 12 May 2016 16:59:24 +0800
-Message-Id: <1463043564-21559-1-git-send-email-gnaygnil@gmail.com>
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 25 May 2016 14:54:07 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+ Lucas Stach <l.stach@pengutronix.de>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, kernel@pengutronix.de,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+In-Reply-To: <alpine.DEB.2.11.1604271212290.3941@nanos>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+ <alpine.DEB.2.11.1604271212290.3941@nanos>
+Message-ID: <c3368a10135e304051a56562a1ae0f99@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds clock support to Loongson1C SoC using the common clock
-infrastructure.
+On 2016-04-27 03:15, Thomas Gleixner wrote:
+> On Wed, 27 Apr 2016, Dong Aisheng wrote:
+>> Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+>> time init, the irq is still not enabled. It fixes the issue indirectly.
+>> See:
+>> asmlinkage __visible void __init start_kernel(void)
+>> {
+>>         /*
+>>          * Set up the scheduler prior starting any interrupts (such as the
+>>          * timer interrupt). Full topology setup happens at smp_init()
+>>          * time - but meanwhile we still have a functioning scheduler.
+>>          */
+>>         sched_init();
+>>         .............
+>>         time_init();
+>>         ..............
+>>         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>>         early_boot_irqs_disabled = false;
+>>         local_irq_enable();
+>> }
+>>
+>> The issue can only happen when PLL enable causes a schedule during
+>> imx_clock_init().
+> 
+> Calling a function which might sleep _BEFORE_ kernel_init() is wrong. Don't
+> try to work around such an issue by doing magic irq_disabled() checks and busy
+> loops. Fix the call site and be done with it.
 
-Signed-off-by: Yang Ling <gnaygnil@gmail.com>
----
- arch/mips/include/asm/mach-loongson32/regs-clk.h | 33 ++++++++++++
- drivers/clk/clk-ls1x.c                           | 69 +++++++++++++++++++++---
- 2 files changed, 95 insertions(+), 7 deletions(-)
+What do you mean exactly by fix the call site? The patch I proposed
+(https://lkml.org/lkml/2016/1/29/695) fixes the call site...
 
-diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h b/arch/mips/include/asm/mach-loongson32/regs-clk.h
-index 1f5a715..2cef0e2 100644
---- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
-+++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
-@@ -1,5 +1,7 @@
- /*
-  * Copyright (c) 2011 Zhang, Keguang <keguang.zhang@gmail.com>
-+ * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
-+ * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
-  *
-  * Loongson 1 Clock Register Definitions.
-  *
-@@ -19,6 +21,7 @@
- #define LS1X_CLK_PLL_DIV		LS1X_CLK_REG(0x4)
- 
- /* Clock PLL Divisor Register Bits */
-+#if defined(CONFIG_LOONGSON1_LS1B)
- #define DIV_DC_EN			(0x1 << 31)
- #define DIV_DC_RST			(0x1 << 30)
- #define DIV_CPU_EN			(0x1 << 25)
-@@ -48,4 +51,34 @@
- #define BYPASS_DDR_WIDTH		1
- #define BYPASS_CPU_WIDTH		1
- 
-+#elif defined(CONFIG_LOONGSON1_LS1C)
-+
-+#define PLL_VALID			(0x1 << 31)
-+#define FRAC_N				(0xff << 16)
-+#define RST_TIME			(0x3 << 2)
-+#define SDRAM_DIV			(0x3 << 0)
-+
-+#define DIV_DC_EN			(0x1 << 31)
-+#define DIV_DC				(0x7f << 24)
-+#define DIV_CAM_EN			(0x1 << 23)
-+#define DIV_CAM				(0x7f << 16)
-+#define DIV_CPU_EN			(0x1 << 15)
-+#define DIV_CPU				(0x7f << 8)
-+#define DIV_DC_SEL_EN			(0x1 << 5)
-+#define DIV_DC_SEL			(0x1 << 4)
-+#define DIV_CAM_SEL_EN			(0x1 << 3)
-+#define DIV_CAM_SEL			(0x1 << 2)
-+#define DIV_CPU_SEL_EN			(0x1 << 1)
-+#define DIV_CPU_SEL			(0x1 << 0)
-+
-+#define DIV_DC_SHIFT                    24
-+#define DIV_CAM_SHIFT                   16
-+#define DIV_CPU_SHIFT                   8
-+
-+#define DIV_DC_WIDTH                    7
-+#define DIV_CPU_WIDTH                   7
-+#define DIV_DDR_WIDTH                   7
-+
-+#endif
-+
- #endif /* __ASM_MACH_LOONGSON32_REGS_CLK_H */
-diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
-index d4c6198..746e653 100644
---- a/drivers/clk/clk-ls1x.c
-+++ b/drivers/clk/clk-ls1x.c
-@@ -1,5 +1,7 @@
- /*
-  * Copyright (c) 2012 Zhang, Keguang <keguang.zhang@gmail.com>
-+ * Copyright (c) 2015 Tang Haifeng <tanghaifeng-gz@loongson.cn>
-+ * Copyright (c) 2016 Ling Yang <gnaygnil@gmail.com>
-  *
-  * This program is free software; you can redistribute  it and/or modify it
-  * under  the terms of  the GNU General  Public License as published by the
-@@ -15,8 +17,13 @@
- 
- #include <loongson1.h>
- 
-+#if defined(CONFIG_LOONGSON1_LS1B)
- #define OSC		(33 * 1000000)
- #define DIV_APB		2
-+#elif defined(CONFIG_LOONGSON1_LS1C)
-+#define OSC		(24 * 1000000)
-+#define DIV_APB		1
-+#endif
- 
- static DEFINE_SPINLOCK(_lock);
- 
-@@ -35,9 +42,15 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
- 	u32 pll, rate;
- 
- 	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
-+#if defined(CONFIG_LOONGSON1_LS1B)
- 	rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
- 	rate *= OSC;
- 	rate >>= 1;
-+#elif defined(CONFIG_LOONGSON1_LS1C)
-+	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-+	rate *= OSC;
-+	rate >>= 2;
-+#endif
- 
- 	return rate;
- }
-@@ -80,22 +93,25 @@ static struct clk *__init clk_register_pll(struct device *dev,
- 	return clk;
- }
- 
--static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
--static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
--static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
-+static const char * const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
-+static const char * const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
-+static const char * const dc_parents[] = { "dc_clk_div", "osc_clk", };
- 
- void __init ls1x_clk_init(void)
- {
- 	struct clk *clk;
-+	u32 reg;
-+	u32 div;
- 
--	clk = clk_register_fixed_rate(NULL, "osc_33m_clk", NULL, CLK_IS_ROOT,
-+	clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, CLK_IS_ROOT,
- 				      OSC);
--	clk_register_clkdev(clk, "osc_33m_clk", NULL);
-+	clk_register_clkdev(clk, "osc_clk", NULL);
- 
--	/* clock derived from 33 MHz OSC clk */
--	clk = clk_register_pll(NULL, "pll_clk", "osc_33m_clk", 0);
-+	/* clock derived from OSC clk */
-+	clk = clk_register_pll(NULL, "pll_clk", "osc_clk", 0);
- 	clk_register_clkdev(clk, "pll_clk", NULL);
- 
-+#if defined(CONFIG_LOONGSON1_LS1B)
- 	/* clock derived from PLL clk */
- 	/*                                 _____
- 	 *         _______________________|     |
-@@ -114,7 +130,23 @@ void __init ls1x_clk_init(void)
- 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
- 			       BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0, &_lock);
- 	clk_register_clkdev(clk, "cpu_clk", NULL);
-+#elif defined(CONFIG_LOONGSON1_LS1C)
-+	reg = __raw_readl(LS1X_CLK_PLL_DIV);
-+	if (reg & DIV_CPU_SEL) {
-+		if (reg & DIV_CPU_EN) {
-+			clk = clk_register_divider(NULL, "cpu_clk", "pll_clk",
-+					CLK_SET_RATE_PARENT, LS1X_CLK_PLL_DIV,
-+					DIV_CPU_SHIFT, DIV_CPU_WIDTH,
-+					CLK_DIVIDER_ONE_BASED, &_lock);
-+		} else {
-+			clk = clk_register_fixed_factor(NULL, "cpu_clk",
-+							"pll_clk", 0, 1, 2);
-+		}
-+	}
-+	clk_register_clkdev(clk, "cpu_clk", NULL);
-+#endif
- 
-+#if defined(CONFIG_LOONGSON1_LS1B)
- 	/*                                 _____
- 	 *         _______________________|     |
- 	 * OSC ___/                       | MUX |___ DC  CLK
-@@ -130,7 +162,14 @@ void __init ls1x_clk_init(void)
- 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
- 			       BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0, &_lock);
- 	clk_register_clkdev(clk, "dc_clk", NULL);
-+#elif defined(CONFIG_LOONGSON1_LS1C)
-+	clk = clk_register_divider(NULL, "dc_clk", "pll_clk",
-+			CLK_SET_RATE_PARENT, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
-+			DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
-+	clk_register_clkdev(clk, "dc_clk", NULL);
-+#endif
- 
-+#if defined(CONFIG_LOONGSON1_LS1B)
- 	/*                                 _____
- 	 *         _______________________|     |
- 	 * OSC ___/                       | MUX |___ DDR CLK
-@@ -146,6 +185,22 @@ void __init ls1x_clk_init(void)
- 			       ARRAY_SIZE(ahb_parents),
- 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
- 			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
-+#elif defined(CONFIG_LOONGSON1_LS1C)
-+	reg = __raw_readl(LS1X_CLK_PLL_FREQ) & SDRAM_DIV;
-+	switch (reg) {
-+	case 0:
-+		div = 2;
-+		break;
-+	case 1:
-+		div = 4;
-+		break;
-+	case 2:
-+	case 3:
-+		div = 3;
-+		break;
-+	}
-+	clk = clk_register_fixed_factor(NULL, "ahb_clk", "cpu_clk", 0, 1, div);
-+#endif
- 	clk_register_clkdev(clk, "ahb_clk", NULL);
- 	clk_register_clkdev(clk, "stmmaceth", NULL);
- 
--- 
-1.9.1
+But I see Dong's argument here, irqs_disabled is the wrong way to figure
+out whether we are in kernel_init. What is the right approach to
+distinguish whether we are allowed to sleep?
+
+--
+Stefan
