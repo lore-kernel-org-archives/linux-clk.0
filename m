@@ -1,273 +1,97 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1462737711-10017-12-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-12-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 23 May 2016 21:58:04 +0800
-Message-ID: <CAGb2v65x8nxHzKG2MF8YLm6G1HHtTibxoqsNz_nzhqbzD8S-Gw@mail.gmail.com>
-Subject: Re: [PATCH 11/16] clk: sunxi-ng: Add N-K-factor clock support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 25 May 2016 14:06:37 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
 	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 08/20] drm/sun4i: rgb: panel is an error pointer
+Message-ID: <20160525120637.GB9232@lukather>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-9-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v6485nF_e9GeANLsy2Rq1XOn4nV5wD_eWskTmL2ME316+w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
+In-Reply-To: <CAGb2v6485nF_e9GeANLsy2Rq1XOn4nV5wD_eWskTmL2ME316+w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Introduce support for clocks that use a combination of two linear
-> multipliers.
+--nVMJ2NtxeReIH9PS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mostly the same comments as the previous patch.
+On Tue, May 17, 2016 at 11:51:36AM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > In case of an error, our pointer to the drm_panel structure attached to=
+ our
+> > encoder will hold an error pointer, not a NULL pointer.
+> >
+> > Make sure we check the right thing.
+> >
+> > Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_rgb.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/=
+sun4i_rgb.c
+> > index 923f55039cb1..b46d2c15dc95 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> > @@ -217,7 +217,7 @@ int sun4i_rgb_init(struct drm_device *drm)
+> >         int ret;
+> >
+> >         /* If we don't have a panel, there's no point in going on */
+> > -       if (!tcon->panel)
+> > +       if (IS_ERR(tcon->panel))
+>=20
+> Without the next patch, tcon->panel could be the result of of_drm_find_pa=
+nel(),
+> which could be NULL.
+>=20
+> Use IS_ERR_OR_NULL here, or reorder/squash the patches.
 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile |   1 +
->  drivers/clk/sunxi-ng/ccu_nk.c | 147 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_nk.h |  44 +++++++++++++
->  3 files changed, 192 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nk.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_nk.h
->
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index 09fce7467784..e29ddae99653 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -7,5 +7,6 @@ obj-y += ccu_gate.o
->  obj-y += ccu_m.o
->  obj-y += ccu_mp.o
->  obj-y += ccu_mux.o
-> +obj-y += ccu_nk.o
->  obj-y += ccu_p.o
->  obj-y += ccu_phase.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-> new file mode 100644
-> index 000000000000..46eede3e986e
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nk.c
-> @@ -0,0 +1,147 @@
-> +/*
-> + * Copyright (C) 2016 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/rational.h>
-> +
-> +#include "ccu_gate.h"
-> +#include "ccu_nk.h"
+Switched the order, and applied both, thanks!
+Maxime
 
-A formula to check against would be nice.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-> +void ccu_nk_find_best(unsigned long parent, unsigned long rate,
-> +                     unsigned int max_n, unsigned int max_k,
-> +                     unsigned int *n, unsigned int *k)
-> +{
-> +       unsigned long best_rate = 0;
-> +       unsigned int best_k = 0, best_n =0;
-> +       unsigned int _k, _n;
-> +
-> +       for (_k = 0; _k <= max_k; _k++) {
-> +               for (_n = 0; _n <= max_n; _n++) {
+--nVMJ2NtxeReIH9PS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I don't think 0 is a valid multiplier, regardless whether the N value in
-the register starts from 0 or 1.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> +                       unsigned long tmp_rate = parent * _n * _k;
-> +
-> +                       if (tmp_rate > rate)
-> +                               continue;
-> +
-> +                       if ((rate - tmp_rate) < (rate - best_rate)) {
-> +                               best_rate = tmp_rate;
-> +                               best_k = _k;
-> +                               best_n = _n;
-> +                       }
-> +               }
-> +       }
-> +
-> +       *k = best_k;
-> +       *n = best_n;
-> +}
-> +
-> +static void ccu_nk_disable(struct clk_hw *hw)
-> +{
-> +       struct ccu_nk *nk = hw_to_ccu_nk(hw);
-> +
-> +       return ccu_gate_helper_disable(&nk->common, nk->enable);
-> +}
-> +
-> +static int ccu_nk_enable(struct clk_hw *hw)
-> +{
-> +       struct ccu_nk *nk = hw_to_ccu_nk(hw);
-> +
-> +       return ccu_gate_helper_enable(&nk->common, nk->enable);
-> +}
-> +
-> +static int ccu_nk_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct ccu_nk *nk = hw_to_ccu_nk(hw);
-> +
-> +       return ccu_gate_helper_is_enabled(&nk->common, nk->enable);
-> +}
-> +
-> +static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
-> +                                       unsigned long parent_rate)
-> +{
-> +       struct ccu_nk *nk = hw_to_ccu_nk(hw);
-> +       unsigned long rate, n, k;
-> +       u32 reg;
-> +
-> +       reg = readl(nk->common.base + nk->common.reg);
-> +
-> +       n = reg >> nk->n.shift;
-> +       n &= (1 << nk->n.width) - 1;
-> +
-> +       k = reg >> nk->k.shift;
-> +       k &= (1 << nk->k.width) - 1;
-> +
-> +       rate = parent_rate * (n + 1) * (k + 1);
-> +
-> +       if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               rate = rate / nk->fixed_post_div;
+iQIcBAEBAgAGBQJXRZVNAAoJEBx+YmzsjxAgScYP/3VJwGalUxfROi5GEWnO5yrZ
+d61hx/38lp+0nwFnLsdaTo/ZfueRFY5ctn6KgeHXD6lZ4bzj7H7b/K4k5re4ZZmR
+oiobnhGeihI+yQwtP4A/1O5MhSeX+hwEgc65SgiCotVCyipaJVAW9eMDMzO8UtsY
+bfSDgZBV7CahVLBulFEyPW7DtgapPtRyZGqkuYIGCcK+pPoYECTHzZpxmp+QU/OD
+f7DwXi5+MN757JYnqLCAQwEff4xw9OyBG0HsHZ2nFEVguDk5sw/RwWSzZzEaovss
+pjsuc8WZFTN2iXxb0Z+wIC1X99V2cXCYylSmOuT/h+7OTDvfvokiAT+WYU9EhQI3
+BuELHmD1PuZBEXMftfY4FLk7SxqqiPMldUj7ZOGPj7xcTfUU6cKRqAxQeSWaPM7n
+EXo1m6081kDV4HZP0+6o8RsafZTsCetJiziWal5yNuGqG56ySUfU5grPcnBa+AYn
+zcbfMTOwWYzI2h0Ys3Wq/v9OXIk8CEYz0VcvzQr6zi5uDBrjnvvcctBjrVSCpa2p
+HkQsv5aYD80bVMkGWExeXWoezHa7TwnHuFLomg3AISV1G48B2dgyqkUe45kihrvT
+xA/FEIUuP9dyLS6OlHCjEYCRAWOLaVrb3wPosiEr81HwCsfgE3xp7Jg3Dniz9BuU
+XfGZuugZyTYLF5Ajwif3
+=4+m5
+-----END PGP SIGNATURE-----
 
-I would go with "rate /= nk->fixed_post_div", but it's purely aesthetics.
-
-> +
-> +       return rate;
-> +}
-> +
-> +static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                             unsigned long *parent_rate)
-> +{
-> +       struct ccu_nk *nk = hw_to_ccu_nk(hw);
-> +       unsigned int n, k;
-> +
-> +       if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               rate = rate * nk->fixed_post_div;
-> +
-> +       ccu_nk_find_best(*parent_rate, rate,
-> +                        1 << nk->n.width, 1 << nk->k.width,
-> +                        &n, &k);
-> +
-> +       rate = *parent_rate * n * k;
-> +       if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               rate = rate / nk->fixed_post_div;
-> +
-> +       return rate;
-> +}
-> +
-> +static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                          unsigned long parent_rate)
-> +{
-> +       struct ccu_nk *nk = hw_to_ccu_nk(hw);
-> +       unsigned long flags;
-> +       unsigned int n, k;
-> +       u32 reg;
-> +
-> +       if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               rate = rate * nk->fixed_post_div;
-> +
-> +       ccu_nk_find_best(parent_rate, rate,
-> +                        1 << nk->n.width, 1 << nk->k.width,
-> +                        &n, &k);
-> +
-> +       spin_lock_irqsave(nk->common.lock, flags);
-> +
-> +       reg = readl(nk->common.base + nk->common.reg);
-> +       reg &= ~GENMASK(nk->n.width + nk->n.shift, nk->n.shift);
-> +       reg &= ~GENMASK(nk->k.width + nk->k.shift, nk->k.shift);
-
-width + shift - 1
-
-> +
-> +       writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
-> +              nk->common.base + nk->common.reg);
-> +
-> +       spin_unlock_irqrestore(nk->common.lock, flags);
-> +
-> +       ccu_helper_wait_for_lock(&nk->common, nk->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops ccu_nk_ops = {
-> +       .disable        = ccu_nk_disable,
-> +       .enable         = ccu_nk_enable,
-> +       .is_enabled     = ccu_nk_is_enabled,
-> +
-> +       .recalc_rate    = ccu_nk_recalc_rate,
-> +       .round_rate     = ccu_nk_round_rate,
-> +       .set_rate       = ccu_nk_set_rate,
-> +};
-> diff --git a/drivers/clk/sunxi-ng/ccu_nk.h b/drivers/clk/sunxi-ng/ccu_nk.h
-> new file mode 100644
-> index 000000000000..cdbbd45815c6
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nk.h
-> @@ -0,0 +1,44 @@
-> +/*
-> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_NK_H_
-> +#define _CCU_NK_H_
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_common.h"
-> +#include "ccu_factor.h"
-> +
-> +struct ccu_nk {
-> +       u16                     reg;
-> +       u32                     enable;
-> +       u32                     lock;
-> +
-> +       struct ccu_factor       n;
-> +       struct ccu_factor       k;
-> +
-> +       unsigned int            fixed_post_div;
-> +
-> +       struct ccu_common       common;
-> +};
-> +
-> +static inline struct ccu_nk *hw_to_ccu_nk(struct clk_hw *hw)
-> +{
-> +       struct ccu_common *common = hw_to_ccu_common(hw);
-> +
-> +       return container_of(common, struct ccu_nk, common);
-> +}
-> +
-> +extern const struct clk_ops ccu_nk_ops;
-
-No macros for this one?
-
-
-Regards
-ChenYu
-
-> +
-> +#endif /* _CCU_NK_H_ */
-> --
-> 2.8.2
->
+--nVMJ2NtxeReIH9PS--
