@@ -1,183 +1,85 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 25 May 2016 18:29:45 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 12/20] drm/sun4i: Add bridge support
+Message-ID: <20160525162945.GK9232@lukather>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-13-git-send-email-maxime.ripard@free-electrons.com>
+ <CAKMK7uG-uq7XSqyesVnPtx0Ajx-FQjVKm_QzjEZgWJQDn8EkPA@mail.gmail.com>
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <20160509224953.GZ3492@codeaurora.org>
-References: <1462797111-14271-1-git-send-email-joel@jms.id.au>
- <1462797111-14271-3-git-send-email-joel@jms.id.au> <20160509224953.GZ3492@codeaurora.org>
-From: Joel Stanley <joel@jms.id.au>
-Date: Tue, 10 May 2016 20:50:11 +0930
-Message-ID: <CACPK8Xfq=Pfy=7GYuS7LJs-CFJOimBUoHA=Y6NHb4=DRcOnvfQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] drvers/clk: Support fourth generation Aspeed SoCs
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jeremy Kerr <jk@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Andrew Jeffery <andrew@aj.id.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="opg8F0UgoHELSI+9"
+In-Reply-To: <CAKMK7uG-uq7XSqyesVnPtx0Ajx-FQjVKm_QzjEZgWJQDn8EkPA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 10, 2016 at 8:19 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 05/09, Joel Stanley wrote:
->> diff --git a/drivers/clk/aspeed/clk-g4.c b/drivers/clk/aspeed/clk-g4.c
->> new file mode 100644
->> index 000000000000..91677e9177f5
->> --- /dev/null
->> +++ b/drivers/clk/aspeed/clk-g4.c
->> @@ -0,0 +1,109 @@
->> +/*
->> + * Copyright 2016 IBM Corporation
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License
->> + * as published by the Free Software Foundation; either version
->> + * 2 of the License, or (at your option) any later version.
->> + */
->> +
->> +#include <linux/clk.h>
->
-> Hopefully this include isn't needed.
 
-It was required for clk_get_rate in aspeed_of_pclk_clk_init. As I
-mention below, I reworked it to avoid this.
+--opg8F0UgoHELSI+9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->> +#include <linux/clk-provider.h>
->> +#include <linux/io.h>
->> +#include <linux/of_address.h>
->> +#include <linux/clkdev.h>
->> +
->> +static void __init aspeed_of_hpll_clk_init(struct device_node *node)
->> +{
->> +     struct clk *clk, *clkin_clk;
->> +     void __iomem *base;
->> +     int reg, rate, clkin;
->> +     const char *name = node->name;
->> +     const char *parent_name;
->> +     const int rates[][4] = {
->> +             {384, 360, 336, 408},
->> +             {400, 375, 350, 425},
->> +     };
->> +
->> +     of_property_read_string(node, "clock-output-names", &name);
->> +     parent_name = of_clk_get_parent_name(node, 0);
->> +
->> +     base = of_iomap(node, 0);
->> +     if (!base) {
->> +             pr_err("%s: of_iomap failed\n", node->full_name);
->> +             return;
->> +     }
->> +     reg = readl(base);
->> +     iounmap(base);
->> +
->> +     clkin_clk = of_clk_get(node, 0);
->> +     if (IS_ERR(clkin_clk)) {
->> +             pr_err("%s: of_clk_get failed\n", node->full_name);
->> +             return;
->> +     }
->> +
->> +     clkin = clk_get_rate(clkin_clk);
->> +
->> +     reg = (reg >> 8) & 0x2;
->> +
->> +     if (clkin == 48000000 || clkin == 24000000)
->> +             rate = rates[0][reg] * 1000000;
->> +     else if (clkin == 25000000)
->> +             rate = rates[1][reg] * 1000000;
->> +     else {
->> +             pr_err("%s: unknown clkin frequency %dHz\n",
->> +                             node->full_name, clkin);
->> +             WARN_ON(1);
->> +     }
->> +
->> +     clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
->
-> Please write a proper clk driver that sets clkin to be the parent
-> of this clk registered here and then calculates the frequency
-> based on the parent clk rate and the strapping registers via the
-> recalc rate callback.
+Hi Daniel,
 
-After a few goes I understood what you meant here.
+On Mon, May 16, 2016 at 03:12:15PM +0200, Daniel Vetter wrote:
+> On Mon, May 16, 2016 at 2:47 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Our RGB bus can be either connected to a bridge or a panel. While the p=
+anel
+> > support was already there, the bridge was not.
+> >
+> > Fix that.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> For bridge support the only thing you need is to set
+> drm_encoder->bridge. Why do you need to hand-roll your own bridge
+> support? That pretty muchmeans you'll do it slightly differently (e.g.
+> you don't bother with a lot of the calls), which will make sharing
+> bridge drivers ever so harder. And also reviewing code, since using
+> shared code but slightly differently is really confusing.
 
-Is the pclk part okay? I modified the pclk part use a fixed factor
-clock instead of the fixed clock, so I could drop the pclk_get_rate
-call below.
+Because I overlooked it :)
 
-> Also please move this to a platform driver
-> instead of using CLK_OF_DECLARE assuming this isn't required for
-> any timers in the system.
+I'll change that.
 
-Can you clarify here? We do use the rate of pclk (the apb clock) in
-the clocksource driver to calculate our count_per_tick value.
+Thanks!
+Maxime
 
->
->> +     if (IS_ERR(clk)) {
->> +             pr_err("%s: failed to register clock\n", node->full_name);
->> +             return;
->> +     }
->> +
->> +     clk_register_clkdev(clk, NULL, name);
->
-> Do you have clkdev users? If not then please drop this.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-I think the answer is no. I will drop.
+--opg8F0UgoHELSI+9
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +     of_clk_add_provider(node, of_clk_src_simple_get, clk);
->> +}
->> +CLK_OF_DECLARE(aspeed_hpll_clock, "aspeed,g4-hpll-clock",
->> +            aspeed_of_hpll_clk_init);
->> +
->> +static void __init aspeed_of_apb_clk_init(struct device_node *node)
->> +{
->> +     struct clk *clk, *hpll_clk;
->> +     void __iomem *base;
->> +     int reg, rate;
->> +     const char *name = node->name;
->> +     const char *parent_name;
->> +
->> +     of_property_read_string(node, "clock-output-names", &name);
->> +     parent_name = of_clk_get_parent_name(node, 0);
->> +
->> +     base = of_iomap(node, 0);
->> +     if (!base) {
->> +             pr_err("%s: of_iomap failed\n", node->full_name);
->> +             return;
->> +     }
->> +     reg = readl(base);
->> +     iounmap(base);
->> +
->> +     hpll_clk = of_clk_get(node, 0);
->> +     if (IS_ERR(hpll_clk)) {
->> +             pr_err("%s: of_clk_get failed\n", node->full_name);
->> +             return;
->> +     }
->> +
->> +     reg = (reg >> 23) & 0x3;
->> +     rate = clk_get_rate(hpll_clk) / (2 + 2 * reg);
->> +
->> +     clk = clk_register_fixed_rate(NULL, name, parent_name, 0, rate);
->> +     if (IS_ERR(clk)) {
->> +             pr_err("%s: failed to register clock\n", node->full_name);
->> +             return;
->> +     }
->> +
->> +     clk_register_clkdev(clk, NULL, name);
->> +     of_clk_add_provider(node, of_clk_src_simple_get, clk);
->> +}
->> +CLK_OF_DECLARE(aspeed_apb_clock, "aspeed,g4-apb-clock",
->> +            aspeed_of_apb_clk_init);
->
-> Following on Rob's comment, please combine this into one driver
-> instead of having different DT nodes for different clks that are
-> all really part of one clock controller hw block.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Ok, I have had a go at this. In our case the clock registers are part
-of the "SCU" IP; a collection of disparate functions that happen to
-include clock control. Is syscon the right thing to use here?
+iQIcBAEBAgAGBQJXRdL5AAoJEBx+YmzsjxAgmQwQAMB4NgJLyyr0/cLzGvYDoSBW
+LmIllM/WFiU1xGySjTtymYKL44qSihgDPBtg/8VZuGI7BaME5IBguZXklUtkdSKp
+kGRoue6D5Nu3Ra3fxoyjxgj74DrD82j6XheCUe05kQtsaAcLFG/UpwS0XU/ZlaXk
+jUXABZmQyxaZXMjJP3akntWvOUUOPAGSn1HpeMYJz2mggNn1rgHnpfWwX4mv8NBd
+sF97fTz2trm+7VJECO9N1CtQUqzW5TYPg7N0KBAkE2bsR2B2VZLJGRItQhzOp/k7
+wlM1a7dirqHfsmuOAgimgjuaaIwPX7JWtJU7Odznp+eT1873c6IQ8ysbuSPzjSkm
+vl1VyUfqr/a8IbQK0WqFywY2YPBm1DBdRu8Vify06RV5xGICY71yJPQiB1tNsXe3
+6mq1UgCp/+lMsLoOTSA+7RWUBaGTh1ZyC6qOCGv1cWNZVHE64SS1a4RHuTO6libx
++m1+04E2ldAKN4RGFMldhYBs0GicY4dQEw5blgfnQnPPXMYDjTciepoOqKMxyPrr
+h9NdaSXSNzmMvkWNp7DQFj5JPYAXHnc/d5Sfg5o0uencXRf/fyuJUWNChWnW4BXG
+WDDIwgw79ev/9e0VfLPu/Gbkp5Ir2wBtuLLKz4gz4uFU04Csy+OL4BdiqKYkKe3b
+kUNOw44KXVAJ97mX/Jze
+=1f8a
+-----END PGP SIGNATURE-----
 
-regmap = syscon_regmap_lookup_by_compatible("aspeed,ast2400-syscon-scu");
-ret = regmap_read(hpll->regmap, 0x70, &reg);
-
-Cheers,
-
-Joel
+--opg8F0UgoHELSI+9--
