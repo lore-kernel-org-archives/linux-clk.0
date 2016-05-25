@@ -1,112 +1,145 @@
 Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
+Subject: Re: [PATCH 1/3] clk: samsung: exynos5433: prepare for adding CPU clocks
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+ <1464095957-25851-2-git-send-email-b.zolnierkie@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
  linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 08/18] clk: samsung: exynos5250: Constify all clock initializers
-Date: Wed, 11 May 2016 14:02:04 +0200
-Message-id: <1462968134-6085-8-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <5745601C.6000806@samsung.com>
+Date: Wed, 25 May 2016 10:19:40 +0200
+MIME-version: 1.0
+In-reply-to: <1464095957-25851-2-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-All of initialization data can be made const.
+On 05/24/2016 03:19 PM, Bartlomiej Zolnierkiewicz wrote:
+> Open-code samsung_cmu_register_one() calls for CMU_APOLLO and
+> CMU_ATLAS setup code as a preparation for adding CPU clocks
+> support for Exynos5433.
+> 
+> There should be no functional change resulting from this patch.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 85 +++++++++++++++++++++++-------------
+>  drivers/clk/samsung/clk.c            | 12 ++---
+>  drivers/clk/samsung/clk.h            |  4 ++
+>  3 files changed, 65 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index 128527b..6dd81ed 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -11,6 +11,7 @@
+>  
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  
+>  #include <dt-bindings/clock/exynos5433.h>
+>  
+> @@ -3594,23 +3595,35 @@ static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
+>  			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+>  };
+>  
+> -static struct samsung_cmu_info apollo_cmu_info __initdata = {
+> -	.pll_clks		= apollo_pll_clks,
+> -	.nr_pll_clks		= ARRAY_SIZE(apollo_pll_clks),
+> -	.mux_clks		= apollo_mux_clks,
+> -	.nr_mux_clks		= ARRAY_SIZE(apollo_mux_clks),
+> -	.div_clks		= apollo_div_clks,
+> -	.nr_div_clks		= ARRAY_SIZE(apollo_div_clks),
+> -	.gate_clks		= apollo_gate_clks,
+> -	.nr_gate_clks		= ARRAY_SIZE(apollo_gate_clks),
+> -	.nr_clk_ids		= APOLLO_NR_CLK,
+> -	.clk_regs		= apollo_clk_regs,
+> -	.nr_clk_regs		= ARRAY_SIZE(apollo_clk_regs),
+> -};
+> -
+>  static void __init exynos5433_cmu_apollo_init(struct device_node *np)
+>  {
+> -	samsung_cmu_register_one(np, &apollo_cmu_info);
+> +	void __iomem *reg_base;
+> +	struct samsung_clk_provider *ctx;
+> +
+> +	reg_base = of_iomap(np, 0);
+> +	if (!reg_base) {
+> +		panic("%s: failed to map registers\n", __func__);
+> +		return;
+> +	}
+> +
+> +	ctx = samsung_clk_init(np, reg_base, APOLLO_NR_CLK);
+> +	if (!ctx) {
+> +		panic("%s: unable to allocate ctx\n", __func__);
+> +		return;
+> +	}
+> +
+> +	samsung_clk_register_pll(ctx, apollo_pll_clks,
+> +				 ARRAY_SIZE(apollo_pll_clks), reg_base);
+> +	samsung_clk_register_mux(ctx, apollo_mux_clks,
+> +				 ARRAY_SIZE(apollo_mux_clks));
+> +	samsung_clk_register_div(ctx, apollo_div_clks,
+> +				 ARRAY_SIZE(apollo_div_clks));
+> +	samsung_clk_register_gate(ctx, apollo_gate_clks,
+> +				  ARRAY_SIZE(apollo_gate_clks));
+> +	samsung_clk_sleep_init(reg_base, apollo_clk_regs,
+> +			       ARRAY_SIZE(apollo_clk_regs));
+> +
+> +	samsung_clk_of_add_provider(np, ctx);
+>  }
+>  CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
+>  		exynos5433_cmu_apollo_init);
+> @@ -3806,23 +3819,35 @@ static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
+>  			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+>  };
+>  
+> -static struct samsung_cmu_info atlas_cmu_info __initdata = {
+> -	.pll_clks		= atlas_pll_clks,
+> -	.nr_pll_clks		= ARRAY_SIZE(atlas_pll_clks),
+> -	.mux_clks		= atlas_mux_clks,
+> -	.nr_mux_clks		= ARRAY_SIZE(atlas_mux_clks),
+> -	.div_clks		= atlas_div_clks,
+> -	.nr_div_clks		= ARRAY_SIZE(atlas_div_clks),
+> -	.gate_clks		= atlas_gate_clks,
+> -	.nr_gate_clks		= ARRAY_SIZE(atlas_gate_clks),
+> -	.nr_clk_ids		= ATLAS_NR_CLK,
+> -	.clk_regs		= atlas_clk_regs,
+> -	.nr_clk_regs		= ARRAY_SIZE(atlas_clk_regs),
+> -};
+> -
+>  static void __init exynos5433_cmu_atlas_init(struct device_node *np)
+>  {
+> -	samsung_cmu_register_one(np, &atlas_cmu_info);
+> +	void __iomem *reg_base;
+> +	struct samsung_clk_provider *ctx;
+> +
+> +	reg_base = of_iomap(np, 0);
+> +	if (!reg_base) {
+> +		panic("%s: failed to map registers\n", __func__);
+> +		return;
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5250.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Return is useless here.
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 837197db4ffb..f24001dcfb8a 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -117,7 +117,7 @@ static struct samsung_clk_reg_dump *exynos5250_save;
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-  */
--static unsigned long exynos5250_clk_regs[] __initdata = {
-+static const unsigned long exynos5250_clk_regs[] __initconst = {
- 	SRC_CPU,
- 	DIV_CPU0,
- 	PWR_CTRL1,
-@@ -266,23 +266,23 @@ static struct samsung_fixed_rate_clock exynos5250_fixed_rate_ext_clks[] __initda
- };
- 
- /* fixed rate clocks generated inside the soc */
--static struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initconst = {
- 	FRATE(CLK_SCLK_HDMIPHY, "sclk_hdmiphy", NULL, 0, 24000000),
- 	FRATE(0, "sclk_hdmi27m", NULL, 0, 27000000),
- 	FRATE(0, "sclk_dptxphy", NULL, 0, 24000000),
- 	FRATE(0, "sclk_uhostphy", NULL, 0, 48000000),
- };
- 
--static struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "fout_mplldiv2", "fout_mpll", 1, 2, 0),
- 	FFACTOR(0, "fout_bplldiv2", "fout_bpll", 1, 2, 0),
- };
- 
--static struct samsung_mux_clock exynos5250_pll_pmux_clks[] __initdata = {
-+static const struct samsung_mux_clock exynos5250_pll_pmux_clks[] __initconst = {
- 	MUX(0, "mout_vpllsrc", mout_vpllsrc_p, SRC_TOP2, 0, 1),
- };
- 
--static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock exynos5250_mux_clks[] __initconst = {
- 	/*
- 	 * NOTE: Following table is sorted by (clock domain, register address,
- 	 * bitfield shift) triplet in ascending order. When adding new entries,
-@@ -378,7 +378,7 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	MUX(0, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
- };
- 
--static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
-+static const struct samsung_div_clock exynos5250_div_clks[] __initconst = {
- 	/*
- 	 * NOTE: Following table is sorted by (clock domain, register address,
- 	 * bitfield shift) triplet in ascending order. When adding new entries,
-@@ -470,7 +470,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
- 	DIV(CLK_DIV_I2S2, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
- };
- 
--static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 	/*
- 	 * NOTE: Following table is sorted by (clock domain, register address,
- 	 * bitfield shift) triplet in ascending order. When adding new entries,
-@@ -698,7 +698,7 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
- 			GATE_IP_ISP1, 7, 0, 0),
- };
- 
--static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
-+static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
- 	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
-@@ -707,7 +707,7 @@ static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
- 	{ },
- };
- 
--static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
-+static const struct samsung_pll_rate_table epll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
- 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
-@@ -721,7 +721,7 @@ static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
- 	{ },
- };
- 
--static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
-+static const struct samsung_pll_rate_table apll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_35XX_RATE(rate, m, p, s) */
- 	PLL_35XX_RATE(1700000000, 425, 6, 0),
--- 
-1.9.1
+> +	}
+> +
+> +	ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
+> +	if (!ctx) {
+> +		panic("%s: unable to allocate ctx\n", __func__);
+> +		return;
+> +	}
+
+This entire if() is useless. The samsung_clk_init() already panics. I
+recently tried to make it consistent across our drivers:
+http://www.spinics.net/lists/arm-kernel/msg503014.html
+
+Beside that, looks fine.
+
+Best regards,
+Krzysztof
