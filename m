@@ -1,66 +1,71 @@
-Return-Path: <robh@kernel.org>
-Date: Wed, 4 May 2016 08:47:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: thierry.reding@gmail.com, tony@atomide.com, linux@arm.linux.org.uk,
-	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to
- use proper unit address
-Message-ID: <20160504134703.GA4194@rob-hp-laptop>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
- <1462291015-1919-5-git-send-email-fcooper@ti.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 05/11] clk: tegra30: clean up init_table
+Date: Wed, 25 May 2016 18:24:25 -0400
+Message-ID: <1464215071-28696-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462291015-1919-5-git-send-email-fcooper@ti.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 03, 2016 at 10:56:50AM -0500, Franklin S Cooper Jr wrote:
-> Replace unit address from 0 to the proper physical address. Also insure
-> that the unit address matches the reg property address.
-> 
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Remove entries from the init_table where the clks are now defined
+as CRITICAL clks, if we were only enabling them in the init_table.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Remove the flag to signal to enable CRITICAL clks if they are still
+needed in the init_table to set other properties.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-> index 788da6c..0d47354 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-tiecap.txt
-> @@ -16,22 +16,22 @@ Optional properties:
->  
->  Example:
->  
-> -ecap0: ecap@0 { /* ECAP on am33xx */
-> +ecap0: ecap@48300100 { /* ECAP on am33xx */
->  	compatible = "ti,am33xx-ecap";
->  	#pwm-cells = <3>;
->  	reg = <0x48300100 0x80>;
->  	ti,hwmods = "ecap0";
->  };
->  
-> -ecap0: ecap@0 { /* ECAP on am4372 */
-> +ecap0: ecap@48300100 { /* ECAP on am4372 */
->  	compatible = "ti,am4372-ecap", "ti,am33xx-ecap";
->  	#pwm-cells = <3>;
->  	reg = <0x48300100 0x80>;
->  	ti,hwmods = "ecap0";
->  };
->  
-> -ecap0: ecap@0 { /* ECAP on da850 */
-> +ecap0: ecap@1f06000 { /* ECAP on da850 */
->  	compatible = "ti,da850-ecap", "ti,am33xx-ecap";
->  	#pwm-cells = <3>;
-> -	reg = <0x306000 0x80>;
-> +	reg = <0x1f06000 0x80>;
->  };
-> -- 
-> 2.7.0
-> 
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra30.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index fc91460ab892..8ae18b63568e 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1349,12 +1349,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
+ 	{ TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
+ 	{ TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
+-	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
+-	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
+-	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
+-	{ TEGRA30_CLK_CLK_OUT_1_MUX, TEGRA30_CLK_EXTERN1, 0, 0 },
+-	{ TEGRA30_CLK_CLK_OUT_1, TEGRA30_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA30_CLK_BLINK, TEGRA30_CLK_CLK_MAX, 0, 1 },
++	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
++	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
+ 	{ TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+@@ -1363,11 +1359,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
+-	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA30_CLK_EMC, TEGRA30_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA30_CLK_MSELECT, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_SBC1, TEGRA30_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA30_CLK_SBC2, TEGRA30_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA30_CLK_SBC3, TEGRA30_CLK_PLL_P, 100000000, 0 },
+@@ -1378,7 +1369,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
+ 	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
+-	{ TEGRA30_CLK_TWD, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+-- 
+1.9.1
