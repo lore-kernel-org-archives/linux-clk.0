@@ -1,32 +1,54 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Doug Anderson <dianders@chromium.org>, Brian Norris <computersforpeace@gmail.com>, Xing Zheng <zhengxing@rock-chips.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: mark rk3399 GIC clocks as critical
-Date: Tue, 17 May 2016 23:10:51 +0200
-Message-ID: <2111538.t2M7m4hXj2@phil>
-In-Reply-To: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
-References: <1463164937-91089-1-git-send-email-briannorris@chromium.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 10/11] clk: Show CRITICAL clks in clk_summary output
+Date: Wed, 25 May 2016 18:24:30 -0400
+Message-ID: <1464215071-28696-11-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 13. Mai 2016, 11:42:16 schrieb Brian Norris:
-> We never want to kill the GIC.
-> 
-> Noticed when making other clock fixups, and seeing the newly-constructed
-> clock tree try to disable cpll, where we had this parent structure:
-> 
->   aclk_gic <------\
-> 
->                   |--- aclk_gic_pre <-- cpll <-- pll_cpll
-> 
->   aclk_gic_noc <--/
-> 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Add a '^' character to the beginning of clk entries that are for
+CRITICAL clks.
 
-applied both patches to my clk-fixes branch with Dougs review-tags.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/clk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-
-Thanks
-Heiko
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 874c7dd8ef66..22dd0ca1e491 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
+ 		return;
+ 
+-	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+-		   level * 3 + 1, "",
++	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
++		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
++		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
+ 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
+@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 
+ 	clk_prepare_unlock();
+ 
++	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
