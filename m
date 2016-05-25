@@ -1,118 +1,247 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W
-Date: Wed,  4 May 2016 16:35:39 +0200
-Message-Id: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/3] clk: samsung: cpu: prepare for adding Exynos5433 CPU
+ clocks
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+ <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <574562FA.1050103@samsung.com>
+Date: Wed, 25 May 2016 10:31:54 +0200
+MIME-version: 1.0
+In-reply-to: <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+On 05/24/2016 03:19 PM, Bartlomiej Zolnierkiewicz wrote:
+> Exynos5433 uses different register layout for CPU clock registers
+> than earlier SoCs so add new code for handling this layout.  Also
+> add new CLK_CPU_HAS_E5433_REGS_LAYOUT flag to request using it.
+> 
+> There should be no functional change resulting from this patch.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-cpu.c | 131 +++++++++++++++++++++++++++++++++++++++++-
+>  drivers/clk/samsung/clk-cpu.h |   4 +-
+>  2 files changed, 133 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+> index 813003d..8bf7e80 100644
+> --- a/drivers/clk/samsung/clk-cpu.c
+> +++ b/drivers/clk/samsung/clk-cpu.c
+> @@ -45,6 +45,13 @@
+>  #define E4210_DIV_STAT_CPU0	0x400
+>  #define E4210_DIV_STAT_CPU1	0x404
+>  
+> +#define E5433_MUX_SEL2		0x008
+> +#define E5433_MUX_STAT2		0x208
+> +#define E5433_DIV_CPU0		0x400
+> +#define E5433_DIV_CPU1		0x404
+> +#define E5433_DIV_STAT_CPU0	0x500
+> +#define E5433_DIV_STAT_CPU1	0x504
 
-This patch series adds initial support for the Clock Pulse Generator and
-Module Standby and Software Reset modules on the Renesas R-Car M3-W
-SoC:
-  - Basic core clocks,
-  - SCIF2 (console) module clock,
-  - INTC-AP (GIC) module clock (disabled pending CLK_ENABLE_HAND_OFF).
+I got a problem matching it with datasheed. The base is 0x200?
 
-Support for more core and module clocks will be added incrementally.
+> +
+>  #define E4210_DIV0_RATIO0_MASK	0x7
+>  #define E4210_DIV1_HPM_MASK	(0x7 << 4)
+>  #define E4210_DIV1_COPY_MASK	(0x7 << 0)
+> @@ -253,6 +260,102 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+>  }
+>  
+>  /*
+> + * Helper function to set the 'safe' dividers for the CPU clock. The parameters
+> + * div and mask contain the divider value and the register bit mask of the
+> + * dividers to be programmed.
+> + */
+> +static void exynos5433_set_safe_div(void __iomem *base, unsigned long div,
+> +					unsigned long mask)
 
-/sys/kernel/debug/clk/clk_summary output:
+Please align the argument.
 
-       clock            enable_cnt  prepare_cnt        rate   accuracy   phase
-    ---------------------------------------------------------------------------
-     scif                        1            1    14745600          0 0
-     extalr                      0            0           0          0 0
-     extal                       1            1    16666666          0 0
-	cp                       0            0     8333333          0 0
-	.main                    1            1    16666666          0 0
-	   .pll4                 0            0  2399999904          0 0
-	   .pll3                 0            0  3199999872          0 0
-	   .pll2                 0            0  2399999904          0 0
-	   .pll1                 1            1  3199999872          0 0
-	      .pll1_div2         1            1  1599999936          0 0
-		 cl              0            0    33333332          0 0
-		 zx              0            0   799999968          0 0
-		 zt              0            0   399999984          0 0
-		 ztrd2           0            0   133333328          0 0
-		 ztr             0            0   266666656          0 0
-		 .s3             2            2   266666656          0 0
-		    s3d4         1            1    66666664          0 0
-		       scif2     2            2    66666664          0 0
-		    s3d2         0            0   133333328          0 0
-		    s3d1         2            2   266666656          0 0
-		       intc-ap   1            1   266666656          0 0
-		 .s2             0            0   399999984          0 0
-		    s2d4         0            0    99999996          0 0
-		    s2d2         0            0   199999992          0 0
-		    s2d1         0            0   399999984          0 0
-		 .s1             0            0   533333312          0 0
-		    s1d4         0            0   133333328          0 0
-		    s1d2         0            0   266666656          0 0
-		    s1d1         0            0   533333312          0 0
-		 .s0             0            0   799999968          0 0
-		    s0d12        0            0    66666664          0 0
-		    s0d8         0            0    99999996          0 0
-		    s0d6         0            0   133333328          0 0
-		    s0d4         0            0   199999992          0 0
-		    s0d3         0            0   266666656          0 0
-		    s0d2         0            0   399999984          0 0
-		    s0d1         0            0   799999968          0 0
-		 .pll1_div4      0            0   799999968          0 0
-	   .pll0                 0            0  2999999880          0 0
+> +{
+> +	unsigned long div0;
+> +
+> +	div0 = readl(base + E5433_DIV_CPU0);
+> +	div0 = (div0 & ~mask) | (div & mask);
+> +	writel(div0, base + E5433_DIV_CPU0);
+> +	wait_until_divider_stable(base + E5433_DIV_STAT_CPU0, mask);
+> +}
+> +
+> +/* handler for pre-rate change notification from parent clock */
+> +static int exynos5433_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+> +			struct exynos_cpuclk *cpuclk, void __iomem *base)
+> +{
+> +	const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
+> +	unsigned long alt_prate = clk_get_rate(cpuclk->alt_parent);
+> +	unsigned long alt_div = 0, alt_div_mask = DIV_MASK;
+> +	unsigned long div0, div1 = 0, mux_reg;
+> +	unsigned long flags;
+> +
+> +	/* find out the divider values to use for clock data */
+> +	while ((cfg_data->prate * 1000) != ndata->new_rate) {
+> +		if (cfg_data->prate == 0)
+> +			return -EINVAL;
+> +		cfg_data++;
+> +	}
+> +
+> +	spin_lock_irqsave(cpuclk->lock, flags);
+> +
+> +	/*
+> +	 * For the selected PLL clock frequency, get the pre-defined divider
+> +	 * values.
+> +	 */
+> +	div0 = cfg_data->div0;
+> +	div1 = cfg_data->div1;
+> +
+> +	/*
+> +	 * If the old parent clock speed is less than the clock speed of
+> +	 * the alternate parent, then it should be ensured that at no point
+> +	 * the armclk speed is more than the old_prate until the dividers are
+> +	 * set.  Also workaround the issue of the dividers being set to lower
+> +	 * values before the parent clock speed is set to new lower speed
+> +	 * (this can result in too high speed of armclk output clocks).
 
-For your convenience, I've pushed this series to the
-topic/r8a7796-clk-v1 branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
+In entire sentence: s/speed/rate/
 
-Integration with renesas-drivers-2016-04-26-v4.6-rc5, and minimal board
-integration for testing is available in the topic/gen3-latest branch.
+> +	 */
+> +	if (alt_prate > ndata->old_rate || ndata->old_rate > ndata->new_rate) {
+> +		unsigned long tmp_rate = min(ndata->old_rate, ndata->new_rate);
+> +
+> +		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
+> +		WARN_ON(alt_div >= MAX_DIV);
+> +
+> +		exynos5433_set_safe_div(base, alt_div, alt_div_mask);
+> +		div0 |= alt_div;
+> +	}
+> +
+> +	/* select the alternate parent */
+> +	mux_reg = readl(base + E5433_MUX_SEL2);
+> +	writel(mux_reg | 1, base + E5433_MUX_SEL2);
+> +	wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 2);
+> +
+> +	/* alternate parent is active now. set the dividers */
+> +	writel(div0, base + E5433_DIV_CPU0);
+> +	wait_until_divider_stable(base + E5433_DIV_STAT_CPU0, DIV_MASK_ALL);
+> +
+> +	writel(div1, base + E5433_DIV_CPU1);
+> +	wait_until_divider_stable(base + E5433_DIV_STAT_CPU1, DIV_MASK_ALL);
+> +
+> +	spin_unlock_irqrestore(cpuclk->lock, flags);
 
-This has received minimal testing on r8a7796/salvator-x, and regression
-testing on r8a7795/salvator-x (ES1.0 and ES1.1).
+One blank line please.
 
-Thanks for your comments!
+> +	return 0;
+> +}
+> +
+> +/* handler for post-rate change notification from parent clock */
+> +static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+> +			struct exynos_cpuclk *cpuclk, void __iomem *base)
+> +{
+> +	unsigned long div = 0, div_mask = DIV_MASK;
+> +	unsigned long mux_reg;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(cpuclk->lock, flags);
+> +
+> +	/* select apll as the alternate parent */
+> +	mux_reg = readl(base + E5433_MUX_SEL2);
+> +	writel(mux_reg & ~1, base + E5433_MUX_SEL2);
+> +	wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 1);
+> +
+> +	exynos5433_set_safe_div(base, div, div_mask);
+> +	spin_unlock_irqrestore(cpuclk->lock, flags);
 
-Geert Uytterhoeven (4):
-  clk: renesas: cpg-mssr: Document r8a7796 support
-  clk: renesas: Add r8a7796 CPG Core Clock Definitions
-  clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code
-  clk: renesas: cpg-mssr: Add support for R-Car M3-W
+One blank line please.
 
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
- drivers/clk/renesas/Kconfig                        |   1 +
- drivers/clk/renesas/Makefile                       |   3 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c             | 360 +--------------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c             | 192 +++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c                | 359 ++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h                |  43 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a7796-cpg-mssr.h       |  69 ++++
- 10 files changed, 682 insertions(+), 359 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7796-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.h
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> +	return 0;
+> +}
+> +
+> +/*
+>   * This notifier function is called for the pre-rate and post-rate change
+>   * notifications of the parent clock of cpuclk.
+>   */
+> @@ -275,6 +378,29 @@ static int exynos_cpuclk_notifier_cb(struct notifier_block *nb,
+>  	return notifier_from_errno(err);
+>  }
+>  
+> +/*
+> + * This notifier function is called for the pre-rate and post-rate change
+> + * notifications of the parent clock of cpuclk.
+> + */
+> +static int exynos5433_cpuclk_notifier_cb(struct notifier_block *nb,
+> +				unsigned long event, void *data)
+> +{
+> +	struct clk_notifier_data *ndata = data;
+> +	struct exynos_cpuclk *cpuclk;
+> +	void __iomem *base;
+> +	int err = 0;
+> +
+> +	cpuclk = container_of(nb, struct exynos_cpuclk, clk_nb);
+> +	base = cpuclk->ctrl_base;
+> +
+> +	if (event == PRE_RATE_CHANGE)
+> +		err = exynos5433_cpuclk_pre_rate_change(ndata, cpuclk, base);
+> +	else if (event == POST_RATE_CHANGE)
+> +		err = exynos5433_cpuclk_post_rate_change(ndata, cpuclk, base);
+> +
+> +	return notifier_from_errno(err);
+> +}
 
--- 
-1.9.1
+Entire function is a duplication of exynos_cpuclk_notifier_cb(), except
+the {pre,post}_rate_change. How about checking the flags here and using
+only one notifier? Overall the code should be smaller...
 
-Gr{oetje,eeting}s,
+Another, more robust solution would be to define new members in:
+struct exynos_cpuclk {
+	int (pre_rate_change) *(....);
+	int (post_rate_change) *(....);
+}
+This way the notifier_cb would be exactly the same for all implementations.
 
-						Geert
+Best regards,
+Krzysztof
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> +
+>  /* helper function to register a CPU clock */
+>  int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+>  		unsigned int lookup_id, const char *name, const char *parent,
+> @@ -301,7 +427,10 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+>  	cpuclk->ctrl_base = ctx->reg_base + offset;
+>  	cpuclk->lock = &ctx->lock;
+>  	cpuclk->flags = flags;
+> -	cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
+> +	if (flags & CLK_CPU_HAS_E5433_REGS_LAYOUT)
+> +		cpuclk->clk_nb.notifier_call = exynos5433_cpuclk_notifier_cb;
+> +	else
+> +		cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
+>  
+>  	cpuclk->alt_parent = __clk_lookup(alt_parent);
+>  	if (!cpuclk->alt_parent) {
+> diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+> index 37874d3..d4b6b51 100644
+> --- a/drivers/clk/samsung/clk-cpu.h
+> +++ b/drivers/clk/samsung/clk-cpu.h
+> @@ -57,10 +57,12 @@ struct exynos_cpuclk {
+>  	struct notifier_block			clk_nb;
+>  	unsigned long				flags;
+>  
+> -/* The CPU clock registers has DIV1 configuration register */
+> +/* The CPU clock registers have DIV1 configuration register */
+>  #define CLK_CPU_HAS_DIV1		(1 << 0)
+>  /* When ALT parent is active, debug clocks need safe divider values */
+>  #define CLK_CPU_NEEDS_DEBUG_ALT_DIV	(1 << 1)
+> +/* The CPU clock registers have Exynos5433-compatible layout */
+> +#define CLK_CPU_HAS_E5433_REGS_LAYOUT	(1 << 2)
+>  };
+>  
+>  extern int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+> 
