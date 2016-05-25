@@ -1,32 +1,41 @@
-Return-Path: <wens@csie.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 08/11] clk: tegra210: Mark required clks as CRITICAL
+Date: Wed, 25 May 2016 18:24:28 -0400
+Message-ID: <1464215071-28696-9-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <1463402840-17062-4-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-4-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 May 2016 00:05:18 +0800
-Message-ID: <CAGb2v64GxTFnnx40Jy9Cz9e+c+T2j2QcbFznZ4-Lm-tdHFgcXg@mail.gmail.com>
-Subject: Re: [PATCH 03/20] clk: sunxi: tcon-ch1: Do not return a negative
- error in get_parent
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	devicetree <devicetree@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> get_parent is supposed to return an unsigned 8 bit integer, so returning
-> -EINVAL is a bad idea.
->
-> Remove it.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Mark clks that are required to be on as CRITICAL clks.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index b8551813ec43..156dc8ec6bf6 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2655,7 +2655,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 
+ 	/* PLLRE */
+ 	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
+-						clk_base, pmc, 0,
++						clk_base, pmc, CLK_IS_CRITICAL,
+ 						&pll_re_vco_params,
+ 						&pll_re_lock, pll_ref_freq);
+ 	clk_register_clkdev(clk, "pll_re_vco", NULL);
+-- 
+1.9.1
