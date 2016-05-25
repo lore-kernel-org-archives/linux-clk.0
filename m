@@ -1,41 +1,58 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 08/11] clk: tegra210: Mark required clks as CRITICAL
-Date: Fri, 27 May 2016 16:38:11 -0400
-Message-ID: <1464381494-27096-9-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-Return-Path: rklein@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/2] ARM: dts: Fix imprecise external abort error when
+ accessing Exynos MFC
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ linux-kernel@vger.kernel.org
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+ Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Andrzej Hajda <a.hajda@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
+Date: Wed, 25 May 2016 08:51:05 +0200
+MIME-version: 1.0
+In-reply-to: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+Content-type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Mark clks that are required to be on as CRITICAL clks.
+Hello,
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b8551813ec43..156dc8ec6bf6 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2655,7 +2655,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 
- 	/* PLLRE */
- 	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
--						clk_base, pmc, 0,
-+						clk_base, pmc, CLK_IS_CRITICAL,
- 						&pll_re_vco_params,
- 						&pll_re_lock, pll_ref_freq);
- 	clk_register_clkdev(clk, "pll_re_vco", NULL);
+On 2016-05-24 19:41, Javier Martinez Canillas wrote:
+> This series fixes an imprecise external abort error when accessing the
+> Exynos MFC registers due the power domain configuration requiring the
+> aclk333 clock to be enabled during a domain switch.
+>
+> There isn't a dependency between the clock and Linux Samsung SoC trees
+> because the CLK_ACLK333 clock ID is already defined so the patches can
+> be picked indepedently by the relevant subsystem maintainers.
+
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+I'm really curious what kind of async-bridge is there, but this patch
+really fixes the problem with mfc power domain.
+
+> Best regards,
+> Javier
+>
+>
+> Javier Martinez Canillas (2):
+>    clk: exynos5420: Set ID for aclk333 gate clock
+>    ARM: dts: Add async-bridge clock to MFC power domain for Exynos5420
+>
+>   arch/arm/boot/dts/exynos5420.dtsi    | 5 +++--
+>   drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>   2 files changed, 4 insertions(+), 3 deletions(-)
+>
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
