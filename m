@@ -1,87 +1,95 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
- <netdev@vger.kernel.org>
-Subject: [v10, 4/7] dt: move guts devicetree doc out of powerpc directory
-Date: Thu, 5 May 2016 11:12:27 +0800
-Message-ID: <1462417950-46796-5-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 25 May 2016 14:09:15 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 09/20] drm/sun4i: defer only if we didn't find our panel
+Message-ID: <20160525120915.GC9232@lukather>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-10-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v655q_w8s7Eg8xnpzdX9PDxSEhRLvMu3bNOd==U4APgg0Q@mail.gmail.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, ulf.hansson@linaro.org,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Jochen Friedrich <jochen@scram.de>,
- leoyang.li@nxp.com, Scott Wood <oss@buserror.net>,
- Rob Herring <robh+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, xiaobo.xie@nxp.com,
- Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f0KYrhQ4vYSV2aJu"
+In-Reply-To: <CAGb2v655q_w8s7Eg8xnpzdX9PDxSEhRLvMu3bNOd==U4APgg0Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
-since it's used by not only PowerPC but also ARM. And add a specification
-for 'little-endian' property.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes for v4:
-	- Added this patch
-Changes for v5:
-	- Modified the description for little-endian property
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Rob Herring'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
----
- Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
- 1 file changed, 3 insertions(+)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+--f0KYrhQ4vYSV2aJu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-similarity index 91%
-rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
-index b71b203..07adca9 100644
---- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-@@ -25,6 +25,9 @@ Recommended properties:
-  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
-    registers, for those SOCs that have a PAMU device.
- 
-+ - little-endian : Indicates that the global utilities block is little
-+   endian. The default is big endian.
-+
- Examples:
- 	global-utilities@e0000 {	/* global utilities block */
- 		compatible = "fsl,mpc8548-guts";
--- 
-2.1.0.27.g96db324
+On Tue, May 17, 2016 at 11:52:10AM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Our code currently defers our probe on any error, even if we were not
+> > expecting to have one at all.
+> >
+> > Make sure we return -EPROBE_DEFER only when we were supposed to have a
+> > panel, but it's not probed yet.
+> >
+> > Fixes: 29e57fab97fc ("drm: sun4i: Add RGB output")
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i=
+/sun4i_tcon.c
+> > index 9f19b0e08560..eed6a9e8d9a6 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -429,7 +429,7 @@ static struct drm_panel *sun4i_tcon_find_panel(stru=
+ct device_node *node)
+> >                 return ERR_PTR(-EINVAL);
+> >         }
+> >
+> > -       return of_drm_find_panel(remote);
+> > +       return of_drm_find_panel(remote) ?: ERR_PTR(-EPROBE_DEFER);
+>=20
+> There's also a typo in the DRM_DEBUG_DRIVER call a few lines up. Could you
+> fix it as well?
 
+Done, thanks!
+Maxime
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--f0KYrhQ4vYSV2aJu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXRZXrAAoJEBx+YmzsjxAgloAQAIt+i2L07f/JUiJt6bEDclgE
+XUw6WAClT2l13qxQe5XXzKwGYFdZruHB+oQcWpgGxaa5YIIC3Jv6fuQHJ6Ow0rLO
+cA4Us8VQb4vbCrZI9jGNqdShL33ePGHHQPyyGhFx93Mg7/BqB4EGjmjGqoKkUbsV
+mklhkSVDr2phVuCEqzKI10upsB+atEOCI2S4Mhc3TWRFHpjPeNzO8LVvgnL+WO2C
+x2ht5PcvTZw/iLrW3zcGaaL0gXPatuZ+FJrPkfrivJz8OBxKkiI6nMpA5JXHGVRP
+AyhH1jTPyoSL11n8YCw4aBKJIbSP4+dxWtCKNok6G9LrV64t12l3dq5nQ+Uxf6N7
+BpJ2I/wrmmPZLlUfd4RzHSbq77qfTylWuU/3O2j/k4YMAz1IxlJ7HFDmQWm+TUXM
+xdzcWxGT+F4+1GerKKRN6qlib5VFclCZK9JI4tVWus3/P0BgkBhjivVBBkgEff2u
+D3lGiPySHDelf2swBQiTZHpxKIym7LN3GBTyqNSIbhwavlYFqcv1dZ+IYihGYJa8
+Abj4yTvuX9hqvci5XrY/Flob767h9EOIYKyqB6+iM1S052YXUI4+sq/fbnwXbzos
+Z6bdxsDS6CFUAIkZZJE3mOiYLU1TwfsLibLBpU/d6Uw6lj3DV579e9skjQTUrT5H
+cVCu8eqpwgTdj7ac97OR
+=mmB1
+-----END PGP SIGNATURE-----
+
+--f0KYrhQ4vYSV2aJu--
