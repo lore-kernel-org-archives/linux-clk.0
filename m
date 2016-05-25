@@ -1,96 +1,65 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 4/5] clk: qcom: ipq4019: Added the cpu clock frequency change notifier
-Date: Mon, 30 May 2016 20:02:37 +0530
-Message-Id: <1464618758-20965-5-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
-References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 25 May 2016 12:24:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
+	benjamin.gaignard@st.com, vincent.abriou@st.com
+Subject: Re: [PATCH 02/11] drivers: clk: st: Add clock propagation for audio
+ clocks
+Message-ID: <20160525172409.GA27913@rob-hp-laptop>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current IPQ4019 clock driver code gives the crash or gets hang
-while switching the CPU frequency some time. The APSS CPU Clock
-divider is not glitch free so the APPS clock need to be switched for
-stable clock duringthe change.
+On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
+> This patch allows fine tuning of the quads FS for audio clocks
+> accuracy.
+> 
+> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
+>  drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> index b7ee5c7..15b33c7 100644
+> --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
+>  Required properties:
+>  - compatible : shall be:
+>    "st,flexgen"
+> +  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on parent)
 
-This patch adds the frequency change notifier for APSS CPU clock.
-It changes the parent of this clock to stable PLL FEPLL500 when it
-gets for PRE_RATE_CHANGE event. This event will be generated before
-actual clock set operations. The clock set operation will again change
-its corresponding parent by getting the same from frequency table.
+What do "d0" and "d2" refer to?
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq4019.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+This seems to indicate you have too much clock detail in the DT (with 
+individual clocks described) or not enough with genericish compatible 
+strings. What happens for the mext clock you need to adjust the flags 
+on? You should be able to make these adjustments without DT updates. 
+Perhaps you need a wider fixing of clock compatible strings.
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 263577c..69a8250 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1455,9 +1455,27 @@ static const struct of_device_id gcc_ipq4019_match_table[] = {
- };
- MODULE_DEVICE_TABLE(of, gcc_ipq4019_match_table);
- 
-+int cpu_clk_notifier_fn(struct notifier_block *nb,
-+			unsigned long action, void *data)
-+{
-+	int err = 0;
-+
-+	if (action == PRE_RATE_CHANGE) {
-+		err = clk_rcg2_ops.set_parent(&apps_clk_src.clkr.hw,
-+							P_FEPLL500);
-+	}
-+
-+	return notifier_from_errno(err);
-+}
-+
-+struct notifier_block cpu_clk_notifier = {
-+	.notifier_call = cpu_clk_notifier_fn,
-+};
-+
- static int gcc_ipq4019_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	int err;
- 
- 	clk_register_fixed_rate(dev, "fepll125", "xo", 0, 125000000);
- 	clk_register_fixed_rate(dev, "fepll125dly", "xo", 0, 125000000);
-@@ -1469,7 +1487,13 @@ static int gcc_ipq4019_probe(struct platform_device *pdev)
- 	clk_register_fixed_rate(dev, "ddrpllsdcc", "xo", 0, 193000000);
- 	clk_register_fixed_rate(dev, "pcnoc_clk_src", "xo", 0, 100000000);
- 
--	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
-+	err = qcom_cc_probe(pdev, &gcc_ipq4019_desc);
-+
-+	if (!err)
-+		clk_notifier_register(apps_clk_src.clkr.hw.clk,
-+					&cpu_clk_notifier);
-+
-+	return err;
- }
- 
- static struct platform_driver gcc_ipq4019_driver = {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Rob
