@@ -1,64 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37654 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954AbcEKHiq (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 03:38:46 -0400
-Received: by mail-wm0-f50.google.com with SMTP id a17so66351030wme.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2016 00:38:45 -0700 (PDT)
-Date: Wed, 11 May 2016 08:38:55 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jiri Slaby <jslaby@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-clk@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: [RFC PATCH 01/21] mfd: uniphier: add UniPhier MFD driver
-Message-ID: <20160511073855.GQ19473@dell>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
- <1462873862-30940-2-git-send-email-yamada.masahiro@socionext.com>
- <20160510112622.GL19473@dell>
- <CAK7LNATmuN647=avdqAMahLU+9Bq4m4TkXe5f7q=pi8m=UrXBg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAK7LNATmuN647=avdqAMahLU+9Bq4m4TkXe5f7q=pi8m=UrXBg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <57454054.1010001@samsung.com>
+Date: Wed, 25 May 2016 11:34:04 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, thomas.ab@samsung.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+ tomasz.figa@gmail.com
+Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
+ FSYS0} blocks clock
+References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+ <570F4BE0.1010102@samsung.com> <5710E082.2050303@samsung.com>
+ <5711180A.8030809@samsung.com>
+In-reply-to: <5711180A.8030809@samsung.com>
+Content-type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 11 May 2016, Masahiro Yamada wrote:
+Hi Sylwester,
 
-> Hi Lee,
-> 
-> 2016-05-10 20:26 GMT+09:00 Lee Jones <lee.jones@linaro.org>:
-> >> +};
-> >> +MODULE_DEVICE_TABLE(of, uniphier_mfd_match);
-> >
-> > NACK.  Please do not mix MFD and DT registration.
-> 
-> OK, thanks for review.
-> 
-> 
-> My basic thought was:
-> 
->   - Add an MFD node to my DTS only once.
->     If I need to expand it in the future, I will just
->     need to modify drivers/mtd/uniphier-mfd.c.
->     It is just kernel-internal modification, so it does not
->     bother DT binding at all.
-> 
->   - Simplify the node topology of DTS.
-
-Just describe the hardware in DT.  If you do so accurately, there
-should be no requirement to change it (in theory).
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On 04/15/2016 10:04 PM, Sylwester Nawrocki wrote:
+> On 04/15/2016 02:37 PM, Alim Akhtar wrote:
+>> On 04/14/2016 01:20 PM, Krzysztof Kozlowski wrote:
+>>>> On 04/14/2016 06:42 AM, Alim Akhtar wrote:
+>>>>>> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
+>>>>>> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
+>>>>>> blocks registers. Let these clocks to be enabled all the time.
+>>>>>>
+>>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>>> ---
+>>>>>>    drivers/clk/samsung/clk-exynos7.c |    5 +++--
+>>>>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>
+>> Thanks Krzysztof,
+>> Sylwester, do you have any concern here?
+>
+> I'm fine with the patch, if it fixes all the issues for you.
+> I will apply it and will likely send it upstream after v4.7-rc1 release.
+>
+Looks like this patch is not available on your tree.
