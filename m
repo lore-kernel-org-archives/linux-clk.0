@@ -1,37 +1,47 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 24/27] clk: samsung: exynos5410: Add I2C, HSI2C and RTC
- clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <1462910970-1812-25-git-send-email-krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <bbe92228-c544-a105-b1b2-82e2563018de@osg.samsung.com>
-Date: Wed, 11 May 2016 08:32:04 -0400
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: add R8A7792 support
+Date: Thu, 26 May 2016 00:40:44 +0300
+Message-ID: <9904764.Bsg49gKsuS@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1462910970-1812-25-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Renesas R-Car V2H (R8A7792) clocks are handled by R-Car gen2 clock driver.
 
-On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> Add clocks for I2C, USI (HSI2C) and RTC to the Exynos5410 clock driver.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+The patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+ drivers/clk/renesas/Kconfig  |    1 +
+ drivers/clk/renesas/Makefile |    1 +
+ 2 files changed, 2 insertions(+)
+
+Index: linux/drivers/clk/renesas/Kconfig
+===================================================================
+--- linux.orig/drivers/clk/renesas/Kconfig
++++ linux/drivers/clk/renesas/Kconfig
+@@ -11,6 +11,7 @@ config CLK_RENESAS_CPG_MSTP
+ 	default y if ARCH_R8A7779
+ 	default y if ARCH_R8A7790
+ 	default y if ARCH_R8A7791
++	default y if ARCH_R8A7792
+ 	default y if ARCH_R8A7793
+ 	default y if ARCH_R8A7794
+ 	default y if ARCH_SH73A0
+Index: linux/drivers/clk/renesas/Makefile
+===================================================================
+--- linux.orig/drivers/clk/renesas/Makefile
++++ linux/drivers/clk/renesas/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a77
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
