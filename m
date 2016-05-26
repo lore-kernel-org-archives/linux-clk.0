@@ -1,124 +1,101 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
-Date: Tue, 10 May 2016 22:09:30 +0200
-Message-Id: <1462910970-1812-28-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lb0-f193.google.com ([209.85.217.193]:33386 "EHLO
+	mail-lb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751627AbcEZLmi (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2016 07:42:38 -0400
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Jon Hunter <jonathanh@nvidia.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
+ <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
+ <5746B6F7.9040101@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+Date: Thu, 26 May 2016 14:42:33 +0300
+MIME-Version: 1.0
+In-Reply-To: <5746B6F7.9040101@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
-This still does not enable them on the board level though.
+On 26.05.2016 11:42, Jon Hunter wrote:
+>
+> On 25/05/16 19:51, Dmitry Osipenko wrote:
+>> On 25.05.2016 18:09, Jon Hunter wrote:
+>
+> ...
+>
+>>> If you are able to reproduce this on v3.18, then it would be good if you
+>>> could trace the CCF calls around this WARNING to see what is causing the
+>>> contention.
+>>
+>> I managed to reproduce it with some CCF "tracing".
+>> Full kmsg log is here: https://bpaste.net/show/d8ab7b7534b7
+>>
+>> Looks like CPU freq governor thread yields during clk_set_rate() and
+>> then CPU idle kicks in, taking the same mutex.
+>
+> On the surface that sounds odd to me, but without understanding the
+> details, I guess I don't know if this is a valid thing to be doing or
+> even how that actually works!
+>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+The reason of that happening should be that I'm using clk PRE/POST rate change 
+notifiers in my DVFS driver that takes other mutexes and they could be locked, 
+causing schedule. I haven't mentioned it before, sorry.
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index dd4d6d752865..ae64cb0a8efd 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -114,6 +114,9 @@
- 			status = "disabled";
- 		};
- 
-+		/* i2c_0-3 are defined in exynos5.dtsi */
-+		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
-+
- 		pinctrl_0: pinctrl@13400000 {
- 			compatible = "samsung,exynos5410-pinctrl";
- 			reg = <0x13400000 0x1000>;
-@@ -146,6 +149,62 @@
- 	};
- };
- 
-+&i2c_0 {
-+	clocks = <&clock CLK_I2C0>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_bus>;
-+};
-+
-+&i2c_1 {
-+	clocks = <&clock CLK_I2C1>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_bus>;
-+};
-+
-+&i2c_2 {
-+	clocks = <&clock CLK_I2C2>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_bus>;
-+};
-+
-+&i2c_3 {
-+	clocks = <&clock CLK_I2C3>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c3_bus>;
-+};
-+
-+&hsi2c_4 {
-+	clocks = <&clock CLK_USI0>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_hs_bus>;
-+};
-+
-+&hsi2c_5 {
-+	clocks = <&clock CLK_USI1>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c5_hs_bus>;
-+};
-+
-+&hsi2c_6 {
-+	clocks = <&clock CLK_USI2>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c6_hs_bus>;
-+};
-+
-+&hsi2c_7 {
-+	clocks = <&clock CLK_USI3>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c7_hs_bus>;
-+};
-+
- &mct {
- 	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
- 	clock-names = "fin_pll", "mct";
-@@ -156,6 +215,13 @@
- 	clock-names = "timers";
- };
- 
-+&rtc {
-+	clocks = <&clock CLK_RTC>;
-+	clock-names = "rtc";
-+	interrupt-parent = <&pmu_system_controller>;
-+	status = "disabled";
-+};
-+
- &serial_0 {
- 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 	clock-names = "uart", "clk_uart_baud0";
+ From drivers/clk/clk.c:
+
+static struct task_struct *prepare_owner;
+
+...
+
+/***           locking             ***/
+static void clk_prepare_lock(void)
+{
+	if (!mutex_trylock(&prepare_lock)) {
+		if (prepare_owner == current) {
+			prepare_refcnt++;
+			return;
+		}
+		mutex_lock(&prepare_lock);
+	}
+
+You can see that it would lock the mutex if prepare_owner != current, in my case 
+it's idle thread != interactive gov. thread.
+
+>> However, cpufreq_interactive governor is android specific governor and
+>> isn't in upstream kernel yet. Quick googling shows that recent
+>> "upstreaming" patch uses same cpufreq_interactive_speedchange_task:
+>> https://lkml.org/lkml/2016/5/20/41
+>
+> Do you know if this version they are upstreaming could also yield during
+> the clk_set_rate()?
+>
+
+I think it should be assumed that any clk_set_rate() potentially could. Please 
+correct me if I'm wrong.
+
+>> I'm not aware of other possibility to reproduce this issue, it needs
+>> some CCF interaction from a separate task. So the current upstream
+>> kernel shouldn't be affected, I guess.
+>
+> What still does not make sense to me is why any frequency changes have
+> not completed before we attempt to enter the LP2 state?
+>
+
+Why not? I don't see any CPUIDLE <-> CPUFREQ interlocking. Do you think it could 
+be harmful somehow?
+
+> OK, well may be we will hold off on this change for the moment.
+
 -- 
-2.5.0
+Dmitry
