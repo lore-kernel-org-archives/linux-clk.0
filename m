@@ -1,30 +1,130 @@
-Return-Path: <Vineet.Gupta1@synopsys.com>
-Subject: Re: [RESEND PATCH 2/2 v6] arc: axs10x: Add DT bindings for I2S PLL
- Clock
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-References: <cover.1461258787.git.joabreu@synopsys.com>
- <e98c3f738b3a8f6755793959d89b4e43c9410fb1.1461258787.git.joabreu@synopsys.com>
- <57305472.2000507@synopsys.com>
-CC: <linux-clk@vger.kernel.org>, Carlos Palminha
-	<CARLOS.PALMINHA@synopsys.com>, Rob Herring <robh@kernel.org>, Pawel Moll
-	<pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell
-	<ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	<linux-snps-arc@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <5735D237.1060700@synopsys.com>
-Date: Fri, 13 May 2016 18:40:15 +0530
+Return-Path: <loic.pallardy@st.com>
+Subject: Re: [STLinux Kernel] [PATCH 02/11] drivers: clk: st: Add clock
+ propagation for audio clocks
+To: Rob Herring <robh@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@linaro.org>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20160525172409.GA27913@rob-hp-laptop>
+ <CAG374jDTCJfZB+PuAnggjXhbcd3NjJqrESpe_EnMniCAeoph9A@mail.gmail.com>
+ <CAL_JsqLOG4P0H+HkQ3mJhfibatuV2T51KqOn-+U+LK8WUx7QgA@mail.gmail.com>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        "kernel@stlinux.com"
+	<kernel@stlinux.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Benjamin GAIGNARD
+	<benjamin.gaignard@st.com>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Russell
+ King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Kumar
+ Gala <galak@codeaurora.org>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <5746F486.602@st.com>
+Date: Thu, 26 May 2016 15:05:10 +0200
 MIME-Version: 1.0
-In-Reply-To: <57305472.2000507@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <CAL_JsqLOG4P0H+HkQ3mJhfibatuV2T51KqOn-+U+LK8WUx7QgA@mail.gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 09 May 2016 02:42 PM, Jose Abreu wrote:
-> Can you apply this to arc-next? Main driver was already merged into clk-next. We
-> still have to check how to deal with the parent clock frequency that will change
-> in the next firmware release.
 
-Done ! although note that this might *not* be bisectable if this goes ahead of
-driver in 4.7-rc1 !
+
+On 05/26/2016 02:46 PM, Rob Herring wrote:
+> On Thu, May 26, 2016 at 4:49 AM, Gabriel Fernandez
+> <gabriel.fernandez@linaro.org> wrote:
+>> On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
+>>>
+>>> On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
+>>>> This patch allows fine tuning of the quads FS for audio clocks
+>>>> accuracy.
+>>>>
+>>>> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>>>> ---
+>>>>   .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
+>>>>   drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
+>>>>   2 files changed, 25 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>> index b7ee5c7..15b33c7 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>> @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
+>>>>   Required properties:
+>>>>   - compatible : shall be:
+>>>>     "st,flexgen"
+>>>> +  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on parent)
+>>>
+>>> What do "d0" and "d2" refer to?
+>>>
+>>> This seems to indicate you have too much clock detail in the DT (with
+>>> individual clocks described) or not enough with genericish compatible
+>>> strings. What happens for the mext clock you need to adjust the flags
+>>> on? You should be able to make these adjustments without DT updates.
+>>> Perhaps you need a wider fixing of clock compatible strings.
+>>>
+>>> Rob
+>>
+>> Sorry i sent my response in html...
+>>
+>> Hi Rob,
+>>
+>> Thanks for reviewing.
+>>
+>> Can i remove
+>> "
+>> st,stih407-clkgend0" & "
+>> st,stih407-clkgend2" compatible strings and add proprieties instead ?
+>> I only need to activate 2 features and then we can keep generic
+>> compatible strings.
+>
+Hi Rob,
+> That is no different and suffers the same point I raised. It requires
+> updating the DT for any clock configuration change or enhancement.
+>
+Agree with you, DT update is needed as soon as a clock configuration 
+should be changed. This is due to STiH clock driver design based on DT 
+description of SoC clock tree.
+
+This clock driver was accepted 2 years ago. At the time being there was 
+discussion about clock tree description location: driver or DT.
+Bad choice was done for this driver...
+
+If we decide to redesign STiH clock driver using in-driver clock tree 
+description, this will modify STiH clock DT nodes description and so 
+break DT backward compatibility.
+
+What's from your pov the best option?
+
+Regards,
+Loic
+
+> Rob
+>
+> _______________________________________________
+> Kernel mailing list
+> Kernel@stlinux.com
+> http://www.stlinux.com/mailman/listinfo/kernel
+>
