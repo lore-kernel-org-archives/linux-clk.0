@@ -1,66 +1,151 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 10/18] clk: samsung: exynos5410: Constify all clock initializers
-Date: Wed, 11 May 2016 14:02:06 +0200
-Message-id: <1462968134-6085-10-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lb0-f195.google.com ([209.85.217.195]:34971 "EHLO
+	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751497AbcEZRBK (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2016 13:01:10 -0400
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Jon Hunter <jonathanh@nvidia.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
+ <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
+ <5746B6F7.9040101@nvidia.com>
+ <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+ <574708E8.3060308@nvidia.com>
+ <d7a01310-869e-197e-9fbe-5b4783629e10@gmail.com>
+ <574715D7.4060004@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6bfd97bc-7e09-973d-e3c3-7e86b08a4550@gmail.com>
+Date: Thu, 26 May 2016 20:01:04 +0300
+MIME-Version: 1.0
+In-Reply-To: <574715D7.4060004@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-All of initialization data can be made const.
+On 26.05.2016 18:27, Jon Hunter wrote:
+>
+> On 26/05/16 15:57, Dmitry Osipenko wrote:
+>> On 26.05.2016 17:32, Jon Hunter wrote:
+>>>
+>>> On 26/05/16 12:42, Dmitry Osipenko wrote:
+>>>> On 26.05.2016 11:42, Jon Hunter wrote:
+>>>>>
+>>>>> On 25/05/16 19:51, Dmitry Osipenko wrote:
+>>>>>> On 25.05.2016 18:09, Jon Hunter wrote:
+>>>>>
+>>>>> ...
+>>>>>
+>>>>>>> If you are able to reproduce this on v3.18, then it would be good if
+>>>>>>> you
+>>>>>>> could trace the CCF calls around this WARNING to see what is causing
+>>>>>>> the
+>>>>>>> contention.
+>>>>>>
+>>>>>> I managed to reproduce it with some CCF "tracing".
+>>>>>> Full kmsg log is here: https://bpaste.net/show/d8ab7b7534b7
+>>>>>>
+>>>>>> Looks like CPU freq governor thread yields during clk_set_rate() and
+>>>>>> then CPU idle kicks in, taking the same mutex.
+>>>>>
+>>>>> On the surface that sounds odd to me, but without understanding the
+>>>>> details, I guess I don't know if this is a valid thing to be doing or
+>>>>> even how that actually works!
+>>>>>
+>>>>
+>>>> The reason of that happening should be that I'm using clk PRE/POST rate
+>>>> change notifiers in my DVFS driver that takes other mutexes and they
+>>>> could be locked, causing schedule. I haven't mentioned it before, sorry.
+>>>
+>>> OK, but I am not sure how these "other mutexes" would be relevant here
+>>> without any more details.
+>>>
+>>>> From drivers/clk/clk.c:
+>>>>
+>>>> static struct task_struct *prepare_owner;
+>>>>
+>>>> ...
+>>>>
+>>>> /***           locking             ***/
+>>>> static void clk_prepare_lock(void)
+>>>> {
+>>>>     if (!mutex_trylock(&prepare_lock)) {
+>>>>         if (prepare_owner == current) {
+>>>>             prepare_refcnt++;
+>>>>             return;
+>>>>         }
+>>>>         mutex_lock(&prepare_lock);
+>>>>     }
+>>>>
+>>>> You can see that it would lock the mutex if prepare_owner != current, in
+>>>> my case it's idle thread != interactive gov. thread.
+>>>
+>>> Right, but that would imply that someone else is actively doing
+>>> something with a clock. However, if we are entering LP2, then that
+>>> implies that all CPUs are idle and so I still don't understand the
+>>> scenario where this would be locked in that case. May be there is
+>>> something I am overlooking here?
+>>>
+>>>>>> However, cpufreq_interactive governor is android specific governor and
+>>>>>> isn't in upstream kernel yet. Quick googling shows that recent
+>>>>>> "upstreaming" patch uses same cpufreq_interactive_speedchange_task:
+>>>>>> https://lkml.org/lkml/2016/5/20/41
+>>>>>
+>>>>> Do you know if this version they are upstreaming could also yield
+>>>>> during
+>>>>> the clk_set_rate()?
+>>>>>
+>>>>
+>>>> I think it should be assumed that any clk_set_rate() potentially could.
+>>>> Please correct me if I'm wrong.
+>>>>
+>>>>>> I'm not aware of other possibility to reproduce this issue, it needs
+>>>>>> some CCF interaction from a separate task. So the current upstream
+>>>>>> kernel shouldn't be affected, I guess.
+>>>>>
+>>>>> What still does not make sense to me is why any frequency changes have
+>>>>> not completed before we attempt to enter the LP2 state?
+>>>>>
+>>>> Why not? I don't see any CPUIDLE <-> CPUFREQ interlocking. Do you think
+>>>> it could be harmful somehow?
+>>>
+>>> Like I said before, I still don't understand that scenario that is
+>>> causing this and without being able to fully understand it, I have no
+>>> idea what the exact problem we are trying to fix here is.
+>>>
+>>
+>> That's how I see it:
+>>
+>> +----------------------------------------------+
+>> |                    CPU 0                     |
+>> +-------------------+--------------------------+
+>> |    Idle thread    | Interactive gov. thread  |
+>> +----------------------------------------------+
+>> |     inactive      |                          |
+>> |                   |                          |
+>> |                   |   CPU freq. change       |
+>> |                   |                          |
+>> |                   |   clk_set_rate()         |
+>> |                   |                          |
+>> |       ...         |   clk_prepare_lock()     |
+>> |                   |                          |
+>> |                   |   PRE rate notifier call |
+>> |                   |                          |
+>> |                   |   schedule               |
+>
+> What is this notifier doing? Is there some sort of hardware activity
+> that it is waiting for to complete?
+>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5410.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It changes regulator voltage if required. So at least I2C would cause scheduling 
+on wait_for_completion_timeout().
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index d5d5dcabc4a9..8e8c7cca8c62 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -76,7 +76,7 @@ PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
- 			"none", "none", "sclk_mpll_bpll",
- 			 "none", "none", "sclk_cpll" };
- 
--static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock exynos5410_mux_clks[] __initconst = {
- 	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
- 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
- 
-@@ -105,7 +105,7 @@ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
- 	MUX(0, "mout_aclk400", mpll_bpll_p, SRC_TOP0, 20, 1),
- };
- 
--static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
-+static const struct samsung_div_clock exynos5410_div_clks[] __initconst = {
- 	DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
- 	DIV(0, "div_arm2", "div_arm", DIV_CPU0, 28, 3),
- 
-@@ -141,7 +141,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
- 	DIV(0, "aclk400", "mout_aclk400", DIV_TOP0, 24, 3),
- };
- 
--static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
- 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
- 
- 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
-@@ -167,7 +167,7 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- 			SRC_MASK_PERIC0, 8, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
-+static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
- 	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
- 	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
 -- 
-1.9.1
+Dmitry
