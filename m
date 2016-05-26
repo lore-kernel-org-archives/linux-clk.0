@@ -1,190 +1,115 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 11/21] clk: uniphier: add clock driver for Peripheral block on UniPhier SoCs
-Date: Tue, 10 May 2016 18:50:52 +0900
-Message-Id: <1462873862-30940-12-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <5746F486.602@st.com>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20160525172409.GA27913@rob-hp-laptop> <CAG374jDTCJfZB+PuAnggjXhbcd3NjJqrESpe_EnMniCAeoph9A@mail.gmail.com>
+ <CAL_JsqLOG4P0H+HkQ3mJhfibatuV2T51KqOn-+U+LK8WUx7QgA@mail.gmail.com> <5746F486.602@st.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 26 May 2016 08:20:39 -0500
+Message-ID: <CAL_JsqLeD8uTmMYLFZ5Sh9=JV5s1xthvruXL-W=c=zcVS=G-ZA@mail.gmail.com>
+Subject: Re: [STLinux Kernel] [PATCH 02/11] drivers: clk: st: Add clock
+ propagation for audio clocks
+To: loic pallardy <loic.pallardy@st.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+	"kernel@stlinux.com" <kernel@stlinux.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>,
+	linux-clk <linux-clk@vger.kernel.org>, Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>, Russell King <linux@armlinux.org.uk>,
+	Thierry Reding <treding@nvidia.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Vincent ABRIOU <vincent.abriou@st.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+On Thu, May 26, 2016 at 8:05 AM, loic pallardy <loic.pallardy@st.com> wrote:
+>
+>
+> On 05/26/2016 02:46 PM, Rob Herring wrote:
+>>
+>> On Thu, May 26, 2016 at 4:49 AM, Gabriel Fernandez
+>> <gabriel.fernandez@linaro.org> wrote:
+>>>
+>>> On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
+>>>>
+>>>>
+>>>> On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
+>>>>>
+>>>>> This patch allows fine tuning of the quads FS for audio clocks
+>>>>> accuracy.
+>>>>>
+>>>>> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+>>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>>>>> ---
+>>>>>   .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
+>>>>>   drivers/clk/st/clk-flexgen.c                       | 24
+>>>>> ++++++++++++++++++++++
+>>>>>   2 files changed, 25 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>> b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>> index b7ee5c7..15b33c7 100644
+>>>>> --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>> @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
+>>>>>   Required properties:
+>>>>>   - compatible : shall be:
+>>>>>     "st,flexgen"
+>>>>> +  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on
+>>>>> parent)
+>>>>
+>>>>
+>>>> What do "d0" and "d2" refer to?
+>>>>
+>>>> This seems to indicate you have too much clock detail in the DT (with
+>>>> individual clocks described) or not enough with genericish compatible
+>>>> strings. What happens for the mext clock you need to adjust the flags
+>>>> on? You should be able to make these adjustments without DT updates.
+>>>> Perhaps you need a wider fixing of clock compatible strings.
+>>>>
+>>>> Rob
+>>>
+>>>
+>>> Sorry i sent my response in html...
+>>>
+>>> Hi Rob,
+>>>
+>>> Thanks for reviewing.
+>>>
+>>> Can i remove
+>>> "
+>>> st,stih407-clkgend0" & "
+>>> st,stih407-clkgend2" compatible strings and add proprieties instead ?
+>>> I only need to activate 2 features and then we can keep generic
+>>> compatible strings.
+>>
+>>
+> Hi Rob,
+>>
+>> That is no different and suffers the same point I raised. It requires
+>> updating the DT for any clock configuration change or enhancement.
+>>
+> Agree with you, DT update is needed as soon as a clock configuration should
+> be changed. This is due to STiH clock driver design based on DT description
+> of SoC clock tree.
+>
+> This clock driver was accepted 2 years ago. At the time being there was
+> discussion about clock tree description location: driver or DT.
+> Bad choice was done for this driver...
+>
+> If we decide to redesign STiH clock driver using in-driver clock tree
+> description, this will modify STiH clock DT nodes description and so break
+> DT backward compatibility.
+>
+> What's from your pov the best option?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+You can break it once or every time you need a clock change. I'd go
+with the former. Maybe more specific compatible strings throughout
+alone would be enough rather than a flag day changing the binding.
 
- drivers/clk/uniphier/Kconfig             |   4 +
- drivers/clk/uniphier/Makefile            |   1 +
- drivers/clk/uniphier/clk-uniphier-peri.c | 133 +++++++++++++++++++++++++++++++
- 3 files changed, 138 insertions(+)
- create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
-
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
-index 895c4a0..08edaf8 100644
---- a/drivers/clk/uniphier/Kconfig
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -38,4 +38,8 @@ config CLK_UNIPHIER_MIO
- 	tristate "Clock driver for UniPhier Media I/O block"
- 	default y
- 
-+config CLK_UNIPHIER_PERI
-+	tristate "Clock driver for UniPhier Peripheral block"
-+	default y
-+
- endif
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-index ae71f04..a69d6fe 100644
---- a/drivers/clk/uniphier/Makefile
-+++ b/drivers/clk/uniphier/Makefile
-@@ -13,3 +13,4 @@ obj-$(CONFIG_CLK_UNIPHIER_LD11)	+= clk-uniphier-ld11.o
- obj-$(CONFIG_CLK_UNIPHIER_LD20)	+= clk-uniphier-ld20.o
- 
- obj-$(CONFIG_CLK_UNIPHIER_MIO)	+= clk-uniphier-mio.o
-+obj-$(CONFIG_CLK_UNIPHIER_PERI)	+= clk-uniphier-peri.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
-new file mode 100644
-index 0000000..e5510f5
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-peri.c
-@@ -0,0 +1,133 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-uniphier.h"
-+
-+#define UNIPHIER_PERI_CLK_UART(ch, index)			\
-+	{							\
-+		.name = "uart" #ch,				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = (index),			\
-+		.data.gate = {					\
-+			.parent_name = "uart",			\
-+			.reg = 0x24,				\
-+			.mask = BIT(19 + ch),			\
-+			.enable_val = BIT(19 + ch),		\
-+		},						\
-+	}
-+
-+#define UNIPHIER_PERI_CLK_I2C_COMMON				\
-+	{							\
-+		.name = "i2c-common",				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = -1,				\
-+		.data.gate = {					\
-+			.parent_name = "i2c",			\
-+			.reg = 0x20,				\
-+			.mask = BIT(1),				\
-+			.enable_val = BIT(1),			\
-+		},						\
-+	}
-+
-+#define UNIPHIER_PERI_CLK_I2C(ch, index)			\
-+	{							\
-+		.name = "i2c" #ch,				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = (index),			\
-+		.data.gate = {					\
-+			.parent_name = "i2c-common",		\
-+			.reg = 0x24,				\
-+			.mask = BIT(5 + ch),			\
-+			.enable_val = BIT(5 + ch),		\
-+		},						\
-+	}
-+
-+#define UNIPHIER_PERI_CLK_FI2C(ch, index)			\
-+	{							\
-+		.name = "fi2c" #ch,				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = (index),			\
-+		.data.gate = {					\
-+			.parent_name = "fi2c",			\
-+			.reg = 0x24,				\
-+			.mask = BIT(24 + ch),			\
-+			.enable_val = BIT(24 + ch),		\
-+		},						\
-+	}
-+
-+static const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
-+	UNIPHIER_PERI_CLK_UART(0, 0),
-+	UNIPHIER_PERI_CLK_UART(1, 1),
-+	UNIPHIER_PERI_CLK_UART(2, 2),
-+	UNIPHIER_PERI_CLK_UART(3, 3),
-+	UNIPHIER_PERI_CLK_I2C_COMMON,
-+	UNIPHIER_PERI_CLK_I2C(0, 4),
-+	UNIPHIER_PERI_CLK_I2C(1, 5),
-+	UNIPHIER_PERI_CLK_I2C(2, 6),
-+	UNIPHIER_PERI_CLK_I2C(3, 7),
-+	UNIPHIER_PERI_CLK_I2C(4, 8),
-+	{ /* sentinel */ }
-+};
-+
-+static int uniphier_ld4_peri_clk_probe(struct platform_device *pdev)
-+{
-+	return uniphier_clk_probe(pdev, uniphier_ld4_peri_clk_data);
-+}
-+
-+static struct platform_driver uniphier_ld4_peri_clk_driver = {
-+	.probe = uniphier_ld4_peri_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-ld4-peri-clk",
-+	},
-+};
-+module_platform_driver(uniphier_ld4_peri_clk_driver);
-+
-+static const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
-+	UNIPHIER_PERI_CLK_UART(0, 0),
-+	UNIPHIER_PERI_CLK_UART(1, 1),
-+	UNIPHIER_PERI_CLK_UART(2, 2),
-+	UNIPHIER_PERI_CLK_UART(3, 3),
-+	UNIPHIER_PERI_CLK_FI2C(0, 4),
-+	UNIPHIER_PERI_CLK_FI2C(1, 5),
-+	UNIPHIER_PERI_CLK_FI2C(2, 6),
-+	UNIPHIER_PERI_CLK_FI2C(3, 7),
-+	UNIPHIER_PERI_CLK_FI2C(4, 8),
-+	UNIPHIER_PERI_CLK_FI2C(5, 9),
-+	UNIPHIER_PERI_CLK_FI2C(6, 10),
-+	{ /* sentinel */ }
-+};
-+
-+static int uniphier_pro4_peri_clk_probe(struct platform_device *pdev)
-+{
-+	return uniphier_clk_probe(pdev, uniphier_pro4_peri_clk_data);
-+}
-+
-+static struct platform_driver uniphier_pro4_peri_clk_driver = {
-+	.probe = uniphier_pro4_peri_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-pro4-peri-clk",
-+	},
-+};
-+module_platform_driver(uniphier_pro4_peri_clk_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier Peripheral Clock Driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+Rob
