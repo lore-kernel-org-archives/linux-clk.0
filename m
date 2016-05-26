@@ -1,41 +1,25 @@
-Return-Path: <krzk@kernel.org>
-Subject: Re: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for Odroid
- XU
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Message-id: <57316E10.2030300@kernel.org>
-Date: Tue, 10 May 2016 07:13:52 +0200
-MIME-version: 1.0
-In-reply-to: <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: fix cclk error handing
+Date: Thu, 26 May 2016 23:47:39 +0200
+Message-ID: <1509769.ko7YVcsoMN@phil>
+In-Reply-To: <1464270549-12713-1-git-send-email-zhengxing@rock-chips.com>
+References: <1464270549-12713-1-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/10/2016 12:05 AM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+Am Donnerstag, 26. Mai 2016, 21:49:08 schrieb Xing Zheng:
+> It maybe due to a copy-paste error the error handing should be
+> cclk not clk.
 > 
-> On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
->>
->> Hi,
->>
->> Patchset adds necessary clocks, reorganizes existing stuff and finally
->> adds Odroid XU support.
->>
-> 
-> Do you have a branch available so I can pull these patches and test in
-> the Exynos5 boards I've access to?
+> Reported-by: Lin Huang <lin.huang@rock-chips.com>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-Of course. It sits on my private repo, on Github:
-https://github.com/krzk/linux
-branch: for-next/odroid-xu-v2
+applied to my clk-fixes branch after adapting the commit message a bit.
 
-Best regards,
-Krzysztof
+
+Thanks for catching that
+Heiko
