@@ -1,29 +1,92 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/7] clk: rockchip: cleanup some code duplication
-Date: Mon, 09 May 2016 16:28:16 +0200
-Message-ID: <1846515.jCoz32uTXP@phil>
-In-Reply-To: <20160506225645.GG3492@codeaurora.org>
-References: <1461849075-8310-1-git-send-email-heiko@sntech.de> <20160506225645.GG3492@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+	<4448030.Zs8fVnr3nm@wuerfel>
+	<HE1PR04MB0889B52134A43C0E7A452B7BF87C0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+	<5159406.HOFrj7pRfW@wuerfel>
+	<1462937186.16584.77.camel@buserror.net>
+	<HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com>
+Date: Thu, 26 May 2016 09:44:10 +0200
+Message-ID: <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+Subject: Re: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 6. Mai 2016, 15:56:45 schrieb Stephen Boyd:
-> On 04/28, Heiko Stuebner wrote:
-> > This tries to generalize code paths that contain some (nearly)
-> > duplicate code. While it's only a bit noticeable now for 3 different
-> > plls, the effect should be more pronounced when the next pll-type
-> > shows up.
-> 
-> Looks ok. Are you sending another pull? Or I can apply them
-> directly.
+On 26 May 2016 at 06:05, Yangbo Lu <yangbo.lu@nxp.com> wrote:
+> Hi Uffe,
+>
+> Could we merge this patchset? ...
+> It has been a long time to wait for Arnd's response...
+>
+> Thanks a lot.
+>
+>
 
-I've sent a pull request with the first 3 patches of the series - see comment 
-to your doubts to patch 4 and further. Also including one other fix from Doug 
-as well).
+As we are still in the merge window I won't queue anything but fixes.
+Let's give Arnd another week or so to respond.
 
+Kind regards
+Uffe
 
-Heiko
+> Best regards,
+> Yangbo Lu
+>
+>
+>> -----Original Message-----
+>> From: Yangbo Lu
+>> Sent: Friday, May 20, 2016 2:06 PM
+>> To: 'Scott Wood'; Arnd Bergmann; linux-arm-kernel@lists.infradead.org
+>> Cc: linuxppc-dev@lists.ozlabs.org; Mark Rutland;
+>> devicetree@vger.kernel.org; ulf.hansson@linaro.org; Russell King; Bhupesh
+>> Sharma; netdev@vger.kernel.org; Joerg Roedel; Kumar Gala; linux-
+>> mmc@vger.kernel.org; linux-kernel@vger.kernel.org; Yang-Leo Li;
+>> iommu@lists.linux-foundation.org; Rob Herring; linux-i2c@vger.kernel.org;
+>> Claudiu Manoil; Santosh Shilimkar; Xiaobo Xie; linux-clk@vger.kernel.org;
+>> Qiang Zhao
+>> Subject: RE: [v10, 7/7] mmc: sdhci-of-esdhc: fix host version for T4240-
+>> R1.0-R2.0
+>>
+>> Hi Arnd,
+>>
+>> Any comments?
+>> Please reply when you see the email since we want this eSDHC issue to be
+>> fixed soon.
+>>
+>> All the patches are Freescale-specific and is to fix the eSDHC driver.
+>> Could we let them merged first if you were talking about a new way of
+>> abstracting getting SoC version.
+>>
+>>
+>> Thanks :)
+>>
+>>
+>> Best regards,
+>> Yangbo Lu
+>>
+>
