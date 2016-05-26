@@ -1,148 +1,119 @@
-Return-Path: <erin.lo@mediatek.com>
-Message-ID: <1463469030.20236.13.camel@mtksdaap41>
-Subject: Re: [PATCH v8 0/10] Add clock support for Mediatek MT2701
-From: erin.lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
-	<devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Arnd
- Bergmann" <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-	"Philipp Zabel" <p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, John Crispin <blogic@openwrt.org>,
-	<robert.chou@mediatek.com>
-Date: Tue, 17 May 2016 15:10:30 +0800
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14880 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753262AbcEZOcQ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2016 10:32:16 -0400
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Dmitry Osipenko <digetx@gmail.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
+ <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
+ <5746B6F7.9040101@nvidia.com>
+ <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	"Peter De Schrijver" <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <574708E8.3060308@nvidia.com>
+Date: Thu, 26 May 2016 15:32:08 +0100
 MIME-Version: 1.0
-Return-Path: erin.lo@mediatek.com
+In-Reply-To: <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2016-05-17 at 13:05 +0800, Erin Lo wrote:
-> This series is based on clk-next, add clock and reset controller support
-> for Mediatek MT2701.
-> 
-> This series also refined makefile and Kconfig to support configurable
-> multiple SoC clock support.
-> 
-> There some code borrowed from [2] in clk-mtk.h, and may need to resolve
-> conflicts while merging these two series.
-> 
-> changes since v7:
-> - Rebase to clk-next.
-> - Implement subsystem clocks in seperated files.
-> - Replace critical clock enabling with CLK_IS_CRITICAL flag.
-> - Reduce most clock registrations in CLK_OF_DECLARE().
-> - Remove __init and __initconst from most init fucntions and data,
->   and replace driver registration with platform_driver_register().
-> - Replace some common function or variable names with unique names.
-> - Use real clock for UARTs.
 
-If we have clock support, we must associate the correct clocks to UARTs.
-Otherwise it will cause booting issue.
-They should be sent together.
-I work with James Liao to prepare these patches.
+On 26/05/16 12:42, Dmitry Osipenko wrote:
+> On 26.05.2016 11:42, Jon Hunter wrote:
+>>
+>> On 25/05/16 19:51, Dmitry Osipenko wrote:
+>>> On 25.05.2016 18:09, Jon Hunter wrote:
+>>
+>> ...
+>>
+>>>> If you are able to reproduce this on v3.18, then it would be good if
+>>>> you
+>>>> could trace the CCF calls around this WARNING to see what is causing
+>>>> the
+>>>> contention.
+>>>
+>>> I managed to reproduce it with some CCF "tracing".
+>>> Full kmsg log is here: https://bpaste.net/show/d8ab7b7534b7
+>>>
+>>> Looks like CPU freq governor thread yields during clk_set_rate() and
+>>> then CPU idle kicks in, taking the same mutex.
+>>
+>> On the surface that sounds odd to me, but without understanding the
+>> details, I guess I don't know if this is a valid thing to be doing or
+>> even how that actually works!
+>>
+> 
+> The reason of that happening should be that I'm using clk PRE/POST rate
+> change notifiers in my DVFS driver that takes other mutexes and they
+> could be locked, causing schedule. I haven't mentioned it before, sorry.
 
+OK, but I am not sure how these "other mutexes" would be relevant here
+without any more details.
+
+> From drivers/clk/clk.c:
 > 
-> changes since v6:
-> - Rebase to v4.6-rc1.
-> - Register subsystem clocks in probe() instead of CLK_OF_DECLARE().
-> - Add clocks that referred by subsystem clocks.
-> - Fix clk_data size of apmixedsys.
-> - Add config options for each subsystem clock provider.
+> static struct task_struct *prepare_owner;
 > 
-> changes since v5:
-> - Rebase to v4.5-rc1 and [1].
-> - Enable critical clocks for MT2701
-> - Refine dt-binding documents, add reset controller support for hifsys.
+> ...
 > 
-> changes since v4:
-> - Rebase to v4.5-rc1.
-> - Remove CLK_SET_RATE_PARENT from divider flags.
-> - Add img_jpgdec_smi clock.
-> - Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
+> /***           locking             ***/
+> static void clk_prepare_lock(void)
+> {
+>     if (!mutex_trylock(&prepare_lock)) {
+>         if (prepare_owner == current) {
+>             prepare_refcnt++;
+>             return;
+>         }
+>         mutex_lock(&prepare_lock);
+>     }
 > 
-> changes since v3:
-> - Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
+> You can see that it would lock the mutex if prepare_owner != current, in
+> my case it's idle thread != interactive gov. thread.
+
+Right, but that would imply that someone else is actively doing
+something with a clock. However, if we are entering LP2, then that
+implies that all CPUs are idle and so I still don't understand the
+scenario where this would be locked in that case. May be there is
+something I am overlooking here?
+
+>>> However, cpufreq_interactive governor is android specific governor and
+>>> isn't in upstream kernel yet. Quick googling shows that recent
+>>> "upstreaming" patch uses same cpufreq_interactive_speedchange_task:
+>>> https://lkml.org/lkml/2016/5/20/41
+>>
+>> Do you know if this version they are upstreaming could also yield during
+>> the clk_set_rate()?
+>>
 > 
-> changes since v2:
-> - Fix ethsys definition.
-> - Replace read-modify-write with regmap_update_bits() in clock operations.
-> - Move mt2701-resets.h to include/dt-bindings/reset/.
-> - Add hifsys reset patch from John Crispin.
+> I think it should be assumed that any clk_set_rate() potentially could.
+> Please correct me if I'm wrong.
 > 
-> changes since v1:
-> - Document MT2701 compatible strings.
-> 
-> [1] https://patchwork.kernel.org/patch/8147901/
-> [2] http://www.spinics.net/lists/dri-devel/msg106726.html
-> 
-> Erin Lo (1):
->   arm: dts: mt2701: Use real clock for UARTs
-> 
-> James Liao (5):
->   clk: fix initial state of critical clock's parents
->   clk: mediatek: remove __init from clk registration functions
->   clk: mediatek: Refine the makefile to support multiple clock drivers
->   dt-bindings: ARM: Mediatek: Document bindings for MT2701
->   arm: dts: mt2701: Add clock controller device nodes
-> 
-> Shunli Wang (4):
->   clk: mediatek: Add dt-bindings for MT2701 clocks
->   clk: mediatek: Add MT2701 clock support
->   reset: mediatek: Add MT2701 reset controller dt-binding file
->   reset: mediatek: Add MT2701 reset driver
-> 
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    3 +-
->  .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,hifsys.txt      |   24 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    3 +-
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    3 +-
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    3 +-
->  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    3 +-
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    3 +-
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    3 +-
->  arch/arm/boot/dts/mt2701.dtsi                      |   50 +-
->  drivers/clk/Kconfig                                |    1 +
->  drivers/clk/clk.c                                  |    9 +-
->  drivers/clk/mediatek/Kconfig                       |   73 ++
->  drivers/clk/mediatek/Makefile                      |   13 +-
->  drivers/clk/mediatek/clk-gate.c                    |   54 +-
->  drivers/clk/mediatek/clk-gate.h                    |    2 +
->  drivers/clk/mediatek/clk-mt2701-bdp.c              |  140 +++
->  drivers/clk/mediatek/clk-mt2701-eth.c              |   82 ++
->  drivers/clk/mediatek/clk-mt2701-hif.c              |   81 ++
->  drivers/clk/mediatek/clk-mt2701-img.c              |   82 ++
->  drivers/clk/mediatek/clk-mt2701-mm.c               |  125 +++
->  drivers/clk/mediatek/clk-mt2701-vdec.c             |   93 ++
->  drivers/clk/mediatek/clk-mt2701.c                  | 1037 ++++++++++++++++++++
->  drivers/clk/mediatek/clk-mtk.c                     |   52 +-
->  drivers/clk/mediatek/clk-mtk.h                     |   52 +-
->  drivers/clk/mediatek/clk-pll.c                     |    3 +-
->  include/dt-bindings/clock/mt2701-clk.h             |  486 +++++++++
->  include/dt-bindings/reset/mt2701-resets.h          |   83 ++
->  29 files changed, 2578 insertions(+), 29 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
->  create mode 100644 drivers/clk/mediatek/Kconfig
->  create mode 100644 drivers/clk/mediatek/clk-mt2701-bdp.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2701-eth.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2701-hif.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2701-img.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2701-mm.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2701-vdec.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2701.c
->  create mode 100644 include/dt-bindings/clock/mt2701-clk.h
->  create mode 100644 include/dt-bindings/reset/mt2701-resets.h
-> 
-> --
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>>> I'm not aware of other possibility to reproduce this issue, it needs
+>>> some CCF interaction from a separate task. So the current upstream
+>>> kernel shouldn't be affected, I guess.
+>>
+>> What still does not make sense to me is why any frequency changes have
+>> not completed before we attempt to enter the LP2 state?
+>>
+> Why not? I don't see any CPUIDLE <-> CPUFREQ interlocking. Do you think
+> it could be harmful somehow?
+
+Like I said before, I still don't understand that scenario that is
+causing this and without being able to fully understand it, I have no
+idea what the exact problem we are trying to fix here is.
+
+Cheers
+Jon
+
+-- 
+nvpublic
