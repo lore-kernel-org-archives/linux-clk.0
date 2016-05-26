@@ -1,194 +1,48 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.141]:48483 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753652AbcEZNtt (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2016 09:49:49 -0400
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 07/22] ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
-Date: Sun, 15 May 2016 22:13:48 +0200
-Message-Id: <1463343243-26429-8-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: fix cclk error handing
+Date: Thu, 26 May 2016 21:49:08 +0800
+Message-Id: <1464270549-12713-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The LED nodes can be shared between Odroid XU3, XU3-Lite and XU (not yet
-added) thus removing duplication.
+It maybe due to a copy-paste error the error handing should be
+cclk not clk.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reported-by: Lin Huang <lin.huang@rock-chips.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 35 +----------------
- arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 35 +----------------
- arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi | 50 +++++++++++++++++++++++++
- 3 files changed, 52 insertions(+), 68 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 2ae1cf41dcb6..03fa88c45426 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -14,44 +14,11 @@
- /dts-v1/;
- #include "exynos5422-odroidxu3-common.dtsi"
- #include "exynos5422-odroidxu3-audio.dtsi"
-+#include "exynos54xx-odroidxu-leds.dtsi"
+ drivers/clk/rockchip/clk-cpu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 4bb130c..05b3d73 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -321,9 +321,9 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 	}
  
- / {
- 	model = "Hardkernel Odroid XU3 Lite";
- 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
--
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
- };
+ 	cclk = clk_register(NULL, &cpuclk->hw);
+-	if (IS_ERR(clk)) {
++	if (IS_ERR(cclk)) {
+ 		pr_err("%s: could not register cpuclk %s\n", __func__,	name);
+-		ret = PTR_ERR(clk);
++		ret = PTR_ERR(cclk);
+ 		goto free_rate_table;
+ 	}
  
- &pwm {
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index 432406db85de..9ed6564acfb0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -13,44 +13,11 @@
- /dts-v1/;
- #include "exynos5422-odroidxu3-common.dtsi"
- #include "exynos5422-odroidxu3-audio.dtsi"
-+#include "exynos54xx-odroidxu-leds.dtsi"
- 
- / {
- 	model = "Hardkernel Odroid XU3";
- 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
--
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
- };
- 
- &i2c_0 {
-diff --git a/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
-new file mode 100644
-index 000000000000..0ed30206625c
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
-@@ -0,0 +1,50 @@
-+/*
-+ * Hardkernel Odroid XU/XU3 LED device tree source
-+ *
-+ * Copyright (c) 2015,2016 Krzysztof Kozlowski
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		greenled {
-+			label = "green:mmc0";
-+			pwms = <&pwm 1 2000000 0>;
-+			pwm-names = "pwm1";
-+			/*
-+			 * Green LED is much brighter than the others
-+			 * so limit its max brightness
-+			 */
-+			max_brightness = <127>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		blueled {
-+			label = "blue:heartbeat";
-+			pwms = <&pwm 2 2000000 0>;
-+			pwm-names = "pwm2";
-+			max_brightness = <255>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	gpioleds {
-+		compatible = "gpio-leds";
-+		redled {
-+			label = "red:microSD";
-+			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc1";
-+		};
-+	};
-+};
 -- 
-2.5.0
+1.7.9.5
+
+
