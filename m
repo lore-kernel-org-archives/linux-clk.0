@@ -1,51 +1,66 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-2-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
-Date: Tue, 31 May 2016 14:56:03 -0400
+Return-Path: <paulmck@linux.vnet.ibm.com>
+Date: Thu, 26 May 2016 09:27:27 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: mingo@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux@roeck-us.net, tony@atomide.com,
+        linux@arm.linux.org.uk, rostedt@goodmis.org, rjw@rjwysocki.net,
+        pavel@ucw.cz, mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [GIT PULL arm] Use _rcuidle tracepoints to allow tracing from
+ idle
+Message-ID: <20160526162727.GA21784@linux.vnet.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20160526162606.GA20023@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1464719945-3417-2-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160526162606.GA20023@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
-
-On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
-> Add clock for TMU to the Exynos5410 clock driver.
+On Thu, May 26, 2016 at 09:26:06AM -0700, Paul E. McKenney wrote:
+> Hello, Ingo,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/clk/samsung/clk-exynos5410.c | 1 +
->  1 file changed, 1 insertion(+)
+> This series changes a number of event tracepoints to their _rcuidle() form
+> to allow use from idle without lockdep-RCU complaints, a straightforward
+> modification that has been successfully applied many times.  These splats
+> were found in testing by Guenter Roeck and Tony Lindgren, who have
+> both successfully tested the full series.  Tony asked that I carry these
+> in -rcu:
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index 6c2e59c576ee..db9978dc6e83 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
->  static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
->  	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
->  	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
-> +	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
->  
->  	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
->  			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+> 	http://lkml.kernel.org/g/20160426213630.GV5995@atomide.com
 > 
+> These have been posted to LKML, CCing relevant maintainers, who have
+> not objected to the proposed changes:
+> 
+> 	http://lkml.kernel.org/g/20160516184844.GA20144@linux.vnet.ibm.com
+> 
+> These maintainers are also CCed on this pull request.
+> 
+> They have also been subjected to 0day Test Robot and -next testing.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+And this time actually including the pull request...  :-/
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+							Thanx, Paul
+
+These changes are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
+
+for you to fetch changes up to e7c38dda94b23965a3eb46ef4656bb8cb921933d:
+
+  arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle (2016-05-18 11:55:29 -0700)
+
+----------------------------------------------------------------
+Paul E. McKenney (6):
+      arm: Use _rcuidle tracepoint to allow use from idle
+      arm: Use _rcuidle for suspend/resume tracepoints
+      arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
+      arm: Add _rcuidle suffix to allow rpm_idle() use from idle
+      arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
+      arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle
+
+ arch/arm/kernel/smp.c             |  2 +-
+ arch/arm/mach-omap2/powerdomain.c |  9 +++++----
+ drivers/base/power/runtime.c      | 14 +++++++-------
+ drivers/clk/clk.c                 |  8 ++++----
+ 4 files changed, 17 insertions(+), 16 deletions(-)
