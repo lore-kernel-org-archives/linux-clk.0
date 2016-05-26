@@ -1,231 +1,205 @@
-Return-Path: <moinejf@free.fr>
-Date: Fri, 13 May 2016 11:45:59 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Vishnu Patekar
- <vishnupatekar0510@gmail.com>, Andre Przywara <andre.przywara@arm.com>,
- Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
-Message-Id: <20160513114559.786221e415ce5956e161dd5b@free.fr>
-In-Reply-To: <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20160525172409.GA27913@rob-hp-laptop>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org> <20160525172409.GA27913@rob-hp-laptop>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Date: Thu, 26 May 2016 11:35:25 +0200
+Message-ID: <CAG374jA1NG69jVrCE20fdvRty8E4VKGbvpEHePCUQardDq2zxA@mail.gmail.com>
+Subject: Re: [PATCH 02/11] drivers: clk: st: Add clock propagation for audio clocks
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>,
+	Pankaj Dev <pankaj.dev@st.com>, Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kernel@stlinux.com" <kernel@stlinux.com>, linux-clk@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
+	Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+	Vincent ABRIOU <vincent.abriou@st.com>
+Content-Type: multipart/alternative; boundary=047d7b5d5ffee5b5190533bb841c
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun,  8 May 2016 22:01:50 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+--047d7b5d5ffee5b5190533bb841c
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> Add the list of clocks and resets found in the H3 CCU.
+On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
 
-Hi Maxime,
+> On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
+> > This patch allows fine tuning of the quads FS for audio clocks
+> > accuracy.
+> >
+> > Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> > ---
+> >  .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
+> >  drivers/clk/st/clk-flexgen.c                       | 24
+> ++++++++++++++++++++++
+> >  2 files changed, 25 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> > index b7ee5c7..15b33c7 100644
+> > --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> > +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+> > @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
+> >  Required properties:
+> >  - compatible : shall be:
+> >    "st,flexgen"
+> > +  "
+> =E2=80=8B=E2=80=8B
+> st,stih407-clkgend0", "st,flexgen" (enable clock
+> =E2=80=8B
+> =E2=80=8B
+> st,stih407-clkgend0 on parent)
+>
+> What do "d0" and "d2" refer to?
+>
+> This seems to indicate you have too much clock detail in the DT (with
+> individual clocks described) or not enough with genericish compatible
+> strings. What happens for the mext clock you need to adjust the flags
+> on? You should be able to make these adjustments without DT updates.
+> Perhaps you need a wider fixing of clock compatible strings.
+>
+> Rob
+>
 
-Nice job. I like this new way for defining the sunxi clocks.
-But it does not yet fully work for the H3 (apart the other already
-signalled errors). See below.
+=E2=80=8BHi Rob
 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile        |   2 +
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
->  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
->  4 files changed, 1024 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
->  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
->=20
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index c794f57b6fb1..67ff6a92f124 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -13,3 +13,5 @@ obj-y +=3D ccu_nkmp.o
->  obj-y +=3D ccu_nm.o
->  obj-y +=3D ccu_p.o
->  obj-y +=3D ccu_phase.o
-> +
-> +obj-y +=3D ccu-sun8i-h3.o
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/c=
-cu-sun8i-h3.c
-> new file mode 100644
-> index 000000000000..5ce699e95c32
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> @@ -0,0 +1,757 @@
-	[snip]
-> +static struct ccu_nkmp pll_cpux_clk =3D {
-> +	.enable		=3D BIT(31),
-> +	.lock		=3D BIT(28),
-> +
-> +	.m		=3D SUNXI_CLK_FACTOR(0, 2),
-> +	.k		=3D SUNXI_CLK_FACTOR(4, 2),
-> +	.n		=3D SUNXI_CLK_FACTOR(8, 5),
-> +	.p		=3D SUNXI_CLK_FACTOR(16, 2),
-> +
-> +	.common		=3D {
-> +		.reg		=3D 0x000,
-> +		.features	=3D CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
+Thanks for reviewing.
 
-It seems to me that these flags are redondant with the .enable
-and .lock fields (always !=3D 0 when used).
+Can i remove
+=E2=80=8B"
+st,stih407-clkgend0" & "
+=E2=80=8B
+st,stih407-clkgend2" compatible strings and add proprieties instead ?
+I only need to activate 2 features and then we can keep generic compatible
+strings.
 
-> +		.hw.init	=3D SUNXI_HW_INIT("pll-cpux",
-> +						"osc24M",
-> +						&ccu_nkmp_ops,
-> +						0),
-> +	},
-> +};
+e.g.
 
-The 'p' factor must be used only for very low rates (< 288MHz).
-I think that it should be ignored.
+clk_s_d2_flexgen: clk-s-d2-flexgen {
+#clock-cells =3D <1>;
+compatible =3D "st,flexgen";
+        ...
+=E2=80=8B        st-sync-mode=E2=80=8B;
+        st-update
+-parent-rate;
+};
 
-> +
-> +static struct ccu_nm pll_audio_base_clk =3D {
-> +	.enable		=3D BIT(31),
-> +	.lock		=3D BIT(28),
-> +
-> +	.m		=3D SUNXI_CLK_FACTOR(0, 5),
-> +	.n		=3D SUNXI_CLK_FACTOR(8, 7),
-> +
-> +	.common		=3D {
-> +		.reg		=3D 0x008,
-> +		.features	=3D CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
-> +		.hw.init	=3D SUNXI_HW_INIT("pll-audio-base",
-> +						"osc24M",
-> +						&ccu_nm_ops,
-> +						0),
-> +	},
-> +};
-> +
-> +static SUNXI_CCU_M(pll_audio_clk, "pll-audio", "pll-audio-base",
-> +		   0x008, 16, 4, 0);
-> +
-> +static SUNXI_CCU_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
-> +			      "pll-audio-base", 2, 1, 0);
-> +static SUNXI_CCU_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-> +			      "pll-audio-base", 1, 1, 0);
-> +static SUNXI_CCU_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
-> +			      "pll-audio-base", 1, 2, 0);
+for d0_flexgen i will enable only =E2=80=8Bst-sync-mode=E2=80=8B;
 
-Forcing the post divider 'p' to 4 would simplify this PLL.
+Best Regards
 
-> +
-> +static struct ccu_nm pll_video_clk =3D {
-> +	.enable		=3D BIT(31),
-> +	.lock		=3D BIT(28),
-> +
-> +	.m		=3D SUNXI_CLK_FACTOR(0, 4),
-> +	.n		=3D SUNXI_CLK_FACTOR(8, 7),
-> +
-> +	.common		=3D {
-> +		.reg		=3D 0x010,
-> +		.features	=3D CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
-> +		.hw.init	=3D SUNXI_HW_INIT("pll-video",
-> +						"osc24M",
-> +						&ccu_nm_ops,
-> +						0),
-> +	},
-> +};
+Gabriel
 
-The legacy u-boot I use (lichee) forces this PLL to 297MHz in
-fractional mode (FRAC_CLK_OUT =3D 1 and PLL_MODE_SEL =3D 0).
-As these bits are not managed, getting the rate is false and setting it
-is not possible.
+--047d7b5d5ffee5b5190533bb841c
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-	[snip]
-> +
-> +static struct ccu_nk pll_periph0_clk =3D {
-> +	.enable		=3D BIT(31),
-> +	.lock		=3D BIT(28),
-> +
-> +	.k		=3D SUNXI_CLK_FACTOR(4, 2),
-> +	.n		=3D SUNXI_CLK_FACTOR(8, 5),
-> +	.fixed_post_div	=3D 2,
-> +
-> +	.common		=3D {
-> +		.reg		=3D 0x028,
-> +		.features	=3D (CCU_FEATURE_GATE |
-> +				   CCU_FEATURE_LOCK |
-> +				   CCU_FEATURE_FIXED_POSTDIV),
-> +		.hw.init	=3D SUNXI_HW_INIT("pll-periph0",
-> +						"osc24M",
-> +						&ccu_nk_ops,
-> +						0),
-> +	},
-> +};
+<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-family:&#39;cou=
+rier new&#39;,monospace"><span style=3D"font-family:arial,sans-serif">On 25=
+ May 2016 at 19:24, Rob Herring </span><span dir=3D"ltr" style=3D"font-fami=
+ly:arial,sans-serif">&lt;<a href=3D"mailto:robh@kernel.org" target=3D"_blan=
+k">robh@kernel.org</a>&gt;</span><span style=3D"font-family:arial,sans-seri=
+f"> wrote:</span><br></div><div class=3D"gmail_extra"><div class=3D"gmail_q=
+uote"><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left-width:1px;border-left-style:solid;border-left-color:rgb(204,204,=
+204);padding-left:1ex"><span class=3D"">On Wed, May 18, 2016 at 10:41:23AM =
++0200, Gabriel Fernandez wrote:<br>
+&gt; This patch allows fine tuning of the quads FS for audio clocks<br>
+&gt; accuracy.<br>
+&gt;<br>
+&gt; Signed-off-by: Olivier Bideau &lt;<a href=3D"mailto:olivier.bideau@st.=
+com">olivier.bideau@st.com</a>&gt;<br>
+&gt; Signed-off-by: Gabriel Fernandez &lt;<a href=3D"mailto:gabriel.fernand=
+ez@linaro.org">gabriel.fernandez@linaro.org</a>&gt;<br>
+&gt; ---<br>
+&gt;=C2=A0 .../devicetree/bindings/clock/st/st,flexgen.txt=C2=A0 =C2=A0 |=
+=C2=A0 1 +<br>
+&gt;=C2=A0 drivers/clk/st/clk-flexgen.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 24 ++++++++++++++++++++++=
+<br>
+&gt;=C2=A0 2 files changed, 25 insertions(+)<br>
+&gt;<br>
+&gt; diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt=
+ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt<br>
+&gt; index b7ee5c7..15b33c7 100644<br>
+&gt; --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt<br>
+&gt; +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt<br>
+&gt; @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].<br>
+&gt;=C2=A0 Required properties:<br>
+&gt;=C2=A0 - compatible : shall be:<br>
+&gt;=C2=A0 =C2=A0 &quot;st,flexgen&quot;<br>
+&gt; +=C2=A0 &quot;<div class=3D"gmail_default" style=3D"font-family:&#39;c=
+ourier new&#39;,monospace;display:inline">=E2=80=8B=E2=80=8B</div>st,stih40=
+7-clkgend0&quot;, &quot;st,flexgen&quot; (enable clock <div class=3D"gmail_=
+default" style=3D"font-family:&#39;courier new&#39;,monospace;display:inlin=
+e">=E2=80=8B</div><div class=3D"gmail_default" style=3D"font-family:&#39;co=
+urier new&#39;,monospace;display:inline">=E2=80=8B</div>st,stih407-clkgend0=
+=C2=A0on parent)<br>
+<br>
+</span>What do &quot;d0&quot; and &quot;d2&quot; refer to?<br>
+<br>
+This seems to indicate you have too much clock detail in the DT (with<br>
+individual clocks described) or not enough with genericish compatible<br>
+strings. What happens for the mext clock you need to adjust the flags<br>
+on? You should be able to make these adjustments without DT updates.<br>
+Perhaps you need a wider fixing of clock compatible strings.<br>
+<span class=3D""><font color=3D"#888888"><br>
+Rob<br></font></span></blockquote><div>=C2=A0</div></div><div class=3D"gmai=
+l_default" style=3D"font-family:&#39;courier new&#39;,monospace">=E2=80=8BH=
+i Rob</div><div class=3D"gmail_default" style=3D"font-family:&#39;courier n=
+ew&#39;,monospace"><br></div><div class=3D"gmail_default" style=3D"font-fam=
+ily:&#39;courier new&#39;,monospace">Thanks for reviewing.</div><div class=
+=3D"gmail_default" style=3D"font-family:&#39;courier new&#39;,monospace"><b=
+r></div><div class=3D"gmail_default"><font face=3D"courier new, monospace">=
+Can i remove=C2=A0</font><div class=3D"gmail_default" style=3D"font-family:=
+&#39;courier new&#39;,monospace;display:inline">=E2=80=8B&quot;</div><span =
+style=3D"font-family:arial,sans-serif">st,stih407-clkgend0&quot; &amp; &quo=
+t;</span><div class=3D"gmail_default" style=3D"font-family:&#39;courier new=
+&#39;,monospace;display:inline">=E2=80=8B</div>st,stih407-clkgend2&quot; co=
+mpatible strings and add=C2=A0proprieties=C2=A0instead ?</div><div class=3D=
+"gmail_default" style=3D"font-family:&#39;courier new&#39;,monospace">I onl=
+y need to activate 2 features and then we can keep generic compatible strin=
+gs.<br></div><div class=3D"gmail_default" style=3D"font-family:&#39;courier=
+ new&#39;,monospace"><br></div><div class=3D"gmail_default" style=3D"font-f=
+amily:&#39;courier new&#39;,monospace">e.g.=C2=A0</div><div class=3D"gmail_=
+default" style=3D""><div class=3D"gmail_default" style=3D""><font face=3D"c=
+ourier new, monospace"><br></font></div><div class=3D"gmail_default" style=
+=3D""><font face=3D"courier new, monospace">clk_s_d2_flexgen: clk-s-d2-flex=
+gen {</font></div><div class=3D"gmail_default" style=3D""><font face=3D"cou=
+rier new, monospace"><span class=3D"" style=3D"white-space:pre">	</span>#cl=
+ock-cells =3D &lt;1&gt;;</font></div><div class=3D"gmail_default" style=3D"=
+"><font face=3D"courier new, monospace"><span class=3D"" style=3D"white-spa=
+ce:pre">	</span>compatible =3D &quot;st,flexgen&quot;;</font></div><div cla=
+ss=3D"gmail_default" style=3D""><font face=3D"courier new, monospace">=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 ...</font></div><div class=3D"gmail_default" style=
+=3D"font-family:&#39;courier new&#39;,monospace">=E2=80=8B =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0st-sync-mode=E2=80=8B;<br></div></div><div class=3D"gmail_defa=
+ult" style=3D"font-family:&#39;courier new&#39;,monospace">=C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 st-update<div class=3D"gmail_default" style=3D"display:inline=
+">-parent-rate;</div></div><div class=3D"gmail_default" style=3D"font-famil=
+y:&#39;courier new&#39;,monospace"><div class=3D"gmail_default" style=3D"di=
+splay:inline">};</div></div><div class=3D"gmail_default" style=3D"font-fami=
+ly:&#39;courier new&#39;,monospace"><br></div><div class=3D"gmail_default" =
+style=3D"font-family:&#39;courier new&#39;,monospace">for d0_flexgen i will=
+ enable only =E2=80=8Bst-sync-mode=E2=80=8B;</div><div class=3D"gmail_defau=
+lt"><div class=3D"gmail_default" style=3D"font-family:&#39;courier new&#39;=
+,monospace"><br></div><div class=3D"gmail_default" style=3D"font-family:&#3=
+9;courier new&#39;,monospace">Best Regards</div><div class=3D"gmail_default=
+" style=3D"font-family:&#39;courier new&#39;,monospace"><br></div><div clas=
+s=3D"gmail_default" style=3D"font-family:&#39;courier new&#39;,monospace">G=
+abriel</div><div class=3D"gmail_default" style=3D"font-family:&#39;courier =
+new&#39;,monospace"><br></div></div><div class=3D"gmail_default" style=3D"f=
+ont-family:&#39;courier new&#39;,monospace"><br></div><br></div></div>
 
-As told previously, the H3 documentation says:
-
- Note: The PLL Output should be fixed to 600MHz, it is not recommended to
- vary this value arbitrarily.
-
-So, is it useful to offer the possibility to change the rate of this PLL
-(and same for pll-periph1)?
-(I force the rate in the DT with assigned-clock-rates to avoid any problem)
-
-> +
-> +static SUNXI_CCU_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
-> +			      "pll-periph0", 1, 2, 0);
-> +
-	[snip]
-> +static const char * const nand_parents[] =3D { "osc24M", "pll-periph0",
-> +					     "pll-periph1" };
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", nand_parents, 0x080,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-
-The mux width is 2, meaning there may be 4 parents. Then, there may be
-an access out of the parent array (and same for mmcx and spix).
-
-> +
-> +static const char * const mmc0_parents[] =3D { "osc24M", "pll-periph0",
-> +					     "pll-periph1" };
-
-The parent tables of nand, mmcx and spix are the same. One table should
-be enough.
-
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc0_parents, 0x088,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_PHASE(mmc0_sample_clk, "mmc0_sample", "mmc0",
-> +		       0x088, 20, 3, 0);
-> +static SUNXI_CCU_PHASE(mmc0_output_clk, "mmc0_output", "mmc0",
-> +		       0x088, 8, 3, 0);
-	[snip]
-> +static const char * const i2s0_parents[] =3D { "pll-audio-8x", "pll-audi=
-o-4x",
-> +					     "pll-audio-2x" , "pll-audio" };
-> +static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s0_parents,
-> +			       0x0b0, 16, 2, BIT(31), 0);
-> +
-> +static const char * const i2s1_parents[] =3D { "pll-audio-8x", "pll-audi=
-o-4x",
-> +					     "pll-audio-2x" , "pll-audio" };
-> +static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s1_parents,
-> +			       0x0b4, 16, 2, BIT(31), 0);
-> +
-> +static const char * const i2s2_parents[] =3D { "pll-audio-8x", "pll-audi=
-o-4x",
-> +					     "pll-audio-2x" , "pll-audio" };
-> +static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s2_parents,
-> +			       0x0b8, 16, 2, BIT(31), 0);
-	[snip]
-
-Same parent tables.
-This occurs for other clocks.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+--047d7b5d5ffee5b5190533bb841c--
