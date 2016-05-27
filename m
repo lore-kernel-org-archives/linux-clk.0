@@ -1,50 +1,70 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] clk: renesas: cpg-mssr: Document r8a7796 support
-Date: Wed,  4 May 2016 16:35:40 +0200
-Message-Id: <1462372543-31835-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 04/11] clk: tegra30: Mark certain clks as critical
+Date: Fri, 27 May 2016 16:38:07 -0400
+Message-ID: <1464381494-27096-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Mark the required clks as critical so the core will enable them during
+registration and therefore they will stay on.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index fefb8023020f1a54..394d725ac7e0baa3 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -13,7 +13,8 @@ They provide the following functionalities:
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra30.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 9396f4930da7..fc91460ab892 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -948,8 +948,8 @@ static void __init tegra30_pll_init(void)
  
- Required Properties:
-   - compatible: Must be one of:
--      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
-+      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-+      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+ 	/* PLLM */
+ 	clk = tegra_clk_register_pll("pll_m", "pll_ref", clk_base, pmc_base,
+-			    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+-			    &pll_m_params, NULL);
++			    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE |
++			    CLK_IS_CRITICAL, &pll_m_params, NULL);
+ 	clks[TEGRA30_CLK_PLL_M] = clk;
  
-   - reg: Base address and length of the memory resource used by the CPG/MSSR
-     block
-@@ -21,8 +22,8 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7795)
--      - "extalr" (r8a7795)
-+      - "extal" (r8a7795, r8a7796)
-+      - "extalr" (r8a7795, r8a7796)
+ 	/* PLLM_OUT1 */
+@@ -1104,7 +1104,8 @@ static void __init tegra30_super_clk_init(void)
  
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+ 	/* twd */
+ 	clk = clk_register_fixed_factor(NULL, "twd", "cclk_g",
+-					CLK_SET_RATE_PARENT, 1, 2);
++					CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++					1, 2);
+ 	clks[TEGRA30_CLK_TWD] = clk;
+ 
+ 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra30_clks, NULL);
+@@ -1164,11 +1165,12 @@ static void __init tegra30_periph_clk_init(void)
+ 	/* emc */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
++			       CLK_SET_RATE_NO_REPARENT | CLK_IS_CRITICAL,
+ 			       clk_base + CLK_SOURCE_EMC,
+ 			       30, 2, 0, &emc_lock);
+-	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
+-				    57, periph_clk_enb_refcnt);
++	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base,
++				    CLK_IS_CRITICAL, 57,
++				    periph_clk_enb_refcnt);
+ 	clks[TEGRA30_CLK_EMC] = clk;
+ 
+ 	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
 -- 
 1.9.1
