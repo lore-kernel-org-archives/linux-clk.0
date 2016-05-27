@@ -1,63 +1,153 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5420: Remove useless check for return
- value of samsung_clk_init
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1462699496-16646-1-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
-Date: Mon, 9 May 2016 09:32:47 -0400
+Return-Path: <loic.pallardy@st.com>
+Subject: Re: [STLinux Kernel] [PATCH 02/11] drivers: clk: st: Add clock
+ propagation for audio clocks
+To: Rob Herring <robh@kernel.org>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20160525172409.GA27913@rob-hp-laptop>
+ <CAG374jDTCJfZB+PuAnggjXhbcd3NjJqrESpe_EnMniCAeoph9A@mail.gmail.com>
+ <CAL_JsqLOG4P0H+HkQ3mJhfibatuV2T51KqOn-+U+LK8WUx7QgA@mail.gmail.com>
+ <5746F486.602@st.com>
+ <CAL_JsqLeD8uTmMYLFZ5Sh9=JV5s1xthvruXL-W=c=zcVS=G-ZA@mail.gmail.com>
+CC: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        "kernel@stlinux.com" <kernel@stlinux.com>,
+        Geert
+ Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Benjamin GAIGNARD
+	<benjamin.gaignard@st.com>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Russell
+ King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Kumar
+ Gala <galak@codeaurora.org>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <5747F5E8.5030300@st.com>
+Date: Fri, 27 May 2016 09:23:20 +0200
 MIME-Version: 1.0
-In-Reply-To: <1462699496-16646-1-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAL_JsqLeD8uTmMYLFZ5Sh9=JV5s1xthvruXL-W=c=zcVS=G-ZA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
 
-On 05/08/2016 05:24 AM, Krzysztof Kozlowski wrote:
-> The samsung_clk_init() cannot return NULL. Either it returns allocated
-> memory or it panics.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 92382cef9f90..770c0f007c6b 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
->  	exynos5x_soc = soc;
->  
->  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
-> -	if (!ctx)
-> -		panic("%s: unable to allocate context.\n", __func__);
+
+On 05/26/2016 03:20 PM, Rob Herring wrote:
+> On Thu, May 26, 2016 at 8:05 AM, loic pallardy <loic.pallardy@st.com> wrote:
+>>
+>>
+>> On 05/26/2016 02:46 PM, Rob Herring wrote:
+>>>
+>>> On Thu, May 26, 2016 at 4:49 AM, Gabriel Fernandez
+>>> <gabriel.fernandez@linaro.org> wrote:
+>>>>
+>>>> On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
+>>>>>
+>>>>>
+>>>>> On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
+>>>>>>
+>>>>>> This patch allows fine tuning of the quads FS for audio clocks
+>>>>>> accuracy.
+>>>>>>
+>>>>>> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+>>>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>>>>>> ---
+>>>>>>    .../devicetree/bindings/clock/st/st,flexgen.txt    |  1 +
+>>>>>>    drivers/clk/st/clk-flexgen.c                       | 24
+>>>>>> ++++++++++++++++++++++
+>>>>>>    2 files changed, 25 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>>> b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>>> index b7ee5c7..15b33c7 100644
+>>>>>> --- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+>>>>>> @@ -60,6 +60,7 @@ This binding uses the common clock binding[2].
+>>>>>>    Required properties:
+>>>>>>    - compatible : shall be:
+>>>>>>      "st,flexgen"
+>>>>>> +  "st,stih407-clkgend0", "st,flexgen" (enable clock propagation on
+>>>>>> parent)
+>>>>>
+>>>>>
+>>>>> What do "d0" and "d2" refer to?
+>>>>>
+>>>>> This seems to indicate you have too much clock detail in the DT (with
+>>>>> individual clocks described) or not enough with genericish compatible
+>>>>> strings. What happens for the mext clock you need to adjust the flags
+>>>>> on? You should be able to make these adjustments without DT updates.
+>>>>> Perhaps you need a wider fixing of clock compatible strings.
+>>>>>
+>>>>> Rob
+>>>>
+>>>>
+>>>> Sorry i sent my response in html...
+>>>>
+>>>> Hi Rob,
+>>>>
+>>>> Thanks for reviewing.
+>>>>
+>>>> Can i remove
+>>>> "
+>>>> st,stih407-clkgend0" & "
+>>>> st,stih407-clkgend2" compatible strings and add proprieties instead ?
+>>>> I only need to activate 2 features and then we can keep generic
+>>>> compatible strings.
+>>>
+>>>
+>> Hi Rob,
+>>>
+>>> That is no different and suffers the same point I raised. It requires
+>>> updating the DT for any clock configuration change or enhancement.
+>>>
+>> Agree with you, DT update is needed as soon as a clock configuration should
+>> be changed. This is due to STiH clock driver design based on DT description
+>> of SoC clock tree.
+>>
+>> This clock driver was accepted 2 years ago. At the time being there was
+>> discussion about clock tree description location: driver or DT.
+>> Bad choice was done for this driver...
+>>
+>> If we decide to redesign STiH clock driver using in-driver clock tree
+>> description, this will modify STiH clock DT nodes description and so break
+>> DT backward compatibility.
+>>
+>> What's from your pov the best option?
 >
+> You can break it once or every time you need a clock change. I'd go
+> with the former. Maybe more specific compatible strings throughout
+> alone would be enough rather than a flag day changing the binding.
 
-Indeed, the check is superfluous. I see that most callers [0] currently
-do the same, so probably makes sense to remove those too in this patch.
+So if I understand you correctly, main issue is d0 and d2 signification.
+d0 and d2 are indeed location of the flexgen in the SoC. But that's 
+right flexgen are dedicated to clocks generation for features (system, 
+audio, video).
+What about "st,flexgen-audio" and "st,flexgen-video"?
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+BR,
+Loic
 
-[0]:
-drivers/clk/samsung/clk-exynos4.c
-drivers/clk/samsung/clk-exynos5250.c
-drivers/clk/samsung/clk-exynos5440.c
-drivers/clk/samsung/clk-s3c2410.c
-drivers/clk/samsung/clk-s3c2412.c
-drivers/clk/samsung/clk-s3c2443.c
-drivers/clk/samsung/clk-s3c64xx.c
-drivers/clk/samsung/clk-s5pv210.c
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+>
+> Rob
+>
