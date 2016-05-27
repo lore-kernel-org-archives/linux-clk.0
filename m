@@ -1,54 +1,100 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/6] ARM: dts: exynos: Interrupt for USB DWC3-1 differs
- between Exynos5420 and 5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-3-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <fca224e1-af8c-5540-d47a-9f05e494b2c4@osg.samsung.com>
-Date: Tue, 31 May 2016 15:01:24 -0400
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35247 "EHLO
+	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752454AbcE0Onu (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2016 10:43:50 -0400
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Jon Hunter <jonathanh@nvidia.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
+ <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
+ <5746B6F7.9040101@nvidia.com>
+ <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+ <574708E8.3060308@nvidia.com>
+ <d7a01310-869e-197e-9fbe-5b4783629e10@gmail.com>
+ <574715D7.4060004@nvidia.com>
+ <6bfd97bc-7e09-973d-e3c3-7e86b08a4550@gmail.com>
+ <574841AD.8090601@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <450c48c1-cc59-1c1a-567e-14f03840880f@gmail.com>
+Date: Fri, 27 May 2016 17:43:45 +0300
 MIME-Version: 1.0
-In-Reply-To: <1464719945-3417-3-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <574841AD.8090601@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+On 27.05.2016 15:46, Jon Hunter wrote:
+>
+> On 26/05/16 18:01, Dmitry Osipenko wrote:
+>> On 26.05.2016 18:27, Jon Hunter wrote:
+>>> On 26/05/16 15:57, Dmitry Osipenko wrote:
+>
+> ...
+>
+>>>> That's how I see it:
+>>>>
+>>>> +----------------------------------------------+
+>>>> |                    CPU 0                     |
+>>>> +-------------------+--------------------------+
+>>>> |    Idle thread    | Interactive gov. thread  |
+>>>> +----------------------------------------------+
+>>>> |     inactive      |                          |
+>>>> |                   |                          |
+>>>> |                   |   CPU freq. change       |
+>>>> |                   |                          |
+>>>> |                   |   clk_set_rate()         |
+>>>> |                   |                          |
+>>>> |       ...         |   clk_prepare_lock()     |
+>>>> |                   |                          |
+>>>> |                   |   PRE rate notifier call |
+>>>> |                   |                          |
+>>>> |                   |   schedule               |
+>>>
+>>> What is this notifier doing? Is there some sort of hardware activity
+>>> that it is waiting for to complete?
+>>>
+>>
+>> It changes regulator voltage if required. So at least I2C would cause
+>> scheduling on wait_for_completion_timeout().
+>
+> Yes, of course that would make sense. What is interesting/odd in this
+> case is that the frequency is increasing (voltage scaled pre frequency
+> change) but yet you are entering LP2. May be that is possible? I guess
+> this problem may also occur on reducing frequency as well?
+>
 
-On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
-> On Exynos5410 the SPI interrupt for second USB DWC3 (called DRD: Dual
-> Role Device) is different - 200 instead of 73.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
->  arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
->  arch/arm/boot/dts/exynos54xx.dtsi | 1 -
->  3 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index a937d9bdad90..994d16a44fe4 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -267,6 +267,10 @@
->  	clock-names = "usbdrd30";
->  };
->  
-> +&usbdrd_dwc3_1 {
-> +	interrupts = <0 200 0>;
+Sorry, possible what? Surely it might happen on the POST notify, I just used PRE 
+for example.
 
-Please use GIC_SPI from <dt-bindings/interrupt-controller/arm-gic.h> instead 0.
+There are no active tasks while CPU changing the frequency, so kernel enters 
+idle mode while waiting for the HW completion - the interrupt. I don't see 
+anything wrong here.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> What are you using in the v3.18 kernel for exit_latency and
+> target_residency? The current mainline has 5000us and 10000us,
+> respectively.
+>
 
-Best regards,
+Default stock latencies, not sure why you are asking. It's essentially a 
+mainline kernel with some added device drivers and android patches.
+
+> It does seem that this could be triggered in the right circumstances and
+> I have to say I don't like the fact that this could be fragile as it is
+> today. Have you thought about adding a post clock notifier for pclk in
+> the PMC driver as an alternative to the change you are suggesting?
+>
+
+No, I haven't. Sounds like a good idea, thanks for the suggestion! I'll try it 
+and send V2 if it will be okay, otherwise will report the problem.
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Dmitry
