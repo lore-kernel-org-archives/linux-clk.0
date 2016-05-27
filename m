@@ -1,57 +1,54 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 00/28] ARM: OMAP2+: hwmod module clock type support
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1460632097-25727-1-git-send-email-t-kristo@ti.com>
- <20160512233935.GN3492@codeaurora.org>
-CC: <tony@atomide.com>, <paul@pwsan.com>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <5735B364.9000504@ti.com>
-Date: Fri, 13 May 2016 13:58:44 +0300
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+Date: Fri, 27 May 2016 16:38:13 -0400
+Message-ID: <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <20160512233935.GN3492@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13/05/16 02:39, Stephen Boyd wrote:
-> On 04/14, Tero Kristo wrote:
->> Hi,
->>
->> v2 contains following changes in comparison to v1:
->>
->> - Patch ordering changed a bit, clk/ti, mach-omap2, dts patches are now
->>    mostly grouped together, with the exception of the introduction of
->>    clock helper API, which is needed by everything else. Please note
->>    that the ordering must be preserved between mach-omap2/clk-driver/dts
->>    to avoid boot problems.
->> - Dropped hwmod data removal patches for now, this allows booting with
->>    either new or old DTS data.
->> - Fixed a typo in the hwmod clock driver timeout handling, the comparison
->>    for timeout against ktime_us_delta was wrong causing too short
->>    timeouts, this was apparent with cpuidle enabled on OMAP4
->> - Added patch #6 to fetch hwmod main clock based on the hwmod name itself,
->>    if found, ignore main_clk / clkctrl setup for the hwmod
->> - Added patch #7 to fix issue in omap2 timer caused by patch #6, with
->>    dynamic parsing of main clock, the hwmod must be setup before attempting
->>    to access main_clk.
->
-> What's the general design goal of this series? This cover letter
-> is more like a change and test log instead of an overall argument
-> for why the series should be merged so I'm left to piecing
-> together the commit text from the 28 different patches. I suspect
-> it's to get rid of DT_CLK macros and do something with hwmod in a
-> more generic way, but that's all I got.
+Add a '^' character to the beginning of clk entries that are for
+CRITICAL clks.
 
-Sorry I think this was lost someone along the series, and looking back I 
-did not explain it that well at any point either.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/clk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-The major motivation of this series is to get rid of the hwmod database 
-from kernel eventually, Tony is working on an interconnect driver which 
-will provide most of the other functionality currently done by hwmod, 
-but he is going to depend on the clkctrl part being done with this 
-series. Another important aspect of the series is that hwmod clkctrl is 
-now done with proper clock nodes, which provides multiple benefits like 
-usecounting, better debugging capabilities, better hierarchy support etc.
-
--Tero
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 874c7dd8ef66..22dd0ca1e491 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
+ 		return;
+ 
+-	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+-		   level * 3 + 1, "",
++	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
++		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
++		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
+ 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
+@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 
+ 	clk_prepare_unlock();
+ 
++	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
