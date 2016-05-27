@@ -1,44 +1,48 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <57454054.1010001@samsung.com>
-Date: Wed, 25 May 2016 11:34:04 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-arm-kernel@lists.infradead.org, thomas.ab@samsung.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
- tomasz.figa@gmail.com
-Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
- FSYS0} blocks clock
-References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
- <570F4BE0.1010102@samsung.com> <5710E082.2050303@samsung.com>
- <5711180A.8030809@samsung.com>
-In-reply-to: <5711180A.8030809@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 27 May 2016 21:31:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, tony@atomide.com,
+	lee.jones@linaro.org, robh+dt@kernel.org, lgirdwood@gmail.com,
+	t-kristo@ti.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org
+Message-ID: <20160527203140.GD29837@sirena.org.uk>
+References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
+ <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
+In-Reply-To: <1463579196-5484-15-git-send-email-peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 14/14] ASoC: omap-mcpdm: Add support for pdmclk clock
+ handling
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
 
-On 04/15/2016 10:04 PM, Sylwester Nawrocki wrote:
-> On 04/15/2016 02:37 PM, Alim Akhtar wrote:
->> On 04/14/2016 01:20 PM, Krzysztof Kozlowski wrote:
->>>> On 04/14/2016 06:42 AM, Alim Akhtar wrote:
->>>>>> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
->>>>>> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
->>>>>> blocks registers. Let these clocks to be enabled all the time.
->>>>>>
->>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>>>> ---
->>>>>>    drivers/clk/samsung/clk-exynos7.c |    5 +++--
->>>>>>    1 file changed, 3 insertions(+), 2 deletions(-)
->>>>
->>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>
->> Thanks Krzysztof,
->> Sylwester, do you have any concern here?
->
-> I'm fine with the patch, if it fixes all the issues for you.
-> I will apply it and will likely send it upstream after v4.7-rc1 release.
->
-Looks like this patch is not available on your tree.
+--at6+YcpfzWZg/htY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, May 18, 2016 at 04:46:36PM +0300, Peter Ujfalusi wrote:
+
+> +	clk_prepare_enable(mcpdm->pdmclk);
+
+Should really check the return value here.
+
+--at6+YcpfzWZg/htY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXSK6nAAoJECTWi3JdVIfQgLgH/1n87ZBxKwq4fE9xWWzz7VSe
+g/1vKGI7TcRkGSrC3jnotjQV/Nn8p3HYm19VBxdiQyR6gBRduGi5KFq1S9G6cimk
+ZF2a7er96t8SeCHplP7obU3slnpuAitBRrUnDQJ7Xb+ZGJJjyeDoETFV7XHYMglX
+/PTce4gJkxtTG7WSaru49540J4nU7YKtwOsOY8pmyC2eRxMekfO9HPq92565Y3bT
+hYpjb4HzBgcfL3OID5OWScBVJBZ4lZx/A69wb7lxeR+DWc+uu2XStqojQ1tSpDMv
+4/4Tw0xJ8aXDjQZqr6D6e0gu7jOBp2rOt4kmSJTCKetPrxf+ROcSEjB/IYc3ff0=
+=IO6m
+-----END PGP SIGNATURE-----
+
+--at6+YcpfzWZg/htY--
