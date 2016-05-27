@@ -1,60 +1,97 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 May 2016 10:41:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: loic pallardy <loic.pallardy@st.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"kernel@stlinux.com" <kernel@stlinux.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Andrzej Hajda <a.hajda@samsung.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Thierry Reding <treding@nvidia.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Vincent ABRIOU <vincent.abriou@st.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 2/2] memory: bcm2835: enable driver early in the boot process
-Date: Fri, 20 May 2016 07:23:17 +0000
-Message-Id: <1463728997-8241-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
-References: <1463728997-8241-1-git-send-email-kernel@martin.sperl.org>
+	Kumar Gala <galak@codeaurora.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: Re: [STLinux Kernel] [PATCH 02/11] drivers: clk: st: Add clock
+ propagation for audio clocks
+Message-ID: <20160527154159.GA17818@rob-hp-laptop>
+References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20160525172409.GA27913@rob-hp-laptop>
+ <CAG374jDTCJfZB+PuAnggjXhbcd3NjJqrESpe_EnMniCAeoph9A@mail.gmail.com>
+ <CAL_JsqLOG4P0H+HkQ3mJhfibatuV2T51KqOn-+U+LK8WUx7QgA@mail.gmail.com>
+ <5746F486.602@st.com>
+ <CAL_JsqLeD8uTmMYLFZ5Sh9=JV5s1xthvruXL-W=c=zcVS=G-ZA@mail.gmail.com>
+ <5747F5E8.5030300@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5747F5E8.5030300@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Fri, May 27, 2016 at 09:23:20AM +0200, loic pallardy wrote:
+> 
+> 
+> On 05/26/2016 03:20 PM, Rob Herring wrote:
+> >On Thu, May 26, 2016 at 8:05 AM, loic pallardy <loic.pallardy@st.com> wrote:
+> >>
+> >>
+> >>On 05/26/2016 02:46 PM, Rob Herring wrote:
+> >>>
+> >>>On Thu, May 26, 2016 at 4:49 AM, Gabriel Fernandez
+> >>><gabriel.fernandez@linaro.org> wrote:
+> >>>>
+> >>>>On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
+> >>>>>
+> >>>>>
+> >>>>>On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
+> >>>>>>
+> >>>>>>This patch allows fine tuning of the quads FS for audio clocks
+> >>>>>>accuracy.
+> >>>>>>
 
-Enable the critical sdram-clocks early during the boot process,
-so that these clocks (and their PLLs) can not get disabled
-when a different driver disables its clocks again because
-it failed to probe propperly (maybe deferred).
+> >>>
+> >>>That is no different and suffers the same point I raised. It requires
+> >>>updating the DT for any clock configuration change or enhancement.
+> >>>
+> >>Agree with you, DT update is needed as soon as a clock configuration should
+> >>be changed. This is due to STiH clock driver design based on DT description
+> >>of SoC clock tree.
+> >>
+> >>This clock driver was accepted 2 years ago. At the time being there was
+> >>discussion about clock tree description location: driver or DT.
+> >>Bad choice was done for this driver...
+> >>
+> >>If we decide to redesign STiH clock driver using in-driver clock tree
+> >>description, this will modify STiH clock DT nodes description and so break
+> >>DT backward compatibility.
+> >>
+> >>What's from your pov the best option?
+> >
+> >You can break it once or every time you need a clock change. I'd go
+> >with the former. Maybe more specific compatible strings throughout
+> >alone would be enough rather than a flag day changing the binding.
+> 
+> So if I understand you correctly, main issue is d0 and d2 signification.
+> d0 and d2 are indeed location of the flexgen in the SoC. But that's right
+> flexgen are dedicated to clocks generation for features (system, audio,
+> video).
+> What about "st,flexgen-audio" and "st,flexgen-video"?
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/memory/bcm2835-sdram.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+It is not so much the name of these 2, but whether there are other cases 
+for different clock nodes that could need the same thing. If so, update 
+them all now rather than 1 by 1.
 
-diff --git a/drivers/memory/bcm2835-sdram.c b/drivers/memory/bcm2835-sdram.c
-index 9d8cce2..7b6406d 100644
---- a/drivers/memory/bcm2835-sdram.c
-+++ b/drivers/memory/bcm2835-sdram.c
-@@ -431,6 +431,9 @@ static int bcm2835_sdram_probe(struct platform_device *pdev)
- 	/* setup debugfs */
- 	bcm2835_sdram_debugfs(pdev);
- 
-+	/* note that we have registered sdram */
-+	dev_dbg(&pdev->dev, "registered sdram\n");
-+
- 	return 0;
- }
- 
-@@ -457,7 +460,12 @@ static struct platform_driver bcm2835_sdram_driver = {
- 		.of_match_table = bcm2835_sdram_of_match_table,
- 	},
- };
--module_platform_driver(bcm2835_sdram_driver);
-+
-+static int __init __bcm2835_sdram_driver_init(void)
-+{
-+	return platform_driver_register(&bcm2835_sdram_driver);
-+}
-+core_initcall_sync(__bcm2835_sdram_driver_init);
- 
- MODULE_AUTHOR("Martin Sperl");
- MODULE_DESCRIPTION("sdram driver for bcm2835 chip");
--- 
-2.1.4
+Rob
