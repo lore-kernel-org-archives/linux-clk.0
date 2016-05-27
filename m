@@ -1,105 +1,77 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-Date: Sat, 28 May 2016 11:54:12 +0200
-Message-Id: <1464429273-23457-2-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 03/11] clk: tegra20: clean up init_table
+Date: Fri, 27 May 2016 16:38:06 -0400
+Message-ID: <1464381494-27096-4-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add license and copyrights (file introduced in 2014) to header with
-Exynos5410 clock IDs. Additionally reformat it to improve readability.
+Remove entries from the init_table where the clks are now defined
+as CRITICAL clks, if we were only enabling them in the init_table.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Remove the flag to signal to enable CRITICAL clks if they are still
+needed in the init_table to set other properties.
+
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 22 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 9b180f032e2d..213f19e02870 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,33 +1,43 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants for Exynos5421 clock controller.
-+*/
-+
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 4a60a25d7e61..c5bbd84735b8 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1021,28 +1021,23 @@ static struct tegra_cpu_car_ops tegra20_cpu_car_ops = {
+ };
  
- /* core clocks */
--#define CLK_FIN_PLL 1
--#define CLK_FOUT_APLL 2
--#define CLK_FOUT_CPLL 3
--#define CLK_FOUT_MPLL 4
--#define CLK_FOUT_BPLL 5
--#define CLK_FOUT_KPLL 6
-+#define CLK_FIN_PLL		1
-+#define CLK_FOUT_APLL		2
-+#define CLK_FOUT_CPLL		3
-+#define CLK_FOUT_MPLL		4
-+#define CLK_FOUT_BPLL		5
-+#define CLK_FOUT_KPLL		6
- 
- /* gate for special clocks (sclk) */
--#define CLK_SCLK_UART0 128
--#define CLK_SCLK_UART1 129
--#define CLK_SCLK_UART2 130
--#define CLK_SCLK_UART3 131
--#define CLK_SCLK_MMC0 132
--#define CLK_SCLK_MMC1 133
--#define CLK_SCLK_MMC2 134
-+#define CLK_SCLK_UART0		128
-+#define CLK_SCLK_UART1		129
-+#define CLK_SCLK_UART2		130
-+#define CLK_SCLK_UART3		131
-+#define CLK_SCLK_MMC0		132
-+#define CLK_SCLK_MMC1		133
-+#define CLK_SCLK_MMC2		134
- 
- /* gate clocks */
--#define CLK_UART0 257
--#define CLK_UART1 258
--#define CLK_UART2 259
--#define CLK_UART3 260
--#define CLK_MCT 315
--#define CLK_MMC0 351
--#define CLK_MMC1 352
--#define CLK_MMC2 353
-+#define CLK_UART0		257
-+#define CLK_UART1		258
-+#define CLK_UART2		259
-+#define CLK_UART3		260
-+#define CLK_MCT			315
-+#define CLK_MMC0		351
-+#define CLK_MMC1		352
-+#define CLK_MMC2		353
- 
--#define CLK_NR_CLKS 512
-+#define CLK_NR_CLKS		512
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
+ static struct tegra_clk_init_table init_table[] __initdata = {
+-	{ TEGRA20_CLK_PLL_P, TEGRA20_CLK_CLK_MAX, 216000000, 1 },
+-	{ TEGRA20_CLK_PLL_P_OUT1, TEGRA20_CLK_CLK_MAX, 28800000, 1 },
+-	{ TEGRA20_CLK_PLL_P_OUT2, TEGRA20_CLK_CLK_MAX, 48000000, 1 },
+-	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 1 },
+-	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 1 },
+-	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 1 },
+-	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 120000000, 1 },
+-	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 1 },
+-	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 1 },
+-	{ TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA20_CLK_EMC, TEGRA20_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
++	{ TEGRA20_CLK_PLL_P, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
++	{ TEGRA20_CLK_PLL_P_OUT1, TEGRA20_CLK_CLK_MAX, 28800000, 0 },
++	{ TEGRA20_CLK_PLL_P_OUT2, TEGRA20_CLK_CLK_MAX, 48000000, 0 },
++	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
++	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
++	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
++	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 120000000, 0 },
++	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
++	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
+ 	{ TEGRA20_CLK_UARTA, TEGRA20_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA20_CLK_UARTB, TEGRA20_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA20_CLK_UARTC, TEGRA20_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA20_CLK_UARTD, TEGRA20_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA20_CLK_UARTE, TEGRA20_CLK_PLL_P, 0, 0 },
+-	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 1 },
+-	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 1 },
+-	{ TEGRA20_CLK_CDEV1, TEGRA20_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA20_CLK_BLINK, TEGRA20_CLK_CLK_MAX, 32768, 1 },
++	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 0 },
++	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 0 },
++	{ TEGRA20_CLK_BLINK, TEGRA20_CLK_CLK_MAX, 32768, 0 },
+ 	{ TEGRA20_CLK_I2S1, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA20_CLK_I2S2, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA20_CLK_SDMMC1, TEGRA20_CLK_PLL_P, 48000000, 0 },
 -- 
-2.7.4
+1.9.1
