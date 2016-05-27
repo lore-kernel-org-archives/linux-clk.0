@@ -1,92 +1,60 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 25 May 2016 14:33:04 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 14/20] ARM: sun5i: a13: Add LCD pins
-Message-ID: <20160525123304.GD9232@lukather>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-15-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v66g_xZEyOf8ky_TKpT70D_EQwirVKNMQbubT5U2cD8rnw@mail.gmail.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 06/11] clk: tegra114: clean up init_table
+Date: Fri, 27 May 2016 16:38:09 -0400
+Message-ID: <1464381494-27096-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/3yNEOqWowh/8j+e"
-In-Reply-To: <CAGb2v66g_xZEyOf8ky_TKpT70D_EQwirVKNMQbubT5U2cD8rnw@mail.gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Remove entries from the init_table where the clks are now defined
+as CRITICAL clks, if we were only enabling them in the init_table.
 
---/3yNEOqWowh/8j+e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove the flag to signal to enable CRITICAL clks if they are still
+needed in the init_table to set other properties.
 
-On Tue, May 17, 2016 at 01:13:01AM +0800, Chen-Yu Tsai wrote:
-> >  arch/arm/boot/dts/sun5i-a13.dtsi | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i=
--a13.dtsi
-> > index 263d46dbc7e6..79b5d513c142 100644
-> > --- a/arch/arm/boot/dts/sun5i-a13.dtsi
-> > +++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-> > @@ -237,6 +237,16 @@
-> >  &pio {
-> >         compatible =3D "allwinner,sun5i-a13-pinctrl";
-> >
-> > +       lcd_rgb666_pins: lcd_rgb666@0 {
-> > +               allwinner,pins =3D "PD2", "PD3", "PD4", "PD5", "PD6", "=
-PD7",
-> > +                                "PD10", "PD11", "PD12", "PD13", "PD14"=
-, "PD15",
-> > +                                "PD18", "PD19", "PD20", "PD21", "PD22"=
-, "PD23",
-> > +                                "PD24", "PD25", "PD26", "PD27";
-> > +               allwinner,function =3D "lcd0";
-> > +               allwinner,drive =3D <SUN4I_PINCTRL_10_MA>;
->=20
-> Just a thought: would we ever need to increase the drive strength for ver=
-y high
-> resolutions?
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra114.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-I don't think we need to, but we can always change that later.
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---/3yNEOqWowh/8j+e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXRZuAAAoJEBx+YmzsjxAgh34P/A8mjRbercJZ5kw43eJi2NIu
-mhZQQdNAoMvgHe3RNOpycMHC+kMhCE9UG8/bbp2A+We/SDYMBgWrse/CNGEo5nCN
-L4EdnEb6ZUI5ry6oBfef+CvUaRX0A0RwNqRSj0zLPpV3URAoutuFmJzavN+am8wp
-u/ptWFhOzKn9W1NN2POH6bXMHTNzD1DslACwf91uceRc77Clzfz3mxYMLv36X5Fq
-ocDH5JUTtdUyIliocENV3D3xrvS8x6zmYop9umMULmgrkmfSrAVirH97w69Z3eP1
-UdiDWV1RNyboaRKgN4TCEXvcmImWBnvcRK8p1HYDHIjXGxzWi1oUmk+MnlGo1R3g
-7fj5MDP5mrTglBa5LVFqt7CZ2ky97NQZVQItlxyAzVwKAGb09GLXj6dVoSrQKuPJ
-pH7odyhe1KFyohtePn8oW2eKnBO9q6qYpq5EsAeNgD4Bsr8fz0mnQZ1Ca+6MWdXy
-eEhY1x5Ob/3wSqjrXraOmHhU66gIc8IiSYbQ6K8Wedkif7ZbluumOywlx0onbU2l
-S3GRqc2XqcpyQv3MKxowQ81i4Yrk5+caX9Gklk6CrhYE45T1CxjOEQXRr+RgXGKM
-oWuGWC7lrlMh6QYykZChRMd4Cn38DhLaTh+DKIE+9CPZMQNzZiQODec+Ecq0nZtG
-n9Bwx+BnsARHgDMCVlaw
-=9ODZ
------END PGP SIGNATURE-----
-
---/3yNEOqWowh/8j+e--
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index b78054fac0a8..29fc8c2e4359 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1318,19 +1318,16 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA114_CLK_UARTB, TEGRA114_CLK_PLL_P, 408000000, 0 },
+ 	{ TEGRA114_CLK_UARTC, TEGRA114_CLK_PLL_P, 408000000, 0 },
+ 	{ TEGRA114_CLK_UARTD, TEGRA114_CLK_PLL_P, 408000000, 0 },
+-	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 1 },
+-	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 1 },
+-	{ TEGRA114_CLK_EXTERN1, TEGRA114_CLK_PLL_A_OUT0, 0, 1 },
+-	{ TEGRA114_CLK_CLK_OUT_1_MUX, TEGRA114_CLK_EXTERN1, 0, 1 },
+-	{ TEGRA114_CLK_CLK_OUT_1, TEGRA114_CLK_CLK_MAX, 0, 1 },
++	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 0 },
++	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 0 },
+ 	{ TEGRA114_CLK_I2S0, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA114_CLK_I2S1, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA114_CLK_I2S2, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA114_CLK_I2S3, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA114_CLK_I2S4, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
+ 	{ TEGRA114_CLK_HOST1X, TEGRA114_CLK_PLL_P, 136000000, 0 },
+-	{ TEGRA114_CLK_DFLL_SOC, TEGRA114_CLK_PLL_P, 51000000, 1 },
+-	{ TEGRA114_CLK_DFLL_REF, TEGRA114_CLK_PLL_P, 51000000, 1 },
++	{ TEGRA114_CLK_DFLL_SOC, TEGRA114_CLK_PLL_P, 51000000, 0 },
++	{ TEGRA114_CLK_DFLL_REF, TEGRA114_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA114_CLK_DISP1, TEGRA114_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA114_CLK_DISP2, TEGRA114_CLK_PLL_P, 0, 0 },
+ 	{ TEGRA114_CLK_GR2D, TEGRA114_CLK_PLL_C2, 300000000, 0 },
+-- 
+1.9.1
