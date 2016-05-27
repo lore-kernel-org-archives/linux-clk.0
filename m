@@ -1,42 +1,41 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/6] dt-bindings: clock: Add TMU clock ID to Exynos5410
-Date: Tue, 31 May 2016 20:39:00 +0200
-Message-Id: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 08/11] clk: tegra210: Mark required clks as CRITICAL
+Date: Fri, 27 May 2016 16:38:11 -0400
+Message-ID: <1464381494-27096-9-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add ID for TMU clock to Exynos5410. Use the same number as for
-Exynos5420 just in case in future these drivers were merged.
+Mark clks that are required to be on as CRITICAL clks.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- include/dt-bindings/clock/exynos5410.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/tegra/clk-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index e94b7bbfd6af..705b2aa84317 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -50,6 +50,7 @@
- #define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_RTC			317
-+#define CLK_TMU			318
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index b8551813ec43..156dc8ec6bf6 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2655,7 +2655,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 
+ 	/* PLLRE */
+ 	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
+-						clk_base, pmc, 0,
++						clk_base, pmc, CLK_IS_CRITICAL,
+ 						&pll_re_vco_params,
+ 						&pll_re_lock, pll_ref_freq);
+ 	clk_register_clkdev(clk, "pll_re_vco", NULL);
 -- 
-2.7.4
+1.9.1
