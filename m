@@ -1,55 +1,85 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50676 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407AbcEMLVW (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2016 07:21:22 -0400
-Date: Fri, 13 May 2016 12:20:56 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-	a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-	dianders@chromium.org, zyw@rock-chips.com
-Message-ID: <20160513112055.GE22038@sirena.org.uk>
-References: <1462886340-7893-1-git-send-email-w.egorov@phytec.de>
- <1462886340-7893-4-git-send-email-w.egorov@phytec.de>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4592 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750985AbcE0Mqp (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2016 08:46:45 -0400
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+To: Dmitry Osipenko <digetx@gmail.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
+ <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
+ <5746B6F7.9040101@nvidia.com>
+ <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+ <574708E8.3060308@nvidia.com>
+ <d7a01310-869e-197e-9fbe-5b4783629e10@gmail.com>
+ <574715D7.4060004@nvidia.com>
+ <6bfd97bc-7e09-973d-e3c3-7e86b08a4550@gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <574841AD.8090601@nvidia.com>
+Date: Fri, 27 May 2016 13:46:37 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/2994txjAzEdQwm5"
-In-Reply-To: <1462886340-7893-4-git-send-email-w.egorov@phytec.de>
-Subject: Re: [PATCH v5 3/6] regulator: rk808: Add regulator driver for RK818
+In-Reply-To: <6bfd97bc-7e09-973d-e3c3-7e86b08a4550@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---/2994txjAzEdQwm5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 26/05/16 18:01, Dmitry Osipenko wrote:
+> On 26.05.2016 18:27, Jon Hunter wrote:
+>> On 26/05/16 15:57, Dmitry Osipenko wrote:
 
-On Tue, May 10, 2016 at 03:18:57PM +0200, Wadim Egorov wrote:
-> Add support for the rk818 regulator. The regulator module consists
-> of 4 DCDCs, 9 LDOs, 1 switch and 1 BOOST converter which is used to
-> power OTG and HDMI5V.
+...
 
-Acked-by: Mark Brown <broonie@kernel.org>
+>>> That's how I see it:
+>>>
+>>> +----------------------------------------------+
+>>> |                    CPU 0                     |
+>>> +-------------------+--------------------------+
+>>> |    Idle thread    | Interactive gov. thread  |
+>>> +----------------------------------------------+
+>>> |     inactive      |                          |
+>>> |                   |                          |
+>>> |                   |   CPU freq. change       |
+>>> |                   |                          |
+>>> |                   |   clk_set_rate()         |
+>>> |                   |                          |
+>>> |       ...         |   clk_prepare_lock()     |
+>>> |                   |                          |
+>>> |                   |   PRE rate notifier call |
+>>> |                   |                          |
+>>> |                   |   schedule               |
+>>
+>> What is this notifier doing? Is there some sort of hardware activity
+>> that it is waiting for to complete?
+>>
+> 
+> It changes regulator voltage if required. So at least I2C would cause
+> scheduling on wait_for_completion_timeout().
 
---/2994txjAzEdQwm5
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, of course that would make sense. What is interesting/odd in this
+case is that the frequency is increasing (voltage scaled pre frequency
+change) but yet you are entering LP2. May be that is possible? I guess
+this problem may also occur on reducing frequency as well?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+What are you using in the v3.18 kernel for exit_latency and
+target_residency? The current mainline has 5000us and 10000us,
+respectively.
 
-iQEcBAEBCAAGBQJXNbiWAAoJECTWi3JdVIfQ82IH/0WRYTRTlQk/OPon4FIaa0IO
-oBFGlMS/tz6UgBysOleM8JPoDrX4wKImWQHYurbJ8IGOqpGfScZ7o1g5h79t05RQ
-HABbHNz+BDHg49foowhQGAKBW7enpzIkKEbsXEj/Bt76g5l3Mdoj9Gzn6HuJILM4
-HmGm05lSdLtxJE1zXZXcl74MqAWRgbVA9jw+KoHOMnSumLLHso1vue5A+UtvJImE
-Q5J9L1BGjCyxXfGXWq7JAFtBcPPokFv/A3vbdsLMlHfFHYkZLHR74IAXWM2IIiSh
-NoaM234W/hluaDT+P4ftX45ZInqqo6S8KbEznQsTAuKMWopfgeu2L27C4vqbXBg=
-=hJT+
------END PGP SIGNATURE-----
+It does seem that this could be triggered in the right circumstances and
+I have to say I don't like the fact that this could be fragile as it is
+today. Have you thought about adding a post clock notifier for pclk in
+the PMC driver as an alternative to the change you are suggesting?
 
---/2994txjAzEdQwm5--
+Cheers
+Jon
+
+-- 
+nvpublic
