@@ -1,64 +1,53 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1463402840-17062-15-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-15-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 May 2016 01:13:01 +0800
-Message-ID: <CAGb2v66g_xZEyOf8ky_TKpT70D_EQwirVKNMQbubT5U2cD8rnw@mail.gmail.com>
-Subject: Re: [PATCH 14/20] ARM: sun5i: a13: Add LCD pins
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <horms@verge.net.au>
+Date: Fri, 27 May 2016 09:49:00 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W
+Message-ID: <20160527004859.GG14269@verge.net.au>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+ <20160526023548.GA20224@verge.net.au>
+ <CAMuHMdW4Q=OO1zX6_wcN85rs8ZtNqFGnQYEMkriSh1q2L4vJSA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdW4Q=OO1zX6_wcN85rs8ZtNqFGnQYEMkriSh1q2L4vJSA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The RGB bus can be used in several configurations, one of which being the
-> RGB666.
->
-> Add a pinctrl group for that case.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Thu, May 26, 2016 at 08:55:35AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, May 26, 2016 at 4:35 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, May 04, 2016 at 04:35:39PM +0200, Geert Uytterhoeven wrote:
+> >> This patch series adds initial support for the Clock Pulse Generator and
+> >> Module Standby and Software Reset modules on the Renesas R-Car M3-W
+> >> SoC:
+> >>   - Basic core clocks,
+> >>   - SCIF2 (console) module clock,
+> >>   - INTC-AP (GIC) module clock (disabled pending CLK_ENABLE_HAND_OFF).
+> >>
+> >> Support for more core and module clocks will be added incrementally.
+> >
+> > I am wondering about the status of this patchset vis a vis mainline.
+> >
+> > I would like to queue up "[PATCH v3 0/3] arm64: Add Renesas R8A7796 SoC
+> > support" for v4.8 but I'd prefer to do so only if there is a good chance
+> > that this patch-set, which is provides run-time dependency, will also be in
+> > v4.8.
+> 
+> I plan to queue it in clk-renesas-for-v4.8 after the closing of the v4.7 merge
+> window.
+> 
+> BTW, as there were no comments on the code, but people are obviously using it,
+> and building on top of it, it would be good to receive some
+> {Acked,Tested,Reviewed}-by tags.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Sorry, I meant to do that a long time ago.
 
-> ---
->  arch/arm/boot/dts/sun5i-a13.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-> index 263d46dbc7e6..79b5d513c142 100644
-> --- a/arch/arm/boot/dts/sun5i-a13.dtsi
-> +++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-> @@ -237,6 +237,16 @@
->  &pio {
->         compatible = "allwinner,sun5i-a13-pinctrl";
->
-> +       lcd_rgb666_pins: lcd_rgb666@0 {
-> +               allwinner,pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-> +                                "PD10", "PD11", "PD12", "PD13", "PD14", "PD15",
-> +                                "PD18", "PD19", "PD20", "PD21", "PD22", "PD23",
-> +                                "PD24", "PD25", "PD26", "PD27";
-> +               allwinner,function = "lcd0";
-> +               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-
-Just a thought: would we ever need to increase the drive strength for very high
-resolutions?
-
-> +               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +       };
-> +
->         uart1_pins_a: uart1@0 {
->                 allwinner,pins = "PE10", "PE11";
->                 allwinner,function = "uart1";
-> --
-> 2.8.2
->
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
