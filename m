@@ -7,35 +7,48 @@ CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
 	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
 	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 08/11] clk: tegra210: Mark required clks as CRITICAL
-Date: Wed, 25 May 2016 18:24:28 -0400
-Message-ID: <1464215071-28696-9-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v2 00/11] Switch to using CRITICAL clks for Tegra
+Date: Fri, 27 May 2016 16:38:03 -0400
+Message-ID: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
 Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Mark clks that are required to be on as CRITICAL clks.
+Switch to defining clks that need to be on as CRITICAL rather than
+using the init_tables defined to enable clks. Some of these may be
+able to be converted to HAND_OFF clks, when that is supported.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I added a patch to mark CRITICAL clks in the clk_summary table, figuring
+it would be handy to be able to easily tell what clks are CRITICAL
+through the table.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b8551813ec43..156dc8ec6bf6 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2655,7 +2655,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 
- 	/* PLLRE */
- 	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
--						clk_base, pmc, 0,
-+						clk_base, pmc, CLK_IS_CRITICAL,
- 						&pll_re_vco_params,
- 						&pll_re_lock, pll_ref_freq);
- 	clk_register_clkdev(clk, "pll_re_vco", NULL);
+I added a warning for using the init_table to enable clks. I considered
+removing it entirely, but I thought phasing it out might be better.
+
+Rhyland Klein (11):
+  clk: tegra: Switch to using critical clks
+  clk: tegra20: Mark required clks as CRITICAL
+  clk: tegra20: clean up init_table
+  clk: tegra30: Mark certain clks as critical
+  clk: tegra30: clean up init_table
+  clk: tegra114: clean up init_table
+  clk: tegra124: clean up init_table
+  clk: tegra210: Mark required clks as CRITICAL
+  clk: tegra210: clean up init_table
+  clk: Show CRITICAL clks in clk_summary output
+  clk: tegra: WARN if clk in the init_table has enable
+
+ drivers/clk/clk.c                        |  7 ++++--
+ drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++------
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 12 ++++++----
+ drivers/clk/tegra/clk-tegra114.c         | 11 ++++-----
+ drivers/clk/tegra/clk-tegra124.c         | 19 ++++++---------
+ drivers/clk/tegra/clk-tegra20.c          | 41 +++++++++++++++-----------------
+ drivers/clk/tegra/clk-tegra210.c         | 28 ++++++++--------------
+ drivers/clk/tegra/clk-tegra30.c          | 28 ++++++++--------------
+ drivers/clk/tegra/clk.c                  |  5 ++++
+ 9 files changed, 81 insertions(+), 91 deletions(-)
+
 -- 
 1.9.1
