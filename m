@@ -1,61 +1,45 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid
- XU
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Message-ID: <09dcc771-40e2-8be0-de73-bc1db37d6804@osg.samsung.com>
-Date: Wed, 11 May 2016 11:41:34 -0400
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 11/11] clk: tegra: WARN if clk in the init_table has enable
+Date: Fri, 27 May 2016 16:38:14 -0400
+Message-ID: <1464381494-27096-12-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Return-Path: rklein@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Enabling clocks through the init_table mechanism is deprecated. Clocks
+that need to be enabled early and stay on should be marked as CRITICAL.
 
-On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Patchset adds necessary clocks, reorganizes existing stuff and finally
-> adds Odroid XU support.
-> 
-> 
-> Changes since v2
-> ================
-> 1. Got global-ack from Stephen for the clock changes. I think merging
->    everything through arm-soc might be the easiest but:
->    a. In such case I will prepare a tag with clock changes,
->    b. Anyway I will wait for response from Sylwester and Tomasz.
-> 2. Applied comments from Javier and added his Reviewed-by.
-> 3. Patch 22: added ack from Rob.
-> 4. Minor improvements in existing patches.
-> 5. Five new patches at the end: 23-27 (not reviewed yet).
->    Some of them could be squashed with existing ones but existing
->    changes got reviews. Although the final Odroid XU DTS works fine but
->    in general this is still work-in-progress so I suspect it will grow.
->    I am releasing it early following Linux concept. :)
-> 
-> Patchset is available at my private repo @github:
-> https://github.com/krzk/linux.git for-next/odroid-xu-v3
-> 
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I have tested this branch on both an Exynos5422 Odroid XU4 board and an
-Exynos5800 Peach Pi Chromebook. All the peripherals are working correctly.
-
-So for all patches affecting Exynos54xx/5800 (9,12,13,14,16,19,20,21,25):
-
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index b2cdd9a235f4..898fe922c742 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -262,6 +262,11 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
+ 				WARN_ON(1);
+ 			}
+ 
++		/* Using the init_table to enable clks at boot is
++		 * deprecated. Clks that need to be enabled through early
++		 * boot, they should be marked as CLK_IS_CRITICAL
++		 */
++		WARN_ON_ONCE(tbl->state);
+ 		if (tbl->state)
+ 			if (clk_prepare_enable(clk)) {
+ 				pr_err("%s: Failed to enable %s\n", __func__,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
