@@ -1,61 +1,48 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	huangtao@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: add a dummy clock for the watchdog pclk on rk3399
-Date: Wed, 25 May 2016 16:51:56 +0800
-Message-Id: <1464166316-22480-1-git-send-email-zhengxing@rock-chips.com>
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+Date: Sat, 28 May 2016 11:54:24 +0200
+Message-Id: <1464429273-23457-14-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Like rk3288, the pclk supplying the watchdog is controlled via the
-SGRF register area. Additionally the SGRF isn't even writable in
-every boot mode.
+Just like other Exynos5 family SoCs, this one has four UARTs. Configure
+clocks for UART3 and enable it.
 
-But still the clock control is available and in the future someone
-might want to use it. Therefore define a simple clock for the time
-being so that the watchdog driver can read its rate.
-
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
+ arch/arm/boot/dts/exynos5410.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/clk/rockchip/clk-rk3399.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 291543f..b6742fa 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1498,6 +1498,7 @@ static void __init rk3399_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
- 	void __iomem *reg_base;
-+	struct clk *clk;
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 0d555c5b7311..a81a03408a0a 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -218,7 +218,8 @@
+ };
  
- 	reg_base = of_iomap(np, 0);
- 	if (!reg_base) {
-@@ -1511,6 +1512,14 @@ static void __init rk3399_clk_init(struct device_node *np)
- 		return;
- 	}
+ &serial_3 {
+-	status = "disabled";
++	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
++	clock-names = "uart", "clk_uart_baud0";
+ };
  
-+	/* Watchdog pclk is controlled by RK3399 SECURE_GRF_SOC_CON3[8]. */
-+	clk = clk_register_fixed_factor(NULL, "pclk_wdt", "pclk_alive", 0, 1, 1);
-+	if (IS_ERR(clk))
-+		pr_warn("%s: could not register clock pclk_wdt: %ld\n",
-+			__func__, PTR_ERR(clk));
-+	else
-+		rockchip_clk_add_lookup(ctx, clk, PCLK_WDT);
-+
- 	rockchip_clk_register_plls(ctx, rk3399_pll_clks,
- 				   ARRAY_SIZE(rk3399_pll_clks), -1);
- 
+ &sromc {
 -- 
-1.7.9.5
+2.7.4
