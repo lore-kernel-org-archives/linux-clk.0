@@ -1,66 +1,60 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 3 May 2016 16:32:53 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>, Anson Huang <b20788@freescale.com>,
-	Adrian Alonso <aalonso@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>
-Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: fix ahb clock mux 1
-Message-ID: <20160503083253.GC5874@tiger>
-References: <1461877623-26838-1-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1461877623-26838-1-git-send-email-stefan@agner.ch>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 19/22] clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+Date: Sat, 28 May 2016 11:54:30 +0200
+Message-Id: <1464429273-23457-20-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 28, 2016 at 02:07:03PM -0700, Stefan Agner wrote:
-> The clock parent of the AHB root clock when using mux option 1
-> is the SYS PLL 270MHz clock. This is specified in  Table 5-11
-> Clock Root Table of the i.MX 7Dual Applications Processor
-> Reference Manual.
-> 
-> While it could be a documentation error, the 270MHz parent is
-> also mentioned in the boot ROM configuration in Table 6-28: The
-> clock is by default at 135MHz due to a POST_PODF value of 1
-> (=> divider of 2).
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Add clocks for I2C, USI (HSI2C) and RTC to the Exynos5410 clock driver.
 
-Anson, Frank,
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5410.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Can you guys confirm this change is correct?
-
-Shawn
-
-> ---
-> Hi Shawn,
-> 
-> I did not found a clock which was based on this clock which I
-> could measure externally... But the change is backed by the
-> documentation.
-> 
-> --
-> Stefan
-> 
->  drivers/clk/imx/clk-imx7d.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 7912be8..5229968 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -56,7 +56,7 @@ static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
->  	"pll_sys_pfd2_135m_clk", "pll_sys_pfd6_clk", "pll_enet_250m_clk",
->  	"pll_audio_main_clk", };
->  
-> -static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-> +static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
->  	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
->  	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_main_clk",
->  	"pll_video_main_clk", };
-> -- 
-> 2.8.0
-> 
-> 
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 5f892128849a..6c2e59c576ee 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -159,6 +159,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+ 
+ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
++	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
+ 
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
+ 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+@@ -187,6 +188,14 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_UART1, "uart1", "aclk66", GATE_IP_PERIC, 1, 0, 0),
+ 	GATE(CLK_UART2, "uart2", "aclk66", GATE_IP_PERIC, 2, 0, 0),
+ 	GATE(CLK_UART3, "uart3", "aclk66", GATE_IP_PERIC, 3, 0, 0),
++	GATE(CLK_I2C0, "i2c0", "aclk66", GATE_IP_PERIC, 6, 0, 0),
++	GATE(CLK_I2C1, "i2c1", "aclk66", GATE_IP_PERIC, 7, 0, 0),
++	GATE(CLK_I2C2, "i2c2", "aclk66", GATE_IP_PERIC, 8, 0, 0),
++	GATE(CLK_I2C3, "i2c3", "aclk66", GATE_IP_PERIC, 9, 0, 0),
++	GATE(CLK_USI0, "usi0", "aclk66", GATE_IP_PERIC, 10, 0, 0),
++	GATE(CLK_USI1, "usi1", "aclk66", GATE_IP_PERIC, 11, 0, 0),
++	GATE(CLK_USI2, "usi2", "aclk66", GATE_IP_PERIC, 12, 0, 0),
++	GATE(CLK_USI3, "usi3", "aclk66", GATE_IP_PERIC, 13, 0, 0),
+ 	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
+ 
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+-- 
+2.7.4
