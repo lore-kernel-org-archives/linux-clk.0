@@ -1,53 +1,197 @@
 Return-Path: <krzk@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <fca224e1-af8c-5540-d47a-9f05e494b2c4@osg.samsung.com>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
-	<1464719945-3417-3-git-send-email-krzk@kernel.org>
-	<fca224e1-af8c-5540-d47a-9f05e494b2c4@osg.samsung.com>
-Date: Tue, 31 May 2016 21:26:43 +0200
-Message-ID: <CAJKOXPf204zCUaWm48TbGhPiehpxjQ6F-F-tc+ZtYOesmoaPww@mail.gmail.com>
-Subject: Re: [PATCH 3/6] ARM: dts: exynos: Interrupt for USB DWC3-1 differs
- between Exynos5420 and 5410
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 12/22] ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+Date: Sat, 28 May 2016 11:54:23 +0200
+Message-Id: <1464429273-23457-13-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 31, 2016 at 9:01 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> Hello Krzysztof,
->
-> On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
->> On Exynos5410 the SPI interrupt for second USB DWC3 (called DRD: Dual
->> Role Device) is different - 200 instead of 73.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
->>  arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
->>  arch/arm/boot/dts/exynos54xx.dtsi | 1 -
->>  3 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
->> index a937d9bdad90..994d16a44fe4 100644
->> --- a/arch/arm/boot/dts/exynos5410.dtsi
->> +++ b/arch/arm/boot/dts/exynos5410.dtsi
->> @@ -267,6 +267,10 @@
->>       clock-names = "usbdrd30";
->>  };
->>
->> +&usbdrd_dwc3_1 {
->> +     interrupts = <0 200 0>;
->
-> Please use GIC_SPI from <dt-bindings/interrupt-controller/arm-gic.h> instead 0.
->
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+The exynos5.dtsi is used for common nodes shared between Exynos5250 and
+Exynos542x. Since Exynos5410 is very similar to Exynos5420 it can
+include the common file as well to remove duplication and make
+everything more consistent.
 
-Sure, thanks for feedback.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5410-smdk5410.dts |   6 +-
+ arch/arm/boot/dts/exynos5410.dtsi         | 103 ++++++++++--------------------
+ 2 files changed, 35 insertions(+), 74 deletions(-)
 
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index 0f6429e1b75c..777fcf2edd79 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -102,14 +102,14 @@
+ 	};
+ };
+ 
+-&uart0 {
++&serial_0 {
+ 	status = "okay";
+ };
+ 
+-&uart1 {
++&serial_1 {
+ 	status = "okay";
+ };
+ 
+-&uart2 {
++&serial_2 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index ef60a06211f1..0d555c5b7311 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include "skeleton.dtsi"
++#include "exynos5.dtsi"
+ #include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
+ 
+@@ -26,9 +27,6 @@
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+ 		pinctrl3 = &pinctrl_3;
+-		serial0 = &uart0;
+-		serial1 = &uart1;
+-		serial2 = &uart2;
+ 	};
+ 
+ 	cpus {
+@@ -70,49 +68,6 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		combiner: interrupt-controller@10440000 {
+-			compatible = "samsung,exynos4210-combiner";
+-			#interrupt-cells = <2>;
+-			interrupt-controller;
+-			samsung,combiner-nr = <32>;
+-			reg = <0x10440000 0x1000>;
+-			interrupts =	<0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-					<0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-					<0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-					<0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+-					<0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
+-					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
+-					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
+-					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
+-		};
+-
+-		gic: interrupt-controller@10481000 {
+-			compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+-			#interrupt-cells = <3>;
+-			interrupt-controller;
+-			reg =	<0x10481000 0x1000>,
+-				<0x10482000 0x1000>,
+-				<0x10484000 0x2000>,
+-				<0x10486000 0x2000>;
+-			interrupts = <1 9 0xf04>;
+-		};
+-
+-		chipid@10000000 {
+-			compatible = "samsung,exynos4210-chipid";
+-			reg = <0x10000000 0x100>;
+-		};
+-
+-		sromc: memory-controller@12250000 {
+-			compatible = "samsung,exynos4210-srom";
+-			reg = <0x12250000 0x14>;
+-			#address-cells = <2>;
+-			#size-cells = <1>;
+-			ranges = <0 0 0x04000000 0x20000
+-				  1 0 0x05000000 0x20000
+-				  2 0 0x06000000 0x20000
+-				  3 0 0x07000000 0x20000>;
+-		};
+-
+ 		pmu_system_controller: system-controller@10040000 {
+ 			compatible = "samsung,exynos5410-pmu", "syscon";
+ 			reg = <0x10040000 0x5000>;
+@@ -239,34 +194,40 @@
+ 			reg = <0x03860000 0x1000>;
+ 			interrupts = <0 47 0>;
+ 		};
++	};
++};
+ 
+-		uart0: serial@12C00000 {
+-			compatible = "samsung,exynos4210-uart";
+-			reg = <0x12C00000 0x100>;
+-			interrupts = <0 51 0>;
+-			clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+-			clock-names = "uart", "clk_uart_baud0";
+-			status = "disabled";
+-		};
++&pwm {
++	clocks = <&clock CLK_PWM>;
++	clock-names = "timers";
++};
+ 
+-		uart1: serial@12C10000 {
+-			compatible = "samsung,exynos4210-uart";
+-			reg = <0x12C10000 0x100>;
+-			interrupts = <0 52 0>;
+-			clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+-			clock-names = "uart", "clk_uart_baud0";
+-			status = "disabled";
+-		};
++&serial_0 {
++	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
++	clock-names = "uart", "clk_uart_baud0";
++};
+ 
+-		uart2: serial@12C20000 {
+-			compatible = "samsung,exynos4210-uart";
+-			reg = <0x12C20000 0x100>;
+-			interrupts = <0 53 0>;
+-			clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+-			clock-names = "uart", "clk_uart_baud0";
+-			status = "disabled";
+-		};
+-	};
++&serial_1 {
++	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
++	clock-names = "uart", "clk_uart_baud0";
++};
++
++&serial_2 {
++	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
++	clock-names = "uart", "clk_uart_baud0";
++};
++
++&serial_3 {
++	status = "disabled";
++};
++
++&sromc {
++	#address-cells = <2>;
++	#size-cells = <1>;
++	ranges = <0 0 0x04000000 0x20000
++		  1 0 0x05000000 0x20000
++		  2 0 0x06000000 0x20000
++		  3 0 0x07000000 0x20000>;
+ };
+ 
+ #include "exynos5410-pinctrl.dtsi"
+-- 
+2.7.4
