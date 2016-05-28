@@ -14,113 +14,59 @@ To: Kukjin Kim <kgene@kernel.org>,
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 06/22] ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
-Date: Sun, 15 May 2016 22:13:47 +0200
-Message-Id: <1463343243-26429-7-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v5 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+Date: Sat, 28 May 2016 11:54:13 +0200
+Message-Id: <1464429273-23457-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Configure the pinctrl for MMC0 (eMMC) and MMC2 (microSD card).
+Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
+Exynos5420 just in case in future these drivers were merged.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
 ---
+ include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Important changes since v2:
-1. Re-order the eMMC pins by pin-name, not by label.
----
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 77 +++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index f9aa6bb55464..ddacafa1e907 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -277,6 +277,83 @@
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
-+
-+	sd0_clk: sd0-clk {
-+		samsung,pins = "gpc0-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd0_cmd: sd0-cmd {
-+		samsung,pins = "gpc0-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd0_cd: sd0-cd {
-+		samsung,pins = "gpc0-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd0_bus1: sd0-bus-width1 {
-+		samsung,pins = "gpc0-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd0_bus4: sd0-bus-width4 {
-+		samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_clk: sd2-clk {
-+		samsung,pins = "gpc2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cmd: sd2-cmd {
-+		samsung,pins = "gpc2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cd: sd2-cd {
-+		samsung,pins = "gpc2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus1: sd2-bus-width1 {
-+		samsung,pins = "gpc2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus4: sd2-bus-width4 {
-+		samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd0_bus8: sd0-bus-width8 {
-+		samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
- };
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 213f19e02870..34c8e96987a1 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2016 Krzysztof Kozlowski
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -27,16 +28,25 @@
+ #define CLK_SCLK_MMC0		132
+ #define CLK_SCLK_MMC1		133
+ #define CLK_SCLK_MMC2		134
++#define CLK_SCLK_USBD300	150
++#define CLK_SCLK_USBD301	151
++#define CLK_SCLK_USBPHY300	152
++#define CLK_SCLK_USBPHY301	153
++#define CLK_SCLK_PWM		155
  
- &pinctrl_1 {
+ /* gate clocks */
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
+ #define CLK_UART3		260
++#define CLK_PWM			279
+ #define CLK_MCT			315
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
++#define CLK_USBH20		365
++#define CLK_USBD300		366
++#define CLK_USBD301		367
+ 
+ #define CLK_NR_CLKS		512
+ 
 -- 
-2.5.0
+2.7.4
