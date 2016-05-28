@@ -1,253 +1,208 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Nicolas Chauvet <kwizart@gmail.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>
-Subject: [PATCH] clk: ti: Add support for basic clk_set_rate for dm814x and j5-eco ADPLL
-Date: Fri, 13 May 2016 09:40:53 -0700
-Message-Id: <1463157653-9404-1-git-send-email-tony@atomide.com>
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 17/22] ARM: dts: exynos: Add initial support for Odroid XU board
+Date: Sat, 28 May 2016 11:54:28 +0200
+Message-Id: <1464429273-23457-18-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Here's basic clk_set_rate support for the dm814x and j5-eco ADPLL.
+The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
+from Samsung: the Exynos5410. Details:
+1. Exynos5410 octa-core (A15+A7, however as of now only one cluster is
+   enabled),
+2. 2 GB DDR3 RAM,
+3. PowerVR SGX544MP3 GPU (not enabled in DTS),
+4. USB 3.0 Host x 1, USB 3.0 OTG x 1, USB 2.0 Host x 4,
+5. HDMI 1.4a, MIPI DSI and Display Port (Display Port not on all of
+   revisions though),
+6. eMMC 4.5 and microSD slots.
 
-Note that to clk_get the ADPLL clocks without a DTS phandle, you need to
-use the generated names like "pll1a0dco", "pll1a0m2" and "pll1a0clkout".
-The ADPLL driver is now enabled for dm814x and j5-eco starting with
-v4.6-rc6, so there are no longer other pending dependencies.
+Comparing this board to Odroid XU3 (more popular), the differences are:
+1. Exynos5410 instead of 5422,
+2. MIPI DSI LCD connector,
+3. Main PMIC: Maxim 77802 instead of S2MPS11,
+4. USB3503+LAN9730 instead of integrated LAN9514,
+5. eMMC 4.5 instead of eMMC 5.0,
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+This patch adds initial support for the XU board with working basic
+functions, eMMC/SD and USB (including attached ethernet adapter).
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Link: http://www.hardkernel.com/main/products/prdt_info.php?g_code=G137510300620
 ---
- drivers/clk/ti/adpll.c | 182 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 182 insertions(+)
+ .../bindings/arm/samsung/samsung-boards.txt        |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          | 121 +++++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index 255cafb..ff8ecfa 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -17,6 +17,7 @@
- #include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-+#include <linux/rational.h>
- #include <linux/string.h>
- 
- #define ADPLL_PLLSS_MMR_LOCK_OFFSET	0x00	/* Managed by MPPULL */
-@@ -54,12 +55,17 @@
- #define ADPLL_M2NDIV_M2			16
- #define ADPLL_M2NDIV_M2_ADPLL_S_WIDTH	5
- #define ADPLL_M2NDIV_M2_ADPLL_LJ_WIDTH	7
-+#define TI_ADPLL_DIV_N_MAX		GENMASK(7, 0)
- 
- #define ADPLL_MN2DIV_OFFSET		0x14
- #define ADPLL_MN2DIV_N2			16
-+#define TI_ADPLL_MIN_MULT_M		2
-+#define TI_ADPLL_MULT_M_MAX		(GENMASK(11, 0) + 1)
- 
- #define ADPLL_FRACDIV_OFFSET		0x18
- #define ADPLL_FRACDIV_REGSD		24
-+#define TI814X_ADPLLJ_MIN_SD_DIV	2
-+#define TI814X_ADPLLJ_MAX_SD_DIV	255
- #define ADPLL_FRACDIV_FRACTIONALM	0
- #define ADPLL_FRACDIV_FRACTIONALM_MASK	0x3ffff
- 
-@@ -480,6 +486,180 @@ static unsigned long ti_adpll_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
-+static long ti_adpll_calc_n_m(struct ti_adpll_dco_data *dco,
-+			      unsigned long rate,
-+			      unsigned long parent_rate,
-+			      u8 *div_n, u16 *mult_m, u16 *frac_m)
-+{
-+	struct ti_adpll_data *d = to_adpll(dco);
-+	unsigned long dcorate, m, n;
-+	u32 v;
-+	u64 tmp64;
-+
-+	if (!rate)
-+		return 0;
-+
-+	dcorate = parent_rate;
-+	if (d->c->is_type_s) {
-+		v = readl_relaxed(d->regs + ADPLL_CLKCTRL_OFFSET);
-+		if (v & BIT(ADPLL_CLKCTRL_REGM4XEN_ADPLL_S))
-+			dcorate /= 4;
-+		dcorate /= 2;
-+	}
-+
-+	/* TRM table "DPLLLJ Frequency Factors" sets the minimum M at 2 */
-+	if (rate < TI_ADPLL_MIN_MULT_M * dcorate)
-+		return 0;
-+
-+	/* Ratio for integer multiplier M and pre-divider N */
-+	rational_best_approximation(rate, dcorate, TI_ADPLL_MULT_M_MAX,
-+				    TI_ADPLL_DIV_N_MAX, &m, &n);
-+	if (m < TI_ADPLL_MIN_MULT_M) {
-+		m = TI_ADPLL_MIN_MULT_M;
-+		n = rate / (dcorate * m);
-+		if (n > TI_ADPLL_DIV_N_MAX) {
-+			dev_err(d->dev, "div_n overflow for rate %li\n", rate);
-+			return 0;
-+		}
-+	}
-+
-+	/* Calculate fractional part for multiplier M */
-+	dcorate /= n;
-+	tmp64 = rate % dcorate;
-+	tmp64 *= 10000000;
-+	do_div(tmp64, dcorate);
-+
-+	*div_n = n - 1;
-+	*mult_m = m;
-+	*frac_m = tmp64;
-+
-+	return rate;
-+}
-+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+index f5deace2b380..0ea7f14ef294 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+@@ -47,6 +47,7 @@ Required root node properties:
+ 	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
+ 	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
+ 	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
++	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
+ 	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
+ 	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
+ 					 Odroid XU3 Lite board.
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5aeb10674370..9ed1c7abedb1 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5250-snow-rev5.dtb \
+ 	exynos5250-spring.dtb \
+ 	exynos5260-xyref5260.dtb \
++	exynos5410-odroidxu.dtb \
+ 	exynos5410-smdk5410.dtb \
+ 	exynos5420-arndale-octa.dtb \
+ 	exynos5420-peach-pit.dtb \
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+new file mode 100644
+index 000000000000..9fe04500ecaf
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -0,0 +1,121 @@
 +/*
-+ * Sets the sigma-delta divider targeting near 250Mhz. Adapted
-+ * from TI 2.6.37 kernel tree adpll_ti814x.c. Maybe we can
-+ * make the SD_DIV_TARGET_MHZ configurable also?
++ * Hardkernel Odroid XU board device tree source
++ *
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2016 Krzysztof Kozlowski
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + */
-+#define SD_DIV_TARGET_MHZ	250
-+static int ti_adpll_lookup_sddiv(struct ti_adpll_data *d,
-+				 unsigned long parent_rate,
-+				 u8 *sd_div, u16 m, u8 n)
-+{
-+	unsigned long clkinp, sd;
-+	int mod1, mod2;
 +
-+	clkinp = parent_rate / 100000;
-+	mod1 = (clkinp * m) % (SD_DIV_TARGET_MHZ * n);
-+	sd = (clkinp * m) / (SD_DIV_TARGET_MHZ * n);
-+	mod2 = sd % 10;
-+	sd /= 10;
++/dts-v1/;
++#include "exynos5410.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include "exynos54xx-odroidxu-leds.dtsi"
 +
-+	if (mod1 || mod2)
-+		sd++;
-+	if ((sd >= TI814X_ADPLLJ_MIN_SD_DIV) &&
-+	    (sd <= TI814X_ADPLLJ_MAX_SD_DIV)) {
-+		*sd_div = sd;
-+		return 0;
-+	}
++/ {
++	model = "Hardkernel Odroid XU";
++	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
 +
-+	*sd_div = 0;
-+	dev_err(d->dev, "sigma-delta out of range: %li\n", sd);
++	memory {
++		reg = <0x40000000 0x7ea00000>;
++	};
 +
-+	return -EINVAL;
-+}
++	chosen {
++		linux,stdout-path = &serial_2;
++	};
 +
-+static long ti_adpll_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct ti_adpll_dco_data *dco = to_dco(hw);
-+	struct ti_adpll_data *d = to_adpll(dco);
-+	long sd_min_rate;
-+	u16 mult_m, frac_m;
-+	u8 div_n;
++	emmc_pwrseq: pwrseq {
++		pinctrl-0 = <&emmc_nrst_pin>;
++		pinctrl-names = "default";
++		compatible = "mmc-pwrseq-emmc";
++		reset-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>;
++	};
 +
-+	sd_min_rate = (SD_DIV_TARGET_MHZ + 10) * 1000000;
-+	/* Limited by sigma-delta somewhere, see above */
-+	if (!d->c->is_type_s && rate < sd_min_rate) {
-+		dev_warn(d->dev, "unsupported rate: %lu\n", rate);
-+		return sd_min_rate;
-+	}
++	fan0: pwm-fan {
++		compatible = "pwm-fan";
++		pwms = <&pwm 0 20972 0>;
++		cooling-min-state = <0>;
++		cooling-max-state = <3>;
++		#cooling-cells = <2>;
++		cooling-levels = <0 130 170 230>;
++	};
 +
-+	return ti_adpll_calc_n_m(dco, rate, *parent_rate, &div_n,
-+				 &mult_m, &frac_m);
-+}
++	fin_pll: xxti {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "fin_pll";
++		#clock-cells = <0>;
++	};
 +
-+static int ti_adpll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct ti_adpll_dco_data *dco = to_dco(hw);
-+	struct ti_adpll_data *d = to_adpll(dco);
-+	u16 mult_m, frac_m = 0;
-+	u8 div_n, div_sd = 0;
-+	unsigned long flags;
-+	long new_rate;
-+	int err;
-+	u32 v;
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
++};
 +
-+	new_rate = ti_adpll_calc_n_m(dco, rate, parent_rate,
-+				     &div_n, &mult_m, &frac_m);
-+	ti_adpll_set_idle_bypass(d);
++&mmc_0 {
++	status = "okay";
++	mmc-pwrseq = <&emmc_pwrseq>;
++	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	samsung,dw-mshc-hs400-timing = <0 2>;
++	samsung,read-strobe-delay = <90>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++};
 +
-+	spin_lock_irqsave(&d->lock, flags);
-+	writeb_relaxed(0, d->regs + ADPLL_CLKCTRL_OFFSET);
++&mmc_2 {
++	status = "okay";
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++};
 +
-+	/* Check sigma-delta divider, otherwise PLL won't lock */
-+	if (!d->c->is_type_s) {
-+		err = ti_adpll_lookup_sddiv(d, parent_rate,
-+					    &div_sd, mult_m, div_n + 1);
-+		if (err)
-+			goto fail;
-+	}
++&pinctrl_0 {
++	emmc_nrst_pin: emmc-nrst {
++		samsung,pins = "gpd1-0";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
 +
-+	/* Set integer multiplier M */
-+	writew_relaxed(mult_m, d->regs + ADPLL_MN2DIV_OFFSET);
++&serial_0 {
++	status = "okay";
++};
 +
-+	/* Set ractional multiplier M and sigma-delta divider */
-+	v = frac_m;
-+	v |= (div_sd << 24);
-+	writel_relaxed(v, d->regs + ADPLL_FRACDIV_OFFSET);
++&serial_1 {
++	status = "okay";
++};
 +
-+	/* Configure SELFREQDCO */
-+	if (!d->c->is_type_s) {
-+		if (rate < 1000000000)
-+			v = 2;
-+		else
-+			v = 4;
-+		writeb_relaxed(v << 2, d->regs + ADPLL_CLKCTRL_OFFSET + 1);
-+	}
++&serial_2 {
++	status = "okay";
++};
 +
-+	dev_info(d->dev,
-+		 "clkin: dco: %lu %lu N: %i + 1 M: %i Mf: %i sddiv: %i r: %i\n",
-+		 parent_rate, rate, div_n, mult_m, frac_m, div_sd, v);
++&serial_3 {
++	status = "okay";
++};
 +
-+	/* Set pre-devider N */
-+	writeb_relaxed(div_n, d->regs + ADPLL_M2NDIV_OFFSET);
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++};
 +
-+	writeb_relaxed(1, d->regs + ADPLL_TENABLE_OFFSET);
-+	writeb_relaxed(0, d->regs + ADPLL_TENABLE_OFFSET);
-+	writeb_relaxed(1, d->regs + ADPLL_TENABLEDIV_OFFSET);
-+	writeb_relaxed(0, d->regs + ADPLL_TENABLEDIV_OFFSET);
-+	writeb_relaxed(1, d->regs + ADPLL_CLKCTRL_OFFSET);
-+	spin_unlock_irqrestore(&d->lock, flags);
-+
-+	ti_adpll_clear_idle_bypass(d);
-+
-+	return ti_adpll_wait_lock(d);
-+
-+fail:
-+	writeb_relaxed(1, d->regs + ADPLL_CLKCTRL_OFFSET);
-+	spin_unlock_irqrestore(&d->lock, flags);
-+	ti_adpll_clear_idle_bypass(d);
-+	ti_adpll_wait_lock(d);
-+
-+	return err;
-+}
-+
- /* PLL parent is always clkinp, bypass only affects the children */
- static u8 ti_adpll_get_parent(struct clk_hw *hw)
- {
-@@ -491,6 +671,8 @@ static struct clk_ops ti_adpll_ops = {
- 	.unprepare = ti_adpll_unprepare,
- 	.is_prepared = ti_adpll_is_prepared,
- 	.recalc_rate = ti_adpll_recalc_rate,
-+	.round_rate = ti_adpll_round_rate,
-+	.set_rate = ti_adpll_set_rate,
- 	.get_parent = ti_adpll_get_parent,
- };
- 
++&usbdrd_dwc3_1 {
++	dr_mode = "peripheral";
++};
 -- 
-2.8.1
+2.7.4
