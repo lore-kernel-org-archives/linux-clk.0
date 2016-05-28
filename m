@@ -1,53 +1,62 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 3 May 2016 20:37:19 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Adrian Alonso <aalonso@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Stefan Agner <stefan@agner.ch>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Anson Huang <b20788@freescale.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: imx: fix ahb clock mux 1
-Message-ID: <20160503123718.GG5874@tiger>
-References: <1461877623-26838-1-git-send-email-stefan@agner.ch>
- <20160503083253.GC5874@tiger>
- <CAA+hA=Rkfii=Mi-NuESpX8E3W37+PnCxa464yOAe5dYMgpt43g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAA+hA=Rkfii=Mi-NuESpX8E3W37+PnCxa464yOAe5dYMgpt43g@mail.gmail.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 04/22] ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl nodes
+Date: Sat, 28 May 2016 11:54:15 +0200
+Message-Id: <1464429273-23457-5-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 03, 2016 at 06:50:21PM +0800, Dong Aisheng wrote:
-> Hi Shawn,
-> 
-> On Tue, May 3, 2016 at 4:32 PM, Shawn Guo <shawnguo@kernel.org> wrote:
-> > On Thu, Apr 28, 2016 at 02:07:03PM -0700, Stefan Agner wrote:
-> >> The clock parent of the AHB root clock when using mux option 1
-> >> is the SYS PLL 270MHz clock. This is specified in  Table 5-11
-> >> Clock Root Table of the i.MX 7Dual Applications Processor
-> >> Reference Manual.
-> >>
-> >> While it could be a documentation error, the 270MHz parent is
-> >> also mentioned in the boot ROM configuration in Table 6-28: The
-> >> clock is by default at 135MHz due to a POST_PODF value of 1
-> >> (=> divider of 2).
-> >>
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >
-> > Anson, Frank,
-> >
-> > Can you guys confirm this change is correct?
-> >
-> 
-> I just checked the doc,
-> it's correct the parent should be SYS_PLL_PFD2(270Mhz).
-> It's a documentation error of early version and it's already fixed
-> in latest internal doc.
+The 'sd0_rclk' was put in the middle of SD1 nodes. Remove the confusion.
 
-Thanks for the confirmation.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Shawn
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index 130563b2ca95..14beb7e07323 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -193,17 +193,17 @@
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
+-	sd1_clk: sd1-clk {
+-		samsung,pins = "gpc1-0";
++	sd0_rclk: sd0-rclk {
++		samsung,pins = "gpc0-7";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
++		samsung,pin-pud = <1>;
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
+-	sd0_rclk: sd0-rclk {
+-		samsung,pins = "gpc0-7";
++	sd1_clk: sd1-clk {
++		samsung,pins = "gpc1-0";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <1>;
++		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
+-- 
+2.7.4
