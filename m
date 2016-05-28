@@ -12,40 +12,94 @@ To: Kukjin Kim <kgene@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
-Date: Sun,  8 May 2016 21:05:48 +0200
-Message-Id: <1462734367-5619-4-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v5 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+Date: Sat, 28 May 2016 11:54:12 +0200
+Message-Id: <1464429273-23457-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-For consistency between Exynos5410 and Exynos542x/5800 switch to similar
-way of defining fin_pll/oscclk. Add a node early, before implementing
-this in driver to preserve bisectability.
+Add license and copyrights (file introduced in 2014) to header with
+Exynos5410 clock IDs. Additionally reformat it to improve readability.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+ include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index 0f6429e1b75c..d7d658deeff4 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -31,6 +31,13 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 9b180f032e2d..213f19e02870 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,33 +1,43 @@
++/*
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants for Exynos5421 clock controller.
++*/
 +
- 	firmware@02037000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x02037000 0x1000>;
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ 
+ /* core clocks */
+-#define CLK_FIN_PLL 1
+-#define CLK_FOUT_APLL 2
+-#define CLK_FOUT_CPLL 3
+-#define CLK_FOUT_MPLL 4
+-#define CLK_FOUT_BPLL 5
+-#define CLK_FOUT_KPLL 6
++#define CLK_FIN_PLL		1
++#define CLK_FOUT_APLL		2
++#define CLK_FOUT_CPLL		3
++#define CLK_FOUT_MPLL		4
++#define CLK_FOUT_BPLL		5
++#define CLK_FOUT_KPLL		6
+ 
+ /* gate for special clocks (sclk) */
+-#define CLK_SCLK_UART0 128
+-#define CLK_SCLK_UART1 129
+-#define CLK_SCLK_UART2 130
+-#define CLK_SCLK_UART3 131
+-#define CLK_SCLK_MMC0 132
+-#define CLK_SCLK_MMC1 133
+-#define CLK_SCLK_MMC2 134
++#define CLK_SCLK_UART0		128
++#define CLK_SCLK_UART1		129
++#define CLK_SCLK_UART2		130
++#define CLK_SCLK_UART3		131
++#define CLK_SCLK_MMC0		132
++#define CLK_SCLK_MMC1		133
++#define CLK_SCLK_MMC2		134
+ 
+ /* gate clocks */
+-#define CLK_UART0 257
+-#define CLK_UART1 258
+-#define CLK_UART2 259
+-#define CLK_UART3 260
+-#define CLK_MCT 315
+-#define CLK_MMC0 351
+-#define CLK_MMC1 352
+-#define CLK_MMC2 353
++#define CLK_UART0		257
++#define CLK_UART1		258
++#define CLK_UART2		259
++#define CLK_UART3		260
++#define CLK_MCT			315
++#define CLK_MMC0		351
++#define CLK_MMC1		352
++#define CLK_MMC2		353
+ 
+-#define CLK_NR_CLKS 512
++#define CLK_NR_CLKS		512
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
 -- 
-2.5.0
+2.7.4
