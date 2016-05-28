@@ -1,292 +1,126 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 08/16] clk: sunxi-ng: Add M-factor clock support
-Date: Sun,  8 May 2016 22:01:43 +0200
-Message-Id: <1462737711-10017-9-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 06/22] ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+Date: Sat, 28 May 2016 11:54:17 +0200
+Message-Id: <1464429273-23457-7-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that divide by a linear factor.
+Configure the pinctrl for MMC0 (eMMC) and MMC2 (microSD card).
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
- drivers/clk/sunxi-ng/Makefile |   1 +
- drivers/clk/sunxi-ng/ccu_m.c  | 135 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_m.h  | 101 +++++++++++++++++++++++++++++++
- 3 files changed, 237 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_m.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_m.h
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index a47a3bbdf285..f41de901c607 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -4,5 +4,6 @@ obj-y += ccu_reset.o
- obj-y += ccu_div_table.o
- obj-y += ccu_fixed_factor.o
- obj-y += ccu_gate.o
-+obj-y += ccu_m.o
- obj-y += ccu_mux.o
- obj-y += ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_m.c b/drivers/clk/sunxi-ng/ccu_m.c
-new file mode 100644
-index 000000000000..424eb6da0d5b
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_m.c
-@@ -0,0 +1,135 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
+Important changes since v2:
+1. Re-order the eMMC pins by pin-name, not by label.
+---
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 77 +++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+index f9aa6bb55464..ddacafa1e907 100644
+--- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+@@ -277,6 +277,83 @@
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
 +
-+#include <linux/clk-provider.h>
++	sd0_clk: sd0-clk {
++		samsung,pins = "gpc0-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
 +
-+#include "ccu_gate.h"
-+#include "ccu_m.h"
-+#include "ccu_mux.h"
++	sd0_cmd: sd0-cmd {
++		samsung,pins = "gpc0-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
 +
-+static void ccu_m_find_best(unsigned long parent, unsigned long rate,
-+			    unsigned int max_m, unsigned int *m)
-+{
-+	unsigned int _m = parent / rate;
++	sd0_cd: sd0-cd {
++		samsung,pins = "gpc0-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
 +
-+	if (_m > max_m)
-+		_m = max_m;
++	sd0_bus1: sd0-bus-width1 {
++		samsung,pins = "gpc0-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
 +
-+	*m = _m;
-+}
++	sd0_bus4: sd0-bus-width4 {
++		samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
 +
-+static unsigned long ccu_m_round_rate(struct ccu_mux_internal *mux,
-+				       unsigned long parent_rate,
-+				       unsigned long rate,
-+				       void *data)
-+{
-+	struct ccu_m *cm = data;
-+	unsigned int m;
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpc2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
 +
-+	ccu_m_find_best(parent_rate, rate, 1 << cm->m.width, &m);
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpc2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
 +
-+	return parent_rate / m;
-+}
++	sd2_cd: sd2-cd {
++		samsung,pins = "gpc2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
 +
++	sd2_bus1: sd2-bus-width1 {
++		samsung,pins = "gpc2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
 +
-+static void ccu_m_disable(struct clk_hw *hw)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
++	sd2_bus4: sd2-bus-width4 {
++		samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
 +
-+	return ccu_gate_helper_disable(&cm->common, cm->enable);
-+}
-+
-+static int ccu_m_enable(struct clk_hw *hw)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+
-+	return ccu_gate_helper_enable(&cm->common, cm->enable);
-+}
-+
-+static int ccu_m_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+
-+	return ccu_gate_helper_is_enabled(&cm->common, cm->enable);
-+}
-+
-+static unsigned long ccu_m_recalc_rate(struct clk_hw *hw,
-+				       unsigned long parent_rate)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+	unsigned long m;
-+	u32 reg;
-+
-+	reg = readl(cm->common.base + cm->common.reg);
-+
-+	m = reg >> cm->m.shift;
-+	m &= (1 << cm->m.width) - 1;
-+
-+	return parent_rate / (m + 1);
-+}
-+
-+static int ccu_m_determine_rate(struct clk_hw *hw,
-+				struct clk_rate_request *req)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+
-+	return ccu_mux_helper_determine_rate(&cm->common, &cm->mux,
-+					     req, ccu_m_round_rate, cm);
-+}
-+
-+static int ccu_m_set_rate(struct clk_hw *hw, unsigned long rate,
-+			  unsigned long parent_rate)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+	unsigned long flags;
-+	unsigned int m;
-+	u32 reg;
-+
-+	ccu_m_find_best(parent_rate, rate, 1 << cm->m.width, &m);
-+
-+	spin_lock_irqsave(cm->common.lock, flags);
-+
-+	reg = readl(cm->common.base + cm->common.reg);
-+	reg &= ((1 << cm->m.width) - 1) << cm->m.shift;
-+
-+	writel(reg | ((m - 1) << cm->m.shift),
-+	       cm->common.base + cm->common.reg);
-+
-+	spin_unlock_irqrestore(cm->common.lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 ccu_m_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+
-+	return ccu_mux_helper_get_parent(&cm->common, &cm->mux);
-+}
-+
-+static int ccu_m_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_m *cm = hw_to_ccu_m(hw);
-+
-+	return ccu_mux_helper_set_parent(&cm->common, &cm->mux, index);
-+}
-+
-+const struct clk_ops ccu_m_ops = {
-+	.disable	= ccu_m_disable,
-+	.enable		= ccu_m_enable,
-+	.is_enabled	= ccu_m_is_enabled,
-+
-+	.get_parent	= ccu_m_get_parent,
-+	.set_parent	= ccu_m_set_parent,
-+
-+	.determine_rate	= ccu_m_determine_rate,
-+	.recalc_rate	= ccu_m_recalc_rate,
-+	.set_rate	= ccu_m_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_m.h b/drivers/clk/sunxi-ng/ccu_m.h
-new file mode 100644
-index 000000000000..625c0a7cef43
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_m.h
-@@ -0,0 +1,101 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_M_H_
-+#define _CCU_M_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_factor.h"
-+#include "ccu_mux.h"
-+
-+struct ccu_m {
-+	u32			enable;
-+
-+	struct ccu_factor	m;
-+	struct ccu_mux_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_M(_struct, _name, _parent, _reg, _mshift, _mwidth,	\
-+		    _flags)						\
-+	struct ccu_m _struct = {					\
-+		.m	= SUNXI_CLK_FACTOR(_mshift, _mwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_m_ops,	\
-+							_flags),	\
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-+			      _mshift, _mwidth,	_gate,			\
-+			      _flags)					\
-+	struct ccu_m _struct = {					\
-+		.enable	= _gate,					\
-+		.m	= SUNXI_CLK_FACTOR(_mshift, _mwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_m_ops,	\
-+							_flags),	\
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
-+			     _mshift, _mwidth, _muxshift, _muxwidth,	\
-+			     _flags)					\
-+	struct ccu_m _struct = {					\
-+		.m	= SUNXI_CLK_FACTOR(_mshift, _mwidth),		\
-+		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
-+								_parents, \
-+								&ccu_m_ops, \
-+								_flags), \
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  _gate, _flags)			\
-+	struct ccu_m _struct = {					\
-+		.enable	= _gate,					\
-+		.m	= SUNXI_CLK_FACTOR(_mshift, _mwidth),		\
-+		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
-+								_parents, \
-+								&ccu_m_ops, \
-+								_flags), \
-+		},							\
-+	}
-+
-+static inline struct ccu_m *hw_to_ccu_m(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_m, common);
-+}
-+
-+extern const struct clk_ops ccu_m_ops;
-+
-+#endif /* _CCU_M_H_ */
++	sd0_bus8: sd0-bus-width8 {
++		samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
+ };
+ 
+ &pinctrl_1 {
 -- 
-2.8.2
+2.7.4
