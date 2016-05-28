@@ -1,121 +1,143 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 15 May 2016 20:51:12 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 08/16] clk: sunxi-ng: Add M-factor clock support
-Message-ID: <20160515185112.GB27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-9-git-send-email-maxime.ripard@free-electrons.com>
- <20160511084633.29b56effa514996ffafd56ef@free.fr>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
-In-Reply-To: <20160511084633.29b56effa514996ffafd56ef@free.fr>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 03/22] clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+Date: Sat, 28 May 2016 11:54:14 +0200
+Message-Id: <1464429273-23457-4-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Just like other Exynos5 family SoCs, this one has four UARTs. Add
+missing UART3 clocks to the Exynos5410 clock driver.
 
---PmA2V3Z32TCmWXqI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add clocks for USB and PWM.
 
-On Wed, May 11, 2016 at 08:46:33AM +0200, Jean-Francois Moine wrote:
-> On Sun,  8 May 2016 22:01:43 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > Introduce support for clocks that divide by a linear factor.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi-ng/Makefile |   1 +
-> >  drivers/clk/sunxi-ng/ccu_m.c  | 135 ++++++++++++++++++++++++++++++++++=
-++++++++
-> >  drivers/clk/sunxi-ng/ccu_m.h  | 101 +++++++++++++++++++++++++++++++
-> >  3 files changed, 237 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu_m.c
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu_m.h
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
-ile
-> > index a47a3bbdf285..f41de901c607 100644
-> > --- a/drivers/clk/sunxi-ng/Makefile
-> > +++ b/drivers/clk/sunxi-ng/Makefile
-> > @@ -4,5 +4,6 @@ obj-y +=3D ccu_reset.o
-> >  obj-y +=3D ccu_div_table.o
-> >  obj-y +=3D ccu_fixed_factor.o
-> >  obj-y +=3D ccu_gate.o
-> > +obj-y +=3D ccu_m.o
-> >  obj-y +=3D ccu_mux.o
-> >  obj-y +=3D ccu_phase.o
-> > diff --git a/drivers/clk/sunxi-ng/ccu_m.c b/drivers/clk/sunxi-ng/ccu_m.c
-> > new file mode 100644
-> > index 000000000000..424eb6da0d5b
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu_m.c
-> > @@ -0,0 +1,135 @@
-> > +/*
-> > + * Copyright (C) 2016 Maxime Ripard
-> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation; either version 2 of
-> > + * the License, or (at your option) any later version.
-> > + */
-> 	[snip]
-> > +static int ccu_m_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			  unsigned long parent_rate)
-> > +{
-> > +	struct ccu_m *cm =3D hw_to_ccu_m(hw);
-> > +	unsigned long flags;
-> > +	unsigned int m;
-> > +	u32 reg;
-> > +
-> > +	ccu_m_find_best(parent_rate, rate, 1 << cm->m.width, &m);
-> > +
-> > +	spin_lock_irqsave(cm->common.lock, flags);
-> > +
-> > +	reg =3D readl(cm->common.base + cm->common.reg);
-> > +	reg &=3D ((1 << cm->m.width) - 1) << cm->m.shift;
->=20
-> Bug:
-> 	reg &=3D ~GENMASK(cm->m.width + cm->m.shift, cm->m.shift);
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5410.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-Indeed, this one slipped in, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---PmA2V3Z32TCmWXqI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXOMUgAAoJEBx+YmzsjxAgL8sP/2ZsdWSfipKyMn9NA4mldSqf
-eUeUy9Vz8cPvY5POVfeHH9XGyGl7XIVRDzlsYBJbk1U7C01zKaGwM/aIoOrmKjWz
-Zuv9aHVpu8D8+BlAbWwKcr4TPzqj75kkdX1ZzUqPiU7Mq+ipJSpk9lLrGqWF7983
-sz0z3UbHQVM7JUujBHiB7E+0bbiF7xc/fzUnq74CCqpt3eiTjy99gdfA6gmChBgf
-N9kK+piBdBHjZQHkkSz1ocAn3MxSTXA2D/jttUL6yT+DvqUdgxLanduGouTy81Uy
-jWgI3cjiUAYdUN7VZOCQn6ZcM89R2a8GfwJjyM2USNALhIBAeFgXlSCQtq9Z4tdn
-zDkzPu8hxEB1DtjM9++GFzGS6py7U4V3DgeIXDSiR+/BYJxsZXIG3IvFisJnoFHm
-mQZqYeQjPW7+P58ox0l2i0S2D2B0s/GCwA8FfG4y2nlL7nrZ8U3uUj2TAblSq6hC
-gF12R460TfozKMTe75+jSbUJX755mTwn4oqOwquO1ivBaQP4tq2rEs12YVowI1IU
-hF535M7alK/DprgwMHRFSrPlyL8xrsSp6QuAvONN2G1E3FY+jxO+qxHJn1znpnlU
-xeqVmHZc19S6r2IkROJIm3IZKPxdWNAwwn9m9w4or5IencSDDk1H3/bHqpgH0PXO
-2C+PMoPBfvF9gnjMgeZg
-=tY2C
------END PGP SIGNATURE-----
-
---PmA2V3Z32TCmWXqI--
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index d5d5dcabc4a9..5f892128849a 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -33,9 +33,11 @@
+ #define SRC_CPERI1		0x4204
+ #define DIV_TOP0		0x10510
+ #define DIV_TOP1		0x10514
++#define DIV_FSYS0		0x10548
+ #define DIV_FSYS1		0x1054c
+ #define DIV_FSYS2		0x10550
+ #define DIV_PERIC0		0x10558
++#define DIV_PERIC3		0x10564
+ #define SRC_TOP0		0x10210
+ #define SRC_TOP1		0x10214
+ #define SRC_TOP2		0x10218
+@@ -44,6 +46,8 @@
+ #define SRC_MASK_FSYS		0x10340
+ #define SRC_MASK_PERIC0		0x10350
+ #define GATE_BUS_FSYS0		0x10740
++#define GATE_TOP_SCLK_FSYS	0x10840
++#define GATE_TOP_SCLK_PERIC	0x10850
+ #define GATE_IP_FSYS		0x10944
+ #define GATE_IP_PERIC		0x10950
+ #define GATE_IP_PERIS		0x10960
+@@ -71,6 +75,7 @@ PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
+ PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
+ PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
+ PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
++PNAME(sclk_mpll_bpll_p)	= { "sclk_mpll_bpll", "fin_pll", };
+ 
+ PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
+ 			"none", "none", "sclk_mpll_bpll",
+@@ -96,10 +101,14 @@ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mmc0", group2_p, SRC_FSYS, 0, 4),
+ 	MUX(0, "mout_mmc1", group2_p, SRC_FSYS, 4, 4),
+ 	MUX(0, "mout_mmc2", group2_p, SRC_FSYS, 8, 4),
++	MUX(0, "mout_usbd300", sclk_mpll_bpll_p, SRC_FSYS, 28, 1),
++	MUX(0, "mout_usbd301", sclk_mpll_bpll_p, SRC_FSYS, 29, 1),
+ 
+ 	MUX(0, "mout_uart0", group2_p, SRC_PERIC0, 0, 4),
+ 	MUX(0, "mout_uart1", group2_p, SRC_PERIC0, 4, 4),
+ 	MUX(0, "mout_uart2", group2_p, SRC_PERIC0, 8, 4),
++	MUX(0, "mout_uart3", group2_p, SRC_PERIC0, 12, 4),
++	MUX(0, "mout_pwm", group2_p, SRC_PERIC0, 24, 4),
+ 
+ 	MUX(0, "mout_aclk200", mpll_bpll_p, SRC_TOP0, 12, 1),
+ 	MUX(0, "mout_aclk400", mpll_bpll_p, SRC_TOP0, 20, 1),
+@@ -121,6 +130,11 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+ 	DIV(0, "aclk66_pre", "sclk_mpll_muxed", DIV_TOP1, 24, 3),
+ 	DIV(0, "aclk66", "aclk66_pre", DIV_TOP0, 0, 3),
+ 
++	DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
++	DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 20, 4),
++	DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
++	DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 28, 4),
++
+ 	DIV(0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+ 	DIV(0, "div_mmc1", "mout_mmc1", DIV_FSYS1, 16, 4),
+ 	DIV(0, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
+@@ -137,6 +151,8 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+ 	DIV(0, "div_uart2", "mout_uart2", DIV_PERIC0, 8, 4),
+ 	DIV(0, "div_uart3", "mout_uart3", DIV_PERIC0, 12, 4),
+ 
++	DIV(0, "dout_pwm", "mout_pwm", DIV_PERIC3, 0, 4),
++
+ 	DIV(0, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+ 	DIV(0, "aclk400", "mout_aclk400", DIV_TOP0, 24, 3),
+ };
+@@ -155,9 +171,23 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
+ 	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
+ 
++	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
++	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_USBPHY300, "sclk_usbphy300", "dout_usbphy300",
++	     GATE_TOP_SCLK_FSYS, 8, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_USBD300, "sclk_usbd300", "dout_usbd300",
++	     GATE_TOP_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_USBD301, "sclk_usbd301", "dout_usbd301",
++	     GATE_TOP_SCLK_FSYS, 10, CLK_SET_RATE_PARENT, 0),
++
++	GATE(CLK_SCLK_PWM, "sclk_pwm", "dout_pwm",
++	     GATE_TOP_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
++
+ 	GATE(CLK_UART0, "uart0", "aclk66", GATE_IP_PERIC, 0, 0, 0),
+ 	GATE(CLK_UART1, "uart1", "aclk66", GATE_IP_PERIC, 1, 0, 0),
+ 	GATE(CLK_UART2, "uart2", "aclk66", GATE_IP_PERIC, 2, 0, 0),
++	GATE(CLK_UART3, "uart3", "aclk66", GATE_IP_PERIC, 3, 0, 0),
++	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
+ 
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+ 			SRC_MASK_PERIC0, 0, CLK_SET_RATE_PARENT, 0),
+@@ -165,6 +195,12 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 			SRC_MASK_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
+ 			SRC_MASK_PERIC0, 8, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_UART3, "sclk_uart3", "div_uart3",
++			SRC_MASK_PERIC0, 12, CLK_SET_RATE_PARENT, 0),
++
++	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
++	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
++	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
+ };
+ 
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+-- 
+2.7.4
