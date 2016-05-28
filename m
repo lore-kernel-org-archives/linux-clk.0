@@ -6,38 +6,110 @@ To: Kukjin Kim <kgene@kernel.org>,
 	Tomasz Figa <tomasz.figa@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
-Date: Tue, 31 May 2016 20:39:01 +0200
-Message-Id: <1464719945-3417-2-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 22/22] ARM: dts: exynos: Add RTC and I2C to Exynos5410
+Date: Sat, 28 May 2016 11:54:33 +0200
+Message-Id: <1464429273-23457-23-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock for TMU to the Exynos5410 clock driver.
+Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
+This still does not enable them on the board level though.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5410.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/exynos5410.dtsi | 63 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 6c2e59c576ee..db9978dc6e83 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
- static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
- 	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
-+	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 6146bf164248..a937d9bdad90 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -149,6 +149,62 @@
+ 	};
+ };
  
- 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
- 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_bus>;
++};
++
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_bus>;
++};
++
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
++};
++
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
++};
++
++&hsi2c_4 {
++	clocks = <&clock CLK_USI0>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c4_hs_bus>;
++};
++
++&hsi2c_5 {
++	clocks = <&clock CLK_USI1>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c5_hs_bus>;
++};
++
++&hsi2c_6 {
++	clocks = <&clock CLK_USI2>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c6_hs_bus>;
++};
++
++&hsi2c_7 {
++	clocks = <&clock CLK_USI3>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c7_hs_bus>;
++};
++
+ &mct {
+ 	clocks = <&fin_pll>, <&clock CLK_MCT>;
+ 	clock-names = "fin_pll", "mct";
+@@ -159,6 +215,13 @@
+ 	clock-names = "timers";
+ };
+ 
++&rtc {
++	clocks = <&clock CLK_RTC>;
++	clock-names = "rtc";
++	interrupt-parent = <&pmu_system_controller>;
++	status = "disabled";
++};
++
+ &serial_0 {
+ 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 	clock-names = "uart", "clk_uart_baud0";
 -- 
 2.7.4
