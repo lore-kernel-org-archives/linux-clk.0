@@ -1,259 +1,135 @@
-Return-Path: <daniel.vetter@ffwll.ch>
-MIME-Version: 1.0
-Sender: daniel.vetter@ffwll.ch
-In-Reply-To: <1463402840-17062-13-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1463402840-17062-13-git-send-email-maxime.ripard@free-electrons.com>
-Date: Mon, 16 May 2016 15:12:15 +0200
-Message-ID: <CAKMK7uG-uq7XSqyesVnPtx0Ajx-FQjVKm_QzjEZgWJQDn8EkPA@mail.gmail.com>
-Subject: Re: [PATCH 12/20] drm/sun4i: Add bridge support
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid XU
+Date: Sat, 28 May 2016 11:54:11 +0200
+Message-Id: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 16, 2016 at 2:47 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Our RGB bus can be either connected to a bridge or a panel. While the panel
-> support was already there, the bridge was not.
->
-> Fix that.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Hi,
 
-For bridge support the only thing you need is to set
-drm_encoder->bridge. Why do you need to hand-roll your own bridge
-support? That pretty muchmeans you'll do it slightly differently (e.g.
-you don't bother with a lot of the calls), which will make sharing
-bridge drivers ever so harder. And also reviewing code, since using
-shared code but slightly differently is really confusing.
--Daniel
-
-> ---
->  drivers/gpu/drm/sun4i/sun4i_drv.c  |  4 +--
->  drivers/gpu/drm/sun4i/sun4i_rgb.c  | 56 +++++++++++++++++++++++++++-----------
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 48 ++++++++++++++++++++++++++++----
->  drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
->  4 files changed, 86 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> index 257d2b4f3645..1f9e00db747d 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> @@ -268,8 +268,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
->                 }
->
->                 /*
-> -                * If the node is our TCON, the first port is used for our
-> -                * panel, and will not be part of the
-> +                * If the node is our TCON, the first port is used for
-> +                * panel or bridges, and will not be part of the
->                  * component framework.
->                  */
->                 if (sun4i_drv_node_is_tcon(node)) {
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> index b46d2c15dc95..c3c611b08269 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> @@ -161,7 +161,12 @@ static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
->
->         DRM_DEBUG_DRIVER("Enabling RGB output\n");
->
-> -       drm_panel_enable(tcon->panel);
-> +       if (!IS_ERR(tcon->panel))
-> +               drm_panel_enable(tcon->panel);
-> +
-> +       if (!IS_ERR(tcon->bridge))
-> +               drm_bridge_enable(tcon->bridge);
-> +
->         sun4i_tcon_channel_enable(tcon, 0);
->  }
->
-> @@ -174,7 +179,12 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
->         DRM_DEBUG_DRIVER("Disabling RGB output\n");
->
->         sun4i_tcon_channel_disable(tcon, 0);
-> -       drm_panel_disable(tcon->panel);
-> +
-> +       if (!IS_ERR(tcon->bridge))
-> +               drm_bridge_disable(tcon->bridge);
-> +
-> +       if (!IS_ERR(tcon->panel))
-> +               drm_panel_disable(tcon->panel);
->  }
->
->  static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
-> @@ -216,10 +226,6 @@ int sun4i_rgb_init(struct drm_device *drm)
->         struct sun4i_rgb *rgb;
->         int ret;
->
-> -       /* If we don't have a panel, there's no point in going on */
-> -       if (IS_ERR(tcon->panel))
-> -               return -ENODEV;
-> -
->         rgb = devm_kzalloc(drm->dev, sizeof(*rgb), GFP_KERNEL);
->         if (!rgb)
->                 return -ENOMEM;
-> @@ -240,19 +246,37 @@ int sun4i_rgb_init(struct drm_device *drm)
->         /* The RGB encoder can only work with the TCON channel 0 */
->         rgb->encoder.possible_crtcs = BIT(0);
->
-> -       drm_connector_helper_add(&rgb->connector,
-> -                                &sun4i_rgb_con_helper_funcs);
-> -       ret = drm_connector_init(drm, &rgb->connector,
-> -                                &sun4i_rgb_con_funcs,
-> -                                DRM_MODE_CONNECTOR_Unknown);
-> -       if (ret) {
-> -               dev_err(drm->dev, "Couldn't initialise the rgb connector\n");
-> -               goto err_cleanup_connector;
-> +       if (!IS_ERR(tcon->panel)) {
-> +               drm_connector_helper_add(&rgb->connector,
-> +                                        &sun4i_rgb_con_helper_funcs);
-> +               ret = drm_connector_init(drm, &rgb->connector,
-> +                                        &sun4i_rgb_con_funcs,
-> +                                        DRM_MODE_CONNECTOR_Unknown);
-> +               if (ret) {
-> +                       dev_err(drm->dev, "Couldn't initialise the rgb connector\n");
-> +                       goto err_cleanup_connector;
-> +               }
-> +
-> +               drm_mode_connector_attach_encoder(&rgb->connector,
-> +                                                 &rgb->encoder);
-> +
-> +               ret = drm_panel_attach(tcon->panel, &rgb->connector);
-> +               if (ret) {
-> +                       dev_err(drm->dev, "Couldn't attach our panel\n");
-> +                       goto err_cleanup_connector;
-> +               }
->         }
->
-> -       drm_mode_connector_attach_encoder(&rgb->connector, &rgb->encoder);
-> +       if (!IS_ERR(tcon->bridge)) {
-> +               rgb->encoder.bridge = tcon->bridge;
-> +               tcon->bridge->encoder = &rgb->encoder;
->
-> -       drm_panel_attach(tcon->panel, &rgb->connector);
-> +               ret = drm_bridge_attach(drm, tcon->bridge);
-> +               if (ret) {
-> +                       dev_err(drm->dev, "Couldn't attach our bridge\n");
-> +                       goto err_cleanup_connector;
-> +               }
-> +       }
->
->         return 0;
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index eed6a9e8d9a6..4618d98913b4 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -432,6 +432,40 @@ static struct drm_panel *sun4i_tcon_find_panel(struct device_node *node)
->         return of_drm_find_panel(remote) ?: ERR_PTR(-EPROBE_DEFER);
->  }
->
-> +static struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node)
-> +{
-> +       struct device_node *port, *remote, *child;
-> +       struct device_node *end_node = NULL;
-> +
-> +       /* Inputs are listed first, then outputs */
-> +       port = of_graph_get_port_by_id(node, 1);
-> +
-> +       /*
-> +        * Our first output is the RGB interface where the panel will
-> +        * be connected.
-> +        */
-> +       for_each_child_of_node(port, child) {
-> +               u32 reg;
-> +
-> +               of_property_read_u32(child, "reg", &reg);
-> +               if (reg == 0)
-> +                       end_node = child;
-> +       }
-> +
-> +       if (!end_node) {
-> +               DRM_DEBUG_DRIVER("Missing bridge endpoint\n");
-> +               return ERR_PTR(-ENODEV);
-> +       }
-> +
-> +       remote = of_graph_get_remote_port_parent(end_node);
-> +       if (!remote) {
-> +               DRM_DEBUG_DRIVER("Enable to parse remote node\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       return of_drm_find_bridge(remote) ?: ERR_PTR(-EPROBE_DEFER);
-> +}
-> +
->  static int sun4i_tcon_bind(struct device *dev, struct device *master,
->                            void *data)
->  {
-> @@ -485,8 +519,9 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
->         }
->
->         tcon->panel = sun4i_tcon_find_panel(dev->of_node);
-> -       if (IS_ERR(tcon->panel)) {
-> -               dev_info(dev, "No panel found... RGB output disabled\n");
-> +       tcon->bridge = sun4i_tcon_find_bridge(dev->of_node);
-> +       if (IS_ERR(tcon->panel) && IS_ERR(tcon->bridge)) {
-> +               dev_info(dev, "No panel or bridge found... RGB output disabled\n");
->                 return 0;
->         }
->
-> @@ -515,19 +550,22 @@ static struct component_ops sun4i_tcon_ops = {
->  static int sun4i_tcon_probe(struct platform_device *pdev)
->  {
->         struct device_node *node = pdev->dev.of_node;
-> +       struct drm_bridge *bridge;
->         struct drm_panel *panel;
->
->         /*
-> -        * The panel is not ready.
-> +        * Neither the bridge or the panel is ready.
->          * Defer the probe.
->          */
->         panel = sun4i_tcon_find_panel(node);
-> +       bridge = sun4i_tcon_find_bridge(node);
->
->         /*
->          * If we don't have a panel endpoint, just go on
->          */
-> -       if (PTR_ERR(panel) == -EPROBE_DEFER) {
-> -               DRM_DEBUG_DRIVER("Still waiting for our panel. Deferring...\n");
-> +       if ((PTR_ERR(panel) == -EPROBE_DEFER) &&
-> +           (PTR_ERR(bridge) == -EPROBE_DEFER)) {
-> +               DRM_DEBUG_DRIVER("Still waiting for our panel/bridge. Deferring...\n");
->                 return -EPROBE_DEFER;
->         }
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> index 0e0b11db401b..31069027d7fb 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> @@ -162,6 +162,7 @@ struct sun4i_tcon {
->         /* Platform adjustments */
->         bool                            has_mux;
->
-> +       struct drm_bridge               *bridge;
->         struct drm_panel                *panel;
->  };
->
-> --
-> 2.8.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Patchset adds necessary clocks, reorganizes existing stuff and finally
+adds Odroid XU support.
 
 
+Changes since v4
+================
+1. Patch 20: Remove the nodes in exynos5420.dtsi (before they were
+   actually just copied instead of moving).
+
+Changes since v3
+================
+1. Get rid of 5 patches changing the fin_pll after talk with Tomasz
+   Figa. The existing definition of oscillator in exynos5410.dtsi
+   is preferred over solution chosen for Exynos5420.
+   This simplifies also the merging strategy.
+2. Add tags from Javier (tested and reviewed).
+
+Patchset is available at my private repo @github:
+https://github.com/krzk/linux.git for-next/odroid-xu-v4
+(I have some more changes coming but I think it is easier for
+reviewers if the patchset does not grow infinitely)
+
+
+Changes since v2
+================
+1. Got global-ack from Stephen for the clock changes. I think merging
+   everything through arm-soc might be the easiest but:
+   a. In such case I will prepare a tag with clock changes,
+   b. Anyway I will wait for response from Sylwester and Tomasz.
+2. Applied comments from Javier and added his Reviewed-by.
+3. Patch 22: added ack from Rob.
+4. Minor improvements in existing patches.
+5. Five new patches at the end: 23-27 (not reviewed yet).
+   Some of them could be squashed with existing ones but existing
+   changes got reviews. Although the final Odroid XU DTS works fine but
+   in general this is still work-in-progress so I suspect it will grow.
+   I am releasing it early following Linux concept. :)
+
+
+Changes since v1
+================
+1. A lot of new patches.
+2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
+3. New clocks, more reorganization.
+4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
+   and more complicated but this might help removing duplications
+   and keeping everything under control.
+
+
+
+Merging strategy
+================
+The clock changes can go to clock tree. ARM changes to samsung-soc tree.
+Please provide me a tag with include/dt-bindings/clock commits so I can
+merge it.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (22):
+  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+    nodes
+  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+  ARM: dts: exynos: Move common nodes to exynos5.dtsi
+  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+    exynos5410.dtsi
+  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+  ARM: dts: exynos: Enable UART3 on Exynos5410
+  ARM: dts: exynos: MCT is not an interrupt controller and extend length
+    of iomap
+  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+  ARM: dts: exynos: Add USB to Exynos5410
+  ARM: dts: exynos: Add initial support for Odroid XU board
+  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+  clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+  ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
+  ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
+  ARM: dts: exynos: Add RTC and I2C to Exynos5410
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  | 1701 +++++++++--------
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |    6 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  267 +--
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  | 1939 +++++++++-----------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
+ arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
+ drivers/clk/samsung/clk-exynos5410.c               |   45 +
+ include/dt-bindings/clock/exynos5410.h             |   73 +-
+ 17 files changed, 2681 insertions(+), 2220 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.7.4
