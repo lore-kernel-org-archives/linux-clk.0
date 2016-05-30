@@ -1,49 +1,44 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 15/27] ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
-Date: Tue, 10 May 2016 22:09:18 +0200
-Message-Id: <1462910970-1812-16-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 02/14] clk: twl6040: Register the clock as of_clk_provider
+Date: Mon, 30 May 2016 11:55:10 +0300
+Message-ID: <20160530085522.30398-3-peter.ujfalusi@ti.com>
+In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2c-arbitrator node in exynos5250-snow-common used absolute path to
-reference other node (the i2c parent). Use phandle instead, because the
-depth of the other node may be changed (like moving it under 'soc'
-node).
+In order ot be able to use the pdmclk clock via DT it need to be registered
+as of_clk_provide.
+Since the twl6040 clock driver does not have it's own DT node, use the
+parent's node for registering.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-twl6040.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index ddfe1f558c10..419d59da1751 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -61,7 +61,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
+index e167e0bbaff5..6a2dbe6a1627 100644
+--- a/drivers/clk/clk-twl6040.c
++++ b/drivers/clk/clk-twl6040.c
+@@ -95,7 +95,8 @@ static int twl6040_clk_probe(struct platform_device *pdev)
  
--		i2c-parent = <&{/i2c@12CA0000}>;
-+		i2c-parent = <&i2c_4>;
+ 	platform_set_drvdata(pdev, clkdata);
  
- 		our-claim-gpio = <&gpf0 3 GPIO_ACTIVE_LOW>;
- 		their-claim-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
+-	return 0;
++	return of_clk_add_provider(pdev->dev.parent->of_node,
++				   of_clk_src_simple_get, clkdata->clk);
+ }
+ 
+ static struct platform_driver twl6040_clk_driver = {
 -- 
-2.5.0
+2.8.3
