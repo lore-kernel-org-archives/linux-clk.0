@@ -1,116 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:52495 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751397AbcEKKel (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 06:34:41 -0400
-Message-ID: <1462962874.2924.20.camel@pengutronix.de>
-Subject: Re: [RFC PATCH 12/21] reset: uniphier: add core support for
- UniPhier reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 11 May 2016 12:34:34 +0200
-In-Reply-To: <CAK7LNASpxbW81A7YGQuAqmBdBty4BC6Z8sko8YepXOPnVqSjAQ@mail.gmail.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-	 <1462873862-30940-13-git-send-email-yamada.masahiro@socionext.com>
-	 <1462888497.9155.9.camel@pengutronix.de>
-	 <CAK7LNASpxbW81A7YGQuAqmBdBty4BC6Z8sko8YepXOPnVqSjAQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 05/14] mfd: twl6040: Register child device for twl6040-pdmclk
+Date: Mon, 30 May 2016 11:55:13 +0300
+Message-ID: <20160530085522.30398-6-peter.ujfalusi@ti.com>
+In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, den 11.05.2016, 11:46 +0900 schrieb Masahiro Yamada:
-> Hi Philipp,
-> 
-> 
-> 2016-05-10 22:54 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
-> > Am Dienstag, den 10.05.2016, 18:50 +0900 schrieb Masahiro Yamada:
-> > [...]
-> >> +static int uniphier_reset_update(struct reset_controller_dev *rcdev,
-> >> +                              unsigned long id, bool assert)
-> >> +{
-> >> +     struct uniphier_reset_priv *priv = to_uniphier_reset_priv(rcdev);
-> >> +     const struct uniphier_reset_data *p;
-> >> +     bool handled = false;
-> >> +
-> >> +     for (p = priv->data; p->id != UNIPHIER_RESET_ID_END; p++) {
-> >> +             unsigned int val;
-> >> +             int ret;
-> >> +
-> >> +             if (p->id != id)
-> >> +                     continue;
-> >> +
-> >> +             val = p->deassert_val;
-> >> +             if (assert)
-> >> +                     val = ~val;
-> >> +
-> >> +             ret = regmap_write_bits(priv->regmap, p->reg, p->mask, val);
-> >
-> > What is the difference between mask and deassert_val? Couldn't you just
-> > assign
-> >         val = assert ? 0 : p->mask;
-> > ?
-> 
-> 
-> I need to handle both active-high resets and active-low resets.
+The McPDM in OMAP4/5 is using the pdmclk from twl6040 as functional clock.
+The twl6040-pdmclk driver provides a clock which can be used to make sure
+that the pdmclk is active when the McPDM is in use.
 
-I see. I hadn't seen any active-high resets in your lists yet. If you
-need them, you obviously can't simplify this much.
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/mfd/twl6040.txt | 1 +
+ drivers/mfd/twl6040.c                             | 5 +++++
+ include/linux/mfd/twl6040.h                       | 2 +-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-> I thought two ways to do that.
-> 
-> 
-> [1] Have mask and a flag indicating active-low/active-high,
->     like follows:
-> 
->      if (flag & UNIPHIER_RST_ACTIVE_LOW)
->           assert = !assert;
->      val = assert ? 0 : p->mask;
-> 
-> [2] Have mask and deassert_val as in this patch
->
-> [1] cannot manage a case where one register contains
-> active-low bits and active-high bits mixed in it.
-> 
-> 
-> 
-> For example, let's say reset bits are BIT(1) and BIT(0).
-> 
-> [2] can solve this case as follows:
-> 
-> (a) If both bit1 and bit0 are active-high.
->      .mask = BIT(1) | BIT(0);
->      .deassert_val = 0;
-> 
-> (b) If bit1 is active-high and bit0 is active-low
->      .mask = BIT(1) | BIT(0);
->      .deassert_val =  BIT(0);
-> 
-> (c) If bit1 is active-low and bit0 is active-high
->      .mask = BIT(1) | BIT(0);
->      .deassert_val =  BIT(1);
-> 
-> (d) If both bit1 and bit0 are active-low
->      .mask = BIT(1) | BIT(0);
->      .deassert_val = BIT(1) | BIT(0);
-> 
-> 
-> I have not been hit by such a complicated case though.
-
-In general it is a good idea not to add complexity for theoretical
-cases, on the other hand [1] isn't really much less complex. Can I ask
-you to invert the logic, though, and use assert_val instead?
-
-regards
-Philipp
-
+diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
+index e6afdfa3543d..9a98ee7c323d 100644
+--- a/Documentation/devicetree/bindings/mfd/twl6040.txt
++++ b/Documentation/devicetree/bindings/mfd/twl6040.txt
+@@ -12,6 +12,7 @@ Required properties:
+ - interrupt-parent: The parent interrupt controller
+ - gpio-controller:
+ - #gpio-cells = <1>: twl6040 provides GPO lines.
++- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
+ - twl6040,audpwron-gpio: Power on GPIO line for the twl6040
+ 
+ - vio-supply: Regulator for the twl6040 VIO supply
+diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
+index 2596546553aa..873628a1bd79 100644
+--- a/drivers/mfd/twl6040.c
++++ b/drivers/mfd/twl6040.c
+@@ -782,6 +782,11 @@ static int twl6040_probe(struct i2c_client *client,
+ 	cell->name = "twl6040-gpo";
+ 	children++;
+ 
++	/* PDM clock support  */
++	cell = &twl6040->cells[children];
++	cell->name = "twl6040-pdmclk";
++	children++;
++
+ 	/* The chip is powered down so mark regmap to cache only and dirty */
+ 	regcache_cache_only(twl6040->regmap, true);
+ 	regcache_mark_dirty(twl6040->regmap);
+diff --git a/include/linux/mfd/twl6040.h b/include/linux/mfd/twl6040.h
+index 8015db974157..ef0bb07c3f3d 100644
+--- a/include/linux/mfd/twl6040.h
++++ b/include/linux/mfd/twl6040.h
+@@ -168,7 +168,7 @@
+ #define TWL6040_VIBROCDET		0x20
+ #define TWL6040_TSHUTDET                0x40
+ 
+-#define TWL6040_CELLS			3
++#define TWL6040_CELLS			4
+ 
+ #define TWL6040_REV_ES1_0		0x00
+ #define TWL6040_REV_ES1_1		0x01 /* Rev ES1.1 and ES1.2 */
+-- 
+2.8.3
