@@ -1,44 +1,90 @@
-Return-Path: <khiem.nguyen.xt@rvc.renesas.com>
-Subject: [RFC 0/4] Add Z clock support
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>, Magnus
- Damm <damm+renesas@opensource.se>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <5731664D.1030909@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:40:45 +0700
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 00/14] clk/mfd/ASoC/ARM: OMAP4/5: McPDM/twl6040 pdmclk support
+Date: Mon, 30 May 2016 11:55:08 +0300
+Message-ID: <20160530085522.30398-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Hi,
 
-This series adds Z clock support for R-Car Gen3.
-It was written on top of "[PATCH 0/4] clk: renesas: cpg-mssr: Add 
-support for R-Car M3-W" series.
+Changes since v1:
+- Added Rob's Acked-by to patch 5 and 14
+- Check the return value of clk_prepare_enable() calls in the last patch
 
-Dien Pham (1):
-   arm64: dts: r8a7795: Add Z clock scaling support
+this is something I wanted to do for a long time...
 
-Khiem Nguyen (3):
-   clk: renesas: rcar-gen3-cpg: Add Z clock
-   clk: renesas: r8a7795: Add Z clock
-   clk: renesas: r8a7796: Add Z clock
+First of all: sorry for the cross domain series. I did tested alone all the
+domain patches and they are not causing any regression. When they come together
+we will have ability to control the pdmclk needed by McPDM.
 
-  arch/arm64/boot/dts/renesas/r8a7795.dtsi |  26 ++++++
-  drivers/clk/renesas/r8a7795-cpg-mssr.c   |   1 +
-  drivers/clk/renesas/r8a7796-cpg-mssr.c   |   2 +
-  drivers/clk/renesas/rcar-gen3-cpg.c      | 143 
-+++++++++++++++++++++++++++++++
-  drivers/clk/renesas/rcar-gen3-cpg.h      |   1 +
-  5 files changed, 173 insertions(+)
+CLK patches:
+The driver was w/o DT support and needed some cleanup so we can use the driver.
+I have also renamed it to twl6040-pdmclk from twl6040-clk to be precise.
+
+MFD patches:
+The regmap_sync() was not working since the twl6040 does not support bulk access
+and now we are going to create the needed child for the pdmclk.
+
+ARM patches:
+Updatding the board DTS files and add the needed lines for the pdmclk.
+
+ASoC patches:
+The machine driver needs to select the twl6040-clk driver as it will be used
+by the omap-mcpdm.
+I needed to do some cleanup and add also suspend/resume support before adding
+the code for pdmclk handling since I don't want to keep the twl6040 powered on
+when the board is suspended. At the moment it is not possible to do true
+dynamic twl6040 power up/down due to pop noises, but I will be looking at that
+later.
+The driver in the future will fail if it is not able to get the pdmclk to avoid
+kernel crash (McPDM registers are not accessible when pdmclk is not available).
+
+I have tested the patches by domain and also in all (I hope) permutation they
+could be. I have not experienced any regression.
+
+Regards,
+Peter
+---
+Peter Ujfalusi (14):
+  clk: twl6040: Correct clk_ops
+  clk: twl6040: Register the clock as of_clk_provider
+  clk: twl6040: Rename the driver and use consistent names in the code
+  mfd: twl6040: The chip does not support bulk access
+  mfd: twl6040: Register child device for twl6040-pdmclk
+  ARM: dts: omap5-board-common: Add pdmclk binding for audio
+  ARM: dts: omap4-panda-common: Add pdmclk binding for audio
+  ARM: dts: omap4-sdp: Add pdmclk binding for audio
+  ARM: dts: omap4-var-som-om44: Add pdmclk binding for audio
+  ARM: dts: omap4-duovero: Add pdmclk binding for audio
+  ASoC: omap: Kconfig: SND_OMAP_SOC_OMAP_ABE_TWL6040 to select
+    CLK_TWL6040
+  ASoC: omap-mcpdm: Move the WD enable write inside
+    omap_mcpdm_open_streams()
+  ASoC: omap-mcpdm: Support for suspend resume
+  ASoC: omap-mcpdm: Add support for pdmclk clock handling
+
+ Documentation/devicetree/bindings/mfd/twl6040.txt  |  1 +
+ .../devicetree/bindings/sound/omap-mcpdm.txt       | 10 +++
+ arch/arm/boot/dts/omap4-duovero.dtsi               |  5 ++
+ arch/arm/boot/dts/omap4-panda-common.dtsi          |  5 ++
+ arch/arm/boot/dts/omap4-sdp.dts                    |  5 ++
+ arch/arm/boot/dts/omap4-var-som-om44.dtsi          |  5 ++
+ arch/arm/boot/dts/omap5-board-common.dtsi          |  5 ++
+ drivers/clk/clk-twl6040.c                          | 80 ++++++++++++---------
+ drivers/mfd/twl6040.c                              |  6 ++
+ include/linux/mfd/twl6040.h                        |  2 +-
+ sound/soc/omap/Kconfig                             |  1 +
+ sound/soc/omap/omap-mcpdm.c                        | 84 ++++++++++++++++++++--
+ 12 files changed, 170 insertions(+), 39 deletions(-)
 
 -- 
-1.9.1
+2.8.3
