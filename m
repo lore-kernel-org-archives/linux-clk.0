@@ -1,47 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:34887 "EHLO
-	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751231AbcEJFHP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2016 01:07:15 -0400
-Received: by mail-pf0-f173.google.com with SMTP id 77so1213071pfv.2
-        for <linux-clk@vger.kernel.org>; Mon, 09 May 2016 22:07:15 -0700 (PDT)
-Date: Tue, 10 May 2016 10:37:10 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
-Message-ID: <20160510050710.GC2790@vireshk-i7>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <5731664D.1030909@rvc.renesas.com>
- <573169CD.8050607@rvc.renesas.com>
- <57316A4E.7040100@rvc.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <57316A4E.7040100@rvc.renesas.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 5/5] clk: qcom: ipq4019: Added the turbo frequency for apps cpu
+Date: Mon, 30 May 2016 20:02:38 +0530
+Message-Id: <1464618758-20965-6-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10-05-16, 11:57, Khiem Nguyen wrote:
-> After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
-> driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
-> Hence, follow the implementation to support new R8A7795 SoC.
-> 
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  1 file changed, 1 insertion(+)
+Added the CPU turbo frequency (710 Mhz) to frequency table of
+APPS CPU clock.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 69a8250..c325618 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -665,11 +665,12 @@ static struct clk_apps_cpu_div gcc_apps_cpu_div_clk = {
+ };
+ 
+ static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+-	F(48000000, P_XO,	   1, 0, 0),
+-	F(200000000, P_FEPLL200,   1, 0, 0),
+-	F(500000000, P_FEPLL500,   1, 0, 0),
++	F(48000000, P_XO, 1, 0, 0),
++	F(200000000, P_FEPLL200, 1, 0, 0),
++	F(500000000, P_FEPLL500, 1, 0, 0),
+ 	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
+-	{ }
++	F(710000000, P_DDRPLLAPSS, 1, 0, 0),
++	{}
+ };
+ 
+ static struct clk_rcg2 apps_clk_src = {
 -- 
-viresh
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
