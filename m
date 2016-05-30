@@ -1,70 +1,286 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 05/22] ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
-Date: Sat, 28 May 2016 11:54:16 +0200
-Message-Id: <1464429273-23457-6-git-send-email-krzk@kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W
+Date: Mon, 30 May 2016 18:28:57 +0200
+Message-Id: <1464625737-6646-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-For consistency lowercase node labels are used.
+Initial support for R-Car M3-W (r8a7796), including basic core clocks,
+and SCIF2 (console) and INTC-AP (GIC) module clocks.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+v2:
+  - Add Tested-by.
+---
+ drivers/clk/renesas/Kconfig            |   1 +
+ drivers/clk/renesas/Makefile           |   1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 192 +++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c |   6 ++
+ drivers/clk/renesas/renesas-cpg-mssr.h |   1 +
+ 5 files changed, 201 insertions(+)
+ create mode 100644 drivers/clk/renesas/r8a7796-cpg-mssr.c
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 477c6741c6dd..ef60a06211f1 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -35,28 +35,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 2115ce410cfb4bc9..fcad9ff090f5fd2b 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -1,6 +1,7 @@
+ config CLK_RENESAS_CPG_MSSR
+ 	bool
+ 	default y if ARCH_R8A7795
++	default y if ARCH_R8A7796
  
--		CPU0: cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
- 			clock-frequency = <1600000000>;
- 		};
+ config CLK_RENESAS_CPG_MSTP
+ 	bool
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 88924c95808c3b2e..0b8d31b4909c9690 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
++obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+ obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
  
--		CPU1: cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x1>;
- 			clock-frequency = <1600000000>;
- 		};
+ obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+new file mode 100644
+index 0000000000000000..c84b549c14d2e57d
+--- /dev/null
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -0,0 +1,192 @@
++/*
++ * r8a7796 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Copyright (C) 2016 Glider bvba
++ *
++ * Based on r8a7795-cpg-mssr.c
++ *
++ * Copyright (C) 2015 Glider bvba
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/clock/r8a7796-cpg-mssr.h>
++
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen3-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R8A7796_CLK_OSC,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++	CLK_EXTALR,
++
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL0,
++	CLK_PLL1,
++	CLK_PLL2,
++	CLK_PLL3,
++	CLK_PLL4,
++	CLK_PLL1_DIV2,
++	CLK_PLL1_DIV4,
++	CLK_S0,
++	CLK_S1,
++	CLK_S2,
++	CLK_S3,
++	CLK_SDSRC,
++	CLK_SSPSRC,
++
++	/* Module Clocks */
++	MOD_CLK_BASE
++};
++
++static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",  CLK_EXTAL),
++	DEF_INPUT("extalr", CLK_EXTALR),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
++	DEF_BASE(".pll0",       CLK_PLL0, CLK_TYPE_GEN3_PLL0, CLK_MAIN),
++	DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN3_PLL1, CLK_MAIN),
++	DEF_BASE(".pll2",       CLK_PLL2, CLK_TYPE_GEN3_PLL2, CLK_MAIN),
++	DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN3_PLL3, CLK_MAIN),
++	DEF_BASE(".pll4",       CLK_PLL4, CLK_TYPE_GEN3_PLL4, CLK_MAIN),
++
++	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2,     CLK_PLL1,       2, 1),
++	DEF_FIXED(".pll1_div4", CLK_PLL1_DIV4,     CLK_PLL1_DIV2,  2, 1),
++	DEF_FIXED(".s0",        CLK_S0,            CLK_PLL1_DIV2,  2, 1),
++	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
++	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
++	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
++
++	/* Core Clock Outputs */
++	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
++	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
++	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
++	DEF_FIXED("zx",         R8A7796_CLK_ZX,    CLK_PLL1_DIV2,  2, 1),
++	DEF_FIXED("s0d1",       R8A7796_CLK_S0D1,  CLK_S0,         1, 1),
++	DEF_FIXED("s0d2",       R8A7796_CLK_S0D2,  CLK_S0,         2, 1),
++	DEF_FIXED("s0d3",       R8A7796_CLK_S0D3,  CLK_S0,         3, 1),
++	DEF_FIXED("s0d4",       R8A7796_CLK_S0D4,  CLK_S0,         4, 1),
++	DEF_FIXED("s0d6",       R8A7796_CLK_S0D6,  CLK_S0,         6, 1),
++	DEF_FIXED("s0d8",       R8A7796_CLK_S0D8,  CLK_S0,         8, 1),
++	DEF_FIXED("s0d12",      R8A7796_CLK_S0D12, CLK_S0,        12, 1),
++	DEF_FIXED("s1d1",       R8A7796_CLK_S1D1,  CLK_S1,         1, 1),
++	DEF_FIXED("s1d2",       R8A7796_CLK_S1D2,  CLK_S1,         2, 1),
++	DEF_FIXED("s1d4",       R8A7796_CLK_S1D4,  CLK_S1,         4, 1),
++	DEF_FIXED("s2d1",       R8A7796_CLK_S2D1,  CLK_S2,         1, 1),
++	DEF_FIXED("s2d2",       R8A7796_CLK_S2D2,  CLK_S2,         2, 1),
++	DEF_FIXED("s2d4",       R8A7796_CLK_S2D4,  CLK_S2,         4, 1),
++	DEF_FIXED("s3d1",       R8A7796_CLK_S3D1,  CLK_S3,         1, 1),
++	DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
++	DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
++
++	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
++	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
++};
++
++static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
++	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
++	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
++};
++
++static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
++};
++
++
++/*
++ * CPG Clock Data
++ */
++
++/*
++ *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4
++ * 14 13 19 17	(MHz)
++ *-------------------------------------------------------------------
++ * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
++ * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
++ * 0  0  1  0	Prohibited setting
++ * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
++ * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
++ * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
++ * 0  1  1  0	Prohibited setting
++ * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
++ * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
++ * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
++ * 1  0  1  0	Prohibited setting
++ * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
++ * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
++ * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
++ * 1  1  1  0	Prohibited setting
++ * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
++ */
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
++					 (((md) & BIT(13)) >> 11) | \
++					 (((md) & BIT(19)) >> 18) | \
++					 (((md) & BIT(17)) >> 17))
++
++static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
++	/* EXTAL div	PLL1 mult	PLL3 mult */
++	{ 1,		192,		192,	},
++	{ 1,		192,		128,	},
++	{ 0, /* Prohibited setting */		},
++	{ 1,		192,		192,	},
++	{ 1,		160,		160,	},
++	{ 1,		160,		106,	},
++	{ 0, /* Prohibited setting */		},
++	{ 1,		160,		160,	},
++	{ 1,		128,		128,	},
++	{ 1,		128,		84,	},
++	{ 0, /* Prohibited setting */		},
++	{ 1,		128,		128,	},
++	{ 2,		192,		192,	},
++	{ 2,		192,		128,	},
++	{ 0, /* Prohibited setting */		},
++	{ 2,		192,		192,	},
++};
++
++static int __init r8a7796_cpg_mssr_init(struct device *dev)
++{
++	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
++	u32 cpg_mode = rcar_gen3_read_mode_pins();
++
++	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
++	if (!cpg_pll_config->extal_div) {
++		dev_err(dev, "Prohibited setting (cpg_mode=0x%x)\n", cpg_mode);
++		return -EINVAL;
++	}
++
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
++}
++
++const struct cpg_mssr_info r8a7796_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r8a7796_core_clks,
++	.num_core_clks = ARRAY_SIZE(r8a7796_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r8a7796_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r8a7796_mod_clks),
++	.num_hw_mod_clks = 12 * 32,
++
++	/* Critical Module Clocks */
++	.crit_mod_clks = r8a7796_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r8a7796_crit_mod_clks),
++
++	/* Callbacks */
++	.init = r8a7796_cpg_mssr_init,
++	.cpg_clk_register = rcar_gen3_cpg_clk_register,
++};
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 210cd744a7a97bbd..e1365e7491ae02a0 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -509,6 +509,12 @@ static const struct of_device_id cpg_mssr_match[] = {
+ 		.data = &r8a7795_cpg_mssr_info,
+ 	},
+ #endif
++#ifdef CONFIG_ARCH_R8A7796
++	{
++		.compatible = "renesas,r8a7796-cpg-mssr",
++		.data = &r8a7796_cpg_mssr_info,
++	},
++#endif
+ 	{ /* sentinel */ }
+ };
  
--		CPU2: cpu@2 {
-+		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x2>;
- 			clock-frequency = <1600000000>;
- 		};
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 0d1e3e811e79bf43..ee7edfaf14089cef 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -131,4 +131,5 @@ struct cpg_mssr_info {
+ };
  
--		CPU3: cpu@3 {
-+		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x3>;
+ extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
++extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+ #endif
 -- 
-2.7.4
+1.9.1
