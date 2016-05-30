@@ -1,515 +1,417 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28622 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752358AbcEKMCn (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2016 08:02:43 -0400
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 13/18] clk: samsung: exynos7: Constify all clock initializers
-Date: Wed, 11 May 2016 14:02:09 +0200
-Message-id: <1462968134-6085-13-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Received: from mout.kundenserver.de ([212.227.126.131]:61199 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161029AbcE3NTF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2016 09:19:05 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Scott Wood <oss@buserror.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of arch/powerpc"
+Date: Mon, 30 May 2016 15:18:43 +0200
+Message-ID: <5513501.AmZs7h1vI2@wuerfel>
+In-Reply-To: <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com> <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-All of initialization data can be made const.
+All users of this driver are PowerPC specific and the header file
+has no business in the global include/linux/ hierarchy, so move
+it back before anyone starts using it on ARM.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/samsung/clk-exynos7.c | 114 +++++++++++++++++++-------------------
- 1 file changed, 57 insertions(+), 57 deletions(-)
+This part of the series is not required for the eSDHC quirk,
+but it restores the asm/fsl_guts.h header so it doesn't accidentally
+get abused for this in the future. I found two drivers outside of
+arch/powerpc that already accessed the registers directly, but the
+functions look fairly contained, and can be easily hidden in an
+#ifdef CONFIG_PPC
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index ad68d463b12c..45b348c0cfc6 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -36,7 +36,7 @@
- #define ENABLE_ACLK_TOPC1	0x0804
- #define ENABLE_SCLK_TOPC1	0x0A04
- 
--static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_topc_bus0_pll", 1, 2, 0),
- 	FFACTOR(0, "ffac_topc_bus0_pll_div4",
- 		"ffac_topc_bus0_pll_div2", 1, 2, 0),
-@@ -69,7 +69,7 @@ PNAME(mout_topc_mfc_pll_half_p) = { "mout_topc_mfc_pll",
- PNAME(mout_topc_bus0_pll_out_p) = {"mout_topc_bus0_pll",
- 	"ffac_topc_bus0_pll_div2"};
- 
--static unsigned long topc_clk_regs[] __initdata = {
-+static const unsigned long topc_clk_regs[] __initconst = {
- 	CC_PLL_LOCK,
- 	BUS0_PLL_LOCK,
- 	BUS1_DPLL_LOCK,
-@@ -89,7 +89,7 @@ static unsigned long topc_clk_regs[] __initdata = {
- 	DIV_TOPC3,
- };
- 
--static struct samsung_mux_clock topc_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock topc_mux_clks[] __initconst = {
- 	MUX(0, "mout_topc_bus0_pll", mout_topc_bus0_pll_ctrl_p,
- 		MUX_SEL_TOPC0, 0, 1),
- 	MUX(0, "mout_topc_bus1_pll", mout_topc_bus1_pll_ctrl_p,
-@@ -118,7 +118,7 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
- 	MUX(0, "mout_aclk_peris_66", mout_topc_group2, MUX_SEL_TOPC3, 24, 2),
- };
- 
--static struct samsung_div_clock topc_div_clks[] __initdata = {
-+static const struct samsung_div_clock topc_div_clks[] __initconst = {
- 	DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
- 		DIV_TOPC0, 4, 4),
- 
-@@ -139,12 +139,12 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
- 		DIV_TOPC3, 28, 4),
- };
- 
--static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
-+static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
- 	PLL_36XX_RATE(491520000, 20, 1, 0, 31457),
- 	{},
- };
- 
--static struct samsung_gate_clock topc_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock topc_gate_clks[] __initconst = {
- 	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
- 		ENABLE_ACLK_TOPC0, 4, 0, 0),
- 
-@@ -174,7 +174,7 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
- 		ENABLE_SCLK_TOPC1, 0, 0, 0),
- };
- 
--static struct samsung_pll_clock topc_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock topc_pll_clks[] __initconst = {
- 	PLL(pll_1451x, 0, "fout_bus0_pll", "fin_pll", BUS0_PLL_LOCK,
- 		BUS0_PLL_CON0, NULL),
- 	PLL(pll_1452x, 0, "fout_cc_pll", "fin_pll", CC_PLL_LOCK,
-@@ -187,7 +187,7 @@ static struct samsung_pll_clock topc_pll_clks[] __initdata = {
- 		AUD_PLL_CON0, pll1460x_24mhz_tbl),
- };
- 
--static struct samsung_cmu_info topc_cmu_info __initdata = {
-+static const struct samsung_cmu_info topc_cmu_info __initconst = {
- 	.pll_clks		= topc_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(topc_pll_clks),
- 	.mux_clks		= topc_mux_clks,
-@@ -256,7 +256,7 @@ PNAME(mout_top0_group3) = {"ioclk_audiocdclk0",
- PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll_user",
- 	"mout_top0_bus0_pll_half", "mout_top0_bus1_pll_half"};
- 
--static unsigned long top0_clk_regs[] __initdata = {
-+static const unsigned long top0_clk_regs[] __initconst = {
- 	MUX_SEL_TOP00,
- 	MUX_SEL_TOP01,
- 	MUX_SEL_TOP03,
-@@ -275,7 +275,7 @@ static unsigned long top0_clk_regs[] __initdata = {
- 	ENABLE_SCLK_TOP0_PERIC3,
- };
- 
--static struct samsung_mux_clock top0_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock top0_mux_clks[] __initconst = {
- 	MUX(0, "mout_top0_aud_pll_user", mout_top0_aud_pll_user_p,
- 		MUX_SEL_TOP00, 0, 1),
- 	MUX(0, "mout_top0_mfc_pll_user", mout_top0_mfc_pll_user_p,
-@@ -315,7 +315,7 @@ static struct samsung_mux_clock top0_mux_clks[] __initdata = {
- 	MUX(0, "mout_sclk_spi4", mout_top0_group1, MUX_SEL_TOP0_PERIC3, 20, 2),
- };
- 
--static struct samsung_div_clock top0_div_clks[] __initdata = {
-+static const struct samsung_div_clock top0_div_clks[] __initconst = {
- 	DIV(DOUT_ACLK_PERIC1, "dout_aclk_peric1_66", "mout_aclk_peric1_66",
- 		DIV_TOP03, 12, 6),
- 	DIV(DOUT_ACLK_PERIC0, "dout_aclk_peric0_66", "mout_aclk_peric0_66",
-@@ -338,7 +338,7 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
- 	DIV(0, "dout_sclk_spi4", "mout_sclk_spi4", DIV_TOP0_PERIC3, 20, 12),
- };
- 
--static struct samsung_gate_clock top0_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock top0_gate_clks[] __initconst = {
- 	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
- 		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_PERIC1_66, "aclk_peric1_66", "dout_aclk_peric1_66",
-@@ -372,7 +372,7 @@ static struct samsung_gate_clock top0_gate_clks[] __initdata = {
- 		ENABLE_SCLK_TOP0_PERIC3, 20, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll_user",
- 		1, 2, 0),
- 	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll_user",
-@@ -381,7 +381,7 @@ static struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initdata = {
- 	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll_user", 1, 2, 0),
- };
- 
--static struct samsung_cmu_info top0_cmu_info __initdata = {
-+static const struct samsung_cmu_info top0_cmu_info __initconst = {
- 	.mux_clks		= top0_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(top0_mux_clks),
- 	.div_clks		= top0_div_clks,
-@@ -438,7 +438,7 @@ PNAME(mout_top1_group1) = {"mout_top1_bus0_pll_half",
- 	"mout_top1_bus1_pll_half", "mout_top1_cc_pll_half",
- 	"mout_top1_mfc_pll_half"};
- 
--static unsigned long top1_clk_regs[] __initdata = {
-+static const unsigned long top1_clk_regs[] __initconst = {
- 	MUX_SEL_TOP10,
- 	MUX_SEL_TOP11,
- 	MUX_SEL_TOP13,
-@@ -455,7 +455,7 @@ static unsigned long top1_clk_regs[] __initdata = {
- 	ENABLE_SCLK_TOP1_FSYS11,
- };
- 
--static struct samsung_mux_clock top1_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock top1_mux_clks[] __initconst = {
- 	MUX(0, "mout_top1_mfc_pll_user", mout_top1_mfc_pll_user_p,
- 		MUX_SEL_TOP10, 4, 1),
- 	MUX(0, "mout_top1_cc_pll_user", mout_top1_cc_pll_user_p,
-@@ -494,7 +494,7 @@ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
- 		MUX_SEL_TOP1_FSYS11, 24, 2),
- };
- 
--static struct samsung_div_clock top1_div_clks[] __initdata = {
-+static const struct samsung_div_clock top1_div_clks[] __initconst = {
- 	DIV(DOUT_ACLK_FSYS1_200, "dout_aclk_fsys1_200", "mout_aclk_fsys1_200",
- 		DIV_TOP13, 24, 4),
- 	DIV(DOUT_ACLK_FSYS0_200, "dout_aclk_fsys0_200", "mout_aclk_fsys0_200",
-@@ -521,7 +521,7 @@ static struct samsung_div_clock top1_div_clks[] __initdata = {
- 		"mout_sclk_phy_fsys1_26m", DIV_TOP1_FSYS11, 24, 6),
- };
- 
--static struct samsung_gate_clock top1_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock top1_gate_clks[] __initconst = {
- 	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "dout_sclk_mmc2",
- 		ENABLE_SCLK_TOP1_FSYS0, 16, CLK_SET_RATE_PARENT, 0),
- 	GATE(0, "sclk_usbdrd300", "dout_sclk_usbdrd300",
-@@ -548,7 +548,7 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
- 		24, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll_user",
- 		1, 2, 0),
- 	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll_user",
-@@ -557,7 +557,7 @@ static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
- 	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll_user", 1, 2, 0),
- };
- 
--static struct samsung_cmu_info top1_cmu_info __initdata = {
-+static const struct samsung_cmu_info top1_cmu_info __initconst = {
- 	.mux_clks		= top1_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(top1_mux_clks),
- 	.div_clks		= top1_div_clks,
-@@ -591,22 +591,22 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+diff --git a/include/linux/fsl/guts.h b/arch/powerpc/include/asm/fsl_guts.h
+similarity index 99%
+rename from include/linux/fsl/guts.h
+rename to arch/powerpc/include/asm/fsl_guts.h
+index 649e9171a9b3..a67413c52701 100644
+--- a/include/linux/fsl/guts.h
++++ b/arch/powerpc/include/asm/fsl_guts.h
+@@ -12,10 +12,9 @@
+  * option) any later version.
   */
- PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
  
--static unsigned long ccore_clk_regs[] __initdata = {
-+static const unsigned long ccore_clk_regs[] __initconst = {
- 	MUX_SEL_CCORE,
- 	ENABLE_PCLK_CCORE,
+-#ifndef __FSL_GUTS_H__
+-#define __FSL_GUTS_H__
+-
+-#include <linux/types.h>
++#ifndef __ASM_POWERPC_FSL_GUTS_H__
++#define __ASM_POWERPC_FSL_GUTS_H__
++#ifdef __KERNEL__
+ 
+ /**
+  * Global Utility Registers.
+@@ -295,3 +294,4 @@ struct ccsr_rcpm_v2 {
  };
  
--static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock ccore_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
- 		MUX_SEL_CCORE, 1, 1),
+ #endif
++#endif
+diff --git a/arch/powerpc/platforms/85xx/mpc85xx_mds.c b/arch/powerpc/platforms/85xx/mpc85xx_mds.c
+index f61cbe235581..00f052e9f2a2 100644
+--- a/arch/powerpc/platforms/85xx/mpc85xx_mds.c
++++ b/arch/powerpc/platforms/85xx/mpc85xx_mds.c
+@@ -34,7 +34,6 @@
+ #include <linux/of_device.h>
+ #include <linux/phy.h>
+ #include <linux/memblock.h>
+-#include <linux/fsl/guts.h>
+ 
+ #include <linux/atomic.h>
+ #include <asm/time.h>
+@@ -52,6 +51,7 @@
+ #include <soc/fsl/qe/qe_ic.h>
+ #include <asm/mpic.h>
+ #include <asm/swiotlb.h>
++#include <asm/fsl_guts.h>
+ #include "smp.h"
+ 
+ #include "mpc85xx.h"
+diff --git a/arch/powerpc/platforms/85xx/mpc85xx_pm_ops.c b/arch/powerpc/platforms/85xx/mpc85xx_pm_ops.c
+index f05325f0cc03..a812c0511252 100644
+--- a/arch/powerpc/platforms/85xx/mpc85xx_pm_ops.c
++++ b/arch/powerpc/platforms/85xx/mpc85xx_pm_ops.c
+@@ -14,8 +14,8 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/fsl/guts.h>
+ 
++#include <asm/fsl_guts.h>
+ #include <asm/io.h>
+ #include <asm/fsl_pm.h>
+ 
+diff --git a/arch/powerpc/platforms/85xx/mpc85xx_rdb.c b/arch/powerpc/platforms/85xx/mpc85xx_rdb.c
+index 3f4dad133338..453ddda00fce 100644
+--- a/arch/powerpc/platforms/85xx/mpc85xx_rdb.c
++++ b/arch/powerpc/platforms/85xx/mpc85xx_rdb.c
+@@ -17,7 +17,6 @@
+ #include <linux/seq_file.h>
+ #include <linux/interrupt.h>
+ #include <linux/of_platform.h>
+-#include <linux/fsl/guts.h>
+ 
+ #include <asm/time.h>
+ #include <asm/machdep.h>
+@@ -28,6 +27,7 @@
+ #include <asm/mpic.h>
+ #include <soc/fsl/qe/qe.h>
+ #include <soc/fsl/qe/qe_ic.h>
++#include <asm/fsl_guts.h>
+ 
+ #include <sysdev/fsl_soc.h>
+ #include <sysdev/fsl_pci.h>
+diff --git a/arch/powerpc/platforms/85xx/p1022_ds.c b/arch/powerpc/platforms/85xx/p1022_ds.c
+index 371df822e88e..6ac986d3f8a3 100644
+--- a/arch/powerpc/platforms/85xx/p1022_ds.c
++++ b/arch/powerpc/platforms/85xx/p1022_ds.c
+@@ -16,7 +16,6 @@
+  * kind, whether express or implied.
+  */
+ 
+-#include <linux/fsl/guts.h>
+ #include <linux/pci.h>
+ #include <linux/of_platform.h>
+ #include <asm/div64.h>
+@@ -26,6 +25,7 @@
+ #include <sysdev/fsl_soc.h>
+ #include <sysdev/fsl_pci.h>
+ #include <asm/udbg.h>
++#include <asm/fsl_guts.h>
+ #include <asm/fsl_lbc.h>
+ #include "smp.h"
+ 
+diff --git a/arch/powerpc/platforms/85xx/p1022_rdk.c b/arch/powerpc/platforms/85xx/p1022_rdk.c
+index 5087becaa8bc..680232d6ba48 100644
+--- a/arch/powerpc/platforms/85xx/p1022_rdk.c
++++ b/arch/powerpc/platforms/85xx/p1022_rdk.c
+@@ -12,7 +12,6 @@
+  * kind, whether express or implied.
+  */
+ 
+-#include <linux/fsl/guts.h>
+ #include <linux/pci.h>
+ #include <linux/of_platform.h>
+ #include <asm/div64.h>
+@@ -22,6 +21,7 @@
+ #include <sysdev/fsl_soc.h>
+ #include <sysdev/fsl_pci.h>
+ #include <asm/udbg.h>
++#include <asm/fsl_guts.h>
+ #include "smp.h"
+ 
+ #include "mpc85xx.h"
+diff --git a/arch/powerpc/platforms/85xx/smp.c b/arch/powerpc/platforms/85xx/smp.c
+index fe9f19e5e935..6bd3a292e790 100644
+--- a/arch/powerpc/platforms/85xx/smp.c
++++ b/arch/powerpc/platforms/85xx/smp.c
+@@ -18,7 +18,6 @@
+ #include <linux/kexec.h>
+ #include <linux/highmem.h>
+ #include <linux/cpu.h>
+-#include <linux/fsl/guts.h>
+ 
+ #include <asm/machdep.h>
+ #include <asm/pgtable.h>
+@@ -26,6 +25,7 @@
+ #include <asm/mpic.h>
+ #include <asm/cacheflush.h>
+ #include <asm/dbell.h>
++#include <asm/fsl_guts.h>
+ #include <asm/code-patching.h>
+ #include <asm/cputhreads.h>
+ #include <asm/fsl_pm.h>
+diff --git a/arch/powerpc/platforms/85xx/twr_p102x.c b/arch/powerpc/platforms/85xx/twr_p102x.c
+index 71bc255b4324..2cac45f72d24 100644
+--- a/arch/powerpc/platforms/85xx/twr_p102x.c
++++ b/arch/powerpc/platforms/85xx/twr_p102x.c
+@@ -15,7 +15,6 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/errno.h>
+-#include <linux/fsl/guts.h>
+ #include <linux/pci.h>
+ #include <linux/of_platform.h>
+ 
+@@ -24,6 +23,7 @@
+ #include <asm/mpic.h>
+ #include <soc/fsl/qe/qe.h>
+ #include <soc/fsl/qe/qe_ic.h>
++#include <asm/fsl_guts.h>
+ 
+ #include <sysdev/fsl_soc.h>
+ #include <sysdev/fsl_pci.h>
+diff --git a/arch/powerpc/platforms/86xx/mpc8610_hpcd.c b/arch/powerpc/platforms/86xx/mpc8610_hpcd.c
+index 957473e5c8e5..761c81476957 100644
+--- a/arch/powerpc/platforms/86xx/mpc8610_hpcd.c
++++ b/arch/powerpc/platforms/86xx/mpc8610_hpcd.c
+@@ -24,7 +24,6 @@
+ #include <linux/delay.h>
+ #include <linux/seq_file.h>
+ #include <linux/of.h>
+-#include <linux/fsl/guts.h>
+ 
+ #include <asm/time.h>
+ #include <asm/machdep.h>
+@@ -39,6 +38,7 @@
+ #include <sysdev/fsl_pci.h>
+ #include <sysdev/fsl_soc.h>
+ #include <sysdev/simple_gpio.h>
++#include <asm/fsl_guts.h>
+ 
+ #include "mpc86xx.h"
+ 
+diff --git a/arch/powerpc/sysdev/fsl_rcpm.c b/arch/powerpc/sysdev/fsl_rcpm.c
+index 9259a94f70e1..8af22187cb25 100644
+--- a/arch/powerpc/sysdev/fsl_rcpm.c
++++ b/arch/powerpc/sysdev/fsl_rcpm.c
+@@ -19,7 +19,7 @@
+ #include <linux/export.h>
+ 
+ #include <asm/io.h>
+-#include <linux/fsl/guts.h>
++#include <asm/fsl_guts.h>
+ #include <asm/cputhreads.h>
+ #include <asm/fsl_pm.h>
+ #include <asm/smp.h>
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 58566a17944a..f311bd399672 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -12,7 +12,6 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/fsl/guts.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -21,6 +20,10 @@
+ #include <linux/of.h>
+ #include <linux/slab.h>
+ 
++#ifdef CONFIG_PPC
++#include <asm/fsl_guts.h>
++#endif
++
+ #define PLL_DIV1	0
+ #define PLL_DIV2	1
+ #define PLL_DIV3	2
+@@ -341,6 +344,8 @@ static const struct clockgen_muxinfo t4240_hwa5 = {
+ 	},
  };
  
--static struct samsung_gate_clock ccore_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock ccore_gate_clks[] __initconst = {
- 	GATE(PCLK_RTC, "pclk_rtc", "mout_aclk_ccore_133_user",
- 		ENABLE_PCLK_CCORE, 8, 0, 0),
- };
++#ifdef CONFIG_PPC
++
+ #define RCWSR7_FM1_CLK_SEL	0x40000000
+ #define RCWSR7_FM2_CLK_SEL	0x20000000
+ #define RCWSR7_HWA_ASYNC_DIV	0x04000000
+@@ -408,6 +413,7 @@ static void __init p5040_init_periph(struct clockgen *cg)
+ 	else
+ 		cg->fman[1] = cg->pll[PLATFORM_PLL].div[PLL_DIV2].clk;
+ }
++#endif
  
--static struct samsung_cmu_info ccore_cmu_info __initdata = {
-+static const struct samsung_cmu_info ccore_cmu_info __initconst = {
- 	.mux_clks		= ccore_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(ccore_mux_clks),
- 	.gate_clks		= ccore_gate_clks,
-@@ -633,20 +633,20 @@ CLK_OF_DECLARE(exynos7_clk_ccore, "samsung,exynos7-clock-ccore",
- PNAME(mout_aclk_peric0_66_user_p)	= { "fin_pll", "aclk_peric0_66" };
- PNAME(mout_sclk_uart0_user_p)	= { "fin_pll", "sclk_uart0" };
+ static void __init t1023_init_periph(struct clockgen *cg)
+ {
+@@ -499,6 +505,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x37,
+ 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+ 	},
++#ifdef CONFIG_PPC
+ 	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+@@ -559,6 +566,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		},
+ 		.pll_mask = 0x0f,
+ 	},
++#endif
+ 	{
+ 		.compat = "fsl,t1023-clockgen",
+ 		.guts_compat = "fsl,t1023-device-config",
+diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
+index a34355fca37a..2570f2a25dc4 100644
+--- a/drivers/iommu/fsl_pamu.c
++++ b/drivers/iommu/fsl_pamu.c
+@@ -20,11 +20,11 @@
  
--static unsigned long peric0_clk_regs[] __initdata = {
-+static const unsigned long peric0_clk_regs[] __initconst = {
- 	MUX_SEL_PERIC0,
- 	ENABLE_PCLK_PERIC0,
- 	ENABLE_SCLK_PERIC0,
- };
+ #include "fsl_pamu.h"
  
--static struct samsung_mux_clock peric0_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock peric0_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk_peric0_66_user", mout_aclk_peric0_66_user_p,
- 		MUX_SEL_PERIC0, 0, 1),
- 	MUX(0, "mout_sclk_uart0_user", mout_sclk_uart0_user_p,
- 		MUX_SEL_PERIC0, 16, 1),
- };
+-#include <linux/fsl/guts.h>
+ #include <linux/interrupt.h>
+ #include <linux/genalloc.h>
  
--static struct samsung_gate_clock peric0_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
- 	GATE(PCLK_HSI2C0, "pclk_hsi2c0", "mout_aclk_peric0_66_user",
- 		ENABLE_PCLK_PERIC0, 8, 0, 0),
- 	GATE(PCLK_HSI2C1, "pclk_hsi2c1", "mout_aclk_peric0_66_user",
-@@ -673,7 +673,7 @@ static struct samsung_gate_clock peric0_gate_clks[] __initdata = {
- 	GATE(SCLK_PWM, "sclk_pwm", "fin_pll", ENABLE_SCLK_PERIC0, 21, 0, 0),
- };
+ #include <asm/mpc85xx.h>
++#include <asm/fsl_guts.h>
  
--static struct samsung_cmu_info peric0_cmu_info __initdata = {
-+static const struct samsung_cmu_info peric0_cmu_info __initconst = {
- 	.mux_clks		= peric0_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(peric0_mux_clks),
- 	.gate_clks		= peric0_gate_clks,
-@@ -709,7 +709,7 @@ PNAME(mout_sclk_spi2_user_p)		= { "fin_pll", "sclk_spi2" };
- PNAME(mout_sclk_spi3_user_p)		= { "fin_pll", "sclk_spi3" };
- PNAME(mout_sclk_spi4_user_p)		= { "fin_pll", "sclk_spi4" };
+ /* define indexes for each operation mapping scenario */
+ #define OMI_QMAN        0x00
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index 1de2e1e51c2b..dabee93fcadd 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -35,7 +35,6 @@
+ #include "fman.h"
+ #include "fman_muram.h"
  
--static unsigned long peric1_clk_regs[] __initdata = {
-+static const unsigned long peric1_clk_regs[] __initconst = {
- 	MUX_SEL_PERIC10,
- 	MUX_SEL_PERIC11,
- 	MUX_SEL_PERIC12,
-@@ -717,7 +717,7 @@ static unsigned long peric1_clk_regs[] __initdata = {
- 	ENABLE_SCLK_PERIC10,
- };
+-#include <linux/fsl/guts.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+@@ -46,6 +45,10 @@
+ #include <linux/interrupt.h>
+ #include <linux/libfdt_env.h>
  
--static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock peric1_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_user_p,
- 		MUX_SEL_PERIC10, 0, 1),
++#ifdef CONFIG_PPC
++#include <asm/fsl_guts.h>
++#endif
++
+ /* General defines */
+ #define FMAN_LIODN_TBL			64	/* size of LIODN table */
+ #define MAX_NUM_OF_MACS			10
+@@ -1889,7 +1892,9 @@ static int fman_reset(struct fman *fman)
+ 			err = -EBUSY;
  
-@@ -739,7 +739,7 @@ static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
- 		MUX_SEL_PERIC11, 28, 1),
- };
+ 		goto _return;
+-	} else {
++	}
++#ifdef CONFIG_PPC
++	else {
+ 		struct device_node *guts_node;
+ 		struct ccsr_guts __iomem *guts_regs;
+ 		u32 devdisr2, reg;
+@@ -1952,6 +1957,7 @@ guts_node:
+ 		dev_dbg(fman->dev, "%s: Didn't perform FManV3 reset due to Errata A007273!\n",
+ 			__func__);
+ 	}
++#endif
+ _return:
+ 	return err;
+ }
+diff --git a/sound/soc/fsl/mpc8610_hpcd.c b/sound/soc/fsl/mpc8610_hpcd.c
+index ddf49f30b23f..73b2b89d4a3e 100644
+--- a/sound/soc/fsl/mpc8610_hpcd.c
++++ b/sound/soc/fsl/mpc8610_hpcd.c
+@@ -12,11 +12,11 @@
  
--static struct samsung_gate_clock peric1_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock peric1_gate_clks[] __initconst = {
- 	GATE(PCLK_HSI2C2, "pclk_hsi2c2", "mout_aclk_peric1_66_user",
- 		ENABLE_PCLK_PERIC1, 4, 0, 0),
- 	GATE(PCLK_HSI2C3, "pclk_hsi2c3", "mout_aclk_peric1_66_user",
-@@ -797,7 +797,7 @@ static struct samsung_gate_clock peric1_gate_clks[] __initdata = {
- 		ENABLE_SCLK_PERIC10, 19, CLK_SET_RATE_PARENT, 0),
- };
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+-#include <linux/fsl/guts.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <sound/soc.h>
++#include <asm/fsl_guts.h>
  
--static struct samsung_cmu_info peric1_cmu_info __initdata = {
-+static const struct samsung_cmu_info peric1_cmu_info __initconst = {
- 	.mux_clks		= peric1_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(peric1_mux_clks),
- 	.gate_clks		= peric1_gate_clks,
-@@ -825,7 +825,7 @@ CLK_OF_DECLARE(exynos7_clk_peric1, "samsung,exynos7-clock-peric1",
- /* List of parent clocks for Muxes in CMU_PERIS */
- PNAME(mout_aclk_peris_66_user_p) = { "fin_pll", "aclk_peris_66" };
+ #include "fsl_dma.h"
+ #include "fsl_ssi.h"
+diff --git a/sound/soc/fsl/p1022_ds.c b/sound/soc/fsl/p1022_ds.c
+index a1f780ecadf5..a24e04919f71 100644
+--- a/sound/soc/fsl/p1022_ds.c
++++ b/sound/soc/fsl/p1022_ds.c
+@@ -11,12 +11,12 @@
+  */
  
--static unsigned long peris_clk_regs[] __initdata = {
-+static const unsigned long peris_clk_regs[] __initconst = {
- 	MUX_SEL_PERIS,
- 	ENABLE_PCLK_PERIS,
- 	ENABLE_PCLK_PERIS_SECURE_CHIPID,
-@@ -833,12 +833,12 @@ static unsigned long peris_clk_regs[] __initdata = {
- 	ENABLE_SCLK_PERIS_SECURE_CHIPID,
- };
+ #include <linux/module.h>
+-#include <linux/fsl/guts.h>
+ #include <linux/interrupt.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <sound/soc.h>
++#include <asm/fsl_guts.h>
  
--static struct samsung_mux_clock peris_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk_peris_66_user",
- 		mout_aclk_peris_66_user_p, MUX_SEL_PERIS, 0, 1),
- };
+ #include "fsl_dma.h"
+ #include "fsl_ssi.h"
+diff --git a/sound/soc/fsl/p1022_rdk.c b/sound/soc/fsl/p1022_rdk.c
+index d4d88a8cb9c0..d8448887bfda 100644
+--- a/sound/soc/fsl/p1022_rdk.c
++++ b/sound/soc/fsl/p1022_rdk.c
+@@ -18,12 +18,12 @@
+  */
  
--static struct samsung_gate_clock peris_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
- 	GATE(PCLK_WDT, "pclk_wdt", "mout_aclk_peris_66_user",
- 		ENABLE_PCLK_PERIS, 6, 0, 0),
- 	GATE(PCLK_TMU, "pclk_tmu_apbif", "mout_aclk_peris_66_user",
-@@ -852,7 +852,7 @@ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
- 	GATE(SCLK_TMU, "sclk_tmu", "fin_pll", ENABLE_SCLK_PERIS, 10, 0, 0),
- };
+ #include <linux/module.h>
+-#include <linux/fsl/guts.h>
+ #include <linux/interrupt.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <sound/soc.h>
++#include <asm/fsl_guts.h>
  
--static struct samsung_cmu_info peris_cmu_info __initdata = {
-+static const struct samsung_cmu_info peris_cmu_info __initconst = {
- 	.mux_clks		= peris_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(peris_mux_clks),
- 	.gate_clks		= peris_gate_clks,
-@@ -893,12 +893,12 @@ PNAME(mout_phyclk_usbdrd300_udrd30_pipe_pclk_user_p)	= { "fin_pll",
- 				"phyclk_usbdrd300_udrd30_pipe_pclk" };
- 
- /* fixed rate clocks used in the FSYS0 block */
--static struct samsung_fixed_rate_clock fixed_rate_clks_fsys0[] __initdata = {
-+static const struct samsung_fixed_rate_clock fixed_rate_clks_fsys0[] __initconst = {
- 	FRATE(0, "phyclk_usbdrd300_udrd30_phyclock", NULL, 0, 60000000),
- 	FRATE(0, "phyclk_usbdrd300_udrd30_pipe_pclk", NULL, 0, 125000000),
- };
- 
--static unsigned long fsys0_clk_regs[] __initdata = {
-+static const unsigned long fsys0_clk_regs[] __initconst = {
- 	MUX_SEL_FSYS00,
- 	MUX_SEL_FSYS01,
- 	MUX_SEL_FSYS02,
-@@ -909,7 +909,7 @@ static unsigned long fsys0_clk_regs[] __initdata = {
- 	ENABLE_SCLK_FSYS04,
- };
- 
--static struct samsung_mux_clock fsys0_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock fsys0_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk_fsys0_200_user", mout_aclk_fsys0_200_user_p,
- 		MUX_SEL_FSYS00, 24, 1),
- 
-@@ -926,7 +926,7 @@ static struct samsung_mux_clock fsys0_mux_clks[] __initdata = {
- 		MUX_SEL_FSYS02, 28, 1),
- };
- 
--static struct samsung_gate_clock fsys0_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock fsys0_gate_clks[] __initconst = {
- 	GATE(ACLK_PDMA1, "aclk_pdma1", "mout_aclk_fsys0_200_user",
- 			ENABLE_ACLK_FSYS00, 3, 0, 0),
- 	GATE(ACLK_PDMA0, "aclk_pdma0", "mout_aclk_fsys0_200_user",
-@@ -960,7 +960,7 @@ static struct samsung_gate_clock fsys0_gate_clks[] __initdata = {
- 		ENABLE_SCLK_FSYS04, 28, 0, 0),
- };
- 
--static struct samsung_cmu_info fsys0_cmu_info __initdata = {
-+static const struct samsung_cmu_info fsys0_cmu_info __initconst = {
- 	.fixed_clks		= fixed_rate_clks_fsys0,
- 	.nr_fixed_clks		= ARRAY_SIZE(fixed_rate_clks_fsys0),
- 	.mux_clks		= fsys0_mux_clks,
-@@ -1005,7 +1005,7 @@ PNAME(mout_phyclk_ufs20_rx0_user_p) = { "fin_pll", "phyclk_ufs20_rx0_symbol" };
- PNAME(mout_phyclk_ufs20_rx1_user_p) = { "fin_pll", "phyclk_ufs20_rx1_symbol" };
- 
- /* fixed rate clocks used in the FSYS1 block */
--static struct samsung_fixed_rate_clock fixed_rate_clks_fsys1[] __initdata = {
-+static const struct samsung_fixed_rate_clock fixed_rate_clks_fsys1[] __initconst = {
- 	FRATE(PHYCLK_UFS20_TX0_SYMBOL, "phyclk_ufs20_tx0_symbol", NULL,
- 			0, 300000000),
- 	FRATE(PHYCLK_UFS20_RX0_SYMBOL, "phyclk_ufs20_rx0_symbol", NULL,
-@@ -1014,7 +1014,7 @@ static struct samsung_fixed_rate_clock fixed_rate_clks_fsys1[] __initdata = {
- 			0, 300000000),
- };
- 
--static unsigned long fsys1_clk_regs[] __initdata = {
-+static const unsigned long fsys1_clk_regs[] __initconst = {
- 	MUX_SEL_FSYS10,
- 	MUX_SEL_FSYS11,
- 	MUX_SEL_FSYS12,
-@@ -1026,7 +1026,7 @@ static unsigned long fsys1_clk_regs[] __initdata = {
- 	ENABLE_SCLK_FSYS13,
- };
- 
--static struct samsung_mux_clock fsys1_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock fsys1_mux_clks[] __initconst = {
- 	MUX(MOUT_FSYS1_PHYCLK_SEL1, "mout_fsys1_phyclk_sel1",
- 		mout_fsys1_group_p, MUX_SEL_FSYS10, 16, 2),
- 	MUX(0, "mout_fsys1_phyclk_sel0", mout_fsys1_group_p,
-@@ -1049,12 +1049,12 @@ static struct samsung_mux_clock fsys1_mux_clks[] __initdata = {
- 		mout_phyclk_ufs20_tx0_user_p, MUX_SEL_FSYS12, 28, 1),
- };
- 
--static struct samsung_div_clock fsys1_div_clks[] __initdata = {
-+static const struct samsung_div_clock fsys1_div_clks[] __initconst = {
- 	DIV(DOUT_PCLK_FSYS1, "dout_pclk_fsys1", "mout_aclk_fsys1_200_user",
- 		DIV_FSYS1, 0, 2),
- };
- 
--static struct samsung_gate_clock fsys1_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock fsys1_gate_clks[] __initconst = {
- 	GATE(SCLK_UFSUNIPRO20_USER, "sclk_ufsunipro20_user",
- 		"mout_sclk_ufsunipro20_user",
- 		ENABLE_SCLK_FSYS11, 20, 0, 0),
-@@ -1089,7 +1089,7 @@ static struct samsung_gate_clock fsys1_gate_clks[] __initdata = {
- 		ENABLE_SCLK_FSYS13, 24, CLK_IGNORE_UNUSED, 0),
- };
- 
--static struct samsung_cmu_info fsys1_cmu_info __initdata = {
-+static const struct samsung_cmu_info fsys1_cmu_info __initconst = {
- 	.fixed_clks		= fixed_rate_clks_fsys1,
- 	.nr_fixed_clks		= ARRAY_SIZE(fixed_rate_clks_fsys1),
- 	.mux_clks		= fsys1_mux_clks,
-@@ -1119,22 +1119,22 @@ CLK_OF_DECLARE(exynos7_clk_fsys1, "samsung,exynos7-clock-fsys1",
- /* List of parent clocks for Muxes in CMU_MSCL */
- PNAME(mout_aclk_mscl_532_user_p)	= { "fin_pll", "aclk_mscl_532" };
- 
--static unsigned long mscl_clk_regs[] __initdata = {
-+static const unsigned long mscl_clk_regs[] __initconst = {
- 	MUX_SEL_MSCL,
- 	DIV_MSCL,
- 	ENABLE_ACLK_MSCL,
- 	ENABLE_PCLK_MSCL,
- };
- 
--static struct samsung_mux_clock mscl_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock mscl_mux_clks[] __initconst = {
- 	MUX(USERMUX_ACLK_MSCL_532, "usermux_aclk_mscl_532",
- 		mout_aclk_mscl_532_user_p, MUX_SEL_MSCL, 0, 1),
- };
--static struct samsung_div_clock mscl_div_clks[] __initdata = {
-+static const struct samsung_div_clock mscl_div_clks[] __initconst = {
- 	DIV(DOUT_PCLK_MSCL, "dout_pclk_mscl", "usermux_aclk_mscl_532",
- 			DIV_MSCL, 0, 3),
- };
--static struct samsung_gate_clock mscl_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock mscl_gate_clks[] __initconst = {
- 
- 	GATE(ACLK_MSCL_0, "aclk_mscl_0", "usermux_aclk_mscl_532",
- 			ENABLE_ACLK_MSCL, 31, 0, 0),
-@@ -1204,7 +1204,7 @@ static struct samsung_gate_clock mscl_gate_clks[] __initdata = {
- 			ENABLE_PCLK_MSCL, 20, 0, 0),
- };
- 
--static struct samsung_cmu_info mscl_cmu_info __initdata = {
-+static const struct samsung_cmu_info mscl_cmu_info __initconst = {
- 	.mux_clks		= mscl_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(mscl_mux_clks),
- 	.div_clks		= mscl_div_clks,
-@@ -1238,7 +1238,7 @@ CLK_OF_DECLARE(exynos7_clk_mscl, "samsung,exynos7-clock-mscl",
- PNAME(mout_aud_pll_user_p) = { "fin_pll", "fout_aud_pll" };
- PNAME(mout_aud_group_p) = { "dout_aud_cdclk", "ioclk_audiocdclk0" };
- 
--static unsigned long aud_clk_regs[] __initdata = {
-+static const unsigned long aud_clk_regs[] __initconst = {
- 	MUX_SEL_AUD,
- 	DIV_AUD0,
- 	DIV_AUD1,
-@@ -1247,13 +1247,13 @@ static unsigned long aud_clk_regs[] __initdata = {
- 	ENABLE_SCLK_AUD,
- };
- 
--static struct samsung_mux_clock aud_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock aud_mux_clks[] __initconst = {
- 	MUX(0, "mout_sclk_i2s", mout_aud_group_p, MUX_SEL_AUD, 12, 1),
- 	MUX(0, "mout_sclk_pcm", mout_aud_group_p, MUX_SEL_AUD, 16, 1),
- 	MUX(0, "mout_aud_pll_user", mout_aud_pll_user_p, MUX_SEL_AUD, 20, 1),
- };
- 
--static struct samsung_div_clock aud_div_clks[] __initdata = {
-+static const struct samsung_div_clock aud_div_clks[] __initconst = {
- 	DIV(0, "dout_aud_ca5", "mout_aud_pll_user", DIV_AUD0, 0, 4),
- 	DIV(0, "dout_aclk_aud", "dout_aud_ca5", DIV_AUD0, 4, 4),
- 	DIV(0, "dout_aud_pclk_dbg", "dout_aud_ca5", DIV_AUD0, 8, 4),
-@@ -1265,7 +1265,7 @@ static struct samsung_div_clock aud_div_clks[] __initdata = {
- 	DIV(0, "dout_aud_cdclk", "mout_aud_pll_user", DIV_AUD1, 24, 4),
- };
- 
--static struct samsung_gate_clock aud_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
- 	GATE(SCLK_PCM, "sclk_pcm", "dout_sclk_pcm",
- 			ENABLE_SCLK_AUD, 27, CLK_SET_RATE_PARENT, 0),
- 	GATE(SCLK_I2S, "sclk_i2s", "dout_sclk_i2s",
-@@ -1293,7 +1293,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
- 	GATE(ACLK_ADMA, "aclk_dmac", "dout_aclk_aud", ENABLE_ACLK_AUD, 31, 0, 0),
- };
- 
--static struct samsung_cmu_info aud_cmu_info __initdata = {
-+static const struct samsung_cmu_info aud_cmu_info __initconst = {
- 	.mux_clks		= aud_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(aud_mux_clks),
- 	.div_clks		= aud_div_clks,
--- 
-1.9.1
+ #include "fsl_dma.h"
+ #include "fsl_ssi.h"
 
