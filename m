@@ -1,277 +1,96 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1462737711-10017-7-git-send-email-maxime.ripard@free-electrons.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-7-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 22 May 2016 00:30:19 +0800
-Message-ID: <CAGb2v66eMndSwAGs-Nmx6f1ct+JdQMh7JLdVa4geP2YYb4tsog@mail.gmail.com>
-Subject: Re: [PATCH 06/16] clk: sunxi-ng: Add divider table clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 4/5] clk: qcom: ipq4019: Added the cpu clock frequency change notifier
+Date: Mon, 30 May 2016 20:02:37 +0530
+Message-Id: <1464618758-20965-5-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The current IPQ4019 clock driver code gives the crash or gets hang
+while switching the CPU frequency some time. The APSS CPU Clock
+divider is not glitch free so the APPS clock need to be switched for
+stable clock duringthe change.
 
-On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add support for clocks based on a divider tables.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile        |   1 +
->  drivers/clk/sunxi-ng/ccu_div_table.c | 117 +++++++++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_div_table.h |  75 ++++++++++++++++++++++
->  3 files changed, 193 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_div_table.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_div_table.h
->
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index aa5c411ff8ea..f20c6c8f217c 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -1,6 +1,7 @@
->  obj-y += ccu_common.o
->  obj-y += ccu_reset.o
->
-> +obj-y += ccu_div_table.o
->  obj-y += ccu_fixed_factor.o
->  obj-y += ccu_gate.o
->  obj-y += ccu_mux.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_div_table.c b/drivers/clk/sunxi-ng/ccu_div_table.c
-> new file mode 100644
-> index 000000000000..cbfff0bd47e3
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_div_table.c
-> @@ -0,0 +1,117 @@
-> +/*
-> + * Copyright (C) 2016 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_div_table.h"
-> +#include "ccu_gate.h"
-> +
-> +static void ccu_div_table_find_best(unsigned long parent, unsigned long rate,
-> +                                   struct ccu_div_table *ct,
-> +                                   unsigned int *index)
-> +{
-> +       unsigned long best_rate = 0;
-> +       unsigned int best_index = 0;
-> +       unsigned int _index;
-> +
-> +       for (_index = 0; _index <= ct->num_divs; _index++) {
-> +               unsigned long tmp_rate = parent / ct->table[_index];
-> +
-> +               if (tmp_rate > rate)
-> +                       continue;
-> +
-> +               if ((rate - tmp_rate) < (rate - best_rate)) {
-> +                       best_rate = tmp_rate;
-> +                       best_index = _index;
-> +               }
-> +       }
-> +
-> +       *index = best_index;
-> +}
+This patch adds the frequency change notifier for APSS CPU clock.
+It changes the parent of this clock to stable PLL FEPLL500 when it
+gets for PRE_RATE_CHANGE event. This event will be generated before
+actual clock set operations. The clock set operation will again change
+its corresponding parent by getting the same from frequency table.
 
-You can drop this function and use the CCF helpers (mentioned below)
-instead.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-> +
-> +static void ccu_div_table_disable(struct clk_hw *hw)
-> +{
-> +       struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-> +
-> +       return ccu_gate_helper_disable(&ct->common, ct->enable);
-> +}
-> +
-> +static int ccu_div_table_enable(struct clk_hw *hw)
-> +{
-> +       struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-> +
-> +       return ccu_gate_helper_enable(&ct->common, ct->enable);
-> +}
-> +
-> +static int ccu_div_table_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-> +
-> +       return ccu_gate_helper_is_enabled(&ct->common, ct->enable);
-> +}
-> +
-> +static unsigned long ccu_div_table_recalc_rate(struct clk_hw *hw,
-> +                                              unsigned long parent_rate)
-> +{
-> +       struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-> +       unsigned long div;
-> +       u32 reg;
-> +
-> +       reg = readl(ct->common.base + ct->common.reg);
-> +
-> +       div = reg >> ct->div.shift;
-> +       div &= (1 << ct->div.width) - 1;
-> +
-> +       return parent_rate / ct->table[div];
-
-CCF provides divider_recalc_rate().
-
-> +}
-> +
-> +static long ccu_div_table_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                                    unsigned long *parent_rate)
-> +{
-> +       struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-> +       unsigned int index;
-> +
-> +       ccu_div_table_find_best(*parent_rate, rate,
-> +                               ct, &index);
-> +
-> +       return *parent_rate / ct->table[index];
-
-CCF provides divider_round_rate().
-
-> +}
-> +
-> +static int ccu_div_table_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                                 unsigned long parent_rate)
-> +{
-> +       struct ccu_div_table *ct = hw_to_ccu_div_table(hw);
-> +       unsigned long flags;
-> +       unsigned int index;
-> +       u32 reg;
-> +
-> +       ccu_div_table_find_best(parent_rate, rate, ct, &index);
-
-CCF provides divider_get_val().
-
-> +
-> +       spin_lock_irqsave(ct->common.lock, flags);
-> +
-> +       reg = readl(ct->common.base + ct->common.reg);
-> +       reg &= ~GENMASK(ct->div.width + ct->div.shift, ct->div.shift);
-> +       writel(reg | ((ct->table[index]) << ct->div.shift),
-> +              ct->common.base + ct->common.reg);
-> +
-> +       spin_unlock_irqrestore(ct->common.lock, flags);
-> +
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops ccu_div_table_ops = {
-> +       .disable        = ccu_div_table_disable,
-> +       .enable         = ccu_div_table_enable,
-> +       .is_enabled     = ccu_div_table_is_enabled,
-> +
-> +       .recalc_rate    = ccu_div_table_recalc_rate,
-> +       .round_rate     = ccu_div_table_round_rate,
-> +       .set_rate       = ccu_div_table_set_rate,
-> +};
-> diff --git a/drivers/clk/sunxi-ng/ccu_div_table.h b/drivers/clk/sunxi-ng/ccu_div_table.h
-> new file mode 100644
-> index 000000000000..bd7da49087ed
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_div_table.h
-> @@ -0,0 +1,75 @@
-> +/*
-> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_DIV_TABLE_H_
-> +#define _CCU_DIV_TABLE_H_
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_common.h"
-> +#include "ccu_factor.h"
-> +
-> +struct ccu_div_table {
-> +       u32                     enable;
-> +
-> +       u8                      *table;
-
-I suggest using struct clk_div_table instead, to be able to use the
-CCF helpers.
-
-> +       int                     num_divs;
-
-This field won't be needed then, but you should add a divider flags
-field.
-
-Regards
-ChenYu
-
-> +
-> +       struct ccu_factor       div;
-> +       struct ccu_common       common;
-> +};
-> +
-> +#define SUNXI_CCU_DIV_TABLE(_struct, _name, _parent, _reg,             \
-> +                           _shift, _width,                             \
-> +                           _table, _flags)                             \
-> +       struct ccu_div_table _struct = {                                \
-> +               .table          = _table,                               \
-> +               .num_divs       = ARRAY_SIZE(_table),                   \
-> +               .div            = SUNXI_CLK_FACTOR(_shift, _width),     \
-> +               .common = {                                             \
-> +                       .reg            = _reg,                         \
-> +                       .hw.init        = SUNXI_HW_INIT(_name,          \
-> +                                                       _parent,        \
-> +                                                       &ccu_div_table_ops, \
-> +                                                       _flags),        \
-> +               }                                                       \
-> +       }
-> +
-> +#define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,   \
-> +                                     _shift, _width,                   \
-> +                                     _table, _gate, _flags)            \
-> +       struct ccu_div_table _struct = {                                \
-> +               .enable         = _gate,                                \
-> +               .table          = _table,                               \
-> +               .num_divs       = ARRAY_SIZE(_table),                   \
-> +               .div            = SUNXI_CLK_FACTOR(_shift, _width),     \
-> +               .common = {                                             \
-> +                       .reg            = _reg,                         \
-> +                       .features       = CCU_FEATURE_GATE,             \
-> +                       .hw.init        = SUNXI_HW_INIT(_name,          \
-> +                                                       _parent,        \
-> +                                                       &ccu_div_table_ops, \
-> +                                                       _flags),        \
-> +               }                                                       \
-> +       }
-> +
-> +static inline struct ccu_div_table *hw_to_ccu_div_table(struct clk_hw *hw)
-> +{
-> +       struct ccu_common *common = hw_to_ccu_common(hw);
-> +
-> +       return container_of(common, struct ccu_div_table, common);
-> +}
-> +
-> +extern const struct clk_ops ccu_div_table_ops;
-> +
-> +#endif /* _CCU_DIV_H_ */
-> --
-> 2.8.2
->
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 263577c..69a8250 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1455,9 +1455,27 @@ static const struct of_device_id gcc_ipq4019_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, gcc_ipq4019_match_table);
+ 
++int cpu_clk_notifier_fn(struct notifier_block *nb,
++			unsigned long action, void *data)
++{
++	int err = 0;
++
++	if (action == PRE_RATE_CHANGE) {
++		err = clk_rcg2_ops.set_parent(&apps_clk_src.clkr.hw,
++							P_FEPLL500);
++	}
++
++	return notifier_from_errno(err);
++}
++
++struct notifier_block cpu_clk_notifier = {
++	.notifier_call = cpu_clk_notifier_fn,
++};
++
+ static int gcc_ipq4019_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	int err;
+ 
+ 	clk_register_fixed_rate(dev, "fepll125", "xo", 0, 125000000);
+ 	clk_register_fixed_rate(dev, "fepll125dly", "xo", 0, 125000000);
+@@ -1469,7 +1487,13 @@ static int gcc_ipq4019_probe(struct platform_device *pdev)
+ 	clk_register_fixed_rate(dev, "ddrpllsdcc", "xo", 0, 193000000);
+ 	clk_register_fixed_rate(dev, "pcnoc_clk_src", "xo", 0, 100000000);
+ 
+-	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
++	err = qcom_cc_probe(pdev, &gcc_ipq4019_desc);
++
++	if (!err)
++		clk_notifier_register(apps_clk_src.clkr.hw.clk,
++					&cpu_clk_notifier);
++
++	return err;
+ }
+ 
+ static struct platform_driver gcc_ipq4019_driver = {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
