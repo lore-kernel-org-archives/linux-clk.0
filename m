@@ -1,97 +1,181 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 27 May 2016 10:41:59 -0500
-From: Rob Herring <robh@kernel.org>
-To: loic pallardy <loic.pallardy@st.com>
-Cc: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.135]:52525 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161029AbcE3NPG (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2016 09:15:06 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	"kernel@stlinux.com" <kernel@stlinux.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <treding@nvidia.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Vincent ABRIOU <vincent.abriou@st.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: Re: [STLinux Kernel] [PATCH 02/11] drivers: clk: st: Add clock
- propagation for audio clocks
-Message-ID: <20160527154159.GA17818@rob-hp-laptop>
-References: <1463560892-7209-1-git-send-email-gabriel.fernandez@linaro.org>
- <1463560892-7209-3-git-send-email-gabriel.fernandez@linaro.org>
- <20160525172409.GA27913@rob-hp-laptop>
- <CAG374jDTCJfZB+PuAnggjXhbcd3NjJqrESpe_EnMniCAeoph9A@mail.gmail.com>
- <CAL_JsqLOG4P0H+HkQ3mJhfibatuV2T51KqOn-+U+LK8WUx7QgA@mail.gmail.com>
- <5746F486.602@st.com>
- <CAL_JsqLeD8uTmMYLFZ5Sh9=JV5s1xthvruXL-W=c=zcVS=G-ZA@mail.gmail.com>
- <5747F5E8.5030300@st.com>
+	Scott Wood <oss@buserror.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: [PATCH 1/4]  base: soc: introduce soc_device_match() interface
+Date: Mon, 30 May 2016 15:14:38 +0200
+Message-ID: <6032641.cjSseEG2PF@wuerfel>
+In-Reply-To: <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com> <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5747F5E8.5030300@st.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 27, 2016 at 09:23:20AM +0200, loic pallardy wrote:
-> 
-> 
-> On 05/26/2016 03:20 PM, Rob Herring wrote:
-> >On Thu, May 26, 2016 at 8:05 AM, loic pallardy <loic.pallardy@st.com> wrote:
-> >>
-> >>
-> >>On 05/26/2016 02:46 PM, Rob Herring wrote:
-> >>>
-> >>>On Thu, May 26, 2016 at 4:49 AM, Gabriel Fernandez
-> >>><gabriel.fernandez@linaro.org> wrote:
-> >>>>
-> >>>>On 25 May 2016 at 19:24, Rob Herring <robh@kernel.org> wrote:
-> >>>>>
-> >>>>>
-> >>>>>On Wed, May 18, 2016 at 10:41:23AM +0200, Gabriel Fernandez wrote:
-> >>>>>>
-> >>>>>>This patch allows fine tuning of the quads FS for audio clocks
-> >>>>>>accuracy.
-> >>>>>>
+We keep running into cases where device drivers want to know the exact
+version of the SoC a they are currently running on. In the past, this
+has usually been done through a vendor specific API that can be called
+by a driver, or by directly accessing some kind of version register
+that is not part of the device itself but that belongs to a global
+register area of the chip.
 
-> >>>
-> >>>That is no different and suffers the same point I raised. It requires
-> >>>updating the DT for any clock configuration change or enhancement.
-> >>>
-> >>Agree with you, DT update is needed as soon as a clock configuration should
-> >>be changed. This is due to STiH clock driver design based on DT description
-> >>of SoC clock tree.
-> >>
-> >>This clock driver was accepted 2 years ago. At the time being there was
-> >>discussion about clock tree description location: driver or DT.
-> >>Bad choice was done for this driver...
-> >>
-> >>If we decide to redesign STiH clock driver using in-driver clock tree
-> >>description, this will modify STiH clock DT nodes description and so break
-> >>DT backward compatibility.
-> >>
-> >>What's from your pov the best option?
-> >
-> >You can break it once or every time you need a clock change. I'd go
-> >with the former. Maybe more specific compatible strings throughout
-> >alone would be enough rather than a flag day changing the binding.
-> 
-> So if I understand you correctly, main issue is d0 and d2 signification.
-> d0 and d2 are indeed location of the flexgen in the SoC. But that's right
-> flexgen are dedicated to clocks generation for features (system, audio,
-> video).
-> What about "st,flexgen-audio" and "st,flexgen-video"?
+Common reasons for doing this include:
 
-It is not so much the name of these 2, but whether there are other cases 
-for different clock nodes that could need the same thing. If so, update 
-them all now rather than 1 by 1.
+- A machine is not using devicetree or similar for passing data
+  about on-chip devices, but just announces their presence using
+  boot-time platform devices, and the machine code itself does
+  not care about the revision.
 
-Rob
+- There is existing firmware or boot loaders with existing DT
+  binaries with generic compatible strings that do not identify
+  the particular revision of each device, but the driver knows
+  which SoC revisions include which part
+
+- A prerelease version of a chip has some quirks and we are
+  using the same version of the bootloader and the DT blob
+  on both the prerelease and the final version. An update of
+  the DT binding seems inappropriate because that would involve
+  maintaining multiple copies of the dts and/or bootloader.
+
+This introduces the soc_device_match() interface that is meant
+to work like of_match_node() but instead of identifying the
+version of a device, it identifies the SoC itself using a
+vendor-agnostic interface.
+
+Unlike soc_device_match(), we do not do an exact string compare
+but instead use glob_match() to allow wildcards in strings.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 246acdafedb6..fc7613cc7fd5 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -225,6 +225,7 @@ config GENERIC_CPU_AUTOPROBE
+ 
+ config SOC_BUS
+ 	bool
++	select GLOB
+ 
+ source "drivers/base/regmap/Kconfig"
+ 
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index 75b98aad6faf..e9623c6674a5 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -14,6 +14,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/err.h>
++#include <linux/glob.h>
+ 
+ static DEFINE_IDA(soc_ida);
+ 
+@@ -168,3 +169,60 @@ static void __exit soc_bus_unregister(void)
+ 	bus_unregister(&soc_bus_type);
+ }
+ module_exit(soc_bus_unregister);
++
++static int soc_device_match_one(struct device *dev, void *arg)
++{
++	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	struct soc_device_attribute *match = arg;
++
++	if (match->machine && !glob_match(match->machine, soc_dev->attr->machine))
++		return 0;
++
++	if (match->family && !glob_match(match->family, soc_dev->attr->family))
++		return 0;
++
++	if (match->revision && !glob_match(match->revision, soc_dev->attr->revision))
++		return 0;
++
++	if (match->soc_id && !glob_match(match->soc_id, soc_dev->attr->revision))
++		return 0;
++
++	return 1;
++}
++
++/*
++ * soc_device_match - identify the SoC in the machine
++ * @matches: zero-terminated array of possible matches
++ *
++ * returns the first matching entry of the argument array, or NULL
++ * if none of them match.
++ *
++ * This function is meant as a helper in place of of_match_node()
++ * in cases where either no device tree is available or the information
++ * in a device node is insufficient to identify a particular variant
++ * by its compatible strings or other properties. For new devices,
++ * the DT binding should always provide unique compatible strings
++ * that allow the use of of_match_node() instead.
++ *
++ * The calling function can use the .data entry of the
++ * soc_device_attribute to pass a structure or function pointer for
++ * each entry.
++ */
++struct soc_device_attribute *soc_device_match(struct soc_device_attribute *matches)
++{
++	struct device *dev;
++	int ret;
++
++	for (ret = 0; ret == 0; matches++) {
++		if (matches->machine || matches->family ||
++		    matches->revision || matches->soc_id)
++			return NULL;
++
++		dev = NULL;
++		ret = bus_for_each_dev(&soc_bus_type, dev, matches,
++					 soc_device_match_one);
++	}
++
++	return matches;
++}
++EXPORT_SYMBOL_GPL(soc_device_match);
+diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
+index 2739ccb69571..02c48c76052b 100644
+--- a/include/linux/sys_soc.h
++++ b/include/linux/sys_soc.h
+@@ -13,6 +13,8 @@ struct soc_device_attribute {
+ 	const char *family;
+ 	const char *revision;
+ 	const char *soc_id;
++
++	const void *data;
+ };
+ 
+ /**
+@@ -34,4 +36,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
+  */
+ struct device *soc_device_to_device(struct soc_device *soc);
+ 
++struct soc_device_attribute *soc_device_match(struct soc_device_attribute *matches);
++
+ #endif /* __SOC_BUS_H */
+
