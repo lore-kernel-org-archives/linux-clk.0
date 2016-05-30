@@ -1,46 +1,129 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 11 May 2016 11:40:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock fixes for 4.6, take 2
-Message-ID: <20160511184023.GE3492@codeaurora.org>
-References: <20160503133605.GN5874@tiger>
- <20160506180217.GW3492@codeaurora.org>
- <20160511121512.GP5874@tiger>
+Return-Path: <dirk.behme@gmail.com>
+Return-Path: <dirk.behme@gmail.com>
+Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock
+ Definitions
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+ <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+ Magnus Damm <damm+renesas@opensource.se>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <574C6C16.3020703@gmail.com>
+Date: Mon, 30 May 2016 18:36:38 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160511121512.GP5874@tiger>
+In-Reply-To: <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/11, Shawn Guo wrote:
-> On Fri, May 06, 2016 at 11:02:17AM -0700, Stephen Boyd wrote:
-> > On 05/03, Shawn Guo wrote:
-> > > The following changes since commit 7196c52c9377df0175b510ff5896bda524f7345e:
-> > > 
-> > >   clk: imx6q: fix typo in CAN clock definition (2016-04-13 15:27:15 +0800)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-fixes-4.6-2
-> > > 
-> > > for you to fetch changes up to 3397c2c45b1b6f54834dfeae30a73046f33ca943:
-> > > 
-> > >   ARM: dts: imx35: restore existing used clock enumeration (2016-04-18 12:37:21 +0800)
-> > > 
-> > > ----------------------------------------------------------------
-> > > The i.MX clock fixes for 4.6, take 2:
-> > >  - Fix the commit 3713e3f5e927 ("clk: imx35: define two clocks for rtc")
-> > >    which messed up the clock enumeration when adding new clock.
-> > 
-> > This commit wasn't introduced in this merge window, so I'm going
-> > to pull this into clk-next unless you have some justification.
-> 
-> That's fine.  Thanks, Stephen.
+Hi Geert,
 
-Thanks. Pulled into clk-next.
+On 30.05.2016 18:28, Geert Uytterhoeven wrote:
+> Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
+> in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
+> datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
+>
+> Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
+> not included, as they are used as internal clock sources only, and never
+> referenced from DT.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> v2:
+>    - Add Tested-by.
+> ---
+>   include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
+>   1 file changed, 69 insertions(+)
+>   create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
+>
+> diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> new file mode 100644
+> index 0000000000000000..1e5942695f0dd057
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> @@ -0,0 +1,69 @@
+> +/*
+> + * Copyright (C) 2016 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7796 CPG Core Clocks */
+> +#define R8A7796_CLK_Z			0
+> +#define R8A7796_CLK_Z2			1
+> +#define R8A7796_CLK_ZR			2
+> +#define R8A7796_CLK_ZG			3
+> +#define R8A7796_CLK_ZTR			4
+> +#define R8A7796_CLK_ZTRD2		5
+> +#define R8A7796_CLK_ZT			6
+> +#define R8A7796_CLK_ZX			7
+> +#define R8A7796_CLK_S0D1		8
+> +#define R8A7796_CLK_S0D2		9
+> +#define R8A7796_CLK_S0D3		10
+> +#define R8A7796_CLK_S0D4		11
+> +#define R8A7796_CLK_S0D6		12
+> +#define R8A7796_CLK_S0D8		13
+> +#define R8A7796_CLK_S0D12		14
+> +#define R8A7796_CLK_S1D1		15
+> +#define R8A7796_CLK_S1D2		16
+> +#define R8A7796_CLK_S1D4		17
+> +#define R8A7796_CLK_S2D1		18
+> +#define R8A7796_CLK_S2D2		19
+> +#define R8A7796_CLK_S2D4		20
+> +#define R8A7796_CLK_S3D1		21
+> +#define R8A7796_CLK_S3D2		22
+> +#define R8A7796_CLK_S3D4		23
+> +#define R8A7796_CLK_LB			24
+> +#define R8A7796_CLK_CL			25
+> +#define R8A7796_CLK_ZB3			26
+> +#define R8A7796_CLK_ZB3D2		27
+> +#define R8A7796_CLK_ZB3D4		28
+> +#define R8A7796_CLK_CR			29
+> +#define R8A7796_CLK_CRD2		30
+> +#define R8A7796_CLK_SD0H		31
+> +#define R8A7796_CLK_SD0			32
+> +#define R8A7796_CLK_SD1H		33
+> +#define R8A7796_CLK_SD1			34
+> +#define R8A7796_CLK_SD2H		35
+> +#define R8A7796_CLK_SD2			36
+> +#define R8A7796_CLK_SD3H		37
+> +#define R8A7796_CLK_SD3			38
+> +#define R8A7796_CLK_SSP2		39
+> +#define R8A7796_CLK_SSP1		40
+> +#define R8A7796_CLK_SSPRS		41
+> +#define R8A7796_CLK_RPC			42
+> +#define R8A7796_CLK_RPCD2		43
+> +#define R8A7796_CLK_MSO			44
+> +#define R8A7796_CLK_CANFD		45
+> +#define R8A7796_CLK_HDMI		46
+> +#define R8A7796_CLK_CSI0		47
+> +#define R8A7796_CLK_CSIREF		48
+> +#define R8A7796_CLK_CP			49
+> +#define R8A7796_CLK_CPEX		50
+> +#define R8A7796_CLK_R			51
+> +#define R8A7796_CLK_OSC			52
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+I think we recently started a discussion to find a more clever way to 
+avoid re-defining (copy & paste) all this R-Car3 clocks  (compare [1]) 
+where they are the same over the R-Car3 family while still being able 
+to deal with the differences.
+
+Best regards
+
+Dirk
+
+[1] 
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/clock/r8a7795-cpg-mssr.h
