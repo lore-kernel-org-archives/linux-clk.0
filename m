@@ -1,93 +1,51 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Shunli
- Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v8 03/10] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Tue, 17 May 2016 13:05:04 +0800
-Message-ID: <1463461511-25019-4-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 08/14] ARM: dts: omap4-sdp: Add pdmclk binding for audio
+Date: Mon, 30 May 2016 11:55:16 +0300
+Message-ID: <20160530085522.30398-9-peter.ujfalusi@ti.com>
+In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+The twl6040 codec is generating the pdmclk, which is used by the McPDM as
+functional clock.
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
-
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+ arch/arm/boot/dts/omap4-sdp.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 2dd371d..34c6aa9 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -205,6 +205,7 @@ config COMMON_CLK_OXNAS
+diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
+index aae513265dc2..7e6cd2d8ed5d 100644
+--- a/arch/arm/boot/dts/omap4-sdp.dts
++++ b/arch/arm/boot/dts/omap4-sdp.dts
+@@ -367,6 +367,7 @@
  
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
+ 	twl6040: twl@4b {
+ 		compatible = "ti,twl6040";
++		#clock-cells = <0>;
+ 		reg = <0x4b>;
+ 
+ 		pinctrl-names = "default";
+@@ -620,6 +621,10 @@
+ &mcpdm {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mcpdm_pins>;
 +
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
++	clocks = <&twl6040>;
++	clock-names = "pdmclk";
 +
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+ 	status = "okay";
+ };
+ 
 -- 
-1.9.1
+2.8.3
