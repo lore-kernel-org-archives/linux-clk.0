@@ -1,93 +1,51 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <yanghongwei@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH 2/5] clk: hisilicon: add hisi_clk_alloc function.
-Date: Tue, 10 May 2016 17:19:10 +0800
-Message-ID: <1462871953-26606-3-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1462871953-26606-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 07/14] ARM: dts: omap4-panda-common: Add pdmclk binding for audio
+Date: Mon, 30 May 2016 11:55:15 +0300
+Message-ID: <20160530085522.30398-8-peter.ujfalusi@ti.com>
+In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Before, there was an ordering issue that the clock provider
-had been published in hisi_clk_init before it could provide
-valid clocks to consumers. hisi_clk_alloc is just used to
-allocate memory space for struct hisi_clock_data. It makes
-it possible to publish the provider after the clocks are ready.
+The twl6040 codec is generating the pdmclk, which is used by the McPDM as
+functional clock.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/clk/hisilicon/clk.c | 29 +++++++++++++++++++++++++++++
- drivers/clk/hisilicon/clk.h |  3 +++
- 2 files changed, 32 insertions(+)
+ arch/arm/boot/dts/omap4-panda-common.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 9b15adb..78675d1 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -37,6 +37,35 @@
+diff --git a/arch/arm/boot/dts/omap4-panda-common.dtsi b/arch/arm/boot/dts/omap4-panda-common.dtsi
+index df2e356ec089..e1d606f64cb7 100644
+--- a/arch/arm/boot/dts/omap4-panda-common.dtsi
++++ b/arch/arm/boot/dts/omap4-panda-common.dtsi
+@@ -376,6 +376,7 @@
  
- static DEFINE_SPINLOCK(hisi_clk_lock);
+ 	twl6040: twl@4b {
+ 		compatible = "ti,twl6040";
++		#clock-cells = <0>;
+ 		reg = <0x4b>;
  
-+struct hisi_clock_data *hisi_clk_alloc(struct platform_device *pdev,
-+						int nr_clks)
-+{
-+	struct hisi_clock_data *clk_data;
-+	struct resource *res;
-+	struct clk **clk_table;
+ 		pinctrl-names = "default";
+@@ -479,6 +480,10 @@
+ &mcpdm {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mcpdm_pins>;
 +
-+	clk_data = devm_kmalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return NULL;
++	clocks = <&twl6040>;
++	clock-names = "pdmclk";
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	clk_data->base = devm_ioremap(&pdev->dev,
-+				res->start, resource_size(res));
-+	if (!clk_data->base)
-+		return NULL;
-+
-+	clk_table = devm_kmalloc(&pdev->dev, sizeof(struct clk *) * nr_clks,
-+				GFP_KERNEL);
-+	if (!clk_table)
-+		return NULL;
-+
-+	clk_data->clk_data.clks = clk_table;
-+	clk_data->clk_data.clk_num = nr_clks;
-+
-+	return clk_data;
-+}
-+EXPORT_SYMBOL_GPL(hisi_clk_alloc);
-+
- struct hisi_clock_data *hisi_clk_init(struct device_node *np,
- 					     int nr_clks)
- {
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 20d64af..5fc644f 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -30,6 +30,8 @@
- #include <linux/io.h>
- #include <linux/spinlock.h>
+ 	status = "okay";
+ };
  
-+struct platform_device;
-+
- struct hisi_clock_data {
- 	struct clk_onecell_data	clk_data;
- 	void __iomem		*base;
-@@ -110,6 +112,7 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 	const char *parent_name, unsigned long flags, void __iomem *reg,
- 	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
- 
-+struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
- struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
- void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
- 				int, struct hisi_clock_data *);
 -- 
-1.9.1
+2.8.3
