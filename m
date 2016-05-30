@@ -1,102 +1,51 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-Date: Sun,  8 May 2016 21:05:46 +0200
-Message-Id: <1462734367-5619-2-git-send-email-krzk@kernel.org>
-In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 06/14] ARM: dts: omap5-board-common: Add pdmclk binding for audio
+Date: Mon, 30 May 2016 11:55:14 +0300
+Message-ID: <20160530085522.30398-7-peter.ujfalusi@ti.com>
+In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add license and copyrights (file introduced in 2014) to header with
-Exynos5410 clock IDs. Additionally reformat it to improve readability.
+The twl6040 codec is generating the pdmclk, which is used by the McPDM as
+functional clock.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/omap5-board-common.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 9b180f032e2d..213f19e02870 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,33 +1,43 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants for Exynos5421 clock controller.
-+*/
+diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
+index 19efaa079797..63d0352d068d 100644
+--- a/arch/arm/boot/dts/omap5-board-common.dtsi
++++ b/arch/arm/boot/dts/omap5-board-common.dtsi
+@@ -637,6 +637,7 @@
+ 
+ 	twl6040: twl@4b {
+ 		compatible = "ti,twl6040";
++		#clock-cells = <0>;
+ 		reg = <0x4b>;
+ 
+ 		pinctrl-names = "default";
+@@ -658,6 +659,10 @@
+ &mcpdm {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mcpdm_pins>;
 +
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
++	clocks = <&twl6040>;
++	clock-names = "pdmclk";
++
+ 	status = "okay";
+ };
  
- /* core clocks */
--#define CLK_FIN_PLL 1
--#define CLK_FOUT_APLL 2
--#define CLK_FOUT_CPLL 3
--#define CLK_FOUT_MPLL 4
--#define CLK_FOUT_BPLL 5
--#define CLK_FOUT_KPLL 6
-+#define CLK_FIN_PLL		1
-+#define CLK_FOUT_APLL		2
-+#define CLK_FOUT_CPLL		3
-+#define CLK_FOUT_MPLL		4
-+#define CLK_FOUT_BPLL		5
-+#define CLK_FOUT_KPLL		6
- 
- /* gate for special clocks (sclk) */
--#define CLK_SCLK_UART0 128
--#define CLK_SCLK_UART1 129
--#define CLK_SCLK_UART2 130
--#define CLK_SCLK_UART3 131
--#define CLK_SCLK_MMC0 132
--#define CLK_SCLK_MMC1 133
--#define CLK_SCLK_MMC2 134
-+#define CLK_SCLK_UART0		128
-+#define CLK_SCLK_UART1		129
-+#define CLK_SCLK_UART2		130
-+#define CLK_SCLK_UART3		131
-+#define CLK_SCLK_MMC0		132
-+#define CLK_SCLK_MMC1		133
-+#define CLK_SCLK_MMC2		134
- 
- /* gate clocks */
--#define CLK_UART0 257
--#define CLK_UART1 258
--#define CLK_UART2 259
--#define CLK_UART3 260
--#define CLK_MCT 315
--#define CLK_MMC0 351
--#define CLK_MMC1 352
--#define CLK_MMC2 353
-+#define CLK_UART0		257
-+#define CLK_UART1		258
-+#define CLK_UART2		259
-+#define CLK_UART3		260
-+#define CLK_MCT			315
-+#define CLK_MMC0		351
-+#define CLK_MMC1		352
-+#define CLK_MMC2		353
- 
--#define CLK_NR_CLKS 512
-+#define CLK_NR_CLKS		512
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
 -- 
-2.5.0
+2.8.3
