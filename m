@@ -1,178 +1,78 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 21/22] ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
-Date: Sun, 15 May 2016 22:14:02 +0200
-Message-Id: <1463343243-26429-22-git-send-email-krzk@kernel.org>
-In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 1/5] clk: qcom: ipq4019: Modified the fixed clock rate to proper values
+Date: Mon, 30 May 2016 20:02:34 +0530
+Message-Id: <1464618758-20965-2-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add pincontrol groups for HSI2C (USI), I2C, PWM and UART to Exynos5410.
-This allows configuring these pins to specific functions.
+Modified the fixed clock rate initialization in the IPQ4019 clock
+probe function with correct values.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Also some of the fixed clocks entries were not added in the current
+driver file so added the same.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 133 ++++++++++++++++++++++++++++++
- 1 file changed, 133 insertions(+)
+ drivers/clk/qcom/gcc-ipq4019.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index ddacafa1e907..b58a0f29f42c 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -278,6 +278,139 @@
- 		#interrupt-cells = <2>;
- 	};
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 3cd1af0..db24cb8 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -80,7 +80,7 @@ static struct parent_map gcc_xo_sdcc1_500_map[] = {
  
-+	uart0_data: uart0-data {
-+		samsung,pins = "gpa0-0", "gpa0-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart0_fctl: uart0-fctl {
-+		samsung,pins = "gpa0-2", "gpa0-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart1_data: uart1-data {
-+		samsung,pins = "gpa0-4", "gpa0-5";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart1_fctl: uart1-fctl {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c2_bus: i2c2-bus {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart2_data: uart2-data {
-+		samsung,pins = "gpa1-0", "gpa1-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart2_fctl: uart2-fctl {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c3_bus: i2c3-bus {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart3_data: uart3-data {
-+		samsung,pins = "gpa1-4", "gpa1-5";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c4_hs_bus: i2c4-hs-bus {
-+		samsung,pins = "gpa2-0", "gpa2-1";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c5_hs_bus: i2c5-hs-bus {
-+		samsung,pins = "gpa2-2", "gpa2-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c6_hs_bus: i2c6-hs-bus {
-+		samsung,pins = "gpb1-3", "gpb1-4";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm0_out: pwm0-out {
-+		samsung,pins = "gpb2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm1_out: pwm1-out {
-+		samsung,pins = "gpb2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm2_out: pwm2-out {
-+		samsung,pins = "gpb2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm3_out: pwm3-out {
-+		samsung,pins = "gpb2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c7_hs_bus: i2c7-hs-bus {
-+		samsung,pins = "gpb2-2", "gpb2-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c0_bus: i2c0-bus {
-+		samsung,pins = "gpb3-0", "gpb3-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c1_bus: i2c1-bus {
-+		samsung,pins = "gpb3-2", "gpb3-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	sd0_clk: sd0-clk {
- 		samsung,pins = "gpc0-0";
- 		samsung,pin-function = <2>;
+ static const char * const gcc_xo_sdcc1_500[] = {
+ 	"xo",
+-	"ddrpll",
++	"ddrpllsdcc",
+ 	"fepll500",
+ };
+ 
+@@ -1317,13 +1317,15 @@ static int gcc_ipq4019_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+-	clk_register_fixed_rate(dev, "fepll125", "xo", 0, 200000000);
+-	clk_register_fixed_rate(dev, "fepll125dly", "xo", 0, 200000000);
+-	clk_register_fixed_rate(dev, "fepllwcss2g", "xo", 0, 200000000);
+-	clk_register_fixed_rate(dev, "fepllwcss5g", "xo", 0, 200000000);
++	clk_register_fixed_rate(dev, "fepll125", "xo", 0, 125000000);
++	clk_register_fixed_rate(dev, "fepll125dly", "xo", 0, 125000000);
++	clk_register_fixed_rate(dev, "fepllwcss2g", "xo", 0, 250000000);
++	clk_register_fixed_rate(dev, "fepllwcss5g", "xo", 0, 250000000);
+ 	clk_register_fixed_rate(dev, "fepll200", "xo", 0, 200000000);
+-	clk_register_fixed_rate(dev, "fepll500", "xo", 0, 200000000);
++	clk_register_fixed_rate(dev, "fepll500", "xo", 0, 500000000);
+ 	clk_register_fixed_rate(dev, "ddrpllapss", "xo", 0, 666000000);
++	clk_register_fixed_rate(dev, "ddrpllsdcc", "xo", 0, 193000000);
++	clk_register_fixed_rate(dev, "pcnoc_clk_src", "xo", 0, 100000000);
+ 
+ 	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
+ }
 -- 
-2.5.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
