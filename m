@@ -1,48 +1,25 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 5 May 2016 17:25:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: linux-mmc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-	netdev@vger.kernel.org, ulf.hansson@linaro.org,
-	Scott Wood <oss@buserror.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Subject: Re: [v10, 1/7] Documentation: DT: update Freescale DCFG compatible
-Message-ID: <20160505222521.GA18377@rob-hp-laptop>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
- <1462417950-46796-2-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1462417950-46796-2-git-send-email-yangbo.lu@nxp.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
+ FSYS0} blocks clock
+To: Alim Akhtar <alim.akhtar@samsung.com>
+References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, thomas.ab@samsung.com,
+ k.kozlowski@samsung.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ sboyd@codeaurora.org, mturquette@baylibre.com, tomasz.figa@gmail.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <574C3718.3050301@samsung.com>
+Date: Mon, 30 May 2016 14:50:32 +0200
+MIME-version: 1.0
+In-reply-to: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 05, 2016 at 11:12:24AM +0800, Yangbo Lu wrote:
-> Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
-> of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
-> ls1043a, and ls2080a.
+On 04/14/2016 06:42 AM, Alim Akhtar wrote:
+> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
+> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
+> blocks registers. Let these clocks to be enabled all the time.
 > 
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> ---
-> Changes for v8:
-> 	- Added this patch
-> Changes for v9:
-> 	- Added a list for the possible compatibles
-> Changes for v10:
-> 	- None
-> ---
->  Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Patch applied, thanks.
