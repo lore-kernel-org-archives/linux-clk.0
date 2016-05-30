@@ -1,37 +1,100 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 01/22] dt-bindings: clock: Add license and reformat
- Exynos5410 clock IDs
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-2-git-send-email-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <93dcd991-43c5-7491-e747-654ae37e6065@osg.samsung.com>
-Date: Mon, 9 May 2016 15:37:08 -0400
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>
+CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH v1 13/14] ASoC: omap-mcpdm: Support for suspend resume
+Date: Mon, 30 May 2016 11:55:21 +0300
+Message-ID: <20160530085522.30398-14-peter.ujfalusi@ti.com>
+In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1462734367-5619-2-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Implement ASoC's suspend and resume callbacks.
+Since McPDM does not use pcm_trigger for start and stop of the stream due
+to strict sequencing needs with the twl6040, the callbacks will stop and
+restart the McPDM in case the board suspended during audio activity.
 
-On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
-> Add license and copyrights (file introduced in 2014) to header with
-> Exynos5410 clock IDs. Additionally reformat it to improve readability.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+ sound/soc/omap/omap-mcpdm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
+index 11bd07cdce22..74d6e6fdcfd0 100644
+--- a/sound/soc/omap/omap-mcpdm.c
++++ b/sound/soc/omap/omap-mcpdm.c
+@@ -66,6 +66,9 @@ struct omap_mcpdm {
+ 	/* McPDM needs to be restarted due to runtime reconfiguration */
+ 	bool restart;
+ 
++	/* pm state for suspend/resume handling */
++	int pm_active_count;
++
+ 	struct snd_dmaengine_dai_dma_data dma_data[2];
+ };
+ 
+@@ -422,12 +425,55 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int omap_mcpdm_suspend(struct snd_soc_dai *dai)
++{
++	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++
++	if (dai->active) {
++		omap_mcpdm_stop(mcpdm);
++		omap_mcpdm_close_streams(mcpdm);
++	}
++
++	mcpdm->pm_active_count = 0;
++	while (pm_runtime_active(mcpdm->dev)) {
++		pm_runtime_put_sync(mcpdm->dev);
++		mcpdm->pm_active_count++;
++	}
++
++	return 0;
++}
++
++static int omap_mcpdm_resume(struct snd_soc_dai *dai)
++{
++	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++
++	if (mcpdm->pm_active_count) {
++		while (mcpdm->pm_active_count--)
++			pm_runtime_get_sync(mcpdm->dev);
++
++		if (dai->active) {
++			omap_mcpdm_open_streams(mcpdm);
++			omap_mcpdm_start(mcpdm);
++		}
++	}
++
++
++	return 0;
++}
++#else
++#define omap_mcpdm_suspend NULL
++#define omap_mcpdm_resume NULL
++#endif
++
+ #define OMAP_MCPDM_RATES	(SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000)
+ #define OMAP_MCPDM_FORMATS	SNDRV_PCM_FMTBIT_S32_LE
+ 
+ static struct snd_soc_dai_driver omap_mcpdm_dai = {
+ 	.probe = omap_mcpdm_probe,
+ 	.remove = omap_mcpdm_remove,
++	.suspend = omap_mcpdm_suspend,
++	.resume = omap_mcpdm_resume,
+ 	.probe_order = SND_SOC_COMP_ORDER_LATE,
+ 	.remove_order = SND_SOC_COMP_ORDER_EARLY,
+ 	.playback = {
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.8.3
