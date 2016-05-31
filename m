@@ -1,119 +1,43 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [RFC PATCH 14/21] reset: uniphier: add reset driver for UniPhier
- PH1-Pro4 SoC
-Date: Tue, 10 May 2016 18:50:55 +0900
-Message-Id: <1462873862-30940-15-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1462873862-30940-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
+Date: Tue, 31 May 2016 20:39:01 +0200
+Message-Id: <1464719945-3417-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is just for review.
-Please do not apply this patch.
+Add clock for TMU to the Exynos5410 clock driver.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
+ drivers/clk/samsung/clk-exynos5410.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/reset/uniphier/Kconfig               |  4 +++
- drivers/reset/uniphier/Makefile              |  1 +
- drivers/reset/uniphier/reset-uniphier-pro4.c | 46 ++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
- create mode 100644 drivers/reset/uniphier/reset-uniphier-pro4.c
-
-diff --git a/drivers/reset/uniphier/Kconfig b/drivers/reset/uniphier/Kconfig
-index 875afd9..1633093 100644
---- a/drivers/reset/uniphier/Kconfig
-+++ b/drivers/reset/uniphier/Kconfig
-@@ -10,4 +10,8 @@ config RESET_UNIPHIER_LD4
- 	tristate "Reset driver for UniPhier PH1-LD4 SoC"
- 	default ARM
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 6c2e59c576ee..db9978dc6e83 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
+ 	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
++	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
  
-+config RESET_UNIPHIER_PRO4
-+	tristate "Reset driver for UniPhier PH1-Pro4 SoC"
-+	default ARM
-+
- endif
-diff --git a/drivers/reset/uniphier/Makefile b/drivers/reset/uniphier/Makefile
-index c99a420..d496fe8 100644
---- a/drivers/reset/uniphier/Makefile
-+++ b/drivers/reset/uniphier/Makefile
-@@ -1,3 +1,4 @@
- obj-y					+= reset-uniphier-core.o
- 
- obj-$(CONFIG_RESET_UNIPHIER_LD4)	+= reset-uniphier-ld4.o
-+obj-$(CONFIG_RESET_UNIPHIER_PRO4)	+= reset-uniphier-pro4.o
-diff --git a/drivers/reset/uniphier/reset-uniphier-pro4.c b/drivers/reset/uniphier/reset-uniphier-pro4.c
-new file mode 100644
-index 0000000..57ce253
---- /dev/null
-+++ b/drivers/reset/uniphier/reset-uniphier-pro4.c
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "reset-uniphier.h"
-+
-+static const struct uniphier_reset_data uniphier_pro4_reset_data[] = {
-+	{
-+		.id = 7,
-+		.reg = 0x2000,
-+		.mask = BIT(10),
-+		.deassert_val = BIT(10),
-+	},
-+	{ .id = UNIPHIER_RESET_ID_END }
-+};
-+
-+static int uniphier_pro4_reset_probe(struct platform_device *pdev)
-+{
-+	return uniphier_reset_probe(pdev, uniphier_pro4_reset_data);
-+}
-+
-+static struct platform_driver uniphier_pro4_reset_driver = {
-+	.probe = uniphier_pro4_reset_probe,
-+	.driver = {
-+		.name = "uniphier-pro4-reset",
-+	},
-+};
-+module_platform_driver(uniphier_pro4_reset_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PH1-Pro4 Reset Controller Driver");
-+MODULE_LICENSE("GPL");
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
+ 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
