@@ -1,72 +1,72 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 05/14] mfd: twl6040: Register child device for twl6040-pdmclk
-Date: Wed, 18 May 2016 16:46:27 +0300
-Message-ID: <1463579196-5484-6-git-send-email-peter.ujfalusi@ti.com>
-In-Reply-To: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-References: <1463579196-5484-1-git-send-email-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid
+ XU
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+ <574C5BD2.60008@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Rob Herring <robh+dt@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <574D557F.70209@samsung.com>
+Date: Tue, 31 May 2016 11:12:31 +0200
+MIME-version: 1.0
+In-reply-to: <574C5BD2.60008@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The McPDM in OMAP4/5 is using the pdmclk from twl6040 as functional clock.
-The twl6040-pdmclk driver provides a clock which can be used to make sure
-that the pdmclk is active when the McPDM is in use.
+On 05/30/2016 05:27 PM, Sylwester Nawrocki wrote:
+> On 05/28/2016 11:54 AM, Krzysztof Kozlowski wrote:
+>>
+>> The clock changes can go to clock tree. ARM changes to samsung-soc tree.
+>> Please provide me a tag with include/dt-bindings/clock commits so I can
+>> merge it.
+> 
+> I applied the clock tree patches and here is the tag for the three
+> include/dt-bindings patches:
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- Documentation/devicetree/bindings/mfd/twl6040.txt | 1 +
- drivers/mfd/twl6040.c                             | 5 +++++
- include/linux/mfd/twl6040.h                       | 2 +-
- 3 files changed, 7 insertions(+), 1 deletion(-)
+Thanks mate!
+Pulled.
 
-diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
-index e6afdfa3543d..9a98ee7c323d 100644
---- a/Documentation/devicetree/bindings/mfd/twl6040.txt
-+++ b/Documentation/devicetree/bindings/mfd/twl6040.txt
-@@ -12,6 +12,7 @@ Required properties:
- - interrupt-parent: The parent interrupt controller
- - gpio-controller:
- - #gpio-cells = <1>: twl6040 provides GPO lines.
-+- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
- - twl6040,audpwron-gpio: Power on GPIO line for the twl6040
- 
- - vio-supply: Regulator for the twl6040 VIO supply
-diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
-index 2596546553aa..873628a1bd79 100644
---- a/drivers/mfd/twl6040.c
-+++ b/drivers/mfd/twl6040.c
-@@ -782,6 +782,11 @@ static int twl6040_probe(struct i2c_client *client,
- 	cell->name = "twl6040-gpo";
- 	children++;
- 
-+	/* PDM clock support  */
-+	cell = &twl6040->cells[children];
-+	cell->name = "twl6040-pdmclk";
-+	children++;
-+
- 	/* The chip is powered down so mark regmap to cache only and dirty */
- 	regcache_cache_only(twl6040->regmap, true);
- 	regcache_mark_dirty(twl6040->regmap);
-diff --git a/include/linux/mfd/twl6040.h b/include/linux/mfd/twl6040.h
-index 8015db974157..ef0bb07c3f3d 100644
---- a/include/linux/mfd/twl6040.h
-+++ b/include/linux/mfd/twl6040.h
-@@ -168,7 +168,7 @@
- #define TWL6040_VIBROCDET		0x20
- #define TWL6040_TSHUTDET                0x40
- 
--#define TWL6040_CELLS			3
-+#define TWL6040_CELLS			4
- 
- #define TWL6040_REV_ES1_0		0x00
- #define TWL6040_REV_ES1_1		0x01 /* Rev ES1.1 and ES1.2 */
--- 
-2.8.2
+Best regards,
+Krzysztof
+
+> 
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> 
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt
+> 
+> for you to fetch changes up to ed1e1505db0c116affdfab01e650c44a9c459c65:
+> 
+>   dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+> (2016-05-30 16:00:11 +0200)
+> 
+> ----------------------------------------------------------------
+> Adition of missing clock index definitions for exynos5410 SoC
+> PWM, USB, I2C, and RTC device related clocks.
+> 
+> ----------------------------------------------------------------
+> Krzysztof Kozlowski (3):
+>       dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+>       dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+>       dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+> 
+>  include/dt-bindings/clock/exynos5410.h | 73
+> +++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
+>  1 file changed, 51 insertions(+), 22 deletions(-)
+> 
+> 
+> --
+> Thanks,
+> Sylwester
+> 
