@@ -1,75 +1,84 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 22 May 2016 21:22:19 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 08/16] clk: sunxi-ng: Add M-factor clock support
-Message-ID: <20160522192219.GZ27618@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-9-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v67wqsLR9QoMihSS6dkqqtyed=HqyBMJEp4adNm_xF-26Q@mail.gmail.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 5/6] ARM: dts: exynos: Configure PWM, usb3503, PMIC and
+ thermal on Odroid XU board
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+ <1464719945-3417-5-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <1ec0f7fc-f6e0-e4d6-e424-43289bf31b16@osg.samsung.com>
+Date: Tue, 31 May 2016 15:36:04 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tUxbtEzdJc4sX0sj"
-In-Reply-To: <CAGb2v67wqsLR9QoMihSS6dkqqtyed=HqyBMJEp4adNm_xF-26Q@mail.gmail.com>
+In-Reply-To: <1464719945-3417-5-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Krzysztof,
 
---tUxbtEzdJc4sX0sj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
+> Extend the DTS for Exynos5410-based Odroid XU board with:
+> 1. Proper PWM outputs,
+> 2. usb3503 USB HUB (with integrated LAN9730 ethernet adapter (smsc95xx)),
+> 3. Maxim 77802 PMIC (regulators, 32 kHz clocks, RTC),
+> 4. CPU thermal (trip points are the same as in Odroid XU3/XU4 but
+>    cooling maps are different as there is no CPU freq and only one
+>    cluster available for now),
+> 5. Regulator supplies for USB 3.0.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
 
-On Sun, May 22, 2016 at 01:09:09AM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Introduce support for clocks that divide by a linear factor.
->=20
-> I think we can have just one implementation for single divide factor
-> (either P or M)
-> clocks, using the CCF divider helpers. Even the divider table clock
-> could be merged
-> in.
+[snip]
 
-This is a good point, I'll merge the drivers.
+> +
+> +			ldo10_reg: LDO10 {
+> +				regulator-name = "vdd18_mipi";
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-always-on;
+> +			};
+> +
 
-Thanks!
-Maxime
+[snip]
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> +
+> +			ldo12_reg: LDO12 {
+> +				regulator-name = "vdd33_usb3";
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +
 
---tUxbtEzdJc4sX0sj
-Content-Type: application/pgp-signature; name="signature.asc"
+[snip]
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +
+> +			ldo15_reg: LDO15 {
+> +				regulator-name = "vdd10_usb3";
+> +				regulator-min-microvolt = <1000000>;
+> +				regulator-max-microvolt = <1000000>;
+> +				regulator-always-on;
+> +			};
+> +
 
-iQIcBAEBAgAGBQJXQgbrAAoJEBx+YmzsjxAghFcP/30L30PiM0YNEPfq4xo5Zm5Y
-ig3CDHG75eFFwTu6O8kp1iuxvgjvEuhOoteGkLo9enQodW5nfE+e5M0YOZ2B+h06
-TdhUntoUaXq/yVvN/88z4x+E9lc/ejHnenLEsYckKZ6P74kOgeLcK93jQqZf7u0J
-NrPwoCRANzkQPHyLDr7ASe6zRBxGpnjIeSOWj/o52VjXal0/AR2RvNBhZS8rYgyl
-tHPpHx+Afsqlqeulc0pDeVP7bBKEpWvu4R/MqlM/u0K1HmxHgjSINu/p43XudV/D
-egnWea9Fo+EedXAVF7wTRqgYp2ZAHod1+J1oWcl0q/dfqCDqlBbYmV8/eTDrw0Mf
-rFuhnv/4u0i+CSF7/aENjWsSB8TTt/JoGeu4oMzVkqB/0t/YlxYWp5eWo5SsCYTU
-f/qIva/kbNV+bbSMauj0D5m+aWU6/nwGSpYFb7R7Ixy2diCqsKCKYA+UNRgTAJ0n
-S/2vXBuR4O4rsg6eJhaMwJJOABdmcY023bXqMs0wOjxmaSiW+SXPQiVaaSTIi+2v
-S2/ZubxfOmnMb4pXyycXgCn+ZrhL/nd2HgRkJ86toifHH1q9rFZZkr+UB3IQr6r5
-mB143RzvUA+IoBtDZi9bekCBLiLUf6xSWlv8kFct11jqgWojZl4yHtT3PjWVvb8m
-v0JgTBfk9IfSaKZCe149
-=Dvw2
------END PGP SIGNATURE-----
+I see that LDO 10, 12 and 15 are used by still marked as always-on. Did
+you try not marking as always-on those or that also causes issues like
+in the other regulators were you added comments about being always-on?
 
---tUxbtEzdJc4sX0sj--
+Besides that, patch looks good to me.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
