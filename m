@@ -1,73 +1,54 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <tony@atomide.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>
-CC: <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH v1 05/14] mfd: twl6040: Register child device for twl6040-pdmclk
-Date: Mon, 30 May 2016 11:55:13 +0300
-Message-ID: <20160530085522.30398-6-peter.ujfalusi@ti.com>
-In-Reply-To: <20160530085522.30398-1-peter.ujfalusi@ti.com>
-References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 3/6] ARM: dts: exynos: Interrupt for USB DWC3-1 differs
+ between Exynos5420 and 5410
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+ <1464719945-3417-3-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <fca224e1-af8c-5540-d47a-9f05e494b2c4@osg.samsung.com>
+Date: Tue, 31 May 2016 15:01:24 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1464719945-3417-3-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The McPDM in OMAP4/5 is using the pdmclk from twl6040 as functional clock.
-The twl6040-pdmclk driver provides a clock which can be used to make sure
-that the pdmclk is active when the McPDM is in use.
+Hello Krzysztof,
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/mfd/twl6040.txt | 1 +
- drivers/mfd/twl6040.c                             | 5 +++++
- include/linux/mfd/twl6040.h                       | 2 +-
- 3 files changed, 7 insertions(+), 1 deletion(-)
+On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
+> On Exynos5410 the SPI interrupt for second USB DWC3 (called DRD: Dual
+> Role Device) is different - 200 instead of 73.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
+>  arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
+>  arch/arm/boot/dts/exynos54xx.dtsi | 1 -
+>  3 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index a937d9bdad90..994d16a44fe4 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -267,6 +267,10 @@
+>  	clock-names = "usbdrd30";
+>  };
+>  
+> +&usbdrd_dwc3_1 {
+> +	interrupts = <0 200 0>;
 
-diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
-index e6afdfa3543d..9a98ee7c323d 100644
---- a/Documentation/devicetree/bindings/mfd/twl6040.txt
-+++ b/Documentation/devicetree/bindings/mfd/twl6040.txt
-@@ -12,6 +12,7 @@ Required properties:
- - interrupt-parent: The parent interrupt controller
- - gpio-controller:
- - #gpio-cells = <1>: twl6040 provides GPO lines.
-+- #clock-cells = <0>; twl6040 is a provider of pdmclk which is used by McPDM
- - twl6040,audpwron-gpio: Power on GPIO line for the twl6040
- 
- - vio-supply: Regulator for the twl6040 VIO supply
-diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
-index 2596546553aa..873628a1bd79 100644
---- a/drivers/mfd/twl6040.c
-+++ b/drivers/mfd/twl6040.c
-@@ -782,6 +782,11 @@ static int twl6040_probe(struct i2c_client *client,
- 	cell->name = "twl6040-gpo";
- 	children++;
- 
-+	/* PDM clock support  */
-+	cell = &twl6040->cells[children];
-+	cell->name = "twl6040-pdmclk";
-+	children++;
-+
- 	/* The chip is powered down so mark regmap to cache only and dirty */
- 	regcache_cache_only(twl6040->regmap, true);
- 	regcache_mark_dirty(twl6040->regmap);
-diff --git a/include/linux/mfd/twl6040.h b/include/linux/mfd/twl6040.h
-index 8015db974157..ef0bb07c3f3d 100644
---- a/include/linux/mfd/twl6040.h
-+++ b/include/linux/mfd/twl6040.h
-@@ -168,7 +168,7 @@
- #define TWL6040_VIBROCDET		0x20
- #define TWL6040_TSHUTDET                0x40
- 
--#define TWL6040_CELLS			3
-+#define TWL6040_CELLS			4
- 
- #define TWL6040_REV_ES1_0		0x00
- #define TWL6040_REV_ES1_1		0x01 /* Rev ES1.1 and ES1.2 */
+Please use GIC_SPI from <dt-bindings/interrupt-controller/arm-gic.h> instead 0.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.8.3
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
