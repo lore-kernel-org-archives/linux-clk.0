@@ -1,47 +1,64 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: add R8A7792 support
-Date: Thu, 26 May 2016 00:40:44 +0300
-Message-ID: <9904764.Bsg49gKsuS@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 6/6] ARM: dts: exynos: No need to enable TMU nodes on Odroid XU3 family
+Date: Tue, 31 May 2016 20:39:05 +0200
+Message-Id: <1464719945-3417-6-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas R-Car V2H (R8A7792) clocks are handled by R-Car gen2 clock driver.
+The thermal nodes are not disabled in exynos5420.dtsi so there is no
+need to manually enable them on Odroid XU3/XU3-Lite/XU4 boards.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-The patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
- drivers/clk/renesas/Kconfig  |    1 +
- drivers/clk/renesas/Makefile |    1 +
- 2 files changed, 2 insertions(+)
-
-Index: linux/drivers/clk/renesas/Kconfig
-===================================================================
---- linux.orig/drivers/clk/renesas/Kconfig
-+++ linux/drivers/clk/renesas/Kconfig
-@@ -11,6 +11,7 @@ config CLK_RENESAS_CPG_MSTP
- 	default y if ARCH_R8A7779
- 	default y if ARCH_R8A7790
- 	default y if ARCH_R8A7791
-+	default y if ARCH_R8A7792
- 	default y if ARCH_R8A7793
- 	default y if ARCH_R8A7794
- 	default y if ARCH_SH73A0
-Index: linux/drivers/clk/renesas/Makefile
-===================================================================
---- linux.orig/drivers/clk/renesas/Makefile
-+++ linux/drivers/clk/renesas/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a77
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 20fa7612080d..c08392b9e0dd 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -388,27 +388,22 @@
+ 
+ &tmu_cpu0 {
+ 	vtmu-supply = <&ldo7_reg>;
+-	status = "okay";
+ };
+ 
+ &tmu_cpu1 {
+ 	vtmu-supply = <&ldo7_reg>;
+-	status = "okay";
+ };
+ 
+ &tmu_cpu2 {
+ 	vtmu-supply = <&ldo7_reg>;
+-	status = "okay";
+ };
+ 
+ &tmu_cpu3 {
+ 	vtmu-supply = <&ldo7_reg>;
+-	status = "okay";
+ };
+ 
+ &tmu_gpu {
+ 	vtmu-supply = <&ldo7_reg>;
+-	status = "okay";
+ };
+ 
+ &rtc {
+-- 
+2.7.4
