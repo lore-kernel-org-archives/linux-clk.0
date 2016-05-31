@@ -1,109 +1,215 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v8 09/10] arm: dts: mt2701: Add clock controller device nodes
-Date: Tue, 17 May 2016 13:05:10 +0800
-Message-ID: <1463461511-25019-10-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
-References: <1463461511-25019-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Roman Volkov <v1ron@mail.ru>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roman Volkov <rvolkov@v1ros.org>, Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: [PATCH 2/2] clk/vt8500: Fix compilation warnings
+Date: Tue, 31 May 2016 12:51:55 +0200
+Message-ID: <4814911.mY88HjlURn@wuerfel>
+In-Reply-To: <1464120473-1808-3-git-send-email-v1ron@mail.ru>
+References: <1464120473-1808-1-git-send-email-v1ron@mail.ru> <1464120473-1808-3-git-send-email-v1ron@mail.ru>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+On Tuesday, May 24, 2016 11:07:53 PM CEST Roman Volkov wrote:
+> From: Roman Volkov <rvolkov@v1ros.org>
+>=20
+> GCC 5.3.0 still throws the following warnings for functions
+> wm8750_find_pll_bits() and wm8850_find_pll_bits():
+>=20
+> warning: 'best_div2' may be used uninitialized in this function
+> warning: 'best_div1' may be used uninitialized in this function
+> warning: 'best_mul' may be used uninitialized in this function
+>=20
+> These warnings are false positives, the variables are controlled
+> by checking the value of the variable 'best_err' which is -1 by
+> default. It is safe to initialize all these variables to zero.
+>=20
+> Fixes: 090341b0a95d ("clk: vt8500: fix sign of possible PLL values")
+> Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
 
-Add clock controller nodes for MT2701, include topckgen, infracfg,
-pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
-bdpsys. This patch also add two oscillators that provide clocks for
-MT2701.
+With gcc-5.3 and linux-4.7-rc1, they should be gone now (no longer
+warning about this with gcov enabled), but I still get them with
+gcc-4.9.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+> diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+> index 77650f19a9b6..7c970d7c0a6a 100644
+> --- a/drivers/clk/clk-vt8500.c
+> +++ b/drivers/clk/clk-vt8500.c
+> @@ -461,7 +461,7 @@ static int wm8750_find_pll_bits(unsigned long rate, u=
+nsigned long parent_rate,
+>  {
+>  	u32 mul;
+>  	int div1, div2;
+> -	u32 best_mul, best_div1, best_div2;
+> +	u32 best_mul =3D 0, best_div1 =3D 0, best_div2 =3D 0;
+>  	unsigned long tclk, rate_err, best_err;
+> =20
+>  	best_err =3D (unsigned long)-1;
+> @@ -513,7 +513,7 @@ static int wm8850_find_pll_bits(unsigned long rate, u=
+nsigned long parent_rate,
+>  {
+>  	u32 mul;
+>  	int div1, div2;
+> -	u32 best_mul, best_div1, best_div2;
+> +	u32 best_mul =3D 0, best_div1 =3D 0, best_div2 =3D 0;
+>  	unsigned long tclk, rate_err, best_err;
+> =20
+>  	best_err =3D (unsigned long)-1;
+>=20
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 8343768..171d4da 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -12,6 +12,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <dt-bindings/clock/mt2701-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include "skeleton64.dtsi"
-@@ -76,6 +77,20 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	rtc32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000>;
-+		clock-output-names = "rtc32k";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupt-parent = <&gic>;
-@@ -85,6 +100,26 @@
- 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 	};
- 
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt2701-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt2701-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	pericfg: syscon@10003000 {
-+		compatible = "mediatek,mt2701-pericfg", "syscon";
-+		reg = <0 0x10003000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
- 	watchdog: watchdog@10007000 {
- 		compatible = "mediatek,mt2701-wdt",
- 			     "mediatek,mt6589-wdt";
-@@ -109,6 +144,13 @@
- 		reg = <0 0x10200100 0 0x1c>;
- 	};
- 
-+	apmixedsys: syscon@10209000 {
-+		compatible = "mediatek,mt2701-apmixedsys", "syscon";
-+		reg = <0 0x10209000 0 0x1000>;
-+		mediatek,hdmi-ibias = <0xa>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@10211000 {
- 		compatible = "arm,cortex-a7-gic";
- 		interrupt-controller;
--- 
-1.9.1
+I see you only patch two instances but not the third one. I think
+we should do it consistently at least.
+
+Coincidentally, I've just done another patch for this myself, since
+it's the last gcc-4.9 warning we get in linux-4.7.
+
+My version below
+
+commit a38daeb34a2dc9d39ee1f153244cfcd83e865e0d
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Tue May 31 10:41:26 2016 +0200
+
+clk: vt8500: fix gcc-4.9 warnings
+
+This fixes some false positive warnings we get with older compiler
+versions:
+
+clk-vt8500.c: In function =E2=80=98wm8650_find_pll_bits=E2=80=99:
+clk-vt8500.c:430:12: =E2=80=98best_div2=E2=80=99 may be used uninitialized =
+in this function
+clk-vt8500.c:429:12: =E2=80=98best_div1=E2=80=99 may be used uninitialized =
+in this function
+clk-vt8500.c:428:14: =E2=80=98best_mul=E2=80=99 may be used uninitialized i=
+n this function
+clk-vt8500.c: In function =E2=80=98wm8750_find_pll_bits=E2=80=99:
+clk-vt8500.c:509:12: =E2=80=98best_div2=E2=80=99 may be used uninitialized =
+in this function
+clk-vt8500.c:508:12: =E2=80=98best_div1=E2=80=99 may be used uninitialized =
+in this function
+clk-vt8500.c:507:14: =E2=80=98best_mul=E2=80=99 may be used uninitialized i=
+n this function
+clk-vt8500.c: In function =E2=80=98wm8850_find_pll_bits=E2=80=99:
+clk-vt8500.c:560:12: =E2=80=98best_div2=E2=80=99 may be used uninitialized =
+in this function
+clk-vt8500.c:559:12: =E2=80=98best_div1=E2=80=99 may be used uninitialized =
+in this function
+clk-vt8500.c:558:14: =E2=80=98best_mul=E2=80=99 may be used uninitialized i=
+n this function
+
+As the local variables are only use for temporaries, we can just
+as well assign the final values directly, which also makes the
+code slightly shorter.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index b0f76a84f1e9..d5a3453970d0 100644
+=2D-- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -388,7 +388,6 @@ static int wm8650_find_pll_bits(unsigned long rate, uns=
+igned long parent_rate,
+ {
+ 	u32 mul, div1;
+ 	int div2;
+=2D	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+=20
+ 	best_err =3D (unsigned long)-1;
+@@ -411,9 +410,9 @@ static int wm8650_find_pll_bits(unsigned long rate, uns=
+igned long parent_rate,
+=20
+ 				if (rate_err < best_err) {
+ 					best_err =3D rate_err;
+=2D					best_mul =3D mul;
+=2D					best_div1 =3D div1;
+=2D					best_div2 =3D div2;
++					*multiplier =3D mul;
++					*divisor1 =3D div1;
++					*divisor2 =3D div2;
+ 				}
+ 			}
+=20
+@@ -425,10 +424,6 @@ static int wm8650_find_pll_bits(unsigned long rate, un=
+signed long parent_rate,
+ 	/* if we got here, it wasn't an exact match */
+ 	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
+ 							rate - best_err);
+=2D	*multiplier =3D best_mul;
+=2D	*divisor1 =3D best_div1;
+=2D	*divisor2 =3D best_div2;
+=2D
+ 	return 0;
+ }
+=20
+@@ -464,7 +459,6 @@ static int wm8750_find_pll_bits(unsigned long rate, uns=
+igned long parent_rate,
+ {
+ 	u32 mul;
+ 	int div1, div2;
+=2D	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+=20
+ 	best_err =3D (unsigned long)-1;
+@@ -488,9 +482,9 @@ static int wm8750_find_pll_bits(unsigned long rate, uns=
+igned long parent_rate,
+=20
+ 				if (rate_err < best_err) {
+ 					best_err =3D rate_err;
+=2D					best_mul =3D mul;
+=2D					best_div1 =3D div1;
+=2D					best_div2 =3D div2;
++					*multiplier =3D mul;
++					*divisor1 =3D div1;
++					*divisor2 =3D div2;
+ 				}
+ 			}
+=20
+@@ -503,10 +497,7 @@ static int wm8750_find_pll_bits(unsigned long rate, un=
+signed long parent_rate,
+ 	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
+ 							rate - best_err);
+=20
+=2D	*filter =3D wm8750_get_filter(parent_rate, best_div1);
+=2D	*multiplier =3D best_mul;
+=2D	*divisor1 =3D best_div1;
+=2D	*divisor2 =3D best_div2;
++	*filter =3D wm8750_get_filter(parent_rate, *divisor1);
+=20
+ 	return 0;
+ }
+@@ -516,7 +507,6 @@ static int wm8850_find_pll_bits(unsigned long rate, uns=
+igned long parent_rate,
+ {
+ 	u32 mul;
+ 	int div1, div2;
+=2D	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+=20
+ 	best_err =3D (unsigned long)-1;
+@@ -540,9 +530,9 @@ static int wm8850_find_pll_bits(unsigned long rate, uns=
+igned long parent_rate,
+=20
+ 				if (rate_err < best_err) {
+ 					best_err =3D rate_err;
+=2D					best_mul =3D mul;
+=2D					best_div1 =3D div1;
+=2D					best_div2 =3D div2;
++					*multiplier =3D mul;
++					*divisor1 =3D div1;
++					*divisor2 =3D div2;
+ 				}
+ 			}
+=20
+@@ -555,10 +545,6 @@ static int wm8850_find_pll_bits(unsigned long rate, un=
+signed long parent_rate,
+ 	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
+ 							rate - best_err);
+=20
+=2D	*multiplier =3D best_mul;
+=2D	*divisor1 =3D best_div1;
+=2D	*divisor2 =3D best_div2;
+=2D
+ 	return 0;
+ }
+=20
