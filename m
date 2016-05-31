@@ -1,66 +1,76 @@
-Return-Path: <paulmck@linux.vnet.ibm.com>
-Date: Thu, 26 May 2016 09:27:27 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux@roeck-us.net, tony@atomide.com,
-        linux@arm.linux.org.uk, rostedt@goodmis.org, rjw@rjwysocki.net,
-        pavel@ucw.cz, mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: Re: [GIT PULL arm] Use _rcuidle tracepoints to allow tracing from
- idle
-Message-ID: <20160526162727.GA21784@linux.vnet.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20160526162606.GA20023@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160526162606.GA20023@linux.vnet.ibm.com>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 3/6] ARM: dts: exynos: Interrupt for USB DWC3-1 differs between Exynos5420 and 5410
+Date: Tue, 31 May 2016 20:39:02 +0200
+Message-Id: <1464719945-3417-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 26, 2016 at 09:26:06AM -0700, Paul E. McKenney wrote:
-> Hello, Ingo,
-> 
-> This series changes a number of event tracepoints to their _rcuidle() form
-> to allow use from idle without lockdep-RCU complaints, a straightforward
-> modification that has been successfully applied many times.  These splats
-> were found in testing by Guenter Roeck and Tony Lindgren, who have
-> both successfully tested the full series.  Tony asked that I carry these
-> in -rcu:
-> 
-> 	http://lkml.kernel.org/g/20160426213630.GV5995@atomide.com
-> 
-> These have been posted to LKML, CCing relevant maintainers, who have
-> not objected to the proposed changes:
-> 
-> 	http://lkml.kernel.org/g/20160516184844.GA20144@linux.vnet.ibm.com
-> 
-> These maintainers are also CCed on this pull request.
-> 
-> They have also been subjected to 0day Test Robot and -next testing.
+On Exynos5410 the SPI interrupt for second USB DWC3 (called DRD: Dual
+Role Device) is different - 200 instead of 73.
 
-And this time actually including the pull request...  :-/
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos54xx.dtsi | 1 -
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-							Thanx, Paul
-
-These changes are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-
-for you to fetch changes up to e7c38dda94b23965a3eb46ef4656bb8cb921933d:
-
-  arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle (2016-05-18 11:55:29 -0700)
-
-----------------------------------------------------------------
-Paul E. McKenney (6):
-      arm: Use _rcuidle tracepoint to allow use from idle
-      arm: Use _rcuidle for suspend/resume tracepoints
-      arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
-      arm: Add _rcuidle suffix to allow rpm_idle() use from idle
-      arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
-      arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle
-
- arch/arm/kernel/smp.c             |  2 +-
- arch/arm/mach-omap2/powerdomain.c |  9 +++++----
- drivers/base/power/runtime.c      | 14 +++++++-------
- drivers/clk/clk.c                 |  8 ++++----
- 4 files changed, 17 insertions(+), 16 deletions(-)
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index a937d9bdad90..994d16a44fe4 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -267,6 +267,10 @@
+ 	clock-names = "usbdrd30";
+ };
+ 
++&usbdrd_dwc3_1 {
++	interrupts = <0 200 0>;
++};
++
+ &usbdrd_phy1 {
+ 	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+ 	clock-names = "phy", "ref";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8b1e706e9250..265747bb19d1 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1046,6 +1046,10 @@
+ 	clock-names = "usbdrd30";
+ };
+ 
++&usbdrd_dwc3_1 {
++	interrupts = <0 73 0>;
++};
++
+ &usbdrd_phy1 {
+ 	clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+ 	clock-names = "phy", "ref";
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 44a8391c8524..0eb8aa31b7d9 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -141,7 +141,6 @@
+ 			usbdrd_dwc3_1: dwc3@12400000 {
+ 				compatible = "snps,dwc3";
+ 				reg = <0x12400000 0x10000>;
+-				interrupts = <0 73 0>;
+ 				phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
+ 				phy-names = "usb2-phy", "usb3-phy";
+ 			};
+-- 
+2.7.4
