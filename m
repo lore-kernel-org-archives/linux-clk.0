@@ -1,91 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:37327 "EHLO
-	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751256AbcEDHnj (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2016 03:43:39 -0400
-Received: by mail-wm0-f49.google.com with SMTP id a17so77810418wme.0
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2016 00:43:39 -0700 (PDT)
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+ <1464719945-3417-2-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
+Date: Tue, 31 May 2016 14:56:03 -0400
 MIME-Version: 1.0
-In-Reply-To: <1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
-References: <1462332274-13744-1-git-send-email-yangbo.lu@nxp.com>
-	<1462332274-13744-7-git-send-email-yangbo.lu@nxp.com>
-Date: Wed, 4 May 2016 09:43:38 +0200
-Message-ID: <CAPDyKFoh7mfmMYxVxjG6jrRr6CuGKkuxdeON4yxX3yXFEamikg@mail.gmail.com>
-Subject: Re: [v9, 6/7] MAINTAINERS: add entry for Freescale SoC driver
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Yangbo Lu <yangbo.lu@nxp.com>, Scott Wood <oss@buserror.net>,
-	Qiang Zhao <qiang.zhao@nxp.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1464719945-3417-2-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 4 May 2016 at 05:24, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> Add maintainer entry for Freescale SoC driver including
-> the QE library and the GUTS driver now. Also add maintainer
-> for QE library.
->
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Hello Krzysztof,
 
-So I need an ack from Scott and Qiang for this one, then I intend to
-queue up the series.
-
-Kind regards
-Uffe
-
+On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
+> Add clock for TMU to the Exynos5410 clock driver.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
-> Changes for v8:
->         - Added this patch
-> Changes for v9:
->         - Added linux-arm mail list
->         - Removed GUTS driver entry
-> ---
->  MAINTAINERS | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42e65d1..ce91db7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4622,9 +4622,18 @@ F:       drivers/net/ethernet/freescale/fec_ptp.c
->  F:     drivers/net/ethernet/freescale/fec.h
->  F:     Documentation/devicetree/bindings/net/fsl-fec.txt
->
-> +FREESCALE SOC DRIVER
-> +M:     Scott Wood <oss@buserror.net>
-> +L:     linuxppc-dev@lists.ozlabs.org
-> +L:     linux-arm-kernel@lists.infradead.org
-> +S:     Maintained
-> +F:     drivers/soc/fsl/
-> +F:     include/linux/fsl/
-> +
->  FREESCALE QUICC ENGINE LIBRARY
-> +M:     Qiang Zhao <qiang.zhao@nxp.com>
->  L:     linuxppc-dev@lists.ozlabs.org
-> -S:     Orphan
-> +S:     Maintained
->  F:     drivers/soc/fsl/qe/
->  F:     include/soc/fsl/*qe*.h
->  F:     include/soc/fsl/*ucc*.h
-> --
-> 2.1.0.27.g96db324
->
+>  drivers/clk/samsung/clk-exynos5410.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+> index 6c2e59c576ee..db9978dc6e83 100644
+> --- a/drivers/clk/samsung/clk-exynos5410.c
+> +++ b/drivers/clk/samsung/clk-exynos5410.c
+> @@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+>  static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+>  	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
+>  	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
+> +	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
+>  
+>  	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
+>  			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+> 
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
