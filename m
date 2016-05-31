@@ -1,72 +1,37 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid
- XU
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
- <574C5BD2.60008@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>,
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 6/6] ARM: dts: exynos: No need to enable TMU nodes on
+ Odroid XU3 family
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
  Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Tomasz Figa <tomasz.figa@gmail.com>,
  Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Rob Herring <robh+dt@kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <574D557F.70209@samsung.com>
-Date: Tue, 31 May 2016 11:12:31 +0200
-MIME-version: 1.0
-In-reply-to: <574C5BD2.60008@samsung.com>
-Content-type: text/plain; charset=windows-1252
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+ <1464719945-3417-6-git-send-email-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <c3222e0a-51a9-a93f-97e4-9a12e17167de@osg.samsung.com>
+Date: Tue, 31 May 2016 15:37:28 -0400
+MIME-Version: 1.0
+In-Reply-To: <1464719945-3417-6-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/30/2016 05:27 PM, Sylwester Nawrocki wrote:
-> On 05/28/2016 11:54 AM, Krzysztof Kozlowski wrote:
->>
->> The clock changes can go to clock tree. ARM changes to samsung-soc tree.
->> Please provide me a tag with include/dt-bindings/clock commits so I can
->> merge it.
-> 
-> I applied the clock tree patches and here is the tag for the three
-> include/dt-bindings patches:
+Hello Krzysztof,
 
-Thanks mate!
-Pulled.
+On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
+> The thermal nodes are not disabled in exynos5420.dtsi so there is no
+> need to manually enable them on Odroid XU3/XU3-Lite/XU4 boards.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
-Krzysztof
-
-> 
-> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-> 
->   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt
-> 
-> for you to fetch changes up to ed1e1505db0c116affdfab01e650c44a9c459c65:
-> 
->   dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-> (2016-05-30 16:00:11 +0200)
-> 
-> ----------------------------------------------------------------
-> Adition of missing clock index definitions for exynos5410 SoC
-> PWM, USB, I2C, and RTC device related clocks.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (3):
->       dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
->       dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
->       dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-> 
->  include/dt-bindings/clock/exynos5410.h | 73
-> +++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
->  1 file changed, 51 insertions(+), 22 deletions(-)
-> 
-> 
-> --
-> Thanks,
-> Sylwester
-> 
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
