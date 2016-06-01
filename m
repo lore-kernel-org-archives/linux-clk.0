@@ -1,56 +1,52 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 03/10] arm64: dts: marvell: add tbg clocks for Armada 37xx
-Date: Fri, 10 Jun 2016 15:23:31 +0200
-Message-Id: <1465565018-14172-4-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
+To: Krzysztof Kozlowski <krzk@kernel.org>
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+ <1464719945-3417-2-git-send-email-krzk@kernel.org>
+ <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <574EB1E6.8050808@samsung.com>
+Date: Wed, 01 Jun 2016 11:59:02 +0200
+MIME-version: 1.0
+In-reply-to: <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a new block of clocks. The Time Base Generators clocks can be the
-parent of the peripheral clocks.
+On 05/31/2016 08:56 PM, Javier Martinez Canillas wrote:
+> On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
+>> > Add clock for TMU to the Exynos5410 clock driver.
+>> > 
+>> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> > ---
+>> >  drivers/clk/samsung/clk-exynos5410.c | 1 +
+>> >  1 file changed, 1 insertion(+)
+>> > 
+>> > diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+>> > index 6c2e59c576ee..db9978dc6e83 100644
+>> > --- a/drivers/clk/samsung/clk-exynos5410.c
+>> > +++ b/drivers/clk/samsung/clk-exynos5410.c
+>> > @@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+>> >  static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+>> >  	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
+>> >  	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
+>> > +	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
+>> >  
+>> >  	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
+>> >  			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+>> > 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+I have applied patches 1/6, 2/6. I will hold back for a moment
+with providing another tag for the "dt-bindings" patches, in case
+there are more such patches submitted in the coming days.
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-index 7c61e13a16f3..e9f0b97c63d5 100644
---- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-@@ -105,6 +105,13 @@
- 				status = "disabled";
- 			};
- 
-+			tbg: tbg@13200 {
-+				compatible = "marvell,armada-3700-tbg-clock";
-+				reg = <0x13200 0x100>;
-+				clocks = <&xtalclk>;
-+				#clock-cells = <1>;
-+			};
-+
- 			gpio1: gpio@13800 {
- 				compatible = "marvell,mvebu-gpio-3700",
- 				"syscon", "simple-mfd";
 -- 
-2.5.0
+Thanks,
+Sylwester
