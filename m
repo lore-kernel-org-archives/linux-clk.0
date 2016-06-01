@@ -1,54 +1,95 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 0/2] mark spi clocks as critical and enable spi3 clocks
-Date: Thu, 30 Jun 2016 16:15:09 +0900
-Message-id: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jonas Jensen <jonas.jensen@gmail.com>
+Subject: [PATCH 19/34] clk: moxart: Migrate to clk_hw based OF and registration APIs
+Date: Wed,  1 Jun 2016 16:15:18 -0700
+Message-Id: <20160601231533.9354-20-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-This patchset enables spi3 clocks by marking critical clocks as
-CLK_IS_CRITICAL and in the meantime replaces the use of
-CLK_IGNORE_UNUSED for spi1 clocks.
+Cc: Jonas Jensen <jonas.jensen@gmail.com>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
 
-The sclk needs to be considered critical as well.
+See commit 58657d189a2f and it's children for details on this
+new registration API.
 
-The SPI3 in the tm2/tm2e boards will control an irled for remote
-controlling.
+ drivers/clk/clk-moxart.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-Changelog:
-
-V1 -> V2
- - the "sclk_spi3" doesn't need to be enabled in boot time as it
-  is handled by the spi driver itself.
-
- - use the CLK_IS_CRITICAL flag for the ioclk
-
-V2 -> V3
- - some more tests has confirmed taht "sclk_spi1,3" need to be
-   enabled as critical!
-
- - added Chanwoo's review in the second commit.
-
-Thanks,
-Andi
-
-Andi Shyti (2):
-  clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI clocks
-  clk: exynos5433: enable sclk_ioclk for SPI3
-
- drivers/clk/samsung/clk-exynos5433.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+index f37f719643ec..b86dac851116 100644
+--- a/drivers/clk/clk-moxart.c
++++ b/drivers/clk/clk-moxart.c
+@@ -19,7 +19,8 @@
+ static void __init moxart_of_pll_clk_init(struct device_node *node)
+ {
+ 	static void __iomem *base;
+-	struct clk *clk, *ref_clk;
++	struct clk_hw *hw;
++	struct clk *ref_clk;
+ 	unsigned int mul;
+ 	const char *name = node->name;
+ 	const char *parent_name;
+@@ -42,14 +43,14 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
+ 		return;
+ 	}
+ 
+-	clk = clk_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
+-	if (IS_ERR(clk)) {
++	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
++	if (IS_ERR(hw)) {
+ 		pr_err("%s: failed to register clock\n", node->full_name);
+ 		return;
+ 	}
+ 
+-	clk_register_clkdev(clk, NULL, name);
+-	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	clk_hw_register_clkdev(hw, NULL, name);
++	of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
+ }
+ CLK_OF_DECLARE(moxart_pll_clock, "moxa,moxart-pll-clock",
+ 	       moxart_of_pll_clk_init);
+@@ -57,7 +58,8 @@ CLK_OF_DECLARE(moxart_pll_clock, "moxa,moxart-pll-clock",
+ static void __init moxart_of_apb_clk_init(struct device_node *node)
+ {
+ 	static void __iomem *base;
+-	struct clk *clk, *pll_clk;
++	struct clk_hw *hw;
++	struct clk *pll_clk;
+ 	unsigned int div, val;
+ 	unsigned int div_idx[] = { 2, 3, 4, 6, 8};
+ 	const char *name = node->name;
+@@ -85,14 +87,14 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
+ 		return;
+ 	}
+ 
+-	clk = clk_register_fixed_factor(NULL, name, parent_name, 0, 1, div);
+-	if (IS_ERR(clk)) {
++	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, 1, div);
++	if (IS_ERR(hw)) {
+ 		pr_err("%s: failed to register clock\n", node->full_name);
+ 		return;
+ 	}
+ 
+-	clk_register_clkdev(clk, NULL, name);
+-	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	clk_hw_register_clkdev(hw, NULL, name);
++	of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
+ }
+ CLK_OF_DECLARE(moxart_apb_clock, "moxa,moxart-apb-clock",
+ 	       moxart_of_apb_clk_init);
 -- 
-2.8.1
+2.7.4
