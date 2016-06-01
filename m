@@ -1,74 +1,96 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	jorge.ramirez-ortiz@linaro.org,
-	xinliang.liu@linaro.org,
-	guodong.xu@linaro.org,
-	john.stultz@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: hi6220: initialize UART1 clock to 150MHz
-Date: Tue, 28 Jun 2016 18:31:42 +0800
-Message-Id: <1467109902-17625-2-git-send-email-guodong.xu@linaro.org>
-In-Reply-To: <1467109902-17625-1-git-send-email-guodong.xu@linaro.org>
-References: <1467109902-17625-1-git-send-email-guodong.xu@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:32826 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751897AbcFAXP7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 19:15:59 -0400
+Received: by mail-pa0-f45.google.com with SMTP id um11so516398pab.0
+        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2016 16:15:59 -0700 (PDT)
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Nishanth Menon <nm@ti.com>
+Subject: [PATCH 22/34] clk: palmas: Migrate to clk_hw based OF and registration APIs
+Date: Wed,  1 Jun 2016 16:15:21 -0700
+Message-Id: <20160601231533.9354-23-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-Early at boot, during the sys_clk initialization, make sure UART1 uses
-the higher frequency clock.
-
-This enables support for higher baud rates (up to 3Mbps) required to
-support faster bluetooth transfers.
-
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Nishanth Menon <nm@ti.com>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 ---
- drivers/clk/hisilicon/clk-hi6220.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index a36ffcb..55bd9bb 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -11,6 +11,7 @@
-  */
+See commit 58657d189a2f and it's children for details on this
+new registration API.
+
+ drivers/clk/clk-palmas.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
+index 8328863cb0e0..31f590cea493 100644
+--- a/drivers/clk/clk-palmas.c
++++ b/drivers/clk/clk-palmas.c
+@@ -41,7 +41,6 @@ struct palmas_clk32k_desc {
  
- #include <linux/kernel.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/io.h>
-@@ -70,10 +71,10 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_ao[] __initdata = {
- 	{ HI6220_UART0_PCLK,  "uart0_pclk",  "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 24, 0, },
- };
+ struct palmas_clock_info {
+ 	struct device *dev;
+-	struct clk *clk;
+ 	struct clk_hw hw;
+ 	struct palmas *palmas;
+ 	const struct palmas_clk32k_desc *clk_desc;
+@@ -218,7 +217,7 @@ static int palmas_clks_init_configure(struct palmas_clock_info *cinfo)
+ 	}
  
-+static struct hisi_clock_data *clk_data_ao;
-+
- static void __init hi6220_clk_ao_init(struct device_node *np)
- {
--	struct hisi_clock_data *clk_data_ao;
--
- 	clk_data_ao = hisi_clk_init(np, HI6220_AO_NR_CLKS);
- 	if (!clk_data_ao)
- 		return;
-@@ -192,6 +193,13 @@ static void __init hi6220_clk_sys_init(struct device_node *np)
+ 	if (cinfo->ext_control_pin) {
+-		ret = clk_prepare(cinfo->clk);
++		ret = clk_prepare(cinfo->hw.clk);
+ 		if (ret < 0) {
+ 			dev_err(cinfo->dev, "Clock prep failed, %d\n", ret);
+ 			return ret;
+@@ -242,7 +241,6 @@ static int palmas_clks_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	const struct palmas_clks_of_match_data *match_data;
+ 	struct palmas_clock_info *cinfo;
+-	struct clk *clk;
+ 	int ret;
  
- 	hi6220_clk_register_divider(hi6220_div_clks_sys,
- 			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
-+
-+	if (!clk_data_ao)
-+		return;
-+
-+	/* enable high speed clock on UART1 mux */
-+	clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
-+			clk_data_ao->clk_data.clks[HI6220_150M]);
- }
- CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
+ 	match_data = of_device_get_match_data(&pdev->dev);
+@@ -261,22 +259,20 @@ static int palmas_clks_probe(struct platform_device *pdev)
  
+ 	cinfo->clk_desc = &match_data->desc;
+ 	cinfo->hw.init = &match_data->init;
+-	clk = devm_clk_register(&pdev->dev, &cinfo->hw);
+-	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
++	ret = devm_clk_hw_register(&pdev->dev, &cinfo->hw);
++	if (ret) {
+ 		dev_err(&pdev->dev, "Fail to register clock %s, %d\n",
+ 			match_data->desc.clk_name, ret);
+ 		return ret;
+ 	}
+ 
+-	cinfo->clk = clk;
+ 	ret = palmas_clks_init_configure(cinfo);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Clock config failed, %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = of_clk_add_provider(node, of_clk_src_simple_get, cinfo->clk);
++	ret = of_clk_add_hw_provider(node, of_clk_hw_simple_get, &cinfo->hw);
+ 	if (ret < 0)
+ 		dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret);
+ 	return ret;
 -- 
-1.9.1
+2.7.4
+
