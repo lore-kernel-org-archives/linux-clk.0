@@ -1,72 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:32845 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752285AbcFAXQI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 19:16:08 -0400
-Received: by mail-pa0-f54.google.com with SMTP id um11so517368pab.0
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2016 16:16:08 -0700 (PDT)
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 31/34] clk: twl6040: Migrate to clk_hw based registration APIs
-Date: Wed,  1 Jun 2016 16:15:30 -0700
-Message-Id: <20160601231533.9354-32-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 2/3] clk: samsung: exynos5410: Add WDT, ACLK266 and SSS clocks
+Date: Wed, 01 Jun 2016 11:45:50 +0200
+Message-id: <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Add clock hierarchy for Security SubSystem clock and watchdog.
 
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
+ drivers/clk/samsung/clk-exynos5410.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
-
- drivers/clk/clk-twl6040.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 697c66757400..8f4c1af5fb92 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -30,7 +30,6 @@ struct twl6040_clk {
- 	struct twl6040 *twl6040;
- 	struct device *dev;
- 	struct clk_hw mcpdm_fclk;
--	struct clk *clk;
- 	int enabled;
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index db9978dc6e83..7e3ffa70d364 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -31,6 +31,7 @@
+ #define SRC_CPU			0x200
+ #define DIV_CPU0		0x500
+ #define SRC_CPERI1		0x4204
++#define GATE_IP_G2D		0x8800
+ #define DIV_TOP0		0x10510
+ #define DIV_TOP1		0x10514
+ #define DIV_FSYS0		0x10548
+@@ -154,11 +155,15 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
+ 	DIV(0, "dout_pwm", "mout_pwm", DIV_PERIC3, 0, 4),
+ 
+ 	DIV(0, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
++	DIV(0, "aclk266", "mpll_user_p", DIV_TOP0, 16, 3),
+ 	DIV(0, "aclk400", "mout_aclk400", DIV_TOP0, 24, 3),
  };
  
-@@ -80,6 +79,7 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- {
- 	struct twl6040 *twl6040 = dev_get_drvdata(pdev->dev.parent);
- 	struct twl6040_clk *clkdata;
-+	int ret;
- 
- 	clkdata = devm_kzalloc(&pdev->dev, sizeof(*clkdata), GFP_KERNEL);
- 	if (!clkdata)
-@@ -89,9 +89,9 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- 	clkdata->twl6040 = twl6040;
- 
- 	clkdata->mcpdm_fclk.init = &wm831x_clkout_init;
--	clkdata->clk = devm_clk_register(&pdev->dev, &clkdata->mcpdm_fclk);
--	if (IS_ERR(clkdata->clk))
--		return PTR_ERR(clkdata->clk);
-+	ret = devm_clk_hw_register(&pdev->dev, &clkdata->mcpdm_fclk);
-+	if (ret)
-+		return ret;
- 
- 	platform_set_drvdata(pdev, clkdata);
+ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
++	GATE(CLK_SSS, "sss", "aclk266", GATE_IP_G2D, 2, 0, 0),
++
+ 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
++	GATE(CLK_WDT, "wdt", "aclk66", GATE_IP_PERIS, 19, 0, 0),
+ 	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
+ 	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
  
 -- 
-2.7.4
-
+1.9.1
