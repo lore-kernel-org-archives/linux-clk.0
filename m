@@ -1,61 +1,101 @@
-Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH 18/34] clk: mb86s7x: Migrate to clk_hw based OF and
+ registration APIs
+Date: Wed,  1 Jun 2016 16:15:17 -0700
+Message-Id: <20160601231533.9354-19-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <20160621013022.GR1521@codeaurora.org>
-References: <1465381201-11537-1-git-send-email-ricardo.ribalda@gmail.com>
- <1465381201-11537-2-git-send-email-ricardo.ribalda@gmail.com>
- <20160616004419.GQ28218@codeaurora.org> <CAPybu_3=Zm8w16_3jtKZDhoFafUz-tYcnpFJmTHT8riwjpCSpA@mail.gmail.com>
- <20160621013022.GR1521@codeaurora.org>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Tue, 21 Jun 2016 10:38:53 +0200
-Message-ID: <CAPybu_3q1W0WG1s8J=rM1aKaF86Lv0XFp=eviPBR3fwpJcx0gQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: Add new function of_clk_is_provider()
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-On Tue, Jun 21, 2016 at 3:30 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> (Please don't top post)
+Cc: Jassi Brar <jaswinder.singh@linaro.org>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
 
-Sorry about that
+See commit 58657d189a2f and it's children for details on this
+new registration API.
 
->
-> I was thinking that of_clk_init() would mark any nodes that
-> matched and provided clk providers as OF_POPULATED. That way,
-> when of_platform_populate() ran, it would *not* add platform
-> devices for clk providers that we registered during the
-> of_clk_init() phase. Then we could have platform drivers and
-> CLK_OF_DECLARE drivers for the same compatible strings, but we
-> wouldn't probe random platform drivers for the nodes that we
-> handled early on and we wouldn't need to litter
-> of_clk_is_provider() in driver probe routines.
->
+ drivers/clk/clk-mb86s7x.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Ok, now I get it. I didn't realised that you wanted to set the flag.
-
-I have prepared two new patches.  now setup does something like:
-
-void __init of_fixed_factor_clk_setup(struct device_node *node)
-{
-        if (!_of_fixed_factor_clk_setup(node))
-                  of_node_set_flag(node, OF_POPULATED);
-}
-
-If we probe this method to be valid, on a future stage I can make a MACRO like:
-
-CLK_OF_DECLARE_PLATFORM(fixed_factor_clk, "fixed-factor-clock",
-_of_fixed_factor_clk_setup, clk_unregister_fixed_factor);
-
-That sets the flag, instantiate MODULE_DEVICE_TABLE,
-builtin_platform_driver,  and does the platform_set_drvdata.....
-
-Driver developers can choose to use CLK_OF_DECLARE_PLATFORM or CLK_OF_DECLARE
-
-
-Thanks!
-
+diff --git a/drivers/clk/clk-mb86s7x.c b/drivers/clk/clk-mb86s7x.c
+index e0817754ca3e..2a83a3ff1d09 100644
+--- a/drivers/clk/clk-mb86s7x.c
++++ b/drivers/clk/clk-mb86s7x.c
+@@ -327,10 +327,11 @@ static struct clk_ops clk_clc_ops = {
+ 	.set_rate = clc_set_rate,
+ };
+ 
+-struct clk *mb86s7x_clclk_register(struct device *cpu_dev)
++static struct clk_hw *mb86s7x_clclk_register(struct device *cpu_dev)
+ {
+ 	struct clk_init_data init;
+ 	struct cl_clk *clc;
++	int ret;
+ 
+ 	clc = kzalloc(sizeof(*clc), GFP_KERNEL);
+ 	if (!clc)
+@@ -344,14 +345,17 @@ struct clk *mb86s7x_clclk_register(struct device *cpu_dev)
+ 	init.flags = CLK_GET_RATE_NOCACHE;
+ 	init.num_parents = 0;
+ 
+-	return devm_clk_register(cpu_dev, &clc->hw);
++	ret = devm_clk_hw_register(cpu_dev, &clc->hw);
++	if (ret)
++		return ERR_PTR(ret);
++	return &clc->hw;
+ }
+ 
+ static int mb86s7x_clclk_of_init(void)
+ {
+ 	int cpu, ret = -ENODEV;
+ 	struct device_node *np;
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fujitsu,mb86s70-scb-1.0");
+ 	if (!np || !of_device_is_available(np))
+@@ -365,12 +369,12 @@ static int mb86s7x_clclk_of_init(void)
+ 			continue;
+ 		}
+ 
+-		clk = mb86s7x_clclk_register(cpu_dev);
+-		if (IS_ERR(clk)) {
++		hw = mb86s7x_clclk_register(cpu_dev);
++		if (IS_ERR(hw)) {
+ 			pr_err("failed to register cpu%d clock\n", cpu);
+ 			continue;
+ 		}
+-		if (clk_register_clkdev(clk, NULL, dev_name(cpu_dev))) {
++		if (clk_hw_register_clkdev(hw, NULL, dev_name(cpu_dev))) {
+ 			pr_err("failed to register cpu%d clock lookup\n", cpu);
+ 			continue;
+ 		}
 -- 
-Ricardo Ribalda
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
