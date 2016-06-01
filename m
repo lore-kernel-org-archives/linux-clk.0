@@ -1,210 +1,115 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 05/28] ARM: OMAP2+: clock: use the new ti_clk_get for fetching clocks
-Date: Mon, 13 Jun 2016 22:04:39 +0300
-Message-ID: <1465844702-12200-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Anders Berg <anders.berg@lsi.com>
+Subject: [PATCH 10/34] clk: axm5516: Migrate to clk_hw based OF and registration APIs
+Date: Wed,  1 Jun 2016 16:15:09 -0700
+Message-Id: <20160601231533.9354-11-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the new ti_clk_get API instead of common implementation, to get rid
-of most of the DT_CLK() aliases under drivers/clk/ti.
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs. Make thing simple by using the
+existing clk_hw array and implementing a custom DT clk provider
+get function to map the clk spec id to a clk_hw pointer.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Cc: Anders Berg <anders.berg@lsi.com>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 ---
- arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c | 2 +-
- arch/arm/mach-omap2/clock.c                  | 6 +++---
- arch/arm/mach-omap2/io.c                     | 2 +-
- arch/arm/mach-omap2/mcbsp.c                  | 2 +-
- arch/arm/mach-omap2/omap2-restart.c          | 5 +++--
- arch/arm/mach-omap2/pm.c                     | 2 +-
- arch/arm/mach-omap2/pm24xx.c                 | 4 ++--
- arch/arm/mach-omap2/timer.c                  | 7 ++++---
- arch/arm/mach-omap2/voltage.c                | 3 ++-
- 9 files changed, 18 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c b/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c
-index b64d717..2a9739e 100644
---- a/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c
-+++ b/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c
-@@ -200,7 +200,7 @@ void omap2xxx_clkt_vps_late_init(void)
+See commit 58657d189a2f and it's children for details on this
+new registration API.
+
+ drivers/clk/clk-axm5516.c | 39 +++++++++++++++++----------------------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/clk-axm5516.c b/drivers/clk/clk-axm5516.c
+index c7c91a5ecf8b..5d7ae333257e 100644
+--- a/drivers/clk/clk-axm5516.c
++++ b/drivers/clk/clk-axm5516.c
+@@ -516,6 +516,19 @@ static struct axxia_clk *axmclk_clocks[] = {
+ 	[AXXIA_CLK_MMC]      = &clk_mmc_mux.aclk,
+ };
+ 
++static struct clk_hw *
++of_clk_axmclk_get(struct of_phandle_args *clkspec, void *unused)
++{
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= ARRAY_SIZE(axmclk_clocks)) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return &axmclk_clocks[idx]->hw;
++}
++
+ static const struct regmap_config axmclk_regmap_config = {
+ 	.reg_bits	= 32,
+ 	.reg_stride	= 4,
+@@ -530,21 +543,14 @@ static const struct of_device_id axmclk_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, axmclk_match_table);
+ 
+-struct axmclk_priv {
+-	struct clk_onecell_data onecell;
+-	struct clk *clks[];
+-};
+-
+ static int axmclk_probe(struct platform_device *pdev)
  {
- 	struct clk *c;
+ 	void __iomem *base;
+ 	struct resource *res;
+ 	int i, ret;
+ 	struct device *dev = &pdev->dev;
+-	struct clk *clk;
+ 	struct regmap *regmap;
+ 	size_t num_clks;
+-	struct axmclk_priv *priv;
  
--	c = clk_get(NULL, "sys_ck");
-+	c = ti_clk_get("sys_ck");
- 	if (IS_ERR(c)) {
- 		WARN(1, "could not locate sys_ck\n");
- 	} else {
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index d058125..50fbff0 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -151,15 +151,15 @@ void __init omap2_clk_print_new_rates(const char *hfclkin_ck_name,
- 	struct clk *hfclkin_ck, *core_ck, *mpu_ck;
- 	unsigned long hfclkin_rate;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+@@ -557,29 +563,18 @@ static int axmclk_probe(struct platform_device *pdev)
  
--	mpu_ck = clk_get(NULL, mpu_ck_name);
-+	mpu_ck = ti_clk_get(mpu_ck_name);
- 	if (WARN(IS_ERR(mpu_ck), "clock: failed to get %s.\n", mpu_ck_name))
- 		return;
+ 	num_clks = ARRAY_SIZE(axmclk_clocks);
+ 	pr_info("axmclk: supporting %zu clocks\n", num_clks);
+-	priv = devm_kzalloc(dev, sizeof(*priv) + sizeof(*priv->clks) * num_clks,
+-			    GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	priv->onecell.clks = priv->clks;
+-	priv->onecell.clk_num = num_clks;
  
--	core_ck = clk_get(NULL, core_ck_name);
-+	core_ck = ti_clk_get(core_ck_name);
- 	if (WARN(IS_ERR(core_ck), "clock: failed to get %s.\n", core_ck_name))
- 		return;
- 
--	hfclkin_ck = clk_get(NULL, hfclkin_ck_name);
-+	hfclkin_ck = ti_clk_get(hfclkin_ck_name);
- 	if (WARN(IS_ERR(hfclkin_ck), "Failed to get %s.\n", hfclkin_ck_name))
- 		return;
- 
-diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
-index 49de4dd..6142aa3 100644
---- a/arch/arm/mach-omap2/io.c
-+++ b/arch/arm/mach-omap2/io.c
-@@ -390,7 +390,7 @@ static int __init _omap2_init_reprogram_sdrc(void)
- 	if (!cpu_is_omap34xx())
- 		return 0;
- 
--	dpll3_m2_ck = clk_get(NULL, "dpll3_m2_ck");
-+	dpll3_m2_ck = ti_clk_get("dpll3_m2_ck");
- 	if (IS_ERR(dpll3_m2_ck))
- 		return -EINVAL;
- 
-diff --git a/arch/arm/mach-omap2/mcbsp.c b/arch/arm/mach-omap2/mcbsp.c
-index b4ac3af..8098546 100644
---- a/arch/arm/mach-omap2/mcbsp.c
-+++ b/arch/arm/mach-omap2/mcbsp.c
-@@ -98,7 +98,7 @@ static int __init omap_init_mcbsp(struct omap_hwmod *oh, void *unused)
- 		(struct omap_mcbsp_dev_attr *)(oh->dev_attr))->sidetone);
- 		pdata->enable_st_clock = omap3_enable_st_clock;
- 		sprintf(clk_name, "mcbsp%d_ick", id);
--		mcbsp_iclks[id] = clk_get(NULL, clk_name);
-+		mcbsp_iclks[id] = ti_clk_get(clk_name);
- 		count++;
- 	}
- 	pdev = omap_device_build_ss(name, id, oh_device, count, pdata,
-diff --git a/arch/arm/mach-omap2/omap2-restart.c b/arch/arm/mach-omap2/omap2-restart.c
-index 497269d..0540495 100644
---- a/arch/arm/mach-omap2/omap2-restart.c
-+++ b/arch/arm/mach-omap2/omap2-restart.c
-@@ -12,6 +12,7 @@
- #include <linux/init.h>
- #include <linux/clk.h>
- #include <linux/io.h>
-+#include <linux/clk/ti.h>
- 
- #include "soc.h"
- #include "common.h"
-@@ -52,11 +53,11 @@ void omap2xxx_restart(enum reboot_mode mode, const char *cmd)
-  */
- static int __init omap2xxx_common_look_up_clks_for_reset(void)
- {
--	reset_virt_prcm_set_ck = clk_get(NULL, "virt_prcm_set");
-+	reset_virt_prcm_set_ck = ti_clk_get("virt_prcm_set");
- 	if (IS_ERR(reset_virt_prcm_set_ck))
- 		return -EINVAL;
- 
--	reset_sys_ck = clk_get(NULL, "sys_ck");
-+	reset_sys_ck = ti_clk_get("sys_ck");
- 	if (IS_ERR(reset_sys_ck))
- 		return -EINVAL;
- 
-diff --git a/arch/arm/mach-omap2/pm.c b/arch/arm/mach-omap2/pm.c
-index 2f7b11d..37c80f5 100644
---- a/arch/arm/mach-omap2/pm.c
-+++ b/arch/arm/mach-omap2/pm.c
-@@ -164,7 +164,7 @@ static int __init omap2_set_init_voltage(char *vdd_name, char *clk_name,
- 		goto exit;
+ 	/* Update each entry with the allocated regmap and register the clock
+ 	 * with the common clock framework
+ 	 */
+ 	for (i = 0; i < num_clks; i++) {
+ 		axmclk_clocks[i]->regmap = regmap;
+-		clk = devm_clk_register(dev, &axmclk_clocks[i]->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
+-		priv->clks[i] = clk;
++		ret = devm_clk_hw_register(dev, &axmclk_clocks[i]->hw);
++		if (ret)
++			return ret;
  	}
  
--	clk =  clk_get(NULL, clk_name);
-+	clk =  ti_clk_get(clk_name);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: unable to get clk %s\n", __func__, clk_name);
- 		goto exit;
-diff --git a/arch/arm/mach-omap2/pm24xx.c b/arch/arm/mach-omap2/pm24xx.c
-index 2a1a418..f74a46f 100644
---- a/arch/arm/mach-omap2/pm24xx.c
-+++ b/arch/arm/mach-omap2/pm24xx.c
-@@ -286,14 +286,14 @@ int __init omap2_pm_init(void)
- 		pr_err("PM: gfx_clkdm not found\n");
+-	ret = of_clk_add_provider(dev->of_node,
+-				  of_clk_src_onecell_get, &priv->onecell);
+-
+-	return ret;
++	return of_clk_add_hw_provider(dev->of_node, of_clk_axmclk_get, NULL);
+ }
  
- 
--	osc_ck = clk_get(NULL, "osc_ck");
-+	osc_ck = ti_clk_get("osc_ck");
- 	if (IS_ERR(osc_ck)) {
- 		printk(KERN_ERR "could not get osc_ck\n");
- 		return -ENODEV;
- 	}
- 
- 	if (cpu_is_omap242x()) {
--		emul_ck = clk_get(NULL, "emul_ck");
-+		emul_ck = ti_clk_get("emul_ck");
- 		if (IS_ERR(emul_ck)) {
- 			printk(KERN_ERR "could not get emul_ck\n");
- 			clk_put(osc_ck);
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-index 5b385bb..08e08db 100644
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -42,6 +42,7 @@
- #include <linux/platform_device.h>
- #include <linux/platform_data/dmtimer-omap.h>
- #include <linux/sched_clock.h>
-+#include <linux/clk/ti.h>
- 
- #include <asm/mach/time.h>
- #include <asm/smp_twd.h>
-@@ -290,11 +291,11 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
- 		return -ENXIO;
- 
- 	/* After the dmtimer is using hwmod these clocks won't be needed */
--	timer->fclk = clk_get(NULL, omap_hwmod_get_main_clk(oh));
-+	timer->fclk = ti_clk_get(omap_hwmod_get_main_clk(oh));
- 	if (IS_ERR(timer->fclk))
- 		return PTR_ERR(timer->fclk);
- 
--	src = clk_get(NULL, fck_source);
-+	src = ti_clk_get(fck_source);
- 	if (IS_ERR(src))
- 		return PTR_ERR(src);
- 
-@@ -556,7 +557,7 @@ static void __init realtime_counter_init(void)
- 		pr_err("%s: ioremap failed\n", __func__);
- 		return;
- 	}
--	sys_clk = clk_get(NULL, "sys_clkin");
-+	sys_clk = ti_clk_get("sys_clkin");
- 	if (IS_ERR(sys_clk)) {
- 		pr_err("%s: failed to get system clock handle\n", __func__);
- 		iounmap(base);
-diff --git a/arch/arm/mach-omap2/voltage.c b/arch/arm/mach-omap2/voltage.c
-index cba8cad..68d2852 100644
---- a/arch/arm/mach-omap2/voltage.c
-+++ b/arch/arm/mach-omap2/voltage.c
-@@ -26,6 +26,7 @@
- #include <linux/debugfs.h>
- #include <linux/slab.h>
- #include <linux/clk.h>
-+#include <linux/clk/ti.h>
- 
- #include "common.h"
- 
-@@ -246,7 +247,7 @@ int __init omap_voltage_late_init(void)
- 		if (!voltdm->scalable)
- 			continue;
- 
--		sys_ck = clk_get(NULL, voltdm->sys_clk.name);
-+		sys_ck = ti_clk_get(voltdm->sys_clk.name);
- 		if (IS_ERR(sys_ck)) {
- 			pr_warn("%s: Could not get sys clk.\n", __func__);
- 			return -EINVAL;
+ static int axmclk_remove(struct platform_device *pdev)
 -- 
-1.9.1
+2.7.4
