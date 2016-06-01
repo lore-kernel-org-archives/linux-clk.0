@@ -1,73 +1,149 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 05/10] dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
-Date: Fri, 10 Jun 2016 15:23:33 +0200
-Message-Id: <1465565018-14172-6-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 17/34] clk: maxgen: Migrate to clk_hw based OF and registration APIs
+Date: Wed,  1 Jun 2016 16:15:16 -0700
+Message-Id: <20160601231533.9354-18-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the the Xtal clock on
-Armada 3700 used in the Marvell Armada 3700 SoCs.
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 ---
- .../bindings/clock/armada3700-xtal-clock.txt       | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-new file mode 100644
-index 000000000000..176c4fe6f0e9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-@@ -0,0 +1,28 @@
-+* Xtal Clock bindings for Marvell Armada 37xx SoCs
-+
-+Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
-+reading the gpio latch register.
-+
-+This node must be a subnode of the node exposing the register address
-+of the GPIO block where the gpio latch is located.
-+
-+Required properties:
-+- compatible : shall be one of the following:
-+	"marvell,armada-3700-xtal-clock"
-+- #clock-cells : from common clock binding; shall be set to 0
-+
-+Optional properties:
-+- clock-output-names : from common clock binding; allows overwrite default clock
-+	output names ("xtal")
-+
-+Example:
-+gpio1: gpio@13800 {
-+	compatible = "marvell,mvebu-gpio-3700",	"syscon", "simple-mfd";
-+	reg = <0x13800 0x1000>;
-+
-+	xtalclk: xtal-clk {
-+		compatible = "marvell,armada-3700-xtal-clock";
-+		clock-output-names = "xtal";
-+		#clock-cells = <0>;
-+	};
+See commit 58657d189a2f and it's children for details on this
+new registration API.
+
+ drivers/clk/clk-max-gen.c | 64 +++++++++++++++++++++++------------------------
+ 1 file changed, 31 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
+index 35af9cb6da4f..4bb53fcf8639 100644
+--- a/drivers/clk/clk-max-gen.c
++++ b/drivers/clk/clk-max-gen.c
+@@ -40,6 +40,11 @@ struct max_gen_clk {
+ 	struct clk_hw hw;
+ };
+ 
++struct max_gen_data {
++	size_t num;
++	struct max_gen_clk clks[];
 +};
++
+ static struct max_gen_clk *to_max_gen_clk(struct clk_hw *hw)
+ {
+ 	return container_of(hw, struct max_gen_clk, hw);
+@@ -89,43 +94,48 @@ struct clk_ops max_gen_clk_ops = {
+ };
+ EXPORT_SYMBOL_GPL(max_gen_clk_ops);
+ 
+-static struct clk *max_gen_clk_register(struct device *dev,
+-					struct max_gen_clk *max_gen)
++static int max_gen_clk_register(struct device *dev, struct max_gen_clk *max_gen)
+ {
+-	struct clk *clk;
+ 	struct clk_hw *hw = &max_gen->hw;
+ 	int ret;
+ 
+-	clk = devm_clk_register(dev, hw);
+-	if (IS_ERR(clk))
+-		return clk;
++	ret = devm_clk_hw_register(dev, hw);
++	if (ret)
++		return ret;
++
++	return clk_hw_register_clkdev(hw, hw->init->name, NULL);
++}
+ 
+-	ret = clk_register_clkdev(clk, hw->init->name, NULL);
++static struct clk_hw *
++of_clk_max_gen_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct max_gen_data *max_gen_data = data;
++	unsigned int idx = clkspec->args[0];
+ 
+-	if (ret)
+-		return ERR_PTR(ret);
++	if (idx >= max_gen_data->num) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
+ 
+-	return clk;
++	return &max_gen_data->clks[idx].hw;
+ }
+ 
+ int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+ 		      u32 reg, struct clk_init_data *clks_init, int num_init)
+ {
+ 	int i, ret;
++	struct max_gen_data *max_gen_data;
+ 	struct max_gen_clk *max_gen_clks;
+-	struct clk **clocks;
+ 	struct device *dev = pdev->dev.parent;
+ 	const char *clk_name;
+ 	struct clk_init_data *init;
+ 
+-	clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
+-	if (!clocks)
++	max_gen_data = devm_kzalloc(dev, sizeof(*max_gen_data) +
++			sizeof(*max_gen_data->clks) * num_init, GFP_KERNEL);
++	if (!max_gen_data)
+ 		return -ENOMEM;
+ 
+-	max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
+-				    * num_init, GFP_KERNEL);
+-	if (!max_gen_clks)
+-		return -ENOMEM;
++	max_gen_clks = max_gen_data->clks;
+ 
+ 	for (i = 0; i < num_init; i++) {
+ 		max_gen_clks[i].regmap = regmap;
+@@ -149,29 +159,17 @@ int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+ 
+ 		max_gen_clks[i].hw.init = init;
+ 
+-		clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
+-		if (IS_ERR(clocks[i])) {
+-			ret = PTR_ERR(clocks[i]);
++		ret = max_gen_clk_register(dev, &max_gen_clks[i]);
++		if (ret) {
+ 			dev_err(dev, "failed to register %s\n",
+ 				max_gen_clks[i].hw.init->name);
+ 			return ret;
+ 		}
+ 	}
+ 
+-	platform_set_drvdata(pdev, clocks);
+-
+ 	if (dev->of_node) {
+-		struct clk_onecell_data *of_data;
+-
+-		of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
+-		if (!of_data)
+-			return -ENOMEM;
+-
+-		of_data->clks = clocks;
+-		of_data->clk_num = num_init;
+-		ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+-					  of_data);
+-
++		ret = of_clk_add_hw_provider(dev->of_node, of_clk_max_gen_get,
++					     max_gen_clks);
+ 		if (ret) {
+ 			dev_err(dev, "failed to register OF clock provider\n");
+ 			return ret;
 -- 
-2.5.0
+2.7.4
