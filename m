@@ -1,61 +1,83 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  carlo@endlessm.com,  victor.wan@amlogic.com,  jerry.cao@amlogic.com,  xing.xu@amlogic.com
-Subject: Re: [PATCH 00/10] meson8b clock driver rewrite/cleanup
-References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
-Date: Tue, 14 Jun 2016 12:12:50 -0700
-In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
-	(Michael Turquette's message of "Thu, 9 Jun 2016 17:27:37 -0700")
-Message-ID: <m2ziqnr3d9.fsf@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f174.google.com ([209.85.192.174]:34164 "EHLO
+	mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752343AbcFAXQL (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 19:16:11 -0400
+Received: by mail-pf0-f174.google.com with SMTP id 62so23303531pfd.1
+        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2016 16:16:06 -0700 (PDT)
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
+Subject: [PATCH 29/34] clk: si570: Migrate to clk_hw based OF and registration APIs
+Date: Wed,  1 Jun 2016 16:15:28 -0700
+Message-Id: <20160601231533.9354-30-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Michael Turquette <mturquette@baylibre.com> writes:
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-> This series came about while writing the clock driver for the AmLogic
-> GXBB clock controller. GXBB shares much of the same clock controller IP
-> as the Meson8b clock controller and the source for the drivers is very
-> similar. However, I wanted the GXBB driver to actually be a real
-> platform_driver, and not an early initcall, which led to the same
-> changes in the Meson8b driver. From there a lot of other changes came
-> about.
->
-> This series improves documentation, refactors statically initialized
-> data, removes unnecessary registration functions and converts the
-> meson8b clock controller code into a proper platform_driver. It also
-> changes up the Kconfig bits to prepare for the gxbb clock controller.
-> The diffstat is -190, which is nice as well.
->
-> As a consequence of the shift to platform_driver, all of clocks are
-> registered at module_init time. If any are needed very early during boot
-> then the OF_CLK_DECLARE stuff can be added back in, but I doubt it is
-> necessary.
->
-> Additionally this series makes use of some of the nice clk_hw helper
-> introduced by Stephen, especially clk_hw_onecell_data.
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
 
-Not sure if it qualifies as much of a clock test, but I at least boot
-tested this on meson8b-odroidc1 and nothing exploded, and the
-clk_summary looks sane:
+See commit 58657d189a2f and it's children for details on this
+new registration API.
 
-/ # cat /debug/clk/clk_summary
-   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-   ----------------------------------------------------------------------------------------
-    xtal                                     0            0    24000000   0 0
-       sys_pll                               0            0  1200000000   0 0
-          cpu_clk                            0            0  1200000000   0 0
-       vid_pll                               0            0   732000000   0 0
-       fixed_pll                             0            0  2550000000   0 0
-          fclk_div7                          0            0   364285714   0 0
-          fclk_div5                          0            0   510000000   0 0
-          fclk_div4                          0            0   637500000   0 0
-             mpeg_clk_sel                    0            0   637500000   0 0
-                mpeg_clk_div                 0            0   159375000   0 0
-                   clk81                     0            0   159375000   0 0
-          fclk_div3                          0            0   850000000   0 0
-          fclk_div2                          0            0  1275000000   0 0
+ drivers/clk/clk-si570.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Kevin
+diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
+index d56648521a95..646af1d1898d 100644
+--- a/drivers/clk/clk-si570.c
++++ b/drivers/clk/clk-si570.c
+@@ -408,7 +408,6 @@ static int si570_probe(struct i2c_client *client,
+ {
+ 	struct clk_si570 *data;
+ 	struct clk_init_data init;
+-	struct clk *clk;
+ 	u32 initial_fout, factory_fout, stability;
+ 	int err;
+ 	enum clk_si570_variant variant = id->driver_data;
+@@ -462,13 +461,13 @@ static int si570_probe(struct i2c_client *client,
+ 	if (err)
+ 		return err;
+ 
+-	clk = devm_clk_register(&client->dev, &data->hw);
+-	if (IS_ERR(clk)) {
++	err = devm_clk_hw_register(&client->dev, &data->hw);
++	if (err) {
+ 		dev_err(&client->dev, "clock registration failed\n");
+-		return PTR_ERR(clk);
++		return err;
+ 	}
+-	err = of_clk_add_provider(client->dev.of_node, of_clk_src_simple_get,
+-			clk);
++	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
++				     &data->hw);
+ 	if (err) {
+ 		dev_err(&client->dev, "unable to add clk provider\n");
+ 		return err;
+@@ -477,7 +476,7 @@ static int si570_probe(struct i2c_client *client,
+ 	/* Read the requested initial output frequency from device tree */
+ 	if (!of_property_read_u32(client->dev.of_node, "clock-frequency",
+ 				&initial_fout)) {
+-		err = clk_set_rate(clk, initial_fout);
++		err = clk_set_rate(data->hw.clk, initial_fout);
+ 		if (err) {
+ 			of_clk_del_provider(client->dev.of_node);
+ 			return err;
+-- 
+2.7.4
+
