@@ -1,31 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 17:00:57 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: weiyj_lk@163.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: Fix return value check in oxnas_stdclk_probe()
-Message-ID: <20160621000057.GC1521@codeaurora.org>
-References: <1466184263-17890-1-git-send-email-weiyj_lk@163.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem
+ to Exynos5410
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
+Date: Wed, 1 Jun 2016 11:16:58 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466184263-17890-1-git-send-email-weiyj_lk@163.com>
+In-Reply-To: <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/17, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Hello Krzysztof,
+
+On 06/01/2016 05:45 AM, Krzysztof Kozlowski wrote:
+> Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
+> shared with Exynos5410 and configure the clocks on the latter.
 > 
-> In case of error, the function syscon_node_to_regmap() returns
-> ERR_PTR() and never returns NULL. The NULL test in the return
-> value check should be replaced with IS_ERR().
-> 
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
 
-Applied to clk-fixes + added fixes tag.
+[snip]
 
+>  
+> +&sss {
+> +	clocks = <&clock CLK_SSS>;
+> +	clock-names = "secss";
+> +};
+> +
+
+[snip]
+
+>  
+> +&watchdog {
+> +	clocks = <&clock CLK_WDT>;
+> +	clock-names = "watchdog";
+> +	samsung,syscon-phandle = <&pmu_system_controller>;
+> +};
+> +
+
+Since you used the same ID than Exynos5420 for the SSS and WDT clocks,
+I wonder if the clock and clock-names shouldn't be just defined in the
+shared exynos54xx.dtsi as is the case for the interrupts that are also
+the same?
+
+The patch looks good to me though, so whatever you decide:
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
