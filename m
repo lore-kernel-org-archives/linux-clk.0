@@ -1,35 +1,31 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 12:27:39 -0700
+Date: Wed, 1 Jun 2016 15:11:33 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Ray Jui <rjui@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Simran Rai <ssimran@broadcom.com>
-Subject: Re: [PATCH 05/34] clk: bcm: iproc: Migrate to clk_hw based
- registration and OF APIs
-Message-ID: <20160630192739.GR1521@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-6-stephen.boyd@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 11/54] MAINTAINERS: Add file patterns for clock device
+ tree bindings
+Message-ID: <20160601221133.GF28218@codeaurora.org>
+References: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
+ <1463907991-7916-12-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-6-stephen.boyd@linaro.org>
+In-Reply-To: <1463907991-7916-12-git-send-email-geert@linux-m68k.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
+On 05/22, Geert Uytterhoeven wrote:
+> Submitters of device tree binding documentation may forget to CC
+> the subsystem maintainer if this is missing.
 > 
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Jon Mason <jonmason@broadcom.com>
-> Cc: Simran Rai <ssimran@broadcom.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
 > ---
 
-Applied to clk-next
+Applied to clk-fixes
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
