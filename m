@@ -1,31 +1,76 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/3] clk: samsung: exynos5410: Add WDT,
- ACLK266 and SSS clocks
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
- <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
- <61eead99-d8a7-71f7-a2a4-18dfd3d780a1@osg.samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <574FFA45.9060409@samsung.com>
-Date: Thu, 02 Jun 2016 11:20:05 +0200
-MIME-version: 1.0
-In-reply-to: <61eead99-d8a7-71f7-a2a4-18dfd3d780a1@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 34/34] clk: wm831x: Migrate to clk_hw based registration APIs
+Date: Wed,  1 Jun 2016 16:15:33 -0700
+Message-Id: <20160601231533.9354-35-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/2016 04:55 PM, Javier Martinez Canillas wrote:
-> On 06/01/2016 05:45 AM, Krzysztof Kozlowski wrote:
->> > Add clock hierarchy for Security SubSystem clock and watchdog.
->> > 
->> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> > ---
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-Patches 1/3, 2/3 applied, thanks.
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
+
+See commit 58657d189a2f and it's children for details on this
+new registration API.
+
+ drivers/clk/clk-wm831x.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/clk-wm831x.c b/drivers/clk/clk-wm831x.c
+index 88def4b2761c..f4fdac55727c 100644
+--- a/drivers/clk/clk-wm831x.c
++++ b/drivers/clk/clk-wm831x.c
+@@ -24,9 +24,6 @@ struct wm831x_clk {
+ 	struct clk_hw xtal_hw;
+ 	struct clk_hw fll_hw;
+ 	struct clk_hw clkout_hw;
+-	struct clk *xtal;
+-	struct clk *fll;
+-	struct clk *clkout;
+ 	bool xtal_ena;
+ };
+ 
+@@ -370,19 +367,19 @@ static int wm831x_clk_probe(struct platform_device *pdev)
+ 	clkdata->xtal_ena = ret & WM831X_XTAL_ENA;
+ 
+ 	clkdata->xtal_hw.init = &wm831x_xtal_init;
+-	clkdata->xtal = devm_clk_register(&pdev->dev, &clkdata->xtal_hw);
+-	if (IS_ERR(clkdata->xtal))
+-		return PTR_ERR(clkdata->xtal);
++	ret = devm_clk_hw_register(&pdev->dev, &clkdata->xtal_hw);
++	if (ret)
++		return ret;
+ 
+ 	clkdata->fll_hw.init = &wm831x_fll_init;
+-	clkdata->fll = devm_clk_register(&pdev->dev, &clkdata->fll_hw);
+-	if (IS_ERR(clkdata->fll))
+-		return PTR_ERR(clkdata->fll);
++	ret = devm_clk_hw_register(&pdev->dev, &clkdata->fll_hw);
++	if (ret)
++		return ret;
+ 
+ 	clkdata->clkout_hw.init = &wm831x_clkout_init;
+-	clkdata->clkout = devm_clk_register(&pdev->dev, &clkdata->clkout_hw);
+-	if (IS_ERR(clkdata->clkout))
+-		return PTR_ERR(clkdata->clkout);
++	ret = devm_clk_hw_register(&pdev->dev, &clkdata->clkout_hw);
++	if (ret)
++		return ret;
+ 
+ 	platform_set_drvdata(pdev, clkdata);
+ 
+-- 
+2.7.4
