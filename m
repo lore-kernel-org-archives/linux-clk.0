@@ -1,110 +1,35 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 00/10]  mfd: ac100: Add support for X-Powers AC100 audio codec / RTC combo IC
-Date: Wed, 15 Jun 2016 18:27:37 +0800
-Message-Id: <1465986467-14802-1-git-send-email-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <9904764.Bsg49gKsuS@wasted.cogentembedded.com>
+References: <9904764.Bsg49gKsuS@wasted.cogentembedded.com>
+Date: Wed, 1 Jun 2016 10:34:47 +0200
+Message-ID: <CAMuHMdWOsOcHLXqL7=AxyEuz4TqdaPsLSngNxzkUmMLcM_=OXA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: add R8A7792 support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+On Wed, May 25, 2016 at 11:40 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Renesas R-Car V2H (R8A7792) clocks are handled by R-Car gen2 clock driver.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This series adds support for X-Powers' AC100 audio codec / RTC combo IC.
-This chip is found on Allwinner A80 SoC based boards, and is also part
-of the AXP813/AXP818 PMIC found with Allwinner A83T SoCs.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The series focuses on the RTC side of the chip. The audio codec will
-be done later, once the digital audio interface of the SoC is supported.
+(I.e. will queue in clk-renesas-for-v4.8).
 
-Changes since v1:
+Gr{oetje,eeting}s,
 
-  - Complete register definitions and regmap regions.
+                        Geert
 
-v1 was actually a working version that wasn't updated with the codec
-register definitions.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Patch 1 adds bulk write support for regmaps without raw formatting.
-This is used in the RTC driver to write out the date and time in one
-call.
-
-Patch 2 adds device tree bindings for the AC100.
-
-Patch 3 adds the mfd driver for the AC100.
-
-Patch 4 adds the RTC driver for the AC100.
-
-Patch 5 adds RTC clk output support to the RTC driver.
-This is a separate patch as the clk code is over 300 LoC. Having a
-separate patch should make it easier for the clk maintainers to review.
-
-Patch 6 adds the AC100 device nodes to the A80 Optimus board dts.
-
-Patch 7 adds the AC100 device nodes to the Cubieboard4 board dts.
-
-Patch 8 fixes the order of device nodes in the A80 Optimus board dts.
-
-Patch 9 fixes the order of device nodes in the Cubieboard4 board dts.
-
-Patch 10 changes the fixed osc_32k clk to a fixed factor clk,
-representing the 32k clk input pin on the SoC, and also hooks up the
-ac100 rtc clk output to this clk in the board dts files.
-
-I'm hoping we can merge the driver bits (patches 2~5) through the
-mfd tree, with acks from the rtc and clk maintainers for patches
-4 and 5.
-
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (10):
-  regmap: Support bulk writes for devices without raw formatting
-  mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC
-    combo IC
-  mfd: ac100: Add driver for X-Powers AC100 audio codec / RTC combo IC
-  rtc: ac100: Add RTC driver for X-Powers AC100
-  rtc: ac100: Add clk output support
-  ARM: dts: sun9i: a80-optimus: Add device node for AC100
-  ARM: dts: sun9i: cubieboard4: Add device node for AC100
-  ARM: dts: sun9i: cubieboard4: Order nodes by alphabetical order
-  ARM: dts: sun9i: a80-optimus: Order nodes by alphabetical order
-  ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
-
- Documentation/devicetree/bindings/mfd/ac100.txt |  42 ++
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts     |  58 +-
- arch/arm/boot/dts/sun9i-a80-optimus.dts         |  76 ++-
- arch/arm/boot/dts/sun9i-a80.dtsi                |   9 +-
- drivers/base/regmap/regmap.c                    |  31 +-
- drivers/mfd/Kconfig                             |  10 +
- drivers/mfd/Makefile                            |   2 +
- drivers/mfd/ac100.c                             | 135 +++++
- drivers/rtc/Kconfig                             |  10 +
- drivers/rtc/Makefile                            |   1 +
- drivers/rtc/rtc-ac100.c                         | 686 ++++++++++++++++++++++++
- include/linux/mfd/ac100.h                       | 176 ++++++
- 12 files changed, 1186 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
- create mode 100644 drivers/mfd/ac100.c
- create mode 100644 drivers/rtc/rtc-ac100.c
- create mode 100644 include/linux/mfd/ac100.h
-
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
