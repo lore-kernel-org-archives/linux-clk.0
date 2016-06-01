@@ -1,118 +1,35 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <96c1b4e0bb74e3c8a543975f0beb6f057d034323.1467135898.git.moinejf@free.fr>
-In-Reply-To: <cover.1467135898.git.moinejf@free.fr>
-References: <cover.1467135898.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 28 Jun 2016 19:22:50 +0200
-Subject: [PATCH 3/3] dt: sun8i: Define the clocks of the A83T
-To: Emilio Lopez <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-    Michael Turquette <mturquette@baylibre.com>,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org,
-    devicetree@vger.kernel.org,
-    linux-sunxi@googlegroups.com
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: Remove CLK_IS_ROOT flag
+Date: Wed,  1 Jun 2016 14:58:08 -0700
+Message-Id: <20160601215808.31787-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Change the clock definition using the CCU.
+Now that we've gotten rid of all the users of this flag we can
+retire the number, leaving a slot open for a future flag user.
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- Documentation/devicetree/bindings/clock/sunxi.txt |  7 ++++---
- arch/arm/boot/dts/sun8i-a83t.dtsi                 | 16 ++++++++++++----
- 2 files changed, 16 insertions(+), 7 deletions(-)
+ include/linux/clk-provider.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 8f7619d..8e1f832 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -61,7 +61,6 @@ Required properties:
- 	"allwinner,sun9i-a80-apb1-gates-clk" - for the APB1 gates on A80
- 	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
- 	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
--	"allwinner,sun8i-a83t-bus-gates-clk" - for the bus gates on A83T
- 	"allwinner,sun8i-h3-bus-gates-clk" - for the bus gates on H3
- 	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
- 	"allwinner,sun4i-a10-display-clk" - for the display clocks on the A10
-@@ -87,6 +86,7 @@ Required properties:
- 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
- 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
- 	"allwinner,sun6i-a31-display-clk" - for the display clocks
-+	"allwinner,sun8i-a83t-ccu" - for the CCU clocks/resets on A83T
- 
- Required properties for all clocks:
- - reg : shall be the control register address for the clock.
-@@ -98,12 +98,13 @@ Required properties for all clocks:
- 	"allwinner,*-gates-clk", "allwinner,sun4i-pll5-clk",
- 	"allwinner,sun4i-pll6-clk", "allwinner,sun6i-a31-pll6-clk",
- 	"allwinner,*-usb-clk", "allwinner,*-mmc-clk",
--	"allwinner,*-mmc-config-clk"
-+	"allwinner,*-mmc-config-clk",
-+	"allwinner,*-ccu"
- - clock-output-names : shall be the corresponding names of the outputs.
- 	If the clock module only has one output, the name shall be the
- 	module name.
- 
--And "allwinner,*-usb-clk" clocks also require:
-+"allwinner,*-usb-clk" and "allwinner,*-ccu" clocks also require:
- - reset-cells : shall be set to 1
- 
- The "allwinner,sun4i-a10-ve-clk" clock also requires:
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index d3473f8..6e0acca 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -45,9 +45,10 @@
- 
- #include "skeleton.dtsi"
- 
-+#include <dt-bindings/clock/sun8i-a83t.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--
- #include <dt-bindings/pinctrl/sun4i-a10.h>
-+#include <dt-bindings/reset/sun8i-a83t.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -138,13 +139,13 @@
- 			clock-output-names = "osc16M";
- 		};
- 
--		osc16Md512: osc16Md512_clk {
-+		osc32k: osc32k_clk {
- 			#clock-cells = <0>;
- 			compatible = "fixed-factor-clock";
- 			clock-div = <512>;
- 			clock-mult = <1>;
- 			clocks = <&osc16M>;
--			clock-output-names = "osc16M-d512";
-+			clock-output-names = "osc32k";
- 		};
- 	};
- 
-@@ -154,13 +155,20 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun8i-a83t-ccu";
-+			reg = <0x01c20000 0x400>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@01c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_BUS_PIO>;
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0c72204c75fc..fb39d5add173 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -25,7 +25,7 @@
+ #define CLK_SET_PARENT_GATE	BIT(1) /* must be gated across re-parent */
+ #define CLK_SET_RATE_PARENT	BIT(2) /* propagate rate change up one level */
+ #define CLK_IGNORE_UNUSED	BIT(3) /* do not gate even if unused */
+-#define CLK_IS_ROOT		BIT(4) /* Deprecated: Don't use */
++				/* unused */
+ #define CLK_IS_BASIC		BIT(5) /* Basic clk, can't do a to_clk_foo() */
+ #define CLK_GET_RATE_NOCACHE	BIT(6) /* do not use the cached clk rate */
+ #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
 -- 
-2.9.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
