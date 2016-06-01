@@ -1,164 +1,277 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v66JDrEDLmTKS6CLojuKzd7W15GcPd7O+hKRkrdT7E7UQA@mail.gmail.com>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v67RUCZfFaXnM2LxomV5DBSVApXHHs0noiNEbReOh_3W9w@mail.gmail.com>
- <20160601191932.GD4908@lukather> <CAGb2v66JDrEDLmTKS6CLojuKzd7W15GcPd7O+hKRkrdT7E7UQA@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 3 Jun 2016 14:55:06 +0800
-Message-ID: <CAGb2v67cHYyxZBCnPBcAUBMn4+LM4JVmHy+dy9FPGsov4CAFpw@mail.gmail.com>
-Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH 1/4] rockchip: rockchip: add new clock-type for the ddrclk
+Date: Wed,  1 Jun 2016 17:35:36 +0800
+Message-Id: <1464773739-18152-2-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
+References: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 3, 2016 at 2:42 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> Hi,
->
-> On Thu, Jun 2, 2016 at 3:19 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> Hi Chen-Yu,
->>
->> On Tue, May 31, 2016 at 12:15:28AM +0800, Chen-Yu Tsai wrote:
->>> On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
->>> <maxime.ripard@free-electrons.com> wrote:
->>> > Add the list of clocks and resets found in the H3 CCU.
->>> >
->>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->>> > ---
->>> >  drivers/clk/sunxi-ng/Makefile        |   2 +
->>> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++++++++++
->>> >  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
->>> >  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
->>> >  4 files changed, 1024 insertions(+)
->>> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>> >  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
->>> >  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
->>> >
->>> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
->>> > index c794f57b6fb1..67ff6a92f124 100644
->>> > --- a/drivers/clk/sunxi-ng/Makefile
->>> > +++ b/drivers/clk/sunxi-ng/Makefile
->>> > @@ -13,3 +13,5 @@ obj-y += ccu_nkmp.o
->>> >  obj-y += ccu_nm.o
->>> >  obj-y += ccu_p.o
->>> >  obj-y += ccu_phase.o
->>> > +
->>> > +obj-y += ccu-sun8i-h3.o
->>> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>> > new file mode 100644
->>> > index 000000000000..5ce699e95c32
->>> > --- /dev/null
->>> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>> > @@ -0,0 +1,757 @@
->>> > +/*
->>> > + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
->>> > + *
->>> > + * This software is licensed under the terms of the GNU General Public
->>> > + * License version 2, as published by the Free Software Foundation, and
->>> > + * may be copied, distributed, and modified under those terms.
->>> > + *
->>> > + * This program is distributed in the hope that it will be useful,
->>> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> > + * GNU General Public License for more details.
->>> > + */
->>> > +
->>> > +#include <linux/clk-provider.h>
->>> > +
->>> > +#include <dt-bindings/clock/sun8i-h3.h>
->>> > +#include <dt-bindings/reset/sun8i-h3.h>
->>> > +
->>> > +#include "ccu_common.h"
->>> > +#include "ccu_reset.h"
->>> > +
->>> > +#include "ccu_div_table.h"
->>> > +#include "ccu_factor.h"
->>> > +#include "ccu_fixed_factor.h"
->>> > +#include "ccu_gate.h"
->>> > +#include "ccu_m.h"
->>> > +#include "ccu_mp.h"
->>> > +#include "ccu_nk.h"
->>> > +#include "ccu_nkm.h"
->>> > +#include "ccu_nkmp.h"
->>> > +#include "ccu_nm.h"
->>> > +#include "ccu_p.h"
->>> > +#include "ccu_phase.h"
->>> > +
->>> > +static struct ccu_nkmp pll_cpux_clk = {
->>> > +       .enable         = BIT(31),
->>> > +       .lock           = BIT(28),
->>> > +
->>> > +       .m              = SUNXI_CLK_FACTOR(0, 2),
->>> > +       .k              = SUNXI_CLK_FACTOR(4, 2),
->>> > +       .n              = SUNXI_CLK_FACTOR(8, 5),
->>> > +       .p              = SUNXI_CLK_FACTOR(16, 2),
->>>
->>> We should find a way to specify a table for p.
->>
->> A table for P? Why?
+On new rockchip platform(rk3399 etc), there have dcf controller to
+do ddr frequency scaling, and this controller will implement in
+arm-trust-firmware. We add a special clock-type to handle that.
 
-Missed this one. The datasheet says P = 0x3 is not valid.
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+ drivers/clk/rockchip/Makefile  |   1 +
+ drivers/clk/rockchip/clk-ddr.c | 147 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c     |   9 +++
+ drivers/clk/rockchip/clk.h     |  27 ++++++++
+ 4 files changed, 184 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-ddr.c
 
-ChenYu
-
->>
->>> > +
->>> > +       .common         = {
->>> > +               .reg            = 0x000,
->>> > +               .features       = CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
->>> > +               .hw.init        = SUNXI_HW_INIT("pll-cpux",
->>> > +                                               "osc24M",
->>>
->>> osc24M is an outside reference. Shouldn't we use put it in a "clocks"
->>> property in the DT, and use of_clk_get_parent_name()?
->>>
->>> osc24M can be controlled from the PRCM on other chips. I suspect the
->>> same with the H3. osc32k might also be from the PRCM.
->>
->> I was discussing exactly this the other day with Mike. He has a bunch
->> of patches to address exactly that issue. He plans on posting it and
->> merge it by 4.8. Until then, we should rely on the hardcoded clock
->> string like it's done there, and we should obviously add the clocks in
->> the DT node for when we will actually use them.
->
-> OK. Let's wait and see.
->
->>
->>> > +                                               &ccu_nkmp_ops,
->>> > +                                               0),
->>> > +       },
->>> > +};
->>> > +
->
-> [...]
->
->>> > +static struct ccu_nkm pll_ddr_clk = {
->>> > +       .enable         = BIT(31),
->>> > +       .lock           = BIT(28),
->>> > +
->>> > +       .n              = SUNXI_CLK_FACTOR(8, 5),
->>> > +       .k              = SUNXI_CLK_FACTOR(4, 2),
->>> > +       .m              = SUNXI_CLK_FACTOR(0, 2),
->>>
->>> We need a special "update" bit (bit 20) for this clock, otherwise changes
->>> don't really take effect.
->>
->> Yeah, I know, but I feel like it's a feature here, since Linux should
->> never modify that clock anyway.
->>
->> I can add a comment though.
->
-> Maybe we should do a read-only variant, or a feature flag?
->
-> [...]
->
-> Thanks
-> ChenYu
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index f47a2fa..b5f2c8e 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
+ obj-y	+= clk-cpu.o
+ obj-y	+= clk-inverter.o
+ obj-y	+= clk-mmc-phase.o
++obj-y	+= clk-ddr.o
+ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+ 
+ obj-y	+= clk-rk3036.o
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+new file mode 100644
+index 0000000..5b6630d
+--- /dev/null
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -0,0 +1,147 @@
++/*
++ * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
++ * Author: Lin Huang <hl@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/of.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include "clk.h"
++
++struct rockchip_ddrclk {
++	struct clk_hw	hw;
++	void __iomem	*reg_base;
++	int		mux_offset;
++	int		mux_shift;
++	int		mux_width;
++	int		mux_flag;
++	int		div_shift;
++	int		div_width;
++	int		div_flag;
++	spinlock_t	*lock;
++};
++
++#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk, hw)
++#define val_mask(width)	((1 << (width)) - 1)
++
++static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
++				    unsigned long prate)
++{
++	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	unsigned long flags;
++
++	spin_lock_irqsave(ddrclk->lock, flags);
++
++	/* TODO: set ddr rate in bl31 */
++
++	spin_unlock_irqrestore(ddrclk->lock, flags);
++
++	return 0;
++}
++
++static unsigned long
++rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
++			    unsigned long parent_rate)
++{
++	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	int val;
++
++	val = clk_readl(ddrclk->reg_base +
++			ddrclk->mux_offset) >> ddrclk->div_shift;
++	val &= val_mask(ddrclk->div_width);
++
++	return DIV_ROUND_UP_ULL((u64)parent_rate, val + 1);
++}
++
++static long clk_ddrclk_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *prate)
++{
++	return rate;
++}
++
++static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
++{
++	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
++	u32 val;
++
++	val = clk_readl(ddrclk->reg_base +
++			ddrclk->mux_offset) >> ddrclk->mux_shift;
++	val &= val_mask(ddrclk->mux_width);
++
++	if (val >= num_parents)
++		return -EINVAL;
++
++	return val;
++}
++
++static const struct clk_ops rockchip_ddrclk_ops = {
++	.recalc_rate = rockchip_ddrclk_recalc_rate,
++	.set_rate = rockchip_ddrclk_set_rate,
++	.round_rate = clk_ddrclk_round_rate,
++	.get_parent = rockchip_ddrclk_get_parent,
++};
++
++struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
++					 const char *const *parent_names,
++					 u8 num_parents, int mux_offset,
++					 int mux_shift, int mux_width,
++					 int mux_flag, int div_shift,
++					 int div_width, int div_flag,
++					 void __iomem *reg_base,
++					 spinlock_t *lock)
++{
++	struct rockchip_ddrclk *ddrclk;
++	struct clk_init_data init;
++	struct clk *clk;
++	int ret;
++
++	ddrclk = kzalloc(sizeof(*ddrclk), GFP_KERNEL);
++	if (!ddrclk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++	init.ops = &rockchip_ddrclk_ops;
++
++	init.flags = flags;
++	init.flags |= CLK_SET_RATE_NO_REPARENT;
++	init.flags |= CLK_GET_RATE_NOCACHE;
++
++	ddrclk->reg_base = reg_base;
++	ddrclk->lock = lock;
++	ddrclk->hw.init = &init;
++	ddrclk->mux_offset = mux_offset;
++	ddrclk->mux_shift = mux_shift;
++	ddrclk->mux_width = mux_width;
++	ddrclk->mux_flag = mux_flag;
++	ddrclk->div_shift = div_shift;
++	ddrclk->div_width = div_width;
++	ddrclk->div_flag = div_flag;
++
++	clk = clk_register(NULL, &ddrclk->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: could not register ddrclk %s\n", __func__,	name);
++		ret = PTR_ERR(clk);
++		goto free_ddrclk;
++	}
++
++	return clk;
++
++free_ddrclk:
++	kfree(ddrclk);
++	return ERR_PTR(ret);
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 7ffd134..6ac1aa5 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -484,6 +484,15 @@ void __init rockchip_clk_register_branches(
+ 				list->gate_offset, list->gate_shift,
+ 				list->gate_flags, flags, &ctx->lock);
+ 			break;
++		case branch_ddrc:
++			clk = rockchip_clk_register_ddrclk(
++				list->name, list->flags,
++				list->parent_names, list->num_parents,
++				list->muxdiv_offset, list->mux_shift,
++				list->mux_width, list->mux_flags,
++				list->div_shift, list->div_width,
++				list->div_flags, ctx->reg_base, &ctx->lock);
++			break;
+ 		}
+ 
+ 		/* none of the cases above matched */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 2194ffa..4033fe4 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -281,6 +281,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift);
+ 
++struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
++			const char *const *parent_names, u8 num_parents,
++			int mux_offset, int mux_shift, int mux_width,
++			int mux_flag, int div_shift, int div_width,
++			int div_flag, void __iomem *reg_base,
++			spinlock_t *lock);
++
+ #define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
+ 
+ struct clk *rockchip_clk_register_inverter(const char *name,
+@@ -299,6 +306,7 @@ enum rockchip_clk_branch_type {
+ 	branch_mmc,
+ 	branch_inverter,
+ 	branch_factor,
++	branch_ddrc,
+ };
+ 
+ struct rockchip_clk_branch {
+@@ -488,6 +496,25 @@ struct rockchip_clk_branch {
+ 		.child		= ch,				\
+ 	}
+ 
++#define COMPOSITE_DDRC(_id, cname, pnames, f, mo, ms, mw, mf,	\
++			 ds, dw, df)				\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_ddrc,			\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.mux_shift	= ms,				\
++		.mux_width	= mw,				\
++		.mux_flags	= mf,				\
++		.div_shift	= ds,				\
++		.div_width	= dw,				\
++		.div_flags	= df,				\
++		.gate_offset	= -1,				\
++	}
++
+ #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
+ 	{							\
+ 		.id		= _id,				\
+-- 
+1.9.1
