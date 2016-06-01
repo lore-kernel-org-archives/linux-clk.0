@@ -1,163 +1,47 @@
-Return-Path: <hl@rock-chips.com>
-Subject: Re: [RFC PATCH v1 1/6] rockchip: rockchip: add new clock-type for the
- ddrclk
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, mturquette@baylibre.com
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
- <1464947719-6245-2-git-send-email-hl@rock-chips.com>
- <1663829.Hlc2xmNrOy@diego>
-Cc: mark.yao@rock-chips.com, myungjoo.ham@samsung.com, sboyd@codeaurora.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, airlied@linux.ie,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kyungmin.park@samsung.com, dianders@chromium.org, dbasehore@chromium.org,
- huangtao@rock-chips.com, typ@rock-chips.com
-From: hl <hl@rock-chips.com>
-Message-ID: <5754EBED.5070606@rock-chips.com>
-Date: Mon, 6 Jun 2016 11:20:13 +0800
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kevin Hilman <khilman@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+ <1464429273-23457-14-git-send-email-krzk@kernel.org>
+ <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
+ <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
+ <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <cabfd6c2-fc7e-622a-36e6-5be0b674cdd2@osg.samsung.com>
+Date: Wed, 1 Jun 2016 16:54:41 -0400
 MIME-Version: 1.0
-In-Reply-To: <1663829.Hlc2xmNrOy@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+On 06/01/2016 04:52 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 
-On 2016年06月03日 20:51, Heiko Stübner wrote:
-> Am Freitag, 3. Juni 2016, 17:55:14 schrieb Lin Huang:
->> On new rockchip platform(rk3399 etc), there have dcf controller to
->> do ddr frequency scaling, and this controller will implement in
->> arm-trust-firmware. We add a special clock-type to handle that.
->>
->> Signed-off-by: Lin Huang <hl@rock-chips.com>
->> ---
->> Changes in v1:
->> - None
->>
->>   drivers/clk/rockchip/Makefile  |   1 +
->>   drivers/clk/rockchip/clk-ddr.c | 147
->> +++++++++++++++++++++++++++++++++++++++++ drivers/clk/rockchip/clk.c     |
->>   9 +++
->>   drivers/clk/rockchip/clk.h     |  27 ++++++++
->>   4 files changed, 184 insertions(+)
->>   create mode 100644 drivers/clk/rockchip/clk-ddr.c
->>
->> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
->> index f47a2fa..b5f2c8e 100644
->> --- a/drivers/clk/rockchip/Makefile
->> +++ b/drivers/clk/rockchip/Makefile
->> @@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
->>   obj-y	+= clk-cpu.o
->>   obj-y	+= clk-inverter.o
->>   obj-y	+= clk-mmc-phase.o
->> +obj-y	+= clk-ddr.o
->>   obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
->>
->>   obj-y	+= clk-rk3036.o
->> diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
->> new file mode 100644
->> index 0000000..5b6630d
->> --- /dev/null
->> +++ b/drivers/clk/rockchip/clk-ddr.c
->> @@ -0,0 +1,147 @@
->> +/*
->> + * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
->> + * Author: Lin Huang <hl@rock-chips.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/of.h>
->> +#include <linux/slab.h>
->> +#include <linux/io.h>
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include "clk.h"
->> +
->> +struct rockchip_ddrclk {
->> +	struct clk_hw	hw;
->> +	void __iomem	*reg_base;
->> +	int		mux_offset;
->> +	int		mux_shift;
->> +	int		mux_width;
->> +	int		mux_flag;
->> +	int		div_shift;
->> +	int		div_width;
->> +	int		div_flag;
->> +	spinlock_t	*lock;
->> +};
->> +
->> +#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk,
->> hw)
->> +#define val_mask(width)	((1 << (width)) - 1)
-> maybe use GENMASK?
-     Oh, yes, we can use it. Will fix next version.
->
->> +
->> +static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
->> +				    unsigned long prate)
->> +{
->> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(ddrclk->lock, flags);
->> +
->> +	/* TODO: set ddr rate in bl31 */
-> I expect this interface to be in existence and merged into the main ATF first.
->
-> Right now the whole clock-type does nothing more than a simple COMPOSITE with
-> added CLK_DIVIDER_READ_ONLY | CLK_MUX_READ_ONLY.
->
-> Also Mike is propably still working in the so called coordinated rate change
-> for clocks needing special handling on rate changes, which might provide a
-> second approach to this.
-     You mean there is a patch set can handle it now? Can you tell me 
-the ID,
-     I want to check it.
->
-> So please, first of all get the ATF-interface merged and meanwhile if you need
-> to read the clock-rate, just use a regular composite, with the read-only flags.
->
-     My colleague are wroking on ATF code now, I agree with you, We can 
-not merge
-     this patch set before ATF-interface merged. And we do not need to 
-add a new code
-     if we only want to read ddr clock rate(we can get the ddr rate to 
-read dpll), so i prefer
-     to keep this function for now, and do review first, once the ATF 
-code ready, we can merge
-     soon(i hope :-P ) .
->> +	spin_unlock_irqrestore(ddrclk->lock, flags);
->> +
->> +	return 0;
->> +}
->> +
->> +static unsigned long
->> +rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
->> +			    unsigned long parent_rate)
->> +{
->> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +	int val;
->> +
->> +	val = clk_readl(ddrclk->reg_base +
->> +			ddrclk->mux_offset) >> ddrclk->div_shift;
->> +	val &= val_mask(ddrclk->div_width);
->> +
->> +	return DIV_ROUND_UP_ULL((u64)parent_rate, val + 1);
-> return divider_recalc_rate(...)
-     got it , thank you.
->
->
-> Heiko
->
->
->
+[snip]
 
+>>
+>> I left the commit in my tree as it is correct (strictly speaking).
+>> Sorry for any trouble it makes.
+>>
+> 
+> Kevin pointed me to this issue over IRC and I was able to reproduce it in
+> my Peach Pi by removing the UART3 clocks from the Exynos5420 clock driver.
+> 
+> Your patch indeed fixes the issue, I'll add a Reviewed-by on that thread.
+> 
+
+err, I meant a Tested-by tag... but yes I've also reviewed the patch :)
+
+Best regards, 
 -- 
-Lin Huang
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
