@@ -1,56 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5171 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750919AbcFWP1Q (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2016 11:27:16 -0400
-Subject: Re: [PATCH 1/2] clk: tegra: Make sor_safe the parent of dpaux and
- dpaux1
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <20160623105231.24383-1-thierry.reding@gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <dac57911-c93d-06dd-99b4-71133c230be7@nvidia.com>
-Date: Thu, 23 Jun 2016 11:27:07 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160623105231.24383-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH 0/4] rk3399 support ddr frequency scaling
+Date: Wed,  1 Jun 2016 17:35:35 +0800
+Message-Id: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 6/23/2016 6:52 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> It turns out that sor_safe, rather than pll_p, is the parent of the
-> dpaux and dpaux1 clocks.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index aab32af77aa2..fe295b4102ca 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2466,11 +2466,11 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
->  					1, 2);
->  	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
->  
-> -	clk = tegra_clk_register_periph_fixed("dpaux", "pll_p", 0, clk_base,
-> +	clk = tegra_clk_register_periph_fixed("dpaux", "sor_safe", 0, clk_base,
->  					      1, 17, 181);
->  	clks[TEGRA210_CLK_DPAUX] = clk;
->  
-> -	clk = tegra_clk_register_periph_fixed("dpaux1", "pll_p", 0, clk_base,
-> +	clk = tegra_clk_register_periph_fixed("dpaux1", "sor_safe", 0, clk_base,
->  					      1, 17, 207);
->  	clks[TEGRA210_CLK_DPAUX1] = clk;
->  
-> 
+rk3399 platform have dfi controller can monitor ddr load,
+and dcf controller to handle ddr register so we can get the
+right ddr frequency and make ddr controller happy work(which
+will implement in bl31). So we do ddr frequency scaling with
+following flow:
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+	     kernel                                bl31
+
+	monitor ddr load
+		|
+		|
+	get_target_rate
+		|
+		|           pass rate to bl31
+	clk_set_rate(ddr) --------------------->run dcf flow
+		|                                   |
+		|                                   |
+	wait dcf interrupt<-------------------trigger dcf interrupt  
+		|
+		|
+	      return
+
+Lin Huang (4):
+  rockchip: rockchip: add new clock-type for the ddrclk
+  clk: rockchip: rk3399: add ddrc clock support
+  PM / devfreq: rockchip: add devfreq driver for rk3399 dmc
+  drm/rockchip: Add dmc notifier in vop driver
+
+ drivers/clk/rockchip/Makefile               |   1 +
+ drivers/clk/rockchip/clk-ddr.c              | 147 ++++++++++
+ drivers/clk/rockchip/clk-rk3399.c           |  16 +
+ drivers/clk/rockchip/clk.c                  |   9 +
+ drivers/clk/rockchip/clk.h                  |  27 ++
+ drivers/devfreq/Kconfig                     |   2 +-
+ drivers/devfreq/Makefile                    |   1 +
+ drivers/devfreq/rockchip/Kconfig            |  14 +
+ drivers/devfreq/rockchip/Makefile           |   2 +
+ drivers/devfreq/rockchip/rk3399_dmc.c       | 438 ++++++++++++++++++++++++++++
+ drivers/devfreq/rockchip/rockchip_dmc.c     | 132 +++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  51 +++-
+ include/dt-bindings/clock/rk3399-cru.h      |   1 +
+ include/soc/rockchip/rockchip_dmc.h         |  44 +++
+ 14 files changed, 882 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/rockchip/clk-ddr.c
+ create mode 100644 drivers/devfreq/rockchip/Kconfig
+ create mode 100644 drivers/devfreq/rockchip/Makefile
+ create mode 100644 drivers/devfreq/rockchip/rk3399_dmc.c
+ create mode 100644 drivers/devfreq/rockchip/rockchip_dmc.c
+ create mode 100644 include/soc/rockchip/rockchip_dmc.h
 
 -- 
-nvpublic
+1.9.1
