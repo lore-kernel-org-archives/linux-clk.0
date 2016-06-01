@@ -1,79 +1,155 @@
-Return-Path: <fcooper@ti.com>
-Subject: Re: [PATCH v8 0/9] ARM: dts: DRA7: Add dt nodes for PWMSS
-To: <thierry.reding@gmail.com>, <robh+dt@kernel.org>, <tony@atomide.com>,
-        <linux@arm.linux.org.uk>, <paul@pwsan.com>, <t-kristo@ti.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <vigneshr@ti.com>, <nsekhar@ti.com>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
-From: "Franklin Cooper Jr." <fcooper@ti.com>
-Message-ID: <47460be2-4a57-09cc-d0a0-1636988b7538@ti.com>
-Date: Fri, 3 Jun 2016 14:00:41 -0500
-MIME-Version: 1.0
-In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH 4/4] drm/rockchip: Add dmc notifier in vop driver
+Date: Wed,  1 Jun 2016 17:35:39 +0800
+Message-Id: <1464773739-18152-5-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
+References: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Gentle ping on this series
+when in ddr frequency scaling process, vop can not do
+enable or disable operate, since dcf will base on vop vblank
+time to do frequency scaling and need to get vop irq if there
+have vop enabled. So need register to dmc notifier, and we can
+get the dmc status.
 
-On 05/03/2016 10:56 AM, Franklin S Cooper Jr wrote:
-> This patch series adds support for PWM for DRA7. The IP is the same as the
-> one present in AM33XX and AM437XX.
->
-> However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
-> and eQEP.
->
-> The following are the biggest changes from v7 to v8:
-> Insure DT unit address matches reg property address
->
-> The following are the biggest changes from v6 to v7:
-> * Several patches to document previously undocumented bindings.
-> * Fix minor issues in binding documents.
->
-> The following are the biggest changes from v5 to v6:
-> * Created two new bindings to allow ECAP and PWM to grab their functional
-> clock from DT rather than depending on PWMSS parent.
-> * Pull in a couple of patches from the "Correct PWM bindings" series. This
-> makes it a bit easier to understand.
->
-> From the two patchsets a handful of patches have already been pulled in by
-> maintainers and have already made it to linux-next. Therefore, this
-> patch series is built ontop of the latest linux-next.
->
-> Tested on:
-> AM335x, AM437x and X15 + lcd w/backlight
->
-> Franklin S Cooper Jr (8):
->   clk: ti: am335x/am4372: Add tbclk to pwm node
->   ARM: dts: am437x: Add missing compatibles to PWM binding documents
->   pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
->   pwm: pwm-tiecap: Update dt binding document to use proper unit address
->   ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
->   pwms: pwm-ti*: Get the clock from the PWMSS parent when using old
->     bindings
->   ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
->   ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
->
-> Vignesh R (1):
->   ARM: dts: DRA7: Add dt nodes for PWMSS
->
->  .../devicetree/bindings/pwm/pwm-tiecap.txt         | 38 ++++++---
->  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 38 ++++++---
->  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 33 +++++++-
->  arch/arm/boot/dts/am33xx.dtsi                      | 36 ++++++---
->  arch/arm/boot/dts/am4372.dtsi                      | 63 ++++++++++-----
->  arch/arm/boot/dts/da850.dtsi                       | 15 ++--
->  arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
->  .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
->  .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 ---------------
->  .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 --------------------
->  arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
->  arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 -------------
->  drivers/clk/ti/clk-33xx.c                          |  3 +
->  drivers/clk/ti/clk-43xx.c                          |  6 ++
->  drivers/pwm/pwm-tiecap.c                           |  7 ++
->  drivers/pwm/pwm-tiehrpwm.c                         |  7 ++
->  16 files changed, 281 insertions(+), 284 deletions(-)
->
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 51 +++++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 1c4d5b5..7ee0cd0 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -31,6 +31,8 @@
+ #include <linux/reset.h>
+ #include <linux/delay.h>
+ 
++#include <soc/rockchip/rockchip_dmc.h>
++
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_fb.h"
+@@ -116,6 +118,9 @@ struct vop {
+ 
+ 	const struct vop_data *data;
+ 
++	struct notifier_block dmc_nb;
++	int dmc_in_process;
++
+ 	uint32_t *regsbak;
+ 	void __iomem *regs;
+ 
+@@ -426,14 +431,41 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
+ 	spin_unlock_irqrestore(&vop->irq_lock, flags);
+ }
+ 
++static int dmc_notify(struct notifier_block *nb, unsigned long event,
++		      void *data)
++{
++	struct vop *vop = container_of(nb, struct vop, dmc_nb);
++
++	if (event == DMCFREQ_ADJUST)
++		vop->dmc_in_process = 1;
++	else if (event == DMCFREQ_FINISH)
++		vop->dmc_in_process = 0;
++
++	return NOTIFY_OK;
++}
++
+ static void vop_enable(struct drm_crtc *crtc)
+ {
+ 	struct vop *vop = to_vop(crtc);
+ 	int ret;
++	int timeout_count = 500;
++	int timeout_loop = 0;
+ 
+ 	if (vop->is_enabled)
+ 		return;
+ 
++	/*
++	 * if in dmc scaling frequency process, wait until it finish
++	 * use 100ms as timeout time.
++	 */
++	while (timeout_loop < timeout_count) {
++		if (vop->dmc_in_process == 0)
++			break;
++
++		timeout_loop++;
++		usleep_range(150, 200);
++	}
++
+ 	ret = pm_runtime_get_sync(vop->dev);
+ 	if (ret < 0) {
+ 		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
+@@ -485,6 +517,7 @@ static void vop_enable(struct drm_crtc *crtc)
+ 	enable_irq(vop->irq);
+ 
+ 	drm_crtc_vblank_on(crtc);
++	rockchip_dmc_get(&vop->dmc_nb);
+ 
+ 	return;
+ 
+@@ -500,11 +533,25 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+ {
+ 	struct vop *vop = to_vop(crtc);
+ 	int i;
++	int timeout_count = 500;
++	int timeout_loop = 0;
+ 
+ 	if (!vop->is_enabled)
+ 		return;
+ 
+ 	/*
++	 * if in dmc scaling frequency process, wait until it finish
++	 * use 100ms as timeout time.
++	 */
++	while (timeout_loop < timeout_count) {
++		if (vop->dmc_in_process == 0)
++			break;
++
++		timeout_loop++;
++		usleep_range(150, 200);
++	}
++
++	/*
+ 	 * We need to make sure that all windows are disabled before we
+ 	 * disable that crtc. Otherwise we might try to scan from a destroyed
+ 	 * buffer later.
+@@ -517,7 +564,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+ 		VOP_WIN_SET(vop, win, enable, 0);
+ 		spin_unlock(&vop->reg_lock);
+ 	}
+-
++	rockchip_dmc_put(&vop->dmc_nb);
+ 	drm_crtc_vblank_off(crtc);
+ 
+ 	/*
+@@ -1243,7 +1290,7 @@ static int vop_create_crtc(struct vop *vop)
+ 		ret = -ENOENT;
+ 		goto err_cleanup_crtc;
+ 	}
+-
++	vop->dmc_nb.notifier_call = dmc_notify;
+ 	init_completion(&vop->dsp_hold_completion);
+ 	init_completion(&vop->wait_update_complete);
+ 	crtc->port = port;
+-- 
+1.9.1
