@@ -1,105 +1,241 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
- driver
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-Message-ID: <4ba85edd-203f-c27f-f11c-5b64f972acc0@osg.samsung.com>
-Date: Wed, 15 Jun 2016 11:12:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 01/34] clk: qcom: Migrate to clk_hw based registration and OF APIs
+Date: Wed,  1 Jun 2016 16:15:00 -0700
+Message-Id: <20160601231533.9354-2-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Laxman,
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers in this driver, allowing us to
+move closer to a clear split of consumer and provider clk APIs.
 
-On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
-> The clock IP used on the Maxim PMICs max77686 and max77802 are
-> same. The configuration of clock register is also same except
-> the number of clocks.
-> 
-> Part of common code utilisation, there is 3 files for these chips
-> clock driver, one for common and two files for driver registration.
-> 
-> Combine both drivers into single file and move common code into
-> same common file reduces the 2 files and make max77686 and max77802
-> clock driver in single fine. This driver does not depends on the
-> parent driver structure. The regmap handle is acquired through
-> regmap APIs for the register access.
-> 
-> This combination of driver helps on adding clock driver for different
-> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> ---
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
 
-[snip]
+See commit 58657d189a2f and it's children for details on this
+new registration API.
 
-> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> index 9b6f277..31ba726 100644
-> --- a/drivers/clk/clk-max77686.c
-> +++ b/drivers/clk/clk-max77686.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * clk-max77686.c - Clock driver for Maxim 77686
-> + * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
->   *
->   * Copyright (C) 2012 Samsung Electornics
->   * Jonghwa Lee <jonghwa3.lee@samsung.com>
-> @@ -13,13 +13,7 @@
->   * but WITHOUT ANY WARRANTY; without even the implied warranty of
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-> - *
->   */
-> -
+ drivers/clk/qcom/clk-regmap.c   |  5 ++--
+ drivers/clk/qcom/clk-regmap.h   |  3 +--
+ drivers/clk/qcom/common.c       | 58 +++++++++++++++++++++++------------------
+ drivers/clk/qcom/gcc-msm8996.c  |  9 +++----
+ drivers/clk/qcom/mmcc-msm8996.c |  9 +++----
+ 5 files changed, 43 insertions(+), 41 deletions(-)
 
-I think removing this part of the header is correct but it should be a
-separate patch.
-
-[snip]
-
-> +
-> +struct max_gen_hw_clk_data {
-> +	const char *name;
-> +	u32 reg;
-> +	u32 mask;
-> +	u32 flags;
-> +};
-> +
-> +struct max_gen_clk_data {
-> +	struct regmap *regmap;
-> +	struct clk_init_data clk_idata;
-> +	struct clk_hw hw;
-> +	u32 reg;
-> +	u32 mask;
-> +};
-> +
-
-Probably now makes more sense to rename all the "max_gen_foo" structs and
-functions to just "max77686_foo" since now are all defined in the max77686
-so that naming is more consistent.
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-I also tested on an Exynos5800 Peach Pi Chromebook that has a max77802 IP:
-
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/drivers/clk/qcom/clk-regmap.c b/drivers/clk/qcom/clk-regmap.c
+index a58ba39a900c..1c856d330733 100644
+--- a/drivers/clk/qcom/clk-regmap.c
++++ b/drivers/clk/qcom/clk-regmap.c
+@@ -101,14 +101,13 @@ EXPORT_SYMBOL_GPL(clk_disable_regmap);
+  * clk_regmap struct via this function so that the regmap is initialized
+  * and so that the clock is registered with the common clock framework.
+  */
+-struct clk *devm_clk_register_regmap(struct device *dev,
+-				     struct clk_regmap *rclk)
++int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk)
+ {
+ 	if (dev && dev_get_regmap(dev, NULL))
+ 		rclk->regmap = dev_get_regmap(dev, NULL);
+ 	else if (dev && dev->parent)
+ 		rclk->regmap = dev_get_regmap(dev->parent, NULL);
+ 
+-	return devm_clk_register(dev, &rclk->hw);
++	return devm_clk_hw_register(dev, &rclk->hw);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_register_regmap);
+diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
+index 491a63d537df..90d95cd11ec6 100644
+--- a/drivers/clk/qcom/clk-regmap.h
++++ b/drivers/clk/qcom/clk-regmap.h
+@@ -39,7 +39,6 @@ struct clk_regmap {
+ int clk_is_enabled_regmap(struct clk_hw *hw);
+ int clk_enable_regmap(struct clk_hw *hw);
+ void clk_disable_regmap(struct clk_hw *hw);
+-struct clk *
+-devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
++int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
+ 
+ #endif
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index f7c226ab4307..fffcbaf0fba7 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -27,8 +27,8 @@
+ 
+ struct qcom_cc {
+ 	struct qcom_reset_controller reset;
+-	struct clk_onecell_data data;
+-	struct clk *clks[];
++	struct clk_regmap **rclks;
++	size_t num_rclks;
+ };
+ 
+ const
+@@ -102,8 +102,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 	struct device_node *clocks_node;
+ 	struct clk_fixed_factor *factor;
+ 	struct clk_fixed_rate *fixed;
+-	struct clk *clk;
+ 	struct clk_init_data init_data = { };
++	int ret;
+ 
+ 	clocks_node = of_find_node_by_path("/clocks");
+ 	if (clocks_node)
+@@ -121,9 +121,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		init_data.name = path;
+ 		init_data.ops = &clk_fixed_rate_ops;
+ 
+-		clk = devm_clk_register(dev, &fixed->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, &fixed->hw);
++		if (ret)
++			return ret;
+ 	}
+ 	of_node_put(node);
+ 
+@@ -141,9 +141,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		init_data.flags = 0;
+ 		init_data.ops = &clk_fixed_factor_ops;
+ 
+-		clk = devm_clk_register(dev, &factor->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, &factor->hw);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -174,42 +174,48 @@ int qcom_cc_register_sleep_clk(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_register_sleep_clk);
+ 
++static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
++					 void *data)
++{
++	struct qcom_cc *cc = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= cc->num_rclks) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return cc->rclks[idx] ? &cc->rclks[idx]->hw : ERR_PTR(-ENOENT);
++}
++
+ int qcom_cc_really_probe(struct platform_device *pdev,
+ 			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+ {
+ 	int i, ret;
+ 	struct device *dev = &pdev->dev;
+-	struct clk *clk;
+-	struct clk_onecell_data *data;
+-	struct clk **clks;
+ 	struct qcom_reset_controller *reset;
+ 	struct qcom_cc *cc;
+ 	struct gdsc_desc *scd;
+ 	size_t num_clks = desc->num_clks;
+ 	struct clk_regmap **rclks = desc->clks;
+ 
+-	cc = devm_kzalloc(dev, sizeof(*cc) + sizeof(*clks) * num_clks,
+-			  GFP_KERNEL);
++	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+ 	if (!cc)
+ 		return -ENOMEM;
+ 
+-	clks = cc->clks;
+-	data = &cc->data;
+-	data->clks = clks;
+-	data->clk_num = num_clks;
++	cc->rclks = rclks;
++	cc->num_rclks = num_clks;
+ 
+ 	for (i = 0; i < num_clks; i++) {
+-		if (!rclks[i]) {
+-			clks[i] = ERR_PTR(-ENOENT);
++		if (!rclks[i])
+ 			continue;
+-		}
+-		clk = devm_clk_register_regmap(dev, rclks[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
+-		clks[i] = clk;
++
++		ret = devm_clk_register_regmap(dev, rclks[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+-	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get, data);
++	ret = of_clk_add_hw_provider(dev->of_node, qcom_cc_clk_hw_get, cc);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index c9b96f318d9c..7a6fd069ba5d 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3463,9 +3463,8 @@ MODULE_DEVICE_TABLE(of, gcc_msm8996_match_table);
+ 
+ static int gcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct clk *clk;
+ 	struct device *dev = &pdev->dev;
+-	int i;
++	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
+@@ -3479,9 +3478,9 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
+ 
+ 	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
+-		clk = devm_clk_register(dev, gcc_msm8996_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 847dd9dadeca..384b812a153e 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3305,9 +3305,8 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8996_match_table);
+ 
+ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct clk *clk;
+ 	struct device *dev = &pdev->dev;
+-	int i;
++	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
+@@ -3320,9 +3319,9 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
+-		clk = devm_clk_register(dev, mmcc_msm8996_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.4
