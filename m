@@ -1,35 +1,62 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 20 Jun 2016 08:18:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Hoan Tran <hotran@apm.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	lho@apm.com, Duc Dang <dhdang@apm.com>
-Subject: Re: [PATCH 1/2] Documentation: dt: clock: Add fractional scale
- binding
-Message-ID: <20160620131826.GA28774@rob-hp-laptop>
-References: <1466120433-30648-1-git-send-email-hotran@apm.com>
- <1466120433-30648-2-git-send-email-hotran@apm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466120433-30648-2-git-send-email-hotran@apm.com>
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 03/34] clk: highbank: Migrate to clk_hw based registration and OF APIs
+Date: Wed,  1 Jun 2016 16:15:02 -0700
+Message-Id: <20160601231533.9354-4-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 16, 2016 at 04:40:32PM -0700, Hoan Tran wrote:
-> Add fractional scale clock DTS binding.
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers in this driver, allowing us to
+move closer to a clear split of consumer and provider clk APIs.
 
-We've generally decided against putting this level of clock details into 
-DT.
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
 
-> 
-> Signed-off-by: Hoan Tran <hotran@apm.com>
-> Signed-off-by: Loc Ho <lho@apm.com>
-> ---
->  .../bindings/clock/fractional-scale-clock.txt      | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fractional-scale-clock.txt
+See commit 58657d189a2f and it's children for details on this
+new registration API.
+
+ drivers/clk/clk-highbank.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+index be3a21abb185..727ed8e1bb72 100644
+--- a/drivers/clk/clk-highbank.c
++++ b/drivers/clk/clk-highbank.c
+@@ -275,7 +275,6 @@ static const struct clk_ops periclk_ops = {
+ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk_ops *ops)
+ {
+ 	u32 reg;
+-	struct clk *clk;
+ 	struct hb_clk *hb_clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name;
+@@ -308,13 +307,13 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
+ 
+ 	hb_clk->hw.init = &init;
+ 
+-	clk = clk_register(NULL, &hb_clk->hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	rc = clk_hw_register(NULL, &hb_clk->hw);
++	if (WARN_ON(rc)) {
+ 		kfree(hb_clk);
+ 		return NULL;
+ 	}
+-	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-	return clk;
++	rc = of_clk_add_hw_provider(node, of_clk_hw_simple_get, &hb_clk->hw);
++	return hb_clk->hw.clk;
+ }
+ 
+ static void __init hb_pll_init(struct device_node *node)
+-- 
+2.7.4
