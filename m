@@ -1,47 +1,86 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kevin Hilman <khilman@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
- <1464429273-23457-14-git-send-email-krzk@kernel.org>
- <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
- <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
- <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
- lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <cabfd6c2-fc7e-622a-36e6-5be0b674cdd2@osg.samsung.com>
-Date: Wed, 1 Jun 2016 16:54:41 -0400
-MIME-Version: 1.0
-In-Reply-To: <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 14/34] clk: cs2000: Migrate to clk_hw based OF and registration APIs
+Date: Wed,  1 Jun 2016 16:15:13 -0700
+Message-Id: <20160601231533.9354-15-stephen.boyd@linaro.org>
+In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/2016 04:52 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers while registering clks in
+these drivers, allowing us to move closer to a clear split of
+consumer and provider clk APIs.
 
-[snip]
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+---
 
->>
->> I left the commit in my tree as it is correct (strictly speaking).
->> Sorry for any trouble it makes.
->>
-> 
-> Kevin pointed me to this issue over IRC and I was able to reproduce it in
-> my Peach Pi by removing the UART3 clocks from the Exynos5420 clock driver.
-> 
-> Your patch indeed fixes the issue, I'll add a Reviewed-by on that thread.
-> 
+See commit 58657d189a2f and it's children for details on this
+new registration API.
 
-err, I meant a Tested-by tag... but yes I've also reviewed the patch :)
+ drivers/clk/clk-cs2000-cp.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-Best regards, 
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 7379de8dc894..021f3daf34e1 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -59,7 +59,6 @@ struct cs2000_priv {
+ 	struct i2c_client *client;
+ 	struct clk *clk_in;
+ 	struct clk *ref_clk;
+-	struct clk *clk_out;
+ };
+ 
+ static const struct of_device_id cs2000_of_match[] = {
+@@ -371,7 +370,6 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
+ 	struct device_node *np = dev->of_node;
+ 	struct clk_init_data init;
+ 	const char *name = np->name;
+-	struct clk *clk;
+ 	static const char *parent_names[CLK_MAX];
+ 	int ch = 0; /* it uses ch0 only at this point */
+ 	int rate;
+@@ -400,18 +398,16 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
+ 
+ 	priv->hw.init = &init;
+ 
+-	clk = clk_register(dev, &priv->hw);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	ret = clk_hw_register(dev, &priv->hw);
++	if (ret)
++		return ret;
+ 
+-	ret = of_clk_add_provider(np, of_clk_src_simple_get, clk);
++	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &priv->hw);
+ 	if (ret < 0) {
+-		clk_unregister(clk);
++		clk_hw_unregister(&priv->hw);
+ 		return ret;
+ 	}
+ 
+-	priv->clk_out = clk;
+-
+ 	return 0;
+ }
+ 
+@@ -454,7 +450,7 @@ static int cs2000_remove(struct i2c_client *client)
+ 
+ 	of_clk_del_provider(np);
+ 
+-	clk_unregister(priv->clk_out);
++	clk_hw_unregister(&priv->hw);
+ 
+ 	return 0;
+ }
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.4
