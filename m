@@ -1,85 +1,49 @@
-Return-Path: <guodong.xu@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <57726602.1060505@linaro.org>
-References: <1467109902-17625-1-git-send-email-guodong.xu@linaro.org>
- <1467109902-17625-2-git-send-email-guodong.xu@linaro.org> <57726602.1060505@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-Date: Wed, 29 Jun 2016 16:51:45 +0800
-Message-ID: <CAFGCpxxVmFGphtxZ=wJF2S75OQ5PyMucfOHCWMK51nrCJN0rkw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: hi6220: initialize UART1 clock to 150MHz
-To: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Xinliang Liu <xinliang.liu@linaro.org>, John Stultz <john.stultz@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 1/3] dt-bindings: clock: Add watchdog and SSS clock IDs to
+ Exynos5410
+Date: Wed, 01 Jun 2016 11:45:49 +0200
+Message-id: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28 June 2016 at 19:56, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org> wrote:
-> On 06/28/2016 12:31 PM, Guodong Xu wrote:
->>
->> From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->>
->> Early at boot, during the sys_clk initialization, make sure UART1 uses
->> the higher frequency clock.
->>
->> This enables support for higher baud rates (up to 3Mbps) required to
->> support faster bluetooth transfers.
->>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
->> ---
->>   drivers/clk/hisilicon/clk-hi6220.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/hisilicon/clk-hi6220.c
->> b/drivers/clk/hisilicon/clk-hi6220.c
->> index a36ffcb..55bd9bb 100644
->> --- a/drivers/clk/hisilicon/clk-hi6220.c
->> +++ b/drivers/clk/hisilicon/clk-hi6220.c
->> @@ -11,6 +11,7 @@
->>    */
->>     #include <linux/kernel.h>
->> +#include <linux/clk.h>
->>   #include <linux/clk-provider.h>
->>   #include <linux/clkdev.h>
->>   #include <linux/io.h>
->> @@ -70,10 +71,10 @@ static struct hisi_gate_clock
->> hi6220_separated_gate_clks_ao[] __initdata = {
->>         { HI6220_UART0_PCLK,  "uart0_pclk",  "clk_tcxo",
->> CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 24, 0, },
->>   };
->>   +static struct hisi_clock_data *clk_data_ao;
->> +
->>   static void __init hi6220_clk_ao_init(struct device_node *np)
->>   {
->> -       struct hisi_clock_data *clk_data_ao;
->> -
->>         clk_data_ao = hisi_clk_init(np, HI6220_AO_NR_CLKS);
->>         if (!clk_data_ao)
->>                 return;
->> @@ -192,6 +193,13 @@ static void __init hi6220_clk_sys_init(struct
->> device_node *np)
->>         hi6220_clk_register_divider(hi6220_div_clks_sys,
->>                         ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
->> +
->> +       if (!clk_data_ao)
->> +               return;
->> +
->> +       /* enable high speed clock on UART1 mux */
->> +       clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
->> +                       clk_data_ao->clk_data.clks[HI6220_150M]);
->>   }
->>   CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl",
->> hi6220_clk_sys_init);
->>
->
->
-> please bear with me on this. it does need rework.
->
+Add IDs for watchdog and Security SubSystem to Exynos5410.  Use the same
+number as for Exynos5420 just in case in future these drivers were
+merged.
 
-V2 was sent. Thanks Jorge.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ include/dt-bindings/clock/exynos5410.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
--Guodong
-
->
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 705b2aa84317..85b467b3a207 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -49,6 +49,7 @@
+ #define CLK_UART3		260
+ #define CLK_PWM			279
+ #define CLK_MCT			315
++#define CLK_WDT			316
+ #define CLK_RTC			317
+ #define CLK_TMU			318
+ #define CLK_MMC0		351
+@@ -57,6 +58,7 @@
+ #define CLK_USBH20		365
+ #define CLK_USBD300		366
+ #define CLK_USBD301		367
++#define CLK_SSS			471
+ 
+ #define CLK_NR_CLKS		512
+ 
+-- 
+1.9.1
