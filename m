@@ -1,48 +1,133 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20160622100206.GV26668@lukather>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
- <1466391138-12862-6-git-send-email-wens@csie.org> <20160622100206.GV26668@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 22 Jun 2016 18:11:55 +0800
-Message-ID: <CAGb2v67DVBZbRb2PWLP8WurPaNin=2Fa=HMAEK_PdBeqv1x+8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] rtc: ac100: Add clk output support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem to
+ Exynos5410
+Date: Wed, 01 Jun 2016 11:45:51 +0200
+Message-id: <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 22, 2016 at 6:02 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Mon, Jun 20, 2016 at 10:52:15AM +0800, Chen-Yu Tsai wrote:
->> +     /*
->> +      * The ADDA 4 MHz clock is from the codec side of the AC100,
->> +      * which is likely a different power domain. However, boards
->> +      * always have both sides powered on, so it is impossible to
->> +      * test this.
->> +      */
->
-> If that ADDA clock is exposed by the codec, why are you putting it in
-> the RTC?
+Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
+shared with Exynos5410 and configure the clocks on the latter.
 
-The thing is it's not entirely clear that it's from the codec side.
-I'm just inferring this from the name. (I'll make the comment clearer.)
-The codec parts of the datasheet don't mention this clock at all.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 11 +++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi | 28 +++++++++++-----------------
+ arch/arm/boot/dts/exynos54xx.dtsi | 12 ++++++++++++
+ 3 files changed, 34 insertions(+), 17 deletions(-)
 
-Allwinner's SDK puts all the clocks under the RTC module. And the
-are always on, so I can't really turn off the codec and see what
-happens. That and I don't have an oscilloscope or logic analyzer.
-
-Regards
-ChenYu
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index f1effd3f03c4..b76f56c2fe8b 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -297,6 +297,11 @@
+ 	clock-names = "uart", "clk_uart_baud0";
+ };
+ 
++&sss {
++	clocks = <&clock CLK_SSS>;
++	clock-names = "secss";
++};
++
+ &sromc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+@@ -349,4 +354,10 @@
+ 	samsung,pmureg-phandle = <&pmu_system_controller>;
+ };
+ 
++&watchdog {
++	clocks = <&clock CLK_WDT>;
++	clock-names = "watchdog";
++	samsung,syscon-phandle = <&pmu_system_controller>;
++};
++
+ #include "exynos5410-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 265747bb19d1..beb6f453039e 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -694,23 +694,6 @@
+ 			#include "exynos4412-tmu-sensor-conf.dtsi"
+ 		};
+ 
+-		watchdog: watchdog@101D0000 {
+-			compatible = "samsung,exynos5420-wdt";
+-			reg = <0x101D0000 0x100>;
+-			interrupts = <0 42 0>;
+-			clocks = <&clock CLK_WDT>;
+-			clock-names = "watchdog";
+-			samsung,syscon-phandle = <&pmu_system_controller>;
+-		};
+-
+-		sss: sss@10830000 {
+-			compatible = "samsung,exynos4210-secss";
+-			reg = <0x10830000 0x300>;
+-			interrupts = <0 112 0>;
+-			clocks = <&clock CLK_SSS>;
+-			clock-names = "secss";
+-		};
+-
+ 		sysmmu_g2dr: sysmmu@0x10A60000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x10A60000 0x1000>;
+@@ -1030,6 +1013,11 @@
+ 	clock-names = "uart", "clk_uart_baud0";
+ };
+ 
++&sss {
++	clocks = <&clock CLK_SSS>;
++	clock-names = "secss";
++};
++
+ &usbdrd3_0 {
+ 	clocks = <&clock CLK_USBD300>;
+ 	clock-names = "usbdrd30";
+@@ -1073,4 +1061,10 @@
+ 	samsung,pmureg-phandle = <&pmu_system_controller>;
+ };
+ 
++&watchdog {
++	clocks = <&clock CLK_WDT>;
++	clock-names = "watchdog";
++	samsung,syscon-phandle = <&pmu_system_controller>;
++};
++
+ #include "exynos5420-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 0eb8aa31b7d9..06a604911e87 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -74,6 +74,18 @@
+ 			};
+ 		};
+ 
++		watchdog: watchdog@101d0000 {
++			compatible = "samsung,exynos5420-wdt";
++			reg = <0x101d0000 0x100>;
++			interrupts = <0 42 0>;
++		};
++
++		sss: sss@10830000 {
++			compatible = "samsung,exynos4210-secss";
++			reg = <0x10830000 0x300>;
++			interrupts = <0 112 0>;
++		};
++
+ 		/* i2c_0-3 are defined in exynos5.dtsi */
+ 		hsi2c_4: i2c@12ca0000 {
+ 			compatible = "samsung,exynos5250-hsi2c";
+-- 
+1.9.1
