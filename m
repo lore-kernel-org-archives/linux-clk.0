@@ -1,65 +1,66 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 09/34] clk: axi-clkgen: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:08 -0700
-Message-Id: <20160601231533.9354-10-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kevin Hilman <khilman@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+ <1464429273-23457-14-git-send-email-krzk@kernel.org>
+ <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
+ <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
+Date: Wed, 1 Jun 2016 16:52:47 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Hello Krzysztof,
 
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
+On 06/01/2016 04:06 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jun 1, 2016 at 9:57 PM, Kevin Hilman <khilman@kernel.org> wrote:
+>> Hi Krzysztof,
+>>
+>> On Sat, May 28, 2016 at 2:54 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>> Just like other Exynos5 family SoCs, this one has four UARTs. Configure
+>>> clocks for UART3 and enable it.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> This patch landed in linux-next[1] and kernelci.org found a boot
+>> regression on the exynos5410-odroidxu[2], where it looks like it's
+>> faulting in clk_prepare().  Bisecting pointed to this patch.  I added
+>> "status = disabled" back into the DTS on top of next-20160601[3] and
+>> verified my odroid-XU to be booting fine again.
+> 
+> Hi,
+> 
+> Thanks for report. Indeed the patch brings up to the light an issue in
+> serial driver. Fixed here:
+> https://lkml.org/lkml/2016/5/31/570
+> 
+> I left the commit in my tree as it is correct (strictly speaking).
+> Sorry for any trouble it makes.
+>
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+Kevin pointed me to this issue over IRC and I was able to reproduce it in
+my Peach Pi by removing the UART3 clocks from the Exynos5420 clock driver.
 
- drivers/clk/clk-axi-clkgen.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Your patch indeed fixes the issue, I'll add a Reviewed-by on that thread.
+ 
+> Best regards,
+> Krzysztof
+> 
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 3294db3b4e4e..5e918e7afaba 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -392,8 +392,8 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 	const char *parent_names[2];
- 	const char *clk_name;
- 	struct resource *mem;
--	struct clk *clk;
- 	unsigned int i;
-+	int ret;
- 
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
-@@ -433,12 +433,12 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 	axi_clkgen_mmcm_enable(axi_clkgen, false);
- 
- 	axi_clkgen->clk_hw.init = &init;
--	clk = devm_clk_register(&pdev->dev, &axi_clkgen->clk_hw);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = devm_clk_hw_register(&pdev->dev, &axi_clkgen->clk_hw);
-+	if (ret)
-+		return ret;
- 
--	return of_clk_add_provider(pdev->dev.of_node, of_clk_src_simple_get,
--				    clk);
-+	return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_simple_get,
-+				      &axi_clkgen->clk_hw);
- }
- 
- static int axi_clkgen_remove(struct platform_device *pdev)
+Best regards,
 -- 
-2.7.4
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
