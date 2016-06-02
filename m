@@ -1,64 +1,122 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 0/4] clk: Combine MAX77686 and MAX77802 driver and extend for MAX77620
-Date: Thu, 16 Jun 2016 18:53:23 +0530
-Message-ID: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Thu, 2 Jun 2016 22:59:15 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160602145915.GA31124@shlinux2>
+References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+ <20160421034520.GA19965@shlinux2.ap.freescale.net>
+ <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+ <alpine.DEB.2.11.1604271212290.3941@nanos>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.11.1604271212290.3941@nanos>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock IP used on the Maxim PMICs max77686 and max77802 are
-same. The configuration of clock register is also same except
-the number of clocks.
-    
-Part of common code utilisation, there is 3 files for these chips
-clock driver, one for common and two files for driver registration.
-    
-Combine both drivers into single file and move common code into
-same common file reduces the 2 files and make max77686 and max77802
-clock driver in single fine. This driver does not depends on the
-parent driver structure. The regmap handle is acquired through
-regmap APIs for the register access.
+Hi Thomas,
 
-After comining the driver and DT files, extend the support to MAX77620.
+On Wed, Apr 27, 2016 at 12:15:00PM +0200, Thomas Gleixner wrote:
+> On Wed, 27 Apr 2016, Dong Aisheng wrote:
+> > On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+> > > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
+> > >> Shawn,
+> > >> What's your suggestion?
+> > >
+> > > I think this needs more discussion, and I just dropped Stefan's patch
+> > > from my tree.
+> > >
+> > > We need to firstly understand why this is happening.  The .prepare hook
+> > > is defined to be non-atomic context, and so that we call sleep function
+> > > in there.  We did everything right.  Why are we getting the warning?  If
+> > > I'm correct, this warning only happens on i.MX7D.  Why is that?
+> > >
+> > 
+> > Why Stefan's patch works (checking irqs_disabled()) is because during kernel
+> > time init, the irq is still not enabled. It fixes the issue indirectly.
+> > See:
+> > asmlinkage __visible void __init start_kernel(void)
+> > {
+> >         /*
+> >          * Set up the scheduler prior starting any interrupts (such as the
+> >          * timer interrupt). Full topology setup happens at smp_init()
+> >          * time - but meanwhile we still have a functioning scheduler.
+> >          */
+> >         sched_init();
+> >         .............
+> >         time_init();
+> >         ..............
+> >         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+> >         early_boot_irqs_disabled = false;
+> >         local_irq_enable();
+> > }
+> > 
+> > The issue can only happen when PLL enable causes a schedule during
+> > imx_clock_init().
+> 
+> Calling a function which might sleep _BEFORE_ kernel_init() is wrong. Don't
+> try to work around such an issue by doing magic irq_disabled() checks and busy
+> loops. Fix the call site and be done with it.
+> 
 
+IRQ chip and clocksource are also initialised before kernel_init()
+which may call clk APIs like clk_prepare_enable().
+We may not be able to guarantee those clocks are unsleepable.
 
-This series is based on discussion from the series
-	clk: max77620: Add clock driver for MAX77620/MAX20024
-On this series, it is proposed to combine all files together.
+e.g.
+For IRQ chip, the arm,gic documents the optional clocks property in
+Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt.
+Although there seems no user currently, not sure there might be
+a exception in the future.
 
-Changes form V1:
-- Incorporated all review comment.
-- Collected Testedby/reviewed by.
+For clocksource driver, it's quite common to call clk APIs to
+enable and get clock rate which may also cause sleep.
+e.g. ARM twd clock in arch/arm/kernel/smp_twd.c.
 
+If we have to avoid the possible sleep caused by these clocks,
+we may need to manually check it and change the related clocks
+(e.g PLLs) from sleepable to busy loops.
+But that is not a good solution and may also not stable when
+clock varies.
 
-Laxman Dewangan (4):
-  clk: max77686: Combine Maxim max77686 and max77802 driver
-  clk: Combine DT binding doc for max77686 and max77802
-  clk: max77686: Add DT binding details for PMIC MAX77620
-  clk: max77686: Add support for MAX77620 clocks
+It looks like not easy to find a generic solution for them.
+What's your suggestion?
 
- .../devicetree/bindings/clock/maxim,max77686.txt   | 118 ++++++++--
- .../devicetree/bindings/clock/maxim,max77802.txt   |  44 ----
- drivers/clk/Kconfig                                |  18 +-
- drivers/clk/Makefile                               |   2 -
- drivers/clk/clk-max-gen.c                          | 194 ---------------
- drivers/clk/clk-max-gen.h                          |  32 ---
- drivers/clk/clk-max77686.c                         | 262 ++++++++++++++++++++-
- drivers/clk/clk-max77802.c                         |  96 --------
- include/dt-bindings/clock/maxim,max77620.h         |  21 ++
- 9 files changed, 368 insertions(+), 419 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
- delete mode 100644 drivers/clk/clk-max-gen.c
- delete mode 100644 drivers/clk/clk-max-gen.h
- delete mode 100644 drivers/clk/clk-max77802.c
- create mode 100644 include/dt-bindings/clock/maxim,max77620.h
+And Stephen,
 
--- 
-2.1.4
+Besides above possible sleep, the clk framework itself may also
+cause unexpected sleep before kernel_init().
+1) clk framework now supports CLK_IS_CRITICAL flag which allows to
+enable the clock during register in __clk_core_init(), it usually
+can happen in time_init()->of_clk_init();
+
+2) clk framework also support set default configuration like set_parent
+and set_rate during register clk providers which also happens in
+time_init()->of_clk_init().
+
+Any ideas?
+Do you think if we should move them onto a bit later stage after
+kernel_init()?
+
+Regards
+Dong Aisheng
+
+> Thanks,
+> 
+> 	tglx
+> 
+> 
