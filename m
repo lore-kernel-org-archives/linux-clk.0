@@ -1,39 +1,31 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 20 Jun 2016 05:10:28 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCHv2 00/28] clk: ti: hwmod clock type support
-Message-ID: <20160620121027.GG22406@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+In-Reply-To: <20160601231533.9354-21-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+	<20160601231533.9354-21-stephen.boyd@linaro.org>
+Date: Thu, 2 Jun 2016 14:06:11 +0200
+Message-ID: <CACRpkdYa5JqZ0ge60C6rEZ_0_0+6TCmf49WcQYtMBgeJBr7FVg@mail.gmail.com>
+Subject: Re: [PATCH 20/34] clk: nomadik: Migrate to clk_hw based OF and
+ registration APIs
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160613 12:07]:
-> Hi,
-> 
-> Resending the series as it didn't get that much attention last time.
-> This has just been rebased on top of 4.7-rc1, no other changes.
-> 
-> This series adds support for hwmod module clocks, which are currently
-> directly handled by hwmod core. This addresses following issues:
-> 
->  * one step closer of removing hwmod core / data from kernel
->  * unblock Tony's interconnect driver work (this is also required
->    for removing hwmod codebase)
->  * add proper clock support for the hardware modules currently handled
->    by hwmod core; use counting for clocks, ability to share clocks
->    between multiple modules, etc.
->  * add helper clock APIs for removing most of the clock aliases under
->    drivers/clk/ti/clk-xyz.c files
+On Thu, Jun 2, 2016 at 1:15 AM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
 
-Mike & Stephen, are you guys OK with this approach? If so, we should
-put this into an immutable branch to avoid merge conflicts.
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 
-Regards,
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Tony
+Yours,
+Linus Walleij
