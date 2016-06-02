@@ -1,297 +1,115 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1464829874.16584.163.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 11/14] clk: sunxi-ng: Add N-K-M Factor clock
-Date: Wed, 29 Jun 2016 21:05:32 +0200
-Message-Id: <20160629190535.11855-12-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Kumar Gala <galak@codeaurora.org>
+Date: Wed, 01 Jun 2016 20:11:14 -0500
+In-Reply-To: <6110875.0k1HlSKhzn@wuerfel>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+	 <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com>
+	 <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+	 <6110875.0k1HlSKhzn@wuerfel>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH 3/4] mmc: sdhci-of-esdhc: fix host version for
+ T4240-R1.0-R2.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that multiply and divide using two linear
-multipliers and one linear divider.
+On Mon, 2016-05-30 at 15:16 +0200, Arnd Bergmann wrote:
+> This is a rewrite of an earlier patch from Yangbo Lu, adding a quirk
+> for the NXP QorIQ T4240 in the detection of the host device version.
+> 
+> Unfortunately, this device cannot be detected using the compatible
+> string, as we have to support existing DTS files that use the generic
+> "fsl,t4240-esdhc" identifier but that have other host versions that
+> are correctly detected.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of
+> -esdhc.c
+> index 3f34d354f1fc..1d4814fe4cb2 100644
+> --- a/drivers/mmc/host/sdhci-of-esdhc.c
+> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
+> @@ -73,14 +73,16 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
+>  static u16 esdhc_readw_fixup(struct sdhci_host *host,
+>  				     int spec_reg, u32 value)
+>  {
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
+>  	u16 ret;
+>  	int shift = (spec_reg & 0x2) * 8;
+>  
+>  	if (spec_reg == SDHCI_HOST_VERSION)
+> -		ret = value & 0xffff;
+> -	else
+> -		ret = (value >> shift) & 0xffff;
+> -	return ret;
+> +		return esdhc->vendor_ver << SDHCI_VENDOR_VER_SHIFT |
+> +		       esdhc->spec_ver;
+> +
+> +	return (value >> shift) & 0xffff;
+>  }
+>  
+>  static u8 esdhc_readb_fixup(struct sdhci_host *host,
+> @@ -562,16 +564,32 @@ static const struct sdhci_pltfm_data
+> sdhci_esdhc_le_pdata = {
+>  	.ops = &sdhci_esdhc_le_ops,
+>  };
+>  
+> +#define T4240_HOST_VER ((VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) |
+> SDHCI_SPEC_200)
+> +static const struct soc_device_attribute esdhc_t4240_quirk = {
+> +	/* T4240 revision < 0x20 uses vendor version 23, SDHCI version 200
+> */
+> +	{ .soc_id = "T4*(0x824000)", .revision = "0x[01]?",
+> +	  .data = (void *)(uintptr_t)(T4240_HOST_VER) },
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Kconfig   |   5 ++
- drivers/clk/sunxi-ng/Makefile  |   1 +
- drivers/clk/sunxi-ng/ccu_nkm.c | 153 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nkm.h |  68 ++++++++++++++++++
- 4 files changed, 227 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nkm.h
+Why should this code need to care that the string begins with "T4"?  This
+creates dual maintenance if that were to change.  It's also broken because
+T4240 has compatible = "fsl,t4240-device-config", "fsl,qoriq-device-config
+-2.0" and thus with these patches it would incorrectly show up as "P series
+(0x824000)".  The compatible string of this node was never meant to be a key
+for choosing a string to describe the system to userspace.
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index d8a5da270778..4c571b86bfd1 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -28,6 +28,11 @@ config SUNXI_CCU_NK
- 	bool
- 	select SUNXI_CCU_GATE
- 
-+config SUNXI_CCU_NKM
-+	bool
-+	select RATIONAL
-+	select SUNXI_CCU_GATE
-+
- config SUNXI_CCU_NM
- 	bool
- 	select RATIONAL
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 7d2cd2a47a39..2d6fdca0d3cc 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -11,5 +11,6 @@ obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
- 
- # Multi-factor clocks
- obj-$(CONFIG_SUNXI_CCU_NK)	+= ccu_nk.o
-+obj-$(CONFIG_SUNXI_CCU_NKM)	+= ccu_nkm.o
- obj-$(CONFIG_SUNXI_CCU_NM)	+= ccu_nm.o
- obj-$(CONFIG_SUNXI_CCU_MP)	+= ccu_mp.o
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-new file mode 100644
-index 000000000000..2071822b1e9c
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -0,0 +1,153 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_nkm.h"
-+
-+struct _ccu_nkm {
-+	unsigned long	n, max_n;
-+	unsigned long	k, max_k;
-+	unsigned long	m, max_m;
-+};
-+
-+static void ccu_nkm_find_best(unsigned long parent, unsigned long rate,
-+			      struct _ccu_nkm *nkm)
-+{
-+	unsigned long best_rate = 0;
-+	unsigned long best_n = 0, best_k = 0, best_m = 0;
-+	unsigned long _n, _k, _m;
-+
-+	for (_k = 1; _k <= nkm->max_k; _k++) {
-+		unsigned long tmp_rate;
-+
-+		rational_best_approximation(rate / _k, parent,
-+					    nkm->max_n, nkm->max_m, &_n, &_m);
-+
-+		tmp_rate = parent * _n * _k / _m;
-+
-+		if (tmp_rate > rate)
-+			continue;
-+
-+		if ((rate - tmp_rate) < (rate - best_rate)) {
-+			best_rate = tmp_rate;
-+			best_n = _n;
-+			best_k = _k;
-+			best_m = _m;
-+		}
-+	}
-+
-+	nkm->n = best_n;
-+	nkm->k = best_k;
-+	nkm->m = best_m;
-+}
-+
-+static void ccu_nkm_disable(struct clk_hw *hw)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+
-+	return ccu_gate_helper_disable(&nkm->common, nkm->enable);
-+}
-+
-+static int ccu_nkm_enable(struct clk_hw *hw)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+
-+	return ccu_gate_helper_enable(&nkm->common, nkm->enable);
-+}
-+
-+static int ccu_nkm_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+
-+	return ccu_gate_helper_is_enabled(&nkm->common, nkm->enable);
-+}
-+
-+static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+	unsigned long n, m, k;
-+	u32 reg;
-+
-+	reg = readl(nkm->common.base + nkm->common.reg);
-+
-+	n = reg >> nkm->n.shift;
-+	n &= (1 << nkm->n.width) - 1;
-+
-+	k = reg >> nkm->k.shift;
-+	k &= (1 << nkm->k.width) - 1;
-+
-+	m = reg >> nkm->m.shift;
-+	m &= (1 << nkm->m.width) - 1;
-+
-+	return parent_rate * (n + 1) * (k + 1) / (m + 1);
-+}
-+
-+static long ccu_nkm_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+	struct _ccu_nkm _nkm;
-+
-+	_nkm.max_n = 1 << nkm->n.width;
-+	_nkm.max_k = 1 << nkm->k.width;
-+	_nkm.max_m = 1 << nkm->m.width;
-+
-+	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
-+
-+	return *parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+}
-+
-+static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+	struct _ccu_nkm _nkm;
-+	unsigned long flags;
-+	u32 reg;
-+
-+	_nkm.max_n = 1 << nkm->n.width;
-+	_nkm.max_k = 1 << nkm->k.width;
-+	_nkm.max_m = 1 << nkm->m.width;
-+
-+	ccu_nkm_find_best(parent_rate, rate, &_nkm);
-+
-+	spin_lock_irqsave(nkm->common.lock, flags);
-+
-+	reg = readl(nkm->common.base + nkm->common.reg);
-+	reg &= ~GENMASK(nkm->n.width + nkm->n.shift - 1, nkm->n.shift);
-+	reg &= ~GENMASK(nkm->k.width + nkm->k.shift - 1, nkm->k.shift);
-+	reg &= ~GENMASK(nkm->m.width + nkm->m.shift - 1, nkm->m.shift);
-+
-+	reg |= (_nkm.n - 1) << nkm->n.shift;
-+	reg |= (_nkm.k - 1) << nkm->k.shift;
-+	reg |= (_nkm.m - 1) << nkm->m.shift;
-+
-+	writel(reg, nkm->common.base + nkm->common.reg);
-+
-+	spin_unlock_irqrestore(nkm->common.lock, flags);
-+
-+	ccu_helper_wait_for_lock(&nkm->common, nkm->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_nkm_ops = {
-+	.disable	= ccu_nkm_disable,
-+	.enable		= ccu_nkm_enable,
-+	.is_enabled	= ccu_nkm_is_enabled,
-+
-+	.recalc_rate	= ccu_nkm_recalc_rate,
-+	.round_rate	= ccu_nkm_round_rate,
-+	.set_rate	= ccu_nkm_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-new file mode 100644
-index 000000000000..1936ac1c6b37
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-@@ -0,0 +1,68 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_NKM_H_
-+#define _CCU_NKM_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_div.h"
-+#include "ccu_mult.h"
-+
-+/*
-+ * struct ccu_nkm - Definition of an N-K-M clock
-+ *
-+ * Clocks based on the formula parent * N * K / M
-+ */
-+struct ccu_nkm {
-+	u32			enable;
-+	u32			lock;
-+
-+	struct _ccu_mult	n;
-+	struct _ccu_mult	k;
-+	struct _ccu_div		m;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_NKM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
-+				     _nshift, _nwidth,			\
-+				     _kshift, _kwidth,			\
-+				     _mshift, _mwidth,			\
-+				     _gate, _lock, _flags)		\
-+	struct ccu_nkm _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.k		= _SUNXI_CCU_MULT(_kshift, _kwidth),	\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_nkm_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
-+static inline struct ccu_nkm *hw_to_ccu_nkm(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_nkm, common);
-+}
-+
-+extern const struct clk_ops ccu_nkm_ops;
-+
-+#endif /* _CCU_NKM_H_ */
--- 
-2.9.0
+0x824000 is a magic number which should be represented symbolically.
+
+If T4240 is affected, then so are the reduced-core variants T4160 and T4080,
+but 0x824000 doesn't match them (Yangbo's patch had the same problem).  And
+please don't respond with "0x824*"
+
+You also didn't strip out the E bit of SVR which indicates encryption
+capability and nothing else (Yangbo's patch did not have this problem because
+it used SVR_SOC_VER).
+
+What happens if the revision condition is more complicated, such as <= 0x20
+with 0x21 being fine?  Multiple quirk entries where before we had as simple
+comparison?
+
+I fail to see how this approach is an improvement (much less one that needs to
+hold up a patchset that is fixing a problem and is not touching any generic
+code).  Why does this need to be a string?
+
+-Scott
