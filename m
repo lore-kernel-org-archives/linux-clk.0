@@ -1,24 +1,47 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 16 Jun 2016 09:05:06 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V3 1/1] clk: imx: refine the powerdown bit of clk-pllv3
-Message-ID: <20160616010506.GM20243@tiger>
-References: <1465803434-31507-1-git-send-email-aisheng.dong@nxp.com>
- <1465820692-20055-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <absahu@codeaurora.org>
+Date: Fri, 3 Jun 2016 00:45:32 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Banavathi, Pradeep" <pradeepb@codeaurora.org>, andy.gross@linaro.org,
+	david.brown@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	mturquette@baylibre.com, galak@codeaurora.org,
+	mmcclint@codeaurora.org, varada@codeaurora.org,
+	sricharan@codeaurora.org, architt@codeaurora.org,
+	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] clk: qcom: ipq4019: Modified the fixed clock rate to
+ proper values
+Message-ID: <20160602191532.GA23619@chewinlnx07.qualcomm.com>
+References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+ <1464618758-20965-2-git-send-email-absahu@codeaurora.org>
+ <20160601221808.GI28218@codeaurora.org>
+ <9a9ac449-4c14-e0fa-5637-5ca7aac321aa@codeaurora.org>
+ <20160602183540.GK28218@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465820692-20055-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <20160602183540.GK28218@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 13, 2016 at 08:24:52PM +0800, Dong Aisheng wrote:
-> The powerdown bit is a bit confused, let's change it to power_bit
-> to relfect both powerdown and powerup case according to different
-> plls.
+On Thu, Jun 02, 2016 at 11:35:40AM -0700, Stephen Boyd wrote:
+> On 06/02, Banavathi, Pradeep wrote:
+> > The PLLs on IPQ4019 cannot be reconfigured by design. The
+> > recommendation is to program these PLLS only once. Since, the
+> > Bootloaders configure the PLLs and clocks already. we did not
+> > support the recalc rate and marked them as fixed clocks.
+> > 
 > 
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-Applied, thanks.
+> (Please don't top post)
+> 
+> That doesn't matter. We recalculate PLL rates on all other qcom
+> SoCs by reading the hardware even though an overwhelming majority
+> of them are fixed by the bootloader.
+>
+We will check for this. Already we added the APSS CPU PLL divider
+in clock framework in next 3 patches of this patchset. Could you
+please review the same so that we can follow the similar thing for
+other PLL and dividers.
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
