@@ -1,57 +1,67 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-Date: Wed, 15 Jun 2016 19:43:38 +0530
-Message-ID: <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160601231533.9354-4-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org> <20160601231533.9354-4-stephen.boyd@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 1 Jun 2016 20:02:54 -0500
+Message-ID: <CAL_JsqJabV618xcAwoSOZT7D8TJ825N3SxS+qV_MGYcSUGidHw@mail.gmail.com>
+Subject: Re: [PATCH 03/34] clk: highbank: Migrate to clk_hw based registration
+ and OF APIs
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock driver used by Maxim PMIC MAX77802 is clk-max77686
-which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
+On Wed, Jun 1, 2016 at 6:15 PM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers in this driver, allowing us to
+> move closer to a clear split of consumer and provider clk APIs.
+>
+> Cc: Rob Herring <robh@kernel.org>
 
-Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
----
- arch/arm/configs/exynos_defconfig   | 1 -
- arch/arm/configs/multi_v7_defconfig | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index daf9762..cfd75c7 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -216,7 +216,6 @@ CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
- CONFIG_CROS_EC_CHARDEV=y
- CONFIG_COMMON_CLK_MAX77686=y
--CONFIG_COMMON_CLK_MAX77802=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_EXTCON=y
- CONFIG_EXTCON_MAX14577=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index ee7c884..7cbf389 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -787,7 +787,6 @@ CONFIG_CHROME_PLATFORMS=y
- CONFIG_STAGING_BOARD=y
- CONFIG_CROS_EC_CHARDEV=m
- CONFIG_COMMON_CLK_MAX77686=y
--CONFIG_COMMON_CLK_MAX77802=m
- CONFIG_COMMON_CLK_RK808=m
- CONFIG_COMMON_CLK_S2MPS11=m
- CONFIG_APQ_MMCC_8084=y
--- 
-2.1.4
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+>
+> See commit 58657d189a2f and it's children for details on this
+> new registration API.
+>
+>  drivers/clk/clk-highbank.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+> index be3a21abb185..727ed8e1bb72 100644
+> --- a/drivers/clk/clk-highbank.c
+> +++ b/drivers/clk/clk-highbank.c
+> @@ -275,7 +275,6 @@ static const struct clk_ops periclk_ops = {
+>  static __init struct clk *hb_clk_init(struct device_node *node, const struct clk_ops *ops)
+>  {
+>         u32 reg;
+> -       struct clk *clk;
+>         struct hb_clk *hb_clk;
+>         const char *clk_name = node->name;
+>         const char *parent_name;
+> @@ -308,13 +307,13 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
+>
+>         hb_clk->hw.init = &init;
+>
+> -       clk = clk_register(NULL, &hb_clk->hw);
+> -       if (WARN_ON(IS_ERR(clk))) {
+> +       rc = clk_hw_register(NULL, &hb_clk->hw);
+> +       if (WARN_ON(rc)) {
+>                 kfree(hb_clk);
+>                 return NULL;
+>         }
+> -       rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> -       return clk;
+> +       rc = of_clk_add_hw_provider(node, of_clk_hw_simple_get, &hb_clk->hw);
+> +       return hb_clk->hw.clk;
+>  }
+>
+>  static void __init hb_pll_init(struct device_node *node)
+> --
+> 2.7.4
+>
