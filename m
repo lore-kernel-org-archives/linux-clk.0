@@ -1,61 +1,67 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH v2 00/11] Switch to using CRITICAL clks for Tegra
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <c2c42a27-d705-0db0-36ab-4660c9dbc848@nvidia.com>
-Date: Tue, 21 Jun 2016 14:05:03 -0400
-MIME-Version: 1.0
-In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem
+ to Exynos5410
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
+ <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <574FCFB2.1080607@samsung.com>
+Date: Thu, 02 Jun 2016 08:18:26 +0200
+MIME-version: 1.0
+In-reply-to: <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/27/2016 4:38 PM, Rhyland Klein wrote:
-> Switch to defining clks that need to be on as CRITICAL rather than
-> using the init_tables defined to enable clks. Some of these may be
-> able to be converted to HAND_OFF clks, when that is supported.
+On 06/01/2016 05:16 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> I added a patch to mark CRITICAL clks in the clk_summary table, figuring
-> it would be handy to be able to easily tell what clks are CRITICAL
-> through the table.
+> On 06/01/2016 05:45 AM, Krzysztof Kozlowski wrote:
+>> Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
+>> shared with Exynos5410 and configure the clocks on the latter.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
 > 
-> I added a warning for using the init_table to enable clks. I considered
-> removing it entirely, but I thought phasing it out might be better.
+> [snip]
 > 
-> Rhyland Klein (11):
->   clk: tegra: Switch to using critical clks
->   clk: tegra20: Mark required clks as CRITICAL
->   clk: tegra20: clean up init_table
->   clk: tegra30: Mark certain clks as critical
->   clk: tegra30: clean up init_table
->   clk: tegra114: clean up init_table
->   clk: tegra124: clean up init_table
->   clk: tegra210: Mark required clks as CRITICAL
->   clk: tegra210: clean up init_table
->   clk: Show CRITICAL clks in clk_summary output
->   clk: tegra: WARN if clk in the init_table has enable
+>>  
+>> +&sss {
+>> +	clocks = <&clock CLK_SSS>;
+>> +	clock-names = "secss";
+>> +};
+>> +
 > 
->  drivers/clk/clk.c                        |  7 ++++--
->  drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++------
->  drivers/clk/tegra/clk-tegra-super-gen4.c | 12 ++++++----
->  drivers/clk/tegra/clk-tegra114.c         | 11 ++++-----
->  drivers/clk/tegra/clk-tegra124.c         | 19 ++++++---------
->  drivers/clk/tegra/clk-tegra20.c          | 41 +++++++++++++++-----------------
->  drivers/clk/tegra/clk-tegra210.c         | 28 ++++++++--------------
->  drivers/clk/tegra/clk-tegra30.c          | 28 ++++++++--------------
->  drivers/clk/tegra/clk.c                  |  5 ++++
->  9 files changed, 81 insertions(+), 91 deletions(-)
+> [snip]
 > 
+>>  
+>> +&watchdog {
+>> +	clocks = <&clock CLK_WDT>;
+>> +	clock-names = "watchdog";
+>> +	samsung,syscon-phandle = <&pmu_system_controller>;
+>> +};
+>> +
+> 
+> Since you used the same ID than Exynos5420 for the SSS and WDT clocks,
+> I wonder if the clock and clock-names shouldn't be just defined in the
+> shared exynos54xx.dtsi as is the case for the interrupts that are also
+> the same?
+> 
+> The patch looks good to me though, so whatever you decide:
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Has anyone had a change to take a look at these patches yet?
+Thanks for review and comments.
 
--rhyland
+The 'clock' property cannot be moved - there is no clock phandle and the
+clock IDs are not included in 54xx.
 
--- 
-nvpublic
+Best regards,
+Krzysztof
