@@ -1,48 +1,88 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
-	"edubezval@gmail.com" <edubezval@gmail.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"wens@csie.org" <wens@csie.org>,
-	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([217.72.192.75]:60174 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161017AbcFBLoF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2016 07:44:05 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Scott Wood <oss@buserror.net>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-In-Reply-To: <20160629134209.GE6095@lukather>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
-	 <20160628101325.2522-3-icenowy@aosc.xyz>
-	 <20160628114640.GE5550@lukather>
-	 <60021467122182@web19j.yandex.ru>
-	 <20160629121021.GD6095@lukather>
-	 <1112501467207099@web30g.yandex.ru> <20160629134209.GE6095@lukather>
-Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of arch/powerpc"
+Date: Thu, 02 Jun 2016 11:01:45 +0200
+Message-ID: <3225846.9EJ0sHv0XK@wuerfel>
+In-Reply-To: <1464830660.22191.6.camel@buserror.net>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <5513501.AmZs7h1vI2@wuerfel> <1464830660.22191.6.camel@buserror.net>
 MIME-Version: 1.0
-Message-Id: <1216731467208359@web29g.yandex.ru>
-Date: Wed, 29 Jun 2016 21:52:39 +0800
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wednesday, June 1, 2016 8:24:20 PM CEST Scott Wood wrote:
+> On Mon, 2016-05-30 at 15:18 +0200, Arnd Bergmann wrote:
+> > All users of this driver are PowerPC specific and the header file
+> > has no business in the global include/linux/ hierarchy, so move
+> > it back before anyone starts using it on ARM.
+> > 
+> > This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
+> > 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> > This part of the series is not required for the eSDHC quirk,
+> > but it restores the asm/fsl_guts.h header so it doesn't accidentally
+> > get abused for this in the future. I found two drivers outside of
+> > arch/powerpc that already accessed the registers directly, but the
+> > functions look fairly contained, and can be easily hidden in an
+> > #ifdef CONFIG_PPC
+> 
+> NACK
+> 
+> Besides adding ifdef pollution for no good reason, this register block is used
+> on some ARM chips as well.  Why is it a problem if "anyone starts using it on
+> ARM"?
 
+It's just not a good interface when it's defined as "this is the layout of
+a register area that any driver can ioremap() if they can figure out the
+device node". It's not uncommon to have register areas like that, but
+normally you have at the minimum a 'syscon' device to handle locking
+between drivers accessing the same registers and to avoid having to map
+the same area multiple times.
 
-29.06.2016, 21:42, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
-> On Wed, Jun 29, 2016 at 09:31:39PM +0800, Icenowy Zheng wrote:
->>  However, sun8iw3/5 ths is not even a GPADC... It's a specified IP,
->>  only used as an ADC suitable for temperature sensor.
->
-> It doesn't matter. It's the same IP, labelled differently.
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+If we need to use 'guts' registers on ARM, we can find a way to abstract
+them properly for the given use cases, using a syscon or a driver with
+exported functions, but just making a PowerPC platform specific header
+global to all Linux drivers by putting it into include/linux doesn't seem
+right.
 
-OK, now I will send only PLL2 driver.
+Note that the header file uses a structure definition rather than the more
+common macros with register offsets, which is fine for a driver that has
+its own registers and abstracts them, but it doesn't really work with
+the regmap interface, so if we want to use it with syscon, it also needs to
+be rewritten.
+
+> BTW, of all the mailing lists you included on this CC, you seem to have left
+> off the PPC list (I've added it).
+
+Sorry, my mistake.
+
+	Arnd
