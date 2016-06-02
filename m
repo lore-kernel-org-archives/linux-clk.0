@@ -1,63 +1,71 @@
-Return-Path: <neidhard.kim@lge.com>
-From: Jongsung Kim <neidhard.kim@lge.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chanho Min
-	<chanho.min@lge.com>, Jongsung Kim <neidhard.kim@lge.com>
-Subject: [PATCH] clk: fixed-factor: set CLK_SET_RATE_PARENT
-Date: Thu, 2 Jun 2016 18:52:00 +0900
-Message-ID: <1464861120-26209-1-git-send-email-neidhard.kim@lge.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: neidhard.kim@lge.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from host.buserror.net ([209.198.135.123]:58218 "EHLO
+	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751479AbcFBBYa (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 21:24:30 -0400
+Message-ID: <1464830660.22191.6.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	linuxppc-dev@lists.ozlabs.org
+Date: Wed, 01 Jun 2016 20:24:20 -0500
+In-Reply-To: <5513501.AmZs7h1vI2@wuerfel>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+	 <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com>
+	 <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
+	 <5513501.AmZs7h1vI2@wuerfel>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of
+ arch/powerpc"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Without CLK_SET_RATE_PARENT-flag set, clk_factor_round_rate() just
-returns the current frequency. A fixed-factor-clock initialzed via
-of_fixed_factor_clk_set() (ie, by device-tree) can't have the flag
-set. It can be problematic when the parent of a fixed-factor-clock
-is rate-controllable clk, because the rounding can't be propagated
-to parent, the rounded target frequency is always the current, and
-finally the frequency can't be changed.
+On Mon, 2016-05-30 at 15:18 +0200, Arnd Bergmann wrote:
+> All users of this driver are PowerPC specific and the header file
+> has no business in the global include/linux/ hierarchy, so move
+> it back before anyone starts using it on ARM.
+> 
+> This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> This part of the series is not required for the eSDHC quirk,
+> but it restores the asm/fsl_guts.h header so it doesn't accidentally
+> get abused for this in the future. I found two drivers outside of
+> arch/powerpc that already accessed the registers directly, but the
+> functions look fairly contained, and can be easily hidden in an
+> #ifdef CONFIG_PPC
 
-This patch sets the flags CLK_SET_RATE_PARENT for all fixed-factor-
-clocks, from clk_register_fixed_factor(), and removes checking the
-flag from clk_factor_round_rate().
+NACK
 
-Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
----
- drivers/clk/clk-fixed-factor.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Besides adding ifdef pollution for no good reason, this register block is used
+on some ARM chips as well.  Why is it a problem if "anyone starts using it on
+ARM"?
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 75cd6c7..9b5df847f 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -38,13 +38,10 @@ static long clk_factor_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *prate)
- {
- 	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
-+	unsigned long best_parent;
- 
--	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
--		unsigned long best_parent;
--
--		best_parent = (rate / fix->mult) * fix->div;
--		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
--	}
-+	best_parent  = (rate / fix->mult) * fix->div;
-+	*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
- 
- 	return (*prate / fix->div) * fix->mult;
- }
-@@ -88,7 +85,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- 
- 	init.name = name;
- 	init.ops = &clk_fixed_factor_ops;
--	init.flags = flags | CLK_IS_BASIC;
-+	init.flags = flags | CLK_IS_BASIC | CLK_SET_RATE_PARENT;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
--- 
-2.7.4
+BTW, of all the mailing lists you included on this CC, you seem to have left
+off the PPC list (I've added it).
+
+-Scott
+
