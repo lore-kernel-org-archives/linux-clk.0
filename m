@@ -1,53 +1,41 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH] clk: Fix return value check in oxnas_stdclk_probe()
-To: weiyj_lk@163.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <1466184263-17890-1-git-send-email-weiyj_lk@163.com>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <5767BF8A.6080204@baylibre.com>
-Date: Mon, 20 Jun 2016 12:03:54 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jun 2016 11:35:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: "Banavathi, Pradeep" <pradeepb@codeaurora.org>
+Cc: Abhishek Sahu <absahu@codeaurora.org>, andy.gross@linaro.org,
+	david.brown@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	mturquette@baylibre.com, galak@codeaurora.org,
+	mmcclint@codeaurora.org, varada@codeaurora.org,
+	sricharan@codeaurora.org, architt@codeaurora.org,
+	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] clk: qcom: ipq4019: Modified the fixed clock rate to
+ proper values
+Message-ID: <20160602183540.GK28218@codeaurora.org>
+References: <1464618758-20965-1-git-send-email-absahu@codeaurora.org>
+ <1464618758-20965-2-git-send-email-absahu@codeaurora.org>
+ <20160601221808.GI28218@codeaurora.org>
+ <9a9ac449-4c14-e0fa-5637-5ca7aac321aa@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1466184263-17890-1-git-send-email-weiyj_lk@163.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <9a9ac449-4c14-e0fa-5637-5ca7aac321aa@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/17/2016 07:24 PM, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On 06/02, Banavathi, Pradeep wrote:
+> The PLLs on IPQ4019 cannot be reconfigured by design. The
+> recommendation is to program these PLLS only once. Since, the
+> Bootloaders configure the PLLs and clocks already. we did not
+> support the recalc rate and marked them as fixed clocks.
 > 
-> In case of error, the function syscon_node_to_regmap() returns
-> ERR_PTR() and never returns NULL. The NULL test in the return
-> value check should be replaced with IS_ERR().
-> 
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-> ---
->  drivers/clk/clk-oxnas.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
-> index efba7d4..79bcb2e 100644
-> --- a/drivers/clk/clk-oxnas.c
-> +++ b/drivers/clk/clk-oxnas.c
-> @@ -144,9 +144,9 @@ static int oxnas_stdclk_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	regmap = syscon_node_to_regmap(of_get_parent(np));
-> -	if (!regmap) {
-> +	if (IS_ERR(regmap)) {
->  		dev_err(&pdev->dev, "failed to have parent regmap\n");
-> -		return -EINVAL;
-> +		return PTR_ERR(regmap);
->  	}
->  
->  	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
-> 
-> 
-> 
-Correct.
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+(Please don't top post)
 
-Thanks,
-Neil
+That doesn't matter. We recalculate PLL rates on all other qcom
+SoCs by reading the hardware even though an overwhelming majority
+of them are fixed by the bootloader.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
