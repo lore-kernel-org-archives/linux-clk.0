@@ -1,46 +1,49 @@
-Return-Path: <LW@karo-electronics.de>
-Date: Thu, 9 Jun 2016 09:43:28 +0200
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: <linux-clk@vger.kernel.org>, anson.huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org, shawnguo@kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
-Message-ID: <20160609094328.136b7bf8@ipc1.ka-ro>
-In-Reply-To: <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-	<1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <krzk@kernel.org>
+Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Kevin Hilman <khilman@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+ <1464429273-23457-14-git-send-email-krzk@kernel.org>
+ <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
+ <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
+ <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
+ <cabfd6c2-fc7e-622a-36e6-5be0b674cdd2@osg.samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Message-id: <574FB341.1090800@kernel.org>
+Date: Thu, 02 Jun 2016 06:17:05 +0200
+MIME-version: 1.0
+In-reply-to: <cabfd6c2-fc7e-622a-36e6-5be0b674cdd2@osg.samsung.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 06/01/2016 10:54 PM, Javier Martinez Canillas wrote:
+> On 06/01/2016 04:52 PM, Javier Martinez Canillas wrote:
+>> Hello Krzysztof,
+> 
+> [snip]
+> 
+>>>
+>>> I left the commit in my tree as it is correct (strictly speaking).
+>>> Sorry for any trouble it makes.
+>>>
+>>
+>> Kevin pointed me to this issue over IRC and I was able to reproduce it in
+>> my Peach Pi by removing the UART3 clocks from the Exynos5420 clock driver.
+>>
+>> Your patch indeed fixes the issue, I'll add a Reviewed-by on that thread.
+>>
+> 
+> err, I meant a Tested-by tag... but yes I've also reviewed the patch :)
 
-On Wed, 8 Jun 2016 22:33:34 +0800 Dong Aisheng wrote:
-> There's a powerdown bit already, so let's change the name of
-> powerup_set bit to power_invert to reflects the power polarity
-> to make it less confusing.
->=20
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/imx/clk-pllv3.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> index eea2b1b3791e..3fdfb6d2cc71 100644
-> --- a/drivers/clk/imx/clk-pllv3.c
-> +++ b/drivers/clk/imx/clk-pllv3.c
-> @@ -29,8 +29,8 @@
->   * struct clk_pllv3 - IMX PLL clock version 3
->   * @clk_hw:	 clock source
->   * @base:	 base address of PLL registers
-> - * @powerup_set: set POWER bit to power up the PLL
-> - * @powerdown:   pll powerdown offset bit
-> + * @powerdown:	 pll powerdown bit offset
-> + * @power_invert: set powerdown bit to power up the PLL
-s/set/clear/ ?
+Sure, thanks!
 
-
-
-Lothar Wa=C3=9Fmann
+Best regards,
+Krzysztof
