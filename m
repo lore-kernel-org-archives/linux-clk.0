@@ -1,132 +1,60 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 13/28] clk: ti: am43xx: transition to usage of ti_clk_get
-Date: Mon, 13 Jun 2016 22:04:47 +0300
-Message-ID: <1465844702-12200-14-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <Purna.Mandal@microchip.com>
+Subject: Re: [PATCH] clk: microchip: Remove CLK_IS_ROOT
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>
+References: <20160601215521.31309-1-sboyd@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Ralf Baechle
+	<ralf@linux-mips.org>, <linux-mips@linux-mips.org>
+From: Purna Chandra Mandal <purna.mandal@microchip.com>
+Message-ID: <574FBC18.8070608@microchip.com>
+Date: Thu, 2 Jun 2016 10:24:48 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160601215521.31309-1-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: purna.mandal@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Cleanup any unnecessary DT_CLK() alias entries from the AM43xx clock file.
-Also, use ti_clk_get where necessary.
+On 06/02/2016 03:25 AM, Stephen Boyd wrote:
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-43xx.c | 88 ++---------------------------------------------
- 1 file changed, 2 insertions(+), 86 deletions(-)
+> This flag is a no-op now (see commit 47b0eeb3dc8a "clk: Deprecate
+> CLK_IS_ROOT", 2016-02-02) so remove it.
+>
+> Cc: Purna Chandra Mandal <purna.mandal@microchip.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: <linux-mips@linux-mips.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>
+> I'm going to send this to Linus tomorrow or Friday so we can finally
+> remove this flag entirely.
+>
+>  drivers/clk/microchip/clk-pic32mzda.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/microchip/clk-pic32mzda.c b/drivers/clk/microchip/clk-pic32mzda.c
+> index 020a29acc5b0..51f54380474b 100644
+> --- a/drivers/clk/microchip/clk-pic32mzda.c
+> +++ b/drivers/clk/microchip/clk-pic32mzda.c
+> @@ -180,15 +180,15 @@ static int pic32mzda_clk_probe(struct platform_device *pdev)
+>  
+>  	/* register fixed rate clocks */
+>  	clks[POSCCLK] = clk_register_fixed_rate(&pdev->dev, "posc_clk", NULL,
+> -						CLK_IS_ROOT, 24000000);
+> +						0, 24000000);
+>  	clks[FRCCLK] =  clk_register_fixed_rate(&pdev->dev, "frc_clk", NULL,
+> -						CLK_IS_ROOT, 8000000);
+> +						0, 8000000);
+>  	clks[BFRCCLK] = clk_register_fixed_rate(&pdev->dev, "bfrc_clk", NULL,
+> -						CLK_IS_ROOT, 8000000);
+> +						0, 8000000);
+>  	clks[LPRCCLK] = clk_register_fixed_rate(&pdev->dev, "lprc_clk", NULL,
+> -						CLK_IS_ROOT, 32000);
+> +						0, 32000);
+>  	clks[UPLLCLK] = clk_register_fixed_rate(&pdev->dev, "usbphy_clk", NULL,
+> -						CLK_IS_ROOT, 24000000);
+> +						0, 24000000);
+>  	/* fixed rate (optional) clock */
+>  	if (of_find_property(np, "microchip,pic32mzda-sosc", NULL)) {
+>  		pr_info("pic32-clk: dt requests SOSC.\n");
 
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-index 097fc90..eefa62b 100644
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -23,92 +23,8 @@
- #include "clock.h"
- 
- static struct ti_dt_clk am43xx_clks[] = {
--	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
--	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
--	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
--	DT_CLK(NULL, "virt_24000000_ck", "virt_24000000_ck"),
--	DT_CLK(NULL, "virt_25000000_ck", "virt_25000000_ck"),
--	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
--	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin_ck"),
--	DT_CLK(NULL, "tclkin_ck", "tclkin_ck"),
--	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
--	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
--	DT_CLK(NULL, "dpll_core_m4_ck", "dpll_core_m4_ck"),
--	DT_CLK(NULL, "dpll_core_m5_ck", "dpll_core_m5_ck"),
--	DT_CLK(NULL, "dpll_core_m6_ck", "dpll_core_m6_ck"),
--	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
--	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
--	DT_CLK(NULL, "dpll_ddr_ck", "dpll_ddr_ck"),
--	DT_CLK(NULL, "dpll_ddr_m2_ck", "dpll_ddr_m2_ck"),
--	DT_CLK(NULL, "dpll_disp_ck", "dpll_disp_ck"),
--	DT_CLK(NULL, "dpll_disp_m2_ck", "dpll_disp_m2_ck"),
--	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
--	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
--	DT_CLK(NULL, "dpll_per_m2_div4_wkupdm_ck", "dpll_per_m2_div4_wkupdm_ck"),
--	DT_CLK(NULL, "dpll_per_m2_div4_ck", "dpll_per_m2_div4_ck"),
--	DT_CLK(NULL, "adc_tsc_fck", "adc_tsc_fck"),
--	DT_CLK(NULL, "clkdiv32k_ck", "clkdiv32k_ck"),
--	DT_CLK(NULL, "clkdiv32k_ick", "clkdiv32k_ick"),
--	DT_CLK(NULL, "dcan0_fck", "dcan0_fck"),
--	DT_CLK(NULL, "dcan1_fck", "dcan1_fck"),
--	DT_CLK(NULL, "pruss_ocp_gclk", "pruss_ocp_gclk"),
--	DT_CLK(NULL, "mcasp0_fck", "mcasp0_fck"),
--	DT_CLK(NULL, "mcasp1_fck", "mcasp1_fck"),
--	DT_CLK(NULL, "smartreflex0_fck", "smartreflex0_fck"),
--	DT_CLK(NULL, "smartreflex1_fck", "smartreflex1_fck"),
--	DT_CLK(NULL, "sha0_fck", "sha0_fck"),
--	DT_CLK(NULL, "aes0_fck", "aes0_fck"),
--	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
--	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
--	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
--	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
--	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
--	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
--	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
--	DT_CLK(NULL, "wdt1_fck", "wdt1_fck"),
--	DT_CLK(NULL, "l3_gclk", "l3_gclk"),
--	DT_CLK(NULL, "dpll_core_m4_div2_ck", "dpll_core_m4_div2_ck"),
--	DT_CLK(NULL, "l4hs_gclk", "l4hs_gclk"),
--	DT_CLK(NULL, "l3s_gclk", "l3s_gclk"),
--	DT_CLK(NULL, "l4ls_gclk", "l4ls_gclk"),
--	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
--	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
--	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
--	DT_CLK(NULL, "dpll_clksel_mac_clk", "dpll_clksel_mac_clk"),
--	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
--	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
--	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
--	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
--	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
--	DT_CLK(NULL, "gpio4_dbclk", "gpio4_dbclk"),
--	DT_CLK(NULL, "gpio5_dbclk", "gpio5_dbclk"),
--	DT_CLK(NULL, "mmc_clk", "mmc_clk"),
--	DT_CLK(NULL, "gfx_fclk_clksel_ck", "gfx_fclk_clksel_ck"),
--	DT_CLK(NULL, "gfx_fck_div_ck", "gfx_fck_div_ck"),
- 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
- 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
--	DT_CLK(NULL, "sysclk_div", "sysclk_div"),
--	DT_CLK(NULL, "disp_clk", "disp_clk"),
--	DT_CLK(NULL, "clk_32k_mosc_ck", "clk_32k_mosc_ck"),
--	DT_CLK(NULL, "clk_32k_tpm_ck", "clk_32k_tpm_ck"),
--	DT_CLK(NULL, "dpll_extdev_ck", "dpll_extdev_ck"),
--	DT_CLK(NULL, "dpll_extdev_m2_ck", "dpll_extdev_m2_ck"),
--	DT_CLK(NULL, "mux_synctimer32k_ck", "mux_synctimer32k_ck"),
--	DT_CLK(NULL, "synctimer_32kclk", "synctimer_32kclk"),
--	DT_CLK(NULL, "timer8_fck", "timer8_fck"),
--	DT_CLK(NULL, "timer9_fck", "timer9_fck"),
--	DT_CLK(NULL, "timer10_fck", "timer10_fck"),
--	DT_CLK(NULL, "timer11_fck", "timer11_fck"),
--	DT_CLK(NULL, "cpsw_50m_clkdiv", "cpsw_50m_clkdiv"),
--	DT_CLK(NULL, "cpsw_5m_clkdiv", "cpsw_5m_clkdiv"),
--	DT_CLK(NULL, "dpll_ddr_x2_ck", "dpll_ddr_x2_ck"),
--	DT_CLK(NULL, "dpll_ddr_m4_ck", "dpll_ddr_m4_ck"),
--	DT_CLK(NULL, "dpll_per_clkdcoldo", "dpll_per_clkdcoldo"),
--	DT_CLK(NULL, "dll_aging_clk_div", "dll_aging_clk_div"),
--	DT_CLK(NULL, "div_core_25m_ck", "div_core_25m_ck"),
--	DT_CLK(NULL, "func_12m_clk", "func_12m_clk"),
--	DT_CLK(NULL, "vtp_clk_div", "vtp_clk_div"),
--	DT_CLK(NULL, "usbphy_32khz_clkmux", "usbphy_32khz_clkmux"),
- 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
- 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
- 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
-@@ -136,8 +52,8 @@ int __init am43xx_dt_clk_init(void)
- 	 * By selecting dpll_core_m5_ck as the clocksource fixes this issue.
- 	 * In AM335x dpll_core_m5_ck is the default clocksource.
- 	 */
--	clk1 = clk_get_sys(NULL, "cpsw_cpts_rft_clk");
--	clk2 = clk_get_sys(NULL, "dpll_core_m5_ck");
-+	clk1 = ti_clk_get("cpsw_cpts_rft_clk");
-+	clk2 = ti_clk_get("dpll_core_m5_ck");
- 	clk_set_parent(clk1, clk2);
- 
- 	return 0;
--- 
-1.9.1
+Tested-by: Purna Chandra Mandal <purna.mandal@microchip.com>
