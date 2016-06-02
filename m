@@ -1,53 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <neidhard.kim@lge.com>
+From: Jongsung Kim <neidhard.kim@lge.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chanho Min
+	<chanho.min@lge.com>, Jongsung Kim <neidhard.kim@lge.com>
+Subject: [PATCH] clk: fixed-factor: set CLK_SET_RATE_PARENT
+Date: Thu, 2 Jun 2016 18:52:00 +0900
+Message-ID: <1464861120-26209-1-git-send-email-neidhard.kim@lge.com>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- "Jean-Francois Moine" <moinejf@free.fr>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160628204502.GG5550@lukather>
-Cc: "Emilio Lopez" <emilio@elopez.com.ar>, "Chen-Yu Tsai" <wens@csie.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sunxi@googlegroups.com
-References: <cover.1467135898.git.moinejf@free.fr>
- <a55dc5d1a9f02dc4d71d5c21064bffebe5a7b149.1467135898.git.moinejf@free.fr>
- <20160628204502.GG5550@lukather>
-Message-ID: <146715247912.89261.8162176265913264908@resonance>
-Subject: Re: [PATCH 1/3] clk: sunxi: Add a driver for the CCU
-Date: Tue, 28 Jun 2016 15:21:19 -0700
+Content-Type: text/plain
+Return-Path: neidhard.kim@lge.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2016-06-28 13:45:02)
-> What's the point of this, if we're not using (or exposing for that
-> matter) any of it?
-> =
+Without CLK_SET_RATE_PARENT-flag set, clk_factor_round_rate() just
+returns the current frequency. A fixed-factor-clock initialzed via
+of_fixed_factor_clk_set() (ie, by device-tree) can't have the flag
+set. It can be problematic when the parent of a fixed-factor-clock
+is rate-controllable clk, because the rounding can't be propagated
+to parent, the rounded target frequency is always the current, and
+finally the frequency can't be changed.
 
-> I'm sorry, but the whole point of the initial serie was to rework and
-> simplify things, precisely because dealing with the clk_factors code
-> was just too difficult nowadays. And this doesn't solve anything on
-> that aspect.
-> =
+This patch sets the flags CLK_SET_RATE_PARENT for all fixed-factor-
+clocks, from clk_register_fixed_factor(), and removes checking the
+flag from clk_factor_round_rate().
 
-> We came with an approach that have all the maintainers involved
-> agreeing on it, I don't see why we should start over. There's some
-> useful features there (like tracing). But it's something that can be
-> added, and should be done differently anyway.
+Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+---
+ drivers/clk/clk-fixed-factor.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Yes, let's not delay Maxime's work any longer. Stephen and I have
-requested these changes to the sunxi clock drivers for a long time and
-now we have them. I intend to merge Maxime's v3 once it addresses the
-last round of review questions.
-
-Regards,
-Mike
-
-> =
-
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 75cd6c7..9b5df847f 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -38,13 +38,10 @@ static long clk_factor_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
+ 	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
++	unsigned long best_parent;
+ 
+-	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-		unsigned long best_parent;
+-
+-		best_parent = (rate / fix->mult) * fix->div;
+-		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
+-	}
++	best_parent  = (rate / fix->mult) * fix->div;
++	*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
+ 
+ 	return (*prate / fix->div) * fix->mult;
+ }
+@@ -88,7 +85,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+-	init.flags = flags | CLK_IS_BASIC;
++	init.flags = flags | CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+-- 
+2.7.4
