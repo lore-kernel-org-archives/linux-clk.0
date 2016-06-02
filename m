@@ -1,52 +1,106 @@
-Return-Path: <khilman@kernel.org>
+Return-Path: <hl@rock-chips.com>
+Subject: Re: [RFC PATCH 3/4] PM / devfreq: rockchip: add devfreq driver for
+ rk3399 dmc
+To: myungjoo.ham@gmail.com
+References: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
+ <1464773739-18152-4-git-send-email-hl@rock-chips.com>
+ <CAJ0PZbQaPm1YjgAgEzGbPYSzfi7kk5NG=zAj80t4XmBV5MqEqg@mail.gmail.com>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, airlied@linux.ie,
+ mturquette@baylibre.com, dbasehore@chromium.org,
+ Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
+ dri-devel@lists.freedesktop.org, dianders@chromium.org,
+ linux-rockchip@lists.infradead.org, Kyungmin Park
+ <kyungmin.park@samsung.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ mark.yao@rock-chips.com
+From: hl <hl@rock-chips.com>
+Message-ID: <574F91D8.70606@rock-chips.com>
+Date: Thu, 2 Jun 2016 09:54:32 +0800
 MIME-Version: 1.0
-In-Reply-To: <1464429273-23457-14-git-send-email-krzk@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-	<1464429273-23457-14-git-send-email-krzk@kernel.org>
-Date: Wed, 1 Jun 2016 12:57:52 -0700
-Message-ID: <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
-Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
-From: Kevin Hilman <khilman@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org,
-	devicetree <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>,
-	Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAJ0PZbQaPm1YjgAgEzGbPYSzfi7kk5NG=zAj80t4XmBV5MqEqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+Hi Myungloo Ham,
 
-On Sat, May 28, 2016 at 2:54 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Just like other Exynos5 family SoCs, this one has four UARTs. Configure
-> clocks for UART3 and enable it.
+
+On 2016年06月01日 18:47, MyungJoo Ham wrote:
+> On Wed, Jun 1, 2016 at 6:35 PM, Lin Huang <hl@rock-chips.com> wrote:
+>> there is dfi controller on rk3399 platform, it can monitor
+>> ddr load, register this controller to devfreq framework, and
+>> default to use simple_ondeamnd policy, and do ddr frequency
+>> scaling base on this result.
+>>
+>> Signed-off-by: Lin Huang <hl@rock-chips.com>
+>> ---
+>>   drivers/devfreq/Kconfig                 |   2 +-
+>>   drivers/devfreq/Makefile                |   1 +
+>>   drivers/devfreq/rockchip/Kconfig        |  14 +
+>>   drivers/devfreq/rockchip/Makefile       |   2 +
+>>   drivers/devfreq/rockchip/rk3399_dmc.c   | 438 ++++++++++++++++++++++++++++++++
+>>   drivers/devfreq/rockchip/rockchip_dmc.c | 132 ++++++++++
+>>   include/soc/rockchip/rockchip_dmc.h     |  44 ++++
+>>   7 files changed, 632 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/devfreq/rockchip/Kconfig
+>>   create mode 100644 drivers/devfreq/rockchip/Makefile
+>>   create mode 100644 drivers/devfreq/rockchip/rk3399_dmc.c
+>>   create mode 100644 drivers/devfreq/rockchip/rockchip_dmc.c
+>>   create mode 100644 include/soc/rockchip/rockchip_dmc.h
+>>
+>> +
+>> +       /* check the rate we get whether correct */
+>> +       dmcfreq->rate = clk_get_rate(dmcfreq->dmc_clk);
+>> +       if (dmcfreq->rate != target_rate) {
+>> +               dev_err(dev, "get wrong ddr frequency, Request freq %lu,\
+>> +                       Current freq %lu\n", target_rate, dmcfreq->rate);
+>> +               regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
+>> +                                     dmcfreq->volt);
+> Why do you need to check this and
+> more importantly, why do you assume that dmvfreq->volt
+> will be safe in this case? (what if the new dmcfreq->rate is
+> larger than the old dmcfreq->rate after clk_get_rate?)
+> Note that you didn't update dmcfreq->volt after clk_get_rate()
+     Now we will set the ddr clock rate in bl31 use dcf controller(as i 
+show in the patch cover letter),
+      and there only two result we can get, set clock rate fail(ddr 
+clock still in old rate) or set clock rate
+     sucessful(use the new ddr rate), if the set rate fail, we should 
+keep the voltage old value. Ah, you
+     remind me, i should check clock rate before:
+         if (old_clk_rate > target_rate)
+     otherwise there have chance set high rate fail and use low voltage.
+
+     And about the dmcfreq->volt, i will update this value when into the 
+function, throuth
+
+     opp = devfreq_recommended_opp(dev, &dmcfreq->rate, flags);
+     if (IS_ERR(opp)) {
+         rcu_read_unlock();
+         return PTR_ERR(opp);
+     }
+     dmcfreq->volt = dev_pm_opp_get_voltage(opp);
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> +EXPORT_SYMBOL_GPL(dmc_event);
+>> +EXPORT_SYMBOL_GPL(rockchip_dmc_enabled);
+>> +EXPORT_SYMBOL_GPL(rockchip_dmc_enable);
+>> +EXPORT_SYMBOL_GPL(rockchip_dmc_disable);
+>> +EXPORT_SYMBOL_GPL(dmc_register_notifier);
+>> +EXPORT_SYMBOL_GPL(dmc_unregister_notifier);
+>> +EXPORT_SYMBOL_GPL(rockchip_dmc_get);
+>> +EXPORT_SYMBOL_GPL(rockchip_dmc_put);
+> Do you really need to export all these device driver specific
+> functions? Looks like a design flaw here.
+>
+     there is some situation we need to disable ddr frequency 
+scaling(connect two panel etc)
+     on rk3399 platform, and it should be also needed on other rockchip 
+platform, so i move these
+     funticon as separate file.
+>
+> Cheers,
+> MyungJoo
+>
+>
 
-This patch landed in linux-next[1] and kernelci.org found a boot
-regression on the exynos5410-odroidxu[2], where it looks like it's
-faulting in clk_prepare().  Bisecting pointed to this patch.  I added
-"status = disabled" back into the DTS on top of next-20160601[3] and
-verified my odroid-XU to be booting fine again.
-
-Kevin
-
-[1] 594127ada6df ARM: dts: exynos: Enable UART3 on Exynos5410
-[2] https://kernelci.org/boot/exynos5410-odroidxu/job/next/kernel/next-20160601/defconfig/multi_v7_defconfig/lab/lab-baylibre-seattle/?_id=574e97c759b5140f4141c8ef
-[3] diff --git a/arch/arm/boot/dts/exynos5410.dtsi
-b/arch/arm/boot/dts/exynos5410.dtsi
-index a937d9bdad90..f4baf1d1e864 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -238,6 +238,7 @@
- };
-
- &serial_3 {
-+       status = "disabled";
-        clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-        clock-names = "uart", "clk_uart_baud0";
- };
+-- 
+Lin Huang
