@@ -1,51 +1,50 @@
-Return-Path: <v1ron@mail.ru>
-From: Roman Volkov <v1ron@mail.ru>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Roman Volkov <rvolkov@v1ros.org>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: [PATCH v2 0/2] Rework clk/vt8500 wm8650_find_pll_bits()
-Date: Wed,  8 Jun 2016 00:56:08 +0300
-Message-Id: <20160607215610.8724-1-v1ron@mail.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:36776 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751033AbcFCAyx (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2016 20:54:53 -0400
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 1/2] clk: rockchip: release io resource when failing to init clk
+Date: Fri,  3 Jun 2016 08:54:18 +0800
+Message-Id: <1464915258-10838-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Roman Volkov <rvolkov@v1ros.org>
+We should call iounmap to relase reg_base since it's not going
+to be used any more if failing to init clk.
 
-Hi Arnd, Stephen,
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-This patch finally removes the warnings from GCC about possibly uninitialized
-variables 'best_div2', 'best_div1', and 'best_mul'. Also one of the functions
-is reworked, so that the algorithm is much easier. This is to continue the
-work started in [1].
+ drivers/clk/rockchip/clk-rk3399.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This code is tested on WM8650. Also the testing app was used in user-mode to
-check possible values and performance [2].
-
-Please schedule this for 4.8.
-
-Changes in v2:
-Apply WM8650 fix on top of changes by Arnd [3].
-
-[1] https://lkml.org/lkml/2016/2/1/149
-[2] https://github.com/v1ron/vt8500-clkrange
-[3] https://lkml.org/lkml/2016/5/31/767
-
-Thanks,
-Roman
-
-Arnd Bergmann (1):
-  clk: vt8500: fix gcc-4.9 warnings
-
-Roman Volkov (1):
-  clk: vt8500: rework wm8650_find_pll_bits()
-
- drivers/clk/clk-vt8500.c | 99 +++++++++++++++++++++---------------------------
- 1 file changed, 44 insertions(+), 55 deletions(-)
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index b6742fa..37c74cb 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1509,6 +1509,7 @@ static void __init rk3399_clk_init(struct device_node *np)
+ 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
++		iounmap(reg_base);
+ 		return;
+ 	}
+ 
+@@ -1562,6 +1563,7 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
+ 	ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip pmu clk init failed\n", __func__);
++		iounmap(reg_base);
+ 		return;
+ 	}
+ 
 -- 
-2.8.3
+2.3.7
+
+
