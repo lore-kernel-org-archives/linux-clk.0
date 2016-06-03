@@ -1,48 +1,79 @@
-Return-Path: <moinejf@free.fr>
-Date: Thu, 30 Jun 2016 10:31:08 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Boris
- Brezillon <boris.brezillon@free-electrons.com>, Rob Herring
- <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
-Message-Id: <20160630103108.66faa9f392f050de6106d194@free.fr>
-In-Reply-To: <20160629190535.11855-14-maxime.ripard@free-electrons.com>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
-	<20160629190535.11855-14-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <fcooper@ti.com>
+Subject: Re: [PATCH v8 0/9] ARM: dts: DRA7: Add dt nodes for PWMSS
+To: <thierry.reding@gmail.com>, <robh+dt@kernel.org>, <tony@atomide.com>,
+        <linux@arm.linux.org.uk>, <paul@pwsan.com>, <t-kristo@ti.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <vigneshr@ti.com>, <nsekhar@ti.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+From: "Franklin Cooper Jr." <fcooper@ti.com>
+Message-ID: <47460be2-4a57-09cc-d0a0-1636988b7538@ti.com>
+Date: Fri, 3 Jun 2016 14:00:41 -0500
+MIME-Version: 1.0
+In-Reply-To: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 29 Jun 2016 21:05:34 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Gentle ping on this series
 
-> +static void __init sun8i_h3_ccu_setup(struct device_node *node)
-> +{
-> +	void __iomem *reg;
-> +	u32 val;
-> +
-> +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("%s: Could not map the clock registers\n",
-> +		       of_node_full_name(node));
-> +		return;
-> +	}
-> +
-> +	/* Force the PLL-Audio-1x divider to 4 */
-> +	val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
-> +	val &=3D ~GENMASK(4, 0);
-> +	writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
-> +
-> +	sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
-> +}
-
-FYI, the pll-audio PLL_POST_DIV is 19:16.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+On 05/03/2016 10:56 AM, Franklin S Cooper Jr wrote:
+> This patch series adds support for PWM for DRA7. The IP is the same as the
+> one present in AM33XX and AM437XX.
+>
+> However, before doing so remove unnecessary hwmod entries for eCAP, ePWM
+> and eQEP.
+>
+> The following are the biggest changes from v7 to v8:
+> Insure DT unit address matches reg property address
+>
+> The following are the biggest changes from v6 to v7:
+> * Several patches to document previously undocumented bindings.
+> * Fix minor issues in binding documents.
+>
+> The following are the biggest changes from v5 to v6:
+> * Created two new bindings to allow ECAP and PWM to grab their functional
+> clock from DT rather than depending on PWMSS parent.
+> * Pull in a couple of patches from the "Correct PWM bindings" series. This
+> makes it a bit easier to understand.
+>
+> From the two patchsets a handful of patches have already been pulled in by
+> maintainers and have already made it to linux-next. Therefore, this
+> patch series is built ontop of the latest linux-next.
+>
+> Tested on:
+> AM335x, AM437x and X15 + lcd w/backlight
+>
+> Franklin S Cooper Jr (8):
+>   clk: ti: am335x/am4372: Add tbclk to pwm node
+>   ARM: dts: am437x: Add missing compatibles to PWM binding documents
+>   pwm: pwm-tiehrpwm: Update dt binding document to use generic node name
+>   pwm: pwm-tiecap: Update dt binding document to use proper unit address
+>   ARM: dts: am437x/am33xx/da850: Add new ECAP and EPWM bindings
+>   pwms: pwm-ti*: Get the clock from the PWMSS parent when using old
+>     bindings
+>   ARM: dts: am437x/am33xx: Remove hwmod entries for ECAP and EPWM nodes
+>   ARM: AM335x/AM437x: hwmod: Remove eQEP, ePWM and eCAP hwmod entries
+>
+> Vignesh R (1):
+>   ARM: dts: DRA7: Add dt nodes for PWMSS
+>
+>  .../devicetree/bindings/pwm/pwm-tiecap.txt         | 38 ++++++---
+>  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       | 38 ++++++---
+>  .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 33 +++++++-
+>  arch/arm/boot/dts/am33xx.dtsi                      | 36 ++++++---
+>  arch/arm/boot/dts/am4372.dtsi                      | 63 ++++++++++-----
+>  arch/arm/boot/dts/da850.dtsi                       | 15 ++--
+>  arch/arm/boot/dts/dra7.dtsi                        | 90 ++++++++++++++++++++++
+>  .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  | 18 -----
+>  .../omap_hwmod_33xx_43xx_interconnect_data.c       | 64 ---------------
+>  .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 84 --------------------
+>  arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |  9 ---
+>  arch/arm/mach-omap2/omap_hwmod_43xx_data.c         | 54 -------------
+>  drivers/clk/ti/clk-33xx.c                          |  3 +
+>  drivers/clk/ti/clk-43xx.c                          |  6 ++
+>  drivers/pwm/pwm-tiecap.c                           |  7 ++
+>  drivers/pwm/pwm-tiehrpwm.c                         |  7 ++
+>  16 files changed, 281 insertions(+), 284 deletions(-)
+>
