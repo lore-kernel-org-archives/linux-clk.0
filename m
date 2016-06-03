@@ -1,142 +1,153 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 12:48:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 08/10] clk: mvebu Add the time base generator clocks for
- Armada 3700
-Message-ID: <20160630194813.GA1521@codeaurora.org>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
- <1465565018-14172-9-git-send-email-gregory.clement@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465565018-14172-9-git-send-email-gregory.clement@free-electrons.com>
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	huangtao@rock-chips.com,
+	typ@rock-chips.com,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH v1 6/6] drm/rockchip: Add dmc notifier in vop driver
+Date: Fri,  3 Jun 2016 17:55:19 +0800
+Message-Id: <1464947719-6245-7-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/10, Gregory CLEMENT wrote:
-> +
-> +struct tbg_def tbg[NUM_TBG] = {
+when in ddr frequency scaling process, vop can not do
+enable or disable operate, since dcf will base on vop vblank
+time to do frequency scaling and need to get vop irq if there
+have vop enabled. So need register to dmc notifier, and we can
+get the dmc status.
 
-const?
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+Changes in v1:
+- use wait_event instead usleep, Suggestion by Derek
 
-> +	{"TBG-A-P", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL8, TBG_A_VCODIV_DIFF},
-> +	{"TBG-B-P", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL8, TBG_B_VCODIV_DIFF},
-> +	{"TBG-A-S", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL1, TBG_A_VCODIV_SE},
-> +	{"TBG-B-S", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL1, TBG_B_VCODIV_SE},
-> +};
-> +
-> +static struct clk_onecell_data clk_tbg_data;
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 43 +++++++++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 2 deletions(-)
 
-Please allocate this in the driver probe.
-
-> +
-> +unsigned int tbg_get_mult(void __iomem *reg, struct tbg_def *ptbg)
-> +{
-> +	u32 val;
-> +
-> +	val = readl(reg + TBG_CTRL0);
-> +
-> +	return ((val >> ptbg->fbdiv_offset) & TBG_DIV_MASK) << 2;
-> +}
-> +
-> +unsigned int tbg_get_div(void __iomem *reg, struct tbg_def *ptbg)
-> +{
-> +	u32 val;
-> +	unsigned int div;
-> +
-> +	val = readl(reg + TBG_CTRL7);
-> +
-> +	div = (val >> ptbg->refdiv_offset) & TBG_DIV_MASK;
-> +	if (div == 0)
-> +		div = 1;
-> +	val = readl(reg + ptbg->vcodiv_reg);
-> +
-> +	div *= 1 << ((val >>  ptbg->vcodiv_offset) & TBG_DIV_MASK);
-> +
-> +	return div;
-> +}
-> +
-> +
-> +static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct device *dev = &pdev->dev;
-> +	const char *parent_name;
-> +	struct resource *res;
-> +	struct clk *parent;
-> +	void __iomem *reg;
-> +	int i, ret;
-> +
-> +	parent = of_clk_get(np, 0);
-
-Why not devm_clk_get() instead? Don't make things dependent on DT
-APIs unnecessarily please.
-
-> +	if (IS_ERR(parent)) {
-> +		dev_err(dev, "Could get the clock parent\n");
-> +		return -EINVAL;
-> +	}
-> +	parent_name = __clk_get_name(parent);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	reg = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(reg)) {
-> +		dev_err(dev, "Could not map the tbg clock registers\n");
-
-devm_ioremap_resource() already spits out an error on failure so
-please drop this print.
-
-> +		ret = PTR_ERR(reg);
-> +		goto put_clk;
-> +	}
-> +
-> +	clk_tbg_data.clk_num = NUM_TBG;
-> +	clk_tbg_data.clks = devm_kcalloc(dev, clk_tbg_data.clk_num,
-> +					 sizeof(struct clk *), GFP_KERNEL);
-
-Please move to clk_hw based registration.
-
-> +	if (!clk_tbg_data.clks) {
-> +		ret = -ENOMEM;
-> +		goto put_clk;
-> +	}
-> +
-> +	for (i = 0; i < NUM_TBG; i++) {
-> +		const char *name;
-> +		unsigned int mult, div;
-> +
-> +		name = tbg[i].name;
-> +		mult = tbg_get_mult(reg, &tbg[i]);
-> +		div = tbg_get_div(reg, &tbg[i]);
-> +		clk_tbg_data.clks[i] = clk_register_fixed_factor(NULL, name,
-> +						 parent_name, 0, mult, div);
-> +		if (IS_ERR(clk_tbg_data.clks[i]))
-> +			dev_err(dev, "Can't register TBG clock %s\n", name);
-> +	}
-> +
-> +	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_tbg_data);
-
-What if this fails?
-
-> +
-> +	return 0;
-> +
-> +put_clk:
-> +	clk_put(parent);
-> +	return ret;
-> +}
-
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 1c4d5b5..8286048 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -31,6 +31,8 @@
+ #include <linux/reset.h>
+ #include <linux/delay.h>
+ 
++#include <soc/rockchip/rockchip_dmc.h>
++
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_fb.h"
+@@ -116,6 +118,10 @@ struct vop {
+ 
+ 	const struct vop_data *data;
+ 
++	struct notifier_block dmc_nb;
++	int dmc_in_process;
++	wait_queue_head_t	wait_dmc_queue;
++
+ 	uint32_t *regsbak;
+ 	void __iomem *regs;
+ 
+@@ -426,6 +432,21 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
+ 	spin_unlock_irqrestore(&vop->irq_lock, flags);
+ }
+ 
++static int dmc_notify(struct notifier_block *nb, unsigned long event,
++		      void *data)
++{
++	struct vop *vop = container_of(nb, struct vop, dmc_nb);
++
++	if (event == DMCFREQ_ADJUST) {
++		vop->dmc_in_process = 1;
++	} else if (event == DMCFREQ_FINISH) {
++		vop->dmc_in_process = 0;
++		wake_up(&vop->wait_dmc_queue);
++	}
++
++	return NOTIFY_OK;
++}
++
+ static void vop_enable(struct drm_crtc *crtc)
+ {
+ 	struct vop *vop = to_vop(crtc);
+@@ -434,6 +455,13 @@ static void vop_enable(struct drm_crtc *crtc)
+ 	if (vop->is_enabled)
+ 		return;
+ 
++	/*
++	 * if in dmc scaling frequency process, wait until it finish
++	 * use 100ms as timeout time.
++	 */
++	wait_event_timeout(vop->wait_dmc_queue,
++			   !vop->dmc_in_process, HZ / 10);
++
+ 	ret = pm_runtime_get_sync(vop->dev);
+ 	if (ret < 0) {
+ 		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
+@@ -485,6 +513,7 @@ static void vop_enable(struct drm_crtc *crtc)
+ 	enable_irq(vop->irq);
+ 
+ 	drm_crtc_vblank_on(crtc);
++	rockchip_dmc_get(&vop->dmc_nb);
+ 
+ 	return;
+ 
+@@ -505,6 +534,13 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+ 		return;
+ 
+ 	/*
++	 * if in dmc scaling frequency process, wait until it finish
++	 * use 100ms as timeout time.
++	 */
++	wait_event_timeout(vop->wait_dmc_queue,
++			   !vop->dmc_in_process, HZ / 10);
++
++	/*
+ 	 * We need to make sure that all windows are disabled before we
+ 	 * disable that crtc. Otherwise we might try to scan from a destroyed
+ 	 * buffer later.
+@@ -517,7 +553,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+ 		VOP_WIN_SET(vop, win, enable, 0);
+ 		spin_unlock(&vop->reg_lock);
+ 	}
+-
++	rockchip_dmc_put(&vop->dmc_nb);
+ 	drm_crtc_vblank_off(crtc);
+ 
+ 	/*
+@@ -1243,7 +1279,7 @@ static int vop_create_crtc(struct vop *vop)
+ 		ret = -ENOENT;
+ 		goto err_cleanup_crtc;
+ 	}
+-
++	vop->dmc_nb.notifier_call = dmc_notify;
+ 	init_completion(&vop->dsp_hold_completion);
+ 	init_completion(&vop->wait_update_complete);
+ 	crtc->port = port;
+@@ -1465,6 +1501,9 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 	/* IRQ is initially disabled; it gets enabled in power_on */
+ 	disable_irq(vop->irq);
+ 
++	init_waitqueue_head(&vop->wait_dmc_queue);
++	vop->dmc_in_process = 0;
++
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
+ 		return ret;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
