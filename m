@@ -1,46 +1,52 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com>
-Date: Wed, 15 Jun 2016 11:39:00 -0400
+Return-Path: <shawn.lin@rock-chips.com>
+Subject: Re: [RFC PATCH v1 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for
+ ddrc
+To: Lin Huang <hl@rock-chips.com>, heiko@sntech.de, mark.yao@rock-chips.com,
+ myungjoo.ham@samsung.com
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-3-git-send-email-hl@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, huangtao@rock-chips.com, typ@rock-chips.com,
+ airlied@linux.ie, mturquette@baylibre.com, dbasehore@chromium.org,
+ sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, dianders@chromium.org,
+ linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
+Date: Fri, 3 Jun 2016 20:34:52 +0800
 MIME-Version: 1.0
-In-Reply-To: <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1464947719-6245-3-git-send-email-hl@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Laxman,
+Hi Lin
 
-On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
-> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
-> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
-> 
-> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
+How about merge it into your patch#3.
+
+On 2016/6/3 17:55, Lin Huang wrote:
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
 > ---
->  arch/arm/configs/exynos_defconfig   | 1 -
->  arch/arm/configs/multi_v7_defconfig | 1 -
+> Changes in v1:
+> - None
+>
+>  include/dt-bindings/clock/rk3399-cru.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
+> index 50a44cf..8a0f0442 100644
+> --- a/include/dt-bindings/clock/rk3399-cru.h
+> +++ b/include/dt-bindings/clock/rk3399-cru.h
+> @@ -131,6 +131,7 @@
+>  #define SCLK_DPHY_RX0_CFG		165
+>  #define SCLK_RMII_SRC			166
+>  #define SCLK_PCIEPHY_REF100M		167
+> +#define SCLK_DDRCLK			168
+>
+>  #define DCLK_VOP0			180
+>  #define DCLK_VOP1			181
+>
 
-Please split these two changes in separate patches, there are just
-cleanups needed after 1/5 and they can be picked separately.
 
-The change looks good to me though so feel free to add:
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Best Regards
+Shawn Lin
