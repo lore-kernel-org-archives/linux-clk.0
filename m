@@ -1,86 +1,54 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 08/10] ARM: dts: sun9i: cubieboard4: Order nodes by alphabetical order
-Date: Wed, 15 Jun 2016 18:27:45 +0800
-Message-Id: <1465986467-14802-9-git-send-email-wens@csie.org>
-In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:50730 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751082AbcFCH30 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2016 03:29:26 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@kernel-upstream.org>
+Cc: Xing Zheng <zhengxing@rock-chips.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	linux-rockchip@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: rockchip: remove ROCKCHIP_SOFTRST_HIWORD_MASK for rockchip platform
+Date: Fri, 03 Jun 2016 09:29:03 +0200
+Message-ID: <1853369.vjRjVRadgx@diego>
+In-Reply-To: <7fdf43a9-58d4-d6a8-d863-a7e265c93a06@kernel-upstream.org>
+References: <1464915288-10877-1-git-send-email-shawn.lin@rock-chips.com> <5750DC85.4040400@rock-chips.com> <7fdf43a9-58d4-d6a8-d863-a7e265c93a06@kernel-upstream.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the &pio node below the mmc nodes for proper ordering by name.
+Hi Shawn,
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 32 ++++++++++++++---------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+Am Freitag, 3. Juni 2016, 11:35:32 schrieb Shawn Lin:
+> 在 2016/6/3 9:25, Xing Zheng 写道:
+> > On 2016年06月03日 08:54, Shawn Lin wrote:
+> >> I check all the Socs including RK2928/3000/3066/3028X/316X/312X/
+> >> 3190/3188/3228/3368/3399/3036, and find all of them use high 16-bit
+> >> as write mask. Obviously we don't need ROCKCHIP_SOFTRST_HIWORD_MASK
+> >> any more(actually I don't know why we need it before). This patch
+> >> removes it to simplify the code and save a little cpu cycle when calling
+> >> assert or deassert callback.
+> > 
+> > In my opinion, this flag can be used for compatibility, we can not
+> > ensure that our SoCs will not use the 32bit SOFTRST_CONs in future.
+> > 
+> > Thanks.
+> 
+> Thanks for sharing your thought.
+> 
+> I'm not 100% sure, but I'm 99% sure about we won't let
+> it happened. You have to consider the backward compatibility
+> rather than the future ones. If you got a chip with 10 bit, or
+> 8bit for SOFTRST_CONX, so how do you wanna deal with it?
+> Should we now add  ROCKCHIP_SOFTRST_X_BIT_MASK?  :)
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-index a92eeea1b222..65f4f32f89ad 100644
---- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-@@ -78,22 +78,6 @@
- 	};
- };
- 
--&pio {
--	led_pins_cubieboard4: led-pins@0 {
--		allwinner,pins = "PH6", "PH17";
--		allwinner,function = "gpio_out";
--		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
--		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
--	};
--
--	mmc0_cd_pin_cubieboard4: mmc0_cd_pin@0 {
--		allwinner,pins = "PH18";
--		allwinner,function = "gpio_in";
--		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
--		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
--	};
--};
--
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_cubieboard4>;
-@@ -119,6 +103,22 @@
- 	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
- };
- 
-+&pio {
-+	led_pins_cubieboard4: led-pins@0 {
-+		allwinner,pins = "PH6", "PH17";
-+		allwinner,function = "gpio_out";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+	};
-+
-+	mmc0_cd_pin_cubieboard4: mmc0_cd_pin@0 {
-+		allwinner,pins = "PH18";
-+		allwinner,function = "gpio_in";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+	};
-+};
-+
- &r_ir {
- 	status = "okay";
- };
--- 
-2.8.1
+older SoCs like the rk2818 (ARM9-based) do actually use 32bit softrst 
+registers. And if I ever get my hands on one of those, I'd actually try to 
+support it :-) .
+
+So I'd really like to keep the flag.
+
+Heiko
