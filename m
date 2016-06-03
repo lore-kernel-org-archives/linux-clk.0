@@ -1,35 +1,34 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 30 Jun 2016 21:17:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>
-Subject: Re: [PATCH v3 01/14] dt-bindings: sunxi: Add CCU binding
- documentation
-Message-ID: <20160701021739.GA16181@rob-hp-laptop>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
- <20160629190535.11855-2-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:53230 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932538AbcFCNma (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 3 Jun 2016 09:42:30 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: rockchip: release io resource when failing to init clk
+Date: Fri, 03 Jun 2016 15:42:23 +0200
+Message-ID: <1945106.rcVxzvAYk1@diego>
+In-Reply-To: <1464915258-10838-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1464915258-10838-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160629190535.11855-2-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 29, 2016 at 09:05:22PM +0200, Maxime Ripard wrote:
-> Introduce a new binding with its documentation for the brand new clock
-> sub-framework.
+Am Freitag, 3. Juni 2016, 08:54:18 schrieb Shawn Lin:
+> We should call iounmap to relase reg_base since it's not going
+> to be used any more if failing to init clk.
 > 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  .../devicetree/bindings/clock/sunxi-ccu.txt        | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Yay!
+applied to my clk-fixes branch for 4.7, after adding a line to the patch-
+description explaining that this is really just missing on rk3399 (and after 
+checking that the iounmaps are already present on the old clock-trees)
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+Thanks for catching this
+Heiko
+
