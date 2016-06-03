@@ -1,90 +1,86 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- "Rob Herring" <robh+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Daniel Vetter" <daniel.vetter@intel.com>, "David Airlie" <airlied@linux.ie>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1463402840-17062-3-git-send-email-maxime.ripard@free-electrons.com>
-Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-3-git-send-email-maxime.ripard@free-electrons.com>
-Message-ID: <20160620205030.24587.98159@quark.deferred.io>
-Subject: Re: [PATCH 02/20] clk: multiplier: Prevent the multiplier from under / over
- flowing
-Date: Mon, 20 Jun 2016 13:50:30 -0700
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	huangtao@rock-chips.com,
+	typ@rock-chips.com,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH v1 3/6] clk: rockchip: rk3399: add ddrc clock support
+Date: Fri,  3 Jun 2016 17:55:16 +0800
+Message-Id: <1464947719-6245-4-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2016-05-16 05:47:02)
-> In the current multiplier base clock implementation, if the
-> CLK_SET_RATE_PARENT flag isn't set, the code will not make sure that the
-> multiplier computed remains within the boundaries of our clock.
-> =
+add ddrc clock setting, so we can do ddr frequency
+scaling on rk3399 platform in future.
 
-> This means that if the clock we want to reach is below the parent rate,
-> or if the multiplier is above the maximum that we can reach, we will end =
-up
-> with a completely bogus one that the clock cannot achieve.
-> =
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+Changes in v1:
+- remove ddrc source CLK_IGNORE_UNUSED flag, Suggestion by Doug
+- move clk_ddrc and clk_ddrc_dpll_src to critical, Suggestion by Doug
 
-> Fixes: f2e0a53271a4 ("clk: Add a basic multiplier clock")
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+ drivers/clk/rockchip/clk-rk3399.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Applied.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/clk-multiplier.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
-> =
-
-> diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-> index 9e449c7b751c..dc037c957acd 100644
-> --- a/drivers/clk/clk-multiplier.c
-> +++ b/drivers/clk/clk-multiplier.c
-> @@ -52,14 +52,28 @@ static unsigned long __bestmult(struct clk_hw *hw, un=
-signed long rate,
->                                 unsigned long *best_parent_rate,
->                                 u8 width, unsigned long flags)
->  {
-> +       struct clk_multiplier *mult =3D to_clk_multiplier(hw);
->         unsigned long orig_parent_rate =3D *best_parent_rate;
->         unsigned long parent_rate, current_rate, best_rate =3D ~0;
->         unsigned int i, bestmult =3D 0;
-> +       unsigned int maxmult =3D (1 << width) - 1;
-> +
-> +       if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-> +               bestmult =3D rate / orig_parent_rate;
-> +
-> +               /* Make sure we don't end up with a 0 multiplier */
-> +               if ((bestmult =3D=3D 0) &&
-> +                   !(mult->flags & CLK_MULTIPLIER_ZERO_BYPASS))
-> +                       bestmult =3D 1;
->  =
-
-> -       if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT))
-> -               return rate / *best_parent_rate;
-> +               /* Make sure we don't overflow the multiplier */
-> +               if (bestmult > maxmult)
-> +                       bestmult =3D maxmult;
-> +
-> +               return bestmult;
-> +       }
->  =
-
-> -       for (i =3D 1; i < ((1 << width) - 1); i++) {
-> +       for (i =3D 1; i < maxmult; i++) {
->                 if (rate =3D=3D orig_parent_rate * i) {
->                         /*
->                          * This is the best case for us if we have a
-> -- =
-
-> 2.8.2
->=20
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index f1d8e44..29afb88 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)				= { "clk_core_b_lpll_src",
+ 						    "clk_core_b_bpll_src",
+ 						    "clk_core_b_dpll_src",
+ 						    "clk_core_b_gpll_src" };
++PNAME(mux_ddrclk_p)				= { "clk_ddrc_lpll_src",
++						    "clk_ddrc_bpll_src",
++						    "clk_ddrc_dpll_src",
++						    "clk_ddrc_gpll_src" };
+ PNAME(mux_aclk_cci_p)				= { "cpll_aclk_cci_src",
+ 						    "gpll_aclk_cci_src",
+ 						    "npll_aclk_cci_src",
+@@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
+ 			RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
+ 			RK3368_CLKGATE_CON(13), 11, GFLAGS),
++
++	/* ddrc */
++	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
++	     0, GFLAGS),
++	GATE(0, "clk_ddrc_bpll_src", "bpll", 0, RK3399_CLKGATE_CON(3),
++	     1, GFLAGS),
++	GATE(0, "clk_ddrc_dpll_src", "dpll", 0, RK3399_CLKGATE_CON(3),
++	     2, GFLAGS),
++	GATE(0, "clk_ddrc_gpll_src", "gpll", 0, RK3399_CLKGATE_CON(3),
++	     3, GFLAGS),
++	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, 0,
++		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
+ };
+ 
+ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+@@ -1487,6 +1503,10 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
+ 	"gpll_hclk_perilp1_src",
+ 	"gpll_aclk_perilp0_src",
+ 	"gpll_aclk_perihp_src",
++
++	/* ddrc */
++	"clk_ddrc_dpll_src",
++	"clk_ddrc",
+ };
+ 
+ static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
+-- 
+1.9.1
