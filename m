@@ -1,122 +1,41 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 11/34] clk: cdce: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:10 -0700
-Message-Id: <20160601231533.9354-12-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] clk: renesas: mstp: document R8A7792 support
+Date: Fri, 03 Jun 2016 23:59:07 +0300
+Message-ID: <6111329.VScVCF4Z1u@wasted.cogentembedded.com>
+In-Reply-To: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
+References: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Renesas R8A7792 SoC also has the CPG MSTP clocks...
 
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+
 ---
+Changes in version 2:
+- added Simon's, Geert's and Rob's ACKs;
+- renamed the patch.
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/clk/clk-cdce706.c | 40 ++++++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
-index 01877f64eff6..f21d9092564f 100644
---- a/drivers/clk/clk-cdce706.c
-+++ b/drivers/clk/clk-cdce706.c
-@@ -71,7 +71,6 @@ struct cdce706_hw_data {
- 	struct cdce706_dev_data *dev_data;
- 	unsigned idx;
- 	unsigned parent;
--	struct clk *clk;
- 	struct clk_hw hw;
- 	unsigned div;
- 	unsigned mul;
-@@ -81,8 +80,6 @@ struct cdce706_hw_data {
- struct cdce706_dev_data {
- 	struct i2c_client *client;
- 	struct regmap *regmap;
--	struct clk_onecell_data onecell;
--	struct clk *clks[6];
- 	struct clk *clkin_clk[2];
- 	const char *clkin_name[2];
- 	struct cdce706_hw_data clkin[1];
-@@ -455,18 +452,19 @@ static int cdce706_register_hw(struct cdce706_dev_data *cdce,
- 			       struct clk_init_data *init)
- {
- 	unsigned i;
-+	int ret;
- 
- 	for (i = 0; i < num_hw; ++i, ++hw) {
- 		init->name = clk_names[i];
- 		hw->dev_data = cdce;
- 		hw->idx = i;
- 		hw->hw.init = init;
--		hw->clk = devm_clk_register(&cdce->client->dev,
-+		ret = devm_clk_hw_register(&cdce->client->dev,
- 					    &hw->hw);
--		if (IS_ERR(hw->clk)) {
-+		if (ret) {
- 			dev_err(&cdce->client->dev, "Failed to register %s\n",
- 				clk_names[i]);
--			return PTR_ERR(hw->clk);
-+			return ret;
- 		}
- 	}
- 	return 0;
-@@ -613,13 +611,23 @@ static int cdce706_register_clkouts(struct cdce706_dev_data *cdce)
- 			cdce->clkout[i].parent);
- 	}
- 
--	ret = cdce706_register_hw(cdce, cdce->clkout,
--				  ARRAY_SIZE(cdce->clkout),
--				  cdce706_clkout_name, &init);
--	for (i = 0; i < ARRAY_SIZE(cdce->clkout); ++i)
--		cdce->clks[i] = cdce->clkout[i].clk;
-+	return cdce706_register_hw(cdce, cdce->clkout,
-+				   ARRAY_SIZE(cdce->clkout),
-+				   cdce706_clkout_name, &init);
-+}
- 
--	return ret;
-+static struct clk_hw *
-+of_clk_cdce_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct cdce706_dev_data *cdce = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= ARRAY_SIZE(cdce->clkout)) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return &cdce->clkout[idx].hw;
- }
- 
- static int cdce706_probe(struct i2c_client *client,
-@@ -657,12 +665,8 @@ static int cdce706_probe(struct i2c_client *client,
- 	ret = cdce706_register_clkouts(cdce);
- 	if (ret < 0)
- 		return ret;
--	cdce->onecell.clks = cdce->clks;
--	cdce->onecell.clk_num = ARRAY_SIZE(cdce->clks);
--	ret = of_clk_add_provider(client->dev.of_node, of_clk_src_onecell_get,
--				  &cdce->onecell);
--
--	return ret;
-+	return of_clk_add_hw_provider(client->dev.of_node, of_clk_cdce_get,
-+				      cdce);
- }
- 
- static int cdce706_remove(struct i2c_client *client)
--- 
-2.7.4
+Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+===================================================================
+--- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+@@ -17,6 +17,7 @@ Required Properties:
+     - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
+     - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
+     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
++    - "renesas,r8a7792-mstp-clocks" for R8A7792 (R-Car V2H) MSTP gate clocks
+     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
+     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
