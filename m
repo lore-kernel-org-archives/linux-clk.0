@@ -1,149 +1,164 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: [PATCH V2 3/4] clk: max77686: Add DT binding details for PMIC MAX77620
-Date: Thu, 16 Jun 2016 18:53:26 +0530
-Message-ID: <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAGb2v66JDrEDLmTKS6CLojuKzd7W15GcPd7O+hKRkrdT7E7UQA@mail.gmail.com>
+References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v67RUCZfFaXnM2LxomV5DBSVApXHHs0noiNEbReOh_3W9w@mail.gmail.com>
+ <20160601191932.GD4908@lukather> <CAGb2v66JDrEDLmTKS6CLojuKzd7W15GcPd7O+hKRkrdT7E7UQA@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 3 Jun 2016 14:55:06 +0800
+Message-ID: <CAGb2v67cHYyxZBCnPBcAUBMn4+LM4JVmHy+dy9FPGsov4CAFpw@mail.gmail.com>
+Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Maxim has used the same clock IP on multiple PMICs like MAX77686,
-MAX77802, MAX77620. Only differences are the number of clocks
-from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
-two clock output and MAX77620 has one clock output.
+On Fri, Jun 3, 2016 at 2:42 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> Hi,
+>
+> On Thu, Jun 2, 2016 at 3:19 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> Hi Chen-Yu,
+>>
+>> On Tue, May 31, 2016 at 12:15:28AM +0800, Chen-Yu Tsai wrote:
+>>> On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
+>>> <maxime.ripard@free-electrons.com> wrote:
+>>> > Add the list of clocks and resets found in the H3 CCU.
+>>> >
+>>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>>> > ---
+>>> >  drivers/clk/sunxi-ng/Makefile        |   2 +
+>>> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++++++++++
+>>> >  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
+>>> >  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
+>>> >  4 files changed, 1024 insertions(+)
+>>> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> >  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
+>>> >  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
+>>> >
+>>> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+>>> > index c794f57b6fb1..67ff6a92f124 100644
+>>> > --- a/drivers/clk/sunxi-ng/Makefile
+>>> > +++ b/drivers/clk/sunxi-ng/Makefile
+>>> > @@ -13,3 +13,5 @@ obj-y += ccu_nkmp.o
+>>> >  obj-y += ccu_nm.o
+>>> >  obj-y += ccu_p.o
+>>> >  obj-y += ccu_phase.o
+>>> > +
+>>> > +obj-y += ccu-sun8i-h3.o
+>>> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> > new file mode 100644
+>>> > index 000000000000..5ce699e95c32
+>>> > --- /dev/null
+>>> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> > @@ -0,0 +1,757 @@
+>>> > +/*
+>>> > + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
+>>> > + *
+>>> > + * This software is licensed under the terms of the GNU General Public
+>>> > + * License version 2, as published by the Free Software Foundation, and
+>>> > + * may be copied, distributed, and modified under those terms.
+>>> > + *
+>>> > + * This program is distributed in the hope that it will be useful,
+>>> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> > + * GNU General Public License for more details.
+>>> > + */
+>>> > +
+>>> > +#include <linux/clk-provider.h>
+>>> > +
+>>> > +#include <dt-bindings/clock/sun8i-h3.h>
+>>> > +#include <dt-bindings/reset/sun8i-h3.h>
+>>> > +
+>>> > +#include "ccu_common.h"
+>>> > +#include "ccu_reset.h"
+>>> > +
+>>> > +#include "ccu_div_table.h"
+>>> > +#include "ccu_factor.h"
+>>> > +#include "ccu_fixed_factor.h"
+>>> > +#include "ccu_gate.h"
+>>> > +#include "ccu_m.h"
+>>> > +#include "ccu_mp.h"
+>>> > +#include "ccu_nk.h"
+>>> > +#include "ccu_nkm.h"
+>>> > +#include "ccu_nkmp.h"
+>>> > +#include "ccu_nm.h"
+>>> > +#include "ccu_p.h"
+>>> > +#include "ccu_phase.h"
+>>> > +
+>>> > +static struct ccu_nkmp pll_cpux_clk = {
+>>> > +       .enable         = BIT(31),
+>>> > +       .lock           = BIT(28),
+>>> > +
+>>> > +       .m              = SUNXI_CLK_FACTOR(0, 2),
+>>> > +       .k              = SUNXI_CLK_FACTOR(4, 2),
+>>> > +       .n              = SUNXI_CLK_FACTOR(8, 5),
+>>> > +       .p              = SUNXI_CLK_FACTOR(16, 2),
+>>>
+>>> We should find a way to specify a table for p.
+>>
+>> A table for P? Why?
 
-Add clock binding details and DT example for the MAX77620.
+Missed this one. The datasheet says P = 0x3 is not valid.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
+ChenYu
 
----
-Changes from V1:
-- Use proper comment for the ::::
-- Added dt binding preprocessor file as maxim,max77620.h for max77620
-  inline with the other chip.
-- Refer the dt binding header for the supported clock index.
----
- .../devicetree/bindings/clock/maxim,max77686.txt   | 52 +++++++++++++++++-----
- include/dt-bindings/clock/maxim,max77620.h         | 21 +++++++++
- 2 files changed, 63 insertions(+), 10 deletions(-)
- create mode 100644 include/dt-bindings/clock/maxim,max77620.h
-
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-index 4d973b5..8398a3a 100644
---- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-@@ -1,14 +1,24 @@
--Binding for Maxim MAX77686/MAX77802 32k clock generator block
-+Binding for Maxim MAX77686/MAX77802/MAX77620 32k clock generator block
- 
--This is a part of device tree bindings of MAX77686/MAX77802 multi-function
--device. More information can be found in bindings/mfd/max77686.txt file for
--MAX77686 and bindings/mfd/max77802.txt for MAX77802.
-+This is a part of device tree bindings of MAX77686/MAX77802/MAX77620
-+multi-function device. More information can be found in MFD DT binding
-+doc as follows:
-+	bindings/mfd/max77686.txt for MAX77686 and
-+	bindings/mfd/max77802.txt for MAX77802 and
-+	bindings/mfd/max77620.txt for MAX77620.
- 
- The MAX77686 contains three 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C.
-+(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
-+dt-bindings/clock/maxim,max77686.h.
-+
- 
- The MAX77802 contains two 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C.
-+(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
-+dt-bindings/clock/maxim,max77802.h.
-+
-+The MAX77686 contains one 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
-+dt-bindings/clock/maxim,max77620.h.
- 
- Following properties should be presend in main device node of the MFD chip.
- 
-@@ -21,13 +31,12 @@ Optional properties:
- 
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. Following indices are allowed:
--    - 0: 32khz_ap clock (max77686, max77802),
-+    - 0: 32khz_ap clock (max77686, max77802), 32khz_out0 (max77620)
-     - 1: 32khz_cp clock (max77686, max77802),
-     - 2: 32khz_pmic clock (max77686).
- 
--Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
--header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
--be used in device tree sources.
-+Clocks are defined as preprocessor macros in above dt-binding header for
-+respective chips.
- 
- Example:
- 
-@@ -80,3 +89,26 @@ Example:
- 			clock-names = "my-clock";
- 			clocks = <&max77802 MAX77802_CLK_32K_AP>;
- 		};
-+
-+
-+3. With MAX77620:
-+
-+#include <dt-bindings/clock/maxim,max77620.h>
-+/* ... */
-+
-+	Node of the MFD chip
-+		max77620: max77620@3c {
-+			compatible = "maxim,max77620";
-+			reg = <0x3c>;
-+			#clock-cells = <1>;
-+			/* ... */
-+		};
-+
-+	Clock consumer node
-+
-+		foo@0 {
-+			compatible = "bar,foo";
-+			/* ... */
-+			clock-names = "my-clock";
-+			clocks = <&max77620 MAX77620_CLK_32K_OUT0>;
-+		};
-diff --git a/include/dt-bindings/clock/maxim,max77620.h b/include/dt-bindings/clock/maxim,max77620.h
-new file mode 100644
-index 0000000..82aba28
---- /dev/null
-+++ b/include/dt-bindings/clock/maxim,max77620.h
-@@ -0,0 +1,21 @@
-+/*
-+ * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants clocks for the Maxim 77620 PMIC.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H
-+#define _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H
-+
-+/* Fixed rate clocks. */
-+
-+#define MAX77620_CLK_32K_OUT0		0
-+
-+/* Total number of clocks. */
-+#define MAX77620_CLKS_NUM		(MAX77620_CLK_32K_OUT0 + 1)
-+
-+#endif /* _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H */
--- 
-2.1.4
+>>
+>>> > +
+>>> > +       .common         = {
+>>> > +               .reg            = 0x000,
+>>> > +               .features       = CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
+>>> > +               .hw.init        = SUNXI_HW_INIT("pll-cpux",
+>>> > +                                               "osc24M",
+>>>
+>>> osc24M is an outside reference. Shouldn't we use put it in a "clocks"
+>>> property in the DT, and use of_clk_get_parent_name()?
+>>>
+>>> osc24M can be controlled from the PRCM on other chips. I suspect the
+>>> same with the H3. osc32k might also be from the PRCM.
+>>
+>> I was discussing exactly this the other day with Mike. He has a bunch
+>> of patches to address exactly that issue. He plans on posting it and
+>> merge it by 4.8. Until then, we should rely on the hardcoded clock
+>> string like it's done there, and we should obviously add the clocks in
+>> the DT node for when we will actually use them.
+>
+> OK. Let's wait and see.
+>
+>>
+>>> > +                                               &ccu_nkmp_ops,
+>>> > +                                               0),
+>>> > +       },
+>>> > +};
+>>> > +
+>
+> [...]
+>
+>>> > +static struct ccu_nkm pll_ddr_clk = {
+>>> > +       .enable         = BIT(31),
+>>> > +       .lock           = BIT(28),
+>>> > +
+>>> > +       .n              = SUNXI_CLK_FACTOR(8, 5),
+>>> > +       .k              = SUNXI_CLK_FACTOR(4, 2),
+>>> > +       .m              = SUNXI_CLK_FACTOR(0, 2),
+>>>
+>>> We need a special "update" bit (bit 20) for this clock, otherwise changes
+>>> don't really take effect.
+>>
+>> Yeah, I know, but I feel like it's a feature here, since Linux should
+>> never modify that clock anyway.
+>>
+>> I can add a comment though.
+>
+> Maybe we should do a read-only variant, or a feature flag?
+>
+> [...]
+>
+> Thanks
+> ChenYu
