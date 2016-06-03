@@ -1,42 +1,81 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com,
- beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag for
- AUD Uart
-Date: Fri, 10 Jun 2016 13:56:30 +0900
-Message-id: <1465534592-18860-2-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
-References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <shawn.lin@rock-chips.com>
+Subject: Re: [RFC PATCH v1 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for
+ ddrc
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ Shawn Lin <shawn.lin@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-3-git-send-email-hl@rock-chips.com>
+ <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
+ <20637963.iQzVZfJq9f@diego>
+Cc: huangtao@rock-chips.com, dbasehore@chromium.org,
+ Lin Huang <hl@rock-chips.com>, airlied@linux.ie, mturquette@baylibre.com,
+ typ@rock-chips.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, dianders@chromium.org,
+ linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com,
+ myungjoo.ham@samsung.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <3d6d3147-00de-8ba4-a27a-a8f89854f4f7@rock-chips.com>
+Date: Fri, 3 Jun 2016 20:47:46 +0800
+MIME-Version: 1.0
+In-Reply-To: <20637963.iQzVZfJq9f@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Beomho Seo <beomho.seo@samsung.com>
+在 2016/6/3 20:36, Heiko Stübner 写道:
+> Hi Shawn,
+>
+> Am Freitag, 3. Juni 2016, 20:34:52 schrieb Shawn Lin:
+>> How about merge it into your patch#3.
+>
+> see comments from Doug and me on previous version.
+>
+> clock-ids should always be separate patches, as we will need them in both
+> clock and devicetree branches, so they must be in a separate branch shared
+> between clock and dts branches.
+>
 
-This patch adds the CLK_IGNORE_UNUSED flag for sclk_aud_uart gate clock
-for uart3 opeation.
+Ah, I missed the previous version as I think it should be from
+non-version to v2 rather than from non-version to v1, which IIRC is from
+Doug. :)
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Anyway, thanks for explaining this.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 128527b8fbeb..e1a9c24079a4 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -2976,7 +2976,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
- 			ENABLE_SCLK_AUD1, 4, 0, 0),
- 	GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
--			ENABLE_SCLK_AUD1, 3, 0, 0),
-+			ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
- 			ENABLE_SCLK_AUD1, 2, 0, 0),
- 	GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
+>
+> Heiko
+>
+>> On 2016/6/3 17:55, Lin Huang wrote:
+>>> Signed-off-by: Lin Huang <hl@rock-chips.com>
+>>> ---
+>>> Changes in v1:
+>>> - None
+>>>
+>>>  include/dt-bindings/clock/rk3399-cru.h | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/include/dt-bindings/clock/rk3399-cru.h
+>>> b/include/dt-bindings/clock/rk3399-cru.h index 50a44cf..8a0f0442 100644
+>>> --- a/include/dt-bindings/clock/rk3399-cru.h
+>>> +++ b/include/dt-bindings/clock/rk3399-cru.h
+>>> @@ -131,6 +131,7 @@
+>>>
+>>>  #define SCLK_DPHY_RX0_CFG		165
+>>>  #define SCLK_RMII_SRC			166
+>>>  #define SCLK_PCIEPHY_REF100M		167
+>>>
+>>> +#define SCLK_DDRCLK			168
+>>>
+>>>  #define DCLK_VOP0			180
+>>>  #define DCLK_VOP1			181
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+
+
 -- 
-1.9.1
+Best Regards
+Shawn Lin
