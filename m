@@ -1,128 +1,239 @@
-Return-Path: <oss@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	yuantian.tang@nxp.com,
-	leoyang.li@nxp.com,
-	xiaofeng.ren@nxp.com,
-	Scott Wood <scottwood@freescale.com>
-Date: Sat, 11 Jun 2016 22:16:25 -0500
-Message-Id: <1465701386-6220-1-git-send-email-oss@buserror.net>
-Subject: [RESEND PATCH 1/2] clk: Add consumer APIs for discovering possible parent clocks
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:58511 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751099AbcFCAzF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2016 20:55:05 -0400
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 2/2] clk: rockchip: remove ROCKCHIP_SOFTRST_HIWORD_MASK for rockchip platform
+Date: Fri,  3 Jun 2016 08:54:48 +0800
+Message-Id: <1464915288-10877-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Scott Wood <scottwood@freescale.com>
+I check all the Socs including RK2928/3000/3066/3028X/316X/312X/
+3190/3188/3228/3368/3399/3036, and find all of them use high 16-bit
+as write mask. Obviously we don't need ROCKCHIP_SOFTRST_HIWORD_MASK
+any more(actually I don't know why we need it before). This patch
+removes it to simplify the code and save a little cpu cycle when calling
+assert or deassert callback.
 
-Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
-__clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
-true provider API versions that operate on struct clk_hw.
-
-qoriq-cpufreq needs these functions in order to determine the options
-it has for calling clk_set_parent() and thus populate the cpufreq
-table, so revive them as legitimate consumer APIs.
-
-Signed-off-by: Scott Wood <scottwood@freescale.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
-Previously sent as http://patchwork.ozlabs.org/patch/519803/
 
-Russell, could you please either ACK this or comment, as CLK API
-maintainer?
+ drivers/clk/rockchip/clk-rk3036.c |  3 +--
+ drivers/clk/rockchip/clk-rk3188.c |  3 +--
+ drivers/clk/rockchip/clk-rk3228.c |  3 +--
+ drivers/clk/rockchip/clk-rk3288.c |  3 +--
+ drivers/clk/rockchip/clk-rk3368.c |  3 +--
+ drivers/clk/rockchip/clk-rk3399.c |  6 ++----
+ drivers/clk/rockchip/clk.h        |  6 ++----
+ drivers/clk/rockchip/softrst.c    | 40 +++++----------------------------------
+ 8 files changed, 14 insertions(+), 53 deletions(-)
 
- drivers/clk/clk.c   | 19 +++++++++++++++++++
- include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d584004..d61a3fe 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_hw);
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 924f560..a13dfc2 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -475,8 +475,7 @@ static void __init rk3036_clk_init(struct device_node *np)
+ 			&rk3036_cpuclk_data, rk3036_cpuclk_rates,
+ 			ARRAY_SIZE(rk3036_cpuclk_rates));
  
-+unsigned int clk_get_num_parents(struct clk *clk)
-+{
-+	return !clk ? 0 : clk->core->num_parents;
-+}
-+EXPORT_SYMBOL_GPL(clk_get_num_parents);
-+
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
+-	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0));
+ 
+ 	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
+ 
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index d0e722a..4acd787 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -780,8 +780,7 @@ static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device
+ 	rockchip_clk_register_branches(ctx, common_clk_branches,
+ 				  ARRAY_SIZE(common_clk_branches));
+ 
+-	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0));
+ 
+ 	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
+ 
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 016bdb0..8412753 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -657,8 +657,7 @@ static void __init rk3228_clk_init(struct device_node *np)
+ 			&rk3228_cpuclk_data, rk3228_cpuclk_rates,
+ 			ARRAY_SIZE(rk3228_cpuclk_rates));
+ 
+-	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0));
+ 
+ 	rockchip_register_restart_notifier(ctx, RK3228_GLB_SRST_FST, NULL);
+ 
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 39af05a..a779a82 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -919,8 +919,7 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 			ARRAY_SIZE(rk3288_cpuclk_rates));
+ 
+ 	rockchip_register_softrst(np, 12,
+-				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++				  rk3288_cru_base + RK3288_SOFTRST_CON(0));
+ 
+ 	rockchip_register_restart_notifier(ctx, RK3288_GLB_SRST_FST,
+ 					   rk3288_clk_shutdown);
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 6cb474c..e0f8c73 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -905,8 +905,7 @@ static void __init rk3368_clk_init(struct device_node *np)
+ 			&rk3368_cpuclkl_data, rk3368_cpuclkl_rates,
+ 			ARRAY_SIZE(rk3368_cpuclkl_rates));
+ 
+-	rockchip_register_softrst(np, 15, reg_base + RK3368_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++	rockchip_register_softrst(np, 15, reg_base + RK3368_SOFTRST_CON(0));
+ 
+ 	rockchip_register_restart_notifier(ctx, RK3368_GLB_SRST_FST, NULL);
+ 
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 37c74cb..4601a5c 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1540,8 +1540,7 @@ static void __init rk3399_clk_init(struct device_node *np)
+ 			&rk3399_cpuclkb_data, rk3399_cpuclkb_rates,
+ 			ARRAY_SIZE(rk3399_cpuclkb_rates));
+ 
+-	rockchip_register_softrst(np, 21, reg_base + RK3399_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++	rockchip_register_softrst(np, 21, reg_base + RK3399_SOFTRST_CON(0));
+ 
+ 	rockchip_register_restart_notifier(ctx, RK3399_GLB_SRST_FST, NULL);
+ 
+@@ -1576,8 +1575,7 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
+ 	rockchip_clk_protect_critical(rk3399_pmucru_critical_clocks,
+ 				  ARRAY_SIZE(rk3399_pmucru_critical_clocks));
+ 
+-	rockchip_register_softrst(np, 2, reg_base + RK3399_PMU_SOFTRST_CON(0),
+-				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++	rockchip_register_softrst(np, 2, reg_base + RK3399_PMU_SOFTRST_CON(0));
+ 
+ 	rockchip_clk_of_add_provider(np, ctx);
+ }
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 2194ffa..51e797c 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -618,16 +618,14 @@ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 					unsigned int reg, void (*cb)(void));
+ 
+-#define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
+-
+ #ifdef CONFIG_RESET_CONTROLLER
+ void rockchip_register_softrst(struct device_node *np,
+ 			       unsigned int num_regs,
+-			       void __iomem *base, u8 flags);
++			       void __iomem *base);
+ #else
+ static inline void rockchip_register_softrst(struct device_node *np,
+ 			       unsigned int num_regs,
+-			       void __iomem *base, u8 flags)
++			       void __iomem *base)
  {
- 	return hw->core->num_parents;
-@@ -358,6 +364,19 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
- 	return core->parents[index];
  }
- 
-+struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int index)
-+{
-+	struct clk_core *parent;
-+
-+	if (!clk)
-+		return NULL;
-+
-+	parent = clk_core_get_parent_by_index(clk->core, index);
-+
-+	return !parent ? NULL : parent->hw->clk;
-+}
-+EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
-+
- struct clk_hw *
- clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0df4a51..937de0e 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
- struct clk *clk_get_parent(struct clk *clk);
- 
- /**
-+ * clk_get_parent_by_index - get a possible parent clock by index
-+ * @clk: clock source
-+ * @index: index into the array of possible parents of this clock
-+ *
-+ * Returns struct clk corresponding to the requested possible
-+ * parent clock source, or NULL.
-+ */
-+struct clk *clk_get_parent_by_index(struct clk *clk,
-+				    unsigned int index);
-+
-+/**
-+ * clk_get_num_parents - get number of possible parents
-+ * @clk: clock source
-+ *
-+ * Returns the number of possible parents of this clock,
-+ * which can then be enumerated using clk_get_parent_by_index().
-+ */
-+unsigned int clk_get_num_parents(struct clk *clk);
-+
-+/**
-  * clk_get_sys - get a clock based upon the device name
-  * @dev_id: device name
-  * @con_id: connection ID
-@@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk *clk)
- 	return NULL;
- }
- 
-+struct clk *clk_get_parent_by_index(struct clk *clk,
-+				    unsigned int index)
-+{
-+	return NULL;
-+}
-+
-+unsigned int clk_get_num_parents(struct clk *clk)
-+{
-+	return 0;
-+}
-+
  #endif
+diff --git a/drivers/clk/rockchip/softrst.c b/drivers/clk/rockchip/softrst.c
+index 21218987..d6b865f 100644
+--- a/drivers/clk/rockchip/softrst.c
++++ b/drivers/clk/rockchip/softrst.c
+@@ -24,8 +24,6 @@ struct rockchip_softrst {
+ 	void __iomem			*reg_base;
+ 	int				num_regs;
+ 	int				num_per_reg;
+-	u8				flags;
+-	spinlock_t			lock;
+ };
  
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+ static int rockchip_softrst_assert(struct reset_controller_dev *rcdev,
+@@ -37,20 +35,8 @@ static int rockchip_softrst_assert(struct reset_controller_dev *rcdev,
+ 	int bank = id / softrst->num_per_reg;
+ 	int offset = id % softrst->num_per_reg;
+ 
+-	if (softrst->flags & ROCKCHIP_SOFTRST_HIWORD_MASK) {
+-		writel(BIT(offset) | (BIT(offset) << 16),
+-		       softrst->reg_base + (bank * 4));
+-	} else {
+-		unsigned long flags;
+-		u32 reg;
+-
+-		spin_lock_irqsave(&softrst->lock, flags);
+-
+-		reg = readl(softrst->reg_base + (bank * 4));
+-		writel(reg | BIT(offset), softrst->reg_base + (bank * 4));
+-
+-		spin_unlock_irqrestore(&softrst->lock, flags);
+-	}
++	writel(BIT(offset) | (BIT(offset) << 16),
++	       softrst->reg_base + (bank * 4));
+ 
+ 	return 0;
+ }
+@@ -64,19 +50,7 @@ static int rockchip_softrst_deassert(struct reset_controller_dev *rcdev,
+ 	int bank = id / softrst->num_per_reg;
+ 	int offset = id % softrst->num_per_reg;
+ 
+-	if (softrst->flags & ROCKCHIP_SOFTRST_HIWORD_MASK) {
+-		writel((BIT(offset) << 16), softrst->reg_base + (bank * 4));
+-	} else {
+-		unsigned long flags;
+-		u32 reg;
+-
+-		spin_lock_irqsave(&softrst->lock, flags);
+-
+-		reg = readl(softrst->reg_base + (bank * 4));
+-		writel(reg & ~BIT(offset), softrst->reg_base + (bank * 4));
+-
+-		spin_unlock_irqrestore(&softrst->lock, flags);
+-	}
++	writel((BIT(offset) << 16), softrst->reg_base + (bank * 4));
+ 
+ 	return 0;
+ }
+@@ -88,7 +62,7 @@ static const struct reset_control_ops rockchip_softrst_ops = {
+ 
+ void __init rockchip_register_softrst(struct device_node *np,
+ 				      unsigned int num_regs,
+-				      void __iomem *base, u8 flags)
++				      void __iomem *base)
+ {
+ 	struct rockchip_softrst *softrst;
+ 	int ret;
+@@ -97,13 +71,9 @@ void __init rockchip_register_softrst(struct device_node *np,
+ 	if (!softrst)
+ 		return;
+ 
+-	spin_lock_init(&softrst->lock);
+-
+ 	softrst->reg_base = base;
+-	softrst->flags = flags;
+ 	softrst->num_regs = num_regs;
+-	softrst->num_per_reg = (flags & ROCKCHIP_SOFTRST_HIWORD_MASK) ? 16
+-								      : 32;
++	softrst->num_per_reg = 16;
+ 
+ 	softrst->rcdev.owner = THIS_MODULE;
+ 	softrst->rcdev.nr_resets =  num_regs * softrst->num_per_reg;
 -- 
-2.5.0
+2.3.7
+
+
