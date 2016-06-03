@@ -1,57 +1,67 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Sun, 12 Jun 2016 19:52:04 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	anson.huang@nxp.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 07/11] clk: imx6ul: fix pll clock parents
-Message-ID: <20160612115204.GB32690@shlinux2>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-7-git-send-email-aisheng.dong@nxp.com>
- <20160612114353.GE20243@tiger>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 3 Jun 2016 18:54:26 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lin Huang <hl@rock-chips.com>
+Cc: heiko@sntech.de, mark.yao@rock-chips.com, myungjoo.ham@samsung.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, airlied@linux.ie,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com, dianders@chromium.org,
+	dbasehore@chromium.org, huangtao@rock-chips.com, typ@rock-chips.com
+Subject: Re: [RFC PATCH v1 4/6] PM / devfreq: event: support rockchip dfi
+ controller
+Message-ID: <20160603165426.GC21013@ulmo.ba.sec>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-5-git-send-email-hl@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160612114353.GE20243@tiger>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ncSAzJYg3Aa9+CRW"
+In-Reply-To: <1464947719-6245-5-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 12, 2016 at 07:43:53PM +0800, Shawn Guo wrote:
-> On Wed, Jun 08, 2016 at 10:33:36PM +0800, Dong Aisheng wrote:
-> > pllx_bypass_src mux shouldn't be the parent of pllx clock
-> > since it's only valid when when pllx BYPASS bit is set.
-> > Thus it is actually one parent of pllx_bypass only.
-> > 
-> > Instead, pllx parent should be fixed to osc according to
-> > reference manual.
-> > Other plls have the same issue.
-> > 
-> > e.g. before fix, the pll tree is:
-> > osc                                      6            6    24000000          0 0
-> >    pll1_bypass_src                       0            0    24000000          0 0
-> >       pll1                               0            0   792000000          0 0
-> >          pll1_bypass                     0            0   792000000          0 0
-> >             pll1_sys                     0            0   792000000          0 0
-> > 
-> > After the fix, it's:
-> > osc                                      6            6    24000000          0 0
-> >    pll1                                  0            0   792000000          0 0
-> >       pll1_bypass                        0            0   792000000          0 0
-> >          pll1_sys                        0            0   792000000          0 0
-> > 
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> I squashed 7 ~ 11 into one patch and applied it, thanks.
-> 
 
-I'm fine.
-Thanks
+--ncSAzJYg3Aa9+CRW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards
-Dong Aisheng
+On Fri, Jun 03, 2016 at 05:55:17PM +0800, Lin Huang wrote:
+[...]
+> +	ret = clk_prepare_enable(data->clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to enable clk: %d\n", ret);
+> +		clk_disable_unprepare(data->clk);
+> +		return ret;
+> +	}
 
-> Shawn
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is going to give you a large WARN. clk_prepare_enable() already
+leaves the clock in a proper state when it fails (i.e. it calls
+clk_unprepare() if the clk_enable() part failed), so calling
+clk_disable_unprepare() upon failure is going to unbalance the
+reference counts.
+
+Thierry
+
+--ncSAzJYg3Aa9+CRW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXUbZAAAoJEN0jrNd/PrOhAhIP/RY+DaI46Gf5oh6uxf4dw7+3
+5aXkSzzNwXZesOYWpUovhm3+fVCH1jASEvkShtUZ+WkayGDqqxSbOCvnr6uEJcv/
+3UWIzvsdtCa4SNRevpFH/kgU8ctVjKu14wEVVurmjfPbjIgmlTvdLqXZkaZTcx3V
+bFg8yhalEPds798whFjMmcCGSmLinNy3EhRU5ZFhxanny2VWMM3FT4G1JGGANE7X
+Z1UjW/ySjTtwZzuyVeIa5hpuYVg3aspmrJCpwKyFdVQjo6x4aO3CexniKj1dYF54
+0wyvUa236sQRgOLGi1jHYiTasoahPkVayoH9dwmS+iWIEaiSU7xJMSwClEYvudKp
+6QlNJ7UaLIYQk6kOHiHA5fBlmeIrvBBz4ROpsry7kGBYEhVH41+iLH2w4a3Hn/lv
+07a3JYeoRanotZ8ghp8/EfeAVOniwELw+QBNkVygRDw7iDjzxpFfbclYOojI5EkD
+QHdpVde49HJi4xF46vqYXhcCe5IxKJN7uBiUCvZyiv5/L/u/5EpidATAWT8MHJJG
+e0qdIm0dfw81/qHu1w13KUcOMH6ZGSpnmc8jzwmTWKhP7f3r5Y2SLKYXfZEWrlSF
+R71w73nTM/ROmQGEnQW+16woYed/cvpwhGaCuxWFR+RaIdkqPJ0Sy9Z5uwb3EiMg
+b9UFGXJ4VidTdIDPRF2y
+=3fNt
+-----END PGP SIGNATURE-----
+
+--ncSAzJYg3Aa9+CRW--
