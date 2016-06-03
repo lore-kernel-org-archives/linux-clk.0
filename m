@@ -1,67 +1,340 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: Yuantian Tang <yuantian.tang@nxp.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC: Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li
-	<leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood
-	<scottwood@freescale.com>
-Subject: RE: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
- parent clocks
-Date: Thu, 30 Jun 2016 03:01:50 +0000
-Message-ID: <DBXPR04MB4951CA4EFB4FB5A2BDE7542F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
-References: <1466058085-19353-1-git-send-email-oss@buserror.net>
- <2091721.Cm4CVR1ptK@vostro.rjw.lan>
- <DBXPR04MB4958B5147DAA4F05BED4884F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
- <2040199.AxgevOCPID@vostro.rjw.lan>
-In-Reply-To: <2040199.AxgevOCPID@vostro.rjw.lan>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	huangtao@rock-chips.com,
+	typ@rock-chips.com,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH v1 4/6] PM / devfreq: event: support rockchip dfi controller
+Date: Fri,  3 Jun 2016 17:55:17 +0800
+Message-Id: <1464947719-6245-5-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYWZhZWwgSi4gV3lzb2NraSBb
-bWFpbHRvOnJqd0Byand5c29ja2kubmV0XQ0KPiBTZW50OiBUaHVyc2RheSwgSnVuZSAzMCwgMjAx
-NiAxMDoyNCBBTQ0KPiBUbzogWXVhbnRpYW4gVGFuZyA8eXVhbnRpYW4udGFuZ0BueHAuY29tPg0K
-PiBDYzogU2NvdHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD47IFJ1c3NlbGwgS2luZyA8bGludXhA
-YXJtbGludXgub3JnLnVrPjsNCj4gTWljaGFlbCBUdXJxdWV0dGUgPG10dXJxdWV0dGVAYmF5bGli
-cmUuY29tPjsgU3RlcGhlbiBCb3lkDQo+IDxzYm95ZEBjb2RlYXVyb3JhLm9yZz47IFZpcmVzaCBL
-dW1hciA8dmlyZXNoLmt1bWFyQGxpbmFyby5vcmc+OyBsaW51eC0NCj4gY2xrQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtcG1Admdlci5rZXJuZWwub3JnOyBsaW51eHBwYy0NCj4gZGV2QGxpc3RzLm96
-bGFicy5vcmc7IFlhbmctTGVvIExpIDxsZW95YW5nLmxpQG54cC5jb20+OyBYaWFvZmVuZyBSZW4N
-Cj4gPHhpYW9mZW5nLnJlbkBueHAuY29tPjsgU2NvdHQgV29vZCA8c2NvdHR3b29kQGZyZWVzY2Fs
-ZS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMS8yXSBjbGs6IEFkZCBjb25zdW1lciBB
-UElzIGZvciBkaXNjb3ZlcmluZyBwb3NzaWJsZQ0KPiBwYXJlbnQgY2xvY2tzDQo+IA0KPiBPbiBU
-aHVyc2RheSwgSnVuZSAzMCwgMjAxNiAwMTo0NzowOSBBTSBZdWFudGlhbiBUYW5nIHdyb3RlOg0K
-PiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IFJhZmFlbCBKLiBX
-eXNvY2tpIFttYWlsdG86cmp3QHJqd3lzb2NraS5uZXRdDQo+ID4gPiBTZW50OiBUaHVyc2RheSwg
-SnVuZSAzMCwgMjAxNiA5OjQ3IEFNDQo+ID4gPiBUbzogWXVhbnRpYW4gVGFuZyA8eXVhbnRpYW4u
-dGFuZ0BueHAuY29tPg0KPiA+ID4gQ2M6IFNjb3R0IFdvb2QgPG9zc0BidXNlcnJvci5uZXQ+OyBS
-dXNzZWxsIEtpbmcNCj4gPiA+IDxsaW51eEBhcm1saW51eC5vcmcudWs+OyBNaWNoYWVsIFR1cnF1
-ZXR0ZQ0KPiA+ID4gPG10dXJxdWV0dGVAYmF5bGlicmUuY29tPjsgU3RlcGhlbiBCb3lkIDxzYm95
-ZEBjb2RlYXVyb3JhLm9yZz47DQo+ID4gPiBWaXJlc2ggS3VtYXIgPHZpcmVzaC5rdW1hckBsaW5h
-cm8ub3JnPjsgbGludXgtIGNsa0B2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBsaW51eC1wbUB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4cHBjLSBkZXZAbGlzdHMub3psYWJzLm9yZzsgWWFuZy1MZW8NCj4g
-PiA+IExpIDxsZW95YW5nLmxpQG54cC5jb20+OyBYaWFvZmVuZyBSZW4gPHhpYW9mZW5nLnJlbkBu
-eHAuY29tPjsgU2NvdHQNCj4gPiA+IFdvb2QgPHNjb3R0d29vZEBmcmVlc2NhbGUuY29tPg0KPiA+
-ID4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAxLzJdIGNsazogQWRkIGNvbnN1bWVyIEFQSXMgZm9y
-IGRpc2NvdmVyaW5nDQo+ID4gPiBwb3NzaWJsZSBwYXJlbnQgY2xvY2tzDQo+ID4gPg0KPiA+ID4g
-T24gV2VkbmVzZGF5LCBKdW5lIDI5LCAyMDE2IDA1OjUwOjI2IEFNIFl1YW50aWFuIFRhbmcgd3Jv
-dGU6DQo+ID4gPiA+IEhpLA0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIHBhdGNoIGlzIGFja2VkIGJ5
-IGNsb2NrIG1haW50YWluZXIuIElmIG5vIGNvbW1lbnRzIGZyb20NCj4gPiA+ID4gYW55b25lIGVs
-c2UsDQo+ID4gPiB3ZSB3aWxsIG1lcmdlIGl0IGluIG5leHQgd2Vlay4NCj4gPiA+DQo+ID4gPiBU
-aGVyZSBpcyBhIGNwdWZyZXEgY29tbWl0IGRlcGVuZGluZyBvbiBpdC4gIEFyZSB5b3UgZ29pbmcg
-dG8gaGFuZGxlDQo+ID4gPiB0aGF0IG9uZSB0b28/DQo+ID4gPg0KPiA+IFRoYXQgb25lIGhhcyBi
-ZWVuIGFja2VkIGJ5IGNwdWZyZXEgbWFpbnRhaW5lci4gWW91IGNhbiBnZXQgdGhpcyBmcm9tDQo+
-IHBhdGNoIGNvbW1lbnRzLg0KPiANCj4gSSBrbm93IHRoYXQgaXQgaGFzIGJlZW4gQUNLZWQuDQo+
-IA0KPiBNeSBxdWVzdGlvbiBpcyB3aGV0aGVyIG9yIG5vdCB5b3UgYXJlIGdvaW5nIHRvIGFwcGx5
-IGl0IGFsb25nIHRoZSBbMS8yXS4NCj4gDQo+IElmIG5vdCwgaXQgd2lsbCBoYXZlIHRvIGJlIGRl
-ZmVycmVkIHVudGlsIHRoZSBbMS8yXSBpcyBtZXJnZWQgYW5kIHRoZW4gYXBwbGllZA0KPiB3aGlj
-aCBtYXkgbm90IGJlIGRlc2lyYWJsZS4NCj4gDQpJIGhvcGUgd2UgY2FuIGFwcGx5IGJvdGggYXQg
-c2FtZSB0aW1lLiBTZWVtcyBTY290dCBoYXMgYSBmZXcgY29uY2VybnMuDQoNCldoYXQgeW91IHRo
-aW5rIGFib3V0IHRoaXMgcGF0Y2g/IENhbiB5b3UgYXBwbHkgaXQ/DQpJZiB5b3UgaGF2ZSBhcHBs
-aWVkIHRoaXMgcGF0Y2gsIHRoZW4gSSBjYW4gcHVzaCBDUFVmcmVxIG1haW50YWluZXIgdG8gYXBw
-bHkgYW5vdGhlciBvbmUgd2hpY2ggd2lsbCBiZSBkZWxheWVkLg0KDQpSZWdhcmRzLA0KWXVhbnRp
-YW4NCg0KPiBUaGFua3MsDQo+IFJhZmFlbA0KDQo=
+on rk3399 platform, there is dfi conroller can monitor
+ddr load, base on this result, we can do ddr freqency
+scaling.
+
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+Changes in v1:
+- NOne
+
+ drivers/devfreq/event/Kconfig        |   7 +
+ drivers/devfreq/event/Makefile       |   1 +
+ drivers/devfreq/event/rockchip-dfi.c | 265 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 273 insertions(+)
+ create mode 100644 drivers/devfreq/event/rockchip-dfi.c
+
+diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+index 1e8b4f4..6ebdc13 100644
+--- a/drivers/devfreq/event/Kconfig
++++ b/drivers/devfreq/event/Kconfig
+@@ -30,4 +30,11 @@ config DEVFREQ_EVENT_EXYNOS_PPMU
+ 	  (Platform Performance Monitoring Unit) counters to estimate the
+ 	  utilization of each module.
+ 
++config DEVFREQ_EVENT_ROCKCHIP_DFI
++	bool "ROCKCHIP DFI DEVFREQ event Driver"
++	depends on ARCH_ROCKCHIP
++	help
++	  This add the devfreq-event driver for Rockchip SoC. It provides DFI
++	  driver to count ddr load.
++
+ endif # PM_DEVFREQ_EVENT
+diff --git a/drivers/devfreq/event/Makefile b/drivers/devfreq/event/Makefile
+index 3d6afd3..dda7090 100644
+--- a/drivers/devfreq/event/Makefile
++++ b/drivers/devfreq/event/Makefile
+@@ -2,3 +2,4 @@
+ 
+ obj-$(CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP) += exynos-nocp.o
+ obj-$(CONFIG_DEVFREQ_EVENT_EXYNOS_PPMU) += exynos-ppmu.o
++obj-$(CONFIG_DEVFREQ_EVENT_ROCKCHIP_DFI) += rockchip-dfi.o
+diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+new file mode 100644
+index 0000000..e3b020f9
+--- /dev/null
++++ b/drivers/devfreq/event/rockchip-dfi.c
+@@ -0,0 +1,265 @@
++/*
++ * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
++ * Author: Lin Huang <hl@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/devfreq-event.h>
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/list.h>
++#include <linux/of.h>
++
++#define RK3399_DMC_NUM_CH	2
++
++/* DDRMON_CTRL */
++#define DDRMON_CTRL	0x04
++#define CLR_DDRMON_CTRL	(0x1f0000 << 0)
++#define LPDDR4_EN	(0x10001 << 4)
++#define HARDWARE_EN	(0x10001 << 3)
++#define LPDDR3_EN	(0x10001 << 2)
++#define SOFTWARE_EN	(0x10001 << 1)
++#define TIME_CNT_EN	(0x10001 << 0)
++
++#define DDRMON_CH0_COUNT_NUM		0x28
++#define DDRMON_CH0_DFI_ACCESS_NUM	0x2c
++#define DDRMON_CH1_COUNT_NUM		0x3c
++#define DDRMON_CH1_DFI_ACCESS_NUM	0x40
++
++/* pmu grf */
++#define PMUGRF_OS_REG2	0x308
++#define DDRTYPE_SHIFT	13
++#define DDRTYPE_MASK	7
++
++enum {
++	DDR3 = 3,
++	LPDDR3 = 6,
++	LPDDR4 = 7,
++	UNUSED = 0xFF
++};
++
++struct dmc_usage {
++	u32 access;
++	u32 total;
++};
++
++struct rockchip_dfi {
++	struct devfreq_event_dev *edev;
++	struct devfreq_event_desc *desc;
++	struct dmc_usage ch_usage[RK3399_DMC_NUM_CH];
++	struct device *dev;
++	void __iomem *regs;
++	struct regmap *regmap_pmu;
++	struct clk *clk;
++};
++
++static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
++{
++	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	void __iomem *dfi_regs = info->regs;
++	u32 val;
++	u32 ddr_type;
++
++	/* get ddr type */
++	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
++	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
++
++	/* clear DDRMON_CTRL setting */
++	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
++
++	/* set ddr type to dfi */
++	if (ddr_type == LPDDR3)
++		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
++	else if (ddr_type == LPDDR4)
++		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
++
++	/* enable count, use software mode */
++	writel_relaxed(SOFTWARE_EN, dfi_regs + DDRMON_CTRL);
++}
++
++static void rockchip_dfi_stop_hardware_counter(struct devfreq_event_dev *edev)
++{
++	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	void __iomem *dfi_regs = info->regs;
++	u32 val;
++
++	val = readl_relaxed(dfi_regs + DDRMON_CTRL);
++	val &= ~SOFTWARE_EN;
++	writel_relaxed(val, dfi_regs + DDRMON_CTRL);
++}
++
++static int rockchip_dfi_get_busier_ch(struct devfreq_event_dev *edev)
++{
++	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	u32 tmp, max = 0;
++	u32 i, busier_ch = 0;
++	void __iomem *dfi_regs = info->regs;
++
++	rockchip_dfi_stop_hardware_counter(edev);
++
++	/* Find out which channel is busier */
++	for (i = 0; i < RK3399_DMC_NUM_CH; i++) {
++		info->ch_usage[i].access = readl_relaxed(dfi_regs +
++				DDRMON_CH0_DFI_ACCESS_NUM + i * 20);
++		info->ch_usage[i].total = readl_relaxed(dfi_regs +
++				DDRMON_CH0_COUNT_NUM + i * 20);
++		tmp = info->ch_usage[i].access;
++		if (tmp > max) {
++			busier_ch = i;
++			max = tmp;
++		}
++	}
++	rockchip_dfi_start_hardware_counter(edev);
++
++	return busier_ch;
++}
++
++static int rockchip_dfi_disable(struct devfreq_event_dev *edev)
++{
++	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++
++	rockchip_dfi_stop_hardware_counter(edev);
++	clk_disable(info->clk);
++
++	return 0;
++}
++
++static int rockchip_dfi_enable(struct devfreq_event_dev *edev)
++{
++	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	int ret;
++
++	ret = clk_enable(info->clk);
++	if (ret)
++		return ret;
++
++	rockchip_dfi_start_hardware_counter(edev);
++	return 0;
++}
++
++static int rockchip_dfi_set_event(struct devfreq_event_dev *edev)
++{
++	return 0;
++}
++
++static int rockchip_dfi_get_event(struct devfreq_event_dev *edev,
++				  struct devfreq_event_data *edata)
++{
++	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	int busier_ch;
++
++	busier_ch = rockchip_dfi_get_busier_ch(edev);
++
++	edata->load_count = info->ch_usage[busier_ch].access;
++	edata->total_count = info->ch_usage[busier_ch].total;
++
++	return 0;
++}
++
++static const struct devfreq_event_ops rockchip_dfi_ops = {
++	.disable = rockchip_dfi_disable,
++	.enable = rockchip_dfi_enable,
++	.get_event = rockchip_dfi_get_event,
++	.set_event = rockchip_dfi_set_event,
++};
++
++static const struct of_device_id rockchip_dfi_id_match[] = {
++	{ .compatible = "rockchip,rk3399-dfi" },
++	{ },
++};
++
++static int rockchip_dfi_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rockchip_dfi *data;
++	struct resource *res;
++	struct devfreq_event_desc *desc;
++	int ret;
++	struct device_node *np = pdev->dev.of_node, *node;
++
++	data = devm_kzalloc(dev, sizeof(struct rockchip_dfi), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	data->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(data->regs))
++		return PTR_ERR(data->regs);
++
++	data->clk = devm_clk_get(dev, "pclk_ddr_mon");
++	if (IS_ERR(data->clk)) {
++		dev_err(dev, "Cannot get the clk dmc_clk\n");
++		return PTR_ERR(data->clk);
++	};
++
++	/* try to find the optional reference to the pmu syscon */
++	node = of_parse_phandle(np, "rockchip,pmu", 0);
++	if (node) {
++		data->regmap_pmu = syscon_node_to_regmap(node);
++		if (IS_ERR(data->regmap_pmu))
++			return PTR_ERR(data->regmap_pmu);
++	}
++	data->dev = dev;
++
++	desc = devm_kzalloc(dev, sizeof(*desc), GFP_KERNEL);
++	if (!desc)
++		return -ENOMEM;
++
++	desc->ops = &rockchip_dfi_ops;
++	desc->driver_data = data;
++	desc->name = np->name;
++	data->desc = desc;
++
++	data->edev = devm_devfreq_event_add_edev(&pdev->dev, desc);
++	if (IS_ERR(data->edev)) {
++		ret = PTR_ERR(data->edev);
++		dev_err(&pdev->dev,
++			"failed to add devfreq-event device\n");
++		return ret;
++	}
++
++	ret = clk_prepare_enable(data->clk);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to enable clk: %d\n", ret);
++		clk_disable_unprepare(data->clk);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, data);
++
++	return 0;
++}
++
++static int rockchip_dfi_remove(struct platform_device *pdev)
++{
++	return 0;
++}
++
++static struct platform_driver rockchip_dfi_driver = {
++	.probe	= rockchip_dfi_probe,
++	.remove	= rockchip_dfi_remove,
++	.driver = {
++		.name	= "rockchip-dfi",
++		.of_match_table = rockchip_dfi_id_match,
++	},
++};
++module_platform_driver(rockchip_dfi_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Rockchip dfi driver");
+-- 
+1.9.1
