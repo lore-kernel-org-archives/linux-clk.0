@@ -1,62 +1,38 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com,
-	maxime.coquelin@st.com,
-	patrice.chotard@st.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	broonie@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 1/6] clk: st: clk-flexgen: Detect critical clocks
-Date: Tue,  7 Jun 2016 12:19:25 +0100
-Message-Id: <20160607111930.10375-2-lee.jones@linaro.org>
-In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
-References: <20160607111930.10375-1-lee.jones@linaro.org>
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <3d6d3147-00de-8ba4-a27a-a8f89854f4f7@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-3-git-send-email-hl@rock-chips.com> <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
+ <20637963.iQzVZfJq9f@diego> <3d6d3147-00de-8ba4-a27a-a8f89854f4f7@rock-chips.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 3 Jun 2016 06:25:24 -0700
+Message-ID: <CAD=FV=XuJ4mVtEh8qzQwcwO8UqqoX6+r6OTrWc9yUN93kbMe_w@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for ddrc
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Tao Huang <huangtao@rock-chips.com>, =?UTF-8?B?5bmz5Y+w57uELeaxpOS6keW5sw==?= <typ@rock-chips.com>,
+	Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>, Derek Basehore <dbasehore@chromium.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@samsung.com,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?B?5aea5pm65oOF?= <mark.yao@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Utilise the new Critical Clock infrastructure to mark clocks which
-much not be disabled as CRITICAL.
+Hi,
 
-While we're at it, reduce the coverage of the flex_flags variable,
-since it's only really used in a single for() loop.
+On Fri, Jun 3, 2016 at 5:47 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+> Ah, I missed the previous version as I think it should be from
+> non-version to v2 rather than from non-version to v1, which IIRC is from
+> Doug. :)
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/clk/st/clk-flexgen.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yup, patch-numbering is 1-based, not 0-based, so typically you have
+no-version => v2 => v3 => v99
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 627267c..546bd79 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -267,7 +267,6 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	const char **parents;
- 	int num_parents, i;
- 	spinlock_t *rlock = NULL;
--	unsigned long flex_flags = 0;
- 	int ret;
- 
- 	pnode = of_get_parent(np);
-@@ -308,12 +307,15 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	for (i = 0; i < clk_data->clk_num; i++) {
- 		struct clk *clk;
- 		const char *clk_name;
-+		unsigned long flex_flags = 0;
- 
- 		if (of_property_read_string_index(np, "clock-output-names",
- 						  i, &clk_name)) {
- 			break;
- 		}
- 
-+		of_clk_detect_critical(np, i, &flex_flags);
-+
- 		/*
- 		 * If we read an empty clock name then the output is unused
- 		 */
--- 
-2.8.3
+-Doug
