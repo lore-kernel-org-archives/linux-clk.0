@@ -1,75 +1,291 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160616004419.GQ28218@codeaurora.org>
-References: <1465381201-11537-1-git-send-email-ricardo.ribalda@gmail.com>
- <1465381201-11537-2-git-send-email-ricardo.ribalda@gmail.com> <20160616004419.GQ28218@codeaurora.org>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Mon, 20 Jun 2016 15:31:57 +0200
-Message-ID: <CAPybu_3=Zm8w16_3jtKZDhoFafUz-tYcnpFJmTHT8riwjpCSpA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: Add new function of_clk_is_provider()
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:32924 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932312AbcFCLQq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2016 07:16:46 -0400
+Date: Fri, 3 Jun 2016 13:16:41 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH RFC 1/2] clk: sunxi-ng: Add the A83T and A80 PLL clocks
+Message-Id: <20160603131641.2c4c3266fe02718f341e8e12@free.fr>
+In-Reply-To: <CAGb2v65sqhxEzxwRJ2fBfN_3F9bwKHreQ2JA4o=kZ5GZiMd=aQ@mail.gmail.com>
+References: <cover.1464680865.git.moinejf@free.fr>
+	<bbf3cefa47323660ead5ebdafe63f382fea06f39.1464680865.git.moinejf@free.fr>
+	<CAGb2v65sqhxEzxwRJ2fBfN_3F9bwKHreQ2JA4o=kZ5GZiMd=aQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen
+Hi Wens,
 
-When the device tree is populated or when an overlay is added, all its
-nodes have the flag OF_POPULATED set. The flag is enabled recursively
-in
-of_platform_bus_create->of_platform_device_create_pdata()
-So we cannot use that flag to mark what is enabled and what is not.
+Thanks for the review.
 
-The other issue that I see is of_clk_mutex. Whatever final
-implementation that we decide to do, it should take into consideration
-that mutex, otherwise it will not be thread-safe.
-of_clk_is_provider() is already taking care of it.
+On Fri, 3 Jun 2016 14:53:24 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Another advantage of of_clk_is_provider() is that it opens the door to
-implement something like:  CLK_OF_DECLARE_EARLY_PLATFORM(probe,remove)
- That allows a driver to implement early clk and platform clk at the
-same time and automatically, following a logic similar to what I have
-done in fixed-clk.
+> On Tue, May 31, 2016 at 3:26 PM, Jean-Francois Moine <moinejf@free.fr> wrote:
+> > The A83T and A80 SoCs have unique settings of their PLL clocks.
+> >
+> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu_ndmp.c | 247 ++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/sunxi-ng/ccu_ndmp.h |  45 ++++++++
+> >  2 files changed, 292 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.c
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.h
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu_ndmp.c b/drivers/clk/sunxi-ng/ccu_ndmp.c
+> > new file mode 100644
+> > index 0000000..079b155
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu_ndmp.c
+> > @@ -0,0 +1,247 @@
+> > +/*
+> > + * PLL clocks of sun8iw6 (A83T) and sun9iw1 (A80)
+> > + *
+> > + * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation; either version 2 of
+> > + * the License, or (at your option) any later version.
+> > + *
+> > + * The clock rates are computed as:
+> > + *     rate = parent_rate / d1 * n / d2 / m >> p
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/rational.h>
+> > +#include <linux/iopoll.h>
+> > +
+> > +#include "ccu_gate.h"
+> > +#include "ccu_ndmp.h"
+	[snip]
+> > +/* d1 and d2 may be only 1 or 2 */
+> > +static int ccu_ndmp_get_fact(struct ccu_ndmp *ndmp,
+> > +                       unsigned long rate, unsigned long prate,
+> > +                       int *p_n, int *p_d1, int *p_d2, int *p_m, int *p_p)
+> > +{
+> > +       int n, d1, d2, m, p, d;
+> > +       unsigned long t;
+> > +
+> > +       /* m implies only n, d1, d2 and m (pll-audio) */
+> > +       /* Setting d1=1 and d2=2 keeps n and m small enough
+> > +        *      with error < 5/10000 */
+> > +       /* As only 2 rates are used, this could be simplified:
+> 
+> Best not simplify generic code to specific use cases.
 
-I will send a v2 with the changes you proposed to fixed-clk
+Well, the Allwinner's audio PLL clocks always ask for these 2 rates only.
+Anyway, this is just a comment.
 
-Thanks and best regards!
+> > +        *      22579200Hz => n = 32, m = 17
+> > +        *      24576000Hz => n = 43, m = 21
+> > +        */
+> > +       if (ndmp->m.shift) {
+> 
+> shift could be 0. Testing against width is better.
+> Same for the other functions.
 
-On Thu, Jun 16, 2016 at 2:44 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/08, Ricardo Ribalda Delgado wrote:
->> of_clk_is_provider() checks if a device_node has already been added to
->> the clk provider list. This can be used to avoid adding the same clock
->> provider twice.
->>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->
-> While I don't disagree with the concept, I'd like to do this
-> outside of the clk framework checking for nodes, because the
-> problem doesn't seem clk specific. From digging in the OF
-> platform layer I see of_node_test_and_set_flag(OF_POPULATED) may
-> be what we should be using. It looks like this can be used to
-> make sure that any clk provider nodes aren't populated as
-> platform devices when we've initialized them early.
->
-> The only problem now is that we have drivers using a hybrid
-> approach with of_clk_init(). Sometimes drivers need to get clks
-> up early for timers, so they have CLK_OF_DECLARE() in their
-> driver, but then they also use a platform driver to handle the
-> non-timer related clks. If we mark all nodes as populated in
-> of_clk_init() we'll preclude these drivers from working. The
-> solution there is to make those drivers specifically clear the
-> populated flag in the clk init callback. Or we can automatically
-> do that with some new CLK_OF_DECLARE_EARLY() macro that hides
-> this clearing from them. Either way, the drivers will need to
-> indicate they're using this hybrid style so that we still
-> populate platform devices.
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Yes. I fixed this already, with some other bugs.
 
+> > +               long unsigned int lun, lum;
+> 
+>                   unsigned long, to match other places.
+> 
+> > +
+> > +               d1 = 0 + 1;
+> > +               d2 = 1 + 1;
+> > +               t = prate / 2;
+> > +               rational_best_approximation(rate, t,
+> > +                                       1 << ndmp->n.width,
+> > +                                       1 << ndmp->m.width,
+> > +                                       &lun, &lum);
+> > +               if (lum == 0)
+> > +                       return -EINVAL;
+> > +               n = lun;
+> > +               m = lum;
+> > +               p = 0;
+> > +
+> > +       /* no d1 implies n alone (pll-cxcpux) */
+> 
+> Pretending these don't have a p factor does not make it disappear.
+> 
+> > +       } else if (!ndmp->d1.shift) {
+> > +               d1 = d2 = 0 + 1;
+> 
+> If you say they aren't there, why do you still need to set them.
+> 
+> > +               n = rate / prate;
+> > +               m = 1;
+> > +               p = 0;
+> 
+> A note about why p isn't used would be nice. Like:
+> 
+>     P should only be used for rates under 288 MHz.
+> 
+> from the manual.
 
+Yes.
+
+> > +
+> > +       /* p implies only n, d1 and p (pll-videox) */
+> > +       } else if (ndmp->m.shift) {
+> 
+>                            ^ p?
+
+Yes. Already fixed.
+
+> > +               d2 = 0 + 1;
+> > +               d = 2 + ndmp->p.width;
+> > +               n = rate / (prate / (1 << d));
+> > +               if (n < 12) {
+> > +                       n *= 2;
+> > +                       d++;
+> > +               }
+> > +               while (n >= 12 * 2 && !(n & 1)) {
+> > +                       n /= 2;
+> > +                       if (--d == 0)
+> > +                               break;
+> > +               }
+> > +               if (d <= 1) {
+> > +                       d1 = d + 1;
+> > +                       p = 0;
+> > +               } else {
+> > +                       d1 = 1 + 1;
+> > +                       p = d - 1;
+> > +               }
+> > +               m = 1;
+> > +
+> > +       /* only n, d1 and d2 (other plls) */
+> > +       } else {
+> > +               t = prate / 4;
+> > +               n = rate / t;
+> > +               if (n < 12) {
+> > +                       n *= 4;
+> > +                       d1 = d2 = 0 + 1;
+> > +               } else if (n >= 12 * 2 && !(n & 1)) {
+> > +                       if (n >= 12 * 4 && !(n % 4)) {
+> > +                               n /= 4;
+> > +                               d1 = d2 = 0 + 1;
+> > +                       } else {
+> > +                               n /= 2;
+> > +                               d1 = 0 + 1;
+> > +                               d2 = 1 + 1;
+> > +                       }
+> > +               } else {
+> > +                       d1 = d2 = 1 + 1;
+> > +               }
+> > +               if (n > (1 << ndmp->n.width))
+> > +                       return -EINVAL;
+> > +               m = 1;
+> > +               p = 0;
+> > +       }
+> > +
+> > +       if (n < 12 || n > (1 << ndmp->n.width))
+> > +               return -EINVAL;
+> > +
+> > +       *p_n = n;
+> > +       *p_d1 = d1;
+> > +       *p_d2 = d2;
+> > +       *p_m = m;
+> > +       *p_p = p;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static long ccu_ndmp_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +                             unsigned long *parent_rate)
+> > +{
+> > +       struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
+> > +       int n, d1, d2, m, p, ret;
+> > +
+> > +       ret = ccu_ndmp_get_fact(ndmp, rate, *parent_rate,
+> > +                               &n, &d1, &d2, &m, &p);
+> > +       if (!ret)
+> > +               return 0;
+> > +
+> > +       return *parent_rate / d1 * n / d2 / m >> p;
+> 
+> A warning should be put at the top of ccu_ndmp_get_fact stating the code
+> should not lazily skip initializing factors it doesn't use. Or just
+> initialize them in this function beforehand. The contract between these
+> 2 functions could be made clearer.
+
+You are right.
+
+> > +}
+> > +
+> > +static int ccu_ndmp_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +                          unsigned long parent_rate)
+> > +{
+> > +       struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
+> > +       unsigned long flags;
+> > +       int n, d1, d2, m, p, ret;
+> > +       u32 reg;
+> > +
+> > +       ret = ccu_ndmp_get_fact(ndmp, rate, parent_rate,
+> > +                               &n, &d1, &d2, &m, &p);
+> > +       if (!ret)
+> > +               return ret;
+> > +       if (!(ndmp->common.features & CCU_FEATURE_N0))
+> 
+> I do not remember seeing this in Maxime's original code. Did I
+> miss something?
+
+There are a lot of bugs to be fixed in Maxime's code, and he did not
+yet submit a new version. As we don't know how he will introduce the
+'n' shift (start from 0 or 1 - in the A80/A83T PLL clocks, only the
+pll-ddr starts from 1), I added this feature flag.
+
+> > +               n--;
+> > +
+> > +       spin_lock_irqsave(ndmp->common.lock, flags);
+> > +
+> > +       reg = readl(ndmp->common.base + ndmp->common.reg) &
+> > +               ~((((1 << ndmp->n.width) - 1) << ndmp->n.shift) |
+> > +                 (((1 << ndmp->d1.width) - 1) << ndmp->d1.shift) |
+> > +                 (((1 << ndmp->d2.width) - 1) << ndmp->d2.shift) |
+> > +                 (((1 << ndmp->m.width) - 1) << ndmp->m.shift) |
+> > +                 (((1 << ndmp->p.width) - 1) << ndmp->p.shift));
+> > +
+> > +       writel(reg | (n << ndmp->n.shift) |
+> > +                       ((d1 - 1) << ndmp->d1.shift) |
+> > +                       ((d2 - 1) << ndmp->d2.shift) |
+> > +                       ((m - 1) << ndmp->m.shift) |
+> > +                       (p << ndmp->p.shift),
+> > +              ndmp->common.base + ndmp->common.reg);
+> > +
+> > +       spin_unlock_irqrestore(ndmp->common.lock, flags);
+> > +
+> > +       WARN_ON(readl_relaxed_poll_timeout(ndmp->common.base + ndmp->reg_lock,
+> > +                                          reg, !(reg & ndmp->lock), 50, 500));
+> 
+> Maybe a feature flag to test for this separate PLL lock register?
+
+All PLLs have a lock bit.
+But, if some clocks would have no lock, a feature flag would not be
+needed: testing the lock bit (ndmp->lock) would do the job (and that is
+the case for all the feature flags in Maxime's original code).
+
+> Regards
+> ChenYu
+> 
+> > +
+> > +       return 0;
+> > +}
+	[snip]
+
+BTW, I also found some bugs in the A83T clocks. Do you want I submit a
+new version?
 
 -- 
-Ricardo Ribalda
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
