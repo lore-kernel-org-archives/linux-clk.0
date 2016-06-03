@@ -1,51 +1,42 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [PATCH 0/5] Fix and improve clock controller for the RK322x SoCs
-To: Heiko Stuebner <heiko@sntech.de>
-References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
- <13345941.K3V3BNYxTY@phil>
-Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Yakir Yang
- <ykk@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Rob Herring <robh+dt@kernel.org>, Jeffy Chen <jeffy.chen@rock-chips.com>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- Caesar Wang <wxt@rock-chips.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <5769E581.2040903@rock-chips.com>
-Date: Wed, 22 Jun 2016 09:10:25 +0800
-MIME-Version: 1.0
-In-Reply-To: <13345941.K3V3BNYxTY@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 25/34] clk: s2mps11: Migrate to clk_hw based OF and
+ registration APIs
+To: Stephen Boyd <stephen.boyd@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-26-stephen.boyd@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Andi Shyti <andi.shyti@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <57512F3D.8090201@samsung.com>
+Date: Fri, 03 Jun 2016 09:18:21 +0200
+MIME-version: 1.0
+In-reply-to: <20160601231533.9354-26-stephen.boyd@linaro.org>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+On 06/02/2016 01:15 AM, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Andi Shyti <andi.shyti@samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+> 
+> See commit 58657d189a2f and it's children for details on this
+> new registration API.
+> 
+>  drivers/clk/clk-s2mps11.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
 
-On 2016年06月22日 07:07, Heiko Stuebner wrote:
-> Am Dienstag, 21. Juni 2016, 12:53:26 schrieb Xing Zheng:
->> Hi,
->>    These patchset fix some clocks bugs, and improve clock configuration
->> for i2s/spdif/MAC on RK322x SoCs.
-> applied to my clock-branch with the following changes:
->
-> - fixed the error in patch1 - missing ")" in
->        COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_src", CLK_SET_RATE_PARENT,
-> -                       RK3288_CLKSEL_CON(7), 0,
-> -                       RK3288_CLKGATE_CON(0), 11, GFLAGS),
-> +                       RK2928_CLKSEL_CON(7), 0,
-> +                       RK2928_CLKGATE_CON(0), 11, GFLAGS,
->
-> - adapted patch2 accordingly
-> - split out clock id addition into separate patches, as they need a shared
-> branch. Xing please remember to add clock-ids to the header in separate
-> patches.
->
->
-So sorry to miss it...
-OK, I will add clock-ids to the header in separate patches.
+Looks and works correct:
 
-Thanks.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-- Xing Zheng
+Best regards,
+Krzysztof
