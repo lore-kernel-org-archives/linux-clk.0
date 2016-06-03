@@ -1,133 +1,136 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	rtc-linux@googlegroups.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/7] mfd: ac100: Add support for X-Powers AC100 audio codec / RTC combo IC
-Date: Thu, 30 Jun 2016 23:58:44 +0800
-Message-Id: <1467302331-9663-1-git-send-email-wens@csie.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Lin Huang <hl@rock-chips.com>, mturquette@baylibre.com
+Cc: mark.yao@rock-chips.com, myungjoo.ham@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, dianders@chromium.org, dbasehore@chromium.org, huangtao@rock-chips.com, typ@rock-chips.com
+Subject: Re: [RFC PATCH v1 1/6] rockchip: rockchip: add new clock-type for the ddrclk
+Date: Fri, 03 Jun 2016 14:51:49 +0200
+Message-ID: <1663829.Hlc2xmNrOy@diego>
+In-Reply-To: <1464947719-6245-2-git-send-email-hl@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com> <1464947719-6245-2-git-send-email-hl@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Am Freitag, 3. Juni 2016, 17:55:14 schrieb Lin Huang:
+> On new rockchip platform(rk3399 etc), there have dcf controller to
+> do ddr frequency scaling, and this controller will implement in
+> arm-trust-firmware. We add a special clock-type to handle that.
+>
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> ---
+> Changes in v1:
+> - None
+> 
+>  drivers/clk/rockchip/Makefile  |   1 +
+>  drivers/clk/rockchip/clk-ddr.c | 147
+> +++++++++++++++++++++++++++++++++++++++++ drivers/clk/rockchip/clk.c     | 
+>  9 +++
+>  drivers/clk/rockchip/clk.h     |  27 ++++++++
+>  4 files changed, 184 insertions(+)
+>  create mode 100644 drivers/clk/rockchip/clk-ddr.c
+> 
+> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+> index f47a2fa..b5f2c8e 100644
+> --- a/drivers/clk/rockchip/Makefile
+> +++ b/drivers/clk/rockchip/Makefile
+> @@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
+>  obj-y	+= clk-cpu.o
+>  obj-y	+= clk-inverter.o
+>  obj-y	+= clk-mmc-phase.o
+> +obj-y	+= clk-ddr.o
+>  obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+> 
+>  obj-y	+= clk-rk3036.o
+> diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+> new file mode 100644
+> index 0000000..5b6630d
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-ddr.c
+> @@ -0,0 +1,147 @@
+> +/*
+> + * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
+> + * Author: Lin Huang <hl@rock-chips.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
+> +#include <linux/io.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include "clk.h"
+> +
+> +struct rockchip_ddrclk {
+> +	struct clk_hw	hw;
+> +	void __iomem	*reg_base;
+> +	int		mux_offset;
+> +	int		mux_shift;
+> +	int		mux_width;
+> +	int		mux_flag;
+> +	int		div_shift;
+> +	int		div_width;
+> +	int		div_flag;
+> +	spinlock_t	*lock;
+> +};
+> +
+> +#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk,
+> hw)
+> +#define val_mask(width)	((1 << (width)) - 1)
 
-This series adds support for X-Powers' AC100 audio codec / RTC combo IC.
-This chip is found on Allwinner A80 SoC based boards, and is also part
-of the AXP813/AXP818 PMIC found with Allwinner A83T SoCs.
+maybe use GENMASK?
 
-The series focuses on the RTC side of the chip. The audio codec will
-be done later, once the digital audio interface of the SoC is supported.
+> +
+> +static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
+> +				    unsigned long prate)
+> +{
+> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(ddrclk->lock, flags);
+> +
+> +	/* TODO: set ddr rate in bl31 */
 
-Changes since v3:
+I expect this interface to be in existence and merged into the main ATF first.
 
-  - bulk write support for regmaps without raw formatting patch merged
-    and thus dropped from series.
+Right now the whole clock-type does nothing more than a simple COMPOSITE with 
+added CLK_DIVIDER_READ_ONLY | CLK_MUX_READ_ONLY.
 
-  - sun9i device node re-ordering patches merged and thus dropped from
-    series.
+Also Mike is propably still working in the so called coordinated rate change 
+for clocks needing special handling on rate changes, which might provide a 
+second approach to this.
 
-  - Fixed device node name and added labels to device tree binding example.
-
-  - Moved 4M_adda clock to codec side, and added clock bindings to codec
-    node.
-
-  - Rename RTC clock output related prefixes from clk32k to clkout.
-
-  - Rename default clock output names to cko{1,2,3}-rtc.
-
-  - Move struct tm to/from RTC conversion offsets inline with reg[]
-    assignments
-
-  - Drop separate mutex and use rtc->ops_lock in interrupt handler.
-
-  - Use platform_get_irq instead of of_get_irq.
-
-  - Add struct of_device_id and .of_match_table to RTC driver.
-
-Changes since v2:
-
-  - Fix ac100_codec interrupt line in DT binding example.
-
-  - Fix copy-paste errors in RTC set_alarm. Alarm now works.
-
-  - Drop file name from MFD driver.
-
-  - Add / update copyright notices.
-
-  - Change license of RTC driver to GPL v2, matching MFD driver.
-
-  - Fix MFD driver MODULE_LICENSE to match license declaration in header.
-
-Changes since v1:
-
-  - Complete register definitions and regmap regions.
-
-v1 was actually a working version that wasn't updated with the codec
-register definitions.
-
-Patch 1 adds device tree bindings for the AC100.
-
-Patch 2 adds the mfd driver for the AC100.
-
-Patch 3 adds the RTC driver for the AC100.
-
-Patch 4 adds RTC clk output support to the RTC driver.
-This is a separate patch as the clk code is over 300 LoC. Having a
-separate patch should make it easier for the clk maintainers to review.
-
-Patch 5 adds the AC100 device nodes to the A80 Optimus board dts.
-
-Patch 6 adds the AC100 device nodes to the Cubieboard4 board dts.
-
-Patch 7 changes the fixed osc_32k clk to a fixed factor clk,
-representing the 32k clk input pin on the SoC, and also hooks up the
-ac100 rtc clk output to this clk in the board dts files.
-
-I'm hoping we can merge the driver bits (patches 1~4) through the
-mfd tree, with acks from the rtc and clk maintainers for patches
-3 and 4.
+So please, first of all get the ATF-interface merged and meanwhile if you need 
+to read the clock-rate, just use a regular composite, with the read-only flags.
 
 
-Regards
-ChenYu
+> +	spin_unlock_irqrestore(ddrclk->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long
+> +rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
+> +			    unsigned long parent_rate)
+> +{
+> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
+> +	int val;
+> +
+> +	val = clk_readl(ddrclk->reg_base +
+> +			ddrclk->mux_offset) >> ddrclk->div_shift;
+> +	val &= val_mask(ddrclk->div_width);
+> +
+> +	return DIV_ROUND_UP_ULL((u64)parent_rate, val + 1);
+
+return divider_recalc_rate(...)
 
 
-Chen-Yu Tsai (7):
-  mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC
-    combo IC
-  mfd: ac100: Add driver for X-Powers AC100 audio codec / RTC combo IC
-  rtc: ac100: Add RTC driver for X-Powers AC100
-  rtc: ac100: Add clk output support
-  ARM: dts: sun9i: a80-optimus: Add device node for AC100
-  ARM: dts: sun9i: cubieboard4: Add device node for AC100
-  ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
-
- Documentation/devicetree/bindings/mfd/ac100.txt |  49 ++
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts     |  29 ++
- arch/arm/boot/dts/sun9i-a80-optimus.dts         |  29 ++
- arch/arm/boot/dts/sun9i-a80.dtsi                |   9 +-
- drivers/mfd/Kconfig                             |  10 +
- drivers/mfd/Makefile                            |   2 +
- drivers/mfd/ac100.c                             | 137 ++++++
- drivers/rtc/Kconfig                             |  10 +
- drivers/rtc/Makefile                            |   1 +
- drivers/rtc/rtc-ac100.c                         | 627 ++++++++++++++++++++++++
- include/linux/mfd/ac100.h                       | 178 +++++++
- 11 files changed, 1075 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
- create mode 100644 drivers/mfd/ac100.c
- create mode 100644 drivers/rtc/rtc-ac100.c
- create mode 100644 include/linux/mfd/ac100.h
-
--- 
-2.8.1
+Heiko
