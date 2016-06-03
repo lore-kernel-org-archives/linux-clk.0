@@ -1,32 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Jun 2016 15:11:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 11/54] MAINTAINERS: Add file patterns for clock device
- tree bindings
-Message-ID: <20160601221133.GF28218@codeaurora.org>
-References: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
- <1463907991-7916-12-git-send-email-geert@linux-m68k.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Lin Huang <hl@rock-chips.com>, mark.yao@rock-chips.com, myungjoo.ham@samsung.com, huangtao@rock-chips.com, typ@rock-chips.com, airlied@linux.ie, mturquette@baylibre.com, dbasehore@chromium.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH v1 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for ddrc
+Date: Fri, 03 Jun 2016 14:36:53 +0200
+Message-ID: <20637963.iQzVZfJq9f@diego>
+In-Reply-To: <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com> <1464947719-6245-3-git-send-email-hl@rock-chips.com> <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1463907991-7916-12-git-send-email-geert@linux-m68k.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/22, Geert Uytterhoeven wrote:
-> Submitters of device tree binding documentation may forget to CC
-> the subsystem maintainer if this is missing.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
+Hi Shawn,
 
-Applied to clk-fixes
+Am Freitag, 3. Juni 2016, 20:34:52 schrieb Shawn Lin:
+> How about merge it into your patch#3.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+see comments from Doug and me on previous version.
+
+clock-ids should always be separate patches, as we will need them in both 
+clock and devicetree branches, so they must be in a separate branch shared 
+between clock and dts branches.
+
+
+Heiko
+
+> On 2016/6/3 17:55, Lin Huang wrote:
+> > Signed-off-by: Lin Huang <hl@rock-chips.com>
+> > ---
+> > Changes in v1:
+> > - None
+> > 
+> >  include/dt-bindings/clock/rk3399-cru.h | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/include/dt-bindings/clock/rk3399-cru.h
+> > b/include/dt-bindings/clock/rk3399-cru.h index 50a44cf..8a0f0442 100644
+> > --- a/include/dt-bindings/clock/rk3399-cru.h
+> > +++ b/include/dt-bindings/clock/rk3399-cru.h
+> > @@ -131,6 +131,7 @@
+> > 
+> >  #define SCLK_DPHY_RX0_CFG		165
+> >  #define SCLK_RMII_SRC			166
+> >  #define SCLK_PCIEPHY_REF100M		167
+> > 
+> > +#define SCLK_DDRCLK			168
+> > 
+> >  #define DCLK_VOP0			180
+> >  #define DCLK_VOP1			181
