@@ -1,41 +1,85 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: renesas: mstp: document R8A7792 support
-Date: Fri, 03 Jun 2016 23:59:07 +0300
-Message-ID: <6111329.VScVCF4Z1u@wasted.cogentembedded.com>
-In-Reply-To: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
-References: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Sun, 5 Jun 2016 19:41:57 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 07/34] clk: berlin: Migrate to clk_hw based registration
+ and OF APIs
+Message-ID: <20160605174157.GP4594@piout.net>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-8-stephen.boyd@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160601231533.9354-8-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas R8A7792 SoC also has the CPG MSTP clocks...
+Hi,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
+The main drawback of those patches is that they break the alignment
+(checkpatch.pl --strict complains).
 
----
-Changes in version 2:
-- added Simon's, Geert's and Rob's ACKs;
-- renamed the patch.
+On 01/06/2016 at 16:15:06 -0700, Stephen Boyd wrote :
+> diff --git a/drivers/clk/berlin/berlin2-avpll.h b/drivers/clk/berlin/berlin2-avpll.h
+> index a37f5068d299..17e311153b42 100644
+> --- a/drivers/clk/berlin/berlin2-avpll.h
+> +++ b/drivers/clk/berlin/berlin2-avpll.h
+> @@ -19,17 +19,13 @@
+>  #ifndef __BERLIN2_AVPLL_H
+>  #define __BERLIN2_AVPLL_H
+>  
+> -struct clk;
+> -
+>  #define BERLIN2_AVPLL_BIT_QUIRK		BIT(0)
+>  #define BERLIN2_AVPLL_SCRAMBLE_QUIRK	BIT(1)
+>  
+> -struct clk * __init
+> -berlin2_avpll_vco_register(void __iomem *base, const char *name,
+> +int berlin2_avpll_vco_register(void __iomem *base, const char *name,
 
- Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
- 1 file changed, 1 insertion(+)
+This is missing __init.
 
-Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-+++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-@@ -17,6 +17,7 @@ Required Properties:
-     - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
-     - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
-     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
-+    - "renesas,r8a7792-mstp-clocks" for R8A7792 (R-Car V2H) MSTP gate clocks
-     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
-     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
-     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+>  	   const char *parent_name, u8 vco_flags, unsigned long flags);
+>  
+> -struct clk * __init
+> -berlin2_avpll_channel_register(void __iomem *base, const char *name,
+> +int berlin2_avpll_channel_register(void __iomem *base, const char *name,
+
+Ditto.
+
+>  		       u8 index, const char *parent_name, u8 ch_flags,
+>  		       unsigned long flags);
+>  
+> diff --git a/drivers/clk/berlin/berlin2-pll.h b/drivers/clk/berlin/berlin2-pll.h
+> index 8831ce27ac1e..796874facc4c 100644
+> --- a/drivers/clk/berlin/berlin2-pll.h
+> +++ b/drivers/clk/berlin/berlin2-pll.h
+> @@ -19,8 +19,6 @@
+>  #ifndef __BERLIN2_PLL_H
+>  #define __BERLIN2_PLL_H
+>  
+> -struct clk;
+> -
+>  struct berlin2_pll_map {
+>  	const u8 vcodiv[16];
+>  	u8 mult;
+> @@ -29,8 +27,7 @@ struct berlin2_pll_map {
+>  	u8 divsel_shift;
+>  };
+>  
+> -struct clk * __init
+> -berlin2_pll_register(const struct berlin2_pll_map *map,
+> +int berlin2_pll_register(const struct berlin2_pll_map *map,
+
+Ditto.
+
+>  		     void __iomem *base, const char *name,
+>  		     const char *parent_name, unsigned long flags);
+>  
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
