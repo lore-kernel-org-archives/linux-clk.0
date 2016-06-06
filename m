@@ -1,91 +1,163 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 29 Jun 2016 14:10:21 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
-	"edubezval@gmail.com" <edubezval@gmail.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"wens@csie.org" <wens@csie.org>,
-	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on
- A23/33
-Message-ID: <20160629121021.GD6095@lukather>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
- <20160628101325.2522-3-icenowy@aosc.xyz>
- <20160628114640.GE5550@lukather>
- <60021467122182@web19j.yandex.ru>
+Return-Path: <hl@rock-chips.com>
+Subject: Re: [RFC PATCH v1 1/6] rockchip: rockchip: add new clock-type for the
+ ddrclk
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, mturquette@baylibre.com
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-2-git-send-email-hl@rock-chips.com>
+ <1663829.Hlc2xmNrOy@diego>
+Cc: mark.yao@rock-chips.com, myungjoo.ham@samsung.com, sboyd@codeaurora.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, airlied@linux.ie,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kyungmin.park@samsung.com, dianders@chromium.org, dbasehore@chromium.org,
+ huangtao@rock-chips.com, typ@rock-chips.com
+From: hl <hl@rock-chips.com>
+Message-ID: <5754EBED.5070606@rock-chips.com>
+Date: Mon, 6 Jun 2016 11:20:13 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ytoMbUMiTKPMT3hY"
-In-Reply-To: <60021467122182@web19j.yandex.ru>
+In-Reply-To: <1663829.Hlc2xmNrOy@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Heiko,
 
---ytoMbUMiTKPMT3hY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2016年06月03日 20:51, Heiko Stübner wrote:
+> Am Freitag, 3. Juni 2016, 17:55:14 schrieb Lin Huang:
+>> On new rockchip platform(rk3399 etc), there have dcf controller to
+>> do ddr frequency scaling, and this controller will implement in
+>> arm-trust-firmware. We add a special clock-type to handle that.
+>>
+>> Signed-off-by: Lin Huang <hl@rock-chips.com>
+>> ---
+>> Changes in v1:
+>> - None
+>>
+>>   drivers/clk/rockchip/Makefile  |   1 +
+>>   drivers/clk/rockchip/clk-ddr.c | 147
+>> +++++++++++++++++++++++++++++++++++++++++ drivers/clk/rockchip/clk.c     |
+>>   9 +++
+>>   drivers/clk/rockchip/clk.h     |  27 ++++++++
+>>   4 files changed, 184 insertions(+)
+>>   create mode 100644 drivers/clk/rockchip/clk-ddr.c
+>>
+>> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+>> index f47a2fa..b5f2c8e 100644
+>> --- a/drivers/clk/rockchip/Makefile
+>> +++ b/drivers/clk/rockchip/Makefile
+>> @@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
+>>   obj-y	+= clk-cpu.o
+>>   obj-y	+= clk-inverter.o
+>>   obj-y	+= clk-mmc-phase.o
+>> +obj-y	+= clk-ddr.o
+>>   obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+>>
+>>   obj-y	+= clk-rk3036.o
+>> diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+>> new file mode 100644
+>> index 0000000..5b6630d
+>> --- /dev/null
+>> +++ b/drivers/clk/rockchip/clk-ddr.c
+>> @@ -0,0 +1,147 @@
+>> +/*
+>> + * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
+>> + * Author: Lin Huang <hl@rock-chips.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#include <linux/of.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/io.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include "clk.h"
+>> +
+>> +struct rockchip_ddrclk {
+>> +	struct clk_hw	hw;
+>> +	void __iomem	*reg_base;
+>> +	int		mux_offset;
+>> +	int		mux_shift;
+>> +	int		mux_width;
+>> +	int		mux_flag;
+>> +	int		div_shift;
+>> +	int		div_width;
+>> +	int		div_flag;
+>> +	spinlock_t	*lock;
+>> +};
+>> +
+>> +#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk,
+>> hw)
+>> +#define val_mask(width)	((1 << (width)) - 1)
+> maybe use GENMASK?
+     Oh, yes, we can use it. Will fix next version.
+>
+>> +
+>> +static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
+>> +				    unsigned long prate)
+>> +{
+>> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(ddrclk->lock, flags);
+>> +
+>> +	/* TODO: set ddr rate in bl31 */
+> I expect this interface to be in existence and merged into the main ATF first.
+>
+> Right now the whole clock-type does nothing more than a simple COMPOSITE with
+> added CLK_DIVIDER_READ_ONLY | CLK_MUX_READ_ONLY.
+>
+> Also Mike is propably still working in the so called coordinated rate change
+> for clocks needing special handling on rate changes, which might provide a
+> second approach to this.
+     You mean there is a patch set can handle it now? Can you tell me 
+the ID,
+     I want to check it.
+>
+> So please, first of all get the ATF-interface merged and meanwhile if you need
+> to read the clock-rate, just use a regular composite, with the read-only flags.
+>
+     My colleague are wroking on ATF code now, I agree with you, We can 
+not merge
+     this patch set before ATF-interface merged. And we do not need to 
+add a new code
+     if we only want to read ddr clock rate(we can get the ddr rate to 
+read dpll), so i prefer
+     to keep this function for now, and do review first, once the ATF 
+code ready, we can merge
+     soon(i hope :-P ) .
+>> +	spin_unlock_irqrestore(ddrclk->lock, flags);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static unsigned long
+>> +rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
+>> +			    unsigned long parent_rate)
+>> +{
+>> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
+>> +	int val;
+>> +
+>> +	val = clk_readl(ddrclk->reg_base +
+>> +			ddrclk->mux_offset) >> ddrclk->div_shift;
+>> +	val &= val_mask(ddrclk->div_width);
+>> +
+>> +	return DIV_ROUND_UP_ULL((u64)parent_rate, val + 1);
+> return divider_recalc_rate(...)
+     got it , thank you.
+>
+>
+> Heiko
+>
+>
+>
 
-Hi,
-
-On Tue, Jun 28, 2016 at 09:56:22PM +0800, Icenowy Zheng wrote:
-> The reason for a dedicate driver is:
-> 1. This IP have only thermal function, so it's not suitable to use a
-> driver at drivers/input/touchscreen/.
-
-That's not a problem, and it's being worked on [1].
-
-> 2. Control Register are quite different.
-
-That's not a problem either, there's just a bit that you don't need to
-set in the control 1 register, and that's pretty much it. It doesn't
-justify a whole new driver.
-
-> 3. This IP uses AUDIO PLL (PLL2) as its clock!
-
-It's listed as the input, but all the rest of the documentation refers
-only to 24MHz, which seems to indicate that it's only running on the
-oscillator, which would make much more sense.
-
-Thanks,
-Maxime
-
-1: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/439487.h=
-tml
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---ytoMbUMiTKPMT3hY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXc7qtAAoJEBx+YmzsjxAg+gAQAKuIc+HZO+maeW9Ukek80wGz
-6Z+szxNy/rnxw2yv7uB/RNBPeCovY1huC6TTwrpXeKrUnpynRTHt5++CcL0Ps+4Y
-YB+DrTssXiKc9YVHSoCcsZrZrlf85M2Y0jmL8IT6ZOfIdLBKQWc3ODNrgnDRqKu0
-X0mgEI6oTM32XkVXqAR+1n6xKpx1TF9A7WJqFJHAdJ1QxhAzuTvZ8uiAd7BNUREM
-wYfX4/toqj3WuZutpqx+3gRjDLQSmu5GGdcvoXT5nhMH7FxObrBEpLZVydzL4O4n
-aKuM0d5aUJkWJwPDehRCASzcMnqkXZlIj0ve4kPsd6YcA2sW/LN9qjDQY5i/Dwfe
-A0gv+uyVEzeWyEeR/sxWsO/joAG1GxbqPopuqhurHahZoCkd5WoJtOSk+JHY92ib
-2C0Nep4dsGXuM+44AARe8LKKMtEbdQDJVIYTijheZ7bJ0BQnvUBr/DFdH/Bs6Qow
-+fhjXVrpghXhzmKCktbRTpnB96+Hj07hha6iB1pSpB810IhF4v+BXjSvTRBEbpZf
-ifMjFKXAtyEW4nozTlL9RhD7dsQnrQG58Zs3b/OTWTKbaRZh17G/c9XPd6XQEUii
-Z9dUXWd1LFKsNC+B2nFgWtHtIHgn+xWiW+Cud0FrNuSsP6GliOVb2kEbssd5v2ZN
-/Ae9RO6SDMjTiz7o9zaS
-=Mevt
------END PGP SIGNATURE-----
-
---ytoMbUMiTKPMT3hY--
+-- 
+Lin Huang
