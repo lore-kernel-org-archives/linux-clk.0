@@ -1,68 +1,70 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 16 Jun 2016 10:14:41 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] ARM: dts: sun9i: cubieboard4: Order nodes by
- alphabetical order
-Message-ID: <20160616081441.GH5144@lukather>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
- <1465986467-14802-9-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ik0NlRzMGhMnxrMX"
-In-Reply-To: <1465986467-14802-9-git-send-email-wens@csie.org>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/3] clk: samsung: exynos5410: Add WDT,
+ ACLK266 and SSS clocks
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <57555851.6020206@samsung.com>
+Date: Mon, 06 Jun 2016 13:02:41 +0200
+MIME-version: 1.0
+In-reply-to: <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/01/2016 11:45 AM, Krzysztof Kozlowski wrote:
+> Add clock hierarchy for Security SubSystem clock and watchdog.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
---ik0NlRzMGhMnxrMX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A applied patches: 
 
-On Wed, Jun 15, 2016 at 06:27:45PM +0800, Chen-Yu Tsai wrote:
-> Move the &pio node below the mmc nodes for proper ordering by name.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+[PATCH 1/3] dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
+[PATCH 2/3] clk: samsung: exynos5410: Add WDT, ACLK266 and SSS clocks
 
-Applied, thanks!
+[PATCH 1/6] dt-bindings: clock: Add TMU clock ID to Exynos5410
+[PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
 
-Maxime
+And here is a subsequent tag from a stable branch including all 
+the dependency "dt-bindings" patches:
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+------8<------
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
---ik0NlRzMGhMnxrMX
-Content-Type: application/pgp-signature; name="signature.asc"
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+are available in the git repository at:
 
-iQIcBAEBAgAGBQJXYl/xAAoJEBx+YmzsjxAg+rIQAIJic/Ica37/xWQ52n0hfxdm
-NCMUa0uLNknxve8+zrFkLymH8HgebpWC7VJHM9uuycXXcyNOboVjAUzsrO1IHZxq
-SXxROc6fYuEUXVFY0ZO58vDwaK/m5Oo1D3oe+6HRgMbB5c4DVmMy99sxRh5/m93U
-gWWfyHSsLrHuAJBuUgW0y0p26kPcsnstOSO+njZSBOCbzZtty1gSogh5kbVmcGNi
-IburNSZ5k9J7VSFb6hMbQV3L9hwBv+n1jyEWQf/F/cPfZsBAVwlxbMLnI6snrjVm
-si8xwfuqsF7gm7l39qME6P9gtGDGI0a+ffKOT1SQ9ks0qblPGq4+QIJFp8DEJwLp
-oPBa+LkuiOFcJrZdB7fufE/TFQsewpfST5E/G76R6yDM53PBINgfb+zM+J5hs3pa
-StcMjiQ4A6Xy1GJyLr6miqwt/69Re3Ba6ubZnVcWGxeMSkw8cMWbmb2o+Ok1PDmv
-njDqNhBn5zjR1X+Eq9WIVY25eDtX8tL8rTK20kQwoa0Y+7gh3XccjCG0dzUOy6UP
-pOiYDk1CNuFGWjTJtosFxKONUDlQ+6xdyiCVdSy/uMSxZ9czQDKvImXZ19CmyPMb
-2jYHQzb3+prcVHmazcz3iksoqwEqKqepB7F3McjFVXKmmPtHx1W2fIkEqv0hOCHW
-baGgBDXIkZNeyyNfdM6G
-=fciQ
------END PGP SIGNATURE-----
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt-2
 
---ik0NlRzMGhMnxrMX--
+for you to fetch changes up to 4528dd8ed477bf202bd33ee48d38d656672d37f8:
+
+  dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410 (2016-06-02 11:17:55 +0200)
+
+----------------------------------------------------------------
+Adition of missing clock index definitions for exynos5410 SoC:
+PWM, USB, I2C, RTC, PMU, watchdog and the security device related
+clocks.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (5):
+      dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+      dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+      dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+      dt-bindings: clock: Add TMU clock ID to Exynos5410
+      dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
+
+ include/dt-bindings/clock/exynos5410.h | 76 +++++++++++++++++++++++++++------------
+ 1 file changed, 54 insertions(+), 22 deletions(-)
+------8<------
+
+--
+Thanks, 
+Sylwester
