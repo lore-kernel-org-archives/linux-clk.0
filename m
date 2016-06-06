@@ -1,57 +1,56 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 01/15] dt-bindings: sunxi: Add CCU binding documentation
-Date: Tue,  7 Jun 2016 22:41:40 +0200
-Message-Id: <20160607204154.31967-2-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/3] clk: samsung: exynos5410: Add WDT,
+ ACLK266 and SSS clocks
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
+ <57555851.6020206@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <57555AD1.6050403@samsung.com>
+Date: Mon, 06 Jun 2016 13:13:21 +0200
+MIME-version: 1.0
+In-reply-to: <57555851.6020206@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce a new binding with its documentation for the brand new clock
-sub-framework.
+On 06/06/2016 01:02 PM, Sylwester Nawrocki wrote:
+> On 06/01/2016 11:45 AM, Krzysztof Kozlowski wrote:
+>> Add clock hierarchy for Security SubSystem clock and watchdog.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> A applied patches: 
+> 
+> [PATCH 1/3] dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
+> [PATCH 2/3] clk: samsung: exynos5410: Add WDT, ACLK266 and SSS clocks
+> 
+> [PATCH 1/6] dt-bindings: clock: Add TMU clock ID to Exynos5410
+> [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
+> 
+> And here is a subsequent tag from a stable branch including all 
+> the dependency "dt-bindings" patches:
+> 
+> ------8<------
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> 
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt-2
+> 
+> for you to fetch changes up to 4528dd8ed477bf202bd33ee48d38d656672d37f8:
+> 
+>   dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410 (2016-06-02 11:17:55 +0200)
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+Thanks, pulled!
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-new file mode 100644
-index 000000000000..2c66046a1342
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -0,0 +1,17 @@
-+Allwinner Clock Control Unit Binding
-+------------------------------------
-+
-+Required properties :
-+- compatible: must contain one of the following compatible:
-+		- "allwinner,sun8i-h3-ccu"
-+
-+- reg: Must contain the registers base address and length
-+- clocks: phandle to the oscillators feeding the SPI controller. Two are
-+          needed:
-+  - "hosc": the high frequency oscillator (usually at 24MHz)
-+  - "losc": the low frequency oscillator (usually at 32kHz)
-+- clock-names: Must contain the clock names described just above
-+- #clock-cells : must contain 1
-+- #reset-cells : must contain 1
-+
-+Example:
--- 
-2.8.3
+BR,
+Krzysztof
