@@ -1,234 +1,285 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin
- Lo <erin.lo@mediatek.com>
-Subject: [PATCH v9 04/10] dt-bindings: ARM: Mediatek: Document bindings for MT2701
-Date: Wed, 22 Jun 2016 15:40:23 +0800
-Message-ID: <1466581229-2342-5-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	cw00.choi@samsung.com,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH v2 1/6] clk: rockchip: add new clock-type for the ddrclk
+Date: Mon,  6 Jun 2016 18:13:01 +0800
+Message-Id: <1465207986-17888-2-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+On new rockchip platform(rk3399 etc), there have dcf controller to
+do ddr frequency scaling, and this controller will implement in
+arm-trust-firmware. We add a special clock-type to handle that.
 
-This patch adds the binding documentation for apmixedsys, bdpsys,
-ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-vdecsys for Mediatek MT2701.
-
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 ---
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
- 10 files changed, 82 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index 936166f..cb0054a 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -5,7 +5,8 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
+Changes in v2:
+- use GENMASK instead val_mask
+- use divider_recalc_rate() instead DIV_ROUND_UP_ULL
+- cleanup code
+
+Changes in v1:
+- None
+
+ drivers/clk/rockchip/Makefile  |   1 +
+ drivers/clk/rockchip/clk-ddr.c | 145 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c     |   9 +++
+ drivers/clk/rockchip/clk.h     |  27 ++++++++
+ 4 files changed, 182 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-ddr.c
+
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index f47a2fa..b5f2c8e 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
+ obj-y	+= clk-cpu.o
+ obj-y	+= clk-inverter.o
+ obj-y	+= clk-mmc-phase.o
++obj-y	+= clk-ddr.o
+ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
  
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
- 	- "mediatek,mt8173-apmixedsys"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+ obj-y	+= clk-rk3036.o
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
 new file mode 100644
-index 0000000..4137196
+index 0000000..b2ad57f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek bdpsys controller
-+============================
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -0,0 +1,145 @@
++/*
++ * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
++ * Author: Lin Huang <hl@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+The Mediatek bdpsys controller provides various clocks to the system.
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/slab.h>
++#include "clk.h"
 +
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-bdpsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The bdpsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+bdpsys: clock-controller@1c000000 {
-+	compatible = "mediatek,mt2701-bdpsys", "syscon";
-+	reg = <0 0x1c000000 0 0x1000>;
-+	#clock-cells = <1>;
++struct rockchip_ddrclk {
++	struct clk_hw	hw;
++	void __iomem	*reg_base;
++	int		mux_offset;
++	int		mux_shift;
++	int		mux_width;
++	int		mux_flag;
++	int		div_shift;
++	int		div_width;
++	int		div_flag;
++	spinlock_t	*lock;
 +};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-new file mode 100644
-index 0000000..768f3a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek ethsys controller
-+============================
 +
-+The Mediatek ethsys controller provides various clocks to the system.
++#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk, hw)
 +
-+Required Properties:
++static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
++				    unsigned long prate)
++{
++	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	unsigned long flags;
 +
-+- compatible: Should be:
-+	- "mediatek,mt2701-ethsys", "syscon"
-+- #clock-cells: Must be 1
++	spin_lock_irqsave(ddrclk->lock, flags);
 +
-+The ethsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++	/* TODO: set ddr rate in bl31 */
 +
-+Example:
++	spin_unlock_irqrestore(ddrclk->lock, flags);
 +
-+ethsys: clock-controller@1b000000 {
-+	compatible = "mediatek,mt2701-ethsys", "syscon";
-+	reg = <0 0x1b000000 0 0x1000>;
-+	#clock-cells = <1>;
++	return 0;
++}
++
++static unsigned long
++rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
++			    unsigned long parent_rate)
++{
++	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	int val;
++
++	val = clk_readl(ddrclk->reg_base +
++			ddrclk->mux_offset) >> ddrclk->div_shift;
++	val &= GENMASK(ddrclk->div_width - 1, 0);
++	return divider_recalc_rate(hw, parent_rate, val, NULL,
++				   ddrclk->div_flag);
++}
++
++static long clk_ddrclk_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *prate)
++{
++	return rate;
++}
++
++static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
++{
++	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
++	u32 val;
++
++	val = clk_readl(ddrclk->reg_base +
++			ddrclk->mux_offset) >> ddrclk->mux_shift;
++	val &= GENMASK(ddrclk->mux_width - 1, 0);
++
++	if (val >= num_parents)
++		return -EINVAL;
++
++	return val;
++}
++
++static const struct clk_ops rockchip_ddrclk_ops = {
++	.recalc_rate = rockchip_ddrclk_recalc_rate,
++	.set_rate = rockchip_ddrclk_set_rate,
++	.round_rate = clk_ddrclk_round_rate,
++	.get_parent = rockchip_ddrclk_get_parent,
 +};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-new file mode 100644
-index 0000000..beed7b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-@@ -0,0 +1,24 @@
-+Mediatek hifsys controller
-+============================
 +
-+The Mediatek hifsys controller provides various clocks and reset
-+outputs to the system.
++struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
++					 const char *const *parent_names,
++					 u8 num_parents, int mux_offset,
++					 int mux_shift, int mux_width,
++					 int mux_flag, int div_shift,
++					 int div_width, int div_flag,
++					 void __iomem *reg_base,
++					 spinlock_t *lock)
++{
++	struct rockchip_ddrclk *ddrclk;
++	struct clk_init_data init;
++	struct clk *clk;
 +
-+Required Properties:
++	ddrclk = kzalloc(sizeof(*ddrclk), GFP_KERNEL);
++	if (!ddrclk)
++		return ERR_PTR(-ENOMEM);
 +
-+- compatible: Should be:
-+	- "mediatek,mt2701-hifsys", "syscon"
-+- #clock-cells: Must be 1
++	init.name = name;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++	init.ops = &rockchip_ddrclk_ops;
 +
-+The hifsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++	init.flags = flags;
++	init.flags |= CLK_SET_RATE_NO_REPARENT;
++	init.flags |= CLK_GET_RATE_NOCACHE;
 +
-+Example:
++	ddrclk->reg_base = reg_base;
++	ddrclk->lock = lock;
++	ddrclk->hw.init = &init;
++	ddrclk->mux_offset = mux_offset;
++	ddrclk->mux_shift = mux_shift;
++	ddrclk->mux_width = mux_width;
++	ddrclk->mux_flag = mux_flag;
++	ddrclk->div_shift = div_shift;
++	ddrclk->div_width = div_width;
++	ddrclk->div_flag = div_flag;
 +
-+hifsys: clock-controller@1a000000 {
-+	compatible = "mediatek,mt2701-hifsys", "syscon";
-+	reg = <0 0x1a000000 0 0x1000>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index b1f2ce1..f6a9166 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -5,7 +5,8 @@ The Mediatek imgsys controller provides various clocks to the system.
++	clk = clk_register(NULL, &ddrclk->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: could not register ddrclk %s\n", __func__,	name);
++		goto free_ddrclk;
++	}
++
++	return clk;
++
++free_ddrclk:
++	kfree(ddrclk);
++
++	return NULL;
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 7ffd134..6ac1aa5 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -484,6 +484,15 @@ void __init rockchip_clk_register_branches(
+ 				list->gate_offset, list->gate_shift,
+ 				list->gate_flags, flags, &ctx->lock);
+ 			break;
++		case branch_ddrc:
++			clk = rockchip_clk_register_ddrclk(
++				list->name, list->flags,
++				list->parent_names, list->num_parents,
++				list->muxdiv_offset, list->mux_shift,
++				list->mux_width, list->mux_flags,
++				list->div_shift, list->div_width,
++				list->div_flags, ctx->reg_base, &ctx->lock);
++			break;
+ 		}
  
- Required Properties:
+ 		/* none of the cases above matched */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 2194ffa..4033fe4 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -281,6 +281,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift);
  
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
- - #clock-cells: Must be 1
++struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
++			const char *const *parent_names, u8 num_parents,
++			int mux_offset, int mux_shift, int mux_width,
++			int mux_flag, int div_shift, int div_width,
++			int div_flag, void __iomem *reg_base,
++			spinlock_t *lock);
++
+ #define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
  
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index aaf8d14..1620ec2 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -6,7 +6,8 @@ outputs to the system.
+ struct clk *rockchip_clk_register_inverter(const char *name,
+@@ -299,6 +306,7 @@ enum rockchip_clk_branch_type {
+ 	branch_mmc,
+ 	branch_inverter,
+ 	branch_factor,
++	branch_ddrc,
+ };
  
- Required Properties:
+ struct rockchip_clk_branch {
+@@ -488,6 +496,25 @@ struct rockchip_clk_branch {
+ 		.child		= ch,				\
+ 	}
  
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 4385946..67dd2e4 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -5,7 +5,8 @@ The Mediatek mmsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt8173-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-index 2f6ff86..e494366 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-@@ -6,7 +6,8 @@ outputs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-pericfg", "syscon"
- 	- "mediatek,mt8135-pericfg", "syscon"
- 	- "mediatek,mt8173-pericfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index f9e9179..9f2fe78 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -5,7 +5,8 @@ The Mediatek topckgen controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-topckgen"
- 	- "mediatek,mt8135-topckgen"
- 	- "mediatek,mt8173-topckgen"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 1faacf1..2440f73 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -5,7 +5,8 @@ The Mediatek vdecsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
- - #clock-cells: Must be 1
- 
++#define COMPOSITE_DDRC(_id, cname, pnames, f, mo, ms, mw, mf,	\
++			 ds, dw, df)				\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_ddrc,			\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.mux_shift	= ms,				\
++		.mux_width	= mw,				\
++		.mux_flags	= mf,				\
++		.div_shift	= ds,				\
++		.div_width	= dw,				\
++		.div_flags	= df,				\
++		.gate_offset	= -1,				\
++	}
++
+ #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
+ 	{							\
+ 		.id		= _id,				\
 -- 
 1.9.1
