@@ -1,55 +1,51 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f65.google.com ([209.85.220.65]:35823 "EHLO
-	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750794AbcFNQFb (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 12:05:31 -0400
-Date: Tue, 14 Jun 2016 21:35:17 +0530
-From: Afzal Mohammed <afzal.mohd.ma@gmail.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	linux-kernel@vger.kernel.org,
-	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/48] clk: at91: replace usleep() by udelay() calls
-Message-ID: <20160614160517.GA2490@afzalpc>
-References: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
- <11395561.bQatt85IOg@wuerfel>
- <20160613152409.GD3240@piout.net>
+Received: from lucky1.263xmail.com ([211.157.147.131]:33094 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750999AbcFFGTZ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2016 02:19:25 -0400
+Subject: Re: [RFC PATCH v1 4/6] PM / devfreq: event: support rockchip dfi
+ controller
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-5-git-send-email-hl@rock-chips.com>
+ <20160603165426.GC21013@ulmo.ba.sec>
+Cc: heiko@sntech.de, mark.yao@rock-chips.com, myungjoo.ham@samsung.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, airlied@linux.ie,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com, dianders@chromium.org,
+	dbasehore@chromium.org, huangtao@rock-chips.com, typ@rock-chips.com
+From: hl <hl@rock-chips.com>
+Message-ID: <575515E0.8080108@rock-chips.com>
+Date: Mon, 6 Jun 2016 14:19:12 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160613152409.GD3240@piout.net>
+In-Reply-To: <20160603165426.GC21013@ulmo.ba.sec>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Thierry,
 
-On Mon, Jun 13, 2016 at 05:24:09PM +0200, Alexandre Belloni wrote:
-> On 11/06/2016 at 00:30:36 +0200, Arnd Bergmann wrote :
+On 2016年06月04日 00:54, Thierry Reding wrote:
+> On Fri, Jun 03, 2016 at 05:55:17PM +0800, Lin Huang wrote:
+> [...]
+>> +	ret = clk_prepare_enable(data->clk);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to enable clk: %d\n", ret);
+>> +		clk_disable_unprepare(data->clk);
+>> +		return ret;
+>> +	}
+> This is going to give you a large WARN. clk_prepare_enable() already
+> leaves the clock in a proper state when it fails (i.e. it calls
+> clk_unprepare() if the clk_enable() part failed), so calling
+> clk_disable_unprepare() upon failure is going to unbalance the
+> reference counts.
+Thanks for reminding, i will fix it next version.
+>
+> Thierry
 
-> > Does this have to be called that early? It seems wasteful to always
-> > call udelay() here, when these are functions that are normally
-> > allowed to sleep.
+-- 
+Lin Huang
 
-> So I've tested it and something like that would work:
-> 
-> 	if (system_state < SYSTEM_RUNNING)
-> 		udelay(osc->startup_usec);
-> 	else
-> 		usleep_range(osc->startup_usec, osc->startup_usec + 1);
-> 
-> But I'm afraid it would be the first driver to actually do something
-> like that (however, it is already the only driver trying to sleep). 
 
-tglx has suggested to modify clock core to handle a somewhat similar
-kind of scenario (probably should work here too) and avoid driver
-changes,
-
-http://lkml.kernel.org/r/alpine.DEB.2.11.1606061448010.28031@nanos
-
-Regards
-afzal
