@@ -1,85 +1,86 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 21 Jun 2016 11:24:13 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	mark.yao@rock-chips.com,
+	myungjoo.ham@samsung.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 04/15] clk: sunxi-ng: Add fixed factor clock support
-Message-ID: <20160621092413.GP26668@lukather>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
- <20160607204154.31967-5-maxime.ripard@free-electrons.com>
- <20160621011537.GP1521@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FRaepaAnLTQkJ4tS"
-In-Reply-To: <20160621011537.GP1521@codeaurora.org>
+	linux-rockchip@lists.infradead.org,
+	airlied@linux.ie,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com,
+	dianders@chromium.org,
+	dbasehore@chromium.org,
+	cw00.choi@samsung.com,
+	Lin Huang <hl@rock-chips.com>
+Subject: [RFC PATCH v2 3/6] clk: rockchip: rk3399: add ddrc clock support
+Date: Mon,  6 Jun 2016 18:13:03 +0800
+Message-Id: <1465207986-17888-4-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+add ddrc clock setting, so we can do ddr frequency
+scaling on rk3399 platform in future.
 
---FRaepaAnLTQkJ4tS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
 
-Hi Stephen,
+Changes in v2:
+- remove clk_ddrc_dpll_src from critical clock list
 
-On Mon, Jun 20, 2016 at 06:15:37PM -0700, Stephen Boyd wrote:
-> On 06/07, Maxime Ripard wrote:
-> > +
-> > +#include <linux/clk-provider.h>
-> > +
-> > +#include "ccu_common.h"
-> > +
-> > +struct ccu_fixed_factor {
-> > +	u16			div;
-> > +	u16			mult;
-> > +
-> > +	struct ccu_common	common;
->=20
-> Does this use the common structure although we have no usage for
-> the members of struct ccu_common except struct clk_hw? I suppose
-> this is done so registering a bunch of clks is easy?
+Changes in v1:
+- remove ddrc source CLK_IGNORE_UNUSED flag
+- move clk_ddrc and clk_ddrc_dpll_src to critical
 
-Yes, when we discussed this with Mike back at the ELC, he said that he
-really liked the approach you had the qualcomm clocks where you have a
-single array with all the clocks, so I tried to follow that as much as
-possible.
+ drivers/clk/rockchip/clk-rk3399.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Even though it doesn't really make much sense here, indeed.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---FRaepaAnLTQkJ4tS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXaQe9AAoJEBx+YmzsjxAgG8cP/37TVecMg8O3pewe3t/MyUX2
-mfsVCGso6c8U4Q/VoxN+K9gjVNfrMCvA6FsRhHnKTOCcuwwE0H9YlKtCmm6XPevF
-htgzDSc5l/Q1+r3nfSPpxtBxWEhY91SDJ+D149fSgWj5n7/vTW065NhSSTaZHJXo
-oXMuKC0cdlY3i3F+nVPL1gpGqUAJC52vNywh8lbMQapdnkkPBSIQaz3yWZCxEVuw
-tR6lLuar9v4wPElwJeyJkSZHV57Et9SaybwAN4TOYaDQ3OH3zuloSZBA39hK7A7+
-a0MhVAWTUkTfHGHrxxU4qXNN9Wz7A+olpwaq2zsRv+ksu+fcD9XMUnaFAJI0bqOZ
-ydYJqawhHjAEHuqlXJF4f5rg9SQFsoZDOGZOjDwt9yyBH+uQB97Lgnz88bwaPjnC
-qcDB+uiXx5NY5KsAIE2/0L3UHQdCWXDEOXpwolnEsJKlzDyw/MJGtKNePJzRJE+j
-WFyPhgH6MeehZ2jX0Lkgk6vdqKz8CZ5DmHCL7OglrPWEi+C6qimwT1cq5eJ4HjBK
-W1g7Vcp+sxPZSPIqSV0lbgmHW91+UrVO98+Mno+vqV78aEYAA3klT7K/VeL+GyP/
-LnUZC0bbNRwtbumRxVBmrqojU9b8t53lKqvjXpYaoaDVJYOxPEBvBA9JlAjfX5Uk
-mfd83zAKzhxf9Mlgu3Hu
-=JpMU
------END PGP SIGNATURE-----
-
---FRaepaAnLTQkJ4tS--
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index f1d8e44..3291b97 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)				= { "clk_core_b_lpll_src",
+ 						    "clk_core_b_bpll_src",
+ 						    "clk_core_b_dpll_src",
+ 						    "clk_core_b_gpll_src" };
++PNAME(mux_ddrclk_p)				= { "clk_ddrc_lpll_src",
++						    "clk_ddrc_bpll_src",
++						    "clk_ddrc_dpll_src",
++						    "clk_ddrc_gpll_src" };
+ PNAME(mux_aclk_cci_p)				= { "cpll_aclk_cci_src",
+ 						    "gpll_aclk_cci_src",
+ 						    "npll_aclk_cci_src",
+@@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
+ 			RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
+ 			RK3368_CLKGATE_CON(13), 11, GFLAGS),
++
++	/* ddrc */
++	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
++	     0, GFLAGS),
++	GATE(0, "clk_ddrc_bpll_src", "bpll", 0, RK3399_CLKGATE_CON(3),
++	     1, GFLAGS),
++	GATE(0, "clk_ddrc_dpll_src", "dpll", 0, RK3399_CLKGATE_CON(3),
++	     2, GFLAGS),
++	GATE(0, "clk_ddrc_gpll_src", "gpll", 0, RK3399_CLKGATE_CON(3),
++	     3, GFLAGS),
++	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, 0,
++		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
+ };
+ 
+ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+@@ -1487,6 +1503,8 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
+ 	"gpll_hclk_perilp1_src",
+ 	"gpll_aclk_perilp0_src",
+ 	"gpll_aclk_perihp_src",
++	"clk_ddrc",
+ };
+ 
+ static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
+-- 
+1.9.1
