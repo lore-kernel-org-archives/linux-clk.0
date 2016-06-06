@@ -1,50 +1,91 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
-References: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Sat, 18 Jun 2016 23:37:31 +0900
-Message-ID: <CA+Ln22E13nm4nsgWoi6gNc_Jh+UqqE5MgwANH02GZF7bQye+yw@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: Suppress unbinding to prevent theoretical attacks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [PATCH v2 12/13] ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
+Date: Mon,  6 Jun 2016 11:26:31 +0200
+Message-Id: <1465205192-7888-13-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+It is necessary to properly configure these clocks in order
+to address 720p and 1080p HDMI resolution.
 
-2016-05-17 16:26 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> Although unbinding a driver requires root privileges but it still might
-> be used theoretically in certain attacks (by triggering NULL pointer
-> exception or memory corruption if driver does not provide proper remove
-> callbacks or core does not handle it).
->
-> Samsung clock drivers are essential for system operation so their
-> removal is not expected. More over, the Exynos3250 ISP clock driver does
-> not implement remove() driver callback and it is not buildable as
-> modules.
->
-> Suppress the unbind interface for Exynos3250 ISP and S3C2410 DCLK clock
-> drivers.
->
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos3250.c   | 1 +
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 5 +++--
->  2 files changed, 4 insertions(+), 2 deletions(-)
+Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ arch/arm/boot/dts/stih407.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Makes sense. (By the way, I wonder if we ever see a solution for the
-unbind problem with .remove implemented and some resources that can't
-be released at the time .unbind is attempted...)
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/boot/dts/stih407.dtsi b/arch/arm/boot/dts/stih407.dtsi
+index d60f0d8..291ffac 100644
+--- a/arch/arm/boot/dts/stih407.dtsi
++++ b/arch/arm/boot/dts/stih407.dtsi
+@@ -16,7 +16,10 @@
+ 			#size-cells = <1>;
+ 
+ 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
+-					  <&clk_s_d2_quadfs 0>,
++					  <&clk_s_d2_quadfs 1>,
++					  <&clk_s_c0_pll1 0>,
++					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
++					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
+@@ -26,14 +29,21 @@
+ 
+ 			assigned-clock-parents = <0>,
+ 						 <0>,
++						 <0>,
++						 <&clk_s_c0_pll1 0>,
++						 <&clk_s_c0_pll1 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+-						 <&clk_s_d2_quadfs 0>,
++						 <&clk_s_d2_quadfs 1>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>;
+ 
+-			assigned-clock-rates = <297000000>, <297000000>;
++			assigned-clock-rates = <297000000>,
++					       <108000000>,
++					       <0>,
++					       <400000000>,
++					       <400000000>;
+ 
+ 			ranges;
+ 
+-- 
+1.9.1
