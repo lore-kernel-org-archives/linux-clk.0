@@ -1,93 +1,64 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH v2 8/9] tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
-Date: Tue, 28 Jun 2016 11:02:34 +0530
-Message-ID: <20160628053235.5114-9-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
-References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [PATCH v2 11/13] ARM: DT: STiH418: Enable synchronous clock mode for video clocks
+Date: Mon,  6 Jun 2016 11:26:30 +0200
+Message-Id: <1465205192-7888-12-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-When DMA mode is enabled one need to make sure the DMA channels are idle before
-entering suspend mode especially when UART ports which are set as wakeup source
-and console port with no_console_suspend is set. This patch takes care of
-gracefully releasing DMA channels for the above two cases and start the DMA at
-resume.
+This patch enables the synchronous clock mode for video clocks
+on STiH418 board.
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 44 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 27687d5..134090a 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1943,6 +1943,30 @@ static int lpuart_suspend(struct device *dev)
- 	}
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index 96b4d7b..2254fa5 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -271,7 +271,7 @@
  
- 	uart_suspend_port(&lpuart_reg, &sport->port);
-+
-+	if (sport->lpuart_dma_rx_use) {
-+		/*
-+		 * EDMA driver during suspend will forcefully release any
-+		 * non-idle DMA channels. If port wakeup is enabled or if port
-+		 * is console port or 'no_console_suspend' is set the Rx DMA
-+		 * cannot resume as as expected, hence gracefully release the
-+		 * Rx DMA path before suspend and start Rx DMA path on resume.
-+		 */
-+		if (sport->port.irq_wake) {
-+			del_timer_sync(&sport->lpuart_timer);
-+			lpuart_dma_rx_free(&sport->port);
-+		}
-+
-+		/* Disable Rx DMA to use UART port as wakeup source */
-+		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_RDMAS,
-+					sport->port.membase + UARTCR5);
-+	}
-+
-+	if (sport->lpuart_dma_tx_use) {
-+		sport->dma_tx_in_progress = false;
-+		dmaengine_terminate_all(sport->dma_tx_chan);
-+	}
-+
- 	if (sport->port.suspended && !sport->port.irq_wake)
- 		clk_disable_unprepare(sport->clk);
+ 			clk_s_d2_flexgen: clk-s-d2-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-video", "st,flexgen";
  
-@@ -1970,6 +1994,26 @@ static int lpuart_resume(struct device *dev)
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
-+	if (sport->lpuart_dma_rx_use) {
-+		if (sport->port.irq_wake) {
-+			if (!lpuart_start_rx_dma(sport)) {
-+				sport->lpuart_dma_rx_use = true;
-+				rx_dma_timer_init(sport);
-+			} else {
-+				sport->lpuart_dma_rx_use = false;
-+			}
-+		}
-+	}
-+
-+	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
-+			init_waitqueue_head(&sport->dma_wait);
-+			sport->lpuart_dma_tx_use = true;
-+			writeb(readb(sport->port.membase + UARTCR5) |
-+				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
-+	} else {
-+		sport->lpuart_dma_tx_use = false;
-+	}
-+
- 	uart_resume_port(&lpuart_reg, &sport->port);
- 
- 	return 0;
+ 				clocks = <&clk_s_d2_quadfs 0>,
+ 					 <&clk_s_d2_quadfs 1>,
 -- 
-2.9.0
+1.9.1
