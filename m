@@ -1,82 +1,64 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH 2/4] clk: rockchip: rk3399: add ddrc clock support
-Date: Wed,  1 Jun 2016 17:35:37 +0800
-Message-Id: <1464773739-18152-3-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
-References: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [PATCH v2 08/13] ARM: DT: STiH418: Enable clock propagation for audio clocks
+Date: Mon,  6 Jun 2016 11:26:27 +0200
+Message-Id: <1465205192-7888-9-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-add ddrc clock setting, so we can do ddr frequency
-scaling on rk3399 platform in future.
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH418
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- drivers/clk/rockchip/clk-rk3399.c      | 16 ++++++++++++++++
- include/dt-bindings/clock/rk3399-cru.h |  1 +
- 2 files changed, 17 insertions(+)
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index f1d8e44..749ea59 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)				= { "clk_core_b_lpll_src",
- 						    "clk_core_b_bpll_src",
- 						    "clk_core_b_dpll_src",
- 						    "clk_core_b_gpll_src" };
-+PNAME(mux_ddrclk_p)				= { "clk_ddrc_lpll_src",
-+						    "clk_ddrc_bpll_src",
-+						    "clk_ddrc_dpll_src",
-+						    "clk_ddrc_gpll_src" };
- PNAME(mux_aclk_cci_p)				= { "cpll_aclk_cci_src",
- 						    "gpll_aclk_cci_src",
- 						    "npll_aclk_cci_src",
-@@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
- 			RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
- 			RK3368_CLKGATE_CON(13), 11, GFLAGS),
-+
-+	/* ddrc */
-+	GATE(0, "clk_ddrc_lpll_src", "lpll", CLK_IGNORE_UNUSED,
-+	     RK3399_CLKGATE_CON(3), 0, GFLAGS),
-+	GATE(0, "clk_ddrc_bpll_src", "bpll", CLK_IGNORE_UNUSED,
-+	     RK3399_CLKGATE_CON(3), 1, GFLAGS),
-+	GATE(0, "clk_ddrc_dpll_src", "dpll", CLK_IGNORE_UNUSED,
-+	     RK3399_CLKGATE_CON(3), 2, GFLAGS),
-+	GATE(0, "clk_ddrc_gpll_src", "gpll", CLK_IGNORE_UNUSED,
-+	     RK3399_CLKGATE_CON(3), 3, GFLAGS),
-+	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, CLK_IGNORE_UNUSED,
-+		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
- };
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index ae6d997..96b4d7b 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -229,7 +229,7 @@
  
- static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
-diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
-index 50a44cf..8a0f0442 100644
---- a/include/dt-bindings/clock/rk3399-cru.h
-+++ b/include/dt-bindings/clock/rk3399-cru.h
-@@ -131,6 +131,7 @@
- #define SCLK_DPHY_RX0_CFG		165
- #define SCLK_RMII_SRC			166
- #define SCLK_PCIEPHY_REF100M		167
-+#define SCLK_DDRCLK			168
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-audio", "st,flexgen";
  
- #define DCLK_VOP0			180
- #define DCLK_VOP1			181
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
 -- 
 1.9.1
