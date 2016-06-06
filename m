@@ -1,35 +1,101 @@
-Return-Path: <neidhard.kim@lge.com>
-Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
-To: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>
-References: <20160621005910.GN1521@codeaurora.org>
- <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
- <20160628205518.GF3737@rob-hp-laptop>
- <146714872010.89261.1969853552594659808@resonance>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chanho Min <chanho.min@lge.com>
-From: Jongsung Kim <neidhard.kim@lge.com>
-Message-ID: <5773736D.3060405@lge.com>
-Date: Wed, 29 Jun 2016 16:06:21 +0900
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.135]:35224 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750763AbcFFD0A (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2016 23:26:00 -0400
+Subject: Re: [RFC PATCH v1 3/6] clk: rockchip: rk3399: add ddrc clock support
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+ <1464947719-6245-4-git-send-email-hl@rock-chips.com>
+ <13084747.Amq298iRsd@diego>
+Cc: mark.yao@rock-chips.com, myungjoo.ham@samsung.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, airlied@linux.ie,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kyungmin.park@samsung.com, dianders@chromium.org,
+	dbasehore@chromium.org, huangtao@rock-chips.com, typ@rock-chips.com
+From: hl <hl@rock-chips.com>
+Message-ID: <5754ED27.1070402@rock-chips.com>
+Date: Mon, 6 Jun 2016 11:25:27 +0800
 MIME-Version: 1.0
-In-Reply-To: <146714872010.89261.1969853552594659808@resonance>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <13084747.Amq298iRsd@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016년 06월 29일 06:18, Michael Turquette wrote:
-> Quoting Rob Herring (2016-06-28 13:55:18)
->> On Fri, Jun 24, 2016 at 01:12:52PM +0900, Jongsung Kim wrote:
->>> There is no way to set additional flags for a DT-initialized fixed-
->>> factor-clock, and it can be problematic i.e., when the clock rate
->>> needs to be changed. [1][2]
->>>
->>> This patch introduces an optional dt-binding named "clock-flags" to
->>> be used for passing any needed flags from dts.
->> I don't think we want this in DT. If we did, the flags would need some 
->> documentation about what the flags mean.
-> Flags are specific to Linux implementation, so I agree with Rob. Better
-> to create a compatible string for your hardware that bakes in the flags.
+Hi Heiko,
 
-Thank you for your comment, Mike. This conversation starts from lacking method to set CLK_SET_RATE_PARENT from DT. I understand compatible string can be a solution. But.. if someone starts talking about lacking method to set another flag, i.e., CLK_SET_PARENT_GATE, then we'll need another compatible string list.
-How do you think about defining possible required subset of the flags and using some more neutral flag-names acceptable in DT?
+On 2016年06月03日 20:56, Heiko Stübner wrote:
+> Am Freitag, 3. Juni 2016, 17:55:16 schrieb Lin Huang:
+>> add ddrc clock setting, so we can do ddr frequency
+>> scaling on rk3399 platform in future.
+>>
+>> Signed-off-by: Lin Huang <hl@rock-chips.com>
+>> ---
+>> Changes in v1:
+>> - remove ddrc source CLK_IGNORE_UNUSED flag, Suggestion by Doug
+>> - move clk_ddrc and clk_ddrc_dpll_src to critical, Suggestion by Doug
+>>
+>>   drivers/clk/rockchip/clk-rk3399.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3399.c
+>> b/drivers/clk/rockchip/clk-rk3399.c index f1d8e44..29afb88 100644
+>> --- a/drivers/clk/rockchip/clk-rk3399.c
+>> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> [...]
+>
+>> @@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch
+>> rk3399_clk_branches[] __initdata = { COMPOSITE_NOMUX(0, "clk_test",
+>> "clk_test_pre", CLK_IGNORE_UNUSED, RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
+>>   			RK3368_CLKGATE_CON(13), 11, GFLAGS),
+>> +
+>> +	/* ddrc */
+>> +	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
+>> +	     0, GFLAGS),
+>> +	GATE(0, "clk_ddrc_bpll_src", "bpll", 0, RK3399_CLKGATE_CON(3),
+>> +	     1, GFLAGS),
+>> +	GATE(0, "clk_ddrc_dpll_src", "dpll", 0, RK3399_CLKGATE_CON(3),
+>> +	     2, GFLAGS),
+>> +	GATE(0, "clk_ddrc_gpll_src", "gpll", 0, RK3399_CLKGATE_CON(3),
+>> +	     3, GFLAGS),
+>> +	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, 0,
+>> +		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
+>>   };
+> as said in the other patch, just make this a regular COMPOSITE_NOGATE with
+> CLK_DIVIDER_READ_ONLY | CLK_MUX_READ_ONLY until that interface to the ATF
+> exists and is approved.
+>
+> That way you can still read back the clock rate without anything changing the
+> clock-rate, but we don't need to add duplicate code for it.
+>
+>
+>>   static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
+>> @@ -1487,6 +1503,10 @@ static const char *const rk3399_cru_critical_clocks[]
+>> __initconst = { "gpll_hclk_perilp1_src",
+>>   	"gpll_aclk_perilp0_src",
+>>   	"gpll_aclk_perihp_src",
+>> +
+>> +	/* ddrc */
+>> +	"clk_ddrc_dpll_src",
+> Why does your clk_ddrc_dpll_src need a separate critical entry. Any code
+> changing the clk_ddrc parent should make sure the new parent is enabled. (The
+> clock-framework of course does this already).
+     Okay, thank you.
+>
+>> +	"clk_ddrc",
+>>   };
+>>
+>>   static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
+>
+> Heiko
+>
+>
+>
+>
+
+-- 
+Lin Huang
+
+
