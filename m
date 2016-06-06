@@ -1,162 +1,350 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock
- Definitions
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
- <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
- <574C6C16.3020703@gmail.com>
- <6b57d59f-d17b-a6c3-41d5-e975db544adc@de.bosch.com>
- <CAMuHMdWByGTDcG62qTg5N69FACx4FiuVuRrF_woyFAoNOpbjSw@mail.gmail.com>
- <77a45dc7-59f0-23fc-f30d-b3daab34d689@de.bosch.com>
- <CAMuHMdW6kTMQoVO15Eve2Er5pfSiEc4LkwvQ72WU1LmdSK+CxQ@mail.gmail.com>
- <94042cf8-5364-8426-a5de-b83fe291fee1@de.bosch.com>
- <CAMuHMdVBu-ecbisZWfx0uKMx=M0zjT+u=j-uF=85_gaDt2u7Jg@mail.gmail.com>
- <743e32de-037b-de4d-98c3-ea7a2738343a@de.bosch.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Simon Horman
-	<horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk
-	<linux-clk@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, TOSHIAKI KOMATSU
-	<toshiaki.komatsu.ud@renesas.com>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <3db87dd5-23a0-56c9-27b5-efac9f8d8023@de.bosch.com>
-Date: Wed, 29 Jun 2016 09:58:55 +0200
-MIME-Version: 1.0
-In-Reply-To: <743e32de-037b-de4d-98c3-ea7a2738343a@de.bosch.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [PATCH v2 02/13] drivers: clk: st: Simplify clock binding of STiH4xx platforms
+Date: Mon,  6 Jun 2016 11:26:21 +0200
+Message-Id: <1465205192-7888-3-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+This patch reworks the clock binding to avoid too much detail in DT.
+Now we have only compatible string per type of clock
+(remark from Rob https://lkml.org/lkml/2016/5/25/492)
 
-On 10.06.2016 08:34, Dirk Behme wrote:
-> Hi Geert,
->
-> On 09.06.2016 10:54, Geert Uytterhoeven wrote:
->> Hi Dirk,
->>
->> On Thu, Jun 9, 2016 at 10:31 AM, Dirk Behme <dirk.behme@de.bosch.com>
->> wrote:
->>> On 07.06.2016 10:17, Geert Uytterhoeven wrote:
->>>> On Tue, Jun 7, 2016 at 9:53 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>>> wrote:
->>>>>
->>>>> I think I just want to discuss if we have a clever idea to further
->>>>> improve
->>>>> one detail. That is, if we have a clever idea to avoid the copy &
->>>>> paste
->>>>> between the family members using anything like a hierarchical way of
->>>>> defining the clocks in r8a779x-cpg-mssr.h.
->>>>>
->>>>>> Given the small amount of work needed to bootstrap r8a7796, I
->>>>>> think they still hold on their promises.
->>>>>
->>>>> Well, regarding the r8a779x-cpg-mssr.h the small amount of work needed
->>>>> isn't
->>>>> a really good argument if you are good with cp & sed for the copy &
->>>>> paste
->>>>> done ;)
->>>>
->>>> They're not really created by cp & sed, as they must match the table in
->>>> the
->>>> datasheet (the latter may have been created by copy & paste though :-)
->>>>
->>>>> What I fear we end up the way we are doing the copy & paste
->>>>> r8a779x-cpg-mssr.h is having 5 or 6 or even more of these files, all >
->>>>> 90%
->>>>> identical. And once you have to change anything, you either have to
->>>>> change
->>>>> all these files. Or you miss anything, ending up with subtle bugs when
->>>>> one
->>>>> SoC does behave differently than an other one.
->>>>
->>>> The point is these files are stable ABI: no single value can be
->>>> changed.
->>>> No value can be reused. Only new values can be appended at the bottom
->>>> (if a newer revision of the datasheet documents more clocks than the
->>>> old
->>>>  version, which happens from time to time).
->>>>
->>>> IMHO a hierarchical way of defining the clocks has more opportunity of
->>>> accidentally referring to a clock that doesn't exist on a particular
->>>> SoC.
->>>>
->>>> Furthermore, r8a779x-cpg-mssr.h is not a good name to be part of a DT
->>>> binding,
->>>> due to the wildcard.
->>>> A future SoC may will match r8a779x and even be called (R-Car
->>>> <something>3?),
->>>> while using a completely different CPG block.
->>>
->>> Just to give an example about what we are talking, I've done [1]
->>> below. This
->>> should just be an *example*, though. I'm sure that we might need a more
->>> clever way.
->>
->> Thanks, it matches with what I had in mind what you wanted to do ;-)
->>
->>> --- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
->>> +++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
->>
->>> +#include <dt-bindings/clock/rcar3-cpg-mssr.h>
->>
->>> +#define R8A7796_CLK_ZB3D4              47
->>> +#define R8A7796_CLK_S0D2               48
->>> +#define R8A7796_CLK_S0D3               49
->>> +#define R8A7796_CLK_S0D6               50
->>> +#define R8A7796_CLK_S0D8               51
->>> +#define R8A7796_CLK_S0D12              53
->>
->> This means on M3-W, clocks may have different prefixes:
->>   - RCAR3_CLK_* if they are defined as common R-Car Gen3 clocks,
->>   - R8A7796_CLK_* if they are defined as M3-W-specific clocks.
->>
->> Not such a big issue, it that can be worked around using
->>
->>     #define R8A7796_CLK_Z RCAR3_CLK_Z
->>     [...]
->>
->>> +++ b/include/dt-bindings/clock/rcar3-cpg-mssr.h
->>> @@ -0,0 +1,63 @@
->>> +/*
->>> + * Copyright (C) 2015 Renesas Electronics Corp.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License as published by
->>> + * the Free Software Foundation; either version 2 of the License, or
->>> + * (at your option) any later version.
->>> + */
->>> +#ifndef __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
->>> +#define __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
->>> +
->>> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
->>> +
->>> +/* RCar3 CPG Core Clocks */
->>> +#define RCAR3_CLK_Z            0
->>> +#define RCAR3_CLK_Z2           1
->>> +#define RCAR3_CLK_ZR           2
->>> +#define RCAR3_CLK_ZG           3
->>> +#define RCAR3_CLK_ZTR          4
->>> +#define RCAR3_CLK_ZTRD2                5
->>
->> While this approach allows to add SoC-specific clocks to the
->> family-specific
->> base list, it does not allow to remove family-specific clocks that are
->> not
->> present on unknown future species of the family.
->
->
-> If I answer with
->
-> #undef
->
-> that would be too easy? ;)
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  2 +-
+ .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
+ .../devicetree/bindings/clock/st/st,clkgen.txt     |  2 +-
+ .../devicetree/bindings/clock/st/st,quadfs.txt     |  6 +--
+ drivers/clk/st/clkgen-fsyn.c                       | 41 ++++++--------
+ drivers/clk/st/clkgen-mux.c                        | 28 ++++------
+ drivers/clk/st/clkgen-pll.c                        | 62 ++++++++++------------
+ 7 files changed, 65 insertions(+), 87 deletions(-)
 
-
-How do we continue the discussion about a hierarchical structure of the 
-RCar3 CPG clock definitions?
-
-
-Best regards
-
-Dirk
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+index 4d277d6..9a46cb1d7 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+@@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
+ Required properties:
+ 
+ - compatible : shall be:
+-	"st,stih407-clkgen-a9-mux",	"st,clkgen-mux"
++	"st,stih407-clkgen-a9-mux"
+ 
+ - #clock-cells : from common clock binding; shall be set to 0.
+ 
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+index c9fd674..be0b043 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+@@ -9,11 +9,10 @@ Base address is located to the parent node. See clock binding[2]
+ Required properties:
+ 
+ - compatible : shall be:
+-	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
+-	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+-	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
+-	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
+-	"st,stih418-plls-c28-a9",	"st,clkgen-plls-c32"
++	"st,clkgen-pll0"
++	"st,clkgen-pll0"
++	"st,stih407-clkgen-plla9"
++	"st,stih418-clkgen-plla9"
+ 
+ - #clock-cells : From common clock binding; shall be set to 1.
+ 
+@@ -29,7 +28,7 @@ Example:
+ 
+ 		clockgen_a9_pll: clockgen-a9-pll {
+ 			#clock-cells = <1>;
+-			compatible = "st,stih407-plls-c32-a9", "st,clkgen-plls-c32";
++			compatible = "st,stih407-clkgen-plla9";
+ 
+ 			clocks = <&clk_sysin>;
+ 
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen.txt
+index c764d6b..c35390f 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen.txt
+@@ -48,7 +48,7 @@ Example:
+ 
+ 		clk_s_a0_pll: clk-s-a0-pll {
+ 			#clock-cells = <1>;
+-			compatible = "st,stih407-plls-c32-a0", "st,clkgen-plls-c32";
++			compatible = "st,clkgen-pll0";
+ 
+ 			clocks = <&clk_sysin>;
+ 
+diff --git a/Documentation/devicetree/bindings/clock/st/st,quadfs.txt b/Documentation/devicetree/bindings/clock/st/st,quadfs.txt
+index 6d81b11..d93d493 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,quadfs.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,quadfs.txt
+@@ -11,8 +11,8 @@ This binding uses the common clock binding[1].
+ 
+ Required properties:
+ - compatible : shall be:
+-  "st,stih407-quadfs660-C",	"st,quadfs"
+-  "st,stih407-quadfs660-D",	"st,quadfs"
++  "st,quadfs"
++  "st,quadfs-pll"
+ 
+ 
+ - #clock-cells : from common clock binding; shall be set to 1.
+@@ -33,7 +33,7 @@ Example:
+ 
+ 	clk_s_c0_quadfs: clk-s-c0-quadfs@9103000 {
+ 		#clock-cells = <1>;
+-		compatible = "st,stih407-quadfs660-C", "st,quadfs";
++		compatible = "st,quadfs-pll";
+ 		reg = <0x9103000 0x1000>;
+ 
+ 		clocks = <&clk_sysin>;
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index 4f43b2e..53fd047 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -819,18 +819,6 @@ static struct clk * __init st_clk_register_quadfs_fsynth(
+ 	return clk;
+ }
+ 
+-static const struct of_device_id quadfs_of_match[] = {
+-	{
+-		.compatible = "st,stih407-quadfs660-C",
+-		.data = &st_fs660c32_C
+-	},
+-	{
+-		.compatible = "st,stih407-quadfs660-D",
+-		.data = &st_fs660c32_D
+-	},
+-	{}
+-};
+-
+ static void __init st_of_create_quadfs_fsynths(
+ 		struct device_node *np, const char *pll_name,
+ 		struct clkgen_quadfs_data *quadfs, void __iomem *reg,
+@@ -886,18 +874,14 @@ static void __init st_of_create_quadfs_fsynths(
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+ }
+ 
+-static void __init st_of_quadfs_setup(struct device_node *np)
++static void __init st_of_quadfs_setup(struct device_node *np,
++		struct clkgen_quadfs_data *data)
+ {
+-	const struct of_device_id *match;
+ 	struct clk *clk;
+ 	const char *pll_name, *clk_parent_name;
+ 	void __iomem *reg;
+ 	spinlock_t *lock;
+ 
+-	match = of_match_node(quadfs_of_match, np);
+-	if (WARN_ON(!match))
+-		return;
+-
+ 	reg = of_iomap(np, 0);
+ 	if (!reg)
+ 		return;
+@@ -916,8 +900,8 @@ static void __init st_of_quadfs_setup(struct device_node *np)
+ 
+ 	spin_lock_init(lock);
+ 
+-	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name,
+-			(struct clkgen_quadfs_data *) match->data, reg, lock);
++	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, data,
++			reg, lock);
+ 	if (IS_ERR(clk))
+ 		goto err_exit;
+ 	else
+@@ -926,11 +910,20 @@ static void __init st_of_quadfs_setup(struct device_node *np)
+ 			__clk_get_name(clk_get_parent(clk)),
+ 			(unsigned int)clk_get_rate(clk));
+ 
+-	st_of_create_quadfs_fsynths(np, pll_name,
+-				    (struct clkgen_quadfs_data *)match->data,
+-				    reg, lock);
++	st_of_create_quadfs_fsynths(np, pll_name, data, reg, lock);
+ 
+ err_exit:
+ 	kfree(pll_name); /* No longer need local copy of the PLL name */
+ }
+-CLK_OF_DECLARE(quadfs, "st,quadfs", st_of_quadfs_setup);
++
++static void __init st_of_quadfs660C_setup(struct device_node *np)
++{
++	st_of_quadfs_setup(np, (struct clkgen_quadfs_data *) &st_fs660c32_C);
++}
++CLK_OF_DECLARE(quadfs660C, "st,quadfs-pll", st_of_quadfs660C_setup);
++
++static void __init st_of_quadfs660D_setup(struct device_node *np)
++{
++	st_of_quadfs_setup(np, (struct clkgen_quadfs_data *) &st_fs660c32_D);
++}
++CLK_OF_DECLARE(quadfs660D, "st,quadfs", st_of_quadfs660D_setup);
+diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+index 6fdb1ab..c514d39 100644
+--- a/drivers/clk/st/clkgen-mux.c
++++ b/drivers/clk/st/clkgen-mux.c
+@@ -53,29 +53,13 @@ static struct clkgen_mux_data stih407_a9_mux_data = {
+ 	.lock = &clkgen_a9_lock,
+ };
+ 
+-static const struct of_device_id mux_of_match[] = {
+-	{
+-		.compatible = "st,stih407-clkgen-a9-mux",
+-		.data = &stih407_a9_mux_data,
+-	},
+-	{}
+-};
+-static void __init st_of_clkgen_mux_setup(struct device_node *np)
++static void __init st_of_clkgen_mux_setup(struct device_node *np,
++		struct clkgen_mux_data *data)
+ {
+-	const struct of_device_id *match;
+ 	struct clk *clk;
+ 	void __iomem *reg;
+ 	const char **parents;
+ 	int num_parents = 0;
+-	const struct clkgen_mux_data *data;
+-
+-	match = of_match_node(mux_of_match, np);
+-	if (!match) {
+-		pr_err("%s: No matching data\n", __func__);
+-		return;
+-	}
+-
+-	data = match->data;
+ 
+ 	reg = of_iomap(np, 0);
+ 	if (!reg) {
+@@ -112,4 +96,10 @@ err:
+ err_parents:
+ 	iounmap(reg);
+ }
+-CLK_OF_DECLARE(clkgen_mux, "st,clkgen-mux", st_of_clkgen_mux_setup);
++
++static void __init st_of_clkgen_a9_mux_setup(struct device_node *np)
++{
++	st_of_clkgen_mux_setup(np, &stih407_a9_mux_data);
++}
++CLK_OF_DECLARE(clkgen_a9mux, "st,stih407-clkgen-a9-mux",
++		st_of_clkgen_a9_mux_setup);
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 224ce9f..8dea6ab 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -702,47 +702,17 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
+ 	return clk;
+ }
+ 
+-static const struct of_device_id c32_pll_of_match[] = {
+-	{
+-		.compatible = "st,stih407-plls-c32-a0",
+-		.data = &st_pll3200c32_407_a0,
+-	},
+-	{
+-		.compatible = "st,plls-c32-cx_0",
+-		.data = &st_pll3200c32_cx_0,
+-	},
+-	{
+-		.compatible = "st,plls-c32-cx_1",
+-		.data = &st_pll3200c32_cx_1,
+-	},
+-	{
+-		.compatible = "st,stih407-plls-c32-a9",
+-		.data = &st_pll3200c32_407_a9,
+-	},
+-	{
+-		.compatible = "st,stih418-plls-c28-a9",
+-		.data = &st_pll4600c28_418_a9,
+-	},
+-	{}
+-};
+ 
+-static void __init clkgen_c32_pll_setup(struct device_node *np)
++static void __init clkgen_c32_pll_setup(struct device_node *np,
++		struct clkgen_pll_data *data)
+ {
+-	const struct of_device_id *match;
+ 	struct clk *clk;
+ 	const char *parent_name, *pll_name;
+ 	void __iomem *pll_base;
+ 	int num_odfs, odf;
+ 	struct clk_onecell_data *clk_data;
+-	struct clkgen_pll_data	*data;
+ 
+-	match = of_match_node(c32_pll_of_match, np);
+-	if (!match) {
+-		pr_err("%s: No matching data\n", __func__);
+-		return;
+-	}
+ 
+-	data = (struct clkgen_pll_data *) match->data;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 	if (!parent_name)
+@@ -796,4 +766,30 @@ err:
+ 	kfree(clk_data->clks);
+ 	kfree(clk_data);
+ }
+-CLK_OF_DECLARE(clkgen_c32_pll, "st,clkgen-plls-c32", clkgen_c32_pll_setup);
++static void __init clkgen_c32_pll0_setup(struct device_node *np)
++{
++	clkgen_c32_pll_setup(np,
++			(struct clkgen_pll_data *) &st_pll3200c32_cx_0);
++}
++CLK_OF_DECLARE(c32_pll0, "st,clkgen-pll0", clkgen_c32_pll0_setup);
++
++static void __init clkgen_c32_pll1_setup(struct device_node *np)
++{
++	clkgen_c32_pll_setup(np,
++			(struct clkgen_pll_data *) &st_pll3200c32_cx_1);
++}
++CLK_OF_DECLARE(c32_pll1, "st,clkgen-pll1", clkgen_c32_pll1_setup);
++
++static void __init clkgen_c32_plla9_setup(struct device_node *np)
++{
++	clkgen_c32_pll_setup(np,
++			(struct clkgen_pll_data *) &st_pll3200c32_407_a9);
++}
++CLK_OF_DECLARE(c32_plla9, "st,stih407-clkgen-plla9", clkgen_c32_plla9_setup);
++
++static void __init clkgen_c28_plla9_setup(struct device_node *np)
++{
++	clkgen_c32_pll_setup(np,
++			(struct clkgen_pll_data *) &st_pll4600c28_418_a9);
++}
++CLK_OF_DECLARE(c28_plla9, "st,stih418-clkgen-plla9", clkgen_c28_plla9_setup);
+-- 
+1.9.1
