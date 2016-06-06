@@ -1,99 +1,64 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V2 3/8] clk: core: support clocks which requires parents enable (part 1)
-Date: Wed, 29 Jun 2016 22:59:06 +0800
-Message-ID: <1467212351-16626-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [PATCH v2 10/13] ARM: DT: STiH410: Enable synchronous clock mode for video clocks
+Date: Mon,  6 Jun 2016 11:26:29 +0200
+Message-Id: <1465205192-7888-11-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Freescale i.MX7D platform, all clocks operations, including
-enable/disable, rate change and re-parent, requires its parent
-clock enable. Current clock core can not support it well.
-This patch introduce a new flag CLK_OPS_PARENT_ENABLE to handle this
-special case in clock core that enable its parent clock firstly for
-each operation and disable it later after operation complete.
+This patch enables the synchronous clock mode for video clocks
+on STiH410 board.
 
-The patch part 1 fixes the possible disabling clocks while its parent
-is off during kernel booting phase in clk_disable_unused_subtree().
-
-Before the completion of kernel booting, clock tree is still not built
-completely, there may be a case that the child clock is on but its
-parent is off which could be caused by either HW initial reset state
-or bootloader initialization.
-
-Taking bootloader as an example, we may enable all clocks in HW by default.
-And during kernel booting time, the parent clock could be disabled in its
-driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
-Because it's child clock is only enabled in HW while its SW usecount
-in clock tree is still 0, so clk_disable of parent clock will gate
-the parent clock in both HW and SW usecount ultimately. Then there will
-be a child clock is still on in HW but its parent is already off.
-
-Later in clk_disable_unused(), this clock disable accessing while its
-parent off will cause system hang due to the limitation of HW which
-must require its parent on.
-
-This patch simply enables the parent clock first before disabling
-if flag CLK_OPS_PARENT_ENABLE is set in clk_disable_unused_subtree().
-This is a simple solution and only affects booting time.
-
-After kernel booting up the clock tree is already created, there will
-be no case that child is off but its parent is off.
-So no need do this checking for normal clk_disable() later.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- drivers/clk/clk.c            | 5 +++++
- include/linux/clk-provider.h | 2 ++
- 2 files changed, 7 insertions(+)
+ arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e2e8f0c9f20a..e3bd28c9ef28 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		clk_disable_unused_subtree(child);
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index 5a9a487..f1d56ba 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -268,7 +268,7 @@
  
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_prepare_enable(core->parent);
-+
- 	flags = clk_enable_lock();
+ 			clk_s_d2_flexgen: clk-s-d2-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-video", "st,flexgen";
  
- 	if (core->enable_count)
-@@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 
- unlock_out:
- 	clk_enable_unlock(flags);
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_disable_unprepare(core->parent);
- }
- 
- static bool clk_ignore_unused;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index fb39d5add173..d87837360254 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -33,6 +33,8 @@
- #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
- #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
- #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
-+/* parents need enable during gate/ungate, set rate and re-parent */
-+#define CLK_OPS_PARENT_ENABLE	BIT(12)
- 
- struct clk;
- struct clk_hw;
+ 				clocks = <&clk_s_d2_quadfs 0>,
+ 					 <&clk_s_d2_quadfs 1>,
 -- 
 1.9.1
