@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 4/5] clk: hisilicon: add hisi_clk_unregister_* functions
-Date: Wed, 15 Jun 2016 14:26:37 +0800
-Message-ID: <1465971998-29619-5-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [PATCH v2 07/13] ARM: DT: STiH410: Enable clock propagation for audio clocks
+Date: Mon,  6 Jun 2016 11:26:26 +0200
+Message-Id: <1465205192-7888-8-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add hisi_clk_unregister_* functions.
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH410
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- drivers/clk/hisilicon/clk.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 2575329..4e1d1af 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -128,4 +128,25 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
- 				int, struct hisi_clock_data *);
-+
-+#define hisi_clk_unregister(type) \
-+static inline \
-+void hisi_clk_unregister_##type(const struct hisi_##type##_clock *clks, \
-+				int nums, struct hisi_clock_data *data) \
-+{ \
-+	struct clk **clocks = data->clk_data.clks; \
-+	int i; \
-+	for (i = 0; i < nums; i++) { \
-+		int id = clks[i].id; \
-+		if (clocks[id])  \
-+			clk_unregister_##type(clocks[id]); \
-+	} \
-+}
-+
-+hisi_clk_unregister(fixed_rate)
-+hisi_clk_unregister(fixed_factor)
-+hisi_clk_unregister(mux)
-+hisi_clk_unregister(divider)
-+hisi_clk_unregister(gate)
-+
- #endif	/* __HISI_CLK_H */
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index d1f2aca..5a9a487 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -226,7 +226,7 @@
+ 
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-audio", "st,flexgen";
+ 
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
 -- 
 1.9.1
