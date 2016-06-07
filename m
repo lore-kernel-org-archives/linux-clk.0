@@ -1,84 +1,45 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com,
+	maxime.coquelin@st.com,
+	patrice.chotard@st.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	broonie@kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Tang <dt.tangr@gmail.com>
-Subject: [PATCH 21/34] clk: nspire: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:20 -0700
-Message-Id: <20160601231533.9354-22-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+	linux-spi@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 0/6] clk: sti: Add support for critical clocks
+Date: Tue,  7 Jun 2016 12:19:24 +0100
+Message-Id: <20160607111930.10375-1-lee.jones@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Describe the platform's critical clocks in DT, then search for them
+from the framework.  This set allows us to remove the clk_ignore_unused
+kernel command line flag which has been required to achieve a successful
+boot to prompt until this point.
 
-Cc: Daniel Tang <dt.tangr@gmail.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
+This may not be the definitive list.  There may be other clocks which
+need to be marked as critical, but we can add those as we go along.
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+Lee Jones (6):
+  clk: st: clk-flexgen: Detect critical clocks
+  clk: st: clkgen-fsyn: Detect critical clocks
+  clk: st: clkgen-pll: Detect critical clocks
+  ARM: sti: stih407-family: Supply defines for CLOCKGEN A0
+  ARM: sti: stih410-clocks: Identify critical clocks
+  spi: st-ssc4: Remove 'no clocking' hack
 
- drivers/clk/clk-nspire.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/stih410-clock.dtsi     |  9 ++++++++
+ drivers/clk/st/clk-flexgen.c             |  4 +++-
+ drivers/clk/st/clkgen-fsyn.c             | 10 ++++++---
+ drivers/clk/st/clkgen-pll.c              | 27 +++++++++++++++---------
+ drivers/spi/spi-st-ssc4.c                | 36 +++++---------------------------
+ include/dt-bindings/clock/stih407-clks.h |  4 ++++
+ 6 files changed, 45 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/clk/clk-nspire.c b/drivers/clk/clk-nspire.c
-index 64f196a90816..f861011d5d21 100644
---- a/drivers/clk/clk-nspire.c
-+++ b/drivers/clk/clk-nspire.c
-@@ -69,7 +69,7 @@ static void __init nspire_ahbdiv_setup(struct device_node *node,
- {
- 	u32 val;
- 	void __iomem *io;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	const char *clk_name = node->name;
- 	const char *parent_name;
- 	struct nspire_clk_info info;
-@@ -85,10 +85,10 @@ static void __init nspire_ahbdiv_setup(struct device_node *node,
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 	parent_name = of_clk_get_parent_name(node, 0);
- 
--	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
--					1, info.base_ahb_ratio);
--	if (!IS_ERR(clk))
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	hw = clk_hw_register_fixed_factor(NULL, clk_name, parent_name, 0,
-+					  1, info.base_ahb_ratio);
-+	if (!IS_ERR(hw))
-+		of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
- }
- 
- static void __init nspire_ahbdiv_setup_cx(struct device_node *node)
-@@ -111,7 +111,7 @@ static void __init nspire_clk_setup(struct device_node *node,
- {
- 	u32 val;
- 	void __iomem *io;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	const char *clk_name = node->name;
- 	struct nspire_clk_info info;
- 
-@@ -125,9 +125,10 @@ static void __init nspire_clk_setup(struct device_node *node,
- 
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
--	clk = clk_register_fixed_rate(NULL, clk_name, NULL, 0, info.base_clock);
--	if (!IS_ERR(clk))
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	hw = clk_hw_register_fixed_rate(NULL, clk_name, NULL, 0,
-+					info.base_clock);
-+	if (!IS_ERR(hw))
-+		of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
- 	else
- 		return;
- 
 -- 
-2.7.4
+2.8.3
