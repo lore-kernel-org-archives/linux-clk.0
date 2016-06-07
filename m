@@ -1,52 +1,60 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [RESEND PATCHv2 03/28] ARM: OMAP2+: omap_device: create clock
- alias purely from DT data
-To: Tony Lindgren <tony@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-4-git-send-email-t-kristo@ti.com>
- <20160628070011.GD28140@atomide.com> <577373F0.5080700@ti.com>
- <5773745A.6020307@ti.com> <20160629075446.GK28140@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <57738E43.6060706@ti.com>
-Date: Wed, 29 Jun 2016 12:00:51 +0300
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+Subject: Re: [PATCH] clk: iproc: fix missing include of clk-iproc.h
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-kernel@lists.codethink.co.uk
+References: <1465317150-12704-1-git-send-email-ben.dooks@codethink.co.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Ray Jui <rjui@broadcom.com>,
+ Jon Mason <jonmason@broadcom.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <70201ca4-acf3-2473-f770-b105a60b2840@broadcom.com>
+Date: Tue, 7 Jun 2016 09:36:42 -0700
 MIME-Version: 1.0
-In-Reply-To: <20160629075446.GK28140@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <1465317150-12704-1-git-send-email-ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29/06/16 10:54, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [160629 00:13]:
->> On 29/06/16 10:08, Tero Kristo wrote:
->>> On 28/06/16 10:00, Tony Lindgren wrote:
->>>> * Tero Kristo <t-kristo@ti.com> [160613 12:07]:
->>>>> This avoids the need to add most of the clock aliases under
->>>>> drivers/clk/ti/clk-xyz.c files.
->>>>
->>>> This is a nice improvment, probably best to queu this along
->>>> with the rest of the series via the clock tree:
->>>>
->>>> Acked-by: Tony Lindgren <tony@atomide.com>
->>>>
->>>> Or please let me know if you want me to pick this separately.
->>>>
->>>> Regards,
->>>>
->>>> Tony
->>>>
->>>
->>> Patches #3, #6, #7, #8 you can pick up separately (but you will have
->>> some conflicts due to missing ti_clk_get implementation.) These patches
->>> are required for this series to work properly though.
->>
->> And patch #9 you can pick up also obviously...
+Hi Ben,
+
+On 6/7/2016 9:32 AM, Ben Dooks wrote:
+> Fix the implicit declaration of iproc_armpll_setup() by
+> including clk-iproc.h which defines it. Fixes the warning:
 >
-> OK can you please repost the ones I can pick for v4.8 merge window
-> to get them out of the way? There were some merge conflicts against
-> Linux next when I tried to apply them for testing yesterday.
+> drivers/clk/bcm/clk-iproc-armpll.c:242:13: warning: symbol 'iproc_armpll_setup' was not declared. Should it be static?
+>
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Jon Mason <jonmason@broadcom.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> ---
+>  drivers/clk/bcm/clk-iproc-armpll.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/bcm/clk-iproc-armpll.c b/drivers/clk/bcm/clk-iproc-armpll.c
+> index a196ee2..698c507 100644
+> --- a/drivers/clk/bcm/clk-iproc-armpll.c
+> +++ b/drivers/clk/bcm/clk-iproc-armpll.c
+> @@ -20,6 +20,8 @@
+>  #include <linux/clkdev.h>
+>  #include <linux/of_address.h>
+>
+> +#include "clk-iproc.h"
+> +
+>  #define IPROC_CLK_MAX_FREQ_POLICY                    0x3
+>  #define IPROC_CLK_POLICY_FREQ_OFFSET                 0x008
+>  #define IPROC_CLK_POLICY_FREQ_POLICY_FREQ_SHIFT      8
+>
 
-Yeah, I can repost these separately once I split up the series.
+Looks good.
 
--Tero
+Acked-by: Ray Jui <ray.jui@broadcom.com>
+
+Thanks,
+
+Ray
