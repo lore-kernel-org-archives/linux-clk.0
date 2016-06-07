@@ -1,64 +1,58 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem
- to Exynos5410
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
- <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
- <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
- <574FCFB2.1080607@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <057fb9e8-002a-0aac-a36d-ef074ab2111e@osg.samsung.com>
-Date: Thu, 2 Jun 2016 09:27:28 -0400
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 7 Jun 2016 18:41:39 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: at91: make of_sama5d2_clk_generated_setup() static
+Message-ID: <20160607184139.69411eef@bbrezillon>
+In-Reply-To: <1465317489-14920-1-git-send-email-ben.dooks@codethink.co.uk>
+References: <1465317489-14920-1-git-send-email-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <574FCFB2.1080607@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+On Tue,  7 Jun 2016 17:38:09 +0100
+Ben Dooks <ben.dooks@codethink.co.uk> wrote:
 
-On 06/02/2016 02:18 AM, Krzysztof Kozlowski wrote:
-> On 06/01/2016 05:16 PM, Javier Martinez Canillas wrote:
-
-[snip]
-
->>>  
->>> +&watchdog {
->>> +	clocks = <&clock CLK_WDT>;
->>> +	clock-names = "watchdog";
->>> +	samsung,syscon-phandle = <&pmu_system_controller>;
->>> +};
->>> +
->>
->> Since you used the same ID than Exynos5420 for the SSS and WDT clocks,
->> I wonder if the clock and clock-names shouldn't be just defined in the
->> shared exynos54xx.dtsi as is the case for the interrupts that are also
->> the same?
->>
->> The patch looks good to me though, so whatever you decide:
->>
->> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> The of_sama5d2_clk_generated_setup() is not exported outside
+> of the driver, so make it static to fix the warning about it
+> being not static:
 > 
-> Thanks for review and comments.
+> drivers/clk/at91/clk-generated.c:270:13: warning: symbol 'of_sama5d2_clk_generated_setup' was not declared. Should it be static?
 > 
-> The 'clock' property cannot be moved - there is no clock phandle and the
-> clock IDs are not included in 54xx.
->
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-You are right, I missed that. Thanks a lot for the clarification.
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-> Best regards,
-> Krzysztof
+> ---
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> ---
+>  drivers/clk/at91/clk-generated.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index e1aa210..7f6bec8 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -267,7 +267,7 @@ at91_clk_register_generated(struct regmap *regmap,  spinlock_t *lock, const char
+>  	return clk;
+>  }
+>  
+> -void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+> +static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+>  {
+>  	int num;
+>  	u32 id;
 
-Best regards,
+
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
