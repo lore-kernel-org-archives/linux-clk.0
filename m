@@ -1,93 +1,59 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 2/7] clk: ti: add clkdev get helper
-Date: Thu, 30 Jun 2016 17:13:33 +0300
-Message-ID: <1467296018-25086-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
-References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, 
+From: Stephen Boyd <stephen.boyd@linaro.org>
+In-Reply-To: <20160605174157.GP4594@piout.net>
+Cc: "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Jisheng Zhang" <jszhang@marvell.com>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-8-stephen.boyd@linaro.org>
+ <20160605174157.GP4594@piout.net>
+Message-ID: <146528884761.28742.8093002152658120585@sboyd-linaro>
+Subject: Re: [PATCH 07/34] clk: berlin: Migrate to clk_hw based registration and OF
+ APIs
+Date: Tue, 07 Jun 2016 01:40:47 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-TI clocks can be found based on a simple query against the clock name,
-thus add a clkdev helper functionality for this. Using this new helper
-implementation  allows getting rid of most of the DT_CLK() entries under
-drivers/clk/ti.
+Quoting Alexandre Belloni (2016-06-05 10:41:57)
+> Hi,
+> =
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk.c | 38 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+> The main drawback of those patches is that they break the alignment
+> (checkpatch.pl --strict complains).
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 5fcf247..17554c3 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -68,6 +68,36 @@ static u32 clk_memmap_readl(void __iomem *reg)
- }
- 
- /**
-+ * ti_clk_get - lookup a TI clock handle
-+ * @dev_id: device to lookup clock for
-+ * @con_id: connection ID to find
-+ *
-+ * Searches for a TI clock handle based on the DT node name.
-+ * Returns the pointer to the clock handle, or ERR_PTR in failure.
-+ */
-+static struct clk *ti_clk_get(const char *dev_id, const char *con_id)
-+{
-+	struct of_phandle_args clkspec;
-+	struct device_node *node;
-+	struct clk *clk;
-+
-+	/* Only check for cases of type clk_get_sys(NULL, "xyz") */
-+	if (dev_id || !con_id)
-+		return ERR_PTR(-ENOENT);
-+
-+	if (of_have_populated_dt()) {
-+		node = of_find_node_by_name(NULL, con_id);
-+		clkspec.np = node;
-+		clk = of_clk_get_from_provider(&clkspec);
-+
-+		if (!IS_ERR(clk))
-+			return clk;
-+	}
-+
-+	return ERR_PTR(-ENOENT);
-+}
-+
-+/**
-  * ti_clk_setup_ll_ops - setup low level clock operations
-  * @ops: low level clock ops descriptor
-  *
-@@ -87,6 +117,8 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
- 	ops->clk_readl = clk_memmap_readl;
- 	ops->clk_writel = clk_memmap_writel;
- 
-+	clkdev_helper_register(ti_clk_get);
-+
- 	return 0;
- }
- 
-@@ -102,14 +134,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
- void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- {
- 	struct ti_dt_clk *c;
--	struct device_node *node;
- 	struct clk *clk;
--	struct of_phandle_args clkspec;
- 
- 	for (c = oclks; c->node_name != NULL; c++) {
--		node = of_find_node_by_name(NULL, c->node_name);
--		clkspec.np = node;
--		clk = of_clk_get_from_provider(&clkspec);
-+		clk = ti_clk_get(NULL, c->node_name);
- 
- 		if (!IS_ERR(clk)) {
- 			c->lk.clk = clk;
--- 
-1.9.1
+Didn't checkpatch --strict already warn on these files though? I'm not
+sure I've done anything to break the alignment style here.
+
+> =
+
+> On 01/06/2016 at 16:15:06 -0700, Stephen Boyd wrote :
+> > diff --git a/drivers/clk/berlin/berlin2-avpll.h b/drivers/clk/berlin/be=
+rlin2-avpll.h
+> > index a37f5068d299..17e311153b42 100644
+> > --- a/drivers/clk/berlin/berlin2-avpll.h
+> > +++ b/drivers/clk/berlin/berlin2-avpll.h
+> > @@ -19,17 +19,13 @@
+> >  #ifndef __BERLIN2_AVPLL_H
+> >  #define __BERLIN2_AVPLL_H
+> >  =
+
+> > -struct clk;
+> > -
+> >  #define BERLIN2_AVPLL_BIT_QUIRK              BIT(0)
+> >  #define BERLIN2_AVPLL_SCRAMBLE_QUIRK BIT(1)
+> >  =
+
+> > -struct clk * __init
+> > -berlin2_avpll_vco_register(void __iomem *base, const char *name,
+> > +int berlin2_avpll_vco_register(void __iomem *base, const char *name,
+> =
+
+> This is missing __init.
+
+Ah I also removed __init in the header file here because it doesn't do
+anything. I guess I should mention that in the commit text.
