@@ -1,53 +1,196 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 1/6] clk: Add missing clk_get_sys() stub
-To: tglx@linutronix.de
-References: <1464903697-3802-1-git-send-email-daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	Russell King <linux@arm.linux.org.uk>,
-	"open list:CLK API" <linux-clk@vger.kernel.org>,
-	mike.turquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <575523EB.4060208@linaro.org>
-Date: Mon, 6 Jun 2016 09:19:07 +0200
-MIME-Version: 1.0
-In-Reply-To: <1464903697-3802-1-git-send-email-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 05/15] clk: sunxi-ng: Add gate clock support
+Date: Tue,  7 Jun 2016 22:41:44 +0200
+Message-Id: <20160607204154.31967-6-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02/2016 11:41 PM, Daniel Lezcano wrote:
-> When compiling with the COMPILE_TEST option set, the clps711x does not
-> compile because of the clk_get_sys() noop stub missing.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Some clocks in the Allwinner SoCs clocks unit are just simple gates. Add
+support for those clocks.
 
-Added missing Cc [Mike and Stephen]
+Since it's a feature that can also be found in more complex clocks, provide
+a bunch of helpers that can be reused later on.
 
-> ---
->   include/linux/clk.h | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 0df4a51..834179f 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -461,6 +461,10 @@ static inline struct clk *clk_get_parent(struct clk *clk)
->   	return NULL;
->   }
->
-> +static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
-> +{
-> +	return NULL;
-> +}
->   #endif
->
->   /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
->
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Makefile   |  1 +
+ drivers/clk/sunxi-ng/ccu_gate.c | 82 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_gate.h | 53 ++++++++++++++++++++++++++
+ 3 files changed, 136 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_gate.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_gate.h
 
-
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index c59cf2ea509b..608b332e0b1f 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -4,3 +4,4 @@ obj-y += ccu_reset.o
+ obj-y += ccu_frac.o
+ 
+ obj-y += ccu_fixed_factor.o
++obj-y += ccu_gate.o
+diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu_gate.c
+new file mode 100644
+index 000000000000..1e98f8a33ac3
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_gate.c
+@@ -0,0 +1,82 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_gate.h"
++
++void ccu_gate_helper_disable(struct ccu_common *common, u32 gate)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (!(common->features & CCU_FEATURE_GATE))
++		return;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + common->reg);
++	writel(reg & ~gate, common->base + common->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++}
++
++static void ccu_gate_disable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	return ccu_gate_helper_disable(&cg->common, cg->enable);
++}
++
++int ccu_gate_helper_enable(struct ccu_common *common, u32 gate)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (!(common->features & CCU_FEATURE_GATE))
++		return 0;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + common->reg);
++	writel(reg | gate, common->base + common->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
++
++static int ccu_gate_enable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	return ccu_gate_helper_enable(&cg->common, cg->enable);
++}
++
++int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate)
++{
++	if (!(common->features & CCU_FEATURE_GATE))
++		return 1;
++
++	return readl(common->base + common->reg) & gate;
++}
++
++static int ccu_gate_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	return ccu_gate_helper_is_enabled(&cg->common, cg->enable);
++}
++
++const struct clk_ops ccu_gate_ops = {
++	.disable	= ccu_gate_disable,
++	.enable		= ccu_gate_enable,
++	.is_enabled	= ccu_gate_is_enabled,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_gate.h b/drivers/clk/sunxi-ng/ccu_gate.h
+new file mode 100644
+index 000000000000..8e15fa17bcc1
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_gate.h
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_GATE_H_
++#define _CCU_GATE_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++
++struct ccu_gate {
++	u32			enable;
++
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_GATE(_struct, _name, _parent, _reg, _gate, _flags)	\
++	struct ccu_gate _struct = {					\
++		.enable	= _gate,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_GATE,		\
++			.hw.init	= SUNXI_HW_INIT(_name,		\
++							_parent,	\
++							&ccu_gate_ops,	\
++							_flags),	\
++		}							\
++	}
++
++static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_gate, common);
++}
++
++void ccu_gate_helper_disable(struct ccu_common *common, u32 gate);
++int ccu_gate_helper_enable(struct ccu_common *common, u32 gate);
++int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate);
++
++extern const struct clk_ops ccu_gate_ops;
++
++#endif /* _CCU_GATE_H_ */
 -- 
-  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.8.3
