@@ -1,42 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 17:48:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Roman Volkov <v1ron@mail.ru>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Roman Volkov <rvolkov@v1ros.org>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: Re: [PATCH v2 2/2] clk: vt8500: rework wm8650_find_pll_bits()
-Message-ID: <20160621004846.GL1521@codeaurora.org>
-References: <20160607215610.8724-1-v1ron@mail.ru>
- <20160607215610.8724-3-v1ron@mail.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160607215610.8724-3-v1ron@mail.ru>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com,
+	maxime.coquelin@st.com,
+	patrice.chotard@st.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	broonie@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 1/6] clk: st: clk-flexgen: Detect critical clocks
+Date: Tue,  7 Jun 2016 12:19:25 +0100
+Message-Id: <20160607111930.10375-2-lee.jones@linaro.org>
+In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
+References: <20160607111930.10375-1-lee.jones@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/08, Roman Volkov wrote:
-> From: Roman Volkov <rvolkov@v1ros.org>
-> 
-> PLL clock on WM8650 is calculated in the following way:
-> 
-> M * parent [O1] => / P [O2] => / D [O3]
-> 
-> Where O2 is 600MHz >= (M * parent) / P >= 300MHz.
-> 
-> Current algorithm does not met this requirement, so that the
-> function may return rates which are not supported by the hardware.
-> 
-> This patch fixes the algorithm and simplifies the code, reducing
-> the calculation time by ~10000 times (according to usermode app) by
-> removing the nested loops.
-> 
-> Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
-> ---
+Utilise the new Critical Clock infrastructure to mark clocks which
+much not be disabled as CRITICAL.
 
-Applied to clk-next
+While we're at it, reduce the coverage of the flex_flags variable,
+since it's only really used in a single for() loop.
 
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/clk/st/clk-flexgen.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 627267c..546bd79 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -267,7 +267,6 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	const char **parents;
+ 	int num_parents, i;
+ 	spinlock_t *rlock = NULL;
+-	unsigned long flex_flags = 0;
+ 	int ret;
+ 
+ 	pnode = of_get_parent(np);
+@@ -308,12 +307,15 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	for (i = 0; i < clk_data->clk_num; i++) {
+ 		struct clk *clk;
+ 		const char *clk_name;
++		unsigned long flex_flags = 0;
+ 
+ 		if (of_property_read_string_index(np, "clock-output-names",
+ 						  i, &clk_name)) {
+ 			break;
+ 		}
+ 
++		of_clk_detect_critical(np, i, &flex_flags);
++
+ 		/*
+ 		 * If we read an empty clock name then the output is unused
+ 		 */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.3
