@@ -1,28 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 12:36:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, p.zabel@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com
-Subject: Re: [PATCH v2 4/5] clk: hisilicon: add hisi_clk_unregister_*
- functions
-Message-ID: <20160630193619.GV1521@codeaurora.org>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
- <1465971998-29619-5-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Tue, 7 Jun 2016 18:33:36 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 07/34] clk: berlin: Migrate to clk_hw based registration
+ and OF APIs
+Message-ID: <20160607163336.GM3363@piout.net>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-8-stephen.boyd@linaro.org>
+ <20160605174157.GP4594@piout.net>
+ <146528884761.28742.8093002152658120585@sboyd-linaro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465971998-29619-5-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <146528884761.28742.8093002152658120585@sboyd-linaro>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/15, Jiancheng Xue wrote:
-> Add hisi_clk_unregister_* functions.
+On 07/06/2016 at 01:40:47 -0700, Stephen Boyd wrote :
+> Quoting Alexandre Belloni (2016-06-05 10:41:57)
+> > Hi,
+> > 
+> > The main drawback of those patches is that they break the alignment
+> > (checkpatch.pl --strict complains).
 > 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> ---
+> Didn't checkpatch --strict already warn on these files though? I'm not
+> sure I've done anything to break the alignment style here.
+> 
 
-Applied to clk-next
+As you change the function return value, the function arguments are no
+longer aligned with the opening parenthesis.
+I would agree that keeping the alignment will make the change quit
+bigger though.
+
+> > 
+> > On 01/06/2016 at 16:15:06 -0700, Stephen Boyd wrote :
+> > > diff --git a/drivers/clk/berlin/berlin2-avpll.h b/drivers/clk/berlin/berlin2-avpll.h
+> > > index a37f5068d299..17e311153b42 100644
+> > > --- a/drivers/clk/berlin/berlin2-avpll.h
+> > > +++ b/drivers/clk/berlin/berlin2-avpll.h
+> > > @@ -19,17 +19,13 @@
+> > >  #ifndef __BERLIN2_AVPLL_H
+> > >  #define __BERLIN2_AVPLL_H
+> > >  
+> > > -struct clk;
+> > > -
+> > >  #define BERLIN2_AVPLL_BIT_QUIRK              BIT(0)
+> > >  #define BERLIN2_AVPLL_SCRAMBLE_QUIRK BIT(1)
+> > >  
+> > > -struct clk * __init
+> > > -berlin2_avpll_vco_register(void __iomem *base, const char *name,
+> > > +int berlin2_avpll_vco_register(void __iomem *base, const char *name,
+> > 
+> > This is missing __init.
+> 
+> Ah I also removed __init in the header file here because it doesn't do
+> anything. I guess I should mention that in the commit text.
+
+Indeed, you are right.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
