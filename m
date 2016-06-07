@@ -1,62 +1,46 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] clk: renesas: build clk-rcar-gen2.o for R8A7792
-To: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms+renesas@verge.net.au>,
- Magnus Damm <damm+renesas@opensource.se>
-References: <20160620154341.2242033-1-arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <80e447e0-b220-6669-b5ea-be43f635f4d2@cogentembedded.com>
-Date: Mon, 20 Jun 2016 20:34:24 +0300
-MIME-Version: 1.0
-In-Reply-To: <20160620154341.2242033-1-arnd@arndb.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <ben.dooks@codethink.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: at91: make of_sama5d2_clk_generated_setup() static
+Date: Tue,  7 Jun 2016 17:38:09 +0100
+Message-Id: <1465317489-14920-1-git-send-email-ben.dooks@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+The of_sama5d2_clk_generated_setup() is not exported outside
+of the driver, so make it static to fix the warning about it
+being not static:
 
-On 06/20/2016 06:43 PM, Arnd Bergmann wrote:
+drivers/clk/at91/clk-generated.c:270:13: warning: symbol 'of_sama5d2_clk_generated_setup' was not declared. Should it be static?
 
-> The newly added support for R8A7792 causes build failures
-> because we try to call rcar_gen2_clocks_init but that is not
-> built into the kernel:
->
-> arch/arm/mach-shmobile/built-in.o: In function `rcar_gen2_timer_init':
-> :(.init.text+0x3b0): undefined reference to `rcar_gen2_clocks_init'
->
-> This changes the clk Makefile to match the other platforms, though
-> I guess it would be better to find another way to do this, e.g.
-> by not requiring the external function call by relying on
-> CLK_OF_DECLARE(), or by making the ARCH_RCAR_GEN2 also control
-> the compilation of the clk driver.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 3ebee0adbfe7 ("ARM: shmobile: r8a7792: basic SoC support")
-> ---
->  drivers/clk/renesas/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-> index ead8bb843524..3cdb9aaf8717 100644
-> --- a/drivers/clk/renesas/Makefile
-> +++ b/drivers/clk/renesas/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
->  obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
->  obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
->  obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ drivers/clk/at91/clk-generated.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    It was in the very first patch that I submitted for this SoC:
-
-    http://marc.info/?t=146421262300001&r=1
-
-    It should be queued up by Geert.
-
-MBR, Sergei
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index e1aa210..7f6bec8 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -267,7 +267,7 @@ at91_clk_register_generated(struct regmap *regmap,  spinlock_t *lock, const char
+ 	return clk;
+ }
+ 
+-void __init of_sama5d2_clk_generated_setup(struct device_node *np)
++static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ {
+ 	int num;
+ 	u32 id;
+-- 
+2.8.1
