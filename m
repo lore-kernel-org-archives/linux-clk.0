@@ -1,63 +1,223 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 18:30:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-clk@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] clk: Add new function of_clk_is_provider()
-Message-ID: <20160621013022.GR1521@codeaurora.org>
-References: <1465381201-11537-1-git-send-email-ricardo.ribalda@gmail.com>
- <1465381201-11537-2-git-send-email-ricardo.ribalda@gmail.com>
- <20160616004419.GQ28218@codeaurora.org>
- <CAPybu_3=Zm8w16_3jtKZDhoFafUz-tYcnpFJmTHT8riwjpCSpA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAPybu_3=Zm8w16_3jtKZDhoFafUz-tYcnpFJmTHT8riwjpCSpA@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 03/15] clk: sunxi-ng: Add fractional lib
+Date: Tue,  7 Jun 2016 22:41:42 +0200
+Message-Id: <20160607204154.31967-4-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-(Please don't top post)
+Some clocks can be switched to a mode called fractional that have two fixed
+output rate you can choose from.
 
-On 06/20, Ricardo Ribalda Delgado wrote:
-> Hi Stephen
-> 
-> When the device tree is populated or when an overlay is added, all its
-> nodes have the flag OF_POPULATED set. The flag is enabled recursively
-> in
-> of_platform_bus_create->of_platform_device_create_pdata()
-> So we cannot use that flag to mark what is enabled and what is not.
+Add a small library to deal with those clocks.
 
-Sorry I don't follow the reasoning here. I'm not asking to test
-that flag in an of_clk_is_provider() API. The goal is to not have
-an of_clk_is_provider() API.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Makefile   |   2 +
+ drivers/clk/sunxi-ng/ccu_frac.c | 110 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_frac.h |  53 +++++++++++++++++++
+ 3 files changed, 165 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_frac.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_frac.h
 
-I was thinking that of_clk_init() would mark any nodes that
-matched and provided clk providers as OF_POPULATED. That way,
-when of_platform_populate() ran, it would *not* add platform
-devices for clk providers that we registered during the
-of_clk_init() phase. Then we could have platform drivers and
-CLK_OF_DECLARE drivers for the same compatible strings, but we
-wouldn't probe random platform drivers for the nodes that we
-handled early on and we wouldn't need to litter
-of_clk_is_provider() in driver probe routines.
-
-> 
-> The other issue that I see is of_clk_mutex. Whatever final
-> implementation that we decide to do, it should take into consideration
-> that mutex, otherwise it will not be thread-safe.
-> of_clk_is_provider() is already taking care of it.
-> 
-> Another advantage of of_clk_is_provider() is that it opens the door to
-> implement something like:  CLK_OF_DECLARE_EARLY_PLATFORM(probe,remove)
->  That allows a driver to implement early clk and platform clk at the
-> same time and automatically, following a logic similar to what I have
-> done in fixed-clk.
-
-Something like CLK_OF_DECLARE_EARLY_PLATFORM() sounds like it may
-be good (I haven't looked at the patch). We'll need something to
-say that there's CLK_OF_DECLARE and a platform driver for the
-same node.
-
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index bd3461b0f38c..4585443b3771 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,2 +1,4 @@
+ obj-y += ccu_common.o
+ obj-y += ccu_reset.o
++
++obj-y += ccu_frac.o
+diff --git a/drivers/clk/sunxi-ng/ccu_frac.c b/drivers/clk/sunxi-ng/ccu_frac.c
+new file mode 100644
+index 000000000000..5c4b10cd15b5
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_frac.c
+@@ -0,0 +1,110 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++
++#include "ccu_frac.h"
++
++bool ccu_frac_helper_is_enabled(struct ccu_common *common,
++				struct _ccu_frac *cf)
++{
++	if (!(common->features & CCU_FEATURE_FRACTIONAL))
++		return false;
++
++	return !(readl(common->base + common->reg) & cf->enable);
++}
++
++void ccu_frac_helper_enable(struct ccu_common *common,
++			    struct _ccu_frac *cf)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (!(common->features & CCU_FEATURE_FRACTIONAL))
++		return;
++
++	spin_lock_irqsave(common->lock, flags);
++	reg = readl(common->base + common->reg);
++	writel(reg & ~cf->enable, common->base + common->reg);
++	spin_unlock_irqrestore(common->lock, flags);
++}
++
++void ccu_frac_helper_disable(struct ccu_common *common,
++			     struct _ccu_frac *cf)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (!(common->features & CCU_FEATURE_FRACTIONAL))
++		return;
++
++	spin_lock_irqsave(common->lock, flags);
++	reg = readl(common->base + common->reg);
++	writel(reg | cf->enable, common->base + common->reg);
++	spin_unlock_irqrestore(common->lock, flags);
++}
++
++bool ccu_frac_helper_has_rate(struct ccu_common *common,
++			      struct _ccu_frac *cf,
++			      unsigned long rate)
++{
++	if (!(common->features & CCU_FEATURE_FRACTIONAL))
++		return false;
++
++	return (cf->rates[0] == rate) || (cf->rates[1] == rate);
++}
++
++unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
++					struct _ccu_frac *cf)
++{
++	u32 reg;
++
++	printk("%s: Read fractional\n", clk_hw_get_name(&common->hw));
++
++	if (!(common->features & CCU_FEATURE_FRACTIONAL))
++		return 0;
++
++	printk("%s: clock is fractional (rates %lu and %lu)\n",
++	       clk_hw_get_name(&common->hw), cf->rates[0], cf->rates[1]);
++
++	reg = readl(common->base + common->reg);
++
++	printk("%s: clock reg is 0x%x (select is 0x%x)\n",
++	       clk_hw_get_name(&common->hw), reg, cf->select);
++
++	return (reg & cf->select) ? cf->rates[1] : cf->rates[0];
++}
++
++int ccu_frac_helper_set_rate(struct ccu_common *common,
++			     struct _ccu_frac *cf,
++			     unsigned long rate)
++{
++	unsigned long flags;
++	u32 reg, sel;
++
++	if (!(common->features & CCU_FEATURE_FRACTIONAL))
++		return -EINVAL;
++
++	if (cf->rates[0] == rate)
++		sel = 0;
++	else if (cf->rates[1] == rate)
++		sel = cf->select;
++	else
++		return -EINVAL;
++
++	spin_lock_irqsave(common->lock, flags);
++	reg = readl(common->base + common->reg);
++	reg &= ~cf->select;
++	writel(reg | sel, common->base + common->reg);
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
+diff --git a/drivers/clk/sunxi-ng/ccu_frac.h b/drivers/clk/sunxi-ng/ccu_frac.h
+new file mode 100644
+index 000000000000..e4c670b1cdfe
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_frac.h
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_FRAC_H_
++#define _CCU_FRAC_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++
++struct _ccu_frac {
++	u32		enable;
++	u32		select;
++
++	unsigned long	rates[2];
++};
++
++#define _SUNXI_CCU_FRAC(_enable, _select, _rate1, _rate2)		\
++	{								\
++		.enable	= _enable,					\
++		.select	= _select,					\
++		.rates = { _rate1, _rate2 },				\
++	}
++
++bool ccu_frac_helper_is_enabled(struct ccu_common *common,
++				struct _ccu_frac *cf);
++void ccu_frac_helper_enable(struct ccu_common *common,
++			    struct _ccu_frac *cf);
++void ccu_frac_helper_disable(struct ccu_common *common,
++			     struct _ccu_frac *cf);
++
++bool ccu_frac_helper_has_rate(struct ccu_common *common,
++			      struct _ccu_frac *cf,
++			      unsigned long rate);
++
++unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
++					struct _ccu_frac *cf);
++
++int ccu_frac_helper_set_rate(struct ccu_common *common,
++			     struct _ccu_frac *cf,
++			     unsigned long rate);
++
++#endif /* _CCU_FRAC_H_ */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.3
