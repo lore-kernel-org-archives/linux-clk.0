@@ -1,87 +1,133 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V3 0/8] clk: core: support clocks which requires parents enable
-Date: Thu, 30 Jun 2016 16:25:24 +0800
-Message-ID: <1467275132-31026-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 7 Jun 2016 15:04:40 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+Message-ID: <20160607070440.GA32573@shlinux2>
+References: <20160426012341.GB8870@tiger>
+ <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
+ <1461663072.7839.17.camel@pengutronix.de>
+ <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
+ <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger>
+ <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
+ <alpine.DEB.2.11.1604271212290.3941@nanos>
+ <20160602145915.GA31124@shlinux2>
+ <alpine.DEB.2.11.1606061448010.28031@nanos>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.11.1606061448010.28031@nanos>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support in clock framework for clocks which all the
-operations like gate/ungate, set_rate, set_parent must require its parent
-clock on.
+On Mon, Jun 06, 2016 at 03:20:03PM +0200, Thomas Gleixner wrote:
+> On Thu, 2 Jun 2016, Dong Aisheng wrote:
+> > On Wed, Apr 27, 2016 at 12:15:00PM +0200, Thomas Gleixner wrote:
+> > > Calling a function which might sleep _BEFORE_ kernel_init() is wrong. Don't
+> > > try to work around such an issue by doing magic irq_disabled() checks and busy
+> > > loops. Fix the call site and be done with it.
+> > > 
+> > 
+> > IRQ chip and clocksource are also initialised before kernel_init()
+> > which may call clk APIs like clk_prepare_enable().
+> > We may not be able to guarantee those clocks are unsleepable.
+> > 
+> > e.g.
+> > For IRQ chip, the arm,gic documents the optional clocks property in
+> > Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt.
+> > Although there seems no user currently, not sure there might be
+> > a exception in the future.
+> > 
+> > For clocksource driver, it's quite common to call clk APIs to
+> > enable and get clock rate which may also cause sleep.
+> > e.g. ARM twd clock in arch/arm/kernel/smp_twd.c.
+> > 
+> > If we have to avoid the possible sleep caused by these clocks,
+> > we may need to manually check it and change the related clocks
+> > (e.g PLLs) from sleepable to busy loops.
+> > But that is not a good solution and may also not stable when
+> > clock varies.
+> > 
+> > It looks like not easy to find a generic solution for them.
+> > What's your suggestion?
+> 
+> I think we should split the prepare callbacks up and move the handling logic
+> into the core.
+> 
+> clk_ops.prepare()	Legacy callback
+> clk_ops.prepare_hw()	Callback which writes to the hardware
+> clk_ops.prepare_done()	Callback which checks whether the prepare is completed
+> 
+> So now the core can do:
+> 
+> clk_prepare()
+> {
+> 	/* Legacy code should go away */
+> 	if (ops->prepare) {
+> 	      ops->prepare();
+> 	      return;
+> 	}
+> 
+> 	if (ops->prepare_hw)
+> 	      ops->prepare_hw();
+> 
+>    	if (!ops->prepare_done())
+> 		return;
+> 
+> 	if (early_boot_or_suspend_resume()) {
+> 		/*
+> 		 * Busy loop when we can't schedule in early boot,
+> 		 * suspend and resume.
+> 		 */
+> 		while (!ops->prepare_done())
+> 		      ;
+> 	} else {
+> 		while (!ops->prepare_done())
+> 		      usleep(clk->prepare_delay);
+> 	}
+> }
+> 
+> As a side effect that allows us to remove the gazillion of
+> 
+>      	    while (!hw_ready)
+> 	    	  usleep();
+> 
+> copies all over the place and we have a single point of control where we allow
+> the clocks to busy loop.
+> 
+> Toughts?
+> 
 
-This special HW requirement can be found on Freescale i.MX7D platform.
-Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
-(see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
-And there may be other SoCs in the same situation.
+Great, that looks like a possible solution.
+If we doing this way there's one more question that
+should we do it for other clk APIs hold by prepare_lock which
+all may sleep too in theory?
+e.g. clk_{set|get}_rate/clk_{set|get}_parent. (possible more)
+(clk_recalc_rate/clk_round_rate may also need be considered due to
+it may be called within above function.)
 
-Current clock core can not support such type of clock well.
+And it seems many exist platforms doing that work in
+CLK_OF_DECLARE init function in time_init().
+e.g.
+drivers/clk/imx/clk-imx6ul.c
+drivers/clk/rockchip/clk-rk3188.c
+drivers/clk/ti/clk-44xx.c
+...
 
-This patch introduce a new flag CLK_SET_PARENT_ENABLE to handle this special
-case in clock core that enable its parent clock firstly for each operation
-and disable it later after operation complete.
+Then it may need introduce a lot changes and increase many new core APIs.
+Is that a problem?
 
-There're two special cases for handling this issue:
+> Thanks,
+> 
+> 	tglx
 
-One is fixing the possible disabling clocks while its parent is already off
-during kernel booting phase in clk_disable_unused_subtree()
-Since this state misalign only happens during booting time,
-so we simply enable the parent clocks before disable it if flag is set.
-For normal clk_disable after kernel booting, there's no such issue
-since the clock tree is already created which makes sure no such issue exist.
-
-Another special case is for set_parent() operation.
-It requires both parent, old one and new one, to be enabled at the same
-time during the operation.
-
-Patch 1~4 does this work.
-
-After clk core supports mx7d type clocks, we don't have to enable all clock
-by default anymore, then we remove the enable of all clocks code and instead
-only enable set of minimum required clocks.
-
-Patch 5~8 does this work.
-
-The whole patch series is based on for-next branch of clock tree:
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-
-Change log:
-v2-> v3:
- * fix rebase error
-v1-> v2:
- * Addressed Mike's comments to make code more clearer
-
-V1:
-https://lkml.org/lkml/2016/4/20/199
-
-The original one can be found at here:
-http://www.spinics.net/lists/arm-kernel/msg435136.html
-It has no functional changes but improve the commit message and
-comments a bit.
-
-Dong Aisheng (8):
-  clk: introduce clk_core_enable_lock and clk_core_disable_lock
-    functions
-  clk: move clk_disable_unused after clk_core_disable_unprepare function
-  clk: core: support clocks which requires parents enable (part 1)
-  clk: core: support clocks which requires parents enable (part 2)
-  clk: imx: re-order and concentrate the same type of clk api
-  clk: imx: add clk api for supporting CLK_OPS_PARENT_ENABLE clocks
-  clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE
-  clk: imx7d: only enable minimum required clocks
-
- drivers/clk/clk.c            | 332 ++++++++++++--------
- drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
- drivers/clk/imx/clk.h        |  90 ++++--
- include/linux/clk-provider.h |   2 +
- 4 files changed, 628 insertions(+), 528 deletions(-)
-
--- 
-1.9.1
+Regards
+Dong Aisheng
