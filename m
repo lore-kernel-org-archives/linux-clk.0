@@ -1,41 +1,45 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Wed, 08 Jun 2016 16:22:42 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 25/34] clk: s2mps11: Migrate to clk_hw based OF and
- registration APIs
-Message-id: <20160608072242.GA23808@samsunx.samsung>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <CGME20160601231605epcas1p251d4d1f532f7a53a0e58d5c7ee9e6ffc@epcas1p2.samsung.com>
- <20160601231533.9354-26-stephen.boyd@linaro.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <20160601231533.9354-26-stephen.boyd@linaro.org>
+Return-Path: <ben.dooks@codethink.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: hi6220: fix missing clk.h include
+Date: Tue,  7 Jun 2016 14:54:08 +0100
+Message-Id: <1465307648-15660-1-git-send-email-ben.dooks@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Fix the warning from missing "clk.h" include which
+defines hi6220_register_clkdiv() function.
 
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Andi Shyti <andi.shyti@samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
-> 
-> See commit 58657d189a2f and it's children for details on this
-> new registration API.
-> 
->  drivers/clk/clk-s2mps11.c | 21 +++++++++------------
->  1 file changed, 9 insertions(+), 12 deletions(-)
+drivers/clk/hisilicon/clkdivider-hi6220.c:102:12: warning: symbol 'hi6220_register_clkdiv' was not declared. Should it be static?
 
-Acked-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Bintian Wang <bintian.wang@huawei.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ drivers/clk/hisilicon/clkdivider-hi6220.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Andi
+diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisilicon/clkdivider-hi6220.c
+index 113eee8..a1c1f68 100644
+--- a/drivers/clk/hisilicon/clkdivider-hi6220.c
++++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
+@@ -18,6 +18,8 @@
+ #include <linux/err.h>
+ #include <linux/spinlock.h>
+ 
++#include "clk.h"
++
+ #define div_mask(width)	((1 << (width)) - 1)
+ 
+ /**
+-- 
+2.8.1
