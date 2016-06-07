@@ -1,89 +1,114 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com,
+	maxime.coquelin@st.com,
+	patrice.chotard@st.com,
+	mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+	broonie@kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 5/5] clk: qcom: ipq4019: Added the cpu clock frequency change notifier
-Date: Tue, 21 Jun 2016 19:19:22 +0530
-Message-Id: <1466516962-18087-6-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
-References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+	linux-spi@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 6/6] spi: st-ssc4: Remove 'no clocking' hack
+Date: Tue,  7 Jun 2016 12:19:30 +0100
+Message-Id: <20160607111930.10375-7-lee.jones@linaro.org>
+In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
+References: <20160607111930.10375-1-lee.jones@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current driver code gives the crash or gets hang while switching
-the CPU frequency some time. The APSS CPU Clock divider is not glitch
-free so it the APPS clock need to be switched for stable clock during
-the change.
+Due to the newly upstreamed 'critical clocks' API we can now
+safely handle clocking in the SPI and I2C drivers without fear
+of catastrophically crippling the running platform.
 
-This patch adds the frequency change notifier for APSS CPU clock. It
-changes the parent of this clock to stable PLL FEPLL500 when it gets
-for PRE_RATE_CHANGE event. This event will be generated before actual
-clock set operations. The clock set operation will again change its
-corresponding parent by getting the same from frequency table.
-
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/qcom/gcc-ipq4019.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ drivers/spi/spi-st-ssc4.c | 36 +++++-------------------------------
+ 1 file changed, 5 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index df159c2..3c014f7 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1740,9 +1740,34 @@ static const struct of_device_id gcc_ipq4019_match_table[] = {
+diff --git a/drivers/spi/spi-st-ssc4.c b/drivers/spi/spi-st-ssc4.c
+index d5adf9f..a56eca0 100644
+--- a/drivers/spi/spi-st-ssc4.c
++++ b/drivers/spi/spi-st-ssc4.c
+@@ -68,32 +68,6 @@ struct spi_st {
+ 	struct completion	done;
  };
- MODULE_DEVICE_TABLE(of, gcc_ipq4019_match_table);
  
-+int cpu_clk_notifier_fn(struct notifier_block *nb,
-+			unsigned long action, void *data)
-+{
-+	int err = 0;
-+
-+	if (action == PRE_RATE_CHANGE) {
-+		err = clk_rcg2_ops.set_parent(&apps_clk_src.clkr.hw,
-+							P_FEPLL500);
-+	}
-+
-+	return notifier_from_errno(err);
-+}
-+
-+struct notifier_block cpu_clk_notifier = {
-+	.notifier_call = cpu_clk_notifier_fn,
-+};
-+
- static int gcc_ipq4019_probe(struct platform_device *pdev)
+-static int spi_st_clk_enable(struct spi_st *spi_st)
+-{
+-	/*
+-	 * Current platforms use one of the core clocks for SPI and I2C.
+-	 * If we attempt to disable the clock, the system will hang.
+-	 *
+-	 * TODO: Remove this when platform supports power domains.
+-	 */
+-	return 0;
+-
+-	return clk_prepare_enable(spi_st->clk);
+-}
+-
+-static void spi_st_clk_disable(struct spi_st *spi_st)
+-{
+-	/*
+-	 * Current platforms use one of the core clocks for SPI and I2C.
+-	 * If we attempt to disable the clock, the system will hang.
+-	 *
+-	 * TODO: Remove this when platform supports power domains.
+-	 */
+-	return;
+-
+-	clk_disable_unprepare(spi_st->clk);
+-}
+-
+ /* Load the TX FIFO */
+ static void ssc_write_tx_fifo(struct spi_st *spi_st)
  {
--	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
-+	int err;
-+
-+	err = qcom_cc_probe(pdev, &gcc_ipq4019_desc);
-+
-+	if (!err)
-+		clk_notifier_register(apps_clk_src.clkr.hw.clk,
-+					&cpu_clk_notifier);
-+
-+	return err;
- }
+@@ -349,7 +323,7 @@ static int spi_st_probe(struct platform_device *pdev)
+ 		goto put_master;
+ 	}
  
- static struct platform_driver gcc_ipq4019_driver = {
+-	ret = spi_st_clk_enable(spi_st);
++	ret = clk_prepare_enable(spi_st->clk);
+ 	if (ret)
+ 		goto put_master;
+ 
+@@ -408,7 +382,7 @@ static int spi_st_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ clk_disable:
+-	spi_st_clk_disable(spi_st);
++	clk_disable_unprepare(spi_st->clk);
+ put_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -419,7 +393,7 @@ static int spi_st_remove(struct platform_device *pdev)
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct spi_st *spi_st = spi_master_get_devdata(master);
+ 
+-	spi_st_clk_disable(spi_st);
++	clk_disable_unprepare(spi_st->clk);
+ 
+ 	pinctrl_pm_select_sleep_state(&pdev->dev);
+ 
+@@ -435,7 +409,7 @@ static int spi_st_runtime_suspend(struct device *dev)
+ 	writel_relaxed(0, spi_st->base + SSC_IEN);
+ 	pinctrl_pm_select_sleep_state(dev);
+ 
+-	spi_st_clk_disable(spi_st);
++	clk_disable_unprepare(spi_st->clk);
+ 
+ 	return 0;
+ }
+@@ -446,7 +420,7 @@ static int spi_st_runtime_resume(struct device *dev)
+ 	struct spi_st *spi_st = spi_master_get_devdata(master);
+ 	int ret;
+ 
+-	ret = spi_st_clk_enable(spi_st);
++	ret = clk_prepare_enable(spi_st->clk);
+ 	pinctrl_pm_select_default_state(dev);
+ 
+ 	return ret;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.3
