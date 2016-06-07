@@ -1,71 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:58218 "EHLO
-	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751479AbcFBBYa (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 21:24:30 -0400
-Message-ID: <1464830660.22191.6.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Yangbo Lu <yangbo.lu@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	linuxppc-dev@lists.ozlabs.org
-Date: Wed, 01 Jun 2016 20:24:20 -0500
-In-Reply-To: <5513501.AmZs7h1vI2@wuerfel>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-	 <HE1PR04MB0889852B7809A1CCFF8922ACF8410@HE1PR04MB0889.eurprd04.prod.outlook.com>
-	 <CAPDyKFqx2JMLzXoDxGCKFYMFV47+SegnkuWFXKvsQHK7L5w-1g@mail.gmail.com>
-	 <5513501.AmZs7h1vI2@wuerfel>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of
- arch/powerpc"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Tue, 7 Jun 2016 17:13:26 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: ti: fapll: fix address space warnings
+Message-ID: <20160607161326.GZ5783@n2100.arm.linux.org.uk>
+References: <1465308337-18047-1-git-send-email-ben.dooks@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1465308337-18047-1-git-send-email-ben.dooks@codethink.co.uk>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2016-05-30 at 15:18 +0200, Arnd Bergmann wrote:
-> All users of this driver are PowerPC specific and the header file
-> has no business in the global include/linux/ hierarchy, so move
-> it back before anyone starts using it on ARM.
+On Tue, Jun 07, 2016 at 03:05:37PM +0100, Ben Dooks wrote:
+> Fix the following warnings from casting "void __iomem *" pointers
+> to u32 when using sparse:
 > 
-> This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> This part of the series is not required for the eSDHC quirk,
-> but it restores the asm/fsl_guts.h header so it doesn't accidentally
-> get abused for this in the future. I found two drivers outside of
-> arch/powerpc that already accessed the registers directly, but the
-> functions look fairly contained, and can be easily hidden in an
-> #ifdef CONFIG_PPC
+> drivers/clk/ti/fapll.c:583:13: warning: cast removes address space of expression
+> drivers/clk/ti/fapll.c:623:21: warning: cast removes address space of expression
 
-NACK
+As a note of general principle, adding __force to casts is not the correct
+way to solve these sparse warnings.
 
-Besides adding ifdef pollution for no good reason, this register block is used
-on some ARM chips as well.  Why is it a problem if "anyone starts using it on
-ARM"?
+__force is supposed to be used in places which know that the cast is 100%
+legitimate - in other words, architecture code removing the __iomem-ness
+of the pointer so it can be dereferenced.  Sprinking the code with __force
+to shut these warnings up doesn't actually help the cause.
 
-BTW, of all the mailing lists you included on this CC, you seem to have left
-off the PPC list (I've added it).
+> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+> index 66a0d0e..d765f4a 100644
+> --- a/drivers/clk/ti/fapll.c
+> +++ b/drivers/clk/ti/fapll.c
+> @@ -43,14 +43,14 @@
+>  #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
+>  
+>  /* The bypass bit is inverted on the ddr_pll.. */
+> -#define fapll_is_ddr_pll(va)	(((u32)(va) & 0xffff) == 0x0440)
+> +#define fapll_is_ddr_pll(va)	(((u32 __force)(va) & 0xffff) == 0x0440)
 
--Scott
+This should be a cast to unsigned long, not u32.
 
+>  
+>  /*
+>   * The audio_pll_clk1 input is hard wired to the 27MHz bypass clock,
+>   * and the audio_pll_clk1 synthesizer is hardwared to 32KiHz output.
+>   */
+> -#define is_ddr_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x044c)
+> -#define is_audio_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x04a8)
+> +#define is_ddr_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x044c)
+> +#define is_audio_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x04a8)
+
+Ditto.
+
+A cast from an __iomem pointer to unsigned long is permitted - no need
+to use __force.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
