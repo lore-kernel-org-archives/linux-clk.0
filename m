@@ -1,983 +1,655 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:63007 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752061AbcFKR4G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Sat, 11 Jun 2016 13:56:06 -0400
-Message-Id: <dae917bae31608c112adfc7723639707165000c7.1465666788.git.moinejf@free.fr>
-In-Reply-To: <cover.1465666788.git.moinejf@free.fr>
-References: <cover.1465666788.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Sat, 11 Jun 2016 18:50:31 +0200
-Subject: [PATCH v2 2/3] clk: sunxi-ng: Add the A83T clocks and resets
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <javier@dowhile0.org>
+MIME-Version: 1.0
+In-Reply-To: <20160601231533.9354-18-stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+	<20160601231533.9354-18-stephen.boyd@linaro.org>
+Date: Tue, 7 Jun 2016 14:50:12 -0400
+Message-ID: <CABxcv=mWdwPrGRrP7ay=2FBxzoew6yBdfjZNvgFeDGACnQZdcQ@mail.gmail.com>
+Subject: Re: [PATCH 17/34] clk: maxgen: Migrate to clk_hw based OF and
+ registration APIs
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>,
+	Javier Martinez Canillas <Javier@osg.samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the clocks and resets found in the A83T CCU.
+Hello Stephen,
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
----
- drivers/clk/sunxi-ng/Makefile          |   2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c  | 675 +++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/sun8i-a83t.h | 150 ++++++++
- include/dt-bindings/reset/sun8i-a83t.h |  94 +++++
- 4 files changed, 920 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
- create mode 100644 include/dt-bindings/clock/sun8i-a83t.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t.h
+On Wed, Jun 1, 2016 at 7:15 PM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index f0608cb..6511c4c 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -15,4 +15,4 @@ obj-y += ccu_nkmp.o
- obj-y += ccu_nm.o
- obj-y += ccu_phase.o
- 
--obj-$(CONFIG_MACH_SUN8I) += ccu-sun8i-h3.o
-+obj-$(CONFIG_MACH_SUN8I) += ccu-sun8i-h3.o ccu-sun8i-a83t.o
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-new file mode 100644
-index 0000000..eec9ca4
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -0,0 +1,675 @@
-+/*
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ * Based on the H3 version from
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+
-+#include <dt-bindings/clock/sun8i-a83t.h>
-+#include <dt-bindings/reset/sun8i-a83t.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_reset.h"
-+
-+#include "ccu_div.h"
-+#include "ccu_fixed_factor.h"
-+#include "ccu_gate.h"
-+#include "ccu_mp.h"
-+#include "ccu_mult.h"
-+#include "ccu_ndmp.h"
-+#include "ccu_phase.h"
-+
-+/* 2 * cpux */
-+/*	rate = 24MHz * n */
-+static SUNXI_CCU_NDMP(pll_c0cpux_clk, "pll-c0cpux", "osc24M", 0x000,
-+			8, 8,		/* N */
-+			0, 0,		/* D1 */
-+			0, 0,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(0), 0x20c,	/* lock */
-+			0);
-+
-+static SUNXI_CCU_NDMP(pll_c1cpux_clk, "pll-c1cpux", "osc24M", 0x004,
-+			8, 8,		/* N */
-+			0, 0,		/* D1 */
-+			0, 0,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(1), 0x20c,	/* lock */
-+			0);
-+
-+/* audio */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) / (p + 1) */
-+static SUNXI_CCU_NDMP(pll_audio_clk, "pll-audio", "osc24M", 0x008,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 6,		/* M (p post-div) */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(2), 0x20c,	/* lock */
-+			0);
-+
-+/* video 0 */
-+/*	rate = 24MHz * n / (d1 + 1) >> p */
-+static SUNXI_CCU_NDMP(pll_video0_clk, "pll-video0", "osc24M", 0x010,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			0, 0,		/* D2 */
-+			0, 0,		/* M */
-+			0, 2,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(3), 0x20c,	/* lock */
-+			0);
-+
-+/* video engine */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static SUNXI_CCU_NDMP(pll_ve_clk, "pll-ve", "osc24M", 0x018,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(4), 0x20c,	/* lock */
-+			0);
-+
-+/* ddr */
-+/*	rate = 24MHz * (n + 1) / (d1 + 1) / (d2 + 1)
-+ *	bit 21: DDR_CLOCK = PLL_DDR / PLL_PERIPH (default DDR)
-+ *	bit 22: to be set after rate is changed
-+ */
-+static SUNXI_CCU_NDMP_N1(pll_ddr_clk, "pll-ddr", "osc24M", 0x020,
-+			8, 6,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(5), 0x20c,	/* lock */
-+			CLK_IGNORE_UNUSED);
-+
-+/* periph */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static SUNXI_CCU_NDMP(pll_periph_clk, "pll-periph", "osc24M", 0x028,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(6), 0x20c,	/* lock */
-+			0);
-+
-+/* gpu */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static SUNXI_CCU_NDMP(pll_gpu_clk, "pll-gpu", "osc24M", 0x038,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(7), 0x20c,	/* lock */
-+			0);
-+
-+/* hsic */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static SUNXI_CCU_NDMP(pll_hsic_clk, "pll-hsic", "osc24M", 0x044,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(8), 0x20c,	/* lock */
-+			CLK_IGNORE_UNUSED);
-+
-+/* display engine */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static SUNXI_CCU_NDMP(pll_de_clk, "pll-de", "osc24M", 0x048,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			18, 1,		/* D2 */
-+			0, 0,		/* M */
-+			0, 0,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(9), 0x20c,	/* lock */
-+			0);
-+/* video 1 */
-+/*	rate = 24MHz * n / (d1 + 1) >> p */
-+static SUNXI_CCU_NDMP(pll_video1_clk, "pll-video1", "osc24M", 0x04c,
-+			8, 8,		/* N */
-+			16, 1,		/* D1 */
-+			0, 0,		/* D2 */
-+			0, 0,		/* M */
-+			0, 2,		/* P */
-+			BIT(31),	/* gate */
-+			BIT(10), 0x20c,	/* lock */
-+			0);
-+
-+static const char * const c0cpux_parents[] = { "osc24M", "pll-c0cpux" };
-+static SUNXI_CCU_MUX(c0cpux_clk, "c0cpux", c0cpux_parents,
-+		     0x050, 12, 1, CLK_IS_CRITICAL);
-+
-+static SUNXI_CCU_M(axi0_clk, "axi0", "c0cpux",
-+		   0x050, 0, 2, CLK_IGNORE_UNUSED);
-+
-+static const char * const c1cpux_parents[] = { "osc24M", "pll-c1cpux" };
-+static SUNXI_CCU_MUX(c1cpux_clk, "c1cpux", c1cpux_parents,
-+		     0x050, 28, 1, CLK_IS_CRITICAL);
-+
-+static SUNXI_CCU_M(axi1_clk, "axi1", "c1cpux",
-+		   0x050, 16, 2, CLK_IGNORE_UNUSED);
-+
-+static const char * const ahb1_parents[] = { "osc32k", "osc24M",
-+						"pll-periph" };
-+static struct ccu_div ahb1_clk = {
-+	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
-+
-+	.mux		= {
-+		.shift	= 12,
-+		.width	= 2,
-+
-+		.variable_prediv	= {
-+			.index	= 2,
-+			.shift	= 6,
-+			.width	= 2,
-+		},
-+	},
-+
-+	.common		= {
-+		.reg		= 0x054,
-+		.features	= CCU_FEATURE_VARIABLE_PREDIV,
-+		.hw.init	= SUNXI_HW_INIT_PARENTS("ahb1",
-+							ahb1_parents,
-+							&ccu_div_ops,
-+							0),
-+	},
-+};
-+
-+static SUNXI_CCU_M(apb1_clk, "apb1", "ahb1", 0x054, 8, 2, 0);
-+
-+static const char * const apb2_parents[] = { "osc32k", "osc24M",
-+						"pll-periph", "pll-periph" };
-+static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
-+			     0, 5,	/* M */
-+			     16, 2,	/* P */
-+			     24, 2,	/* mux */
-+			     0);
-+
-+static const char * const ahb2_parents[] = { "ahb1", "pll-periph" };
-+static struct ccu_mux ahb2_clk = {
-+	.mux		= {
-+		.shift	= 0,
-+		.width	= 2,
-+
-+		.fixed_prediv	= {
-+			.index	= 1,
-+			.div	= 2,
-+		},
-+	},
-+
-+	.common		= {
-+		.reg		= 0x05c,
-+		.features	= CCU_FEATURE_FIXED_PREDIV,
-+		.hw.init	= SUNXI_HW_INIT_PARENTS("ahb2",
-+							ahb2_parents,
-+							&ccu_mux_ops,
-+							0),
-+	},
-+};
-+
-+static SUNXI_CCU_GATE(bus_mipi_dsi_clk,	"bus-mipi-dsi",	"ahb1",
-+		      0x060, BIT(1), 0);
-+static SUNXI_CCU_GATE(bus_ss_clk,	"bus-ss",	"ahb1",
-+		      0x060, BIT(5), 0);
-+static SUNXI_CCU_GATE(bus_dma_clk,	"bus-dma",	"ahb1",
-+		      0x060, BIT(6), 0);
-+static SUNXI_CCU_GATE(bus_mmc0_clk,	"bus-mmc0",	"ahb1",
-+		      0x060, BIT(8), 0);
-+static SUNXI_CCU_GATE(bus_mmc1_clk,	"bus-mmc1",	"ahb1",
-+		      0x060, BIT(9), 0);
-+static SUNXI_CCU_GATE(bus_mmc2_clk,	"bus-mmc2",	"ahb1",
-+		      0x060, BIT(10), 0);
-+static SUNXI_CCU_GATE(bus_nand_clk,	"bus-nand",	"ahb1",
-+		      0x060, BIT(13), 0);
-+static SUNXI_CCU_GATE(bus_dram_clk,	"bus-dram",	"ahb1",
-+		      0x060, BIT(14), CLK_IGNORE_UNUSED);
-+static SUNXI_CCU_GATE(bus_emac_clk,	"bus-emac",	"ahb2",
-+		      0x060, BIT(17), 0);
-+static SUNXI_CCU_GATE(bus_hstimer_clk,	"bus-hstimer",	"ahb1",
-+		      0x060, BIT(19), 0);
-+static SUNXI_CCU_GATE(bus_spi0_clk,	"bus-spi0",	"ahb1",
-+		      0x060, BIT(20), 0);
-+static SUNXI_CCU_GATE(bus_spi1_clk,	"bus-spi1",	"ahb1",
-+		      0x060, BIT(21), 0);
-+static SUNXI_CCU_GATE(bus_usbdrd_clk,	"bus-usbdrd",	"ahb2",
-+		      0x060, BIT(24), 0);
-+static SUNXI_CCU_GATE(bus_ehci0_clk,	"bus-ehci0",	"ahb2",
-+		      0x060, BIT(26), 0);
-+static SUNXI_CCU_GATE(bus_ehci1_clk,	"bus-ehci1",	"ahb2",
-+		      0x060, BIT(27), 0);
-+static SUNXI_CCU_GATE(bus_ohci0_clk,	"bus-ohci0",	"ahb2",
-+		      0x060, BIT(29), 0);
-+
-+static SUNXI_CCU_GATE(bus_ve_clk,	"bus-ve",	"ahb1",
-+		      0x064, BIT(0), 0);
-+static SUNXI_CCU_GATE(bus_tcon0_clk,	"bus-tcon0",	"ahb1",
-+		      0x064, BIT(4), 0);
-+static SUNXI_CCU_GATE(bus_tcon1_clk,	"bus-tcon1",	"ahb1",
-+		      0x064, BIT(5), 0);
-+static SUNXI_CCU_GATE(bus_csi_clk,	"bus-csi",	"ahb1",
-+		      0x064, BIT(8), 0);
-+static SUNXI_CCU_GATE(bus_hdmi_clk,	"bus-hdmi",	"ahb1",
-+		      0x064, BIT(11), 0);
-+static SUNXI_CCU_GATE(bus_de_clk,	"bus-de",	"ahb1",
-+		      0x064, BIT(12), 0);
-+static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
-+		      0x064, BIT(20), 0);
-+static SUNXI_CCU_GATE(bus_msgbox_clk,	"bus-msgbox",	"ahb1",
-+		      0x064, BIT(21), 0);
-+static SUNXI_CCU_GATE(bus_spinlock_clk,	"bus-spinlock",	"ahb1",
-+		      0x064, BIT(22), 0);
-+
-+static SUNXI_CCU_GATE(bus_spdif_clk,	"bus-spdif",	"apb1",
-+		      0x068, BIT(1), 0);
-+static SUNXI_CCU_GATE(bus_pio_clk,	"bus-pio",	"apb1",
-+		      0x068, BIT(5), 0);
-+static SUNXI_CCU_GATE(bus_daudio0_clk,	"bus-daudio0",	"apb1",
-+		      0x068, BIT(12), 0);
-+static SUNXI_CCU_GATE(bus_daudio1_clk,	"bus-daudio1",	"apb1",
-+		      0x068, BIT(13), 0);
-+static SUNXI_CCU_GATE(bus_daudio2_clk,	"bus-daudio2",	"apb1",
-+		      0x068, BIT(14), 0);
-+static SUNXI_CCU_GATE(bus_tdm_clk,	"bus-tdm",	"apb1",
-+		      0x068, BIT(15), 0);
-+
-+static SUNXI_CCU_GATE(bus_i2c0_clk,	"bus-i2c0",	"apb2",
-+		      0x06c, BIT(0), 0);
-+static SUNXI_CCU_GATE(bus_i2c1_clk,	"bus-i2c1",	"apb2",
-+		      0x06c, BIT(1), 0);
-+static SUNXI_CCU_GATE(bus_i2c2_clk,	"bus-i2c2",	"apb2",
-+		      0x06c, BIT(2), 0);
-+static SUNXI_CCU_GATE(bus_uart0_clk,	"bus-uart0",	"apb2",
-+		      0x06c, BIT(16), 0);
-+static SUNXI_CCU_GATE(bus_uart1_clk,	"bus-uart1",	"apb2",
-+		      0x06c, BIT(17), 0);
-+static SUNXI_CCU_GATE(bus_uart2_clk,	"bus-uart2",	"apb2",
-+		      0x06c, BIT(18), 0);
-+static SUNXI_CCU_GATE(bus_uart3_clk,	"bus-uart3",	"apb2",
-+		      0x06c, BIT(19), 0);
-+static SUNXI_CCU_GATE(bus_uart4_clk,	"bus-uart4",	"apb2",
-+		      0x06c, BIT(20), 0);
-+
-+static const char * const cci400_parents[] = { "osc24M", "pll-periph",
-+						"pll-hsic" };
-+static SUNXI_CCU_M_WITH_MUX(cci400_clk, "cci400", cci400_parents,
-+			    0x078, 0, 2, 24, 2, 0);
-+
-+static const char * const mod0_default_parents[] = { "osc24M", "pll-periph" };
-+static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", mod0_default_parents,
-+				  0x080,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 2,	/* mux */
-+				  BIT(31),	/* gate */
-+				  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mod0_default_parents,
-+				  0x088,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 2,	/* mux */
-+				  BIT(31),	/* gate */
-+				  0);
-+
-+static SUNXI_CCU_PHASE(mmc0_sample_clk, "mmc0_sample", "mmc0",
-+		       0x088, 20, 3, 0);
-+static SUNXI_CCU_PHASE(mmc0_output_clk, "mmc0_output", "mmc0",
-+		       0x088, 8, 3, 0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mod0_default_parents,
-+				  0x08c,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 2,	/* mux */
-+				  BIT(31),	/* gate */
-+				  0);
-+
-+static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1_sample", "mmc1",
-+		       0x08c, 20, 3, 0);
-+static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1_output", "mmc1",
-+		       0x08c, 8, 3, 0);
-+
-+/* mode select */
-+static SUNXI_CCU_M_WITH_MUX(mmc2mod_clk, "mmc2mod", mod0_default_parents,
-+			    0x090, 30, 1, 24, 2, 0);
-+
-+static struct ccu_mp mmc2_clk = {
-+	.enable		= BIT(31),
-+
-+	.p		= _SUNXI_CCU_DIV(16, 2),
-+	.m		= _SUNXI_CCU_DIV(0, 4),
-+
-+	.common		= {
-+		.reg		= 0x090,
-+		.hw.init	= SUNXI_HW_INIT("mmc2",
-+						"mmc2mod",
-+						&ccu_mp_ops,
-+						CLK_SET_RATE_PARENT),
-+	},
-+};
-+
-+static SUNXI_CCU_PHASE(mmc2_sample_clk, "mmc2_sample", "mmc2",
-+		       0x090, 20, 3, 0);
-+static SUNXI_CCU_PHASE(mmc2_output_clk, "mmc2_output", "mmc2",
-+		       0x090, 8, 3, 0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE(ss_clk, "ss", mod0_default_parents, 0x09c,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 2,	/* mux */
-+				  BIT(31),	/* gate */
-+				  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE(spi0_clk, "spi0", mod0_default_parents,
-+				  0x0a0,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 2,	/* mux */
-+				  BIT(31),	/* gate */
-+				  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents,
-+				  0x0a4,
-+				  0, 4,		/* M */
-+				  16, 2,	/* P */
-+				  24, 2,	/* mux */
-+				  BIT(31),	/* gate */
-+				  0);
-+
-+static SUNXI_CCU_M(daudio0_clk, "daudio0", "pll-audio", 0x0b0, 0, 4, 0);
-+
-+static SUNXI_CCU_M(daudio1_clk, "daudio1", "pll-audio", 0x0b4, 0, 4, 0);
-+
-+static SUNXI_CCU_M(daudio2_clk, "daudio2", "pll-audio", 0x0b8, 0, 4, 0);
-+
-+static SUNXI_CCU_M(tdm_clk, "tdm", "pll-audio", 0x0bc, 0, 4, 0);
-+
-+static SUNXI_CCU_M(spdif_clk, "spdif", "pll-audio", 0x0c0, 0, 4, 0);
-+
-+static SUNXI_CCU_GATE(usb_phy0_clk, "usb-phy0", "osc24M", 0x0cc, BIT(8), 0);
-+static SUNXI_CCU_GATE(usb_phy1_clk, "usb-phy1", "osc24M", 0x0cc, BIT(9), 0);
-+static SUNXI_CCU_GATE(usb_hsic_clk, "usb-hsic", "pll-hsic", 0x0cc, BIT(10), 0);
-+
-+static SUNXI_CCU_GATE(osc12mx2_clk, "osc12Mx2", "osc24M", 0x0cc, BIT(11), 0);
-+static SUNXI_CCU_FIXED_FACTOR(osc12m_clk, "osc12M", "osc12Mx2",
-+				2, 1, CLK_SET_RATE_PARENT);
-+
-+static SUNXI_CCU_GATE(ohci0_clk, "ohci0", "osc24M", 0x0cc, BIT(16), 0);
-+
-+static SUNXI_CCU_M(dram_clk, "dram", "pll-ddr", 0x0f4, 0, 4,
-+							CLK_IGNORE_UNUSED);
-+/* bit 16 SDRCLK_UPD (configuration update) */
-+
-+/* pll_ddr config not done */
-+
-+static SUNXI_CCU_GATE(dram_ve_clk, "dram-ve", "dram", 0x100, BIT(0), 0);
-+static SUNXI_CCU_GATE(dram_csi_clk, "dram-csi", "dram", 0x100, BIT(1), 0);
-+
-+static SUNXI_CCU_GATE(tcon0_clk, "tcon0", "pll-video0", 0x118, BIT(31), 0);
-+
-+static SUNXI_CCU_M_WITH_GATE(tcon1_clk, "tcon1", "pll-video1",
-+						0x11c, 0, 4, BIT(31), 0);
-+
-+static SUNXI_CCU_GATE(csi_misc_clk, "csi-misc", "osc24M", 0x130, BIT(16), 0);
-+
-+static SUNXI_CCU_GATE(mipi_csi_clk, "mipi-csi", "osc24M", 0x130, BIT(31), 0);
-+
-+/* hack: "osc32k" is used for no parent */
-+static const char * const csi_sclk_parents[] = { "pll-periph",
-+				"osc32k", "osc32k", "osc32k", "osc32k",
-+				"pll-ve" };
-+static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
-+				 0x134, 16, 4, 24, 3, BIT(31), 0);
-+
-+/* hack: "osc32k" is used for no parent */
-+static const char * const csi_mclk_parents[] = {"osc32k", "osc32k", "osc32k",
-+				"pll-periph", "osc32k",
-+				"osc24M"};
-+static SUNXI_CCU_M_WITH_MUX_GATE(csi_mclk_clk, "csi-mclk", csi_mclk_parents,
-+				 0x134, 0, 5, 8, 3, BIT(15), 0);
-+
-+static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve", 0x13c, 16, 3, BIT(31), 0);
-+
-+static SUNXI_CCU_GATE(avs_clk, "avs", "osc24M", 0x144, BIT(31), 0);
-+
-+static SUNXI_CCU_M_WITH_GATE(hdmi_clk, "hdmi", "pll-video1",
-+			     0x150, 0, 4, BIT(31), 0);
-+
-+static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x154, BIT(31), 0);
-+
-+static const char * const mbus_parents[] = { "osc24M", "pll-periph",
-+						"pll-ddr" };
-+static SUNXI_CCU_M_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents,
-+				 0x15c, 0, 3, 24, 2, BIT(31), CLK_IS_CRITICAL);
-+
-+static SUNXI_CCU_M_WITH_GATE(mipi_dsi0_clk, "mipi-dsi0", "pll-video0",
-+			     0x168, 0, 4, BIT(31), 0);
-+
-+static const char * const mipi_dsi1_parents[] = { "osc24M",
-+/* hack: "osc32k" is used for no parent */
-+				"osc32k", "osc32k", "osc32k", "osc32k",
-+					"osc32k", "osc32k", "osc32k", "osc32k",
-+				"pll-video0" };
-+static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi1_clk, "mipi-dsi1", mipi_dsi1_parents,
-+				 0x16c, 0, 4, 24, 4, BIT(31), 0);
-+
-+static SUNXI_CCU_M_WITH_GATE(gpu_core_clk, "gpu-core", "pll-gpu",
-+			     0x1a0, 0, 3, BIT(31), 0);
-+
-+static const char * const gpu_mem_parents[] = { "pll-gpu", "pll-periph" };
-+static SUNXI_CCU_M_WITH_MUX_GATE(gpu_mem_clk, "gpu-mem", gpu_mem_parents,
-+				 0x1a4, 0, 3, 24, 1, BIT(31), 0);
-+
-+static SUNXI_CCU_M_WITH_GATE(gpu_hyd_clk, "gpu-hyd", "pll-gpu",
-+			     0x1a8, 0, 3, BIT(31), 0);
-+
-+static struct ccu_common *sun8i_a83t_ccu_clks[] = {
-+	[CLK_PLL_C0CPUX]	= &pll_c0cpux_clk.common,
-+	[CLK_PLL_C1CPUX]	= &pll_c1cpux_clk.common,
-+	[CLK_PLL_AUDIO]		= &pll_audio_clk.common,
-+	[CLK_PLL_VIDEO0]	= &pll_video0_clk.common,
-+	[CLK_PLL_VE]		= &pll_ve_clk.common,
-+	[CLK_PLL_DDR]		= &pll_ddr_clk.common,
-+	[CLK_PLL_PERIPH]	= &pll_periph_clk.common,
-+	[CLK_PLL_GPU]		= &pll_gpu_clk.common,
-+	[CLK_PLL_HSIC]		= &pll_hsic_clk.common,
-+	[CLK_PLL_DE]		= &pll_de_clk.common,
-+	[CLK_PLL_VIDEO1]	= &pll_video1_clk.common,
-+	[CLK_C0CPUX]		= &c0cpux_clk.common,
-+	[CLK_AXI0]		= &axi0_clk.common,
-+	[CLK_C1CPUX]		= &c1cpux_clk.common,
-+	[CLK_AXI1]		= &axi1_clk.common,
-+	[CLK_AHB1]		= &ahb1_clk.common,
-+	[CLK_APB1]		= &apb1_clk.common,
-+	[CLK_APB2]		= &apb2_clk.common,
-+	[CLK_AHB2]		= &ahb2_clk.common,
-+	[CLK_BUS_MIPI_DSI]	= &bus_mipi_dsi_clk.common,
-+	[CLK_BUS_SS]		= &bus_ss_clk.common,
-+	[CLK_BUS_DMA]		= &bus_dma_clk.common,
-+	[CLK_BUS_MMC0]		= &bus_mmc0_clk.common,
-+	[CLK_BUS_MMC1]		= &bus_mmc1_clk.common,
-+	[CLK_BUS_MMC2]		= &bus_mmc2_clk.common,
-+	[CLK_BUS_NAND]		= &bus_nand_clk.common,
-+	[CLK_BUS_DRAM]		= &bus_dram_clk.common,
-+	[CLK_BUS_EMAC]		= &bus_emac_clk.common,
-+	[CLK_BUS_HSTIMER]	= &bus_hstimer_clk.common,
-+	[CLK_BUS_SPI0]		= &bus_spi0_clk.common,
-+	[CLK_BUS_SPI1]		= &bus_spi1_clk.common,
-+	[CLK_BUS_USBDRD]	= &bus_usbdrd_clk.common,
-+	[CLK_BUS_EHCI0]		= &bus_ehci0_clk.common,
-+	[CLK_BUS_EHCI1]		= &bus_ehci1_clk.common,
-+	[CLK_BUS_OHCI0]		= &bus_ohci0_clk.common,
-+	[CLK_BUS_VE]		= &bus_ve_clk.common,
-+	[CLK_BUS_TCON0]		= &bus_tcon0_clk.common,
-+	[CLK_BUS_TCON1]		= &bus_tcon1_clk.common,
-+	[CLK_BUS_CSI]		= &bus_csi_clk.common,
-+	[CLK_BUS_HDMI]		= &bus_hdmi_clk.common,
-+	[CLK_BUS_DE]		= &bus_de_clk.common,
-+	[CLK_BUS_GPU]		= &bus_gpu_clk.common,
-+	[CLK_BUS_MSGBOX]	= &bus_msgbox_clk.common,
-+	[CLK_BUS_SPINLOCK]	= &bus_spinlock_clk.common,
-+	[CLK_BUS_SPDIF]		= &bus_spdif_clk.common,
-+	[CLK_BUS_PIO]		= &bus_pio_clk.common,
-+	[CLK_BUS_DAUDIO0]	= &bus_daudio0_clk.common,
-+	[CLK_BUS_DAUDIO1]	= &bus_daudio1_clk.common,
-+	[CLK_BUS_DAUDIO2]	= &bus_daudio2_clk.common,
-+	[CLK_BUS_TDM]		= &bus_tdm_clk.common,
-+	[CLK_BUS_I2C0]		= &bus_i2c0_clk.common,
-+	[CLK_BUS_I2C1]		= &bus_i2c1_clk.common,
-+	[CLK_BUS_I2C2]		= &bus_i2c2_clk.common,
-+	[CLK_BUS_UART0]		= &bus_uart0_clk.common,
-+	[CLK_BUS_UART1]		= &bus_uart1_clk.common,
-+	[CLK_BUS_UART2]		= &bus_uart2_clk.common,
-+	[CLK_BUS_UART3]		= &bus_uart3_clk.common,
-+	[CLK_BUS_UART4]		= &bus_uart4_clk.common,
-+	[CLK_CCI400]		= &cci400_clk.common,
-+	[CLK_NAND]		= &nand_clk.common,
-+	[CLK_MMC0]		= &mmc0_clk.common,
-+	[CLK_MMC0_SAMPLE]	= &mmc0_sample_clk.common,
-+	[CLK_MMC0_OUTPUT]	= &mmc0_output_clk.common,
-+	[CLK_MMC1]		= &mmc1_clk.common,
-+	[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common,
-+	[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common,
-+	[CLK_MMC2MOD]		= &mmc2mod_clk.common,
-+	[CLK_MMC2]		= &mmc2_clk.common,
-+	[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common,
-+	[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common,
-+	[CLK_SS]		= &ss_clk.common,
-+	[CLK_SPI0]		= &spi0_clk.common,
-+	[CLK_SPI1]		= &spi1_clk.common,
-+	[CLK_DAUDIO0]		= &daudio0_clk.common,
-+	[CLK_DAUDIO1]		= &daudio1_clk.common,
-+	[CLK_DAUDIO2]		= &daudio2_clk.common,
-+	[CLK_TDM]		= &tdm_clk.common,
-+	[CLK_SPDIF]		= &spdif_clk.common,
-+	[CLK_USB_PHY0]		= &usb_phy0_clk.common,
-+	[CLK_USB_PHY1]		= &usb_phy1_clk.common,
-+	[CLK_USB_HSIC]		= &usb_hsic_clk.common,
-+	[CLK_OSC12M]		= &osc12m_clk.common,
-+	[CLK_OHCI0]		= &ohci0_clk.common,
-+	[CLK_DRAM]		= &dram_clk.common,
-+	[CLK_DRAM_VE]		= &dram_ve_clk.common,
-+	[CLK_DRAM_CSI]		= &dram_csi_clk.common,
-+	[CLK_TCON0]		= &tcon0_clk.common,
-+	[CLK_TCON1]		= &tcon1_clk.common,
-+	[CLK_CSI_MISC]		= &csi_misc_clk.common,
-+	[CLK_MIPI_CSI]		= &mipi_csi_clk.common,
-+	[CLK_CSI_SCLK]		= &csi_sclk_clk.common,
-+	[CLK_CSI_MCLK]		= &csi_mclk_clk.common,
-+	[CLK_VE]		= &ve_clk.common,
-+	[CLK_AVS]		= &avs_clk.common,
-+	[CLK_HDMI]		= &hdmi_clk.common,
-+	[CLK_HDMI_DDC]		= &hdmi_ddc_clk.common,
-+	[CLK_MBUS]		= &mbus_clk.common,
-+	[CLK_MIPI_DSI0]		= &mipi_dsi0_clk.common,
-+	[CLK_MIPI_DSI1]		= &mipi_dsi1_clk.common,
-+	[CLK_GPU_CORE]		= &gpu_core_clk.common,
-+	[CLK_GPU_MEM]		= &gpu_mem_clk.common,
-+	[CLK_GPU_HYD]		= &gpu_hyd_clk.common,
-+	[CLK_OSC12MX2]		= &osc12mx2_clk.common,
-+};
-+
-+static struct ccu_reset_map sun8i_a83t_ccu_resets[] = {
-+	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
-+	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
-+	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
-+
-+	[RST_DRAM]		=  { 0x0f4, BIT(31) },
-+	[RST_MBUS]		=  { 0x0fc, BIT(31) },
-+
-+	[RST_BUS_MIPI_DSI]	=  { 0x2c0, BIT(1) },
-+	[RST_BUS_CE]		=  { 0x2c0, BIT(5) },
-+	[RST_BUS_DMA]		=  { 0x2c0, BIT(6) },
-+	[RST_BUS_MMC0]		=  { 0x2c0, BIT(8) },
-+	[RST_BUS_MMC1]		=  { 0x2c0, BIT(9) },
-+	[RST_BUS_MMC2]		=  { 0x2c0, BIT(10) },
-+	[RST_BUS_NAND]		=  { 0x2c0, BIT(13) },
-+	[RST_BUS_DRAM]		=  { 0x2c0, BIT(14) },
-+	[RST_BUS_EMAC]		=  { 0x2c0, BIT(17) },
-+	[RST_BUS_HSTIMER]	=  { 0x2c0, BIT(19) },
-+	[RST_BUS_SPI0]		=  { 0x2c0, BIT(20) },
-+	[RST_BUS_SPI1]		=  { 0x2c0, BIT(21) },
-+	[RST_BUS_USBDRD]	=  { 0x2c0, BIT(24) },
-+	[RST_BUS_EHCI0]		=  { 0x2c0, BIT(26) },
-+	[RST_BUS_EHCI1]		=  { 0x2c0, BIT(27) },
-+	[RST_BUS_OHCI0]		=  { 0x2c0, BIT(29) },
-+
-+	[RST_BUS_VE]		=  { 0x2c4, BIT(0) },
-+	[RST_BUS_TCON0]		=  { 0x2c4, BIT(4) },
-+	[RST_BUS_TCON1]		=  { 0x2c4, BIT(5) },
-+	[RST_BUS_CSI]		=  { 0x2c4, BIT(8) },
-+	[RST_BUS_HDMI0]		=  { 0x2c4, BIT(10) },
-+	[RST_BUS_HDMI1]		=  { 0x2c4, BIT(11) },
-+	[RST_BUS_DE]		=  { 0x2c4, BIT(12) },
-+	[RST_BUS_GPU]		=  { 0x2c4, BIT(20) },
-+	[RST_BUS_MSGBOX]	=  { 0x2c4, BIT(21) },
-+	[RST_BUS_SPINLOCK]	=  { 0x2c4, BIT(22) },
-+
-+	[RST_BUS_LVDS]		=  { 0x2c8, BIT(0) },
-+
-+	[RST_BUS_SPDIF]		=  { 0x2d0, BIT(1) },
-+	[RST_BUS_DAUDIO0]	=  { 0x2d0, BIT(12) },
-+	[RST_BUS_DAUDIO1]	=  { 0x2d0, BIT(13) },
-+	[RST_BUS_DAUDIO2]	=  { 0x2d0, BIT(14) },
-+	[RST_BUS_TDM]		=  { 0x2d0, BIT(15) },
-+
-+	[RST_BUS_I2C0]		=  { 0x2d8, BIT(0) },
-+	[RST_BUS_I2C1]		=  { 0x2d8, BIT(1) },
-+	[RST_BUS_I2C2]		=  { 0x2d8, BIT(2) },
-+	[RST_BUS_UART0]		=  { 0x2d8, BIT(16) },
-+	[RST_BUS_UART1]		=  { 0x2d8, BIT(17) },
-+	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
-+	[RST_BUS_UART3]		=  { 0x2d8, BIT(19) },
-+	[RST_BUS_UART4]		=  { 0x2d8, BIT(20) },
-+};
-+
-+static const struct sunxi_ccu_desc sun8i_a83t_ccu_desc = {
-+	.clks		= sun8i_a83t_ccu_clks,
-+	.num_clks	= ARRAY_SIZE(sun8i_a83t_ccu_clks),
-+
-+	.resets		= sun8i_a83t_ccu_resets,
-+	.num_resets	= ARRAY_SIZE(sun8i_a83t_ccu_resets),
-+};
-+
-+static void __init sun8i_a83t_ccu_setup(struct device_node *node)
-+{
-+	void __iomem *reg;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg)) {
-+		pr_err("%s: Could not map the clock registers\n",
-+		       of_node_full_name(node));
-+		return;
-+	}
-+
-+	sunxi_ccu_probe(node, reg, &sun8i_a83t_ccu_desc);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_ccu, "allwinner,sun8i-a83t-ccu",
-+	       sun8i_a83t_ccu_setup);
-diff --git a/include/dt-bindings/clock/sun8i-a83t.h b/include/dt-bindings/clock/sun8i-a83t.h
-new file mode 100644
-index 0000000..4cf3b9f
---- /dev/null
-+++ b/include/dt-bindings/clock/sun8i-a83t.h
-@@ -0,0 +1,150 @@
-+/*
-+ * Copyright (C) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SUN8I_A83T_H_
-+#define _DT_BINDINGS_CLK_SUN8I_A83T_H_
-+
-+#define CLK_PLL_C0CPUX		0
-+#define CLK_PLL_C1CPUX		1
-+#define CLK_PLL_AUDIO		2
-+#define CLK_PLL_VIDEO0		3
-+#define CLK_PLL_VE		4
-+#define CLK_PLL_DDR		5
-+#define CLK_PLL_PERIPH		6
-+#define CLK_PLL_GPU		7
-+#define CLK_PLL_HSIC		8
-+#define CLK_PLL_DE		9
-+#define CLK_PLL_VIDEO1		10
-+#define CLK_C0CPUX		11
-+#define CLK_AXI0		12
-+#define CLK_C1CPUX		13
-+#define CLK_AXI1		14
-+#define CLK_AHB1		15
-+#define CLK_APB1		16
-+#define CLK_APB2		17
-+#define CLK_AHB2		18
-+#define CLK_BUS_MIPI_DSI	19
-+#define CLK_BUS_SS		20
-+#define CLK_BUS_DMA		21
-+#define CLK_BUS_MMC0		22
-+#define CLK_BUS_MMC1		23
-+#define CLK_BUS_MMC2		24
-+#define CLK_BUS_NAND		25
-+#define CLK_BUS_DRAM		26
-+#define CLK_BUS_EMAC		27
-+#define CLK_BUS_HSTIMER		28
-+#define CLK_BUS_SPI0		29
-+#define CLK_BUS_SPI1		30
-+#define CLK_BUS_USBDRD		31
-+#define CLK_BUS_EHCI0		32
-+#define CLK_BUS_EHCI1		33
-+#define CLK_BUS_OHCI0		34
-+#define CLK_BUS_VE		35
-+#define CLK_BUS_TCON0		36
-+#define CLK_BUS_TCON1		37
-+#define CLK_BUS_CSI		38
-+#define CLK_BUS_HDMI		39
-+#define CLK_BUS_DE		40
-+#define CLK_BUS_GPU		41
-+#define CLK_BUS_MSGBOX		42
-+#define CLK_BUS_SPINLOCK	43
-+#define CLK_BUS_SPDIF		44
-+#define CLK_BUS_PIO		45
-+#define CLK_BUS_DAUDIO0		46
-+#define CLK_BUS_DAUDIO1		47
-+#define CLK_BUS_DAUDIO2		48
-+#define CLK_BUS_TDM		49
-+#define CLK_BUS_I2C0		50
-+#define CLK_BUS_I2C1		51
-+#define CLK_BUS_I2C2		52
-+#define CLK_BUS_UART0		53
-+#define CLK_BUS_UART1		54
-+#define CLK_BUS_UART2		55
-+#define CLK_BUS_UART3		56
-+#define CLK_BUS_UART4		57
-+#define CLK_CCI400		58
-+#define CLK_NAND		59
-+#define CLK_MMC0		60
-+#define CLK_MMC0_SAMPLE		61
-+#define CLK_MMC0_OUTPUT		62
-+#define CLK_MMC1		63
-+#define CLK_MMC1_SAMPLE		64
-+#define CLK_MMC1_OUTPUT		65
-+#define CLK_MMC2MOD		66
-+#define CLK_MMC2		67
-+#define CLK_MMC2_SAMPLE		68
-+#define CLK_MMC2_OUTPUT		69
-+#define CLK_SS			70
-+#define CLK_SPI0		71
-+#define CLK_SPI1		72
-+#define CLK_DAUDIO0		73
-+#define CLK_DAUDIO1		74
-+#define CLK_DAUDIO2		75
-+#define CLK_TDM			76
-+#define CLK_SPDIF		77
-+#define CLK_USB_PHY0		78
-+#define CLK_USB_PHY1		79
-+#define CLK_USB_HSIC		80
-+#define CLK_OSC12M		81
-+#define CLK_OHCI0		82
-+#define CLK_DRAM		83
-+#define CLK_DRAM_VE		84
-+#define CLK_DRAM_CSI		85
-+#define CLK_TCON0		86
-+#define CLK_TCON1		87
-+#define CLK_CSI_MISC		88
-+#define CLK_MIPI_CSI		89
-+#define CLK_CSI_SCLK		90
-+#define CLK_CSI_MCLK		91
-+#define CLK_VE			92
-+#define CLK_AVS			93
-+#define CLK_HDMI		94
-+#define CLK_HDMI_DDC		95
-+#define CLK_MBUS		96
-+#define CLK_MIPI_DSI0		97
-+#define CLK_MIPI_DSI1		98
-+#define CLK_GPU_CORE		99
-+#define CLK_GPU_MEM		100
-+#define CLK_GPU_HYD		101
-+#define CLK_OSC12MX2		102
-+
-+#endif /* _DT_BINDINGS_CLK_SUN8I_A83T_H_ */
-diff --git a/include/dt-bindings/reset/sun8i-a83t.h b/include/dt-bindings/reset/sun8i-a83t.h
-new file mode 100644
-index 0000000..e48019a
---- /dev/null
-+++ b/include/dt-bindings/reset/sun8i-a83t.h
-@@ -0,0 +1,94 @@
-+/*
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifndef _DT_BINDINGS_RST_SUN8I_A83T_H_
-+#define _DT_BINDINGS_RST_SUN8I_A83T_H_
-+
-+#define RST_USB_PHY0		0
-+#define RST_USB_PHY1		1
-+#define RST_USB_HSIC		2
-+
-+#define RST_DRAM		3
-+#define RST_MBUS		4
-+
-+#define RST_BUS_MIPI_DSI	5
-+#define RST_BUS_CE		6
-+#define RST_BUS_DMA		7
-+#define RST_BUS_MMC0		8
-+#define RST_BUS_MMC1		9
-+#define RST_BUS_MMC2		10
-+#define RST_BUS_NAND		11
-+#define RST_BUS_DRAM		12
-+#define RST_BUS_EMAC		13
-+#define RST_BUS_HSTIMER		14
-+#define RST_BUS_SPI0		15
-+#define RST_BUS_SPI1		16
-+#define RST_BUS_USBDRD		17
-+#define RST_BUS_EHCI0		18
-+#define RST_BUS_EHCI1		19
-+#define RST_BUS_OHCI0		20
-+#define RST_BUS_VE		21
-+#define RST_BUS_TCON0		22
-+#define RST_BUS_TCON1		23
-+#define RST_BUS_CSI		24
-+#define RST_BUS_HDMI0		25
-+#define RST_BUS_HDMI1		26
-+#define RST_BUS_DE		27
-+#define RST_BUS_GPU		28
-+#define RST_BUS_MSGBOX		29
-+#define RST_BUS_SPINLOCK	30
-+#define RST_BUS_LVDS		31
-+#define RST_BUS_SPDIF		32
-+#define RST_BUS_DAUDIO0		33
-+#define RST_BUS_DAUDIO1		34
-+#define RST_BUS_DAUDIO2		35
-+#define RST_BUS_TDM		36
-+#define RST_BUS_I2C0		37
-+#define RST_BUS_I2C1		38
-+#define RST_BUS_I2C2		39
-+#define RST_BUS_UART0		40
-+#define RST_BUS_UART1		41
-+#define RST_BUS_UART2		42
-+#define RST_BUS_UART3		43
-+#define RST_BUS_UART4		44
-+
-+#endif /* _DT_BINDINGS_RST_SUN8I_A83T_H_ */
--- 
-2.8.4
+This email address doesn't exist anymore, you can use
+javier@osg.samsung.com instead.
 
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+>
+> See commit 58657d189a2f and it's children for details on this
+> new registration API.
+>
+
+I tried this patch on top of linux-next and my Peach Pi Chromebook
+(that has a max77802 chip) failed to boot. Following is the relevant
+parts from the boot log:
+
+[    3.096860] WARNING: CPU: 1 PID: 121 at include/linux/kref.h:46
+__clk_get+0x90/0x98
+[    3.096882] Modules linked in:
+[    3.096896] CPU: 1 PID: 121 Comm: kworker/u16:2 Not tainted
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[    3.096905] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    3.096926] Workqueue: deferwq deferred_probe_work_func
+[    3.096956] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[    3.096971] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[    3.096986] [<c032479c>] (dump_stack) from [<c011a82c>] (__warn+0xe8/0x100)
+[    3.096997] [<c011a82c>] (__warn) from [<c011a8f4>]
+(warn_slowpath_null+0x20/0x28)
+[    3.097009] [<c011a8f4>] (warn_slowpath_null) from [<c05528dc>]
+(__clk_get+0x90/0x98)
+[    3.097024] [<c05528dc>] (__clk_get) from [<c0552a40>]
+(__of_clk_get_from_provider+0x70/0x10c)
+[    3.097041] [<c0552a40>] (__of_clk_get_from_provider) from
+[<c054f160>] (__of_clk_get_by_name+0xf0/0x108)
+[    3.097055] [<c054f160>] (__of_clk_get_by_name) from [<c054f1c0>]
+(clk_get+0x2c/0x5c)
+[    3.097070] [<c054f1c0>] (clk_get) from [<c054ed54>] (devm_clk_get+0x3c/0x78)
+[    3.097086] [<c054ed54>] (devm_clk_get) from [<c04e4798>]
+(s3c_rtc_probe+0x2bc/0x438)
+[    3.097101] [<c04e4798>] (s3c_rtc_probe) from [<c03fc040>]
+(platform_drv_probe+0x4c/0xb0)
+[    3.097115] [<c03fc040>] (platform_drv_probe) from [<c03fa794>]
+(driver_probe_device+0x214/0x2c0)
+[    3.097136] [<c03fa794>] (driver_probe_device) from [<c03f8bb4>]
+(bus_for_each_drv+0x60/0x94)
+[    3.097149] [<c03f8bb4>] (bus_for_each_drv) from [<c03fa4a0>]
+(__device_attach+0xb0/0x114)
+[    3.097163] [<c03fa4a0>] (__device_attach) from [<c03f9adc>]
+(bus_probe_device+0x84/0x8c)
+[    3.097174] [<c03f9adc>] (bus_probe_device) from [<c03f9f6c>]
+(deferred_probe_work_func+0x68/0x98)
+[    3.097193] [<c03f9f6c>] (deferred_probe_work_func) from
+[<c012ff2c>] (process_one_work+0x124/0x338)
+[    3.097208] [<c012ff2c>] (process_one_work) from [<c0130178>]
+(worker_thread+0x38/0x4d4)
+[    3.097224] [<c0130178>] (worker_thread) from [<c0135454>]
+(kthread+0xdc/0xf4)
+[    3.097239] [<c0135454>] (kthread) from [<c0107978>]
+(ret_from_fork+0x14/0x3c)
+[    3.097251] ---[ end trace c79e2db53b5a7881 ]---
+[    3.097286] Unable to handle kernel NULL pointer dereference at
+virtual address 0000003f
+[    3.097293] pgd = c0004000
+[    3.097312] [0000003f] *pgd=00000000
+[    3.097324] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+[    3.097342] Modules linked in:
+[    3.097354] CPU: 1 PID: 121 Comm: kworker/u16:2 Tainted: G        W
+      4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[    3.097364] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    3.097384] Workqueue: deferwq deferred_probe_work_func
+[    3.097394] task: ed22b200 ti: c3b9c000 task.ti: c3b9c000
+[    3.097408] PC is at clk_core_enable+0x10/0x98
+[    3.097420] LR is at clk_core_enable+0x40/0x98
+[    3.097430] pc : [<c054fc84>]    lr : [<c054fcb4>]    psr: a0000093
+[    3.097430] sp : c3b9dde8  ip : 00000000  fp : c3abed80
+[    3.097442] r10: edc1a800  r9 : 00000004  r8 : 00000000
+[    3.097453] r7 : edd72734  r6 : ede32a10  r5 : a0000013  r4 : ffffffff
+[    3.097462] r3 : 00000000  r2 : 00000001  r1 : 00000001  r0 : ffffffff
+[    3.097474] Flags: NzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
+Segment none
+[    3.097484] Control: 10c5387d  Table: 2000406a  DAC: 00000051
+[    3.097495] Process kworker/u16:2 (pid: 121, stack limit = 0xc3b9c210)
+[    3.097508] Stack: (0xc3b9dde8 to 0xc3b9e000)
+[    3.097520] dde0:                   c3894340 a0000013 ede32a10
+c054fcb4 edd75a40 a0000013
+[    3.097532] de00: ede32a10 c0550720 edd72710 edd75a40 ede32a10
+c04e48bc ede1f550 00000001
+[    3.097546] de20: c089ff18 00000004 ede1f550 c3a88d70 00000000
+ede1f550 00000001 c089ff18
+[    3.097558] de40: edd74d70 ede32a10 ede32a10 ede32a10 ede32a10
+ede32a10 ede32a10 c0b2a504
+[    3.097570] de60: fffffdfb c03fc040 ede32a10 c0b8308c c0b83094
+c0b2a504 00000000 c03fa794
+[    3.097582] de80: 00000000 c3b9deb8 c03fa924 00000001 00000000
+00000000 edc1a800 c03f8bb4
+[    3.097594] dea0: edc05894 c3a69644 ede32a10 ede32a44 c0b211f0
+c03fa4a0 ede32a10 00000001
+[    3.097603] dec0: c0b473a8 ede32a10 ede32a10 c0b211f0 c3b5ad00
+c03f9adc ede32a10 c0b20f9c
+[    3.097615] dee0: c0b20fc8 c03f9f6c c3abed80 c0b20fe8 edc1a800
+c012ff2c c3abed80 edc1a824
+[    3.097628] df00: edc1a800 c3abed98 00000088 edc1a824 c0b02100
+c3b9c000 edc1a800 c0130178
+[    3.097638] df20: c3b9c000 c3ac26c0 c3abed80 00000000 c3ac26c0
+c3abed80 c0130140 00000000
+[    3.097649] df40: 00000000 00000000 00000000 c0135454 e7fddef0
+00000000 e7fddef0 c3abed80
+[    3.097663] df60: 00000000 00000000 dead4ead ffffffff ffffffff
+c3b9df74 c3b9df74 00000000
+[    3.097675] df80: 00000000 dead4ead ffffffff ffffffff c3b9df90
+c3b9df90 c3b9dfac c3ac26c0
+[    3.097688] dfa0: c0135378 00000000 00000000 c0107978 00000000
+00000000 00000000 00000000
+[    3.097700] dfc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[    3.097710] dfe0: 00000000 00000000 00000000 00000000 00000013
+00000000 e7fddef0 e7fddef0
+[    3.097725] [<c054fc84>] (clk_core_enable) from [<c054fcb4>]
+(clk_core_enable+0x40/0x98)
+[    3.097741] [<c054fcb4>] (clk_core_enable) from [<c0550720>]
+(clk_enable+0x20/0x34)
+[    3.097754] [<c0550720>] (clk_enable) from [<c04e48bc>]
+(s3c_rtc_probe+0x3e0/0x438)
+[    3.097767] [<c04e48bc>] (s3c_rtc_probe) from [<c03fc040>]
+(platform_drv_probe+0x4c/0xb0)
+[    3.097781] [<c03fc040>] (platform_drv_probe) from [<c03fa794>]
+(driver_probe_device+0x214/0x2c0)
+[    3.097792] [<c03fa794>] (driver_probe_device) from [<c03f8bb4>]
+(bus_for_each_drv+0x60/0x94)
+[    3.097802] [<c03f8bb4>] (bus_for_each_drv) from [<c03fa4a0>]
+(__device_attach+0xb0/0x114)
+[    3.097815] [<c03fa4a0>] (__device_attach) from [<c03f9adc>]
+(bus_probe_device+0x84/0x8c)
+[    3.097827] [<c03f9adc>] (bus_probe_device) from [<c03f9f6c>]
+(deferred_probe_work_func+0x68/0x98)
+[    3.097841] [<c03f9f6c>] (deferred_probe_work_func) from
+[<c012ff2c>] (process_one_work+0x124/0x338)
+[    3.097857] [<c012ff2c>] (process_one_work) from [<c0130178>]
+(worker_thread+0x38/0x4d4)
+[    3.097870] [<c0130178>] (worker_thread) from [<c0135454>]
+(kthread+0xdc/0xf4)
+[    3.097882] [<c0135454>] (kthread) from [<c0107978>]
+(ret_from_fork+0x14/0x3c)
+[    3.097897] Code: e3500000 012fff1e e92d4070 e1a04000 (e5903040)
+[    3.097915] ---[ end trace c79e2db53b5a7882 ]---
+[    3.097929] note: kworker/u16:2[121] exited with preempt_count 1
+[    3.098019] Unable to handle kernel paging request at virtual
+address ffffffe0
+[    3.098029] pgd = c0004000
+[    3.098064] [ffffffe0] *pgd=4fffd861, *pte=00000000, *ppte=00000000
+[    3.098075] Internal error: Oops: 37 [#2] PREEMPT SMP ARM
+[    3.098094] Modules linked in:
+[    3.098107] CPU: 1 PID: 121 Comm: kworker/u16:2 Tainted: G      D W
+      4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[    3.098117] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    3.098133] task: ed22b200 ti: c3b9c000 task.ti: c3b9c000
+[    3.098143] PC is at kthread_data+0x4/0xc
+[    3.098155] LR is at wq_worker_sleeping+0x8/0xc8
+[    3.098166] pc : [<c0135a58>]    lr : [<c0130dbc>]    psr: 00000193
+[    3.098166] sp : c3b9dc20  ip : 00000400  fp : c3b9dc4c
+[    3.098175] r10: ed22b200  r9 : 00000000  r8 : c0b0261c
+[    3.098185] r7 : ed22b54c  r6 : ed22b200  r5 : ee34c000  r4 : c0a64000
+[    3.098195] r3 : 00000000  r2 : 00000000  r1 : ed22b200  r0 : ed22b200
+[    3.098205] Flags: nzcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
+Segment none
+[    3.098214] Control: 10c5387d  Table: 2000406a  DAC: 00000051
+[    3.098224] Process kworker/u16:2 (pid: 121, stack limit = 0xc3b9c210)
+[    3.098234] Stack: (0xc3b9dc20 to 0xc3b9e000)
+[    3.098246] dc20: c0a64000 c06cf400 ed22b200 ee34c640 c3b9c000
+c3b9d98c 00000001 edc88000
+[    3.098260] dc40: c3b9dc60 ed22b4b8 c3b9dc5c c06cf61c ed22b200
+c3b9d98c c3abed80 c011cf54
+[    3.098270] dc60: c3b9dc60 c3b9dc60 c3b9c000 c0b45404 0000000b
+c0878584 00000005 60000193
+[    3.098282] dc80: c0b0680c ed22b200 c3abed80 c010b168 c3b9c210
+0000000b 0000003f c3b9dd98
+[    3.098296] dca0: 00000005 00000000 0000003f 00000004 edc1a800
+c0114f58 00000005 c0110a08
+[    3.098308] dcc0: 00000000 00000000 60000013 00000000 ffffffff
+c0b06a4c 00000005 c0110aa4
+[    3.098318] dce0: 0000003f c3b9dd98 00000004 edc1a800 c3abed80
+c0101334 c087ac10 c3b9dd24
+[    3.098329] dd00: c3abed80 c01955b8 c3abed80 c3b9dd24 00000000
+00000000 00000000 c011a7e4
+[    3.098343] dd20: c087ac10 ffde7db5 3b5a7881 c79e2db5 0000002e
+c05528dc 00000001 00000001
+[    3.098354] dd40: c0b2ff84 c3b9dd50 c0b473a8 c06d1f70 00000001
+c3b9dd50 00000000 edd75a40
+[    3.098366] dd60: c38944c0 c3b9dd90 ede1e380 c0552a50 ede1e380
+c08c57a8 ee3a74a8 00000001
+[    3.098378] dd80: c054fc84 a0000093 ffffffff c3b9ddcc 00000000
+c010b960 ffffffff 00000001
+[    3.098391] dda0: 00000001 00000000 ffffffff a0000013 ede32a10
+edd72734 00000000 00000004
+[    3.098401] ddc0: edc1a800 c3abed80 00000000 c3b9dde8 c054fcb4
+c054fc84 a0000093 ffffffff
+[    3.098414] dde0: 00000051 a0000013 c3894340 a0000013 ede32a10
+c054fcb4 edd75a40 a0000013
+[    3.098426] de00: ede32a10 c0550720 edd72710 edd75a40 ede32a10
+c04e48bc ede1f550 00000001
+[    3.098436] de20: c089ff18 00000004 ede1f550 c3a88d70 00000000
+ede1f550 00000001 c089ff18
+[    3.098450] de40: edd74d70 ede32a10 ede32a10 ede32a10 ede32a10
+ede32a10 ede32a10 c0b2a504
+[    3.098465] de60: fffffdfb c03fc040 ede32a10 c0b8308c c0b83094
+c0b2a504 00000000 c03fa794
+[    3.098478] de80: 00000000 c3b9deb8 c03fa924 00000001 00000000
+00000000 edc1a800 c03f8bb4
+[    3.098488] dea0: edc05894 c3a69644 ede32a10 ede32a44 c0b211f0
+c03fa4a0 ede32a10 00000001
+[    3.098501] dec0: c0b473a8 ede32a10 ede32a10 c0b211f0 c3b5ad00
+c03f9adc ede32a10 c0b20f9c
+[    3.098513] dee0: c0b20fc8 c03f9f6c c3abed80 c0b20fe8 edc1a800
+c012ff2c c3abed80 edc1a824
+[    3.098526] df00: edc1a800 c3abed98 00000088 edc1a824 c0b02100
+c3b9c000 edc1a800 c0130178
+[    3.098538] df20: c3b9c000 c3ac26c0 c3abed80 00000000 c3ac26c0
+c3abed80 c0130140 00000000
+[    3.098549] df40: 00000000 00000000 00000000 c0135454 e7fddef0
+00000000 e7fddef0 c3abed80
+[    3.098562] df60: 00000000 00000000 dead4ead ffffffff ffffffff
+c3b9df74 c3b9df74 00000001
+[    3.098574] df80: 00010001 dead4ead ffffffff ffffffff c3b9df90
+c3b9df90 c3b9dfac c3ac26c0
+[    3.098580] dfa0: c0135378 00000000 00000000 c0107978 00000000
+00000000 00000000 00000000
+[    3.098588] dfc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[    3.098593] dfe0: 00000000 00000000 00000000 00000000 00000013
+00000000 e7fddef0 e7fddef0
+[    3.098602] [<c0135a58>] (kthread_data) from [<c0130dbc>]
+(wq_worker_sleeping+0x8/0xc8)
+[    3.098619] [<c0130dbc>] (wq_worker_sleeping) from [<c06cf400>]
+(__schedule+0x2d4/0x4a4)
+[    3.098629] [<c06cf400>] (__schedule) from [<c06cf61c>] (schedule+0x4c/0xac)
+[    3.098641] [<c06cf61c>] (schedule) from [<c011cf54>] (do_exit+0x66c/0xa44)
+[    3.098655] [<c011cf54>] (do_exit) from [<c010b168>] (die+0x22c/0x2ec)
+[    3.098669] [<c010b168>] (die) from [<c0114f58>]
+(__do_kernel_fault.part.0+0x64/0x1e4)
+[    3.098687] [<c0114f58>] (__do_kernel_fault.part.0) from
+[<c0110a08>] (do_bad_area+0x0/0x8c)
+[    3.098702] [<c0110a08>] (do_bad_area) from [<c0110aa4>]
+(do_translation_fault+0x0/0xac)
+[    3.098712] [<c0110aa4>] (do_translation_fault) from [<edc1a800>]
+(0xedc1a800)
+[    3.098725] Code: e3a02002 e0431101 eaffff8e e5903310 (e5130020)
+[    3.098744] ---[ end trace c79e2db53b5a7883 ]---
+[    3.098754] Fixing recursive fault but reboot is needed!
+[    3.104585] smsc95xx 5-1.1:1.0 eth0: register 'smsc95xx' at
+usb-xhci-hcd.6.auto-1.1, smsc95xx USB 2.0 Ethernet, 94:eb:2c:00:03:c0
+[   43.484379] BUG: spinlock lockup suspected on CPU#1, kworker/u16:2/121
+[   43.489456]  lock: 0xee34c000, .magic: dead4ead, .owner:
+kworker/u16:2/121, .owner_cpu: 1
+[   43.497614] CPU: 1 PID: 121 Comm: kworker/u16:2 Tainted: G      D W
+      4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   43.508631] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   43.514707] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   43.522425] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   43.529627] [<c032479c>] (dump_stack) from [<c01582a4>]
+(do_raw_spin_lock+0xfc/0x1b0)
+[   43.537435] [<c01582a4>] (do_raw_spin_lock) from [<c06cf1b0>]
+(__schedule+0x84/0x4a4)
+[   43.545243] [<c06cf1b0>] (__schedule) from [<c06cf61c>] (schedule+0x4c/0xac)
+[   43.552263] [<c06cf61c>] (schedule) from [<c011d16c>] (do_exit+0x884/0xa44)
+[   43.559205] [<c011d16c>] (do_exit) from [<c010b168>] (die+0x22c/0x2ec)
+[   43.565709] [<c010b168>] (die) from [<c0114f58>]
+(__do_kernel_fault.part.0+0x64/0x1e4)
+[   43.573607] [<c0114f58>] (__do_kernel_fault.part.0) from
+[<c0110a08>] (do_bad_area+0x0/0x8c)
+[   43.582023] [<c0110a08>] (do_bad_area) from [<c0110764>]
+(do_page_fault+0x0/0x2a4)
+[   43.589569] [<c0110764>] (do_page_fault) from [<00000030>] (0x30)
+[   43.595635] Sending NMI to all CPUs:
+[   43.599187] NMI backtrace for cpu 1
+[   43.602663] CPU: 1 PID: 121 Comm: kworker/u16:2 Tainted: G      D W
+      4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   43.613686] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   43.619759] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   43.627482] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   43.634683] [<c032479c>] (dump_stack) from [<c03280f0>]
+(nmi_cpu_backtrace+0x78/0x7c)
+[   43.642487] [<c03280f0>] (nmi_cpu_backtrace) from [<c010cb4c>]
+(raise_nmi+0x60/0x64)
+[   43.650208] [<c010cb4c>] (raise_nmi) from [<c0328064>]
+(nmi_trigger_all_cpu_backtrace+0x118/0x12c)
+[   43.659144] [<c0328064>] (nmi_trigger_all_cpu_backtrace) from
+[<c01582ac>] (do_raw_spin_lock+0x104/0x1b0)
+[   43.668688] [<c01582ac>] (do_raw_spin_lock) from [<c06cf1b0>]
+(__schedule+0x84/0x4a4)
+[   43.676494] [<c06cf1b0>] (__schedule) from [<c06cf61c>] (schedule+0x4c/0xac)
+[   43.683517] [<c06cf61c>] (schedule) from [<c011d16c>] (do_exit+0x884/0xa44)
+[   43.690456] [<c011d16c>] (do_exit) from [<c010b168>] (die+0x22c/0x2ec)
+[   43.696963] [<c010b168>] (die) from [<c0114f58>]
+(__do_kernel_fault.part.0+0x64/0x1e4)
+[   43.704861] [<c0114f58>] (__do_kernel_fault.part.0) from
+[<c0110a08>] (do_bad_area+0x0/0x8c)
+[   43.713277] [<c0110a08>] (do_bad_area) from [<c0110764>]
+(do_page_fault+0x0/0x2a4)
+[   43.720821] [<c0110764>] (do_page_fault) from [<00000030>] (0x30)
+[   43.727331] NMI backtrace for cpu 3
+[   43.730399] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   43.740901] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   43.746960] task: edc8c600 ti: edcc4000 task.ti: edcc4000
+[   43.752343] PC is at arch_cpu_idle+0x38/0x3c
+[   43.756592] LR is at arch_cpu_idle+0x34/0x3c
+[   43.760844] pc : [<c01083bc>]    lr : [<c01083b8>]    psr: 60000113
+[   43.767090] sp : edcc5fd8  ip : ee363f74  fp : c0b024b8
+[   43.772296] r10: c0b024c0  r9 : c0a633f8  r8 : 00000000
+[   43.777499] r7 : 00000000  r6 : 00000008  r5 : c0b02454  r4 : edcc4000
+[   43.784007] r3 : c0113e40  r2 : 00000000  r1 : 00000000  r0 : 00000001
+[   43.790515] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   43.797628] Control: 10c5387d  Table: 2000406a  DAC: 00000051
+[   43.803354] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   43.813858] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   43.819924] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   43.827647] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   43.834848] [<c032479c>] (dump_stack) from [<c03280d4>]
+(nmi_cpu_backtrace+0x5c/0x7c)
+[   43.842655] [<c03280d4>] (nmi_cpu_backtrace) from [<c010d398>]
+(handle_IPI+0xd8/0x1ac)
+[   43.850552] [<c010d398>] (handle_IPI) from [<c01014e4>]
+(gic_handle_irq+0x94/0x98)
+[   43.858096] [<c01014e4>] (gic_handle_irq) from [<c010b9d4>]
+(__irq_svc+0x54/0x90)
+[   43.865558] Exception stack(0xedcc5f88 to 0xedcc5fd0)
+[   43.870583] 5f80:                   00000001 00000000 00000000
+c0113e40 edcc4000 c0b02454
+[   43.878744] 5fa0: 00000008 00000000 00000000 c0a633f8 c0b024c0
+c0b024b8 ee363f74 edcc5fd8
+[   43.886900] 5fc0: c01083b8 c01083bc 60000113 ffffffff
+[   43.891923] [<c010b9d4>] (__irq_svc) from [<c01083bc>]
+(arch_cpu_idle+0x38/0x3c)
+[   43.899301] [<c01083bc>] (arch_cpu_idle) from [<c0151900>]
+(cpu_startup_entry+0x1cc/0x250)
+[   43.907546] [<c0151900>] (cpu_startup_entry) from [<2010158c>] (0x2010158c)
+[   43.914488] NMI backtrace for cpu 4
+[   43.917940] CPU: 4 PID: 0 Comm: swapper/4 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   43.928436] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   43.934492] task: edc8cb00 ti: edcc6000 task.ti: edcc6000
+[   43.939869] PC is at arch_cpu_idle+0x38/0x3c
+[   43.944117] LR is at arch_cpu_idle+0x34/0x3c
+[   43.948369] pc : [<c01083bc>]    lr : [<c01083b8>]    psr: 60000013
+[   43.954617] sp : edcc7fd8  ip : 0000abe0  fp : c0b024b8
+[   43.959821] r10: c0b024c0  r9 : c0a633f8  r8 : 00000000
+[   43.965028] r7 : 00000000  r6 : 00000010  r5 : c0b02454  r4 : edcc6000
+[   43.971537] r3 : c0113e40  r2 : 00000000  r1 : 00000000  r0 : 00000001
+[   43.978041] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   43.985154] Control: 10c5387d  Table: 2000406a  DAC: 00000051
+[   43.990880] CPU: 4 PID: 0 Comm: swapper/4 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   44.001390] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   44.007450] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   44.015180] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   44.022380] [<c032479c>] (dump_stack) from [<c03280d4>]
+(nmi_cpu_backtrace+0x5c/0x7c)
+[   44.030189] [<c03280d4>] (nmi_cpu_backtrace) from [<c010d398>]
+(handle_IPI+0xd8/0x1ac)
+[   44.038083] [<c010d398>] (handle_IPI) from [<c01014e4>]
+(gic_handle_irq+0x94/0x98)
+[   44.045630] [<c01014e4>] (gic_handle_irq) from [<c010b9d4>]
+(__irq_svc+0x54/0x90)
+[   44.053090] Exception stack(0xedcc7f88 to 0xedcc7fd0)
+[   44.058109] 7f80:                   00000001 00000000 00000000
+c0113e40 edcc6000 c0b02454
+[   44.066277] 7fa0: 00000010 00000000 00000000 c0a633f8 c0b024c0
+c0b024b8 0000abe0 edcc7fd8
+[   44.074432] 7fc0: c01083b8 c01083bc 60000013 ffffffff
+[   44.079450] [<c010b9d4>] (__irq_svc) from [<c01083bc>]
+(arch_cpu_idle+0x38/0x3c)
+[   44.086835] [<c01083bc>] (arch_cpu_idle) from [<c0151900>]
+(cpu_startup_entry+0x1cc/0x250)
+[   44.095079] [<c0151900>] (cpu_startup_entry) from [<2010158c>] (0x2010158c)
+[   44.102013] NMI backtrace for cpu 6
+[   44.105473] CPU: 6 PID: 0 Comm: swapper/6 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   44.115985] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   44.122040] task: edc8d500 ti: edcca000 task.ti: edcca000
+[   44.127418] PC is at arch_cpu_idle+0x38/0x3c
+[   44.131665] LR is at arch_cpu_idle+0x34/0x3c
+[   44.135918] pc : [<c01083bc>]    lr : [<c01083b8>]    psr: 60000013
+[   44.142168] sp : edccbfd8  ip : 0000abe0  fp : c0b024b8
+[   44.147369] r10: c0b024c0  r9 : c0a633f8  r8 : 00000000
+[   44.152575] r7 : 00000000  r6 : 00000040  r5 : c0b02454  r4 : edcca000
+[   44.159080] r3 : c0113e40  r2 : 00000000  r1 : 00000000  r0 : 00000001
+[   44.165589] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   44.172705] Control: 10c5387d  Table: 2000406a  DAC: 00000051
+[   44.178429] CPU: 6 PID: 0 Comm: swapper/6 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   44.188942] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   44.194997] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   44.202729] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   44.209929] [<c032479c>] (dump_stack) from [<c03280d4>]
+(nmi_cpu_backtrace+0x5c/0x7c)
+[   44.217742] [<c03280d4>] (nmi_cpu_backtrace) from [<c010d398>]
+(handle_IPI+0xd8/0x1ac)
+[   44.225633] [<c010d398>] (handle_IPI) from [<c01014e4>]
+(gic_handle_irq+0x94/0x98)
+[   44.233179] [<c01014e4>] (gic_handle_irq) from [<c010b9d4>]
+(__irq_svc+0x54/0x90)
+[   44.240639] Exception stack(0xedccbf88 to 0xedccbfd0)
+[   44.245656] bf80:                   00000001 00000000 00000000
+c0113e40 edcca000 c0b02454
+[   44.253827] bfa0: 00000040 00000000 00000000 c0a633f8 c0b024c0
+c0b024b8 0000abe0 edccbfd8
+[   44.261982] bfc0: c01083b8 c01083bc 60000013 ffffffff
+[   44.266998] [<c010b9d4>] (__irq_svc) from [<c01083bc>]
+(arch_cpu_idle+0x38/0x3c)
+[   44.274387] [<c01083bc>] (arch_cpu_idle) from [<c0151900>]
+(cpu_startup_entry+0x1cc/0x250)
+[   44.282629] [<c0151900>] (cpu_startup_entry) from [<2010158c>] (0x2010158c)
+[   81.055964] BUG: spinlock lockup suspected on CPU#0, kworker/0:0/4
+[   81.060688]  lock: enable_lock+0x0/0x10, .magic: dead4ead, .owner:
+kworker/u16:2/121, .owner_cpu: 1
+[   81.069700] CPU: 0 PID: 4 Comm: kworker/0:0 Tainted: G      D W
+  4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   81.070847] BUG: spinlock lockup suspected on CPU#2, kworker/2:1/108
+[   81.070861]  lock: enable_lock+0x0/0x10, .magic: dead4ead, .owner:
+kworker/u16:2/121, .owner_cpu: 1
+[   81.095720] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   81.101790] Workqueue: events dbs_work_handler
+[   81.106215] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   81.113942] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   81.121141] [<c032479c>] (dump_stack) from [<c01582a4>]
+(do_raw_spin_lock+0xfc/0x1b0)
+[   81.128951] [<c01582a4>] (do_raw_spin_lock) from [<c06d3fdc>]
+(_raw_spin_lock_irqsave+0x20/0x28)
+[   81.137713] [<c06d3fdc>] (_raw_spin_lock_irqsave) from [<c054fdd4>]
+(clk_enable_lock+0x58/0x110)
+[   81.146474] [<c054fdd4>] (clk_enable_lock) from [<c0550714>]
+(clk_enable+0x14/0x34)
+[   81.154113] [<c0550714>] (clk_enable) from [<c04eb04c>]
+(exynos5_i2c_xfer+0x28/0x2f4)
+[   81.161915] [<c04eb04c>] (exynos5_i2c_xfer) from [<c04e6bc8>]
+(__i2c_transfer+0x13c/0x278)
+[   81.170156] [<c04e6bc8>] (__i2c_transfer) from [<c04e6d70>]
+(i2c_transfer+0x6c/0xa8)
+[   81.177876] [<c04e6d70>] (i2c_transfer) from [<c04e6de8>]
+(i2c_master_send+0x3c/0x4c)
+[   81.185685] [<c04e6de8>] (i2c_master_send) from [<c0415d30>]
+(regmap_i2c_write+0x10/0x2c)
+[   81.193847] [<c0415d30>] (regmap_i2c_write) from [<c0411dd0>]
+(_regmap_raw_write+0x514/0x5f0)
+[   81.202342] [<c0411dd0>] (_regmap_raw_write) from [<c0411154>]
+(_regmap_update_bits+0xc0/0xc4)
+[   81.210929] [<c0411154>] (_regmap_update_bits) from [<c04120c0>]
+(regmap_update_bits_base+0x50/0x74)
+[   81.220047] [<c04120c0>] (regmap_update_bits_base) from
+[<c037d910>] (regulator_set_voltage_sel_regmap+0x4c/0x9c)
+[   81.230277] [<c037d910>] (regulator_set_voltage_sel_regmap) from
+[<c03799e4>] (_regulator_do_set_voltage+0x288/0x358)
+[   81.240859] [<c03799e4>] (_regulator_do_set_voltage) from
+[<c037a624>] (regulator_set_voltage_unlocked+0x1d8/0x22c)
+[   81.251268] [<c037a624>] (regulator_set_voltage_unlocked) from
+[<c037a6a0>] (regulator_set_voltage+0x28/0x54)
+[   81.261166] [<c037a6a0>] (regulator_set_voltage) from [<c0408868>]
+(_set_opp_voltage+0x30/0x98)
+[   81.269834] [<c0408868>] (_set_opp_voltage) from [<c0408fa8>]
+(dev_pm_opp_set_rate+0x10c/0x2b4)
+[   81.278513] [<c0408fa8>] (dev_pm_opp_set_rate) from [<c050dbdc>]
+(__cpufreq_driver_target+0x170/0x2d4)
+[   81.287792] [<c050dbdc>] (__cpufreq_driver_target) from
+[<c0510ec8>] (od_dbs_timer+0x9c/0x168)
+[   81.296377] [<c0510ec8>] (od_dbs_timer) from [<c0511474>]
+(dbs_work_handler+0x2c/0x60)
+[   81.304271] [<c0511474>] (dbs_work_handler) from [<c012ff2c>]
+(process_one_work+0x124/0x338)
+[   81.312686] [<c012ff2c>] (process_one_work) from [<c0130178>]
+(worker_thread+0x38/0x4d4)
+[   81.320755] [<c0130178>] (worker_thread) from [<c0135454>]
+(kthread+0xdc/0xf4)
+[   81.327954] [<c0135454>] (kthread) from [<c0107978>]
+(ret_from_fork+0x14/0x3c)
+[   81.335151] Sending NMI to all CPUs:
+[   81.335155] CPU: 2 PID: 108 Comm: kworker/2:1 Tainted: G      D W
+    4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   81.335160] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   81.335178] Workqueue: pm pm_runtime_work
+[   81.335192] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   81.335203] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   81.335213] [<c032479c>] (dump_stack) from [<c01582a4>]
+(do_raw_spin_lock+0xfc/0x1b0)
+[   81.335224] [<c01582a4>] (do_raw_spin_lock) from [<c06d3fdc>]
+(_raw_spin_lock_irqsave+0x20/0x28)
+[   81.335235] [<c06d3fdc>] (_raw_spin_lock_irqsave) from [<c054fdd4>]
+(clk_enable_lock+0x58/0x110)
+[   81.335246] [<c054fdd4>] (clk_enable_lock) from [<c05507e4>]
+(clk_disable+0x1c/0x34)
+[   81.335257] [<c05507e4>] (clk_disable) from [<c0372774>]
+(amba_pm_runtime_suspend+0x50/0x58)
+[   81.335268] [<c0372774>] (amba_pm_runtime_suspend) from
+[<c0402d18>] (__rpm_callback+0x2c/0x60)
+[   81.335278] [<c0402d18>] (__rpm_callback) from [<c0402d6c>]
+(rpm_callback+0x20/0x80)
+[   81.335289] [<c0402d6c>] (rpm_callback) from [<c0403234>]
+(rpm_suspend+0xdc/0x4c0)
+[   81.335299] [<c0403234>] (rpm_suspend) from [<c040453c>]
+(pm_runtime_work+0x74/0xa8)
+[   81.335311] [<c040453c>] (pm_runtime_work) from [<c012ff2c>]
+(process_one_work+0x124/0x338)
+[   81.335323] [<c012ff2c>] (process_one_work) from [<c0130178>]
+(worker_thread+0x38/0x4d4)
+[   81.335334] [<c0130178>] (worker_thread) from [<c0135454>]
+(kthread+0xdc/0xf4)
+[   81.335345] [<c0135454>] (kthread) from [<c0107978>]
+(ret_from_fork+0x14/0x3c)
+[   81.478460] NMI backtrace for cpu 0
+[   81.481925] CPU: 0 PID: 4 Comm: kworker/0:0 Tainted: G      D W
+  4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   81.492602] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   81.498669] Workqueue: events dbs_work_handler
+[   81.503094] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   81.510822] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   81.518022] [<c032479c>] (dump_stack) from [<c03280f0>]
+(nmi_cpu_backtrace+0x78/0x7c)
+[   81.525829] [<c03280f0>] (nmi_cpu_backtrace) from [<c010cb4c>]
+(raise_nmi+0x60/0x64)
+[   81.533551] [<c010cb4c>] (raise_nmi) from [<c0328064>]
+(nmi_trigger_all_cpu_backtrace+0x118/0x12c)
+[   81.542487] [<c0328064>] (nmi_trigger_all_cpu_backtrace) from
+[<c01582ac>] (do_raw_spin_lock+0x104/0x1b0)
+[   81.552029] [<c01582ac>] (do_raw_spin_lock) from [<c06d3fdc>]
+(_raw_spin_lock_irqsave+0x20/0x28)
+[   81.560791] [<c06d3fdc>] (_raw_spin_lock_irqsave) from [<c054fdd4>]
+(clk_enable_lock+0x58/0x110)
+[   81.569553] [<c054fdd4>] (clk_enable_lock) from [<c0550714>]
+(clk_enable+0x14/0x34)
+[   81.577187] [<c0550714>] (clk_enable) from [<c04eb04c>]
+(exynos5_i2c_xfer+0x28/0x2f4)
+[   81.584994] [<c04eb04c>] (exynos5_i2c_xfer) from [<c04e6bc8>]
+(__i2c_transfer+0x13c/0x278)
+[   81.593234] [<c04e6bc8>] (__i2c_transfer) from [<c04e6d70>]
+(i2c_transfer+0x6c/0xa8)
+[   81.600955] [<c04e6d70>] (i2c_transfer) from [<c04e6de8>]
+(i2c_master_send+0x3c/0x4c)
+[   81.608762] [<c04e6de8>] (i2c_master_send) from [<c0415d30>]
+(regmap_i2c_write+0x10/0x2c)
+[   81.616918] [<c0415d30>] (regmap_i2c_write) from [<c0411dd0>]
+(_regmap_raw_write+0x514/0x5f0)
+[   81.625420] [<c0411dd0>] (_regmap_raw_write) from [<c0411154>]
+(_regmap_update_bits+0xc0/0xc4)
+[   81.634008] [<c0411154>] (_regmap_update_bits) from [<c04120c0>]
+(regmap_update_bits_base+0x50/0x74)
+[   81.643118] [<c04120c0>] (regmap_update_bits_base) from
+[<c037d910>] (regulator_set_voltage_sel_regmap+0x4c/0x9c)
+[   81.653355] [<c037d910>] (regulator_set_voltage_sel_regmap) from
+[<c03799e4>] (_regulator_do_set_voltage+0x288/0x358)
+[   81.663937] [<c03799e4>] (_regulator_do_set_voltage) from
+[<c037a624>] (regulator_set_voltage_unlocked+0x1d8/0x22c)
+[   81.674348] [<c037a624>] (regulator_set_voltage_unlocked) from
+[<c037a6a0>] (regulator_set_voltage+0x28/0x54)
+[   81.684238] [<c037a6a0>] (regulator_set_voltage) from [<c0408868>]
+(_set_opp_voltage+0x30/0x98)
+[   81.692912] [<c0408868>] (_set_opp_voltage) from [<c0408fa8>]
+(dev_pm_opp_set_rate+0x10c/0x2b4)
+[   81.701587] [<c0408fa8>] (dev_pm_opp_set_rate) from [<c050dbdc>]
+(__cpufreq_driver_target+0x170/0x2d4)
+[   81.710870] [<c050dbdc>] (__cpufreq_driver_target) from
+[<c0510ec8>] (od_dbs_timer+0x9c/0x168)
+[   81.719456] [<c0510ec8>] (od_dbs_timer) from [<c0511474>]
+(dbs_work_handler+0x2c/0x60)
+[   81.727350] [<c0511474>] (dbs_work_handler) from [<c012ff2c>]
+(process_one_work+0x124/0x338)
+[   81.735766] [<c012ff2c>] (process_one_work) from [<c0130178>]
+(worker_thread+0x38/0x4d4)
+[   81.743834] [<c0130178>] (worker_thread) from [<c0135454>]
+(kthread+0xdc/0xf4)
+[   81.751033] [<c0135454>] (kthread) from [<c0107978>]
+(ret_from_fork+0x14/0x3c)
+[   81.758426] NMI backtrace for cpu 3
+[   81.761710] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   81.772212] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   81.778277] task: edc8c600 ti: edcc4000 task.ti: edcc4000
+[   81.783655] PC is at arch_cpu_idle+0x38/0x3c
+[   81.787905] LR is at arch_cpu_idle+0x34/0x3c
+[   81.792155] pc : [<c01083bc>]    lr : [<c01083b8>]    psr: 60000113
+[   81.798403] sp : edcc5fd8  ip : ee363f74  fp : c0b024b8
+[   81.803608] r10: c0b024c0  r9 : c0a633f8  r8 : 00000000
+[   81.808813] r7 : 00000000  r6 : 00000008  r5 : c0b02454  r4 : edcc4000
+[   81.815320] r3 : c0113e40  r2 : 00000000  r1 : 00000000  r0 : 00000001
+[   81.821826] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   81.828940] Control: 10c5387d  Table: 2000406a  DAC: 00000051
+[   81.834666] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D W
+4.7.0-rc2-next-20160606-00009-g897c9c5cd3cf #117
+[   81.845168] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   81.851233] [<c010e1ac>] (unwind_backtrace) from [<c010af38>]
+(show_stack+0x10/0x14)
+[   81.858960] [<c010af38>] (show_stack) from [<c032479c>]
+(dump_stack+0x88/0x9c)
+[   81.866160] [<c032479c>] (dump_stack) from [<c03280d4>]
+(nmi_cpu_backtrace+0x5c/0x7c)
+[   81.873967] [<c03280d4>] (nmi_cpu_backtrace) from [<c010d398>]
+(handle_IPI+0xd8/0x1ac)
+[   81.881861] [<c010d398>] (handle_IPI) from [<c01014e4>]
+(gic_handle_irq+0x94/0x98)
+[   81.889409] [<c01014e4>] (gic_handle_irq) from [<c010b9d4>]
+(__irq_svc+0x54/0x90)
+[   81.896869] Exception stack(0xedcc5f88 to 0xedcc5fd0)
+[   81.901895] 5f80:                   00000001 00000000 00000000
+c0113e40 edcc4000 c0b02454
+[   81.910056] 5fa0: 00000008 00000000 00000000 c0a633f8 c0b024c0
+c0b024b8 ee363f74 edcc5fd8
+[   81.918210] 5fc0: c01083b8 c01083bc 60000113 ffffffff
+[   81.923236] [<c010b9d4>] (__irq_svc) from [<c01083bc>]
+(arch_cpu_idle+0x38/0x3c)
+[   81.930615] [<c01083bc>] (arch_cpu_idle) from [<c0151900>]
+(cpu_startup_entry+0x1cc/0x250)
+[   81.938857] [<c0151900>] (cpu_startup_entry) from [<2010158c>] (0x2010158c)
