@@ -1,138 +1,128 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	s.hauer@pengutronix.de,
-	jeremy.kerr@canonical.com,
+Return-Path: <v1ron@mail.ru>
+From: Roman Volkov <v1ron@mail.ru>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v2 3/3] clk: fixed-rate: Convert into a module platform driver
-Date: Mon, 20 Jun 2016 15:43:38 +0200
-Message-Id: <1466430218-6561-4-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Roman Volkov <rvolkov@v1ros.org>,
+	Tony Prisk <linux@prisktech.co.nz>
+Subject: [PATCH v2 2/2] clk: vt8500: rework wm8650_find_pll_bits()
+Date: Wed,  8 Jun 2016 00:56:10 +0300
+Message-Id: <20160607215610.8724-3-v1ron@mail.ru>
+In-Reply-To: <20160607215610.8724-1-v1ron@mail.ru>
+References: <20160607215610.8724-1-v1ron@mail.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adds support for fixed-rate clock providers which have not been
-enabled via of_clk_init().
+From: Roman Volkov <rvolkov@v1ros.org>
 
-This is required by Device trees overlays that introduce clocks
-providers.
+PLL clock on WM8650 is calculated in the following way:
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+M * parent [O1] => / P [O2] => / D [O3]
+
+Where O2 is 600MHz >= (M * parent) / P >= 300MHz.
+
+Current algorithm does not met this requirement, so that the
+function may return rates which are not supported by the hardware.
+
+This patch fixes the algorithm and simplifies the code, reducing
+the calculation time by ~10000 times (according to usermode app) by
+removing the nested loops.
+
+Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
 ---
-v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
--Add error check
--CodeStyle on of_device_ide
--Use builtin_platform_driver()
- drivers/clk/clk-fixed-rate.c | 71 +++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 67 insertions(+), 4 deletions(-)
+ drivers/clk/clk-vt8500.c | 73 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 38 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index 8e4453eb54e8..eb51922f86f7 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -15,6 +15,7 @@
- #include <linux/io.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/platform_device.h>
- 
- /*
-  * DOC: basic fixed-rate clock that cannot gate
-@@ -149,15 +150,16 @@ EXPORT_SYMBOL_GPL(clk_unregister_fixed_rate);
- /**
-  * of_fixed_clk_setup() - Setup function for simple fixed rate clock
-  */
--void of_fixed_clk_setup(struct device_node *node)
-+struct clk *_of_fixed_clk_setup(struct device_node *node)
- {
- 	struct clk *clk;
- 	const char *clk_name = node->name;
- 	u32 rate;
- 	u32 accuracy = 0;
-+	int ret;
- 
- 	if (of_property_read_u32(node, "clock-frequency", &rate))
--		return;
-+		return ERR_PTR(-EIO);
- 
- 	of_property_read_u32(node, "clock-accuracy", &accuracy);
- 
-@@ -165,9 +167,70 @@ void of_fixed_clk_setup(struct device_node *node)
- 
- 	clk = clk_register_fixed_rate_with_accuracy(NULL, clk_name, NULL,
- 						    0, rate, accuracy);
--	if (!IS_ERR(clk))
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (ret) {
-+		clk_unregister(clk);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return clk;
-+}
-+
-+void of_fixed_clk_setup(struct device_node *node)
-+{
-+	_of_fixed_clk_setup(node);
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index d5a3453970d0..37368a399ff9 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -383,47 +383,50 @@ static int vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
- CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
-+
-+static int of_fixed_clk_remove(struct platform_device *pdev)
-+{
-+	struct clk *clk = platform_get_drvdata(pdev);
-+
-+	if (clk)
-+		clk_unregister_fixed_rate(clk);
-+
-+	return 0;
-+}
-+
-+static int of_fixed_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk;
-+
+ 
+-static int wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+-				u32 *multiplier, u32 *divisor1, u32 *divisor2)
++/*
++ * M * parent [O1] => / P [O2] => / D [O3]
++ * Where O1 is 900MHz...3GHz;
++ * O2 is 600MHz >= (M * parent) / P >= 300MHz;
++ * M is 36...120 [25MHz parent]; D is 1 or 2 or 4 or 8.
++ * Possible ranges (O3):
++ * D = 8: 37,5MHz...75MHz
++ * D = 4: 75MHz...150MHz
++ * D = 2: 150MHz...300MHz
++ * D = 1: 300MHz...600MHz
++ */
++static int wm8650_find_pll_bits(unsigned long rate,
++	unsigned long parent_rate, u32 *multiplier, u32 *divisor1,
++	u32 *divisor2)
+ {
+-	u32 mul, div1;
+-	int div2;
+-	unsigned long tclk, rate_err, best_err;
+-
+-	best_err = (unsigned long)-1;
++	unsigned long O1, min_err, rate_err;
+ 
+-	/* Find the closest match (lower or equal to requested) */
+-	for (div1 = 5; div1 >= 3; div1--)
+-		for (div2 = 3; div2 >= 0; div2--)
+-			for (mul = 3; mul <= 1023; mul++) {
+-				tclk = parent_rate * mul / (div1 * (1 << div2));
+-				if (tclk > rate)
+-					continue;
+-				/* error will always be +ve */
+-				rate_err = rate - tclk;
+-				if (rate_err == 0) {
+-					*multiplier = mul;
+-					*divisor1 = div1;
+-					*divisor2 = div2;
+-					return 0;
+-				}
++	if (!parent_rate || (rate < 37500000) || (rate > 600000000))
++		return -EINVAL;
+ 
+-				if (rate_err < best_err) {
+-					best_err = rate_err;
+-					*multiplier = mul;
+-					*divisor1 = div1;
+-					*divisor2 = div2;
+-				}
+-			}
++	*divisor2 = rate <= 75000000 ? 3 : rate <= 150000000 ? 2 :
++					   rate <= 300000000 ? 1 : 0;
 +	/*
-+	 * Don't do anything if of_clk_init() has already
-+	 * added this clock to the provider list
++	 * Divisor P cannot be calculated. Test all divisors and find where M
++	 * will be as close as possible to the requested rate.
 +	 */
-+	if (of_clk_is_provider(pdev->dev.of_node))
-+		return 0;
++	min_err = ULONG_MAX;
++	for (*divisor1 = 5; *divisor1 >= 3; (*divisor1)--) {
++		O1 = rate * *divisor1 * (1 << (*divisor2));
++		rate_err = O1 % parent_rate;
++		if (rate_err < min_err) {
++			*multiplier = O1 / parent_rate;
++			if (rate_err == 0)
++				return 0;
 +
-+	clk = _of_fixed_clk_setup(pdev->dev.of_node);
++			min_err = rate_err;
++		}
++	}
+ 
+-	if (best_err == (unsigned long)-1) {
+-		pr_warn("%s: impossible rate %lu\n", __func__, rate);
++	if ((*multiplier < 3) || (*multiplier > 1023))
+ 		return -EINVAL;
+-	}
+ 
+-	/* if we got here, it wasn't an exact match */
+-	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
+-							rate - best_err);
++	pr_warn("%s: rate error is %lu\n", __func__, min_err);
 +
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	platform_set_drvdata(pdev, clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id of_fixed_clk_ids[] = {
-+	{ .compatible = "fixed-clock" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, of_fixed_clk_ids);
-+
-+static struct platform_driver of_fixed_clk_driver = {
-+	.driver = {
-+		.name = "of_fixed_clk",
-+		.of_match_table = of_fixed_clk_ids,
-+	},
-+	.probe = of_fixed_clk_probe,
-+	.remove = of_fixed_clk_remove,
-+};
-+
-+builtin_platform_driver(of_fixed_clk_driver);
- #endif
+ 	return 0;
+ }
+ 
 -- 
-2.8.1
+2.8.3
