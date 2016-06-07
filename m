@@ -1,87 +1,85 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V2 6/8] clk: imx: add clk api for supporting CLK_OPS_PARENT_ENABLE clocks
-Date: Wed, 29 Jun 2016 22:59:09 +0800
-Message-ID: <1467212351-16626-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com,
+	maxime.coquelin@st.com,
+	patrice.chotard@st.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	broonie@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5/6] ARM: sti: stih410-clocks: Identify critical clocks
+Date: Tue,  7 Jun 2016 12:19:29 +0100
+Message-Id: <20160607111930.10375-6-lee.jones@linaro.org>
+In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
+References: <20160607111930.10375-1-lee.jones@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-IMX SoCs like i.MX7D requires using CLK_OPS_PARENT_ENABLE flags,
-adding the corresponding clock APIs variants for easily to use.
+Lots of platforms contain clocks which if turned off would prove fatal.
+The only way to recover is to restart the board(s).  This driver takes
+references to clocks which are required to be always-on.  The Common
+Clk Framework will then take references to them.  This way they will
+not be turned off during the clk_disabled_unused() procedure.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+In this patch we are identifying clocks, which if gated would render
+the STiH410 development board unserviceable.
+
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/imx/clk.h | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm/boot/dts/stih410-clock.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index df87d8888d80..6736e858b8f0 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -97,6 +97,14 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index d1f2aca..fd50496 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -103,6 +103,7 @@
+ 				clocks = <&clk_sysin>;
  
-+static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift, u8 width)
-+{
-+	return clk_register_divider(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_gate(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
-@@ -133,6 +141,22 @@ static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent
- 			shift, cgr_val, 0, &imx_ccm_lock, NULL);
- }
+ 				clock-output-names = "clk-s-a0-pll-ofd-0";
++				clock-critical = <0>; /* clk-s-a0-pll-ofd-0 */
+ 			};
  
-+static inline struct clk *imx_clk_gate3(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift)
-+{
-+	return clk_register_gate(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, 0, &imx_ccm_lock);
-+}
-+
-+static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift)
-+{
-+	return clk_register_gate2(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, 0x3, 0, &imx_ccm_lock, NULL);
-+}
-+
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- 		u8 shift, u8 width, const char **parents, int num_parents)
- {
-@@ -141,6 +165,14 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- 			width, 0, &imx_ccm_lock);
- }
+ 			clk_s_a0_flexgen: clk-s-a0-flexgen {
+@@ -115,6 +116,7 @@
  
-+static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
-+		u8 shift, u8 width, const char **parents, int num_parents)
-+{
-+	return clk_register_mux(NULL, name, parents, num_parents,
-+			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_mux_flags(const char *name,
- 		void __iomem *reg, u8 shift, u8 width, const char **parents,
- 		int num_parents, unsigned long flags)
+ 				clock-output-names = "clk-ic-lmi0",
+ 						     "clk-ic-lmi1";
++				clock-critical = <CLK_IC_LMI0>;
+ 			};
+ 		};
+ 
+@@ -129,6 +131,7 @@
+ 					     "clk-s-c0-fs0-ch1",
+ 					     "clk-s-c0-fs0-ch2",
+ 					     "clk-s-c0-fs0-ch3";
++			clock-critical = <0>; /* clk-s-c0-fs0-ch0 */
+ 		};
+ 
+ 		clk_s_c0: clockgen-c@09103000 {
+@@ -142,6 +145,7 @@
+ 				clocks = <&clk_sysin>;
+ 
+ 				clock-output-names = "clk-s-c0-pll0-odf-0";
++				clock-critical = <0>; /* clk-s-c0-pll0-odf-0 */
+ 			};
+ 
+ 			clk_s_c0_pll1: clk-s-c0-pll1 {
+@@ -204,6 +208,11 @@
+ 						     "clk-clust-hades",
+ 						     "clk-hwpe-hades",
+ 						     "clk-fc-hades";
++				clock-critical = <CLK_ICN_CPU>,
++						 <CLK_TX_ICN_DMU>,
++						 <CLK_EXT2F_A9>,
++						 <CLK_ICN_LMI>,
++						 <CLK_ICN_SBC>;
+ 			};
+ 		};
+ 
 -- 
-1.9.1
+2.8.3
