@@ -1,89 +1,45 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 06/10] clk: meson8b: remove mali clk
-Date: Thu,  9 Jun 2016 17:27:43 -0700
-Message-Id: <1465518467-23939-7-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
-References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com,
+	maxime.coquelin@st.com,
+	patrice.chotard@st.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 1/1] clk: Remove unused variable
+Date: Tue,  7 Jun 2016 13:25:02 +0100
+Message-Id: <20160607122502.32168-1-lee.jones@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is undocumented and always orphaned. Get rid of it until we
-have more complete clock tree documentation.
-
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/meson/meson8b-clkc.c | 22 ----------------------
- 1 file changed, 22 deletions(-)
+ drivers/clk/clk.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
-index 94512b6..dcd8f03 100644
---- a/drivers/clk/meson/meson8b-clkc.c
-+++ b/drivers/clk/meson/meson8b-clkc.c
-@@ -112,11 +112,8 @@ static const struct clk_div_table cpu_div_table[] = {
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d584004..8a815a1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1501,7 +1501,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ {
+ 	struct clk_core *top, *fail_clk;
+ 	unsigned long rate = req_rate;
+-	int ret = 0;
  
- PNAME(p_clk81)		= { "fclk_div3", "fclk_div4", "fclk_div5" };
--PNAME(p_mali)		= { "fclk_div3", "fclk_div4", "fclk_div5",
--			    "fclk_div7", "zero" };
+ 	if (!core)
+ 		return 0;
+@@ -1532,7 +1531,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
  
- static u32 mux_table_clk81[]	= { 6, 5, 7 };
--static u32 mux_table_mali[]	= { 6, 5, 7, 4, 0 };
+ 	core->req_rate = req_rate;
  
- static const struct composite_conf clk81_conf __initconst = {
- 	.mux_table		= mux_table_clk81,
-@@ -126,13 +123,6 @@ static const struct composite_conf clk81_conf __initconst = {
- 	.gate_parm		= PARM(0x00, 7, 1),
- };
+-	return ret;
++	return 0;
+ }
  
--static const struct composite_conf mali_conf __initconst = {
--	.mux_table		= mux_table_mali,
--	.mux_parm		= PARM(0x00, 9, 3),
--	.div_parm		= PARM(0x00, 0, 7),
--	.gate_parm		= PARM(0x00, 8, 1),
--};
--
- static struct clk_fixed_rate meson8b_xtal = {
- 	.fixed_rate = 24000000,
- 	.hw.init = &(struct clk_init_data){
-@@ -142,15 +132,6 @@ static struct clk_fixed_rate meson8b_xtal = {
- 	},
- };
- 
--static struct clk_fixed_rate meson8b_zero = {
--	.fixed_rate = 0,
--	.hw.init = &(struct clk_init_data){
--		.name = "zero",
--		.num_parents = 0,
--		.ops = &clk_fixed_rate_ops,
--	},
--};
--
- static struct meson_clk_pll meson8b_fixed_pll = {
- 	.m = {
- 		.reg_off = MESON8B_REG_PLL_FIXED,
-@@ -301,8 +282,6 @@ static struct meson_clk_cpu meson8b_cpu_clk = {
- static const struct clk_conf meson8b_clk_confs[] __initconst = {
- 	COMPOSITE(MESON8B_REG_HHI_MPEG, CLKID_CLK81, "clk81", p_clk81,
- 		  CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED, &clk81_conf),
--	COMPOSITE(MESON8B_REG_MALI, CLKID_MALI, "mali", p_mali,
--		  CLK_IGNORE_UNUSED, &mali_conf),
- };
- 
- /*
-@@ -315,7 +294,6 @@ static const struct clk_conf meson8b_clk_confs[] __initconst = {
- static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 	.hws = {
- 		[CLKID_XTAL] = &meson8b_xtal.hw,
--		[CLKID_ZERO] = &meson8b_zero.hw,
- 		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
- 		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
- 		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
+ /**
 -- 
-2.1.4
+2.8.3
