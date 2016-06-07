@@ -1,87 +1,57 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 10/10] clk: meson: only build selected platforms
-Date: Thu,  9 Jun 2016 17:27:47 -0700
-Message-Id: <1465518467-23939-11-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
-References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <ben.dooks@codethink.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
+	Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: ti: fapll: fix address space warnings
+Date: Tue,  7 Jun 2016 15:05:37 +0100
+Message-Id: <1465308337-18047-1-git-send-email-ben.dooks@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Break the AmLogic clock code up so that only the necessary parts are
-compiled and linked. The core code is selected by both arm and arm64
-builds with COMMON_CLK_AMLOGIC. The individual drivers have their own
-config options as well.
+Fix the following warnings from casting "void __iomem *" pointers
+to u32 when using sparse:
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+drivers/clk/ti/fapll.c:583:13: warning: cast removes address space of expression
+drivers/clk/ti/fapll.c:623:21: warning: cast removes address space of expression
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- drivers/clk/Kconfig        |  1 +
- drivers/clk/Makefile       |  2 +-
- drivers/clk/meson/Kconfig  | 12 ++++++++++++
- drivers/clk/meson/Makefile |  4 ++--
- 4 files changed, 16 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/meson/Kconfig
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-omap@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/ti/fapll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 53ddba2..30feb6b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -208,6 +208,7 @@ config COMMON_CLK_OXNAS
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index 66a0d0e..d765f4a 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -43,14 +43,14 @@
+ #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
  
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/meson/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index dcc5e69..af03eb2 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -65,7 +65,7 @@ ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
- obj-y					+= mvebu/
--obj-$(CONFIG_ARCH_MESON)		+= meson/
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
- obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-new file mode 100644
-index 0000000..7bb19ad
---- /dev/null
-+++ b/drivers/clk/meson/Kconfig
-@@ -0,0 +1,12 @@
-+config COMMON_CLK_AMLOGIC
-+	bool
-+	depends on OF
-+	depends on ARCH_MESON || COMPILE_TEST
-+
-+config COMMON_CLK_MESON8B
-+	bool
-+	depends on COMMON_CLK_AMLOGIC
-+	help
-+	  Support for the clock controller on AmLogic S805 devices, aka
-+	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
-+	  work.
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 901b5d4..b3d60fe 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,5 +2,5 @@
- # Makefile for Meson specific clk
- #
+ /* The bypass bit is inverted on the ddr_pll.. */
+-#define fapll_is_ddr_pll(va)	(((u32)(va) & 0xffff) == 0x0440)
++#define fapll_is_ddr_pll(va)	(((u32 __force)(va) & 0xffff) == 0x0440)
  
--obj-y += clk-pll.o clk-cpu.o
--obj-y += meson8b-clkc.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o
-+obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
+ /*
+  * The audio_pll_clk1 input is hard wired to the 27MHz bypass clock,
+  * and the audio_pll_clk1 synthesizer is hardwared to 32KiHz output.
+  */
+-#define is_ddr_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x044c)
+-#define is_audio_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x04a8)
++#define is_ddr_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x044c)
++#define is_audio_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x04a8)
+ 
+ /* Synthesizer divider register */
+ #define SYNTH_LDMDIV1		BIT(8)
 -- 
-2.1.4
+2.8.1
