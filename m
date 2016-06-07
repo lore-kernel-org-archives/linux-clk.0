@@ -1,31 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 12:36:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, p.zabel@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com
-Subject: Re: [PATCH v2 2/5] clk: hisilicon: add hisi_clk_alloc function.
-Message-ID: <20160630193625.GX1521@codeaurora.org>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
- <1465971998-29619-3-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465971998-29619-3-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 01/15] dt-bindings: sunxi: Add CCU binding documentation
+Date: Tue,  7 Jun 2016 22:41:40 +0200
+Message-Id: <20160607204154.31967-2-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/15, Jiancheng Xue wrote:
-> Before, there was an ordering issue that the clock provider
-> had been published in hisi_clk_init before it could provide
-> valid clocks to consumers. hisi_clk_alloc is just used to
-> allocate memory space for struct hisi_clock_data. It makes
-> it possible to publish the provider after the clocks are ready.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> ---
+Introduce a new binding with its documentation for the brand new clock
+sub-framework.
 
-Applied to clk-next
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+new file mode 100644
+index 000000000000..2c66046a1342
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -0,0 +1,17 @@
++Allwinner Clock Control Unit Binding
++------------------------------------
++
++Required properties :
++- compatible: must contain one of the following compatible:
++		- "allwinner,sun8i-h3-ccu"
++
++- reg: Must contain the registers base address and length
++- clocks: phandle to the oscillators feeding the SPI controller. Two are
++          needed:
++  - "hosc": the high frequency oscillator (usually at 24MHz)
++  - "losc": the low frequency oscillator (usually at 32kHz)
++- clock-names: Must contain the clock names described just above
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
++
++Example:
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.3
