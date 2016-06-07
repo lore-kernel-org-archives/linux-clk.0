@@ -1,57 +1,296 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH 09/11] clk: imx6sx: fix pll clock parents
-Date: Wed, 8 Jun 2016 22:33:38 +0800
-Message-ID: <1465396420-27064-9-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 09/15] clk: sunxi-ng: Add M-P factor clock support
+Date: Tue,  7 Jun 2016 22:41:48 +0200
+Message-Id: <20160607204154.31967-10-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-pllx_bypass_src mux shouldn't be the parent of pllx clock
-since it's only valid when when pllx BYPASS bit is set.
-Thus it is actually one parent of pllx_bypass only.
+Introduce support for the clocks that combine a linear divider and a
+power-of-two based one.
 
-Instead, pllx parent should be fixed to osc according to
-reference manual.
-Other plls have the same issue.
-
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/imx/clk-imx6sx.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/sunxi-ng/Makefile |   1 +
+ drivers/clk/sunxi-ng/ccu_mp.c | 158 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_mp.h |  78 +++++++++++++++++++++
+ 3 files changed, 237 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mp.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mp.h
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 97e742a8be17..b5c96de41ccf 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -174,13 +174,13 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 
- 	/*                                    type               name    parent_name        base         div_mask */
--	clks[IMX6SX_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
--	clks[IMX6SX_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
--	clks[IMX6SX_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "pll3_bypass_src", base + 0x10, 0x3);
--	clks[IMX6SX_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
--	clks[IMX6SX_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
--	clks[IMX6SX_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
--	clks[IMX6SX_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "pll7_bypass_src", base + 0x20, 0x3);
-+	clks[IMX6SX_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-+	clks[IMX6SX_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-+	clks[IMX6SX_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-+	clks[IMX6SX_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-+	clks[IMX6SX_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-+	clks[IMX6SX_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-+	clks[IMX6SX_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
- 
- 	clks[IMX6SX_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
- 	clks[IMX6SX_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 67a2559fe283..2aeccdb26e3f 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -6,5 +6,6 @@ obj-y += ccu_frac.o
+ obj-y += ccu_div.o
+ obj-y += ccu_fixed_factor.o
+ obj-y += ccu_gate.o
++obj-y += ccu_mp.o
+ obj-y += ccu_mux.o
+ obj-y += ccu_phase.o
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+new file mode 100644
+index 000000000000..cbf33ef5faa9
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -0,0 +1,158 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_gate.h"
++#include "ccu_mp.h"
++
++static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
++			     unsigned int max_m, unsigned int max_p,
++			     unsigned int *m, unsigned int *p)
++{
++	unsigned long best_rate = 0;
++	unsigned int best_m = 0, best_p = 0;
++	unsigned int _m, _p;
++
++	for (_p = 0; _p <= max_p; _p++) {
++		for (_m = 1; _m <= max_m; _m++) {
++			unsigned long tmp_rate = (parent >> _p) / _m;
++
++			if (tmp_rate > rate)
++				continue;
++
++			if ((rate - tmp_rate) < (rate - best_rate)) {
++				best_rate = tmp_rate;
++				best_m = _m;
++				best_p = _p;
++			}
++		}
++	}
++
++	*m = best_m;
++	*p = best_p;
++}
++
++static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
++				       unsigned long parent_rate,
++				       unsigned long rate,
++				       void *data)
++{
++	struct ccu_mp *cmp = data;
++	unsigned int m, p;
++
++	ccu_mp_find_best(parent_rate, rate,
++			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
++			 &m, &p);
++
++	return (parent_rate >> p) / m;
++}
++
++static void ccu_mp_disable(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_gate_helper_disable(&cmp->common, cmp->enable);
++}
++
++static int ccu_mp_enable(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_gate_helper_enable(&cmp->common, cmp->enable);
++}
++
++static int ccu_mp_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_gate_helper_is_enabled(&cmp->common, cmp->enable);
++}
++
++static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++	unsigned int m, p;
++	u32 reg;
++
++	reg = readl(cmp->common.base + cmp->common.reg);
++
++	m = reg >> cmp->m.shift;
++	m &= (1 << cmp->m.width) - 1;
++
++	p = reg >> cmp->p.shift;
++	p &= (1 << cmp->p.width) - 1;
++
++	return (parent_rate >> p) / (m + 1);
++}
++
++static int ccu_mp_determine_rate(struct clk_hw *hw,
++				 struct clk_rate_request *req)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_mux_helper_determine_rate(&cmp->common, &cmp->mux,
++					     req, ccu_mp_round_rate, cmp);
++}
++
++static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
++			   unsigned long parent_rate)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++	unsigned long flags;
++	unsigned int m, p;
++	u32 reg;
++
++	ccu_mp_find_best(parent_rate, rate,
++			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
++			 &m, &p);
++
++
++	spin_lock_irqsave(cmp->common.lock, flags);
++
++	reg = readl(cmp->common.base + cmp->common.reg);
++	reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
++	reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
++
++	writel(reg | (p << cmp->p.shift) | ((m - 1) << cmp->m.shift),
++	       cmp->common.base + cmp->common.reg);
++
++	spin_unlock_irqrestore(cmp->common.lock, flags);
++
++	return 0;
++}
++
++static u8 ccu_mp_get_parent(struct clk_hw *hw)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_mux_helper_get_parent(&cmp->common, &cmp->mux);
++}
++
++static int ccu_mp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++
++	return ccu_mux_helper_set_parent(&cmp->common, &cmp->mux, index);
++}
++
++const struct clk_ops ccu_mp_ops = {
++	.disable	= ccu_mp_disable,
++	.enable		= ccu_mp_enable,
++	.is_enabled	= ccu_mp_is_enabled,
++
++	.get_parent	= ccu_mp_get_parent,
++	.set_parent	= ccu_mp_set_parent,
++
++	.determine_rate	= ccu_mp_determine_rate,
++	.recalc_rate	= ccu_mp_recalc_rate,
++	.set_rate	= ccu_mp_set_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+new file mode 100644
+index 000000000000..2f96e685b98e
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mp.h
+@@ -0,0 +1,78 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_MP_H_
++#define _CCU_MP_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++#include "ccu_div.h"
++#include "ccu_mult.h"
++#include "ccu_mux.h"
++
++/*
++ * struct ccu_mp - Definition of an M-P clock
++ *
++ * Clocks based on the formula parent >> P / M
++ */
++struct ccu_mp {
++	u32			enable;
++
++	struct _ccu_div		m;
++	struct _ccu_div		p;
++	struct ccu_mux_internal	mux;
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				   _mshift, _mwidth,			\
++				   _pshift, _pwidth,			\
++				   _muxshift, _muxwidth,		\
++				   _gate, _flags)			\
++	struct ccu_mp _struct = {					\
++		.enable	= _gate,					\
++		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
++		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
++		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_GATE,		\
++			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
++								_parents, \
++								&ccu_mp_ops, \
++								_flags), \
++		}							\
++	}
++
++#define SUNXI_CCU_MP_WITH_MUX(_struct, _name, _parents, _reg,		\
++			      _mshift, _mwidth,				\
++			      _pshift, _pwidth,				\
++			      _muxshift, _muxwidth,			\
++			      _flags)					\
++	SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				   _mshift, _mwidth,			\
++				   _pshift, _pwidth,			\
++				   _muxshift, _muxwidth,		\
++				   0, _flags)
++
++static inline struct ccu_mp *hw_to_ccu_mp(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_mp, common);
++}
++
++extern const struct clk_ops ccu_mp_ops;
++
++#endif /* _CCU_MP_H_ */
 -- 
-1.9.1
+2.8.3
