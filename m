@@ -1,90 +1,41 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH v2 1/6] clk: meson: only build selected platforms
-Date: Wed, 22 Jun 2016 19:01:15 -0700
-Message-Id: <1466647280-17596-2-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
-References: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <andi.shyti@samsung.com>
+Date: Wed, 08 Jun 2016 16:22:42 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 25/34] clk: s2mps11: Migrate to clk_hw based OF and
+ registration APIs
+Message-id: <20160608072242.GA23808@samsunx.samsung>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <CGME20160601231605epcas1p251d4d1f532f7a53a0e58d5c7ee9e6ffc@epcas1p2.samsung.com>
+ <20160601231533.9354-26-stephen.boyd@linaro.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <20160601231533.9354-26-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Break the AmLogic clock code up so that only the necessary parts are
-compiled and linked. The core code is selected by both arm and arm64
-builds with COMMON_CLK_AMLOGIC. The individual drivers have their own
-config options as well.
+Hi Stephen,
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
----
-No change in v2.
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Andi Shyti <andi.shyti@samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+> 
+> See commit 58657d189a2f and it's children for details on this
+> new registration API.
+> 
+>  drivers/clk/clk-s2mps11.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
 
- drivers/clk/Kconfig        |  1 +
- drivers/clk/Makefile       |  2 +-
- drivers/clk/meson/Kconfig  | 12 ++++++++++++
- drivers/clk/meson/Makefile |  4 ++--
- 4 files changed, 16 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/meson/Kconfig
+Acked-by: Andi Shyti <andi.shyti@samsung.com>
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 53ddba26578c..30feb6b40305 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -208,6 +208,7 @@ config COMMON_CLK_OXNAS
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/meson/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index dcc5e698ff6d..af03eb2f6c05 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -65,7 +65,7 @@ ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
- obj-y					+= mvebu/
--obj-$(CONFIG_ARCH_MESON)		+= meson/
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
- obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-new file mode 100644
-index 000000000000..7bb19ad7369e
---- /dev/null
-+++ b/drivers/clk/meson/Kconfig
-@@ -0,0 +1,12 @@
-+config COMMON_CLK_AMLOGIC
-+	bool
-+	depends on OF
-+	depends on ARCH_MESON || COMPILE_TEST
-+
-+config COMMON_CLK_MESON8B
-+	bool
-+	depends on COMMON_CLK_AMLOGIC
-+	help
-+	  Support for the clock controller on AmLogic S805 devices, aka
-+	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
-+	  work.
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 901b5d435812..b3d60fecd846 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,5 +2,5 @@
- # Makefile for Meson specific clk
- #
- 
--obj-y += clk-pll.o clk-cpu.o
--obj-y += meson8b-clkc.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o
-+obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
--- 
-2.1.4
+Thanks,
+Andi
