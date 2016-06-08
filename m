@@ -1,36 +1,75 @@
-Return-Path: <ldewangan@nvidia.com>
-Message-ID: <575AC14D.4080907@nvidia.com>
-Date: Fri, 10 Jun 2016 19:01:57 +0530
-From: Laxman Dewangan <ldewangan@nvidia.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 02/11] clk: imx: correct AV PLL rate formula
+Date: Wed, 8 Jun 2016 22:33:31 +0800
+Message-ID: <1465396420-27064-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-To: Javier Martinez Canillas <javier@dowhile0.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] clk: max77620: Add clock driver for MAX77620/MAX20024
-References: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>	<1465553536-23838-2-git-send-email-ldewangan@nvidia.com>	<CABxcv=mrmN5Mzt595ZFgGbOoHJWQMwQ1wiCvcHEiWh_79EbJqQ@mail.gmail.com>	<575ABD10.60208@nvidia.com> <CABxcv==7=PZ2HDtryNZHW0CcLaCAkBBT+XWJ0TJRS4uX48k_=w@mail.gmail.com>
-In-Reply-To: <CABxcv==7=PZ2HDtryNZHW0CcLaCAkBBT+XWJ0TJRS4uX48k_=w@mail.gmail.com>
-Return-Path: ldewangan@nvidia.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-+ Krzysztof,
+From: Anson Huang <b20788@freescale.com>
 
-On Friday 10 June 2016 07:02 PM, Javier Martinez Canillas wrote:
-> Hello Laxman,
->
-> On Fri, Jun 10, 2016 at 9:13 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->> So until I change it too generic, it will not be possible.
->> Also if it is require then what about all max77686/max77802 and max77620 in
->> single file, the way we did for RTC.
->> We dont need 4 files for the similar driver then.
->>
-> Indeed, probably is better to have a single driver to handle all these
-> IP variants since they seem to be quite similar.
->
->
-Yaah, single driver will be very clean approach. But it needs some 
-testing on max77802 and max77686 based platform as I do not have any driver.
-I will need help on this from you.
+The audio/video PLL's rate calculation is as below in RM:
+
+Fref * (DIV_SELECT + NUM / DENOM), in origin clk-pllv3's
+code, below code is used:
+
+(parent_rate * div) + ((parent_rate / mfd) * mfn
+
+as it does NOT consider the float data using div, so below
+formula should be used as a decent method:
+
+(parent_rate * div) + ((parent_rate * mfn) / mfd)
+
+and we also need to consider parent_rate * mfd may overflow
+a 32 bit value, 64 bit value should be used.
+
+After updating this formula, the dram PLL's rate is
+1066MHz, which is correct, while the old formula gets
+1056MHz.
+
+[Aisheng: fix clk_pllv3_av_round_rate too]
+
+Signed-off-by: Anson Huang <b20788@freescale.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-pllv3.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 44d294a336f0..eea2b1b3791e 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -218,8 +218,12 @@ static unsigned long clk_pllv3_av_recalc_rate(struct clk_hw *hw,
+ 	u32 mfn = readl_relaxed(pll->base + PLL_NUM_OFFSET);
+ 	u32 mfd = readl_relaxed(pll->base + PLL_DENOM_OFFSET);
+ 	u32 div = readl_relaxed(pll->base) & pll->div_mask;
++	u64 temp64 = (u64)parent_rate;
+ 
+-	return (parent_rate * div) + ((parent_rate / mfd) * mfn);
++	temp64 *= mfn;
++	do_div(temp64, mfd);
++
++	return (parent_rate * div) + (u32)temp64;
+ }
+ 
+ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -243,7 +247,7 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	do_div(temp64, parent_rate);
+ 	mfn = temp64;
+ 
+-	return parent_rate * div + parent_rate / mfd * mfn;
++	return parent_rate * div + parent_rate * mfn / mfd;
+ }
+ 
+ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+1.9.1
