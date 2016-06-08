@@ -1,33 +1,43 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com,
- beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 0/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag and
-Date: Fri, 10 Jun 2016 13:56:29 +0900
-Message-id: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 03/11] clk: imx7d: correct dram root clk parent select
+Date: Wed, 8 Jun 2016 22:33:32 +0800
+Message-ID: <1465396420-27064-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch-set add the CLK_IGNORE_UNUSED flag to the specific clocks because
-the specific clocks should remain the enable state. This patch-set support the
-PCIE (PCI Express), serial3(AUD Uart) device and fix the hang issue for
-suspend-to-ram.
+From: Anson Huang <b20788@freescale.com>
 
-Beomho Seo (1):
-  clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag for AUD Uart
+DRAM root clk should be either from pll dram main clk
+or dram alt root clk.
 
-Jaehoon Chung (1):
-  clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to PCIE device
+Signed-off-by: Anson Huang <b20788@freescale.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jonghwa Lee (1):
-  clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks occurring hang at sleep
-
- drivers/clk/samsung/clk-exynos5433.c   | 47 +++++++++++++++++++++-------------
- include/dt-bindings/clock/exynos5433.h |  3 ++-
- 2 files changed, 31 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 3be2e9371491..1cb866773fc0 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -65,7 +65,7 @@ static const char *dram_phym_sel[] = { "pll_dram_main_clk",
+ 	"dram_phym_alt_clk", };
+ 
+ static const char *dram_sel[] = { "pll_dram_main_clk",
+-	"dram_alt_clk", };
++	"dram_alt_root_clk", };
+ 
+ static const char *dram_phym_alt_sel[] = { "osc", "pll_dram_533m_clk",
+ 	"pll_sys_main_clk", "pll_enet_500m_clk",
 -- 
 1.9.1
