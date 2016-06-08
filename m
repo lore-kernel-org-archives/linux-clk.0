@@ -1,61 +1,111 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: rui.zhang@intel.com,
-	edubezval@gmail.com,
-	robh+dt@kernel.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	emilio@elopez.com.ar
-Cc: mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [RFC PATCH 2/5] dt: bindings: add bindings for allwinner a23/33 ths
-Date: Tue, 28 Jun 2016 18:13:22 +0800
-Message-Id: <20160628101325.2522-2-icenowy@aosc.xyz>
-In-Reply-To: <20160628101325.2522-1-icenowy@aosc.xyz>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 8 Jun 2016 15:23:26 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+	broonie@kernel.org, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+Subject: Re: [RESEND PATCH v5 3/5] mfd: dt-bindings: Add RK818 device tree
+ bindings document
+Message-ID: <20160608142326.GF14888@dell>
+References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
+ <1464850228-17244-3-git-send-email-w.egorov@phytec.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1464850228-17244-3-git-send-email-w.egorov@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the THS on A23/33 SoCs.
+On Thu, 02 Jun 2016, Wadim Egorov wrote:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- .../devicetree/bindings/thermal/sun8iw3-thermal.txt  | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt
+> Add device tree bindings documentation for Rockchip's RK818 PMIC.
+> 
+> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt b/Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt
-new file mode 100644
-index 0000000..0cdcb9a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt
-@@ -0,0 +1,20 @@
-+* Thermal Sensor (THS) on Allwinner sun8i A23/33 SoCs
-+
-+Required properties:
-+- compatible : should be "allwinner,sun8i-<name>-ths"
-+   "allwinner,sun8i-a23-ths": found on A23 SoCs
-+   "allwinner,sun8i-a33-ths": found on A33 SoCs
-+- reg : physical base address of the controller and length of memory mapped
-+	region.
-+- clocks : Must contain an entry for each entry in clock-names.
-+- clock-names : Shall be "pll2", since the THS on A23/33 is using audio PLL (PLL2).
-+- #thermal-sensor-cells : Should be 0. See ./thermal.txt for a description.
-+
-+Example:
-+ths: ths@01c25000 {
-+	#thermal-sensor-cells = <0>;
-+	compatible = "allwinner,sun8i-a23-ths";
-+	reg = <0x01c25000 0x44>;
-+	clocks = <&pll2 0>;
-+	clock-names = "pll2";
-+};
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> ---
+>  Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
+>  1 file changed, 34 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+> index 4ca6aab..9636ae8 100644
+> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
+> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+> @@ -1,7 +1,11 @@
+> -RK808 Power Management Integrated Circuit
+> +RK8XX Power Management Integrated Circuit
+> +
+> +The rk8xx family current members:
+> +rk808
+> +rk818
+>  
+>  Required properties:
+> -- compatible: "rockchip,rk808"
+> +- compatible: "rockchip,rk808", "rockchip,rk818"
+>  - reg: I2C slave address
+>  - interrupt-parent: The parent interrupt controller.
+>  - interrupts: the interrupt outputs of the controller.
+> @@ -13,6 +17,8 @@ Optional properties:
+>    default output clock name
+>  - rockchip,system-power-controller: Telling whether or not this pmic is controlling
+>    the system power.
+> +
+> +Optional RK808 properties:
+>  - vcc1-supply:  The input supply for DCDC_REG1
+>  - vcc2-supply:  The input supply for DCDC_REG2
+>  - vcc3-supply:  The input supply for DCDC_REG3
+> @@ -29,7 +35,20 @@ Optional properties:
+>    the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+>    very quickly with no slow ramp time.
+>  
+> -Regulators: All the regulators of RK808 to be instantiated shall be
+> +Optional RK818 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- boost-supply: The input supply for DCDC_BOOST
+> +- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
+> +- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
+> +- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
+> +- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
+> +- h_5v-supply:  The input supply for HDMI_SWITCH
+> +- usb-supply:   The input supply for OTG_SWITCH
+> +
+> +Regulators: All the regulators of RK8XX to be instantiated shall be
+>  listed in a child node named 'regulators'. Each regulator is represented
+>  by a child node of the 'regulators' node.
+>  
+> @@ -48,6 +67,18 @@ number as described in RK808 datasheet.
+>  	- SWITCH_REGn
+>  		- valid values for n are 1 to 2
+>  
+> +Following regulators of the RK818 PMIC block are supported. Note that
+> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+> +number as described in RK818 datasheet.
+> +
+> +	- DCDC_REGn
+> +		- valid values for n are 1 to 4.
+> +	- LDO_REGn
+> +		- valid values for n are 1 to 9.
+> +	- SWITCH_REG
+> +	- HDMI_SWITCH
+> +	- OTG_SWITCH
+> +
+>  Standard regulator bindings are used inside regulator subnodes. Check
+>    Documentation/devicetree/bindings/regulator/regulator.txt
+>  for more details
+
 -- 
-2.9.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
