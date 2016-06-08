@@ -1,114 +1,57 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com,
-	maxime.coquelin@st.com,
-	patrice.chotard@st.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	broonie@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 6/6] spi: st-ssc4: Remove 'no clocking' hack
-Date: Tue,  7 Jun 2016 12:19:30 +0100
-Message-Id: <20160607111930.10375-7-lee.jones@linaro.org>
-In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
-References: <20160607111930.10375-1-lee.jones@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 10/11] clk: imx6sl: fix pll clock parents
+Date: Wed, 8 Jun 2016 22:33:39 +0800
+Message-ID: <1465396420-27064-10-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Due to the newly upstreamed 'critical clocks' API we can now
-safely handle clocking in the SPI and I2C drivers without fear
-of catastrophically crippling the running platform.
+pllx_bypass_src mux shouldn't be the parent of pllx clock
+since it's only valid when when pllx BYPASS bit is set.
+Thus it is actually one parent of pllx_bypass only.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Instead, pllx parent should be fixed to osc according to
+reference manual.
+Other plls have the same issue.
+
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/spi/spi-st-ssc4.c | 36 +++++-------------------------------
- 1 file changed, 5 insertions(+), 31 deletions(-)
+ drivers/clk/imx/clk-imx6sl.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/spi/spi-st-ssc4.c b/drivers/spi/spi-st-ssc4.c
-index d5adf9f..a56eca0 100644
---- a/drivers/spi/spi-st-ssc4.c
-+++ b/drivers/spi/spi-st-ssc4.c
-@@ -68,32 +68,6 @@ struct spi_st {
- 	struct completion	done;
- };
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 1be6230a07af..5fd4ddac1bf1 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -218,13 +218,13 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
  
--static int spi_st_clk_enable(struct spi_st *spi_st)
--{
--	/*
--	 * Current platforms use one of the core clocks for SPI and I2C.
--	 * If we attempt to disable the clock, the system will hang.
--	 *
--	 * TODO: Remove this when platform supports power domains.
--	 */
--	return 0;
--
--	return clk_prepare_enable(spi_st->clk);
--}
--
--static void spi_st_clk_disable(struct spi_st *spi_st)
--{
--	/*
--	 * Current platforms use one of the core clocks for SPI and I2C.
--	 * If we attempt to disable the clock, the system will hang.
--	 *
--	 * TODO: Remove this when platform supports power domains.
--	 */
--	return;
--
--	clk_disable_unprepare(spi_st->clk);
--}
--
- /* Load the TX FIFO */
- static void ssc_write_tx_fifo(struct spi_st *spi_st)
- {
-@@ -349,7 +323,7 @@ static int spi_st_probe(struct platform_device *pdev)
- 		goto put_master;
- 	}
+ 	/*                                    type               name    parent_name        base         div_mask */
+-	clks[IMX6SL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
+-	clks[IMX6SL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
+-	clks[IMX6SL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "pll3_bypass_src", base + 0x10, 0x3);
+-	clks[IMX6SL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
+-	clks[IMX6SL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
+-	clks[IMX6SL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
+-	clks[IMX6SL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "pll7_bypass_src", base + 0x20, 0x3);
++	clks[IMX6SL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
++	clks[IMX6SL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
++	clks[IMX6SL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
++	clks[IMX6SL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
++	clks[IMX6SL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
++	clks[IMX6SL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
++	clks[IMX6SL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
  
--	ret = spi_st_clk_enable(spi_st);
-+	ret = clk_prepare_enable(spi_st->clk);
- 	if (ret)
- 		goto put_master;
- 
-@@ -408,7 +382,7 @@ static int spi_st_probe(struct platform_device *pdev)
- 	return 0;
- 
- clk_disable:
--	spi_st_clk_disable(spi_st);
-+	clk_disable_unprepare(spi_st->clk);
- put_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -419,7 +393,7 @@ static int spi_st_remove(struct platform_device *pdev)
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct spi_st *spi_st = spi_master_get_devdata(master);
- 
--	spi_st_clk_disable(spi_st);
-+	clk_disable_unprepare(spi_st->clk);
- 
- 	pinctrl_pm_select_sleep_state(&pdev->dev);
- 
-@@ -435,7 +409,7 @@ static int spi_st_runtime_suspend(struct device *dev)
- 	writel_relaxed(0, spi_st->base + SSC_IEN);
- 	pinctrl_pm_select_sleep_state(dev);
- 
--	spi_st_clk_disable(spi_st);
-+	clk_disable_unprepare(spi_st->clk);
- 
- 	return 0;
- }
-@@ -446,7 +420,7 @@ static int spi_st_runtime_resume(struct device *dev)
- 	struct spi_st *spi_st = spi_master_get_devdata(master);
- 	int ret;
- 
--	ret = spi_st_clk_enable(spi_st);
-+	ret = clk_prepare_enable(spi_st->clk);
- 	pinctrl_pm_select_default_state(dev);
- 
- 	return ret;
+ 	clks[IMX6SL_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
+ 	clks[IMX6SL_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
 -- 
-2.8.3
+1.9.1
