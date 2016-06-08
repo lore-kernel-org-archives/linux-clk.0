@@ -1,77 +1,57 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Xing Zheng <zhengxing@rock-chips.com>, elaine zhang <elaine.zhang@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>, Brian Norris <briannorris@chromium.org>, Yakir Yang <ykk@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, tomasz.figa@chromium.org
-Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for dclk_vop0_div on RK3399
-Date: Mon, 27 Jun 2016 00:18:57 +0200
-Message-ID: <3441187.YrMqoaIQDf@phil>
-In-Reply-To: <CAD=FV=V5UvQGtYQ26gZ+U7+TygEWuqRoHhiH8SiQSK7GcvkF5w@mail.gmail.com>
-References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com> <2376423.L1zs1HaIGm@diego> <CAD=FV=V5UvQGtYQ26gZ+U7+TygEWuqRoHhiH8SiQSK7GcvkF5w@mail.gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 09/11] clk: imx6sx: fix pll clock parents
+Date: Wed, 8 Jun 2016 22:33:38 +0800
+Message-ID: <1465396420-27064-9-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 21. Juni 2016, 17:31:16 schrieb Doug Anderson:
-> OK, so what do we do?  Personally I can't see us coming up with a
-> one-size fits all approach, can you?  That means some type of
-> configuration.  ...and, as seen by the assigned-clocks device tree
-> binding, _some_ types of configuration is allowed in the device tree
-> presuming it is well thought out and describing how the designers of
-> the hardware "intended" it to be used.
-> 
-> So maybe:
-> 
-> i) Unless there's a counter example, I see no reason to let any clocks
-> other than the VOP display clocks parent on the "dynamic" PLL.  If we
-> later find a counter example then presumably we should add a device
-> tree property on that board.  We could have code at boot time that
-> goes through all clocks parented on "dynamic" PLL and reparents them
-> (trying to keep the rate?), they disallows future muxing to the
-> "dynamic" PLL.
+pllx_bypass_src mux shouldn't be the parent of pllx clock
+since it's only valid when when pllx BYPASS bit is set.
+Thus it is actually one parent of pllx_bypass only.
 
-Two problems:
-- "disallowing future muxing to the pll" feels a bit far on the "policy"-
-side on the policy<->hw-description scale, I still guess the kernel should 
-be allowed to shoot itself in the foot :-)
-- would probably include hacking up the clock parent-names, which won't work 
-at runtime, as they are init params and get memcpy'd on clk creation.
+Instead, pllx parent should be fixed to osc according to
+reference manual.
+Other plls have the same issue.
 
-But I guess this issue of depending clock maybe needing to adapt to a 
-changed pll-rate here would be solvable with my rate-reassignment I still 
-need to revisit.
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx6sx.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-
-> ii) It seems sane to me to add a device tree property to the board
-> that will effectively enable CLK_SET_RATE_PARENT on one of the
-> dclk_vop clocks and forcing it to the "dynamic" PLL (no
-> auto-remuxing).  Maybe we would add something to the HDMI node, for
-> instance, like "rockchip,intended-dclk-pll = <&...>".  Then somehow
-> this would need to affect whichever VOP was assigned to HDMI.
-
-Right now I see two issues:
-- can the drm reassign vops at runtime [don't know enough about drm], but 
-what would happen in such a case when hdmi jumps from one to the other vop.
-- clock-flags [CLK_SET_RATE_PARENT and friends] are clk-init data, set when 
-creating a clock, so there is no changing this at runtime - see above
-
-I guess one option to handle this could be to not have anybody getting a 
-real CLK_SET_RATE_PARENT to the vpll, but instead having the vops handle 
-this special pll if necessary. Aka check if the requested rate is possible 
-using the current sources (clk_round_rate on the dclk_vopX) and if not adapt 
-the special pll to a suitable source rate and re-check.
-
-And if there is no dclk-vpll, then simply skip that step and try to get the 
-best rate possible.
-
-
-> iii) If later someone can propose how to handle D) above, we can
-> handle it then.  Until a solution is proposed those boards would work
-> like today.
-
-Having the "rockchip,dclk-pll = <&...>;" live in the display-subsystem node 
-or so (=assigned to the global display-subsystem not one special vop) the 
-available vops might even be able to work out between them who should get 
-access to it depending on connected displays / modes?
-
-
-Heiko
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 97e742a8be17..b5c96de41ccf 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -174,13 +174,13 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+ 
+ 	/*                                    type               name    parent_name        base         div_mask */
+-	clks[IMX6SX_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
+-	clks[IMX6SX_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
+-	clks[IMX6SX_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "pll3_bypass_src", base + 0x10, 0x3);
+-	clks[IMX6SX_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
+-	clks[IMX6SX_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
+-	clks[IMX6SX_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
+-	clks[IMX6SX_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "pll7_bypass_src", base + 0x20, 0x3);
++	clks[IMX6SX_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
++	clks[IMX6SX_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
++	clks[IMX6SX_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
++	clks[IMX6SX_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
++	clks[IMX6SX_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
++	clks[IMX6SX_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
++	clks[IMX6SX_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
+ 
+ 	clks[IMX6SX_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
+ 	clks[IMX6SX_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
+-- 
+1.9.1
