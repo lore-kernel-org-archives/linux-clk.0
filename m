@@ -1,97 +1,70 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	rtc-linux@googlegroups.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 7/7] ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
-Date: Thu, 30 Jun 2016 23:58:51 +0800
-Message-Id: <1467302331-9663-8-git-send-email-wens@csie.org>
-In-Reply-To: <1467302331-9663-1-git-send-email-wens@csie.org>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 07/11] clk: imx6ul: fix pll clock parents
+Date: Wed, 8 Jun 2016 22:33:36 +0800
+Message-ID: <1465396420-27064-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The 32.768 kHz clock inside the A80 SoC is fed from an external source,
-typically the AC100 RTC module.
+pllx_bypass_src mux shouldn't be the parent of pllx clock
+since it's only valid when when pllx BYPASS bit is set.
+Thus it is actually one parent of pllx_bypass only.
 
-Make the osc32k placeholder a fixed-factor clock so board dts files can
-specify its source.
+Instead, pllx parent should be fixed to osc according to
+reference manual.
+Other plls have the same issue.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+e.g. before fix, the pll tree is:
+osc                                      6            6    24000000          0 0
+   pll1_bypass_src                       0            0    24000000          0 0
+      pll1                               0            0   792000000          0 0
+         pll1_bypass                     0            0   792000000          0 0
+            pll1_sys                     0            0   792000000          0 0
+
+After the fix, it's:
+osc                                      6            6    24000000          0 0
+   pll1                                  0            0   792000000          0 0
+      pll1_bypass                        0            0   792000000          0 0
+         pll1_sys                        0            0   792000000          0 0
+
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
-Changes since v3: none
-Changes since v2: none
-Changes since v1: none
----
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 5 +++++
- arch/arm/boot/dts/sun9i-a80-optimus.dts     | 5 +++++
- arch/arm/boot/dts/sun9i-a80.dtsi            | 9 +++------
- 3 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/clk/imx/clk-imx6ul.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-index cf2f4b72a841..04b014603659 100644
---- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-@@ -103,6 +103,11 @@
- 	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
- };
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 67ae3465dd37..bdf4cf807b78 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -130,13 +130,13 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", base + 0xe0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+ 	clks[IMX6UL_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
  
-+&osc32k {
-+	/* osc32k input is from AC100 */
-+	clocks = <&ac100_rtc 0>;
-+};
-+
- &pio {
- 	led_pins_cubieboard4: led-pins@0 {
- 		allwinner,pins = "PH6", "PH17";
-diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-index e35c06c162a7..fd874ded890e 100644
---- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-@@ -152,6 +152,11 @@
- 	status = "okay";
- };
+-	clks[IMX6UL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
+-	clks[IMX6UL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
+-	clks[IMX6UL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3", "pll3_bypass_src", base + 0x10, 0x3);
+-	clks[IMX6UL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
+-	clks[IMX6UL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
+-	clks[IMX6UL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
+-	clks[IMX6UL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7", "pll7_bypass_src", base + 0x20, 0x3);
++	clks[IMX6UL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1", "osc", base + 0x00, 0x7f);
++	clks[IMX6UL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
++	clks[IMX6UL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3", "osc", base + 0x10, 0x3);
++	clks[IMX6UL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4", "osc", base + 0x70, 0x7f);
++	clks[IMX6UL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5", "osc", base + 0xa0, 0x7f);
++	clks[IMX6UL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6", "osc", base + 0xe0, 0x3);
++	clks[IMX6UL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7", "osc", base + 0x20, 0x3);
  
-+&osc32k {
-+	/* osc32k input is from AC100 */
-+	clocks = <&ac100_rtc 0>;
-+};
-+
- &pio {
- 	led_pins_optimus: led-pins@0 {
- 		allwinner,pins = "PH0", "PH1";
-diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-index f68b3242b33a..dd11115ec087 100644
---- a/arch/arm/boot/dts/sun9i-a80.dtsi
-+++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-@@ -148,15 +148,12 @@
- 
- 		/*
- 		 * The 32k clock is from an external source, normally the
--		 * AC100 codec/RTC chip. This clock is by default enabled
--		 * and clocked at 32768 Hz, from the oscillator connected
--		 * to the AC100. It is configurable, but no such driver or
--		 * bindings exist yet.
-+		 * AC100 codec/RTC chip. This serves as a placeholder for
-+		 * board dts files to specify the source.
- 		 */
- 		osc32k: osc32k_clk {
- 			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <32768>;
-+			compatible = "fixed-factor-clock";
- 			clock-output-names = "osc32k";
- 		};
- 
+ 	clks[IMX6UL_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
+ 	clks[IMX6UL_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
 -- 
-2.8.1
+1.9.1
