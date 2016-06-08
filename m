@@ -1,91 +1,41 @@
-Return-Path: <neidhard.kim@lge.com>
-Subject: Re: [PATCH 1/2] clk: fixed-factor: Allow for a few clocks to change
- the parent rate
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-From: Jongsung Kim <neidhard.kim@lge.com>
-Message-ID: <576CBA88.2060502@lge.com>
-Date: Fri, 24 Jun 2016 13:43:52 +0900
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 06/11] clk: imx6ul: fix gpt2 clock names
+Date: Wed, 8 Jun 2016 22:33:35 +0800
+Message-ID: <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+fix gpt2 clock names
 
-We need a path to set CLK_SET_RATE_PARENT any other needed flags when a fixed-factor-clock is initialized by DT. It seems your way will work also for my case. However, I suggested some more generic approach:
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx6ul.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://lkml.org/lkml/2016/6/24/3
-
-Please leave any comments.
-
-
-On 2016년 06월 22일 18:15, Maxime Ripard wrote:
-> The only way for a fixed factor clock to change its rate would be to change
-> its parent rate.
->
-> Since passing blindly CLK_SET_RATE_PARENT might break a lot of platforms
-> that were relying on the fact that the parent rate wouldn't change,
-> introduce a compatible-based whitelist that will allow clocks to opt-in
-> that flag.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  .../devicetree/bindings/clock/fixed-factor-clock.txt          |  4 ++++
->  drivers/clk/clk-fixed-factor.c                                | 11 ++++++++++-
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt b/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
-> index 1bae8527eb9b..189467a7188a 100644
-> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
-> @@ -14,6 +14,10 @@ Required properties:
->  Optional properties:
->  - clock-output-names : From common clock binding.
->  
-> +Some clocks that require special treatments are also handled by that
-> +driver, with the compatibles:
-> +  - allwinner,sun4i-a10-pll3-2x-clk
-> +
->  Example:
->  	clock {
->  		compatible = "fixed-factor-clock";
-> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-> index 75cd6c792cb8..4db3be214077 100644
-> --- a/drivers/clk/clk-fixed-factor.c
-> +++ b/drivers/clk/clk-fixed-factor.c
-> @@ -142,6 +142,11 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
->  EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
->  
->  #ifdef CONFIG_OF
-> +static const struct of_device_id set_rate_parent_matches[] = {
-> +	{ .compatible = "allwinner,sun4i-a10-pll3-2x-clk" },
-> +	{ /* Sentinel */ },
-> +};
-> +
->  /**
->   * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
->   */
-> @@ -150,6 +155,7 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
->  	struct clk *clk;
->  	const char *clk_name = node->name;
->  	const char *parent_name;
-> +	unsigned long flags = 0;
->  	u32 div, mult;
->  
->  	if (of_property_read_u32(node, "clock-div", &div)) {
-> @@ -167,7 +173,10 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
->  	of_property_read_string(node, "clock-output-names", &clk_name);
->  	parent_name = of_clk_get_parent_name(node, 0);
->  
-> -	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
-> +	if (of_match_node(set_rate_parent_matches, node))
-> +		flags |= CLK_SET_RATE_PARENT;
-> +
-> +	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
->  					mult, div);
->  	if (!IS_ERR(clk))
->  		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 0f1f17a8f3ed..67ae3465dd37 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -305,8 +305,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_CAN1_SERIAL]	= imx_clk_gate2("can1_serial",	"can_podf",	base + 0x68,	16);
+ 	clks[IMX6UL_CLK_CAN2_IPG]	= imx_clk_gate2("can2_ipg",	"ipg",		base + 0x68,	18);
+ 	clks[IMX6UL_CLK_CAN2_SERIAL]	= imx_clk_gate2("can2_serial",	"can_podf",	base + 0x68,	20);
+-	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus",	"perclk",	base + 0x68,	24);
+-	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial",	"perclk",	base + 0x68,	26);
++	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus2",	"perclk",	base + 0x68,	24);
++	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial2",	"perclk",	base + 0x68,	26);
+ 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
+ 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+ 	clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
+-- 
+1.9.1
