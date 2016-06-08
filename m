@@ -1,128 +1,55 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
-To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <57627757.50101@samsung.com>
-Date: Thu, 16 Jun 2016 11:54:31 +0200
-MIME-version: 1.0
-In-reply-to: <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 11/11] clk: imx7d: fix pll clock parents
+Date: Wed, 8 Jun 2016 22:33:40 +0800
+Message-ID: <1465396420-27064-11-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
-> Maxim Max77620 has one 32KHz clock output and the clock HW
-> IP used on this PMIC is same as what it is there in the MAX77686.
-> 
-> Add clock driver support for MAX77620 on the MAX77686 driver.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> ---
->  drivers/clk/Kconfig        |  7 ++++---
->  drivers/clk/clk-max77686.c | 16 ++++++++++++++++
->  2 files changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6afad74..d75f4c5 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
->  source "drivers/clk/versatile/Kconfig"
->  
->  config COMMON_CLK_MAX77686
-> -	tristate "Clock driver for Maxim 77686/77802 MFD"
-> -	depends on MFD_MAX77686
-> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-> +	depends on MFD_MAX77686 || MFD_MAX77620
->  	---help---
-> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
-> +	  clock.
->  
->  config COMMON_CLK_RK808
->  	tristate "Clock driver for RK808"
-> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> index 31ba726..d2be736 100644
-> --- a/drivers/clk/clk-max77686.c
-> +++ b/drivers/clk/clk-max77686.c
-> @@ -19,6 +19,7 @@
->  #include <linux/err.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/mfd/max77620.h>
->  #include <linux/mfd/max77686.h>
->  #include <linux/mfd/max77686-private.h>
->  #include <linux/clk-provider.h>
-> @@ -30,12 +31,14 @@
->  
->  #include <dt-bindings/clock/maxim,max77686.h>
->  #include <dt-bindings/clock/maxim,max77802.h>
-> +#include <dt-bindings/mfd/max77620.h>
->  
->  #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
->  
->  enum chip_name {
->  	CHIP_MAX77686,
->  	CHIP_MAX77802,
-> +	CHIP_MAX77620,
+pllx_bypass_src mux shouldn't be the parent of pllx clock
+since it's only valid when when pllx BYPASS bit is set.
+Thus it is actually one parent of pllx_bypass only.
 
-Now it is more obvious why it is here. However I don't like the
-duplication of device IDs, under different names and different values:
-1. include/linux/mfd/max77686-private.h
-2. include/linux/mfd/max77620.h
-3. here
+Instead, pllx parent should be fixed to osc according to
+reference manual.
+Other plls have the same issue.
 
-I was thinking about way of combining it... but these headers are
-different. Unless there will be one header for all three devices.
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Anyway, please add the max77686 prefix to the enum.
-
-Best regards,
-Krzysztof
-
->  };
->  
->  struct max_gen_hw_clk_data {
-> @@ -91,6 +94,14 @@ static struct max_gen_hw_clk_data max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
->  	},
->  };
->  
-> +static struct max_gen_hw_clk_data max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
-> +	[MAX77620_CLK_32K_OUT0] = {
-> +		.name = "32khz_pmic",
-> +		.reg = MAX77620_REG_CNFG1_32K,
-> +		.mask = MAX77620_CNFG1_32K_OUT0_EN,
-> +	},
-> +};
-> +
->  static struct max_gen_clk_data *to_max_gen_clk_data(struct clk_hw *hw)
->  {
->  	return container_of(hw, struct max_gen_clk_data, hw);
-> @@ -171,6 +182,10 @@ static int max77686_clk_probe(struct platform_device *pdev)
->  		num_clks = MAX77802_CLKS_NUM;
->  		hw_clks = max77802_hw_clks_info;
->  		break;
-> +	case CHIP_MAX77620:
-> +		num_clks = MAX77620_CLKS_NUM;
-> +		hw_clks = max77620_hw_clks_info;
-> +		break;
->  	default:
->  		dev_err(dev, "Unknown Chip ID\n");
->  		return -EINVAL;
-> @@ -269,6 +284,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
->  static const struct platform_device_id max77686_clk_id[] = {
->  	{ "max77686-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77686, },
->  	{ "max77802-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77802, },
-> +	{ "max77620-clock", .driver_data = (kernel_ulong_t)CHIP_MAX77620, },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(platform, max77686_clk_id);
-> 
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index dc8c3355a66d..738a5289b378 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -394,12 +394,12 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_PLL_AUDIO_MAIN_SRC] = imx_clk_mux("pll_audio_main_src", base + 0xf0, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
+ 	clks[IMX7D_PLL_VIDEO_MAIN_SRC] = imx_clk_mux("pll_video_main_src", base + 0x130, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
+ 
+-	clks[IMX7D_PLL_ARM_MAIN]  = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_arm_main", "pll_arm_main_src", base + 0x60, 0x7f);
+-	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_dram_main", "pll_dram_main_src", base + 0x70, 0x7f);
+-	clks[IMX7D_PLL_SYS_MAIN]  = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll_sys_main", "pll_sys_main_src", base + 0xb0, 0x1);
+-	clks[IMX7D_PLL_ENET_MAIN] = imx_clk_pllv3(IMX_PLLV3_ENET_IMX7, "pll_enet_main", "pll_enet_main_src", base + 0xe0, 0x0);
+-	clks[IMX7D_PLL_AUDIO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_audio_main", "pll_audio_main_src", base + 0xf0, 0x7f);
+-	clks[IMX7D_PLL_VIDEO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_video_main", "pll_video_main_src", base + 0x130, 0x7f);
++	clks[IMX7D_PLL_ARM_MAIN]  = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_arm_main", "osc", base + 0x60, 0x7f);
++	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_dram_main", "osc", base + 0x70, 0x7f);
++	clks[IMX7D_PLL_SYS_MAIN]  = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll_sys_main", "osc", base + 0xb0, 0x1);
++	clks[IMX7D_PLL_ENET_MAIN] = imx_clk_pllv3(IMX_PLLV3_ENET_IMX7, "pll_enet_main", "osc", base + 0xe0, 0x0);
++	clks[IMX7D_PLL_AUDIO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_audio_main", "osc", base + 0xf0, 0x7f);
++	clks[IMX7D_PLL_VIDEO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_video_main", "osc", base + 0x130, 0x7f);
+ 
+ 	clks[IMX7D_PLL_ARM_MAIN_BYPASS]  = imx_clk_mux_flags("pll_arm_main_bypass", base + 0x60, 16, 1, pll_arm_bypass_sel, ARRAY_SIZE(pll_arm_bypass_sel), CLK_SET_RATE_PARENT);
+ 	clks[IMX7D_PLL_DRAM_MAIN_BYPASS] = imx_clk_mux_flags("pll_dram_main_bypass", base + 0x70, 16, 1, pll_dram_bypass_sel, ARRAY_SIZE(pll_dram_bypass_sel), CLK_SET_RATE_PARENT);
+-- 
+1.9.1
