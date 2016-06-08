@@ -1,149 +1,88 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 17/34] clk: maxgen: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:16 -0700
-Message-Id: <20160601231533.9354-18-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
+Date: Wed, 8 Jun 2016 22:33:34 +0800
+Message-ID: <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+There's a powerdown bit already, so let's change the name of
+powerup_set bit to power_invert to reflects the power polarity
+to make it less confusing.
 
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
+ drivers/clk/imx/clk-pllv3.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
-
- drivers/clk/clk-max-gen.c | 64 +++++++++++++++++++++++------------------------
- 1 file changed, 31 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
-index 35af9cb6da4f..4bb53fcf8639 100644
---- a/drivers/clk/clk-max-gen.c
-+++ b/drivers/clk/clk-max-gen.c
-@@ -40,6 +40,11 @@ struct max_gen_clk {
- 	struct clk_hw hw;
- };
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index eea2b1b3791e..3fdfb6d2cc71 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -29,8 +29,8 @@
+  * struct clk_pllv3 - IMX PLL clock version 3
+  * @clk_hw:	 clock source
+  * @base:	 base address of PLL registers
+- * @powerup_set: set POWER bit to power up the PLL
+- * @powerdown:   pll powerdown offset bit
++ * @powerdown:	 pll powerdown bit offset
++ * @power_invert: set powerdown bit to power up the PLL
+  * @div_mask:	 mask of divider bits
+  * @div_shift:	 shift of divider bits
+  *
+@@ -40,7 +40,7 @@
+ struct clk_pllv3 {
+ 	struct clk_hw	hw;
+ 	void __iomem	*base;
+-	bool		powerup_set;
++	bool		power_invert;
+ 	u32		powerdown;
+ 	u32		div_mask;
+ 	u32		div_shift;
+@@ -55,7 +55,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+ 	u32 val = readl_relaxed(pll->base) & pll->powerdown;
  
-+struct max_gen_data {
-+	size_t num;
-+	struct max_gen_clk clks[];
-+};
-+
- static struct max_gen_clk *to_max_gen_clk(struct clk_hw *hw)
- {
- 	return container_of(hw, struct max_gen_clk, hw);
-@@ -89,43 +94,48 @@ struct clk_ops max_gen_clk_ops = {
- };
- EXPORT_SYMBOL_GPL(max_gen_clk_ops);
+ 	/* No need to wait for lock when pll is not powered up */
+-	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
++	if ((pll->power_invert && !val) || (!pll->power_invert && val))
+ 		return 0;
  
--static struct clk *max_gen_clk_register(struct device *dev,
--					struct max_gen_clk *max_gen)
-+static int max_gen_clk_register(struct device *dev, struct max_gen_clk *max_gen)
- {
--	struct clk *clk;
- 	struct clk_hw *hw = &max_gen->hw;
- 	int ret;
+ 	/* Wait for PLL to lock */
+@@ -76,7 +76,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
+ 	u32 val;
  
--	clk = devm_clk_register(dev, hw);
--	if (IS_ERR(clk))
--		return clk;
-+	ret = devm_clk_hw_register(dev, hw);
-+	if (ret)
-+		return ret;
-+
-+	return clk_hw_register_clkdev(hw, hw->init->name, NULL);
-+}
+ 	val = readl_relaxed(pll->base);
+-	if (pll->powerup_set)
++	if (pll->power_invert)
+ 		val |= pll->powerdown;
+ 	else
+ 		val &= ~pll->powerdown;
+@@ -91,7 +91,7 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
+ 	u32 val;
  
--	ret = clk_register_clkdev(clk, hw->init->name, NULL);
-+static struct clk_hw *
-+of_clk_max_gen_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct max_gen_data *max_gen_data = data;
-+	unsigned int idx = clkspec->args[0];
- 
--	if (ret)
--		return ERR_PTR(ret);
-+	if (idx >= max_gen_data->num) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
- 
--	return clk;
-+	return &max_gen_data->clks[idx].hw;
- }
- 
- int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
- 		      u32 reg, struct clk_init_data *clks_init, int num_init)
- {
- 	int i, ret;
-+	struct max_gen_data *max_gen_data;
- 	struct max_gen_clk *max_gen_clks;
--	struct clk **clocks;
- 	struct device *dev = pdev->dev.parent;
- 	const char *clk_name;
- 	struct clk_init_data *init;
- 
--	clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
--	if (!clocks)
-+	max_gen_data = devm_kzalloc(dev, sizeof(*max_gen_data) +
-+			sizeof(*max_gen_data->clks) * num_init, GFP_KERNEL);
-+	if (!max_gen_data)
- 		return -ENOMEM;
- 
--	max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
--				    * num_init, GFP_KERNEL);
--	if (!max_gen_clks)
--		return -ENOMEM;
-+	max_gen_clks = max_gen_data->clks;
- 
- 	for (i = 0; i < num_init; i++) {
- 		max_gen_clks[i].regmap = regmap;
-@@ -149,29 +159,17 @@ int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
- 
- 		max_gen_clks[i].hw.init = init;
- 
--		clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
--		if (IS_ERR(clocks[i])) {
--			ret = PTR_ERR(clocks[i]);
-+		ret = max_gen_clk_register(dev, &max_gen_clks[i]);
-+		if (ret) {
- 			dev_err(dev, "failed to register %s\n",
- 				max_gen_clks[i].hw.init->name);
- 			return ret;
- 		}
- 	}
- 
--	platform_set_drvdata(pdev, clocks);
--
- 	if (dev->of_node) {
--		struct clk_onecell_data *of_data;
--
--		of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
--		if (!of_data)
--			return -ENOMEM;
--
--		of_data->clks = clocks;
--		of_data->clk_num = num_init;
--		ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
--					  of_data);
--
-+		ret = of_clk_add_hw_provider(dev->of_node, of_clk_max_gen_get,
-+					     max_gen_clks);
- 		if (ret) {
- 			dev_err(dev, "failed to register OF clock provider\n");
- 			return ret;
+ 	val = readl_relaxed(pll->base);
+-	if (pll->powerup_set)
++	if (pll->power_invert)
+ 		val &= ~pll->powerdown;
+ 	else
+ 		val |= pll->powerdown;
+@@ -326,7 +326,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 		pll->div_shift = 1;
+ 	case IMX_PLLV3_USB:
+ 		ops = &clk_pllv3_ops;
+-		pll->powerup_set = true;
++		pll->power_invert = true;
+ 		break;
+ 	case IMX_PLLV3_AV:
+ 		ops = &clk_pllv3_av_ops;
 -- 
-2.7.4
+1.9.1
