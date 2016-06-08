@@ -1,81 +1,64 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Lin Huang <hl@rock-chips.com>
-Cc: mark.yao@rock-chips.com, myungjoo.ham@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, dianders@chromium.org, dbasehore@chromium.org, huangtao@rock-chips.com, typ@rock-chips.com
-Subject: Re: [RFC PATCH v1 3/6] clk: rockchip: rk3399: add ddrc clock support
-Date: Fri, 03 Jun 2016 14:56:58 +0200
-Message-ID: <13084747.Amq298iRsd@diego>
-In-Reply-To: <1464947719-6245-4-git-send-email-hl@rock-chips.com>
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com> <1464947719-6245-4-git-send-email-hl@rock-chips.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160607204154.31967-2-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com> <20160607204154.31967-2-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Jun 2016 09:37:30 +0800
+Message-ID: <CAGb2v661ERE7zi9uExMtiEgG68owxT6x4jX3nCsVH8BwohJ53A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] dt-bindings: sunxi: Add CCU binding documentation
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Jean-Francois Moine <moinejf@free.fr>,
+	linux-kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 3. Juni 2016, 17:55:16 schrieb Lin Huang:
-> add ddrc clock setting, so we can do ddr frequency
-> scaling on rk3399 platform in future.
-> 
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
+On Wed, Jun 8, 2016 at 4:41 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Introduce a new binding with its documentation for the brand new clock
+> sub-framework.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
-> Changes in v1:
-> - remove ddrc source CLK_IGNORE_UNUSED flag, Suggestion by Doug
-> - move clk_ddrc and clk_ddrc_dpll_src to critical, Suggestion by Doug
-> 
->  drivers/clk/rockchip/clk-rk3399.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c
-> b/drivers/clk/rockchip/clk-rk3399.c index f1d8e44..29afb88 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-
-[...]
-
-> @@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch
-> rk3399_clk_branches[] __initdata = { COMPOSITE_NOMUX(0, "clk_test",
-> "clk_test_pre", CLK_IGNORE_UNUSED, RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
->  			RK3368_CLKGATE_CON(13), 11, GFLAGS),
+>  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+> new file mode 100644
+> index 000000000000..2c66046a1342
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+> @@ -0,0 +1,17 @@
+> +Allwinner Clock Control Unit Binding
+> +------------------------------------
 > +
-> +	/* ddrc */
-> +	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
-> +	     0, GFLAGS),
-> +	GATE(0, "clk_ddrc_bpll_src", "bpll", 0, RK3399_CLKGATE_CON(3),
-> +	     1, GFLAGS),
-> +	GATE(0, "clk_ddrc_dpll_src", "dpll", 0, RK3399_CLKGATE_CON(3),
-> +	     2, GFLAGS),
-> +	GATE(0, "clk_ddrc_gpll_src", "gpll", 0, RK3399_CLKGATE_CON(3),
-> +	     3, GFLAGS),
-> +	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, 0,
-> +		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
->  };
-
-as said in the other patch, just make this a regular COMPOSITE_NOGATE with 
-CLK_DIVIDER_READ_ONLY | CLK_MUX_READ_ONLY until that interface to the ATF 
-exists and is approved.
-
-That way you can still read back the clock rate without anything changing the 
-clock-rate, but we don't need to add duplicate code for it.
-
-
-> 
->  static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
-> @@ -1487,6 +1503,10 @@ static const char *const rk3399_cru_critical_clocks[]
-> __initconst = { "gpll_hclk_perilp1_src",
->  	"gpll_aclk_perilp0_src",
->  	"gpll_aclk_perihp_src",
+> +Required properties :
+> +- compatible: must contain one of the following compatible:
+> +               - "allwinner,sun8i-h3-ccu"
 > +
-> +	/* ddrc */
-> +	"clk_ddrc_dpll_src",
+> +- reg: Must contain the registers base address and length
+> +- clocks: phandle to the oscillators feeding the SPI controller. Two are
 
-Why does your clk_ddrc_dpll_src need a separate critical entry. Any code 
-changing the clk_ddrc parent should make sure the new parent is enabled. (The 
-clock-framework of course does this already).
+SPI? copy paste error?
 
+> +          needed:
+> +  - "hosc": the high frequency oscillator (usually at 24MHz)
+> +  - "losc": the low frequency oscillator (usually at 32kHz)
+> +- clock-names: Must contain the clock names described just above
+> +- #clock-cells : must contain 1
+> +- #reset-cells : must contain 1
+> +
+> +Example:
 
-> +	"clk_ddrc",
->  };
-> 
->  static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
+No example? Maybe just remove this section then.
 
+ChenYu
 
-Heiko
+> --
+> 2.8.3
+>
