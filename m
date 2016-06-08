@@ -1,64 +1,56 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [RESEND PATCH v2 11/13] ARM: DT: STiH418: Enable synchronous clock mode for video clocks
-Date: Thu, 16 Jun 2016 11:20:31 +0200
-Message-Id: <1466068833-5055-12-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH 01/11] clk: imx: clk-pllv3: fix incorrect handle of enet powerdown bit
+Date: Wed, 8 Jun 2016 22:33:30 +0800
+Message-ID: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the synchronous clock mode for video clocks
-on STiH418 board.
+After commit f53947456f98 ("ARM: clk: imx: update pllv3 to support imx7"),
+the former used BM_PLL_POWER bit is not correct anymore for IMX7 ENET.
+Instead, pll->powerdown holds the correct bit, so using powerdown bit
+in clk_pllv3_{prepare | unprepare} functions.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Fixes: f53947456f98 ("ARM: clk: imx: update pllv3 to support imx7")
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk-pllv3.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 96b4d7b..2254fa5 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -271,7 +271,7 @@
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 4826b3c9e19e..44d294a336f0 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -77,9 +77,9 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
  
- 			clk_s_d2_flexgen: clk-s-d2-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-video", "st,flexgen";
+ 	val = readl_relaxed(pll->base);
+ 	if (pll->powerup_set)
+-		val |= BM_PLL_POWER;
++		val |= pll->powerdown;
+ 	else
+-		val &= ~BM_PLL_POWER;
++		val &= ~pll->powerdown;
+ 	writel_relaxed(val, pll->base);
  
- 				clocks = <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>,
+ 	return clk_pllv3_wait_lock(pll);
+@@ -92,9 +92,9 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
+ 
+ 	val = readl_relaxed(pll->base);
+ 	if (pll->powerup_set)
+-		val &= ~BM_PLL_POWER;
++		val &= ~pll->powerdown;
+ 	else
+-		val |= BM_PLL_POWER;
++		val |= pll->powerdown;
+ 	writel_relaxed(val, pll->base);
+ }
+ 
 -- 
 1.9.1
