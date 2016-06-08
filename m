@@ -1,52 +1,82 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [RESEND PATCHv2 08/28] ARM: OMAP2+: clockdomain: add usecounting
- support to autoidle APIs
-To: Nishanth Menon <nm@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <tony@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-9-git-send-email-t-kristo@ti.com> <575F4257.3010108@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <575FA4B2.70408@ti.com>
-Date: Tue, 14 Jun 2016 09:31:14 +0300
+Return-Path: <paulmck@linux.vnet.ibm.com>
+Date: Wed, 8 Jun 2016 08:16:04 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux@roeck-us.net, tony@atomide.com, linux@arm.linux.org.uk,
+        rostedt@goodmis.org, rjw@rjwysocki.net, pavel@ucw.cz,
+        mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [GIT PULL arm] Use _rcuidle tracepoints to allow tracing from
+ idle
+Message-ID: <20160608151604.GA4104@linux.vnet.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20160526162606.GA20023@linux.vnet.ibm.com>
+ <20160526162727.GA21784@linux.vnet.ibm.com>
+ <20160608133350.GA18357@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <575F4257.3010108@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160608133350.GA18357@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14/06/16 02:31, Nishanth Menon wrote:
-> On 06/13/2016 02:04 PM, Tero Kristo wrote:
-> [..]
->> diff --git a/arch/arm/mach-omap2/omap_hwmod.c
-> b/arch/arm/mach-omap2/omap_hwmod.c
->> index 0c85f91..635a563 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod.c
->
-> [...]
->
->> @@ -2177,14 +2173,10 @@ static int _enable(struct omap_hwmod *oh)
->>
->>   	r = (soc_ops.wait_target_ready) ? soc_ops.wait_target_ready(oh) :
->>   		-EINVAL;
->> -	if (!r) {
->> -		/*
->> -		 * Set the clockdomain to HW_AUTO only if the target is ready,
->> -		 * assuming that the previous state was HW_AUTO
->> -		 */
->> -		if (oh->clkdm && hwsup)
->> -			clkdm_allow_idle(oh->clkdm);
->> +	if (oh->clkdm)
->> +		clkdm_allow_idle(oh->clkdm);
->
-> Should'nt this be under if (!r) ?
+On Wed, Jun 08, 2016 at 03:33:50PM +0200, Ingo Molnar wrote:
+> 
+> * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > On Thu, May 26, 2016 at 09:26:06AM -0700, Paul E. McKenney wrote:
+> > > Hello, Ingo,
+> > > 
+> > > This series changes a number of event tracepoints to their _rcuidle() form
+> > > to allow use from idle without lockdep-RCU complaints, a straightforward
+> > > modification that has been successfully applied many times.  These splats
+> > > were found in testing by Guenter Roeck and Tony Lindgren, who have
+> > > both successfully tested the full series.  Tony asked that I carry these
+> > > in -rcu:
+> > > 
+> > > 	http://lkml.kernel.org/g/20160426213630.GV5995@atomide.com
+> > > 
+> > > These have been posted to LKML, CCing relevant maintainers, who have
+> > > not objected to the proposed changes:
+> > > 
+> > > 	http://lkml.kernel.org/g/20160516184844.GA20144@linux.vnet.ibm.com
+> > > 
+> > > These maintainers are also CCed on this pull request.
+> > > 
+> > > They have also been subjected to 0day Test Robot and -next testing.
+> > 
+> > And this time actually including the pull request...  :-/
+> > 
+> > 							Thanx, Paul
+> > 
+> > These changes are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
+> > 
+> > for you to fetch changes up to e7c38dda94b23965a3eb46ef4656bb8cb921933d:
+> > 
+> >   arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle (2016-05-18 11:55:29 -0700)
+> > 
+> > ----------------------------------------------------------------
+> > Paul E. McKenney (6):
+> >       arm: Use _rcuidle tracepoint to allow use from idle
+> >       arm: Use _rcuidle for suspend/resume tracepoints
+> >       arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
+> >       arm: Add _rcuidle suffix to allow rpm_idle() use from idle
+> >       arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
+> >       arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle
+> > 
+> >  arch/arm/kernel/smp.c             |  2 +-
+> >  arch/arm/mach-omap2/powerdomain.c |  9 +++++----
+> >  drivers/base/power/runtime.c      | 14 +++++++-------
+> >  drivers/clk/clk.c                 |  8 ++++----
+> >  4 files changed, 17 insertions(+), 16 deletions(-)
+> 
+> Just wondering, wouldn't it be better for Russell to pull/apply, as it appears to 
+> be a mostly ARM patch-set?
 
-No, we must call clkdm_allow_idle() always, otherwise the clockdomain is 
-left in force wakeup state for all eternity, which is wrong, and 
-prevents any further transitions on the clockdomain. (Most likely the 
-failed transition on the hwmod itself is going to prevent idle on the 
-clockdomain though, but its better to keep at least the clockdomain 
-state sane.)
+Fair enough -- I can always repost the patches to their respective
+maintainers if you are in any way uncomfortable taking them.  The patches
+do not depend on each other.
 
--Tero
+							Thanx, Paul
