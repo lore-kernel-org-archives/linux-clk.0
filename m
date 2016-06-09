@@ -1,289 +1,107 @@
-Return-Path: <oss@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	yuantian.tang@nxp.com,
-	leoyang.li@nxp.com,
-	xiaofeng.ren@nxp.com,
-	Scott Wood <scottwood@freescale.com>
-Date: Sat, 11 Jun 2016 22:57:15 -0500
-Message-Id: <1465703835-2777-2-git-send-email-oss@buserror.net>
-In-Reply-To: <1465703835-2777-1-git-send-email-oss@buserror.net>
-References: <1465703835-2777-1-git-send-email-oss@buserror.net>
-Subject: [v2 PATCH 2/2] cpufreq: qoriq: Don't look at clock implementation details
+Return-Path: <moinejf@free.fr>
+Date: Thu, 9 Jun 2016 09:42:19 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
+ Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
+ Patekar <vishnupatekar0510@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 14/15] clk: sunxi-ng: Add H3 clocks
+Message-Id: <20160609094219.6b4153aed49fb5ab6ccd7f74@free.fr>
+In-Reply-To: <20160607204154.31967-15-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+	<20160607204154.31967-15-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Scott Wood <scottwood@freescale.com>
+On Tue,  7 Jun 2016 22:41:53 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Get the CPU clock's potential parent clocks from the clock interface
-itself, rather than manually parsing the clocks property to find a
-phandle, looking at the clock-names property of that, and assuming that
-those are valid parent clocks for the cpu clock.
+> Add the list of clocks and resets found in the H3 CCU.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> ---
+> Changes from v1:
+>   - Only build the H3 clocks description when MACH_SUN8I is set
+> ---
+>  drivers/clk/sunxi-ng/Makefile        |   2 +
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 703 +++++++++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
+>  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
+>  4 files changed, 970 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
+>  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index ddcf456df719..cafabf0e8060 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -13,3 +13,5 @@ obj-y +=3D ccu_nkm.o
+>  obj-y +=3D ccu_nkmp.o
+>  obj-y +=3D ccu_nm.o
+>  obj-y +=3D ccu_phase.o
+> +
+> +obj-$(CONFIG_MACH_SUN8I) +=3D ccu-sun8i-h3.o
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/c=
+cu-sun8i-h3.c
+> new file mode 100644
+> index 000000000000..41102ac020d9
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+	[snip]
+> +static const struct sunxi_ccu_desc sun8i_h3_ccu_desc =3D {
+> +	.clks		=3D sun8i_h3_ccu_clks,
+> +	.num_clks	=3D ARRAY_SIZE(sun8i_h3_ccu_clks),
+> +
+> +	.resets		=3D sun8i_h3_ccu_resets,
+> +	.num_resets	=3D ARRAY_SIZE(sun8i_h3_ccu_resets),
+> +};
+> +
+> +#define SUN8I_H3_PLL2_REG	0x008
 
-This is necessary now that the clocks are generated based on the clock
-driver's knowledge of the chip rather than a fragile device-tree
-description of the mux options.
+SUN8I_H3_PLL_AUDIO_REG would be clearer.
 
-We can now rely on the clock driver to ensure that the mux only exposes
-options that are valid.  The cpufreq driver was currently being overly
-conservative in some cases -- for example, the "min_cpufreq =
-get_bus_freq()" restriction only applies to chips with erratum
-A-004510, and whether the freq_mask used on p5020 is needed depends on
-the actual frequencies of the PLLs (FWIW, p5040 has a similar
-limitation but its .freq_mask was zero) -- and the frequency mask
-mechanism made assumptions about particular parent clock indices that
-are no longer valid.
+This definition could go near the audio PLL description with some
+comments.
 
-Signed-off-by: Scott Wood <scottwood@freescale.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-v2: no changes
+> +
+> +static void __init sun8i_h3_ccu_setup(struct device_node *node)
+> +{
+> +	void __iomem *reg;
+> +	u32 val;
+> +
+> +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
+> +	if (IS_ERR(reg)) {
+> +		pr_err("%s: Could not map the clock registers\n",
+> +		       of_node_full_name(node));
+> +		return;
+> +	}
+> +
+> +	/* Force the PLL2-1x divider to 4 */
+> +	val =3D readl(reg + SUN8I_H3_PLL2_REG);
+> +	val &=3D ~GENMASK(4, 0);
+> +	writel(val | 3, reg + SUN8I_H3_PLL2_REG);
+> +
+> +	sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
+> +}
+> +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
+> +	       sun8i_h3_ccu_setup);
+> diff --git a/include/dt-bindings/clock/sun8i-h3.h b/include/dt-bindings/c=
+lock/sun8i-h3.h
+> new file mode 100644
+> index 000000000000..96eced56e7a2
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/sun8i-h3.h
+	[snip]
 
- drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++----------------------------
- 1 file changed, 40 insertions(+), 97 deletions(-)
-
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 53d8c3f..f94943a 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -37,53 +37,20 @@ struct cpu_data {
- 	struct thermal_cooling_device *cdev;
- };
- 
-+/*
-+ * Don't use cpufreq on this SoC -- used when the SoC would have otherwise
-+ * matched a more generic compatible.
-+ */
-+#define SOC_BLACKLIST		1
-+
- /**
-  * struct soc_data - SoC specific data
-- * @freq_mask: mask the disallowed frequencies
-- * @flag: unique flags
-+ * @flags: SOC_xxx
-  */
- struct soc_data {
--	u32 freq_mask[4];
--	u32 flag;
--};
--
--#define FREQ_MASK	1
--/* see hardware specification for the allowed frqeuencies */
--static const struct soc_data sdata[] = {
--	{ /* used by p2041 and p3041 */
--		.freq_mask = {0x8, 0x8, 0x2, 0x2},
--		.flag = FREQ_MASK,
--	},
--	{ /* used by p5020 */
--		.freq_mask = {0x8, 0x2},
--		.flag = FREQ_MASK,
--	},
--	{ /* used by p4080, p5040 */
--		.freq_mask = {0},
--		.flag = 0,
--	},
-+	u32 flags;
- };
- 
--/*
-- * the minimum allowed core frequency, in Hz
-- * for chassis v1.0, >= platform frequency
-- * for chassis v2.0, >= platform frequency / 2
-- */
--static u32 min_cpufreq;
--static const u32 *fmask;
--
--#if defined(CONFIG_ARM)
--static int get_cpu_physical_id(int cpu)
--{
--	return topology_core_id(cpu);
--}
--#else
--static int get_cpu_physical_id(int cpu)
--{
--	return get_hard_smp_processor_id(cpu);
--}
--#endif
--
- static u32 get_bus_freq(void)
- {
- 	struct device_node *soc;
-@@ -101,9 +68,10 @@ static u32 get_bus_freq(void)
- 	return sysfreq;
- }
- 
--static struct device_node *cpu_to_clk_node(int cpu)
-+static struct clk *cpu_to_clk(int cpu)
- {
--	struct device_node *np, *clk_np;
-+	struct device_node *np;
-+	struct clk *clk;
- 
- 	if (!cpu_present(cpu))
- 		return NULL;
-@@ -112,37 +80,28 @@ static struct device_node *cpu_to_clk_node(int cpu)
- 	if (!np)
- 		return NULL;
- 
--	clk_np = of_parse_phandle(np, "clocks", 0);
--	if (!clk_np)
--		return NULL;
--
-+	clk = of_clk_get(np, 0);
- 	of_node_put(np);
--
--	return clk_np;
-+	return clk;
- }
- 
- /* traverse cpu nodes to get cpu mask of sharing clock wire */
- static void set_affected_cpus(struct cpufreq_policy *policy)
- {
--	struct device_node *np, *clk_np;
- 	struct cpumask *dstp = policy->cpus;
-+	struct clk *clk;
- 	int i;
- 
--	np = cpu_to_clk_node(policy->cpu);
--	if (!np)
--		return;
--
- 	for_each_present_cpu(i) {
--		clk_np = cpu_to_clk_node(i);
--		if (!clk_np)
-+		clk = cpu_to_clk(i);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: no clock for cpu %d\n", __func__, i);
- 			continue;
-+		}
- 
--		if (clk_np == np)
-+		if (clk_is_match(policy->clk, clk))
- 			cpumask_set_cpu(i, dstp);
--
--		of_node_put(clk_np);
- 	}
--	of_node_put(np);
- }
- 
- /* reduce the duplicated frequencies in frequency table */
-@@ -200,7 +159,7 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- {
- 	struct device_node *np, *pnode;
- 	int i, count, ret;
--	u32 freq, mask;
-+	u32 freq;
- 	struct clk *clk;
- 	struct cpufreq_frequency_table *table;
- 	struct cpu_data *data;
-@@ -221,17 +180,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 		goto err_nomem2;
- 	}
- 
--	pnode = of_parse_phandle(np, "clocks", 0);
--	if (!pnode) {
--		pr_err("%s: could not get clock information\n", __func__);
--		goto err_nomem2;
--	}
-+	count = clk_get_num_parents(policy->clk);
- 
--	count = of_property_count_strings(pnode, "clock-names");
- 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
- 	if (!data->pclk) {
- 		pr_err("%s: no memory\n", __func__);
--		goto err_node;
-+		goto err_nomem2;
- 	}
- 
- 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
-@@ -240,23 +194,11 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 		goto err_pclk;
- 	}
- 
--	if (fmask)
--		mask = fmask[get_cpu_physical_id(cpu)];
--	else
--		mask = 0x0;
--
- 	for (i = 0; i < count; i++) {
--		clk = of_clk_get(pnode, i);
-+		clk = clk_get_parent_by_index(policy->clk, i);
- 		data->pclk[i] = clk;
- 		freq = clk_get_rate(clk);
--		/*
--		 * the clock is valid if its frequency is not masked
--		 * and large than minimum allowed frequency.
--		 */
--		if (freq < min_cpufreq || (mask & (1 << i)))
--			table[i].frequency = CPUFREQ_ENTRY_INVALID;
--		else
--			table[i].frequency = freq / 1000;
-+		table[i].frequency = freq / 1000;
- 		table[i].driver_data = i;
- 	}
- 	freq_table_redup(table, count);
-@@ -290,10 +232,7 @@ err_nomem1:
- 	kfree(table);
- err_pclk:
- 	kfree(data->pclk);
--err_node:
--	of_node_put(pnode);
- err_nomem2:
--	policy->driver_data = NULL;
- 	kfree(data);
- err_np:
- 	of_node_put(np);
-@@ -357,12 +296,20 @@ static struct cpufreq_driver qoriq_cpufreq_driver = {
- 	.attr		= cpufreq_generic_attr,
- };
- 
-+static const struct soc_data blacklist = {
-+	.flags = SOC_BLACKLIST,
-+};
-+
- static const struct of_device_id node_matches[] __initconst = {
--	{ .compatible = "fsl,p2041-clockgen", .data = &sdata[0], },
--	{ .compatible = "fsl,p3041-clockgen", .data = &sdata[0], },
--	{ .compatible = "fsl,p5020-clockgen", .data = &sdata[1], },
--	{ .compatible = "fsl,p4080-clockgen", .data = &sdata[2], },
--	{ .compatible = "fsl,p5040-clockgen", .data = &sdata[2], },
-+	/* e6500 cannot use cpufreq due to erratum A-008083 */
-+	{ .compatible = "fsl,b4420-clockgen", &blacklist },
-+	{ .compatible = "fsl,b4860-clockgen", &blacklist },
-+	{ .compatible = "fsl,t2080-clockgen", &blacklist },
-+	{ .compatible = "fsl,t4240-clockgen", &blacklist },
-+
-+	{ .compatible = "fsl,ls1021a-clockgen", },
-+	{ .compatible = "fsl,p4080-clockgen", },
-+	{ .compatible = "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
- 	{}
- };
-@@ -380,16 +327,12 @@ static int __init qoriq_cpufreq_init(void)
- 
- 	match = of_match_node(node_matches, np);
- 	data = match->data;
--	if (data) {
--		if (data->flag)
--			fmask = data->freq_mask;
--		min_cpufreq = get_bus_freq();
--	} else {
--		min_cpufreq = get_bus_freq() / 2;
--	}
- 
- 	of_node_put(np);
- 
-+	if (data && data->flags & SOC_BLACKLIST)
-+		return -ENODEV;
-+
- 	ret = cpufreq_register_driver(&qoriq_cpufreq_driver);
- 	if (!ret)
- 		pr_info("Freescale QorIQ CPU frequency scaling driver\n");
--- 
-2.5.0
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
