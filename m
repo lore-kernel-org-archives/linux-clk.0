@@ -1,66 +1,145 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 1/4] clk: max77686: Combine Maxim max77686 and max77802
- driver
-To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
- <1466083407-28793-2-git-send-email-ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <57639255.3010403@samsung.com>
-Date: Fri, 17 Jun 2016 08:01:57 +0200
-MIME-version: 1.0
-In-reply-to: <1466083407-28793-2-git-send-email-ldewangan@nvidia.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <moinejf@free.fr>
+Date: Thu, 9 Jun 2016 09:39:49 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
+ Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
+ Patekar <vishnupatekar0510@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 05/15] clk: sunxi-ng: Add gate clock support
+Message-Id: <20160609093949.b1a7a89aa1448226113b8b1d@free.fr>
+In-Reply-To: <20160607204154.31967-6-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+	<20160607204154.31967-6-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/16/2016 03:23 PM, Laxman Dewangan wrote:
-> The clock IP used on the Maxim PMICs max77686 and max77802 are
-> same. The configuration of clock register is also same except
-> the number of clocks.
-> 
-> Part of common code utilisation, there is 3 files for these chips
-> clock driver, one for common and two files for driver registration.
-> 
-> Combine both drivers into single file and move common code into
-> same common file reduces the 2 files and make max77686 and max77802
-> clock driver in single fine. This driver does not depends on the
-> parent driver structure. The regmap handle is acquired through
-> regmap APIs for the register access.
-> 
-> This combination of driver helps on adding clock driver for different
-> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
+On Tue,  7 Jun 2016 22:41:44 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+
+> Some clocks in the Allwinner SoCs clocks unit are just simple gates. Add
+> support for those clocks.
+>=20
+> Since it's a feature that can also be found in more complex clocks, provi=
+de
+> a bunch of helpers that can be reused later on.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
-> Changes from V1:
-> - Collected RB and TB from Javier.
-> - Change the max_gen to max77686.
-> - Rename structure and avoid duplication for reg and mask.
-> - Taken care of comment from Krzysztof on coding.
-> ---
->  drivers/clk/Kconfig        |  15 +--
->  drivers/clk/Makefile       |   2 -
->  drivers/clk/clk-max-gen.c  | 194 -----------------------------------
->  drivers/clk/clk-max-gen.h  |  32 ------
->  drivers/clk/clk-max77686.c | 244 ++++++++++++++++++++++++++++++++++++++++++---
->  drivers/clk/clk-max77802.c |  96 ------------------
->  6 files changed, 234 insertions(+), 349 deletions(-)
->  delete mode 100644 drivers/clk/clk-max-gen.c
->  delete mode 100644 drivers/clk/clk-max-gen.h
->  delete mode 100644 drivers/clk/clk-max77802.c
+>  drivers/clk/sunxi-ng/Makefile   |  1 +
+>  drivers/clk/sunxi-ng/ccu_gate.c | 82 +++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/sunxi-ng/ccu_gate.h | 53 ++++++++++++++++++++++++++
+>  3 files changed, 136 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_gate.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_gate.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index c59cf2ea509b..608b332e0b1f 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -4,3 +4,4 @@ obj-y +=3D ccu_reset.o
+>  obj-y +=3D ccu_frac.o
+> =20
+>  obj-y +=3D ccu_fixed_factor.o
+> +obj-y +=3D ccu_gate.o
+> diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu_g=
+ate.c
+> new file mode 100644
+> index 000000000000..1e98f8a33ac3
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_gate.c
+> @@ -0,0 +1,82 @@
+> +/*
+> + * Copyright (C) 2016 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "ccu_gate.h"
+> +
+> +void ccu_gate_helper_disable(struct ccu_common *common, u32 gate)
+> +{
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	if (!(common->features & CCU_FEATURE_GATE))
+> +		return;
 
+	if (!gate)
+		return;
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+seems simpler and permits to remove the feature flag.
 
-Best regards,
-Krzysztof
+> +
+> +	spin_lock_irqsave(common->lock, flags);
+> +
+> +	reg =3D readl(common->base + common->reg);
+> +	writel(reg & ~gate, common->base + common->reg);
+> +
+> +	spin_unlock_irqrestore(common->lock, flags);
+> +}
+> +
+> +static void ccu_gate_disable(struct clk_hw *hw)
+> +{
+> +	struct ccu_gate *cg =3D hw_to_ccu_gate(hw);
+> +
+> +	return ccu_gate_helper_disable(&cg->common, cg->enable);
+> +}
+> +
+> +int ccu_gate_helper_enable(struct ccu_common *common, u32 gate)
+> +{
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	if (!(common->features & CCU_FEATURE_GATE))
+> +		return 0;
+
+Same as above.
+
+> +
+> +	spin_lock_irqsave(common->lock, flags);
+> +
+> +	reg =3D readl(common->base + common->reg);
+> +	writel(reg | gate, common->base + common->reg);
+> +
+> +	spin_unlock_irqrestore(common->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ccu_gate_enable(struct clk_hw *hw)
+> +{
+> +	struct ccu_gate *cg =3D hw_to_ccu_gate(hw);
+> +
+> +	return ccu_gate_helper_enable(&cg->common, cg->enable);
+> +}
+> +
+> +int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate)
+> +{
+> +	if (!(common->features & CCU_FEATURE_GATE))
+> +		return 1;
+
+Same.
+
+> +
+> +	return readl(common->base + common->reg) & gate;
+> +}
+> +
+> +static int ccu_gate_is_enabled(struct clk_hw *hw)
+	[snip]
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
