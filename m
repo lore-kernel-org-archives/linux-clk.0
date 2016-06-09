@@ -1,153 +1,137 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas
-	<javier@dowhile0.org>
-Subject: [PATCH V3 3/4] clk: max77686: Add DT binding details for PMIC MAX77620
-Date: Fri, 17 Jun 2016 16:21:06 +0530
-Message-ID: <1466160667-28451-4-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <94042cf8-5364-8426-a5de-b83fe291fee1@de.bosch.com>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+ <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+ <574C6C16.3020703@gmail.com> <6b57d59f-d17b-a6c3-41d5-e975db544adc@de.bosch.com>
+ <CAMuHMdWByGTDcG62qTg5N69FACx4FiuVuRrF_woyFAoNOpbjSw@mail.gmail.com>
+ <77a45dc7-59f0-23fc-f30d-b3daab34d689@de.bosch.com> <CAMuHMdW6kTMQoVO15Eve2Er5pfSiEc4LkwvQ72WU1LmdSK+CxQ@mail.gmail.com>
+ <94042cf8-5364-8426-a5de-b83fe291fee1@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Jun 2016 10:54:57 +0200
+Message-ID: <CAMuHMdVBu-ecbisZWfx0uKMx=M0zjT+u=j-uF=85_gaDt2u7Jg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock Definitions
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Maxim has used the same clock IP on multiple PMICs like MAX77686,
-MAX77802, MAX77620. Only differences are the number of clocks
-from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
-two clock output and MAX77620 has one clock output.
+Hi Dirk,
 
-Add clock binding details and DT example for the MAX77620.
+On Thu, Jun 9, 2016 at 10:31 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> On 07.06.2016 10:17, Geert Uytterhoeven wrote:
+>> On Tue, Jun 7, 2016 at 9:53 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>> wrote:
+>>>
+>>> I think I just want to discuss if we have a clever idea to further
+>>> improve
+>>> one detail. That is, if we have a clever idea to avoid the copy & paste
+>>> between the family members using anything like a hierarchical way of
+>>> defining the clocks in r8a779x-cpg-mssr.h.
+>>>
+>>>> Given the small amount of work needed to bootstrap r8a7796, I
+>>>> think they still hold on their promises.
+>>>
+>>> Well, regarding the r8a779x-cpg-mssr.h the small amount of work needed
+>>> isn't
+>>> a really good argument if you are good with cp & sed for the copy & paste
+>>> done ;)
+>>
+>> They're not really created by cp & sed, as they must match the table in
+>> the
+>> datasheet (the latter may have been created by copy & paste though :-)
+>>
+>>> What I fear we end up the way we are doing the copy & paste
+>>> r8a779x-cpg-mssr.h is having 5 or 6 or even more of these files, all >
+>>> 90%
+>>> identical. And once you have to change anything, you either have to
+>>> change
+>>> all these files. Or you miss anything, ending up with subtle bugs when
+>>> one
+>>> SoC does behave differently than an other one.
+>>
+>> The point is these files are stable ABI: no single value can be changed.
+>> No value can be reused. Only new values can be appended at the bottom
+>> (if a newer revision of the datasheet documents more clocks than the old
+>>  version, which happens from time to time).
+>>
+>> IMHO a hierarchical way of defining the clocks has more opportunity of
+>> accidentally referring to a clock that doesn't exist on a particular SoC.
+>>
+>> Furthermore, r8a779x-cpg-mssr.h is not a good name to be part of a DT
+>> binding,
+>> due to the wildcard.
+>> A future SoC may will match r8a779x and even be called (R-Car
+>> <something>3?),
+>> while using a completely different CPG block.
+>
+> Just to give an example about what we are talking, I've done [1] below. This
+> should just be an *example*, though. I'm sure that we might need a more
+> clever way.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Thanks, it matches with what I had in mind what you wanted to do ;-)
 
----
-Changes from V1:
-- Use proper comment for the ::::
-- Added dt binding preprocessor file as maxim,max77620.h for max77620
-  inline with the other chip.
-- Refer the dt binding header for the supported clock index.
+> --- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> +++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
 
-Changes from V2:
-- Collected RBs.
----
- .../devicetree/bindings/clock/maxim,max77686.txt   | 52 +++++++++++++++++-----
- include/dt-bindings/clock/maxim,max77620.h         | 21 +++++++++
- 2 files changed, 63 insertions(+), 10 deletions(-)
- create mode 100644 include/dt-bindings/clock/maxim,max77620.h
+> +#include <dt-bindings/clock/rcar3-cpg-mssr.h>
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-index 4d973b5..8398a3a 100644
---- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-@@ -1,14 +1,24 @@
--Binding for Maxim MAX77686/MAX77802 32k clock generator block
-+Binding for Maxim MAX77686/MAX77802/MAX77620 32k clock generator block
- 
--This is a part of device tree bindings of MAX77686/MAX77802 multi-function
--device. More information can be found in bindings/mfd/max77686.txt file for
--MAX77686 and bindings/mfd/max77802.txt for MAX77802.
-+This is a part of device tree bindings of MAX77686/MAX77802/MAX77620
-+multi-function device. More information can be found in MFD DT binding
-+doc as follows:
-+	bindings/mfd/max77686.txt for MAX77686 and
-+	bindings/mfd/max77802.txt for MAX77802 and
-+	bindings/mfd/max77620.txt for MAX77620.
- 
- The MAX77686 contains three 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C.
-+(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
-+dt-bindings/clock/maxim,max77686.h.
-+
- 
- The MAX77802 contains two 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C.
-+(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
-+dt-bindings/clock/maxim,max77802.h.
-+
-+The MAX77686 contains one 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
-+dt-bindings/clock/maxim,max77620.h.
- 
- Following properties should be presend in main device node of the MFD chip.
- 
-@@ -21,13 +31,12 @@ Optional properties:
- 
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. Following indices are allowed:
--    - 0: 32khz_ap clock (max77686, max77802),
-+    - 0: 32khz_ap clock (max77686, max77802), 32khz_out0 (max77620)
-     - 1: 32khz_cp clock (max77686, max77802),
-     - 2: 32khz_pmic clock (max77686).
- 
--Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
--header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
--be used in device tree sources.
-+Clocks are defined as preprocessor macros in above dt-binding header for
-+respective chips.
- 
- Example:
- 
-@@ -80,3 +89,26 @@ Example:
- 			clock-names = "my-clock";
- 			clocks = <&max77802 MAX77802_CLK_32K_AP>;
- 		};
-+
-+
-+3. With MAX77620:
-+
-+#include <dt-bindings/clock/maxim,max77620.h>
-+/* ... */
-+
-+	Node of the MFD chip
-+		max77620: max77620@3c {
-+			compatible = "maxim,max77620";
-+			reg = <0x3c>;
-+			#clock-cells = <1>;
-+			/* ... */
-+		};
-+
-+	Clock consumer node
-+
-+		foo@0 {
-+			compatible = "bar,foo";
-+			/* ... */
-+			clock-names = "my-clock";
-+			clocks = <&max77620 MAX77620_CLK_32K_OUT0>;
-+		};
-diff --git a/include/dt-bindings/clock/maxim,max77620.h b/include/dt-bindings/clock/maxim,max77620.h
-new file mode 100644
-index 0000000..82aba28
---- /dev/null
-+++ b/include/dt-bindings/clock/maxim,max77620.h
-@@ -0,0 +1,21 @@
-+/*
-+ * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants clocks for the Maxim 77620 PMIC.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H
-+#define _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H
-+
-+/* Fixed rate clocks. */
-+
-+#define MAX77620_CLK_32K_OUT0		0
-+
-+/* Total number of clocks. */
-+#define MAX77620_CLKS_NUM		(MAX77620_CLK_32K_OUT0 + 1)
-+
-+#endif /* _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H */
--- 
-2.1.4
+> +#define R8A7796_CLK_ZB3D4              47
+> +#define R8A7796_CLK_S0D2               48
+> +#define R8A7796_CLK_S0D3               49
+> +#define R8A7796_CLK_S0D6               50
+> +#define R8A7796_CLK_S0D8               51
+> +#define R8A7796_CLK_S0D12              53
+
+This means on M3-W, clocks may have different prefixes:
+  - RCAR3_CLK_* if they are defined as common R-Car Gen3 clocks,
+  - R8A7796_CLK_* if they are defined as M3-W-specific clocks.
+
+Not such a big issue, it that can be worked around using
+
+    #define R8A7796_CLK_Z RCAR3_CLK_Z
+    [...]
+
+> +++ b/include/dt-bindings/clock/rcar3-cpg-mssr.h
+> @@ -0,0 +1,63 @@
+> +/*
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* RCar3 CPG Core Clocks */
+> +#define RCAR3_CLK_Z            0
+> +#define RCAR3_CLK_Z2           1
+> +#define RCAR3_CLK_ZR           2
+> +#define RCAR3_CLK_ZG           3
+> +#define RCAR3_CLK_ZTR          4
+> +#define RCAR3_CLK_ZTRD2                5
+
+While this approach allows to add SoC-specific clocks to the family-specific
+base list, it does not allow to remove family-specific clocks that are not
+present on unknown future species of the family.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
