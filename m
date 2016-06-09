@@ -1,101 +1,287 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 00/10] mfd: ac100: Add support for X-Powers AC100 audio codec / RTC combo IC
-Date: Tue, 14 Jun 2016 10:17:47 +0800
-Message-Id: <1465870678-30128-1-git-send-email-wens@csie.org>
+Return-Path: <Dirk.Behme@de.bosch.com>
+Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock
+ Definitions
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+ <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+ <574C6C16.3020703@gmail.com>
+ <6b57d59f-d17b-a6c3-41d5-e975db544adc@de.bosch.com>
+ <CAMuHMdWByGTDcG62qTg5N69FACx4FiuVuRrF_woyFAoNOpbjSw@mail.gmail.com>
+ <77a45dc7-59f0-23fc-f30d-b3daab34d689@de.bosch.com>
+ <CAMuHMdW6kTMQoVO15Eve2Er5pfSiEc4LkwvQ72WU1LmdSK+CxQ@mail.gmail.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Simon Horman
+	<horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk
+	<linux-clk@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <94042cf8-5364-8426-a5de-b83fe291fee1@de.bosch.com>
+Date: Thu, 9 Jun 2016 10:31:29 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdW6kTMQoVO15Eve2Er5pfSiEc4LkwvQ72WU1LmdSK+CxQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Hi Geert,
 
-This series adds support for X-Powers' AC100 audio codec / RTC combo IC.
-This chip is found on Allwinner A80 SoC based boards, and is also part
-of the AXP813/AXP818 PMIC found with Allwinner A83T SoCs.
-
-The series focuses on the RTC side of the chip. The audio codec will
-be done later, once the digital audio interface of the SoC is supported.
-
-Patch 1 adds bulk write support for regmaps without raw formatting.
-This is used in the RTC driver to write out the date and time in one
-call.
-
-Patch 2 adds device tree bindings for the AC100.
-
-Patch 3 adds the mfd driver for the AC100.
-
-Patch 4 adds the RTC driver for the AC100.
-
-Patch 5 adds RTC clk output support to the RTC driver.
-This is a separate patch as the clk code is over 300 LoC. Having a
-separate patch should make it easier for the clk maintainers to review.
-
-Patch 6 adds the AC100 device nodes to the A80 Optimus board dts.
-
-Patch 7 adds the AC100 device nodes to the Cubieboard4 board dts.
-
-Patch 8 fixes the order of device nodes in the A80 Optimus board dts.
-
-Patch 9 fixes the order of device nodes in the Cubieboard4 board dts.
-
-Patch 10 changes the fixed osc_32k clk to a fixed factor clk,
-representing the 32k clk input pin on the SoC, and also hooks up the
-ac100 rtc clk output to this clk in the board dts files.
-
-I'm hoping we can merge the driver bits (patches 2~5) through the
-mfd tree, with acks from the rtc and clk maintainers for patches
-4 and 5.
-
-Regards
-ChenYu
+On 07.06.2016 10:17, Geert Uytterhoeven wrote:
+> Hi Dirk,
+>
+> On Tue, Jun 7, 2016 at 9:53 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> I think I just want to discuss if we have a clever idea to further improve
+>> one detail. That is, if we have a clever idea to avoid the copy & paste
+>> between the family members using anything like a hierarchical way of
+>> defining the clocks in r8a779x-cpg-mssr.h.
+>>
+>>> Given the small amount of work needed to bootstrap r8a7796, I
+>>> think they still hold on their promises.
+>>
+>> Well, regarding the r8a779x-cpg-mssr.h the small amount of work needed isn't
+>> a really good argument if you are good with cp & sed for the copy & paste
+>> done ;)
+>
+> They're not really created by cp & sed, as they must match the table in the
+> datasheet (the latter may have been created by copy & paste though :-)
+>
+>> What I fear we end up the way we are doing the copy & paste
+>> r8a779x-cpg-mssr.h is having 5 or 6 or even more of these files, all > 90%
+>> identical. And once you have to change anything, you either have to change
+>> all these files. Or you miss anything, ending up with subtle bugs when one
+>> SoC does behave differently than an other one.
+>
+> The point is these files are stable ABI: no single value can be changed.
+> No value can be reused. Only new values can be appended at the bottom
+> (if a newer revision of the datasheet documents more clocks than the old
+>  version, which happens from time to time).
+>
+> IMHO a hierarchical way of defining the clocks has more opportunity of
+> accidentally referring to a clock that doesn't exist on a particular SoC.
+>
+> Furthermore, r8a779x-cpg-mssr.h is not a good name to be part of a DT binding,
+> due to the wildcard.
+> A future SoC may will match r8a779x and even be called (R-Car <something>3?),
+> while using a completely different CPG block.
 
 
-Chen-Yu Tsai (10):
-  regmap: Support bulk writes for devices without raw formatting
-  mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC
-    combo IC
-  mfd: ac100: Add driver for X-Powers AC100 audio codec / RTC combo IC
-  rtc: ac100: Add RTC driver for X-Powers AC100
-  rtc: ac100: Add clk output support
-  ARM: dts: sun9i: a80-optimus: Add device node for AC100
-  ARM: dts: sun9i: cubieboard4: Add device node for AC100
-  ARM: dts: sun9i: cubieboard4: Order nodes by alphabetical order
-  ARM: dts: sun9i: a80-optimus: Order nodes by alphabetical order
-  ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
+Just to give an example about what we are talking, I've done [1] below. 
+This should just be an *example*, though. I'm sure that we might need a 
+more clever way.
 
- Documentation/devicetree/bindings/mfd/ac100.txt |  42 ++
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts     |  58 +-
- arch/arm/boot/dts/sun9i-a80-optimus.dts         |  76 ++-
- arch/arm/boot/dts/sun9i-a80.dtsi                |   9 +-
- drivers/base/regmap/regmap.c                    |  31 +-
- drivers/mfd/Kconfig                             |  10 +
- drivers/mfd/Makefile                            |   2 +
- drivers/mfd/ac100.c                             | 135 +++++
- drivers/rtc/Kconfig                             |  10 +
- drivers/rtc/Makefile                            |   1 +
- drivers/rtc/rtc-ac100.c                         | 686 ++++++++++++++++++++++++
- include/linux/mfd/ac100.h                       | 176 ++++++
- 12 files changed, 1186 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
- create mode 100644 drivers/mfd/ac100.c
- create mode 100644 drivers/rtc/rtc-ac100.c
- create mode 100644 include/linux/mfd/ac100.h
+I'm interested in your opinion why it doesn't work this way ;)
 
--- 
-2.8.1
+Best regards
+
+Dirk
+
+[1]
+
+  include/dt-bindings/clock/r8a7795-cpg-mssr.h |   51 ---------------------
+  include/dt-bindings/clock/r8a7796-cpg-mssr.h |   61 
++++-----------------------
+  include/dt-bindings/clock/rcar3-cpg-mssr.h   |   63 
++++++++++++++++++++++++++++
+  3 files changed, 71 insertions(+), 104 deletions(-)
+
+Index: b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+===================================================================
+--- a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+@@ -9,55 +9,6 @@
+  #ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+  #define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+
+-#include <dt-bindings/clock/renesas-cpg-mssr.h>
+-
+-/* r8a7795 CPG Core Clocks */
+-#define R8A7795_CLK_Z			0
+-#define R8A7795_CLK_Z2			1
+-#define R8A7795_CLK_ZR			2
+-#define R8A7795_CLK_ZG			3
+-#define R8A7795_CLK_ZTR			4
+-#define R8A7795_CLK_ZTRD2		5
+-#define R8A7795_CLK_ZT			6
+-#define R8A7795_CLK_ZX			7
+-#define R8A7795_CLK_S0D1		8
+-#define R8A7795_CLK_S0D4		9
+-#define R8A7795_CLK_S1D1		10
+-#define R8A7795_CLK_S1D2		11
+-#define R8A7795_CLK_S1D4		12
+-#define R8A7795_CLK_S2D1		13
+-#define R8A7795_CLK_S2D2		14
+-#define R8A7795_CLK_S2D4		15
+-#define R8A7795_CLK_S3D1		16
+-#define R8A7795_CLK_S3D2		17
+-#define R8A7795_CLK_S3D4		18
+-#define R8A7795_CLK_LB			19
+-#define R8A7795_CLK_CL			20
+-#define R8A7795_CLK_ZB3			21
+-#define R8A7795_CLK_ZB3D2		22
+-#define R8A7795_CLK_CR			23
+-#define R8A7795_CLK_CRD2		24
+-#define R8A7795_CLK_SD0H		25
+-#define R8A7795_CLK_SD0			26
+-#define R8A7795_CLK_SD1H		27
+-#define R8A7795_CLK_SD1			28
+-#define R8A7795_CLK_SD2H		29
+-#define R8A7795_CLK_SD2			30
+-#define R8A7795_CLK_SD3H		31
+-#define R8A7795_CLK_SD3			32
+-#define R8A7795_CLK_SSP2		33
+-#define R8A7795_CLK_SSP1		34
+-#define R8A7795_CLK_SSPRS		35
+-#define R8A7795_CLK_RPC			36
+-#define R8A7795_CLK_RPCD2		37
+-#define R8A7795_CLK_MSO			38
+-#define R8A7795_CLK_CANFD		39
+-#define R8A7795_CLK_HDMI		40
+-#define R8A7795_CLK_CSI0		41
+-#define R8A7795_CLK_CSIREF		42
+-#define R8A7795_CLK_CP			43
+-#define R8A7795_CLK_CPEX		44
+-#define R8A7795_CLK_R			45
+-#define R8A7795_CLK_OSC			46
++#include <dt-bindings/clock/rcar3-cpg-mssr.h>
+
+  #endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
+Index: b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+===================================================================
+--- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+@@ -9,61 +9,14 @@
+  #ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+  #define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+
+-#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/clock/rcar3-cpg-mssr.h>
+
+  /* r8a7796 CPG Core Clocks */
+-#define R8A7796_CLK_Z			0
+-#define R8A7796_CLK_Z2			1
+-#define R8A7796_CLK_ZR			2
+-#define R8A7796_CLK_ZG			3
+-#define R8A7796_CLK_ZTR			4
+-#define R8A7796_CLK_ZTRD2		5
+-#define R8A7796_CLK_ZT			6
+-#define R8A7796_CLK_ZX			7
+-#define R8A7796_CLK_S0D1		8
+-#define R8A7796_CLK_S0D2		9
+-#define R8A7796_CLK_S0D3		10
+-#define R8A7796_CLK_S0D4		11
+-#define R8A7796_CLK_S0D6		12
+-#define R8A7796_CLK_S0D8		13
+-#define R8A7796_CLK_S0D12		14
+-#define R8A7796_CLK_S1D1		15
+-#define R8A7796_CLK_S1D2		16
+-#define R8A7796_CLK_S1D4		17
+-#define R8A7796_CLK_S2D1		18
+-#define R8A7796_CLK_S2D2		19
+-#define R8A7796_CLK_S2D4		20
+-#define R8A7796_CLK_S3D1		21
+-#define R8A7796_CLK_S3D2		22
+-#define R8A7796_CLK_S3D4		23
+-#define R8A7796_CLK_LB			24
+-#define R8A7796_CLK_CL			25
+-#define R8A7796_CLK_ZB3			26
+-#define R8A7796_CLK_ZB3D2		27
+-#define R8A7796_CLK_ZB3D4		28
+-#define R8A7796_CLK_CR			29
+-#define R8A7796_CLK_CRD2		30
+-#define R8A7796_CLK_SD0H		31
+-#define R8A7796_CLK_SD0			32
+-#define R8A7796_CLK_SD1H		33
+-#define R8A7796_CLK_SD1			34
+-#define R8A7796_CLK_SD2H		35
+-#define R8A7796_CLK_SD2			36
+-#define R8A7796_CLK_SD3H		37
+-#define R8A7796_CLK_SD3			38
+-#define R8A7796_CLK_SSP2		39
+-#define R8A7796_CLK_SSP1		40
+-#define R8A7796_CLK_SSPRS		41
+-#define R8A7796_CLK_RPC			42
+-#define R8A7796_CLK_RPCD2		43
+-#define R8A7796_CLK_MSO			44
+-#define R8A7796_CLK_CANFD		45
+-#define R8A7796_CLK_HDMI		46
+-#define R8A7796_CLK_CSI0		47
+-#define R8A7796_CLK_CSIREF		48
+-#define R8A7796_CLK_CP			49
+-#define R8A7796_CLK_CPEX		50
+-#define R8A7796_CLK_R			51
+-#define R8A7796_CLK_OSC			52
++#define R8A7796_CLK_ZB3D4		47
++#define R8A7796_CLK_S0D2		48
++#define R8A7796_CLK_S0D3		49
++#define R8A7796_CLK_S0D6		50
++#define R8A7796_CLK_S0D8		51
++#define R8A7796_CLK_S0D12		53
+
+  #endif /* __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__ */
+Index: b/include/dt-bindings/clock/rcar3-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ b/include/dt-bindings/clock/rcar3-cpg-mssr.h
+@@ -0,0 +1,63 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* RCar3 CPG Core Clocks */
++#define RCAR3_CLK_Z		0
++#define RCAR3_CLK_Z2		1
++#define RCAR3_CLK_ZR		2
++#define RCAR3_CLK_ZG		3
++#define RCAR3_CLK_ZTR		4
++#define RCAR3_CLK_ZTRD2		5
++#define RCAR3_CLK_ZT		6
++#define RCAR3_CLK_ZX		7
++#define RCAR3_CLK_S0D1		8
++#define RCAR3_CLK_S0D4		9
++#define RCAR3_CLK_S1D1		10
++#define RCAR3_CLK_S1D2		11
++#define RCAR3_CLK_S1D4		12
++#define RCAR3_CLK_S2D1		13
++#define RCAR3_CLK_S2D2		14
++#define RCAR3_CLK_S2D4		15
++#define RCAR3_CLK_S3D1		16
++#define RCAR3_CLK_S3D2		17
++#define RCAR3_CLK_S3D4		18
++#define RCAR3_CLK_LB		19
++#define RCAR3_CLK_CL		20
++#define RCAR3_CLK_ZB3		21
++#define RCAR3_CLK_ZB3D2		22
++#define RCAR3_CLK_CR		23
++#define RCAR3_CLK_CRD2		24
++#define RCAR3_CLK_SD0H		25
++#define RCAR3_CLK_SD0		26
++#define RCAR3_CLK_SD1H		27
++#define RCAR3_CLK_SD1		28
++#define RCAR3_CLK_SD2H		29
++#define RCAR3_CLK_SD2		30
++#define RCAR3_CLK_SD3H		31
++#define RCAR3_CLK_SD3		32
++#define RCAR3_CLK_SSP2		33
++#define RCAR3_CLK_SSP1		34
++#define RCAR3_CLK_SSPRS		35
++#define RCAR3_CLK_RPC		36
++#define RCAR3_CLK_RPCD2		37
++#define RCAR3_CLK_MSO		38
++#define RCAR3_CLK_CANFD		39
++#define RCAR3_CLK_HDMI		40
++#define RCAR3_CLK_CSI0		41
++#define RCAR3_CLK_CSIREF	42
++#define RCAR3_CLK_CP		43
++#define RCAR3_CLK_CPEX		44
++#define RCAR3_CLK_R		45
++#define RCAR3_CLK_OSC		46
++
++#endif /* __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__ */
