@@ -1,122 +1,79 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Thu, 2 Jun 2016 22:59:15 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-Message-ID: <20160602145915.GA31124@shlinux2>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
- <20160421034520.GA19965@shlinux2.ap.freescale.net>
- <20160426012341.GB8870@tiger>
- <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com>
- <1461663072.7839.17.camel@pengutronix.de>
- <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com>
- <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger>
- <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com>
- <alpine.DEB.2.11.1604271212290.3941@nanos>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.phytec.co.uk ([217.6.246.34]:33455 "EHLO root.phytec.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750846AbcFINMX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 9 Jun 2016 09:12:23 -0400
+Subject: Re: [RESEND PATCH v5 1/5] mfd: RK808: Add RK818 support
+To: Lee Jones <lee.jones@linaro.org>
+References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
+ <20160608141735.GE14888@dell> <5759277D.7090101@phytec.de>
+ <20160609111201.GA1388@dell>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+	broonie@kernel.org, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+From: Wadim Egorov <w.egorov@phytec.de>
+Message-ID: <57596B1C.2010101@phytec.de>
+Date: Thu, 9 Jun 2016 15:11:56 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.11.1604271212290.3941@nanos>
+In-Reply-To: <20160609111201.GA1388@dell>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Thomas,
 
-On Wed, Apr 27, 2016 at 12:15:00PM +0200, Thomas Gleixner wrote:
-> On Wed, 27 Apr 2016, Dong Aisheng wrote:
-> > On Wed, Apr 27, 2016 at 9:58 AM, Shawn Guo <shawnguo@kernel.org> wrote:
-> > > On Tue, Apr 26, 2016 at 07:27:03PM +0800, Dong Aisheng wrote:
-> > >> Shawn,
-> > >> What's your suggestion?
-> > >
-> > > I think this needs more discussion, and I just dropped Stefan's patch
-> > > from my tree.
-> > >
-> > > We need to firstly understand why this is happening.  The .prepare hook
-> > > is defined to be non-atomic context, and so that we call sleep function
-> > > in there.  We did everything right.  Why are we getting the warning?  If
-> > > I'm correct, this warning only happens on i.MX7D.  Why is that?
-> > >
-> > 
-> > Why Stefan's patch works (checking irqs_disabled()) is because during kernel
-> > time init, the irq is still not enabled. It fixes the issue indirectly.
-> > See:
-> > asmlinkage __visible void __init start_kernel(void)
-> > {
-> >         /*
-> >          * Set up the scheduler prior starting any interrupts (such as the
-> >          * timer interrupt). Full topology setup happens at smp_init()
-> >          * time - but meanwhile we still have a functioning scheduler.
-> >          */
-> >         sched_init();
-> >         .............
-> >         time_init();
-> >         ..............
-> >         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
-> >         early_boot_irqs_disabled = false;
-> >         local_irq_enable();
-> > }
-> > 
-> > The issue can only happen when PLL enable causes a schedule during
-> > imx_clock_init().
-> 
-> Calling a function which might sleep _BEFORE_ kernel_init() is wrong. Don't
-> try to work around such an issue by doing magic irq_disabled() checks and busy
-> loops. Fix the call site and be done with it.
-> 
 
-IRQ chip and clocksource are also initialised before kernel_init()
-which may call clk APIs like clk_prepare_enable().
-We may not be able to guarantee those clocks are unsleepable.
+On 09.06.2016 13:12, Lee Jones wrote:
+> On Thu, 09 Jun 2016, Wadim Egorov wrote:
+>> On 08.06.2016 16:17, Lee Jones wrote:
+>>> On Thu, 02 Jun 2016, Wadim Egorov wrote:
+>>>
+>>>> The RK818 chip is a power management IC for multimedia and handheld
+>>> "Power Management IC (PMIC)"
+>>>
+>>>> devices. It contains the following components:
+>>>>
+>>>> - Regulators
+>>>> - RTC
+>>>> - Clkout
+>>> Clocking
+>>>
+>>>> - battery support
+>>> Battery support
+>>>
+>>>> Both chips RK808 and RK818 are using a similar register map.
+>>> "Both RK808 ad RK818 chips"
+>>>
+>>>> So we can reuse the RTC and Clkout functionality.
+>>> Swap '.' for ','.
+>>>
+>>>> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+>>>> ---
+>>>>  drivers/mfd/Kconfig       |   4 +-
+>>>>  drivers/mfd/rk808.c       | 231 ++++++++++++++++++++++++++++++++++++++--------
+>>>>  include/linux/mfd/rk808.h | 162 ++++++++++++++++++++++++++++++--
+>>>>  3 files changed, 350 insertions(+), 47 deletions(-)
+> [...]
+>
+>>>> -struct rk808_reg_data {
+>>>> -	int addr;
+>>>> -	int mask;
+>>>> -	int value;
+>>>> -};
+>>> Why are you moving this to the header?
+>> It is now part of the rk808 struct.
+> Why?
+>
+For me it seemed reasonable. My idea was to have only one chip variant
+check.
 
-e.g.
-For IRQ chip, the arm,gic documents the optional clocks property in
-Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt.
-Although there seems no user currently, not sure there might be
-a exception in the future.
+I can move the rk808_reg_data struct back to the c file, check for the
+chip variant within the probe function and initialize the proper
+reg_data variable.
+This would also apply to the mfd_cell variables.
 
-For clocksource driver, it's quite common to call clk APIs to
-enable and get clock rate which may also cause sleep.
-e.g. ARM twd clock in arch/arm/kernel/smp_twd.c.
-
-If we have to avoid the possible sleep caused by these clocks,
-we may need to manually check it and change the related clocks
-(e.g PLLs) from sleepable to busy loops.
-But that is not a good solution and may also not stable when
-clock varies.
-
-It looks like not easy to find a generic solution for them.
-What's your suggestion?
-
-And Stephen,
-
-Besides above possible sleep, the clk framework itself may also
-cause unexpected sleep before kernel_init().
-1) clk framework now supports CLK_IS_CRITICAL flag which allows to
-enable the clock during register in __clk_core_init(), it usually
-can happen in time_init()->of_clk_init();
-
-2) clk framework also support set default configuration like set_parent
-and set_rate during register clk providers which also happens in
-time_init()->of_clk_init().
-
-Any ideas?
-Do you think if we should move them onto a bit later stage after
-kernel_init()?
-
-Regards
-Dong Aisheng
-
-> Thanks,
-> 
-> 	tglx
-> 
-> 
