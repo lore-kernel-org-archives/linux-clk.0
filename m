@@ -1,47 +1,89 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 3/4] clk: max77686: Add DT binding details for PMIC
- MAX77620
-To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
- <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 9 Jun 2016 16:28:52 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Wadim Egorov <w.egorov@phytec.de>
 Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <576391DE.603@samsung.com>
-Date: Fri, 17 Jun 2016 07:59:58 +0200
-MIME-version: 1.0
-In-reply-to: <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
-Content-type: text/plain; charset=windows-1252
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+	broonie@kernel.org, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+Subject: Re: [RESEND PATCH v5 1/5] mfd: RK808: Add RK818 support
+Message-ID: <20160609152852.GA5438@dell>
+References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
+ <20160608141735.GE14888@dell>
+ <5759277D.7090101@phytec.de>
+ <20160609111201.GA1388@dell>
+ <57596B1C.2010101@phytec.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <57596B1C.2010101@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/16/2016 03:23 PM, Laxman Dewangan wrote:
-> Maxim has used the same clock IP on multiple PMICs like MAX77686,
-> MAX77802, MAX77620. Only differences are the number of clocks
-> from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
-> two clock output and MAX77620 has one clock output.
-> 
-> Add clock binding details and DT example for the MAX77620.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> 
-> ---
-> Changes from V1:
-> - Use proper comment for the ::::
-> - Added dt binding preprocessor file as maxim,max77620.h for max77620
->   inline with the other chip.
-> - Refer the dt binding header for the supported clock index.
-> ---
->  .../devicetree/bindings/clock/maxim,max77686.txt   | 52 +++++++++++++++++-----
->  include/dt-bindings/clock/maxim,max77620.h         | 21 +++++++++
->  2 files changed, 63 insertions(+), 10 deletions(-)
->  create mode 100644 include/dt-bindings/clock/maxim,max77620.h
+On Thu, 09 Jun 2016, Wadim Egorov wrote:
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> 
+> On 09.06.2016 13:12, Lee Jones wrote:
+> > On Thu, 09 Jun 2016, Wadim Egorov wrote:
+> >> On 08.06.2016 16:17, Lee Jones wrote:
+> >>> On Thu, 02 Jun 2016, Wadim Egorov wrote:
+> >>>
+> >>>> The RK818 chip is a power management IC for multimedia and handheld
+> >>> "Power Management IC (PMIC)"
+> >>>
+> >>>> devices. It contains the following components:
+> >>>>
+> >>>> - Regulators
+> >>>> - RTC
+> >>>> - Clkout
+> >>> Clocking
+> >>>
+> >>>> - battery support
+> >>> Battery support
+> >>>
+> >>>> Both chips RK808 and RK818 are using a similar register map.
+> >>> "Both RK808 ad RK818 chips"
+> >>>
+> >>>> So we can reuse the RTC and Clkout functionality.
+> >>> Swap '.' for ','.
+> >>>
+> >>>> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> >>>> ---
+> >>>>  drivers/mfd/Kconfig       |   4 +-
+> >>>>  drivers/mfd/rk808.c       | 231 ++++++++++++++++++++++++++++++++++++++--------
+> >>>>  include/linux/mfd/rk808.h | 162 ++++++++++++++++++++++++++++++--
+> >>>>  3 files changed, 350 insertions(+), 47 deletions(-)
+> > [...]
+> >
+> >>>> -struct rk808_reg_data {
+> >>>> -	int addr;
+> >>>> -	int mask;
+> >>>> -	int value;
+> >>>> -};
+> >>> Why are you moving this to the header?
+> >> It is now part of the rk808 struct.
+> > Why?
+> >
+> For me it seemed reasonable. My idea was to have only one chip variant
+> check.
+> 
+> I can move the rk808_reg_data struct back to the c file, check for the
+> chip variant within the probe function and initialize the proper
+> reg_data variable.
+> This would also apply to the mfd_cell variables.
 
-Best regards,
-Krzysztof
+'struct rk808' should only contain information you wish to share with
+your subordinate/child devices.  Any data only used in the parent/MFD
+driver should be declared, initialised and used only the latter.  No
+need to export.
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
