@@ -1,111 +1,153 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:49616 "EHLO
-	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751057AbcFKCNU (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2016 22:13:20 -0400
-Message-ID: <1465611186.22191.169.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Yangbo Lu <yangbo.lu@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	Kumar Gala <galak@codeaurora.org>
-Date: Fri, 10 Jun 2016 21:13:07 -0500
-In-Reply-To: <3225846.9EJ0sHv0XK@wuerfel>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-	 <5513501.AmZs7h1vI2@wuerfel> <1464830660.22191.6.camel@buserror.net>
-	 <3225846.9EJ0sHv0XK@wuerfel>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of
- arch/powerpc"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH 8/8] tty: serial: fsl_lpuart: Add support for RS-485
+Date: Thu, 9 Jun 2016 20:40:39 +0530
+Message-ID: <20160609151039.20817-9-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2016-06-02 at 11:01 +0200, Arnd Bergmann wrote:
-> On Wednesday, June 1, 2016 8:24:20 PM CEST Scott Wood wrote:
-> > On Mon, 2016-05-30 at 15:18 +0200, Arnd Bergmann wrote:
-> > > All users of this driver are PowerPC specific and the header file
-> > > has no business in the global include/linux/ hierarchy, so move
-> > > it back before anyone starts using it on ARM.
-> > > 
-> > > This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
-> > > 
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > > This part of the series is not required for the eSDHC quirk,
-> > > but it restores the asm/fsl_guts.h header so it doesn't accidentally
-> > > get abused for this in the future. I found two drivers outside of
-> > > arch/powerpc that already accessed the registers directly, but the
-> > > functions look fairly contained, and can be easily hidden in an
-> > > #ifdef CONFIG_PPC
-> > 
-> > NACK
-> > 
-> > Besides adding ifdef pollution for no good reason, this register block is
-> > used
-> > on some ARM chips as well.  Why is it a problem if "anyone starts using it
-> > on
-> > ARM"?
-> 
-> It's just not a good interface when it's defined as "this is the layout of
-> a register area that any driver can ioremap() if they can figure out the
-> device node".
+Enable Vybrid's build-in support for RS-485 auto RTS for controlling
+line direction of RS-485 transceiver driver.
 
-That's why I want to move accesses into one guts driver.
+Enable RS485 feature by either using ioctrl 'TIOCSRS485' or enable it in
+the device tree by setting 'linux,rs485-enabled-at-boot-time' property.
 
->  It's not uncommon to have register areas like that, but
-> normally you have at the minimum a 'syscon' device to handle locking
-> between drivers accessing the same registers and to avoid having to map
-> the same area multiple times.
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 78 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 72 insertions(+), 6 deletions(-)
 
-syscon requires device tree changes.
-
-I don't see read-modify-write operations in regmap -- how does locking around
-an individual, inherently-atomic load or store help?
-
-> If we need to use 'guts' registers on ARM, we can find a way to abstract
-> them properly for the given use cases, using a syscon or a driver with
-> exported functions, but just making a PowerPC platform specific header
-> global to all Linux drivers by putting it into include/linux doesn't seem
-> right.
-
-Again, it's not PowerPC-specific!  It started that way but then the same
-register block got put onto some ARM chips.
-
-It's not global to "all Linux drivers", just the ones that choose to include
-an fsl-specific header.
-
-If and when all uses of guts are moved into the guts driver, the header can be
-moved into drivers/soc/fsl.
-
-> Note that the header file uses a structure definition rather than the more
-> common macros with register offsets, which is fine for a driver that has
-> its own registers and abstracts them, but it doesn't really work with
-> the regmap interface, so if we want to use it with syscon, it also needs to
-> be rewritten.
-
-We don't want to use it with syscon.  If we did, the solution wouldn't be to
-move the header back to arch/powerpc, but to convert the struct into offsets.
-
--Scott
-
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 134090a..4d1fca4 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -917,6 +917,52 @@ static void lpuart_dma_rx_free(struct uart_port *port)
+ 	sport->dma_rx_cookie = -EINVAL;
+ }
+ 
++static int lpuart_config_rs485(struct uart_port *port,
++			struct serial_rs485 *rs485)
++{
++	struct lpuart_port *sport = container_of(port,
++			struct lpuart_port, port);
++
++	u8 modem = readb(sport->port.membase + UARTMODEM) &
++		~(UARTMODEM_TXRTSPOL | UARTMODEM_TXRTSE);
++	writeb(modem, sport->port.membase + UARTMODEM);
++
++	if (rs485->flags & SER_RS485_ENABLED) {
++		/* Enable auto RS-485 RTS mode */
++		modem |= UARTMODEM_TXRTSE;
++
++		/*
++		 * RTS needs to be logic HIGH either during transer _or_ after
++		 * transfer, other variants are not supported by the hardware.
++		 */
++
++		if (!(rs485->flags & (SER_RS485_RTS_ON_SEND |
++				SER_RS485_RTS_AFTER_SEND)))
++			rs485->flags |= SER_RS485_RTS_ON_SEND;
++
++		if (rs485->flags & SER_RS485_RTS_ON_SEND &&
++				rs485->flags & SER_RS485_RTS_AFTER_SEND)
++			rs485->flags &= ~SER_RS485_RTS_AFTER_SEND;
++
++		/*
++		 * The hardware defaults to RTS logic HIGH while transfer.
++		 * Switch polarity in case RTS shall be logic HIGH
++		 * after transfer.
++		 * Note: UART is assumed to be active high.
++		 */
++		if (rs485->flags & SER_RS485_RTS_ON_SEND)
++			modem &= ~UARTMODEM_TXRTSPOL;
++		else if (rs485->flags & SER_RS485_RTS_AFTER_SEND)
++			modem |= UARTMODEM_TXRTSPOL;
++	}
++
++	/* Store the new configuration */
++	sport->port.rs485 = *rs485;
++
++	writeb(modem, sport->port.membase + UARTMODEM);
++	return 0;
++}
++
+ static unsigned int lpuart_get_mctrl(struct uart_port *port)
+ {
+ 	unsigned int temp = 0;
+@@ -950,17 +996,22 @@ static unsigned int lpuart32_get_mctrl(struct uart_port *port)
+ static void lpuart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ {
+ 	unsigned char temp;
++	struct lpuart_port *sport = container_of(port,
++				struct lpuart_port, port);
+ 
+-	temp = readb(port->membase + UARTMODEM) &
++	/* Make sure RXRTSE bit is not set when RS485 is enabled */
++	if (!(sport->port.rs485.flags & SER_RS485_ENABLED)) {
++		temp = readb(sport->port.membase + UARTMODEM) &
+ 			~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
+ 
+-	if (mctrl & TIOCM_RTS)
+-		temp |= UARTMODEM_RXRTSE;
++		if (mctrl & TIOCM_RTS)
++			temp |= UARTMODEM_RXRTSE;
+ 
+-	if (mctrl & TIOCM_CTS)
+-		temp |= UARTMODEM_TXCTSE;
++		if (mctrl & TIOCM_CTS)
++			temp |= UARTMODEM_TXCTSE;
+ 
+-	writeb(temp, port->membase + UARTMODEM);
++		writeb(temp, port->membase + UARTMODEM);
++	}
+ }
+ 
+ static void lpuart32_set_mctrl(struct uart_port *port, unsigned int mctrl)
+@@ -1256,6 +1307,13 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		cr1 |= UARTCR1_M;
+ 	}
+ 
++	/*
++	 * When auto RS-485 RTS mode is enabled,
++	 * hardware flow control need to be disabled.
++	 */
++	if (sport->port.rs485.flags & SER_RS485_ENABLED)
++		termios->c_cflag &= ~CRTSCTS;
++
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
+ 	} else {
+@@ -1864,6 +1922,8 @@ static int lpuart_probe(struct platform_device *pdev)
+ 		sport->port.ops = &lpuart_pops;
+ 	sport->port.flags = UPF_BOOT_AUTOCONF;
+ 
++	sport->port.rs485_config = lpuart_config_rs485;
++
+ 	sport->clk = devm_clk_get(&pdev->dev, "ipg");
+ 	if (IS_ERR(sport->clk)) {
+ 		ret = PTR_ERR(sport->clk);
+@@ -1904,6 +1964,12 @@ static int lpuart_probe(struct platform_device *pdev)
+ 		dev_info(sport->port.dev, "DMA rx channel request failed, "
+ 				"operating without rx DMA\n");
+ 
++	if (of_property_read_bool(np, "linux,rs485-enabled-at-boot-time")) {
++		sport->port.rs485.flags |= SER_RS485_ENABLED;
++		sport->port.rs485.flags |= SER_RS485_RTS_ON_SEND;
++		writeb(UARTMODEM_TXRTSE, sport->port.membase + UARTMODEM);
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.8.3
