@@ -1,62 +1,36 @@
-Return-Path: <wens@csie.org>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH 0/8] Improve Rx/Tx DMA implementation
+Date: Thu, 9 Jun 2016 20:40:31 +0530
+Message-ID: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-In-Reply-To: <20160626004557.GX5809@piout.net>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
- <1466391138-12862-6-git-send-email-wens@csie.org> <20160626004557.GX5809@piout.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 26 Jun 2016 22:58:07 +0800
-Message-ID: <CAGb2v64YnSz5MnnF==ZeeqZw4yBY2R=dNVdyi9BczVR5WCNZ3g@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] rtc: ac100: Add clk output support
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 26, 2016 at 8:45 AM, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
-> On 20/06/2016 at 10:52:15 +0800, Chen-Yu Tsai wrote :
->> +struct ac100_clk32k {
->> +     struct clk_hw hw;
->> +     struct regmap *regmap;
->> +     u8 offset;
->> +};
->> +
->> +#define to_ac100_clk32k(_hw) container_of(_hw, struct ac100_clk32k, hw)
->> +
->> +#define AC100_RTC_32K_NAME   "ac100-rtc-32k"
->> +#define AC100_RTC_32K_RATE   32768
->> +#define AC100_ADDA_4M_NAME   "ac100-adda-4M"
->> +#define AC100_ADDA_4M_RATE   4000000
->> +#define AC100_CLK32K_NUM     3
->> +
->> +static const char * const ac100_clk32k_names[] = {
->> +     "ac100-clk32k-ap",
->> +     "ac100-clk32k-bb",
->> +     "ac100-clk32k-md",
->> +};
->> +
->
-> Well, naming things is hard but I don't feel ac100_clk32k and
-> ac100-clk32k are good prefixes for those clocks as they are actually
-> dividing a 32KHz or 4MHz clock (one configuration out of 128 is 32KHz).
+Bhuvanchandra DV (5):
+  tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+  tty: serial: fsl-lpuart: Use cyclic DMA for Rx
+  tty: serial: fsl-lpuart: Use scatter/gather DMA for Tx Drop PIO to DMA
+    switching and use scatter/gather DMA for Tx path to improve
+    performance.
+  tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
+  tty: serial: fsl_lpuart: Add support for RS-485
 
-I agree it's a bit misleading. There are 2 names used throughout the
-datasheet: 1) CKOn_RTC for the pin names, and 2) CLK32Kxx for the
-register names and block diagram.
+Stefan Agner (3):
+  tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+  tty: serial: fsl_lpuart: support suspend/resume
+  tty: serial: fsl_lpuart: fix clearing of receive flag
 
-I'll switch to the pin names, since this is probably what is shown on
-board schematics.
+ drivers/clk/imx/clk-vf610.c     |  12 +-
+ drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
+ 2 files changed, 482 insertions(+), 340 deletions(-)
 
-> Else, I don't have any objection.
-
-Thanks!
-ChenYu
+-- 
+2.8.3
