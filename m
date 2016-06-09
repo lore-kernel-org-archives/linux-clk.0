@@ -1,288 +1,143 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [PATCH v2 03/13] drivers: clk: st: Add fs660c32 synthesizer algorithm
-Date: Mon,  6 Jun 2016 11:26:22 +0200
-Message-Id: <1465205192-7888-4-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <tglx@linutronix.de>
+Date: Fri, 10 Jun 2016 00:55:26 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Stefan Agner <stefan@agner.ch>
+cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+    Lucas Stach <l.stach@pengutronix.de>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
+    Ingo Molnar <mingo@kernel.org>, kernel@pengutronix.de,
+    linux-clk@vger.kernel.org, LAK <linux-arm-kernel@lists.infradead.org>,
+    "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
+In-Reply-To: <1162370a4389413d2d4ff0eb79ff13ac@agner.ch>
+Message-ID: <alpine.DEB.2.11.1606100046150.28031@nanos>
+References: <20160426012341.GB8870@tiger> <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com> <1461663072.7839.17.camel@pengutronix.de> <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com> <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
+ <20160427015835.GE30692@tiger> <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com> <alpine.DEB.2.11.1604271212290.3941@nanos> <20160602145915.GA31124@shlinux2> <alpine.DEB.2.11.1606061448010.28031@nanos> <20160607070440.GA32573@shlinux2>
+ <alpine.DEB.2.11.1606092204590.28031@nanos> <1162370a4389413d2d4ff0eb79ff13ac@agner.ch>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Use an algorithm instead of a table to compute clocks for fs660c32
-synthesizer.
-During a video playback we need to adjust audio & video frequencies.
-A table can't cover all HDMI resolutions and audio adjustment.
+On Thu, 9 Jun 2016, Stefan Agner wrote:
+> On 2016-06-09 13:08, Thomas Gleixner wrote:
+> > On Tue, 7 Jun 2016, Dong Aisheng wrote:
+> >> Then it may need introduce a lot changes and increase many new core APIs.
+> >> Is that a problem?
+> > 
+> > No. That's all better than each driver having broken workarounds. It's a
+> > common problem so it wants to be addressed at the core level. There you have a
+> > central point to do this and you can still catch abusers which call stuff from
+> > the wrong context. The hacks in the drivers don't allow that because they look
+> > at the context, i.e. irq disabled, instead of checking the system state.
+> 
+> IMHO, the hacky part of my patch was how I detected whether to use sleep
+> or delay. That said I am ok with API extension too, I guess it is fairly
+> common use case... I found at least 6 clock prepare functions with sleep
+> in it (and some udelays, all between 1-100).
+> 
+> Your proposed solution uses "early_boot_or_suspend_resume" which I did
+> not found as a convenient function in the wild :-)
+> 
+> How would you implement that?
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- drivers/clk/st/clkgen-fsyn.c | 180 ++++++++++++++++++++++++++-----------------
- 1 file changed, 111 insertions(+), 69 deletions(-)
+Early boot is simple. Supsend/resume is not that hard either. We have a patch
+in RT which does exactly what you need. See below.
 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index 53fd047..765f0f2 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -42,40 +42,6 @@ struct stm_fs {
- 	unsigned long nsdiv;
- };
+Then the state check simply becomes:
+
+     system_state != SYSTEM_RUNNING
+
+Thanks,
+
+	tglx
+
+8<---------------------------
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 350dfb08aee3..5e63b681f58e 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -473,6 +473,7 @@ extern enum system_states {
+ 	SYSTEM_HALT,
+ 	SYSTEM_POWER_OFF,
+ 	SYSTEM_RESTART,
++	SYSTEM_SUSPEND,
+ } system_state;
  
--static const struct stm_fs fs660c32_rtbl[] = {
--	{ .mdiv = 0x14, .pe = 0x376b,	.sdiv = 0x4,	.nsdiv = 1 },	/* 25.175  MHz */
--	{ .mdiv = 0x14, .pe = 0x30c3,	.sdiv = 0x4,	.nsdiv = 1 },	/* 25.200  MHz */
--	{ .mdiv = 0x10, .pe = 0x71c7,	.sdiv = 0x4,	.nsdiv = 1 },	/* 27.000  MHz */
--	{ .mdiv = 0x00, .pe = 0x47af,	.sdiv = 0x3,	.nsdiv = 0 },	/* 27.027  MHz */
--	{ .mdiv = 0x0e, .pe = 0x4e1a,	.sdiv = 0x4,	.nsdiv = 1 },	/* 28.320  MHz */
--	{ .mdiv = 0x0b, .pe = 0x534d,	.sdiv = 0x4,	.nsdiv = 1 },	/* 30.240  MHz */
--	{ .mdiv = 0x17, .pe = 0x6fbf,	.sdiv = 0x2,	.nsdiv = 0 },	/* 31.500  MHz */
--	{ .mdiv = 0x01, .pe = 0x0,	.sdiv = 0x4,	.nsdiv = 1 },	/* 40.000  MHz */
--	{ .mdiv = 0x15, .pe = 0x2aab,	.sdiv = 0x3,	.nsdiv = 1 },	/* 49.500  MHz */
--	{ .mdiv = 0x14, .pe = 0x6666,	.sdiv = 0x3,	.nsdiv = 1 },	/* 50.000  MHz */
--	{ .mdiv = 0x1d, .pe = 0x395f,	.sdiv = 0x1,	.nsdiv = 0 },	/* 57.284  MHz */
--	{ .mdiv = 0x08, .pe = 0x4ec5,	.sdiv = 0x3,	.nsdiv = 1 },	/* 65.000  MHz */
--	{ .mdiv = 0x05, .pe = 0x1770,	.sdiv = 0x3,	.nsdiv = 1 },	/* 71.000  MHz */
--	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x3,	.nsdiv = 1 },	/* 74.176  MHz */
--	{ .mdiv = 0x0f, .pe = 0x3426,	.sdiv = 0x1,	.nsdiv = 0 },	/* 74.250  MHz */
--	{ .mdiv = 0x0e, .pe = 0x7777,	.sdiv = 0x1,	.nsdiv = 0 },	/* 75.000  MHz */
--	{ .mdiv = 0x01, .pe = 0x4053,	.sdiv = 0x3,	.nsdiv = 1 },	/* 78.800  MHz */
--	{ .mdiv = 0x09, .pe = 0x15b5,	.sdiv = 0x1,	.nsdiv = 0 },	/* 85.500  MHz */
--	{ .mdiv = 0x1b, .pe = 0x3f19,	.sdiv = 0x2,	.nsdiv = 1 },	/* 88.750  MHz */
--	{ .mdiv = 0x10, .pe = 0x71c7,	.sdiv = 0x2,	.nsdiv = 1 },	/* 108.000 MHz */
--	{ .mdiv = 0x00, .pe = 0x47af,	.sdiv = 0x1,	.nsdiv = 0 },	/* 108.108 MHz */
--	{ .mdiv = 0x0c, .pe = 0x3118,	.sdiv = 0x2,	.nsdiv = 1 },	/* 118.963 MHz */
--	{ .mdiv = 0x0c, .pe = 0x2f54,	.sdiv = 0x2,	.nsdiv = 1 },	/* 119.000 MHz */
--	{ .mdiv = 0x07, .pe = 0xe39,	.sdiv = 0x2,	.nsdiv = 1 },	/* 135.000 MHz */
--	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x2,	.nsdiv = 1 },	/* 148.352 MHz */
--	{ .mdiv = 0x0f, .pe = 0x3426,	.sdiv = 0x0,	.nsdiv = 0 },	/* 148.500 MHz */
--	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x1,	.nsdiv = 1 },	/* 296.704 MHz */
--	{ .mdiv = 0x03, .pe = 0x471c,	.sdiv = 0x1,	.nsdiv = 1 },	/* 297.000 MHz */
--	{ .mdiv = 0x00, .pe = 0x295f,	.sdiv = 0x1,	.nsdiv = 1 },	/* 326.700 MHz */
--	{ .mdiv = 0x1f, .pe = 0x3633,	.sdiv = 0x0,	.nsdiv = 1 },	/* 333.000 MHz */
--	{ .mdiv = 0x1c, .pe = 0x0,	.sdiv = 0x0,	.nsdiv = 1 },	/* 352.000 Mhz */
--};
--
- struct clkgen_quadfs_data {
- 	bool reset_present;
- 	bool bwfilter_present;
-@@ -99,8 +65,7 @@ struct clkgen_quadfs_data {
- 	struct clkgen_field nsdiv[QUADFS_MAX_CHAN];
+ #define TAINT_PROPRIETARY_MODULE	0
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index b7342a24f559..bfd9e0982f15 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -285,6 +285,8 @@ static int create_image(int platform_mode)
  
- 	const struct clk_ops *pll_ops;
--	const struct stm_fs *rtbl;
--	u8 rtbl_cnt;
-+	int  (*get_params)(unsigned long, unsigned long, struct stm_fs *);
- 	int  (*get_rate)(unsigned long , const struct stm_fs *,
- 			unsigned long *);
- };
-@@ -108,6 +73,8 @@ struct clkgen_quadfs_data {
- static const struct clk_ops st_quadfs_pll_c32_ops;
- static const struct clk_ops st_quadfs_fs660c32_ops;
+ 	local_irq_disable();
  
-+static int clk_fs660c32_dig_get_params(unsigned long input,
-+		unsigned long output, struct stm_fs *fs);
- static int clk_fs660c32_dig_get_rate(unsigned long, const struct stm_fs *,
- 		unsigned long *);
++	system_state = SYSTEM_SUSPEND;
++
+ 	error = syscore_suspend();
+ 	if (error) {
+ 		printk(KERN_ERR "PM: Some system devices failed to power down, "
+@@ -314,6 +316,7 @@ static int create_image(int platform_mode)
+ 	syscore_resume();
  
-@@ -149,8 +116,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C = {
- 	.powerup_polarity = 1,
- 	.standby_polarity = 1,
- 	.pll_ops	= &st_quadfs_pll_c32_ops,
--	.rtbl		= fs660c32_rtbl,
--	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
-+	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
+  Enable_irqs:
++	system_state = SYSTEM_RUNNING;
+ 	local_irq_enable();
  
-@@ -192,8 +158,7 @@ static const struct clkgen_quadfs_data st_fs660c32_D = {
- 	.powerup_polarity = 1,
- 	.standby_polarity = 1,
- 	.pll_ops	= &st_quadfs_pll_c32_ops,
--	.rtbl		= fs660c32_rtbl,
--	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
-+	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,};
+  Enable_cpus:
+@@ -437,6 +440,7 @@ static int resume_target_kernel(bool platform_mode)
+ 		goto Enable_cpus;
  
- /**
-@@ -620,6 +585,107 @@ static int clk_fs660c32_dig_get_rate(unsigned long input,
- 	return 0;
- }
+ 	local_irq_disable();
++	system_state = SYSTEM_SUSPEND;
  
-+
-+static int clk_fs660c32_get_pe(int m, int si, unsigned long *deviation,
-+		signed long input, unsigned long output, uint64_t *p,
-+		struct stm_fs *fs)
-+{
-+	unsigned long new_freq, new_deviation;
-+	struct stm_fs fs_tmp;
-+	uint64_t val;
-+
-+	val = (uint64_t)output << si;
-+
-+	*p = (uint64_t)input * P20 - (32LL  + (uint64_t)m) * val * (P20 / 32LL);
-+
-+	*p = div64_u64(*p, val);
-+
-+	if (*p > 32767LL)
-+		return 1;
-+
-+	fs_tmp.mdiv = (unsigned long) m;
-+	fs_tmp.pe = (unsigned long)*p;
-+	fs_tmp.sdiv = si;
-+	fs_tmp.nsdiv = 1;
-+
-+	clk_fs660c32_dig_get_rate(input, &fs_tmp, &new_freq);
-+
-+	new_deviation = abs(output - new_freq);
-+
-+	if (new_deviation < *deviation) {
-+		fs->mdiv = m;
-+		fs->pe = (unsigned long)*p;
-+		fs->sdiv = si;
-+		fs->nsdiv = 1;
-+		*deviation = new_deviation;
-+	}
-+	return 0;
-+}
-+
-+static int clk_fs660c32_dig_get_params(unsigned long input,
-+		unsigned long output, struct stm_fs *fs)
-+{
-+	int si;	/* sdiv_reg (8 downto 0) */
-+	int m; /* md value */
-+	unsigned long new_freq, new_deviation;
-+	/* initial condition to say: "infinite deviation" */
-+	unsigned long deviation = ~0;
-+	uint64_t p, p1, p2;	/* pe value */
-+	int r1, r2;
-+
-+	struct stm_fs fs_tmp;
-+
-+	for (si = 0; (si <= 8) && deviation; si++) {
-+
-+		/* Boundary test to avoid useless iteration */
-+		r1 = clk_fs660c32_get_pe(0, si, &deviation,
-+				input, output, &p1, fs);
-+		r2 = clk_fs660c32_get_pe(31, si, &deviation,
-+				input, output, &p2, fs);
-+
-+		/* No solution */
-+		if (r1 && r2 && (p1 > p2))
-+			continue;
-+
-+		/* Try to find best deviation */
-+		for (m = 1; (m < 31) && deviation; m++)
-+			clk_fs660c32_get_pe(m, si, &deviation,
-+					input, output, &p, fs);
-+
-+	}
-+
-+	if (deviation == ~0) /* No solution found */
-+		return -1;
-+
-+	/* pe fine tuning if deviation not 0: +/- 2 around computed pe value */
-+	if (deviation) {
-+		fs_tmp.mdiv = fs->mdiv;
-+		fs_tmp.sdiv = fs->sdiv;
-+		fs_tmp.nsdiv = fs->nsdiv;
-+
-+		if (fs->pe > 2)
-+			p2 = fs->pe - 2;
-+		else
-+			p2 = 0;
-+
-+		for (; p2 < 32768ll && (p2 <= (fs->pe + 2)); p2++) {
-+			fs_tmp.pe = (unsigned long)p2;
-+
-+			clk_fs660c32_dig_get_rate(input, &fs_tmp, &new_freq);
-+
-+			new_deviation = abs(output - new_freq);
-+
-+			/* Check if this is a better solution */
-+			if (new_deviation < deviation) {
-+				fs->pe = (unsigned long)p2;
-+				deviation = new_deviation;
-+
-+			}
-+		}
-+	}
-+	return 0;
-+}
-+
- static int quadfs_fsynt_get_hw_value_for_recalc(struct st_clk_quadfs_fsynth *fs,
- 		struct stm_fs *params)
- {
-@@ -655,38 +721,14 @@ static long quadfs_find_best_rate(struct clk_hw *hw, unsigned long drate,
- 	struct st_clk_quadfs_fsynth *fs = to_quadfs_fsynth(hw);
- 	int (*clk_fs_get_rate)(unsigned long ,
- 				const struct stm_fs *, unsigned long *);
--	struct stm_fs prev_params;
--	unsigned long prev_rate, rate = 0;
--	unsigned long diff_rate, prev_diff_rate = ~0;
--	int index;
-+	int (*clk_fs_get_params)(unsigned long, unsigned long, struct stm_fs *);
-+	unsigned long rate = 0;
+ 	error = syscore_suspend();
+ 	if (error)
+@@ -470,6 +474,7 @@ static int resume_target_kernel(bool platform_mode)
+ 	syscore_resume();
  
- 	clk_fs_get_rate = fs->data->get_rate;
-+	clk_fs_get_params = fs->data->get_params;
+  Enable_irqs:
++	system_state = SYSTEM_RUNNING;
+ 	local_irq_enable();
  
--	for (index = 0; index < fs->data->rtbl_cnt; index++) {
--		prev_rate = rate;
--
--		*params = fs->data->rtbl[index];
--		prev_params = *params;
--
--		clk_fs_get_rate(prate, &fs->data->rtbl[index], &rate);
--
--		diff_rate = abs(drate - rate);
--
--		if (diff_rate > prev_diff_rate) {
--			rate = prev_rate;
--			*params = prev_params;
--			break;
--		}
--
--		prev_diff_rate = diff_rate;
--
--		if (drate == rate)
--			return rate;
--	}
--
--
--	if (index == fs->data->rtbl_cnt)
--		*params = prev_params;
-+	if (!clk_fs_get_params(prate, drate, params))
-+		clk_fs_get_rate(prate, params, &rate);
+  Enable_cpus:
+@@ -555,6 +560,7 @@ int hibernation_platform_enter(void)
+ 		goto Enable_cpus;
  
- 	return rate;
- }
--- 
-1.9.1
+ 	local_irq_disable();
++	system_state = SYSTEM_SUSPEND;
+ 	syscore_suspend();
+ 	if (pm_wakeup_pending()) {
+ 		error = -EAGAIN;
+@@ -567,6 +573,7 @@ int hibernation_platform_enter(void)
+ 
+  Power_up:
+ 	syscore_resume();
++	system_state = SYSTEM_RUNNING;
+ 	local_irq_enable();
+ 
+  Enable_cpus:
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index f9fe133c13e2..80ebc0726290 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -359,6 +359,8 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
+ 	arch_suspend_disable_irqs();
+ 	BUG_ON(!irqs_disabled());
+ 
++	system_state = SYSTEM_SUSPEND;
++
+ 	error = syscore_suspend();
+ 	if (!error) {
+ 		*wakeup = pm_wakeup_pending();
+@@ -375,6 +377,8 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
+ 		syscore_resume();
+ 	}
+ 
++	system_state = SYSTEM_RUNNING;
++
+ 	arch_suspend_enable_irqs();
+ 	BUG_ON(irqs_disabled());
+ 
