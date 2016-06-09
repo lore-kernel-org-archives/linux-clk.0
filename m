@@ -1,70 +1,93 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 29 Jun 2016 00:01:50 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCHv2 04/28] ARM: OMAP2+: hwmod: use new ti_clk_get
- API to search for clock handles
-Message-ID: <20160629070149.GI28140@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-5-git-send-email-t-kristo@ti.com>
- <20160628065712.GC28140@atomide.com>
- <577367CB.6090703@ti.com>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	"Bhuvanchandra DV" <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH 7/8] tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
+Date: Thu, 9 Jun 2016 20:40:38 +0530
+Message-ID: <20160609151039.20817-8-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <577367CB.6090703@ti.com>
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160628 23:19]:
-> On 28/06/16 09:57, Tony Lindgren wrote:
-> > Hi,
-> > 
-> > * Tero Kristo <t-kristo@ti.com> [160613 12:07]:
-> > > The new API avoids the need to add clock aliases for most of the clocks,
-> > > should use of it is preferred. Many of the existing clock aliases are
-> > > only created because of hwmod data.
-> > > 
-> > > Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> > > ---
-> > >   arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
-> > >   1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-> > > index 83cb527..0ea869c 100644
-> > > --- a/arch/arm/mach-omap2/omap_hwmod.c
-> > > +++ b/arch/arm/mach-omap2/omap_hwmod.c
-> > > @@ -786,7 +786,7 @@ static int _init_main_clk(struct omap_hwmod *oh)
-> > >   	if (!oh->main_clk)
-> > >   		return 0;
-> > > 
-> > > -	oh->_clk = clk_get(NULL, oh->main_clk);
-> > > +	oh->_clk = ti_clk_get(oh->main_clk);
-> > >   	if (IS_ERR(oh->_clk)) {
-> > >   		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
-> > >   			oh->name, oh->main_clk);
-> > 
-> > After thinking about this for a while I think code outside TI specific
-> > clock implementation should use just clk_get(). Otherwise we create more
-> > dependencies to move code to live under drivers subdirectory.
-> > 
-> > Can't we have clk_get() call a SoC specific helper function if clock
-> > is not found?
-> 
-> That is for Mike / Stephen to answer. Implementing something like this
-> sounds trivial, I could just hook up the ti_clk_get being called here.
-> However, any attempted changes to the clkdev implementation have been shot
-> down so far, thus I did this.
+When DMA mode is enabled one need to make sure the DMA channels are
+idle before entering suspend mode especially when UART ports which
+are set as wakeup source and console port with no_console_suspend
+is set. This patch takes care of gracefully releasing DMA channels
+for the above two cases and start the DMA at resume.
 
-Probably best to send a minimal patch for that for review. We want to
-have the clock framework consumers using the standard interface.
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 44 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-> The problem is still the clocks which are just referred via a name only, not
-> via a DT node.
-
-OK
-
-Regards,
-
-Tony
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 27687d5..134090a 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1943,6 +1943,30 @@ static int lpuart_suspend(struct device *dev)
+ 	}
+ 
+ 	uart_suspend_port(&lpuart_reg, &sport->port);
++
++	if (sport->lpuart_dma_rx_use) {
++		/*
++		 * EDMA driver during suspend will forcefully release any
++		 * non-idle DMA channels. If port wakeup is enabled or if port
++		 * is console port or 'no_console_suspend' is set the Rx DMA
++		 * cannot resume as as expected, hence gracefully release the
++		 * Rx DMA path before suspend and start Rx DMA path on resume.
++		 */
++		if (sport->port.irq_wake) {
++			del_timer_sync(&sport->lpuart_timer);
++			lpuart_dma_rx_free(&sport->port);
++		}
++
++		/* Disable Rx DMA to use UART port as wakeup source */
++		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_RDMAS,
++					sport->port.membase + UARTCR5);
++	}
++
++	if (sport->lpuart_dma_tx_use) {
++		sport->dma_tx_in_progress = false;
++		dmaengine_terminate_all(sport->dma_tx_chan);
++	}
++
+ 	if (sport->port.suspended && !sport->port.irq_wake)
+ 		clk_disable_unprepare(sport->clk);
+ 
+@@ -1970,6 +1994,26 @@ static int lpuart_resume(struct device *dev)
+ 		writeb(temp, sport->port.membase + UARTCR2);
+ 	}
+ 
++	if (sport->lpuart_dma_rx_use) {
++		if (sport->port.irq_wake) {
++			if (!lpuart_start_rx_dma(sport)) {
++				sport->lpuart_dma_rx_use = true;
++				rx_dma_timer_init(sport);
++			} else {
++				sport->lpuart_dma_rx_use = false;
++			}
++		}
++	}
++
++	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
++			init_waitqueue_head(&sport->dma_wait);
++			sport->lpuart_dma_tx_use = true;
++			writeb(readb(sport->port.membase + UARTCR5) |
++				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
++	} else {
++		sport->lpuart_dma_tx_use = false;
++	}
++
+ 	uart_resume_port(&lpuart_reg, &sport->port);
+ 
+ 	return 0;
+-- 
+2.8.3
