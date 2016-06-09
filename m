@@ -1,66 +1,41 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Sun, 12 Jun 2016 19:52:57 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	anson.huang@nxp.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/11] clk: imx6ul: fix gpt2 clock names
-Message-ID: <20160612115256.GC32690@shlinux2>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
- <20160612114111.GD20243@tiger>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160612114111.GD20243@tiger>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+From: Kieran Bingham <kieran@bingham.xyz>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Kieran Bingham <kieran@bingham.xyz>
+Subject: [PATCH] clk: renesas: r8a7795: Provide FDP1 clocks
+Date: Thu,  9 Jun 2016 17:12:26 +0100
+Message-Id: <1465488747-26892-2-git-send-email-kieran@bingham.xyz>
+In-Reply-To: <1465488747-26892-1-git-send-email-kieran@bingham.xyz>
+References: <1465488747-26892-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 12, 2016 at 07:41:11PM +0800, Shawn Guo wrote:
-> On Wed, Jun 08, 2016 at 10:33:35PM +0800, Dong Aisheng wrote:
-> > fix gpt2 clock names
-> > 
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-imx6ul.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> > index 0f1f17a8f3ed..67ae3465dd37 100644
-> > --- a/drivers/clk/imx/clk-imx6ul.c
-> > +++ b/drivers/clk/imx/clk-imx6ul.c
-> > @@ -305,8 +305,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
-> >  	clks[IMX6UL_CLK_CAN1_SERIAL]	= imx_clk_gate2("can1_serial",	"can_podf",	base + 0x68,	16);
-> >  	clks[IMX6UL_CLK_CAN2_IPG]	= imx_clk_gate2("can2_ipg",	"ipg",		base + 0x68,	18);
-> >  	clks[IMX6UL_CLK_CAN2_SERIAL]	= imx_clk_gate2("can2_serial",	"can_podf",	base + 0x68,	20);
-> > -	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus",	"perclk",	base + 0x68,	24);
-> > -	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial",	"perclk",	base + 0x68,	26);
-> > +	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus2",	"perclk",	base + 0x68,	24);
-> > +	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial2",	"perclk",	base + 0x68,	26);
-> 
-> gpt2_bus and gpt2_serial, please.
-> 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Yes, sorry the careless.
-Will resend it.
-
-Regards
-Dong Aisheng
-
-> Shawn
-> 
-> >  	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
-> >  	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
-> >  	clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
-> > -- 
-> > 1.9.1
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index ca5519c583d4..f2b887502066 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -129,6 +129,9 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ };
+ 
+ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
++	DEF_MOD("fdp1-2",		 117,	R8A7795_CLK_S2D1),
++	DEF_MOD("fdp1-1",		 118,	R8A7795_CLK_S2D1),
++	DEF_MOD("fdp1-0",		 119,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("scif5",		 202,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("scif4",		 203,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("scif3",		 204,	R8A7795_CLK_S3D4),
+-- 
+2.7.4
