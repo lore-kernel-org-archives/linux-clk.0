@@ -1,38 +1,68 @@
-Return-Path: <moinejf@free.fr>
-Date: Fri, 1 Jul 2016 08:04:00 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] clk: sunxi: Add a driver for the CCU
-Message-Id: <20160701080400.fc6070646ce7c98fe0e63bb5@free.fr>
-In-Reply-To: <20160630211635.GE5485@lukather>
-References: <cover.1467135898.git.moinejf@free.fr>
-	<a55dc5d1a9f02dc4d71d5c21064bffebe5a7b149.1467135898.git.moinejf@free.fr>
-	<20160628204502.GG5550@lukather>
-	<20160629101256.93895e6ff9184efa340f69dd@free.fr>
-	<20160630211635.GE5485@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH 4/8] tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+Date: Thu, 9 Jun 2016 20:40:35 +0530
+Message-ID: <20160609151039.20817-5-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 30 Jun 2016 23:16:35 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+By default the driver always configure the mode as 8s1 even when 8m1
+mode is selected. Fix this by adding support to control the space/mark bit.
 
-> > - in case a driver requests a reset, this last one should exist.
-> >   But, this reset may point to a void one (reg =3D null) when the real
-> >   reset has been moved to the prepare/unprepare of the associated clock.
->=20
-> And what if this driver wants to be reset, by calling
-> reset_control_reset? You realize you're going against the semantics of
-> the reset and clock APIs, and what the hardware expose here right?
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-If a driver really wants a reset, the reset stuff is not included in
-the clock prepare.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 97c1fda..615f191 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1220,13 +1220,14 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ {
+ 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
+ 	unsigned long flags;
+-	unsigned char cr1, old_cr1, old_cr2, cr4, bdh, modem;
++	unsigned char cr1, old_cr1, old_cr2, cr3, cr4, bdh, modem;
+ 	unsigned int  baud;
+ 	unsigned int old_csize = old ? old->c_cflag & CSIZE : CS8;
+ 	unsigned int sbr, brfa;
+ 
+ 	cr1 = old_cr1 = readb(sport->port.membase + UARTCR1);
+ 	old_cr2 = readb(sport->port.membase + UARTCR2);
++	cr3 = readb(sport->port.membase + UARTCR3);
+ 	cr4 = readb(sport->port.membase + UARTCR4);
+ 	bdh = readb(sport->port.membase + UARTBDH);
+ 	modem = readb(sport->port.membase + UARTMODEM);
+@@ -1274,7 +1275,10 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if ((termios->c_cflag & PARENB)) {
+ 		if (termios->c_cflag & CMSPAR) {
+ 			cr1 &= ~UARTCR1_PE;
+-			cr1 |= UARTCR1_M;
++			if (termios->c_cflag & PARODD)
++				cr3 |= UARTCR3_T8;
++			else
++				cr3 &= ~UARTCR3_T8;
+ 		} else {
+ 			cr1 |= UARTCR1_PE;
+ 			if ((termios->c_cflag & CSIZE) == CS8)
+@@ -1342,6 +1346,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	writeb(cr4 | brfa, sport->port.membase + UARTCR4);
+ 	writeb(bdh, sport->port.membase + UARTBDH);
+ 	writeb(sbr & 0xFF, sport->port.membase + UARTBDL);
++	writeb(cr3, sport->port.membase + UARTCR3);
+ 	writeb(cr1, sport->port.membase + UARTCR1);
+ 	writeb(modem, sport->port.membase + UARTMODEM);
+ 
+-- 
+2.8.3
