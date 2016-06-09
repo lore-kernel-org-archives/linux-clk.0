@@ -1,72 +1,63 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 07/10] dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
-Date: Fri, 10 Jun 2016 15:23:35 +0200
-Message-Id: <1465565018-14172-8-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
+Subject: [PATCH 1/8] tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+Date: Thu, 9 Jun 2016 20:40:32 +0530
+Message-ID: <20160609151039.20817-2-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the Time Base Generator
-clock used in the Marvell Armada 3700 SoCs.
+From: Stefan Agner <stefan@agner.ch>
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Currently the tx_empty callback only considers the Transmit Complete
+Flag (TC). The reference manual is not quite clear if the TC flag
+covers the TX FIFO too. Debug prints on real hardware have shown that
+from time to time the TC flag is asserted (indicating Transmitter
+idle) while there are still data in the TX FIFO. Hence, in this case
+the serial core will call the shutdown callback even though there are
+data remaining in the TX FIFO buffers.
+
+Avoid early shutdowns by considering the TX FIFO empty flag too. Also
+avoid theoretical race conditions between DMA and the driver by
+checking whether the TX DMA is in progress too.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../bindings/clock/armada3700-tbg-clock.txt        | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+ drivers/tty/serial/fsl_lpuart.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-new file mode 100644
-index 000000000000..0ba1d83ff363
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-@@ -0,0 +1,27 @@
-+* Time Base Generator Clock bindings for Marvell Armada 37xx SoCs
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 3d79003..fabfa7e 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -810,8 +810,18 @@ static irqreturn_t lpuart32_int(int irq, void *dev_id)
+ /* return TIOCSER_TEMT when transmitter is not busy */
+ static unsigned int lpuart_tx_empty(struct uart_port *port)
+ {
+-	return (readb(port->membase + UARTSR1) & UARTSR1_TC) ?
+-		TIOCSER_TEMT : 0;
++	struct lpuart_port *sport = container_of(port,
++			struct lpuart_port, port);
++	unsigned char sr1 = readb(port->membase + UARTSR1);
++	unsigned char sfifo = readb(port->membase + UARTSFIFO);
 +
-+Marvell Armada 37xx SoCs provde Time Base Generator clocks which are
-+used as parent clocks for the peripheral clocks.
++	if (sport->dma_tx_in_progress)
++		return 0;
 +
-+The TBG clock consumer should specify the desired clock by having the
-+clock ID in its "clocks" phandle cell.
++	if (sr1 & UARTSR1_TC && sfifo & UARTSFIFO_TXEMPT)
++		return TIOCSER_TEMT;
 +
-+The following is a list of provided IDs and clock names on Armada 3700:
-+ 0 = TBG A P
-+ 1 = TBG B P
-+ 2 = TBG A S
-+ 3 = TBG B S
-+
-+Required properties:
-+- compatible : shall be "marvell,armada-3700-tbg-clock"
-+- reg : must be the register address of North Bridge PLL register
-+- #clock-cells : from common clock binding; shall be set to 1
-+
-+Example:
-+
-+tbg: tbg@13200 {
-+	compatible = "marvell,armada-3700-tbg-clock";
-+	reg = <0x13200 0x1000>;
-+	clocks = <&xtalclk>;
-+	#clock-cells = <1>;
-+};
++	return 0;
+ }
+ 
+ static unsigned int lpuart32_tx_empty(struct uart_port *port)
 -- 
-2.5.0
+2.8.3
