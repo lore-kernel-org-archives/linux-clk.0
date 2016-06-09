@@ -1,38 +1,125 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 14 Jun 2016 07:39:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 07/10] dt-bindings: clock: add DT binding for the TBG
- clocks on Armada 3700
-Message-ID: <20160614123927.GA1049@rob-hp-laptop>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
- <1465565018-14172-8-git-send-email-gregory.clement@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465565018-14172-8-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <moinejf@free.fr>
+Date: Thu, 9 Jun 2016 09:41:01 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
+ Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
+ Patekar <vishnupatekar0510@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 11/15] clk: sunxi-ng: Add N-M-factor clock support
+Message-Id: <20160609094101.426a13c4c61aa6cb11df16fc@free.fr>
+In-Reply-To: <20160607204154.31967-12-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+	<20160607204154.31967-12-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 10, 2016 at 03:23:35PM +0200, Gregory CLEMENT wrote:
-> This commit adds the DT binding documentation for the Time Base Generator
-> clock used in the Marvell Armada 3700 SoCs.
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  .../bindings/clock/armada3700-tbg-clock.txt        | 27 ++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+On Tue,  7 Jun 2016 22:41:50 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> Introduce support for clocks that multiply and divide using linear factor=
+s.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> ---
+> Changes from v1:
+>   - Fixed the maximums for both factors passed to the rational factor
+>     computation.
+> ---
+>  drivers/clk/sunxi-ng/Makefile |   1 +
+>  drivers/clk/sunxi-ng/ccu_nm.c | 114 ++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/sunxi-ng/ccu_nm.h |  95 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 210 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index a201fad6b11d..5c7ae1ad1082 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -9,4 +9,5 @@ obj-y +=3D ccu_gate.o
+>  obj-y +=3D ccu_mp.o
+>  obj-y +=3D ccu_mux.o
+>  obj-y +=3D ccu_nk.o
+> +obj-y +=3D ccu_nm.o
+>  obj-y +=3D ccu_phase.o
+> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+> new file mode 100644
+> index 000000000000..e35ddd8eec8b
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> @@ -0,0 +1,114 @@
+> +/*
+> + * Copyright (C) 2016 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/rational.h>
+> +
+> +#include "ccu_frac.h"
+> +#include "ccu_gate.h"
+> +#include "ccu_nm.h"
+	[snip]
+> +static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
+> +					unsigned long parent_rate)
+> +{
+> +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
+> +	unsigned long n, m;
+> +	u32 reg;
+> +
+> +	if (ccu_frac_helper_is_enabled(&nm->common, &nm->frac))
+> +		return ccu_frac_helper_read_rate(&nm->common, &nm->frac);
+> +
+> +	reg =3D readl(nm->common.base + nm->common.reg);
+> +
+> +	n =3D reg >> nm->n.shift;
+> +	n &=3D (1 << nm->n.width) - 1;
+> +
+> +	m =3D reg >> nm->m.shift;
+> +	m &=3D (1 << nm->m.width) - 1;
+> +
+> +	return parent_rate * (n + 1) / (m + 1);
+
+In the H3, 'm' is a pre-divider (audio and video PLLs):
+
+	return parent_rate / (m + 1) * (n + 1);
+
+> +}
+> +
+> +static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			      unsigned long *parent_rate)
+> +{
+> +	struct ccu_nm *nm =3D hw_to_ccu_nm(hw);
+> +	unsigned long n, m;
+> +
+> +	rational_best_approximation(rate, *parent_rate,
+> +				    1 << nm->n.width, 1 << nm->m.width,
+> +				    &n, &m);
+> +
+> +	return *parent_rate * n / m;
+
+Same here.
+
+> +}
+> +
+> +static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			   unsigned long parent_rate)
+> +{
+	[snip]
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
