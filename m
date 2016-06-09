@@ -1,60 +1,61 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: rui.zhang@intel.com,
-	edubezval@gmail.com,
-	robh+dt@kernel.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	emilio@elopez.com.ar
-Cc: mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [RFC PATCH 4/5] ARM: sun8i: enable PLL2 on a23/33
-Date: Tue, 28 Jun 2016 18:13:24 +0800
-Message-Id: <20160628101325.2522-4-icenowy@aosc.xyz>
-In-Reply-To: <20160628101325.2522-1-icenowy@aosc.xyz>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Stefan Agner
+	<stefan.agner@toradex.com>
+Subject: [PATCH 3/8] tty: serial: fsl_lpuart: fix clearing of receive flag
+Date: Thu, 9 Jun 2016 20:40:34 +0530
+Message-ID: <20160609151039.20817-4-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- arch/arm/boot/dts/sun8i-a23-a33.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+From: Stefan Agner <stefan.agner@toradex.com>
 
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 7e05e09..a340cea 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -46,6 +46,7 @@
+Commit 8e4934c6d6c6 ("tty: serial: fsl_lpuart: clear receive flag
+on FIFO flush") implemented clearing of the receive flag by reading
+the status register only. It turned out that even though we flush
+the FIFO afterwards, a explicit read of the data register is still
+required.
+
+This leads to a FIFO underrun. To avoid this, follow the advice in
+the overrun "Operation section": Unconditionally clear RXUF after
+using RXFLUSH.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/tty/serial/fsl_lpuart.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 75a2098..97c1fda 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -935,13 +935,16 @@ static void lpuart_setup_watermark(struct lpuart_port *sport)
+ 	writeb(val | UARTPFIFO_TXFE | UARTPFIFO_RXFE,
+ 			sport->port.membase + UARTPFIFO);
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+-	/* explicitly clear RDRF */
+-	readb(sport->port.membase + UARTSR1);
+-
+ 	/* flush Tx and Rx FIFO */
+ 	writeb(UARTCFIFO_TXFLUSH | UARTCFIFO_RXFLUSH,
+ 			sport->port.membase + UARTCFIFO);
  
-+#include <dt-bindings/clock/sun4i-a10-pll2.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
- 
- / {
-@@ -120,6 +121,15 @@
- 			clock-output-names = "pll1";
- 		};
- 
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun6i-a31-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
++	/* explicitly clear RDRF */
++	if (readb(sport->port.membase + UARTSR1) & UARTSR1_RDRF) {
++		readb(sport->port.membase + UARTDR);
++		writeb(UARTSFIFO_RXUF, sport->port.membase + UARTSFIFO);
++	}
 +
- 		/* dummy clock until actually implemented */
- 		pll5: pll5_clk {
- 			#clock-cells = <0>;
+ 	writeb(0, sport->port.membase + UARTTWFIFO);
+ 	writeb(1, sport->port.membase + UARTRWFIFO);
+ 
 -- 
-2.9.0
+2.8.3
