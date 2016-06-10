@@ -1,54 +1,38 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.135]:64206 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751724AbcFJWcU (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2016 18:32:20 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 0/5] Patches for QCOM IPQ4019 clock driver
-Date: Tue, 21 Jun 2016 19:19:17 +0530
-Message-Id: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/48] clk: at91: replace usleep() by udelay() calls
+Date: Sat, 11 Jun 2016 00:30:36 +0200
+Message-ID: <11395561.bQatt85IOg@wuerfel>
+In-Reply-To: <1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com> <1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches are related to Qualcomm IPQ4019 GCC (Global Clock
-Controller) driver code mainly adding the nodes for clock marked
-as fixed in current IPQ4019 clock driver and support for multiple
-CPU frequencies.
+On Saturday, June 11, 2016 12:03:04 AM CEST Alexandre Belloni wrote:
+> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> 
+> Fix the main and slow clock .prepare() implementations which used to call
+> usleep() when the scheduler wasn't ready yet.
+> 
 
-[V2]
+Does this have to be called that early? It seems wasteful to always
+call udelay() here, when these are functions that are normally
+allowed to sleep.
 
-   1. Removed the fixed clock references and add the same as clock nodes
-   with recalc_rate operation.
+	Arnd
 
-   2. Added all the supported cpu frequencies in frequency table.
-
-Abhishek Sahu (5):
-  clk: qcom: ipq4019: Added the clock nodes and operations for pll
-  clk: qcom: ipq4019: Added the apss cpu pll divider clock node
-  clk: qcom: ipq4019: Added the nodes for pcnoc
-  clk: qcom: ipq4019: Added the all frequencies for apps cpu
-  clk: qcom: ipq4019: Added the cpu clock frequency change notifier
-
- drivers/clk/qcom/gcc-ipq4019.c               | 508 +++++++++++++++++++++++++--
- include/dt-bindings/clock/qcom,gcc-ipq4019.h |  11 +
- 2 files changed, 486 insertions(+), 33 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
