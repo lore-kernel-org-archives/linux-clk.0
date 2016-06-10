@@ -1,332 +1,53 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 08/15] clk: sunxi-ng: Add divider
-Date: Tue,  7 Jun 2016 22:41:47 +0200
-Message-Id: <20160607204154.31967-9-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 10 Jun 2016 06:01:15 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Franklin S Cooper Jr <fcooper@ti.com>, robh+dt@kernel.org,
+	linux@arm.linux.org.uk, paul@pwsan.com, t-kristo@ti.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 5/9] ARM: dts: am437x/am33xx/da850: Add new ECAP and
+ EPWM bindings
+Message-ID: <20160610130114.GP22406@atomide.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-6-git-send-email-fcooper@ti.com>
+ <20160610103423.GT22406@atomide.com>
+ <20160610120142.GK22406@atomide.com>
+ <20160610124022.GD27142@ulmo.ba.sec>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160610124022.GD27142@ulmo.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the various dividers (linear, table or pow-of-two based)
-found in the CCU.
+* Thierry Reding <thierry.reding@gmail.com> [160610 05:42]:
+> On Fri, Jun 10, 2016 at 05:01:43AM -0700, Tony Lindgren wrote:
+> > * Tony Lindgren <tony@atomide.com> [160610 03:37]:
+> > > * Franklin S Cooper Jr <fcooper@ti.com> [160503 08:58]:
+> > > > Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod=
+ to
+> > > > provide the various required clocks.
+> > > >=20
+> > > > For AM437 and AM335x, add the required clocks explicitly to DT. The
+> > > > hwmod entries for ECAP and EPWM will be removed and this will preve=
+nt
+> > > > anything from breaking.
+> > >=20
+> > > I've applying the first patch into omap-for-v4.8/soc, the rest into
+> > > omap-for-v4.8/dt. Note that this patch did not apply against d850.dtsi
+> > > so please resend that change as a separate patch to the davinci
+> > > maintainer.
+> >=20
+> > And I did not apply patch "pwms: pwm-ti*: Get the clock from the PWMSS
+> > parent when using old bindings", Thierry should take that one.
+>=20
+> Tony, did you take patches 3 and 4 already? It's fine if yo have, just
+> wanted to know whether I should pick those up as well.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Makefile  |   1 +
- drivers/clk/sunxi-ng/ccu_div.c | 136 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_div.h | 135 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 272 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_div.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_div.h
+Yes looks like I also took the binding documentation patches too.
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index c47cbd309d59..67a2559fe283 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -3,6 +3,7 @@ obj-y += ccu_reset.o
- 
- obj-y += ccu_frac.o
- 
-+obj-y += ccu_div.o
- obj-y += ccu_fixed_factor.o
- obj-y += ccu_gate.o
- obj-y += ccu_mux.o
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-new file mode 100644
-index 000000000000..8659b4cb6c20
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -0,0 +1,136 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_div.h"
-+
-+static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
-+					unsigned long parent_rate,
-+					unsigned long rate,
-+					void *data)
-+{
-+	struct ccu_div *cd = data;
-+	unsigned long val;
-+
-+	/*
-+	 * We can't use divider_round_rate that assumes that there's
-+	 * several parents, while we might be called to evaluate
-+	 * several different parents.
-+	 */
-+	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-+			      cd->div.flags);
-+
-+	return divider_recalc_rate(&cd->common.hw, parent_rate, val,
-+				   cd->div.table, cd->div.flags);
-+}
-+
-+static void ccu_div_disable(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_gate_helper_disable(&cd->common, cd->enable);
-+}
-+
-+static int ccu_div_enable(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_gate_helper_enable(&cd->common, cd->enable);
-+}
-+
-+static int ccu_div_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_gate_helper_is_enabled(&cd->common, cd->enable);
-+}
-+
-+static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	unsigned long val;
-+	u32 reg;
-+
-+	reg = readl(cd->common.base + cd->common.reg);
-+	val = reg >> cd->div.shift;
-+	val &= (1 << cd->div.width) - 1;
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cd->common, &cd->mux, -1,
-+						&parent_rate);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-+				   cd->div.flags);
-+}
-+
-+static int ccu_div_determine_rate(struct clk_hw *hw,
-+				struct clk_rate_request *req)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
-+					     req, ccu_div_round_rate, cd);
-+}
-+
-+static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	unsigned long flags;
-+	unsigned long val;
-+	u32 reg;
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cd->common, &cd->mux, -1,
-+						&parent_rate);
-+
-+	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-+			      cd->div.flags);
-+
-+	spin_lock_irqsave(cd->common.lock, flags);
-+
-+	reg = readl(cd->common.base + cd->common.reg);
-+	reg &= ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-+
-+	writel(reg | (val << cd->div.shift),
-+	       cd->common.base + cd->common.reg);
-+
-+	spin_unlock_irqrestore(cd->common.lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 ccu_div_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_mux_helper_get_parent(&cd->common, &cd->mux);
-+}
-+
-+static int ccu_div_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_mux_helper_set_parent(&cd->common, &cd->mux, index);
-+}
-+
-+const struct clk_ops ccu_div_ops = {
-+	.disable	= ccu_div_disable,
-+	.enable		= ccu_div_enable,
-+	.is_enabled	= ccu_div_is_enabled,
-+
-+	.get_parent	= ccu_div_get_parent,
-+	.set_parent	= ccu_div_set_parent,
-+
-+	.determine_rate	= ccu_div_determine_rate,
-+	.recalc_rate	= ccu_div_recalc_rate,
-+	.set_rate	= ccu_div_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-new file mode 100644
-index 000000000000..5edbdc1a98c8
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -0,0 +1,135 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_DIV_H_
-+#define _CCU_DIV_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_mux.h"
-+
-+struct _ccu_div {
-+	u8			shift;
-+	u8			width;
-+
-+	u32			flags;
-+
-+	struct clk_div_table	*table;
-+};
-+
-+#define _SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, _flags)	\
-+	{								\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.flags	= _flags,					\
-+		.table	= _table,					\
-+	}
-+
-+#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
-+	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, _flags)
-+
-+#define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)			\
-+	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
-+
-+#define _SUNXI_CCU_DIV(_shift, _width)					\
-+	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, 0)
-+
-+struct ccu_div {
-+	u32			enable;
-+
-+	struct _ccu_div		div;
-+	struct ccu_mux_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
-+				      _shift, _width,			\
-+				      _table, _gate, _flags)		\
-+	struct ccu_div _struct = {					\
-+		.div		= _SUNXI_CCU_DIV_TABLE(_shift, _width,	\
-+						       _table),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_div_ops,	\
-+							_flags),	\
-+		}							\
-+	}
-+
-+
-+#define SUNXI_CCU_DIV_TABLE(_struct, _name, _parent, _reg,		\
-+			    _shift, _width,				\
-+			    _table, _flags)				\
-+	SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
-+				      _shift, _width, _table, 0,	\
-+				      _flags)
-+
-+#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  _gate, _flags)			\
-+	struct ccu_div _struct = {					\
-+		.enable	= _gate,					\
-+		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-+		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT_PARENTS(_name,	\
-+								_parents, \
-+								&ccu_div_ops, \
-+								_flags), \
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
-+			     _mshift, _mwidth, _muxshift, _muxwidth,	\
-+			     _flags)					\
-+	SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  0, _flags)
-+
-+
-+#define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-+			      _mshift, _mwidth,	_gate,			\
-+			      _flags)					\
-+	struct ccu_div _struct = {					\
-+		.enable	= _gate,					\
-+		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_GATE,		\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_div_ops,	\
-+							_flags),	\
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M(_struct, _name, _parent, _reg, _mshift, _mwidth,	\
-+		    _flags)						\
-+	SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-+			      _mshift, _mwidth, 0, _flags)
-+
-+static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_div, common);
-+}
-+
-+extern const struct clk_ops ccu_div_ops;
-+
-+#endif /* _CCU_DIV_H_ */
--- 
-2.8.3
+Regards,
+
+Tony
