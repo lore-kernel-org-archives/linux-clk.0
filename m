@@ -1,27 +1,38 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [RFC PATCH 03/15] clk: samsung: exynos4: fixup reg access on be
-To: Matthew Leach <matthew@mattleach.net>
-References: <20160608183110.13851-1-matthew@mattleach.net>
- <20160608183110.13851-4-matthew@mattleach.net>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <575A8DBC.4070403@samsung.com>
-Date: Fri, 10 Jun 2016 11:51:56 +0200
-MIME-version: 1.0
-In-reply-to: <20160608183110.13851-4-matthew@mattleach.net>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1465488747-26892-2-git-send-email-kieran@bingham.xyz>
+References: <1465488747-26892-1-git-send-email-kieran@bingham.xyz> <1465488747-26892-2-git-send-email-kieran@bingham.xyz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 09:24:35 +0200
+Message-ID: <CAMuHMdXuSsv50kzMeLT_QAfJtnvEoZsP-ofFQFzQ7yhct-5jmQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Provide FDP1 clocks
+To: Kieran Bingham <kieran@bingham.xyz>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/08/2016 08:30 PM, Matthew Leach wrote:
-> Use the byte-order aware big endian accessors, allowing for kernels
-> running under big-endian.
-> 
-> Signed-off-by: Matthew Leach <matthew@mattleach.net>
+Hi Kieran,
 
-Patch applied, thanks.
+On Thu, Jun 9, 2016 at 6:12 PM, Kieran Bingham <kieran@bingham.xyz> wrote:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+> ---
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Thanks queued in clk-renesas-for-v4.8.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
