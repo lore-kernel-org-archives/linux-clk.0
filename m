@@ -1,93 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:63093 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752222AbcFKR4G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Sat, 11 Jun 2016 13:56:06 -0400
-Message-Id: <61aeb2c338f6c1a3dc00db4ad66d285e6b7f48d2.1465666788.git.moinejf@free.fr>
-In-Reply-To: <cover.1465666788.git.moinejf@free.fr>
-References: <cover.1465666788.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Sat, 11 Jun 2016 19:04:50 +0200
-Subject: [PATCH v2 3/3] dt: sun8i: Define the clocks of the A83T
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
+ k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com,
+ beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 3/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to
+ PCIE device
+Date: Fri, 10 Jun 2016 13:56:32 +0900
+Message-id: <1465534592-18860-4-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks are defined by the CCU binding.
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+This patch adds the CLK_IGNORE_UNUSED flag for PCI Express's clocks
+which need the on state and the 'pcie' gate clock.
+
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c   | 11 ++++++-----
+ include/dt-bindings/clock/exynos5433.h |  3 ++-
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index d3473f8..4fec56a 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -45,9 +45,10 @@
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 852ac6a7607e..e3cc9359fb20 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -639,7 +639,7 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
  
- #include "skeleton.dtsi"
+ 	/* ENABLE_SCLK_TOP_FSYS */
+ 	GATE(CLK_SCLK_PCIE_100_FSYS, "sclk_pcie_100_fsys", "div_sclk_pcie_100",
+-			ENABLE_SCLK_TOP_FSYS, 7, 0, 0),
++			ENABLE_SCLK_TOP_FSYS, 7, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_MMC2_FSYS, "sclk_mmc2_fsys", "div_sclk_mmc2_b",
+ 			ENABLE_SCLK_TOP_FSYS, 6, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_MMC1_FSYS, "sclk_mmc1_fsys", "div_sclk_mmc1_b",
+@@ -2146,7 +2146,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
+ 	GATE(CLK_ACLK_SMMU_PDMA1, "aclk_smmu_pdma1", "mout_aclk_fsys_200_user",
+ 			ENABLE_ACLK_FSYS1, 25, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_BTS_PCIE, "aclk_bts_pcie", "mout_aclk_fsys_200_user",
+-			ENABLE_ACLK_FSYS1, 24, 0, 0),
++			ENABLE_ACLK_FSYS1, 24, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_AXIUS_PDMA1, "aclk_axius_pdma1",
+ 			"mout_aclk_fsys_200_user", ENABLE_ACLK_FSYS1,
+ 			22, CLK_IGNORE_UNUSED, 0),
+@@ -2193,13 +2193,13 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
  
-+#include <dt-bindings/clock/sun8i-a83t.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--
- #include <dt-bindings/pinctrl/sun4i-a10.h>
-+#include <dt-bindings/reset/sun8i-a83t.h>
+ 	/* ENABLE_PCLK_FSYS */
+ 	GATE(CLK_PCLK_PCIE_CTRL, "pclk_pcie_ctrl", "mout_aclk_fsys_200_user",
+-			ENABLE_PCLK_FSYS, 17, 0, 0),
++			ENABLE_PCLK_FSYS, 17, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_SMMU_PDMA1, "pclk_smmu_pdma1", "mout_aclk_fsys_200_user",
+ 			ENABLE_PCLK_FSYS, 16, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_PCIE_PHY, "pclk_pcie_phy", "mout_aclk_fsys_200_user",
+-			ENABLE_PCLK_FSYS, 14, 0, 0),
++			ENABLE_PCLK_FSYS, 14, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_BTS_PCIE, "pclk_bts_pcie", "mout_aclk_fsys_200_user",
+-			ENABLE_PCLK_FSYS, 13, 0, 0),
++			ENABLE_PCLK_FSYS, 13, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_SMMU_PDMA0, "pclk_smmu_pdma0", "mout_aclk_fsys_200_user",
+ 			ENABLE_PCLK_FSYS, 8, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_BTS_UFS, "pclk_bts_ufs", "mout_aclk_fsys_200_user",
+@@ -2278,6 +2278,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_FSYS, 0, 0, 0),
  
- / {
- 	interrupt-parent = <&gic>;
-@@ -138,13 +139,13 @@
- 			clock-output-names = "osc16M";
- 		};
+ 	/* ENABLE_IP_FSYS0 */
++	GATE(CLK_PCIE, "pcie", "sclk_pcie_100", ENABLE_IP_FSYS0, 17, 0, 0),
+ 	GATE(CLK_PDMA1, "pdma1", "aclk_pdma1", ENABLE_IP_FSYS0, 15, 0, 0),
+ 	GATE(CLK_PDMA0, "pdma0", "aclk_pdma0", ENABLE_IP_FSYS0, 0, 0, 0),
+ };
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 8e024fea26e7..4fa6bb2136e3 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -622,8 +622,9 @@
+ #define CLK_SCLK_UFSUNIPRO		112
+ #define CLK_SCLK_USBHOST30		113
+ #define CLK_SCLK_USBDRD30		114
++#define CLK_PCIE			115
  
--		osc16Md512: osc16Md512_clk {
-+		osc32k: osc32k_clk {
- 			#clock-cells = <0>;
- 			compatible = "fixed-factor-clock";
- 			clock-div = <512>;
- 			clock-mult = <1>;
- 			clocks = <&osc16M>;
--			clock-output-names = "osc16M-d512";
-+			clock-output-names = "osc32k";
- 		};
- 	};
+-#define FSYS_NR_CLK			115
++#define FSYS_NR_CLK			116
  
-@@ -154,13 +155,20 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun8i-a83t-ccu";
-+			reg = <0x01c20000 0x400>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@01c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_BUS_PIO>;
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -210,7 +218,7 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_BUS_UART0>;
- 			status = "disabled";
- 		};
- 
+ /* CMU_G2D */
+ #define CLK_MUX_ACLK_G2D_266_USER	1
 -- 
-2.8.4
-
+1.9.1
