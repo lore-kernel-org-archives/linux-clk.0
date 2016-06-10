@@ -1,52 +1,87 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/5] clk: Combine DT binding doc for max77686 and max77802
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-3-git-send-email-ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <a9a4bf3b-7ece-f92f-9d49-d4745f512e3c@osg.samsung.com>
-Date: Wed, 15 Jun 2016 11:19:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466000018-16784-3-git-send-email-ldewangan@nvidia.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH 10/10] clk: meson: only build selected platforms
+Date: Thu,  9 Jun 2016 17:27:47 -0700
+Message-Id: <1465518467-23939-11-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Laxman,
+Break the AmLogic clock code up so that only the necessary parts are
+compiled and linked. The core code is selected by both arm and arm64
+builds with COMMON_CLK_AMLOGIC. The individual drivers have their own
+config options as well.
 
-On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
-> The clock driver for Maxim PMICs max77686 and max77802 are
-> combined into single file to extend the support for same clock
-> IP for different PMICs.
->
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+---
+ drivers/clk/Kconfig        |  1 +
+ drivers/clk/Makefile       |  2 +-
+ drivers/clk/meson/Kconfig  | 12 ++++++++++++
+ drivers/clk/meson/Makefile |  4 ++--
+ 4 files changed, 16 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/meson/Kconfig
 
-The DT binding docs shouldn't neither refer to drivers nor map the file
-structure of the Linux drivers. That's just an implementation detail of
-Linux and it could be different in other operating systems, the binding
-should only describe the hardware.
-
-So the commit message should explain the benefits of merging the two DT
-bindings docs without mentioning the Linux driver implementation.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 53ddba2..30feb6b 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -208,6 +208,7 @@ config COMMON_CLK_OXNAS
  
-> Remove the separate DT binding document file for maxim,max77802 and
-> move all information to maxim,max77686 DT binding document.
-> 
-
-Now, I wonder if this is the correct approach. A system integrator is
-probably going to search for the bindings of the chip that is present
-in their system. For example there are different DT bindings docs for
-both the max77686 and max77802 PMIC even when support is implemented
-by the same driver (drivers/mfd/max77686.c).
-
-But maybe I'm wrong so I'll let people with more DT experience to say
-if merging the bindings docs in a single one is the correct approach.
-
-Best regards,
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/meson/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/renesas/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dcc5e69..af03eb2 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -65,7 +65,7 @@ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+= mmp/
+ endif
+ obj-y					+= mvebu/
+-obj-$(CONFIG_ARCH_MESON)		+= meson/
++obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+new file mode 100644
+index 0000000..7bb19ad
+--- /dev/null
++++ b/drivers/clk/meson/Kconfig
+@@ -0,0 +1,12 @@
++config COMMON_CLK_AMLOGIC
++	bool
++	depends on OF
++	depends on ARCH_MESON || COMPILE_TEST
++
++config COMMON_CLK_MESON8B
++	bool
++	depends on COMMON_CLK_AMLOGIC
++	help
++	  Support for the clock controller on AmLogic S805 devices, aka
++	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
++	  work.
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 901b5d4..b3d60fe 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,5 +2,5 @@
+ # Makefile for Meson specific clk
+ #
+ 
+-obj-y += clk-pll.o clk-cpu.o
+-obj-y += meson8b-clkc.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o
++obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.1.4
