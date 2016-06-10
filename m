@@ -1,165 +1,41 @@
-Return-Path: <megous@megous.com>
-From: megous@megous.com
-To: dev@linux-sunxi.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Josef Gajdusek <atx@atx.name>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 01/14] ARM: clk: sunxi: Add driver for the H3 THS clock
-Date: Sat, 25 Jun 2016 05:44:58 +0200
-Message-Id: <20160625034511.7966-2-megous@megous.com>
-In-Reply-To: <20160625034511.7966-1-megous@megous.com>
-References: <20160625034511.7966-1-megous@megous.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 10 Jun 2016 05:01:43 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: thierry.reding@gmail.com, robh+dt@kernel.org, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 5/9] ARM: dts: am437x/am33xx/da850: Add new ECAP and
+ EPWM bindings
+Message-ID: <20160610120142.GK22406@atomide.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-6-git-send-email-fcooper@ti.com>
+ <20160610103423.GT22406@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160610103423.GT22406@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Josef Gajdusek <atx@atx.name>
+* Tony Lindgren <tony@atomide.com> [160610 03:37]:
+> * Franklin S Cooper Jr <fcooper@ti.com> [160503 08:58]:
+> > Switch to a new ECAP and EPWM bindings that doesn't depend on hwmod to
+> > provide the various required clocks.
+> > 
+> > For AM437 and AM335x, add the required clocks explicitly to DT. The
+> > hwmod entries for ECAP and EPWM will be removed and this will prevent
+> > anything from breaking.
+> 
+> I've applying the first patch into omap-for-v4.8/soc, the rest into
+> omap-for-v4.8/dt. Note that this patch did not apply against d850.dtsi
+> so please resend that change as a separate patch to the davinci
+> maintainer.
 
-This patch adds a driver for the THS clock which is present on the
-Allwinner H3.
+And I did not apply patch "pwms: pwm-ti*: Get the clock from the PWMSS
+parent when using old bindings", Thierry should take that one.
 
-Signed-off-by: Josef Gajdusek <atx@atx.name>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/Makefile                        |  1 +
- drivers/clk/sunxi/clk-h3-ths.c                    | 98 +++++++++++++++++++++++
- 3 files changed, 100 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-h3-ths.c
+Regards,
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 8f7619d..5faae05 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -87,6 +87,7 @@ Required properties:
- 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
- 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
- 	"allwinner,sun6i-a31-display-clk" - for the display clocks
-+	"allwinner,sun8i-h3-ths-clk" - for THS on H3
- 
- Required properties for all clocks:
- - reg : shall be the control register address for the clock.
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 39d2044..8e245e3 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -9,6 +9,7 @@ obj-y += clk-a10-mod1.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a10-ve.o
- obj-y += clk-a20-gmac.o
-+obj-y += clk-h3-ths.o
- obj-y += clk-mod0.o
- obj-y += clk-simple-gates.o
- obj-y += clk-sun4i-display.o
-diff --git a/drivers/clk/sunxi/clk-h3-ths.c b/drivers/clk/sunxi/clk-h3-ths.c
-new file mode 100644
-index 0000000..c1d6d32
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-h3-ths.c
-@@ -0,0 +1,98 @@
-+/*
-+ * sun8i THS clock driver
-+ *
-+ * Copyright (C) 2015 Josef Gajdusek
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define SUN8I_H3_THS_CLK_ENABLE				31
-+#define SUN8I_H3_THS_CLK_DIVIDER_SHIFT		0
-+#define SUN8I_H3_THS_CLK_DIVIDER_WIDTH		2
-+
-+static DEFINE_SPINLOCK(sun8i_h3_ths_clk_lock);
-+
-+static const struct clk_div_table sun8i_h3_ths_clk_table[] __initconst = {
-+	{ .val = 0, .div = 1 },
-+	{ .val = 1, .div = 2 },
-+	{ .val = 2, .div = 4 },
-+	{ .val = 3, .div = 6 },
-+	{ } /* sentinel */
-+};
-+
-+static void __init sun8i_h3_ths_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	struct clk_gate *gate;
-+	struct clk_divider *div;
-+	const char *parent;
-+	const char *clk_name = node->name;
-+	void __iomem *reg;
-+	int err;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+
-+	if (IS_ERR(reg))
-+		return;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto err_unmap;
-+
-+	div = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!div)
-+		goto err_gate_free;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	parent = of_clk_get_parent_name(node, 0);
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN8I_H3_THS_CLK_ENABLE;
-+	gate->lock = &sun8i_h3_ths_clk_lock;
-+
-+	div->reg = reg;
-+	div->shift = SUN8I_H3_THS_CLK_DIVIDER_SHIFT;
-+	div->width = SUN8I_H3_THS_CLK_DIVIDER_WIDTH;
-+	div->table = sun8i_h3_ths_clk_table;
-+	div->lock = &sun8i_h3_ths_clk_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name, &parent, 1,
-+								 NULL, NULL,
-+								 &div->hw, &clk_divider_ops,
-+								 &gate->hw, &clk_gate_ops,
-+								 CLK_SET_RATE_PARENT);
-+
-+	if (IS_ERR(clk))
-+		goto err_div_free;
-+
-+	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (err)
-+		goto err_unregister_clk;
-+
-+	return;
-+
-+err_unregister_clk:
-+	clk_unregister(clk);
-+err_gate_free:
-+	kfree(gate);
-+err_div_free:
-+	kfree(div);
-+err_unmap:
-+	iounmap(reg);
-+}
-+
-+CLK_OF_DECLARE(sun8i_h3_ths_clk, "allwinner,sun8i-h3-ths-clk",
-+			   sun8i_h3_ths_clk_setup);
--- 
-2.9.0
+Tony
