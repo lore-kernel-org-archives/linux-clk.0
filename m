@@ -1,153 +1,50 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	huangtao@rock-chips.com,
-	typ@rock-chips.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v1 6/6] drm/rockchip: Add dmc notifier in vop driver
-Date: Fri,  3 Jun 2016 17:55:19 +0800
-Message-Id: <1464947719-6245-7-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 01/10] arm64: marvell: enable Armada 3700 clock drivers
+Date: Fri, 10 Jun 2016 15:23:29 +0200
+Message-Id: <1465565018-14172-2-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-when in ddr frequency scaling process, vop can not do
-enable or disable operate, since dcf will base on vop vblank
-time to do frequency scaling and need to get vop irq if there
-have vop enabled. So need register to dmc notifier, and we can
-get the dmc status.
+This patch enables the support for the clocks drivers used on the
+Armada 3700.
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
-Changes in v1:
-- use wait_event instead usleep, Suggestion by Derek
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 43 +++++++++++++++++++++++++++--
- 1 file changed, 41 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 1c4d5b5..8286048 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -31,6 +31,8 @@
- #include <linux/reset.h>
- #include <linux/delay.h>
- 
-+#include <soc/rockchip/rockchip_dmc.h>
-+
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_gem.h"
- #include "rockchip_drm_fb.h"
-@@ -116,6 +118,10 @@ struct vop {
- 
- 	const struct vop_data *data;
- 
-+	struct notifier_block dmc_nb;
-+	int dmc_in_process;
-+	wait_queue_head_t	wait_dmc_queue;
-+
- 	uint32_t *regsbak;
- 	void __iomem *regs;
- 
-@@ -426,6 +432,21 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
- 	spin_unlock_irqrestore(&vop->irq_lock, flags);
- }
- 
-+static int dmc_notify(struct notifier_block *nb, unsigned long event,
-+		      void *data)
-+{
-+	struct vop *vop = container_of(nb, struct vop, dmc_nb);
-+
-+	if (event == DMCFREQ_ADJUST) {
-+		vop->dmc_in_process = 1;
-+	} else if (event == DMCFREQ_FINISH) {
-+		vop->dmc_in_process = 0;
-+		wake_up(&vop->wait_dmc_queue);
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
- static void vop_enable(struct drm_crtc *crtc)
- {
- 	struct vop *vop = to_vop(crtc);
-@@ -434,6 +455,13 @@ static void vop_enable(struct drm_crtc *crtc)
- 	if (vop->is_enabled)
- 		return;
- 
-+	/*
-+	 * if in dmc scaling frequency process, wait until it finish
-+	 * use 100ms as timeout time.
-+	 */
-+	wait_event_timeout(vop->wait_dmc_queue,
-+			   !vop->dmc_in_process, HZ / 10);
-+
- 	ret = pm_runtime_get_sync(vop->dev);
- 	if (ret < 0) {
- 		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
-@@ -485,6 +513,7 @@ static void vop_enable(struct drm_crtc *crtc)
- 	enable_irq(vop->irq);
- 
- 	drm_crtc_vblank_on(crtc);
-+	rockchip_dmc_get(&vop->dmc_nb);
- 
- 	return;
- 
-@@ -505,6 +534,13 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
- 		return;
- 
- 	/*
-+	 * if in dmc scaling frequency process, wait until it finish
-+	 * use 100ms as timeout time.
-+	 */
-+	wait_event_timeout(vop->wait_dmc_queue,
-+			   !vop->dmc_in_process, HZ / 10);
-+
-+	/*
- 	 * We need to make sure that all windows are disabled before we
- 	 * disable that crtc. Otherwise we might try to scan from a destroyed
- 	 * buffer later.
-@@ -517,7 +553,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
- 		VOP_WIN_SET(vop, win, enable, 0);
- 		spin_unlock(&vop->reg_lock);
- 	}
--
-+	rockchip_dmc_put(&vop->dmc_nb);
- 	drm_crtc_vblank_off(crtc);
- 
- 	/*
-@@ -1243,7 +1279,7 @@ static int vop_create_crtc(struct vop *vop)
- 		ret = -ENOENT;
- 		goto err_cleanup_crtc;
- 	}
--
-+	vop->dmc_nb.notifier_call = dmc_notify;
- 	init_completion(&vop->dsp_hold_completion);
- 	init_completion(&vop->wait_update_complete);
- 	crtc->port = port;
-@@ -1465,6 +1501,9 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
- 	/* IRQ is initially disabled; it gets enabled in power_on */
- 	disable_irq(vop->irq);
- 
-+	init_waitqueue_head(&vop->wait_dmc_queue);
-+	vop->dmc_in_process = 0;
-+
- 	ret = vop_create_crtc(vop);
- 	if (ret)
- 		return ret;
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 7ef1d05859ae..2fdadff9143d 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -73,6 +73,7 @@ config ARCH_MVEBU
+ 	bool "Marvell EBU SoC Family"
+ 	select ARMADA_AP806_SYSCON
+ 	select ARMADA_CP110_SYSCON
++	select ARMADA_37XX_CLK
+ 	select MVEBU_ODMI
+ 	help
+ 	  This enables support for Marvell EBU familly, including:
 -- 
-1.9.1
+2.5.0
