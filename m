@@ -1,43 +1,62 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH 04/11] clk: imx: correct dram pll type
-Date: Wed, 8 Jun 2016 22:33:33 +0800
-Message-ID: <1465396420-27064-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <javier@dowhile0.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <575ABD10.60208@nvidia.com>
+References: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
+	<1465553536-23838-2-git-send-email-ldewangan@nvidia.com>
+	<CABxcv=mrmN5Mzt595ZFgGbOoHJWQMwQ1wiCvcHEiWh_79EbJqQ@mail.gmail.com>
+	<575ABD10.60208@nvidia.com>
+Date: Fri, 10 Jun 2016 09:32:17 -0400
+Message-ID: <CABxcv==7=PZ2HDtryNZHW0CcLaCAkBBT+XWJ0TJRS4uX48k_=w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: max77620: Add clock driver for MAX77620/MAX20024
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Anson Huang <b20788@freescale.com>
+Hello Laxman,
 
-DRAM PLL is a audio/video type PLL, need to correct
-it to get correct ops of PLL.
+On Fri, Jun 10, 2016 at 9:13 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+> On Friday 10 June 2016 06:50 PM, Javier Martinez Canillas wrote:
+>>
+>> Hello Laxman,
+>>
+>> On Fri, Jun 10, 2016 at 6:12 AM, Laxman Dewangan <ldewangan@nvidia.com>
+>> wrote:
+>>>
+>>> MAXIM MAX77620 is the power management IC with multiple DCDC/LDO(
+>>> regulators, RTC, GPIOs, Watchdog, 32KHz clock source etc.
+>>>
+>>> Add support for controlling the 32KHz clock source via clock
+>>> framework.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>> ---
+>>
+>> It looks very similar to the max77686 and max77802 drivers (with only
+>> the difference in number of clock outputs), can you use the helpers in
+>> drivers/clk/clk-max-gen.c ?
+>
+>
+> I have explored that option.
+>
+> The bit location for clock bit on register are same in case of max77686 and
+> max77802 but it is different for the max77620.
+>
 
-Signed-off-by: Anson Huang <b20788@freescale.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, I see.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 1cb866773fc0..dc8c3355a66d 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -395,7 +395,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_PLL_VIDEO_MAIN_SRC] = imx_clk_mux("pll_video_main_src", base + 0x130, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
- 
- 	clks[IMX7D_PLL_ARM_MAIN]  = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_arm_main", "pll_arm_main_src", base + 0x60, 0x7f);
--	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_dram_main", "pll_dram_main_src", base + 0x70, 0x7f);
-+	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_dram_main", "pll_dram_main_src", base + 0x70, 0x7f);
- 	clks[IMX7D_PLL_SYS_MAIN]  = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll_sys_main", "pll_sys_main_src", base + 0xb0, 0x1);
- 	clks[IMX7D_PLL_ENET_MAIN] = imx_clk_pllv3(IMX_PLLV3_ENET_IMX7, "pll_enet_main", "pll_enet_main_src", base + 0xe0, 0x0);
- 	clks[IMX7D_PLL_AUDIO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_audio_main", "pll_audio_main_src", base + 0xf0, 0x7f);
--- 
-1.9.1
+> So until I change it too generic, it will not be possible.
+> Also if it is require then what about all max77686/max77802 and max77620 in
+> single file, the way we did for RTC.
+> We dont need 4 files for the similar driver then.
+>
+
+Indeed, probably is better to have a single driver to handle all these
+IP variants since they seem to be quite similar.
+
+Best regards,
+Javier
