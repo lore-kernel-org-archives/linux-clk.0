@@ -1,34 +1,50 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1462968736-7568-1-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com> <1462968736-7568-1-git-send-email-k.kozlowski@samsung.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Sat, 18 Jun 2016 23:35:55 +0900
-Message-ID: <CA+Ln22HyYd=SqBk_U1_zdiFmFc4tftEKYiibxnrtVA2cQZUX3g@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos3250: Move PLL rates data to init section
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] clk: max77620: Add clock driver for MAX77620/MAX20024
+To: Laxman Dewangan <ldewangan@nvidia.com>,
+ Javier Martinez Canillas <javier@dowhile0.org>
+References: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
+ <1465553536-23838-2-git-send-email-ldewangan@nvidia.com>
+ <CABxcv=mrmN5Mzt595ZFgGbOoHJWQMwQ1wiCvcHEiWh_79EbJqQ@mail.gmail.com>
+ <575ABD10.60208@nvidia.com>
+ <CABxcv==7=PZ2HDtryNZHW0CcLaCAkBBT+XWJ0TJRS4uX48k_=w@mail.gmail.com>
+ <575AC14D.4080907@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Linux Kernel <linux-kernel@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <575ACA8C.4000406@samsung.com>
+Date: Fri, 10 Jun 2016 16:11:24 +0200
+MIME-version: 1.0
+In-reply-to: <575AC14D.4080907@nvidia.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 06/10/2016 03:31 PM, Laxman Dewangan wrote:
+> + Krzysztof,
+> 
+> On Friday 10 June 2016 07:02 PM, Javier Martinez Canillas wrote:
+>> Hello Laxman,
+>>
+>> On Fri, Jun 10, 2016 at 9:13 AM, Laxman Dewangan
+>> <ldewangan@nvidia.com> wrote:
+>>> So until I change it too generic, it will not be possible.
+>>> Also if it is require then what about all max77686/max77802 and
+>>> max77620 in
+>>> single file, the way we did for RTC.
+>>> We dont need 4 files for the similar driver then.
+>>>
+>> Indeed, probably is better to have a single driver to handle all these
+>> IP variants since they seem to be quite similar.
+>>
+>>
+> Yaah, single driver will be very clean approach. But it needs some
+> testing on max77802 and max77686 based platform as I do not have any
+> driver.
+> I will need help on this from you.
 
-2016-05-11 21:12 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> The arrays with initialization data of PLLs can be moved to initconst
-> section because they are referenced only from other initconst-level
-> symbols.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos3250.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+No problems, I have both devices at work so I can provide a tested-by.
 
 Best regards,
-Tomasz
+Krzysztof
