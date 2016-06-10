@@ -1,121 +1,73 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [PATCH v2 04/13] drivers: clk: st: Add clock propagation for audio clocks
-Date: Mon,  6 Jun 2016 11:26:23 +0200
-Message-Id: <1465205192-7888-5-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 05/10] dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+Date: Fri, 10 Jun 2016 15:23:33 +0200
+Message-Id: <1465565018-14172-6-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch allows fine tuning of the quads FS for audio clocks
-accuracy.
+This commit adds the DT binding documentation for the the Xtal clock on
+Armada 3700 used in the Marvell Armada 3700 SoCs.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- .../devicetree/bindings/clock/st/st,flexgen.txt    |  2 ++
- drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ .../bindings/clock/armada3700-xtal-clock.txt       | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-index b7ee5c7..d68f6a5f 100644
---- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-@@ -60,6 +60,8 @@ This binding uses the common clock binding[2].
- Required properties:
- - compatible : shall be:
-   "st,flexgen"
-+  "st,flexgen-audio", "st,flexgen" (enable clock propagation on parent for
-+  audio use case)
- 
- - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
-   outputs).
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 627267c..33d6ced 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -15,6 +15,10 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
-+struct clkgen_data {
-+	unsigned long flags;
+diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+new file mode 100644
+index 000000000000..176c4fe6f0e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+@@ -0,0 +1,28 @@
++* Xtal Clock bindings for Marvell Armada 37xx SoCs
++
++Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
++reading the gpio latch register.
++
++This node must be a subnode of the node exposing the register address
++of the GPIO block where the gpio latch is located.
++
++Required properties:
++- compatible : shall be one of the following:
++	"marvell,armada-3700-xtal-clock"
++- #clock-cells : from common clock binding; shall be set to 0
++
++Optional properties:
++- clock-output-names : from common clock binding; allows overwrite default clock
++	output names ("xtal")
++
++Example:
++gpio1: gpio@13800 {
++	compatible = "marvell,mvebu-gpio-3700",	"syscon", "simple-mfd";
++	reg = <0x13800 0x1000>;
++
++	xtalclk: xtal-clk {
++		compatible = "marvell,armada-3700-xtal-clock";
++		clock-output-names = "xtal";
++		#clock-cells = <0>;
++	};
 +};
-+
- struct flexgen {
- 	struct clk_hw hw;
- 
-@@ -259,6 +263,18 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
- 	return parents;
- }
- 
-+static const struct clkgen_data clkgen_audio = {
-+	.flags = CLK_SET_RATE_PARENT,
-+};
-+
-+static const struct of_device_id flexgen_of_match[] = {
-+	{
-+		.compatible = "st,flexgen-audio",
-+		.data = &clkgen_audio,
-+	},
-+	{}
-+};
-+
- static void __init st_of_flexgen_setup(struct device_node *np)
- {
- 	struct device_node *pnode;
-@@ -267,6 +283,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	const char **parents;
- 	int num_parents, i;
- 	spinlock_t *rlock = NULL;
-+	const struct of_device_id *match;
-+	struct clkgen_data *data = NULL;
- 	unsigned long flex_flags = 0;
- 	int ret;
- 
-@@ -282,6 +300,12 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	if (!parents)
- 		return;
- 
-+	match = of_match_node(flexgen_of_match, np);
-+	if (match) {
-+		data = (struct clkgen_data *)match->data;
-+		flex_flags = data->flags;
-+	}
-+
- 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
- 		goto err;
 -- 
-1.9.1
+2.5.0
