@@ -1,41 +1,81 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V2 1/1] clk: imx6ul: fix gpt2 clock names
-Date: Mon, 13 Jun 2016 15:38:30 +0800
-Message-ID: <1465803510-31944-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <javier@dowhile0.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
+References: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
+Date: Fri, 10 Jun 2016 09:26:46 -0400
+Message-ID: <CABxcv==dd8x3WA1o7v-EoLgUxBye5jqnzQQ6OmPR=T692NYA1A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: max77620: Add DT binding doc for MAX77620 clock
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-fix gpt2 clock names
+Hello Laxman,
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx6ul.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Jun 10, 2016 at 6:12 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> MAXIM MAX77620 is the power management IC with multiple DCDC/LDO
+> regulators, RTC, GPIOs, Watchdog, 32KHz clock source etc.
+>
+> Add DT binding doc for the details of the properties for MAX76620
+> clocks.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+>  .../devicetree/bindings/clock/clk-max77620.txt     | 31 ++++++++++++++++++++++
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 38da5a522d58..d1d7787ce211 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -305,8 +305,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_CAN1_SERIAL]	= imx_clk_gate2("can1_serial",	"can_podf",	base + 0x68,	16);
- 	clks[IMX6UL_CLK_CAN2_IPG]	= imx_clk_gate2("can2_ipg",	"ipg",		base + 0x68,	18);
- 	clks[IMX6UL_CLK_CAN2_SERIAL]	= imx_clk_gate2("can2_serial",	"can_podf",	base + 0x68,	20);
--	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus",	"perclk",	base + 0x68,	24);
--	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial",	"perclk",	base + 0x68,	26);
-+	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt2_bus",	"perclk",	base + 0x68,	24);
-+	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt2_serial",	"perclk",	base + 0x68,	26);
- 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
- 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
- 	clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
--- 
-1.9.1
+The DT binding for the clock outputs found in the other Maxim PMICs
+(max77686 and max77802) are named maxim,max77{686,802} so I think it
+would be better to call this maxim,max7720 for consistency.
+
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/clk-max77620.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/clk-max77620.txt b/Documentation/devicetree/bindings/clock/clk-max77620.txt
+> new file mode 100644
+> index 0000000..cda6ef7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/clk-max77620.txt
+> @@ -0,0 +1,31 @@
+> +* Maxim MAX77620 32KHz clocks *
+> +
+> +Maxim Power Management IC (PMIC) has clock output pins for 32KHz.
+> +
+
+I think it would be nice to mention that this should be defined in the
+node for the max77620 PMIC and probably have a reference to the MFD
+binding. Look how the other max77xxx DT bindings do.
+
+> +This binding uses the common clock binding ./clock-bindings.txt.
+> +
+> +Required Properties:
+> +--------------------
+> +
+> +-#clock-cells : shall be set to 0.
+> +
+> +Example:
+> +
+> +#include <dt-bindings/mfd/max77620.h>
+> +...
+> +
+> +i2c@7000d000 {
+> +       spmic: max77620@3c {
+> +               compatible = "maxim,max77620";
+> +               :::::
+> +               #clock-cells = <0>;
+> +               :::
+> +       };
+> +};
+> +
+> +bluetooth {
+> +       compatible = "bcom,bluuetooth-device";
+> +       clocks = <&smic>;
+> +       clock-names = "in-32k";
+> +       :::
+> +};
+> --
+
+Best regards,
+Javier
