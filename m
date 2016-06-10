@@ -1,279 +1,130 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 10/15] clk: sunxi-ng: Add N-K-factor clock support
-Date: Tue,  7 Jun 2016 22:41:49 +0200
-Message-Id: <20160607204154.31967-11-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 10 Jun 2016 14:48:10 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 6/9] pwms: pwm-ti*: Get the clock from the PWMSS
+ parent when using old bindings
+Message-ID: <20160610124810.GE27142@ulmo.ba.sec>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-7-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZRyEpB+iJ+qUx0kp"
+In-Reply-To: <1462291015-1919-7-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that use a combination of two linear
-multipliers.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Makefile |   1 +
- drivers/clk/sunxi-ng/ccu_nk.c | 147 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nk.h |  73 +++++++++++++++++++++
- 3 files changed, 221 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.h
+--ZRyEpB+iJ+qUx0kp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 2aeccdb26e3f..a201fad6b11d 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -8,4 +8,5 @@ obj-y += ccu_fixed_factor.o
- obj-y += ccu_gate.o
- obj-y += ccu_mp.o
- obj-y += ccu_mux.o
-+obj-y += ccu_nk.o
- obj-y += ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-new file mode 100644
-index 000000000000..4470ffc8cf0d
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -0,0 +1,147 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_nk.h"
-+
-+void ccu_nk_find_best(unsigned long parent, unsigned long rate,
-+		      unsigned int max_n, unsigned int max_k,
-+		      unsigned int *n, unsigned int *k)
-+{
-+	unsigned long best_rate = 0;
-+	unsigned int best_k = 0, best_n = 0;
-+	unsigned int _k, _n;
-+
-+	for (_k = 1; _k <= max_k; _k++) {
-+		for (_n = 1; _n <= max_n; _n++) {
-+			unsigned long tmp_rate = parent * _n * _k;
-+
-+			if (tmp_rate > rate)
-+				continue;
-+
-+			if ((rate - tmp_rate) < (rate - best_rate)) {
-+				best_rate = tmp_rate;
-+				best_k = _k;
-+				best_n = _n;
-+			}
-+		}
-+	}
-+
-+	*k = best_k;
-+	*n = best_n;
-+}
-+
-+static void ccu_nk_disable(struct clk_hw *hw)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_disable(&nk->common, nk->enable);
-+}
-+
-+static int ccu_nk_enable(struct clk_hw *hw)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_enable(&nk->common, nk->enable);
-+}
-+
-+static int ccu_nk_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_is_enabled(&nk->common, nk->enable);
-+}
-+
-+static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned long rate, n, k;
-+	u32 reg;
-+
-+	reg = readl(nk->common.base + nk->common.reg);
-+
-+	n = reg >> nk->n.shift;
-+	n &= (1 << nk->n.width) - 1;
-+
-+	k = reg >> nk->k.shift;
-+	k &= (1 << nk->k.width) - 1;
-+
-+	rate = parent_rate * (n + 1) * (k + 1);
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= nk->fixed_post_div;
-+
-+	return rate;
-+}
-+
-+static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned int n, k;
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= nk->fixed_post_div;
-+
-+	ccu_nk_find_best(*parent_rate, rate,
-+			 1 << nk->n.width, 1 << nk->k.width,
-+			 &n, &k);
-+
-+	rate = *parent_rate * n * k;
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nk->fixed_post_div;
-+
-+	return rate;
-+}
-+
-+static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned long flags;
-+	unsigned int n, k;
-+	u32 reg;
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate * nk->fixed_post_div;
-+
-+	ccu_nk_find_best(parent_rate, rate,
-+			 1 << nk->n.width, 1 << nk->k.width,
-+			 &n, &k);
-+
-+	spin_lock_irqsave(nk->common.lock, flags);
-+
-+	reg = readl(nk->common.base + nk->common.reg);
-+	reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
-+	reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
-+
-+	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
-+	       nk->common.base + nk->common.reg);
-+
-+	spin_unlock_irqrestore(nk->common.lock, flags);
-+
-+	ccu_helper_wait_for_lock(&nk->common, nk->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_nk_ops = {
-+	.disable	= ccu_nk_disable,
-+	.enable		= ccu_nk_enable,
-+	.is_enabled	= ccu_nk_is_enabled,
-+
-+	.recalc_rate	= ccu_nk_recalc_rate,
-+	.round_rate	= ccu_nk_round_rate,
-+	.set_rate	= ccu_nk_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.h b/drivers/clk/sunxi-ng/ccu_nk.h
-new file mode 100644
-index 000000000000..d266dd85f04d
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nk.h
-@@ -0,0 +1,73 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_NK_H_
-+#define _CCU_NK_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_div.h"
-+#include "ccu_mult.h"
-+
-+/*
-+ * struct ccu_nk - Definition of an N-K clock
-+ *
-+ * Clocks based on the formula parent * N * K
-+ */
-+struct ccu_nk {
-+	u16			reg;
-+	u32			enable;
-+	u32			lock;
-+
-+	struct _ccu_mult	n;
-+	struct _ccu_mult	k;
-+
-+	unsigned int		fixed_post_div;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(_struct, _name, _parent, _reg, \
-+					    _nshift, _nwidth,		\
-+					    _kshift, _kwidth,		\
-+					    _gate, _lock, _postdiv,	\
-+					    _flags)			\
-+	struct ccu_nk _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.k		= _SUNXI_CCU_MULT(_kshift, _kwidth),	\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.fixed_post_div	= _postdiv,				\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= (CCU_FEATURE_GATE |		\
-+					   CCU_FEATURE_PLL_LOCK |	\
-+					   CCU_FEATURE_FIXED_POSTDIV),	\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_nk_ops,	\
-+							_flags),	\
-+		},							\
-+	}
-+
-+static inline struct ccu_nk *hw_to_ccu_nk(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_nk, common);
-+}
-+
-+extern const struct clk_ops ccu_nk_ops;
-+
-+#endif /* _CCU_NK_H_ */
--- 
-2.8.3
+On Tue, May 03, 2016 at 10:56:52AM -0500, Franklin S Cooper Jr wrote:
+> When using the old eCAP and ePWM bindings for AM335x and AM437x the clock
+> can be retrieved from the PWMSS parent. Newer bindings will insure that
+> this clock is provided via device tree.
+>=20
+> Therefore, update this driver to support the newer and older bindings. In
+> the case of the older binding being used give a warning.
+>=20
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
+>  drivers/pwm/pwm-tiecap.c   | 7 +++++++
+>  drivers/pwm/pwm-tiehrpwm.c | 7 +++++++
+>  2 files changed, 14 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
+> index 616af76..a0833c8 100644
+> --- a/drivers/pwm/pwm-tiecap.c
+> +++ b/drivers/pwm/pwm-tiecap.c
+> @@ -195,6 +195,7 @@ static const struct pwm_ops ecap_pwm_ops =3D {
+>  };
+> =20
+>  static const struct of_device_id ecap_of_match[] =3D {
+> +	{ .compatible	=3D "ti,am3352-ecap" },
+>  	{ .compatible	=3D "ti,am33xx-ecap" },
+>  	{},
+>  };
+> @@ -213,6 +214,12 @@ static int ecap_pwm_probe(struct platform_device *pd=
+ev)
+>  		return -ENOMEM;
+> =20
+>  	clk =3D devm_clk_get(&pdev->dev, "fck");
+> +
+> +	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33x=
+x-ecap")) {
+> +		dev_warn(&pdev->dev, "Binding is obsolete.\n");
+> +		clk =3D devm_clk_get(pdev->dev.parent, "fck");
+> +	}
+
+I rewrote this slightly for readability:
+
+	struct device_node *np =3D pdev->dev.of_node;
+
+	if (IS_ERR(clk)) {
+		if (of_device_is_compatible(np, "ti,am33xx-ecap")) {
+			...
+		}
+	}
+
+>  	if (IS_ERR(clk)) {
+>  		dev_err(&pdev->dev, "failed to get clock\n");
+>  		return PTR_ERR(clk);
+> diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+> index 6a41e66..cee29a2 100644
+> --- a/drivers/pwm/pwm-tiehrpwm.c
+> +++ b/drivers/pwm/pwm-tiehrpwm.c
+> @@ -426,6 +426,7 @@ static const struct pwm_ops ehrpwm_pwm_ops =3D {
+>  };
+> =20
+>  static const struct of_device_id ehrpwm_of_match[] =3D {
+> +	{ .compatible	=3D "ti,am3352-ehrpwm" },
+>  	{ .compatible	=3D "ti,am33xx-ehrpwm" },
+>  	{},
+>  };
+> @@ -444,6 +445,12 @@ static int ehrpwm_pwm_probe(struct platform_device *=
+pdev)
+>  		return -ENOMEM;
+> =20
+>  	clk =3D devm_clk_get(&pdev->dev, "fck");
+> +
+> +	if (IS_ERR(clk) && of_device_is_compatible(pdev->dev.of_node, "ti,am33x=
+x-ecap")) {
+> +		dev_warn(&pdev->dev, "Binding is obsolete.\n");
+> +		clk =3D devm_clk_get(pdev->dev.parent, "fck");
+> +	}
+> +
+
+Same here.
+
+Thierry
+
+--ZRyEpB+iJ+qUx0kp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXWrcKAAoJEN0jrNd/PrOhv04QAI0lubozNnqPJ+XipFlWkkQZ
+hC5AIPHcpsuwcLgDL4qGMlhX2nrwT0lcLfH4P7rbMszbVpAuTB9QfEqGynApT2+I
+xPXeQeXne/HsK4kBdujR8Iuxr2ZEOvY1xPnMljajYWfm9QTg3YPT/Y7RbhOBnMSK
+mzgjIp7aPxunfM+H0kqA5k+YdPXc2ch/YSfy2pXKIAi33kBaoDNWExWDezUqpZLD
+jvsJK1bJqEPeRf98EcRwibiDh22rJy4KcTjLA+Vy/3CzagO3Z+MwI6OLoQ9KThi8
+YeJ6Zm2XAcCpxJaq0UJEvJFVkbpkvpTWr5pR80IppqMmfVufd7XGIl8+sAaeK7rJ
+M4Ov/ZMtL5NCJ9fSkXj30ZZ3aJ35/PSOc+Hm+t1Vh+oLVAWqof7s0lmhK/f9Z+E1
+/amTWLxKBhTrMLfm3/bEUaDQZwcDTMvC1yQgGqeDF9C/DBKC++52KAJttbq3Arxj
+se0jGT670xB5l03HBp4JGgxJaobeRBBirdRiU2dMdN7dURWJJDwUAnguCgn6FnIX
+nzECwy2AN9CJ/gWsxsr0SYc2UdhTBl45bEFLOydhjJb+oNsi5sYt4Av4vxRTxIv3
+lAOrKixXvejOfswgYbJ7Xktt9cU4sxaMKJiXQwM/0PMuty0l1iuwLxhGhpxS0L7k
+goD2BqJed+O3MGya6hEw
+=1nT8
+-----END PGP SIGNATURE-----
+
+--ZRyEpB+iJ+qUx0kp--
