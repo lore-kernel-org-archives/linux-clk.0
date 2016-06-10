@@ -1,64 +1,71 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 0/4] clk: Combine MAX77686 and MAX77802 driver and extend for MAX77620
-Date: Fri, 17 Jun 2016 16:21:03 +0530
-Message-ID: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 10 Jun 2016 14:37:57 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	bcousson@baylibre.com, tony@atomide.com, linux@arm.linux.org.uk,
+	t-kristo@ti.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] pwm: pwm-tiehrpwm: Update dt binding document to
+ use generic node name
+Message-ID: <20160610123757.GC27142@ulmo.ba.sec>
+References: <1458263723-25770-1-git-send-email-fcooper@ti.com>
+ <1458263723-25770-4-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KDt/GgjP6HVcx58l"
+In-Reply-To: <1458263723-25770-4-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock IP used on the Maxim PMICs max77686 and max77802 are
-same. The configuration of clock register is also same except
-the number of clocks.
-    
-Part of common code utilisation, there is 3 files for these chips
-clock driver, one for common and two files for driver registration.
-    
-Combine both drivers into single file and move common code into
-same common file reduces the 2 files and make max77686 and max77802
-clock driver in single fine. This driver does not depends on the
-parent driver structure. The regmap handle is acquired through
-regmap APIs for the register access.
 
-After comining the driver and DT files, extend the support to MAX77620.
+--KDt/GgjP6HVcx58l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Mar 17, 2016 at 08:15:23PM -0500, Franklin S Cooper Jr wrote:
+> Now that the node name has been changed from ehrpwm to pwm the document
+> should show this proper usage. Also change the unit address in the example
+> from 0 to the proper physical address value that should be used.
+>=20
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
+> Version 3 changes:
+> N/A
+>=20
+> Version 2 changes:
+> Changed the unit address for da850 to match the value in the reg property.
+>=20
+>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-This series is based on discussion from the series
-	clk: max77620: Add clock driver for MAX77620/MAX20024
-On this series, it is proposed to combine all files together.
+Applied, thanks.
 
-Changes form V1:
-- Incorporated all review comment.
-- Collected Testedby/reviewed by.
+Thierry
 
-Changes from V2:
-- Nit fixes and colleced all RB/TB
+--KDt/GgjP6HVcx58l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Laxman Dewangan (4):
-  clk: max77686: Combine Maxim max77686 and max77802 driver
-  clk: Combine DT binding doc for max77686 and max77802
-  clk: max77686: Add DT binding details for PMIC MAX77620
-  clk: max77686: Add support for MAX77620 clocks
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
- .../devicetree/bindings/clock/maxim,max77686.txt   | 118 ++++++++--
- .../devicetree/bindings/clock/maxim,max77802.txt   |  44 ----
- drivers/clk/Kconfig                                |  18 +-
- drivers/clk/Makefile                               |   2 -
- drivers/clk/clk-max-gen.c                          | 194 ---------------
- drivers/clk/clk-max-gen.h                          |  32 ---
- drivers/clk/clk-max77686.c                         | 262 ++++++++++++++++++++-
- drivers/clk/clk-max77802.c                         |  96 --------
- include/dt-bindings/clock/maxim,max77620.h         |  21 ++
- 9 files changed, 368 insertions(+), 419 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
- delete mode 100644 drivers/clk/clk-max-gen.c
- delete mode 100644 drivers/clk/clk-max-gen.h
- delete mode 100644 drivers/clk/clk-max77802.c
- create mode 100644 include/dt-bindings/clock/maxim,max77620.h
+iQIcBAABCAAGBQJXWrSjAAoJEN0jrNd/PrOhltEP/2Sj6ewFRIuy/jeWy82CsRdZ
+l8rHNHpSm/mTHupAuDlLLkkEZVV1rxUkAnHRjUSCP7McirTHvL9KwOb52KOIzBBM
+ODOJrJJQxZOGLgZkb2jKA6bAhHs8t1ziob8gTFMjZ4hQfJbwdNav5oWK9OhJMCBI
+rmPWKcwlQMeE2PM1YdiSqfcfZQnBRSvhSZkX1PfXl0mSAKMke0LSWUyZwtKK38af
+yhk9iRoB2c9j+tyKjnZzjQt33bygUIF80mpwbkKFaOTKxQ9xb3hY8qfTvYZ9gRaQ
+hQJQvZQ7BHTY0zQTLz6AFkdTh5UDBpz0HmoaUXRhivGdrVh0wGXoSBcOOj3vfUj4
+4jl3PioIYufjjsXVk0hFYorrbNd1QI247cBH948N4vcdFYyB2fnL/+JdOTtPGbsy
+mZ+O7dP0JntU231yjEyiJRbuZ+gTPBbQ+M+HGUwq0HsB0901MJ/LJG9Ly7O82Vdv
+J/PQ85KhY1snpCplGG966XfiM8k2HnJeTGyOUEZbmysO30SCr1LnRMGXiEuqmWKI
+tP14X42iQ1/iwLEIlwJ/zj5J9ivkuK8fyoZInYt9zcYnaanBeXnRuLgyR2iJl+aP
+BNnXJtiox9krY5e5ndOdztT7DnjzWv6OQRM3cTP69YFp0EwQjy34D5RhNJHJ/4m9
+k1qRDz7wLlCRr/JpLkam
+=2+ii
+-----END PGP SIGNATURE-----
 
--- 
-2.1.4
+--KDt/GgjP6HVcx58l--
