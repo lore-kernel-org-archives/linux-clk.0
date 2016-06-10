@@ -1,113 +1,89 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin
- Lo <erin.lo@mediatek.com>
-Subject: [PATCH v9 09/10] arm: dts: mt2701: Add clock controller device nodes
-Date: Wed, 22 Jun 2016 15:40:28 +0800
-Message-ID: <1466581229-2342-10-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH 06/10] clk: meson8b: remove mali clk
+Date: Thu,  9 Jun 2016 17:27:43 -0700
+Message-Id: <1465518467-23939-7-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+This clock is undocumented and always orphaned. Get rid of it until we
+have more complete clock tree documentation.
 
-Add clock controller nodes for MT2701, include topckgen, infracfg,
-pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
-bdpsys. This patch also add two oscillators that provide clocks for
-MT2701.
-
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
- arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/clk/meson/meson8b-clkc.c | 22 ----------------------
+ 1 file changed, 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 18596a2..c9a8dbf 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -12,8 +12,10 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
+index 94512b6..dcd8f03 100644
+--- a/drivers/clk/meson/meson8b-clkc.c
++++ b/drivers/clk/meson/meson8b-clkc.c
+@@ -112,11 +112,8 @@ static const struct clk_div_table cpu_div_table[] = {
+ };
  
-+#include <dt-bindings/clock/mt2701-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/mt2701-resets.h>
- #include "skeleton64.dtsi"
- #include "mt2701-pinfunc.h"
+ PNAME(p_clk81)		= { "fclk_div3", "fclk_div4", "fclk_div5" };
+-PNAME(p_mali)		= { "fclk_div3", "fclk_div4", "fclk_div5",
+-			    "fclk_div7", "zero" };
  
-@@ -77,6 +79,20 @@
- 		#clock-cells = <0>;
- 	};
+ static u32 mux_table_clk81[]	= { 6, 5, 7 };
+-static u32 mux_table_mali[]	= { 6, 5, 7, 4, 0 };
  
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	rtc32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000>;
-+		clock-output-names = "rtc32k";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupt-parent = <&gic>;
-@@ -104,6 +120,26 @@
- 		reg = <0 0x10005000 0 0x1000>;
- 	};
+ static const struct composite_conf clk81_conf __initconst = {
+ 	.mux_table		= mux_table_clk81,
+@@ -126,13 +123,6 @@ static const struct composite_conf clk81_conf __initconst = {
+ 	.gate_parm		= PARM(0x00, 7, 1),
+ };
  
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt2701-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt2701-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	pericfg: syscon@10003000 {
-+		compatible = "mediatek,mt2701-pericfg", "syscon";
-+		reg = <0 0x10003000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
- 	watchdog: watchdog@10007000 {
- 		compatible = "mediatek,mt2701-wdt",
- 			     "mediatek,mt6589-wdt";
-@@ -128,6 +164,12 @@
- 		reg = <0 0x10200100 0 0x1c>;
- 	};
+-static const struct composite_conf mali_conf __initconst = {
+-	.mux_table		= mux_table_mali,
+-	.mux_parm		= PARM(0x00, 9, 3),
+-	.div_parm		= PARM(0x00, 0, 7),
+-	.gate_parm		= PARM(0x00, 8, 1),
+-};
+-
+ static struct clk_fixed_rate meson8b_xtal = {
+ 	.fixed_rate = 24000000,
+ 	.hw.init = &(struct clk_init_data){
+@@ -142,15 +132,6 @@ static struct clk_fixed_rate meson8b_xtal = {
+ 	},
+ };
  
-+	apmixedsys: syscon@10209000 {
-+		compatible = "mediatek,mt2701-apmixedsys", "syscon";
-+		reg = <0 0x10209000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@10211000 {
- 		compatible = "arm,cortex-a7-gic";
- 		interrupt-controller;
+-static struct clk_fixed_rate meson8b_zero = {
+-	.fixed_rate = 0,
+-	.hw.init = &(struct clk_init_data){
+-		.name = "zero",
+-		.num_parents = 0,
+-		.ops = &clk_fixed_rate_ops,
+-	},
+-};
+-
+ static struct meson_clk_pll meson8b_fixed_pll = {
+ 	.m = {
+ 		.reg_off = MESON8B_REG_PLL_FIXED,
+@@ -301,8 +282,6 @@ static struct meson_clk_cpu meson8b_cpu_clk = {
+ static const struct clk_conf meson8b_clk_confs[] __initconst = {
+ 	COMPOSITE(MESON8B_REG_HHI_MPEG, CLKID_CLK81, "clk81", p_clk81,
+ 		  CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED, &clk81_conf),
+-	COMPOSITE(MESON8B_REG_MALI, CLKID_MALI, "mali", p_mali,
+-		  CLK_IGNORE_UNUSED, &mali_conf),
+ };
+ 
+ /*
+@@ -315,7 +294,6 @@ static const struct clk_conf meson8b_clk_confs[] __initconst = {
+ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 	.hws = {
+ 		[CLKID_XTAL] = &meson8b_xtal.hw,
+-		[CLKID_ZERO] = &meson8b_zero.hw,
+ 		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
+ 		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
+ 		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
 -- 
-1.9.1
+2.1.4
