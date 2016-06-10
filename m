@@ -7,122 +7,46 @@ Cc: linux-amlogic@lists.infradead.org,
 	victor.wan@amlogic.com,
 	jerry.cao@amlogic.com,
 	xing.xu@amlogic.com
-Subject: [PATCH v2 4/6] clk: meson: fractional pll support
-Date: Wed, 22 Jun 2016 19:01:18 -0700
-Message-Id: <1466647280-17596-5-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
-References: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
+Subject: [PATCH 1/7] clk: meson: add peripheral gate macro
+Date: Thu,  9 Jun 2016 17:32:48 -0700
+Message-Id: <1465518774-26924-2-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
+References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fractional MPLLs are a superset of the existing AmLogic MPLLs. They add
-in a couple of new bitfields for further dividing the clock rate to
-achieve rates with fractional hertz.
+There are a series of peripheral and system gate clocks that fan out
+from the clk81 signal. Add a helper macro to statically initialize these
+gate clocks.
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
-No change in v2.
+ drivers/clk/meson/clkc.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
- drivers/clk/meson/clk-pll.c | 32 ++++++++++++++++++++++++++++++--
- drivers/clk/meson/clkc.h    | 15 +++++++++++++++
- 2 files changed, 45 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 60c6b94fe9b1..4adc1e89212c 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -53,7 +53,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	struct parm *p;
- 	unsigned long parent_rate_mhz = parent_rate / 1000000;
- 	unsigned long rate_mhz;
--	u16 n, m, od;
-+	u16 n, m, frac = 0, od, od2 = 0;
- 	u32 reg;
- 
- 	p = &pll->n;
-@@ -68,7 +68,21 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	reg = readl(pll->base + p->reg_off);
- 	od = PARM_GET(p->width, p->shift, reg);
- 
--	rate_mhz = (parent_rate_mhz * m / n) >> od;
-+	p = &pll->od2;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		od2 = PARM_GET(p->width, p->shift, reg);
-+	}
-+
-+	p = &pll->frac;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		frac = PARM_GET(p->width, p->shift, reg);
-+		rate_mhz = (parent_rate_mhz * m + \
-+				(parent_rate_mhz * frac >> 12)) * 2 / n;
-+		rate_mhz = rate_mhz >> od >> od2;
-+	} else
-+		rate_mhz = (parent_rate_mhz * m / n) >> od >> od2;
- 
- 	return rate_mhz * 1000000;
- }
-@@ -155,6 +169,20 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->od);
- 	writel(reg, pll->base + p->reg_off);
- 
-+	p = &pll->od2;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		reg = PARM_SET(p->width, p->shift, reg, rate_set->od2);
-+		writel(reg, pll->base + p->reg_off);
-+	}
-+
-+	p = &pll->frac;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		reg = PARM_SET(p->width, p->shift, reg, rate_set->frac);
-+		writel(reg, pll->base + p->reg_off);
-+	}
-+
- 	p = &pll->n;
- 	ret = meson_clk_pll_wait_lock(pll, p);
- 	if (ret) {
 diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 73f014691240..53326c32e853 100644
+index f3f3961..9436932 100644
 --- a/drivers/clk/meson/clkc.h
 +++ b/drivers/clk/meson/clkc.h
-@@ -40,7 +40,10 @@ struct pll_rate_table {
- 	u16		m;
- 	u16		n;
- 	u16		od;
-+	u16		od2;
-+	u16		frac;
- };
-+
- #define PLL_RATE(_r, _m, _n, _od)					\
- 	{								\
- 		.rate		= (_r),					\
-@@ -49,12 +52,24 @@ struct pll_rate_table {
- 		.od		= (_od),				\
- 	}								\
+@@ -73,6 +73,20 @@ struct meson_clk_cpu {
+ int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 		void *data);
  
-+#define PLL_FRAC_RATE(_r, _m, _n, _od, _od2, _frac)			\
-+	{								\
-+		.rate		= (_r),					\
-+		.m		= (_m),					\
-+		.n		= (_n),					\
-+		.od		= (_od),				\
-+		.od2		= (_od2),				\
-+		.frac		= (_frac),				\
-+	}								\
++#define MESON_GATE(_name, _reg, _bit)					\
++struct clk_gate gxbb_##_name = { 						\
++	.reg = (void __iomem *) _reg, 					\
++	.bit_idx = (_bit), 						\
++	.lock = &clk_lock,						\
++	.hw.init = &(struct clk_init_data) { 				\
++		.name = #_name,					\
++		.ops = &clk_gate_ops,					\
++		.parent_names = (const char *[]){ "clk81" },		\
++		.num_parents = 1,					\
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), 	\
++	},								\
++};
 +
- struct meson_clk_pll {
- 	struct clk_hw hw;
- 	void __iomem *base;
- 	struct parm m;
- 	struct parm n;
-+	struct parm frac;
- 	struct parm od;
-+	struct parm od2;
- 	const struct pll_rate_table *rate_table;
- 	unsigned int rate_count;
- 	spinlock_t *lock;
+ /* clk_ops */
+ extern const struct clk_ops meson_clk_pll_ro_ops;
+ extern const struct clk_ops meson_clk_pll_ops;
 -- 
 2.1.4
