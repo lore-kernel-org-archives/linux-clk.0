@@ -1,41 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 18:15:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 04/15] clk: sunxi-ng: Add fixed factor clock support
-Message-ID: <20160621011537.GP1521@codeaurora.org>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
- <20160607204154.31967-5-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160607204154.31967-5-maxime.ripard@free-electrons.com>
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 00/10] Add clock support for Armada 37xx SoCs
+Date: Fri, 10 Jun 2016 15:23:28 +0200
+Message-Id: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07, Maxime Ripard wrote:
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_common.h"
-> +
-> +struct ccu_fixed_factor {
-> +	u16			div;
-> +	u16			mult;
-> +
-> +	struct ccu_common	common;
+Hi,
 
-Does this use the common structure although we have no usage for
-the members of struct ccu_common except struct clk_hw? I suppose
-this is done so registering a bunch of clks is easy?
+this series add clock support for the Armada 37xx SoCs.
+
+The design of the drivers is as close as possible as the hardware is,
+with some clocks made of several layers: muxing, divider and gating.
+
+The device tree binding was written in a way that even if we discover
+some change inside the clocks, the binding should not be
+affected. Especially, there are some holes in the clocks, but we
+should be able to add them seamless.
+
+I tried to follow the last update made in the clock framework, I hope
+theses drivers will comply the new guidelines.
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (10):
+  arm64: marvell: enable Armada 3700 clock drivers
+  arm64: dts: marvell: Add xtal clock support for Armada 3700
+  arm64: dts: marvell: add tbg clocks for Armada 37xx
+  arm64: dts: marvell: add peripherals clocks for Armada 37xx
+  dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+  clk: mvebu: Add the xtal clock for Armada 3700 SoC
+  dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
+  clk: mvebu Add the time base generator clocks for Armada 3700
+  dt-bindings: clock: add DT binding for the peripheral clocks on Armada
+    3700
+  clk: mvebu: Add the peripheral clock driver for Armada 3700
+
+ .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
+ .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
+ .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
+ arch/arm64/Kconfig.platforms                       |   1 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi       |  35 ++
+ drivers/clk/mvebu/Kconfig                          |   3 +
+ drivers/clk/mvebu/Makefile                         |   3 +
+ drivers/clk/mvebu/armada-37xx-periph.c             | 462 +++++++++++++++++++++
+ drivers/clk/mvebu/armada-37xx-tbg.c                | 172 ++++++++
+ drivers/clk/mvebu/armada-37xx-xtal.c               |  93 +++++
+ 10 files changed, 894 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+ create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
+ create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
+ create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
