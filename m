@@ -1,52 +1,27 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 28 Jun 2016 10:40:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
-Message-ID: <20160628174028.GC1521@codeaurora.org>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
- <1464381494-27096-11-git-send-email-rklein@nvidia.com>
- <20160622122419.GC26943@ulmo.ba.sec>
- <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 10 Jun 2016 04:36:40 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org,
+	robh+dt@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+	t-kristo@ti.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org
+Subject: Re: [PATCH v1 06/14] ARM: dts: omap5-board-common: Add pdmclk
+ binding for audio
+Message-ID: <20160610113639.GE22406@atomide.com>
+References: <20160530085522.30398-1-peter.ujfalusi@ti.com>
+ <20160530085522.30398-7-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
+In-Reply-To: <20160530085522.30398-7-peter.ujfalusi@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22, Rhyland Klein wrote:
-> On 6/22/2016 8:24 AM, Thierry Reding wrote:
-> > 
-> > Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
-> > omit the second conditional.
-> > 
-> > I wonder if it might be easier to read if this flag was at the end of
-> > the line. There's also the fact that someone may have written a script
-> > that expects the clock name as the first word on the line and may get
-> > confused by this change. If you put it at the very end of the line the
-> > likelihood of upsetting scripts will be reduced.
-> 
-> Yah we can put the mark at the end of the line. I wasn't sure if there
-> was a strong motivation to avoid extending the the width of each line,
-> as sometimes people prefer to try to keep it close to 80 char as
-> possible. I think right now, it was close to that, but might be a little
-> over already. I can switch to that though, as it is less likely to break
-> any automatic parsing scripts.
-> 
+* Peter Ujfalusi <peter.ujfalusi@ti.com> [160530 01:58]:
+> The twl6040 codec is generating the pdmclk, which is used by the McPDM as
+> functional clock.
 
-Nak. clk_summary is about taking a snapshot of the system state
-for things that may be changing rapidly, like consumers (which
-sounds fun to add!), rates, enable/prepare state. Flags are not
-changing. If you want to add flag info into some summary then a
-script should be able to augment clk_summary info (really should
-use the clk_dump in this case though) with whatever flags can be
-read through debugfs already.
+Applying patches 6 - 10 into omap-for-v4.8/dt thanks.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tony
