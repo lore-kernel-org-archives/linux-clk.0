@@ -1,55 +1,53 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 12 Jun 2016 19:33:10 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 04/11] clk: imx: correct dram pll type
-Message-ID: <20160612113310.GB20243@tiger>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-4-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a7795: Correct lvds clock parent
+Date: Fri, 10 Jun 2016 16:22:27 +0300
+Message-ID: <2566506.K23fCkD3hP@avalon>
+In-Reply-To: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
+References: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465396420-27064-4-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 08, 2016 at 10:33:33PM +0800, Dong Aisheng wrote:
-> From: Anson Huang <b20788@freescale.com>
-> 
-> DRAM PLL is a audio/video type PLL, need to correct
-> it to get correct ops of PLL.
-> 
-> Signed-off-by: Anson Huang <b20788@freescale.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Hi Geert,
 
-'clk: imx7d: ' for patch prefix would be more clear.  Updated it and
-applied the patch.
+Thank you for the patch.
 
-Shawn
+On Friday 10 Jun 2016 09:44:33 Geert Uytterhoeven wrote:
+> According to the latest information, the parent clock of the LVDS module
+> clock is the S0D4 clock, not the S2D1 clock.
+> 
+> Note that this change has no influence on actual operation, as the
+> rcar-du LVDS encoder driver doesn't use the parent clock's rate.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 > ---
->  drivers/clk/imx/clk-imx7d.c | 2 +-
+> Will queue in clk-renesas-for-v4.8.
+> 
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 1cb866773fc0..dc8c3355a66d 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -395,7 +395,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->  	clks[IMX7D_PLL_VIDEO_MAIN_SRC] = imx_clk_mux("pll_video_main_src", base + 0x130, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
->  
->  	clks[IMX7D_PLL_ARM_MAIN]  = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_arm_main", "pll_arm_main_src", base + 0x60, 0x7f);
-> -	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_dram_main", "pll_dram_main_src", base + 0x70, 0x7f);
-> +	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_dram_main", "pll_dram_main_src", base + 0x70, 0x7f);
->  	clks[IMX7D_PLL_SYS_MAIN]  = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll_sys_main", "pll_sys_main_src", base + 0xb0, 0x1);
->  	clks[IMX7D_PLL_ENET_MAIN] = imx_clk_pllv3(IMX_PLLV3_ENET_IMX7, "pll_enet_main", "pll_enet_main_src", base + 0xe0, 0x0);
->  	clks[IMX7D_PLL_AUDIO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_audio_main", "pll_audio_main_src", base + 0xf0, 0x7f);
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> b/drivers/clk/renesas/r8a7795-cpg-mssr.c index
+> 8f76af6f454d0823..ad01b0b1bc5fa172 100644
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -180,7 +180,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[]
+> __initconst = { DEF_MOD("du2",			 722,	R8A7795_CLK_S2D1),
+>  	DEF_MOD("du1",			 723,	R8A7795_CLK_S2D1),
+>  	DEF_MOD("du0",			 724,	R8A7795_CLK_S2D1),
+> -	DEF_MOD("lvds",			 727,	R8A7795_CLK_S2D1),
+> +	DEF_MOD("lvds",			 727,	R8A7795_CLK_S0D4),
+>  	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
+>  	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
+>  	DEF_MOD("vin7",			 804,	R8A7795_CLK_S2D1),
+
+-- 
+Regards,
+
+Laurent Pinchart
