@@ -1,64 +1,167 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [RESEND PATCH v2 08/13] ARM: DT: STiH418: Enable clock propagation for audio clocks
-Date: Thu, 16 Jun 2016 11:20:28 +0200
-Message-Id: <1466068833-5055-9-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 06/10] clk: mvebu: Add the xtal clock for Armada 3700 SoC
+Date: Fri, 10 Jun 2016 15:23:34 +0200
+Message-Id: <1465565018-14172-7-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch is used in the clock driver to apply a clock propagation
-flag on the audio clocks of STiH418
+This clock is the parent of all the Armada 3700 clocks. It is a fixed
+rate clock which depends on the gpio configuration read when resetting
+the SoC.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/Kconfig            |  3 ++
+ drivers/clk/mvebu/Makefile           |  1 +
+ drivers/clk/mvebu/armada-37xx-xtal.c | 93 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 97 insertions(+)
+ create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index ae6d997..96b4d7b 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -229,7 +229,7 @@
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index 3165da77d525..fddc8ac5faff 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -24,6 +24,9 @@ config ARMADA_39X_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
  
- 			clk_s_d0_flexgen: clk-s-d0-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-audio", "st,flexgen";
- 
- 				clocks = <&clk_s_d0_quadfs 0>,
- 					 <&clk_s_d0_quadfs 1>,
++config ARMADA_37XX_CLK
++       bool
++
+ config ARMADA_XP_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 7172ef65693d..4257a36d0219 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
+ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
++obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-xtal.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
+ obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
+diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+new file mode 100644
+index 000000000000..fb051a75b2c2
+--- /dev/null
++++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+@@ -0,0 +1,93 @@
++/*
++ * Marvell Armada 37xx SoC xtal clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Gregory CLEMENT <gregory.clement@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define NB_GPIO1_LATCH	0xC
++#define XTAL_MODE	    BIT(31)
++
++static struct clk *xtal_clk;
++
++static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	const char *xtal_name = "xtal";
++	struct device_node *parent;
++	struct regmap *regmap;
++	unsigned int rate;
++	u32 reg;
++	int ret;
++
++	parent = np->parent;
++	if (!parent) {
++		dev_err(&pdev->dev, "no parrent\n");
++		return -ENODEV;
++	}
++
++	regmap = syscon_node_to_regmap(parent);
++	if (IS_ERR(regmap)) {
++		dev_err(&pdev->dev, "cannot get regmap\n");
++		return PTR_ERR(regmap);
++	}
++
++	ret = regmap_read(regmap, NB_GPIO1_LATCH, &reg);
++	if (ret) {
++		dev_err(&pdev->dev, "cannot read from regmap\n");
++		return ret;
++	}
++
++	if (reg & XTAL_MODE)
++		rate = 40000000;
++	else
++		rate = 25000000;
++
++	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
++	xtal_clk = clk_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
++	if (IS_ERR(xtal_clk))
++		return PTR_ERR(xtal_clk);
++	of_clk_add_provider(np, of_clk_src_simple_get, xtal_clk);
++
++	return 0;
++}
++
++static int armada_3700_xtal_clock_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++	clk_unregister_fixed_rate(xtal_clk);
++
++	return 0;
++}
++
++static const struct of_device_id armada_3700_xtal_clock_of_match[] = {
++	{ .compatible = "marvell,armada-3700-xtal-clock", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, armada_3700_xtal_clock_of_match);
++
++static struct platform_driver armada_3700_xtal_clock_driver = {
++	.probe = armada_3700_xtal_clock_probe,
++	.remove = armada_3700_xtal_clock_remove,
++	.driver		= {
++		.name	= "marvell-armada-3700-xtal-clock",
++		.of_match_table = armada_3700_xtal_clock_of_match,
++	},
++};
++
++module_platform_driver(armada_3700_xtal_clock_driver);
++
++MODULE_AUTHOR("Gregory CLEMENT <gregory.clement@free-electrons.com>");
++MODULE_DESCRIPTION("Marvell Armada 37xx SoC xtal clocks driver");
++MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+2.5.0
