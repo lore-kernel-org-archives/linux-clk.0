@@ -1,53 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:43266 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750704AbcF1H1z (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2016 03:27:55 -0400
-Subject: Re: [RESEND PATCH v2 0/5] clk: hisilicon: Fix some problems of
- clk-hi3519
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <577226C0.3020101@hisilicon.com>
-Date: Tue, 28 Jun 2016 15:26:56 +0800
-MIME-Version: 1.0
-In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 01/48] clk: at91: replace usleep() by udelay() calls
+Date: Sat, 11 Jun 2016 00:03:04 +0200
+Message-Id: <1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-    Can this patch be merged into the clk-next? If there are still some
-issues to fix, please let me know. Thank you very much.
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-Regards,
-Jiancheng
+Fix the main and slow clock .prepare() implementations which used to call
+usleep() when the scheduler wasn't ready yet.
 
-On 2016/6/15 14:26, Jiancheng Xue wrote:
-> This patch is base on branch clk-hi3519 in clk tree. It mainly fixes the
-> following issues:
-> 1. Add driver remove path.
-> 2. Fix the ordering issue about clock provider being published.
-> 3. Add error checking upon registering clocks. 
-> 
-> change log
-> v2:
-> -Redivided patches to make sure every patch can be compiled successfully.
-> 
-> Jiancheng Xue (5):
->   reset: hisilicon: change the definition of hisi_reset_init
->   clk: hisilicon: add hisi_clk_alloc function.
->   clk: hisilicon: add error processing for hisi_clk_register_* functions
->   clk: hisilicon: add hisi_clk_unregister_* functions
->   clk: hisilicon: hi3519: add driver remove path and fix some issues
-> 
->  drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
->  drivers/clk/hisilicon/clk.c        |  89 ++++++++++++++++++++++++----
->  drivers/clk/hisilicon/clk.h        |  34 +++++++++--
->  drivers/clk/hisilicon/reset.c      |  19 +++---
->  drivers/clk/hisilicon/reset.h      |   5 +-
->  5 files changed, 220 insertions(+), 43 deletions(-)
-> 
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/clk-main.c | 2 +-
+ drivers/clk/at91/clk-slow.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index 58b5baca670c..12c5062aeb92 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -342,7 +342,7 @@ static int clk_main_probe_frequency(struct regmap *regmap)
+ 		regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
+ 		if (mcfr & AT91_PMC_MAINRDY)
+ 			return 0;
+-		usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
++		udelay(MAINF_LOOP_MIN_WAIT);
+ 	} while (time_before(prep_time, timeout));
+ 
+ 	return -ETIMEDOUT;
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 61090b1146cf..612e893ce994 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -76,7 +76,7 @@ static int clk_slow_osc_prepare(struct clk_hw *hw)
+ 
+ 	writel(tmp | AT91_SCKC_OSC32EN, sckcr);
+ 
+-	usleep_range(osc->startup_usec, osc->startup_usec + 1);
++	udelay(osc->startup_usec);
+ 
+ 	return 0;
+ }
+@@ -195,7 +195,7 @@ static int clk_slow_rc_osc_prepare(struct clk_hw *hw)
+ 
+ 	writel(readl(sckcr) | AT91_SCKC_RCEN, sckcr);
+ 
+-	usleep_range(osc->startup_usec, osc->startup_usec + 1);
++	udelay(osc->startup_usec);
+ 
+ 	return 0;
+ }
+@@ -304,7 +304,7 @@ static int clk_sam9x5_slow_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 	writel(tmp, sckcr);
+ 
+-	usleep_range(SLOWCK_SW_TIME_USEC, SLOWCK_SW_TIME_USEC + 1);
++	udelay(SLOWCK_SW_TIME_USEC);
+ 
+ 	return 0;
+ }
+-- 
+2.8.1
