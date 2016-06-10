@@ -1,48 +1,233 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Stephen Boyd <stephen.boyd@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH 04/34] clk: bcm2835: Migrate to clk_hw based registration and OF APIs
-In-Reply-To: <20160601231533.9354-5-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org> <20160601231533.9354-5-stephen.boyd@linaro.org>
-Date: Thu, 02 Jun 2016 11:25:48 -0700
-Message-ID: <87r3cfa1n7.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 08/10] clk: mvebu Add the time base generator clocks for Armada 3700
+Date: Fri, 10 Jun 2016 15:23:36 +0200
+Message-Id: <1465565018-14172-9-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+These clocks are children of the xtal clock and each one can be selected
+as a source for the peripheral clocks.
 
-Stephen Boyd <stephen.boyd@linaro.org> writes:
+According to the datasheet it should be possible to modify their rate,
+but currently it is not supported.
 
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/clk/mvebu/Makefile          |   1 +
+ drivers/clk/mvebu/armada-37xx-tbg.c | 172 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 173 insertions(+)
+ create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
 
-This looks good, but it'll conflict with the fixes for 4.7.  Could we
-land those first and then put this commit on top of that?
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJXUHosAAoJELXWKTbR/J7oYgkP/i34kKHmGLCvP7DMuGPIBtYh
-vcyP4KM7x/4vw9q9jF3nYLpANHUYxm8nFc6qc8tbxXHQslf6/DaHKwk8tgGxOz4g
-Xr/SIDKuxE3O8H4+zD5sIT2qMTRri5qXev7SZNzfVc75g8+eViJlUCkcWjc1CjOw
-6VX3Plpz6x3i0G+vHySVFlpyd2liLNwc6BHK+fNjrRhBSLSeRmIChSzwNSZJJMIo
-LGbLBpaCX2310VWcqgS6gmYoe60kz7X4SARNyJnU+4E4x180yGdtN8m79RMb5KIf
-I+rRSjL3I2JXkuMj7/zCmcjpAppChMlatW0tWG3OELS7AD3EgN+a5oiQOSXeO7ai
-HQHnRmE4K2ykdUXfVQZjUCVn19Ku+OSle8Qwr+dJp3zX6jpVNRBnEIyG2N0wWFvC
-+cz4Z7oHxpaMT2Z/VawJLtHpLHmeXdOJVKIW/X58HY5YGeVSV/AgNGpQbXIQpuIC
-xNObD2MAFWQ1T7tsJt1jRM4HbpStEfT6TZGGDI0JPZo8mUExldywAuQ5f1QJyYuD
-4ZPe+S4o6jllABAv8on6AZCsPSmn5qJ3adcTni3tupQ+tJqYg13W1QvJupI37JKe
-1hO2ok4T4AE/OaLhtgeo7WG/QB1L4zawPdHxSCAWubNiYZY/iIbJ4NwBaUc7VSPz
-8G47yAdGJB6yfN5CoMx4
-=lFyZ
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 4257a36d0219..72e3512a9d4a 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
+ obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-xtal.o
++obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-tbg.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
+ obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+new file mode 100644
+index 000000000000..e9a331b85a78
+--- /dev/null
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -0,0 +1,172 @@
++/*
++ * Marvell Armada 37xx SoC Time Base Generator clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Gregory CLEMENT <gregory.clement@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#define NUM_TBG	    4
++
++#define TBG_CTRL0		0x4
++#define TBG_CTRL1		0x8
++#define TBG_CTRL7		0x20
++#define TBG_CTRL8		0x30
++
++#define TBG_DIV_MASK		0x1FF
++
++#define TBG_A_REFDIV		0
++#define TBG_B_REFDIV		16
++
++#define TBG_A_FBDIV		2
++#define TBG_B_FBDIV		18
++
++#define TBG_A_VCODIV_SE		0
++#define TBG_B_VCODIV_SE		16
++
++#define TBG_A_VCODIV_DIFF	1
++#define TBG_B_VCODIV_DIFF	17
++
++struct tbg_def {
++	char *name;
++	u32 refdiv_offset;
++	u32 fbdiv_offset;
++	u32 vcodiv_reg;
++	u32 vcodiv_offset;
++};
++
++struct tbg_def tbg[NUM_TBG] = {
++	{"TBG-A-P", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL8, TBG_A_VCODIV_DIFF},
++	{"TBG-B-P", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL8, TBG_B_VCODIV_DIFF},
++	{"TBG-A-S", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL1, TBG_A_VCODIV_SE},
++	{"TBG-B-S", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL1, TBG_B_VCODIV_SE},
++};
++
++static struct clk_onecell_data clk_tbg_data;
++
++unsigned int tbg_get_mult(void __iomem *reg, struct tbg_def *ptbg)
++{
++	u32 val;
++
++	val = readl(reg + TBG_CTRL0);
++
++	return ((val >> ptbg->fbdiv_offset) & TBG_DIV_MASK) << 2;
++}
++
++unsigned int tbg_get_div(void __iomem *reg, struct tbg_def *ptbg)
++{
++	u32 val;
++	unsigned int div;
++
++	val = readl(reg + TBG_CTRL7);
++
++	div = (val >> ptbg->refdiv_offset) & TBG_DIV_MASK;
++	if (div == 0)
++		div = 1;
++	val = readl(reg + ptbg->vcodiv_reg);
++
++	div *= 1 << ((val >>  ptbg->vcodiv_offset) & TBG_DIV_MASK);
++
++	return div;
++}
++
++
++static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	const char *parent_name;
++	struct resource *res;
++	struct clk *parent;
++	void __iomem *reg;
++	int i, ret;
++
++	parent = of_clk_get(np, 0);
++	if (IS_ERR(parent)) {
++		dev_err(dev, "Could get the clock parent\n");
++		return -EINVAL;
++	}
++	parent_name = __clk_get_name(parent);
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(dev, res);
++	if (IS_ERR(reg)) {
++		dev_err(dev, "Could not map the tbg clock registers\n");
++		ret = PTR_ERR(reg);
++		goto put_clk;
++	}
++
++	clk_tbg_data.clk_num = NUM_TBG;
++	clk_tbg_data.clks = devm_kcalloc(dev, clk_tbg_data.clk_num,
++					 sizeof(struct clk *), GFP_KERNEL);
++	if (!clk_tbg_data.clks) {
++		ret = -ENOMEM;
++		goto put_clk;
++	}
++
++	for (i = 0; i < NUM_TBG; i++) {
++		const char *name;
++		unsigned int mult, div;
++
++		name = tbg[i].name;
++		mult = tbg_get_mult(reg, &tbg[i]);
++		div = tbg_get_div(reg, &tbg[i]);
++		clk_tbg_data.clks[i] = clk_register_fixed_factor(NULL, name,
++						 parent_name, 0, mult, div);
++		if (IS_ERR(clk_tbg_data.clks[i]))
++			dev_err(dev, "Can't register TBG clock %s\n", name);
++	}
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_tbg_data);
++
++	return 0;
++
++put_clk:
++	clk_put(parent);
++	return ret;
++}
++
++static int armada_3700_tbg_clock_remove(struct platform_device *pdev)
++{
++	int i;
++
++	of_clk_del_provider(pdev->dev.of_node);
++	for (i = 0; i < clk_tbg_data.clk_num; i++)
++		clk_unregister_fixed_factor(clk_tbg_data.clks[i]);
++
++	return 0;
++}
++
++static const struct of_device_id armada_3700_tbg_clock_of_match[] = {
++	{ .compatible = "marvell,armada-3700-tbg-clock", },
++	{ }
++};
++
++MODULE_DEVICE_TABLE(of, armada_3700_tbg_clock_of_match);
++
++static struct platform_driver armada_3700_tbg_clock_driver = {
++	.probe = armada_3700_tbg_clock_probe,
++	.remove = armada_3700_tbg_clock_remove,
++	.driver		= {
++		.name	= "marvell-armada-3700-tbg-clock",
++		.of_match_table = armada_3700_tbg_clock_of_match,
++	},
++};
++
++module_platform_driver(armada_3700_tbg_clock_driver);
++
++MODULE_AUTHOR("Gregory CLEMENT <gregory.clement@free-electrons.com>");
++MODULE_DESCRIPTION("Marvell Armada 37xx SoC Time Base Generator driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.5.0
