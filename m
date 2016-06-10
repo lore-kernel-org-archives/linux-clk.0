@@ -1,289 +1,234 @@
-Return-Path: <oss@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	yuantian.tang@nxp.com,
-	leoyang.li@nxp.com,
-	xiaofeng.ren@nxp.com,
-	Scott Wood <scottwood@freescale.com>
-Date: Sat, 11 Jun 2016 22:16:26 -0500
-Message-Id: <1465701386-6220-2-git-send-email-oss@buserror.net>
-In-Reply-To: <1465701386-6220-1-git-send-email-oss@buserror.net>
-References: <1465701386-6220-1-git-send-email-oss@buserror.net>
-Subject: [RESEND PATCH 2/2] cpufreq: qoriq: Don't look at clock implementation details
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH 04/10] clk: meson8b: clean up fixed factor clocks
+Date: Thu,  9 Jun 2016 17:27:41 -0700
+Message-Id: <1465518467-23939-5-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Scott Wood <scottwood@freescale.com>
+Remove the fixed factor registration function and helpers. Replace
+unnecessary configuration struct with static initialization of the
+desired clock type.
 
-Get the CPU clock's potential parent clocks from the clock interface
-itself, rather than manually parsing the clocks property to find a
-phandle, looking at the clock-names property of that, and assuming that
-those are valid parent clocks for the cpu clock.
-
-This is necessary now that the clocks are generated based on the clock
-driver's knowledge of the chip rather than a fragile device-tree
-description of the mux options.
-
-We can now rely on the clock driver to ensure that the mux only exposes
-options that are valid.  The cpufreq driver was currently being overly
-conservative in some cases -- for example, the "min_cpufreq =
-get_bus_freq()" restriction only applies to chips with erratum
-A-004510, and whether the freq_mask used on p5020 is needed depends on
-the actual frequencies of the PLLs (FWIW, p5040 has a similar
-limitation but its .freq_mask was zero) -- and the frequency mask
-mechanism made assumptions about particular parent clock indices that
-are no longer valid.
-
-Signed-off-by: Scott Wood <scottwood@freescale.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
-Previously sent as http://patchwork.ozlabs.org/patch/519804/
+ drivers/clk/meson/clkc.c         | 46 ----------------------------
+ drivers/clk/meson/clkc.h         | 19 ------------
+ drivers/clk/meson/meson8b-clkc.c | 66 ++++++++++++++++++++++++++++++++++++----
+ 3 files changed, 60 insertions(+), 71 deletions(-)
 
- drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++----------------------------
- 1 file changed, 40 insertions(+), 97 deletions(-)
-
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 53d8c3f..f94943a 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -37,53 +37,20 @@ struct cpu_data {
- 	struct thermal_cooling_device *cdev;
- };
+diff --git a/drivers/clk/meson/clkc.c b/drivers/clk/meson/clkc.c
+index 2161ea3..275da27 100644
+--- a/drivers/clk/meson/clkc.c
++++ b/drivers/clk/meson/clkc.c
+@@ -125,48 +125,6 @@ error:
+ 	return clk;
+ }
  
-+/*
-+ * Don't use cpufreq on this SoC -- used when the SoC would have otherwise
-+ * matched a more generic compatible.
-+ */
-+#define SOC_BLACKLIST		1
-+
- /**
-  * struct soc_data - SoC specific data
-- * @freq_mask: mask the disallowed frequencies
-- * @flag: unique flags
-+ * @flags: SOC_xxx
-  */
- struct soc_data {
--	u32 freq_mask[4];
--	u32 flag;
+-static struct clk * __init
+-meson_clk_register_fixed_factor(const struct clk_conf *clk_conf,
+-				void __iomem *clk_base)
+-{
+-	struct clk *clk;
+-	const struct fixed_fact_conf *fixed_fact_conf;
+-	const struct parm *p;
+-	unsigned int mult, div;
+-	u32 reg;
+-
+-	fixed_fact_conf = &clk_conf->conf.fixed_fact;
+-
+-	mult = clk_conf->conf.fixed_fact.mult;
+-	div = clk_conf->conf.fixed_fact.div;
+-
+-	if (!mult) {
+-		mult = 1;
+-		p = &fixed_fact_conf->mult_parm;
+-		if (MESON_PARM_APPLICABLE(p)) {
+-			reg = readl(clk_base + clk_conf->reg_off + p->reg_off);
+-			mult = PARM_GET(p->width, p->shift, reg);
+-		}
+-	}
+-
+-	if (!div) {
+-		div = 1;
+-		p = &fixed_fact_conf->div_parm;
+-		if (MESON_PARM_APPLICABLE(p)) {
+-			reg = readl(clk_base + clk_conf->reg_off + p->reg_off);
+-			mult = PARM_GET(p->width, p->shift, reg);
+-		}
+-	}
+-
+-	clk = clk_register_fixed_factor(NULL,
+-			clk_conf->clk_name,
+-			clk_conf->clks_parent[0],
+-			clk_conf->flags,
+-			mult, div);
+-
+-	return clk;
+-}
+-
+ void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
+ 				    unsigned int nr_confs,
+ 				    void __iomem *clk_base)
+@@ -178,10 +136,6 @@ void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
+ 		const struct clk_conf *clk_conf = &clk_confs[i];
+ 
+ 		switch (clk_conf->clk_type) {
+-		case CLK_FIXED_FACTOR:
+-			clk = meson_clk_register_fixed_factor(clk_conf,
+-							      clk_base);
+-			break;
+ 		case CLK_COMPOSITE:
+ 			clk = meson_clk_register_composite(clk_conf,
+ 							   clk_base);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 0bb4fb8..97dd4d7 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -69,13 +69,6 @@ struct meson_clk_pll {
+ 
+ #define to_meson_clk_pll(_hw) container_of(_hw, struct meson_clk_pll, hw)
+ 
+-struct fixed_fact_conf {
+-	unsigned int	div;
+-	unsigned int	mult;
+-	struct parm	div_parm;
+-	struct parm	mult_parm;
 -};
 -
--#define FREQ_MASK	1
--/* see hardware specification for the allowed frqeuencies */
--static const struct soc_data sdata[] = {
--	{ /* used by p2041 and p3041 */
--		.freq_mask = {0x8, 0x8, 0x2, 0x2},
--		.flag = FREQ_MASK,
--	},
--	{ /* used by p5020 */
--		.freq_mask = {0x8, 0x2},
--		.flag = FREQ_MASK,
--	},
--	{ /* used by p4080, p5040 */
--		.freq_mask = {0},
--		.flag = 0,
--	},
-+	u32 flags;
+ struct composite_conf {
+ 	struct parm		mux_parm;
+ 	struct parm		div_parm;
+@@ -90,7 +83,6 @@ struct composite_conf {
+ #define PNAME(x) static const char *x[]
+ 
+ enum clk_type {
+-	CLK_FIXED_FACTOR,
+ 	CLK_COMPOSITE,
+ 	CLK_CPU,
+ };
+@@ -104,22 +96,11 @@ struct clk_conf {
+ 	int				num_parents;
+ 	unsigned long			flags;
+ 	union {
+-		struct fixed_fact_conf		fixed_fact;
+ 		const struct composite_conf		*composite;
+ 		const struct clk_div_table	*div_table;
+ 	} conf;
  };
  
--/*
-- * the minimum allowed core frequency, in Hz
-- * for chassis v1.0, >= platform frequency
-- * for chassis v2.0, >= platform frequency / 2
-- */
--static u32 min_cpufreq;
--static const u32 *fmask;
+-#define FIXED_FACTOR_DIV(_ci, _cn, _cp, _f, _d)				\
+-	{								\
+-		.clk_type			= CLK_FIXED_FACTOR,	\
+-		.clk_id				= (_ci),		\
+-		.clk_name			= (_cn),		\
+-		.clks_parent			= (_cp),		\
+-		.num_parents			= ARRAY_SIZE(_cp),	\
+-		.conf.fixed_fact.div		= (_d),			\
+-	}								\
 -
--#if defined(CONFIG_ARM)
--static int get_cpu_physical_id(int cpu)
--{
--	return topology_core_id(cpu);
--}
--#else
--static int get_cpu_physical_id(int cpu)
--{
--	return get_hard_smp_processor_id(cpu);
--}
--#endif
--
- static u32 get_bus_freq(void)
- {
- 	struct device_node *soc;
-@@ -101,9 +68,10 @@ static u32 get_bus_freq(void)
- 	return sysfreq;
- }
- 
--static struct device_node *cpu_to_clk_node(int cpu)
-+static struct clk *cpu_to_clk(int cpu)
- {
--	struct device_node *np, *clk_np;
-+	struct device_node *np;
-+	struct clk *clk;
- 
- 	if (!cpu_present(cpu))
- 		return NULL;
-@@ -112,37 +80,28 @@ static struct device_node *cpu_to_clk_node(int cpu)
- 	if (!np)
- 		return NULL;
- 
--	clk_np = of_parse_phandle(np, "clocks", 0);
--	if (!clk_np)
--		return NULL;
--
-+	clk = of_clk_get(np, 0);
- 	of_node_put(np);
--
--	return clk_np;
-+	return clk;
- }
- 
- /* traverse cpu nodes to get cpu mask of sharing clock wire */
- static void set_affected_cpus(struct cpufreq_policy *policy)
- {
--	struct device_node *np, *clk_np;
- 	struct cpumask *dstp = policy->cpus;
-+	struct clk *clk;
- 	int i;
- 
--	np = cpu_to_clk_node(policy->cpu);
--	if (!np)
--		return;
--
- 	for_each_present_cpu(i) {
--		clk_np = cpu_to_clk_node(i);
--		if (!clk_np)
-+		clk = cpu_to_clk(i);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: no clock for cpu %d\n", __func__, i);
- 			continue;
-+		}
- 
--		if (clk_np == np)
-+		if (clk_is_match(policy->clk, clk))
- 			cpumask_set_cpu(i, dstp);
--
--		of_node_put(clk_np);
- 	}
--	of_node_put(np);
- }
- 
- /* reduce the duplicated frequencies in frequency table */
-@@ -200,7 +159,7 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- {
- 	struct device_node *np, *pnode;
- 	int i, count, ret;
--	u32 freq, mask;
-+	u32 freq;
- 	struct clk *clk;
- 	struct cpufreq_frequency_table *table;
- 	struct cpu_data *data;
-@@ -221,17 +180,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 		goto err_nomem2;
- 	}
- 
--	pnode = of_parse_phandle(np, "clocks", 0);
--	if (!pnode) {
--		pr_err("%s: could not get clock information\n", __func__);
--		goto err_nomem2;
--	}
-+	count = clk_get_num_parents(policy->clk);
- 
--	count = of_property_count_strings(pnode, "clock-names");
- 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
- 	if (!data->pclk) {
- 		pr_err("%s: no memory\n", __func__);
--		goto err_node;
-+		goto err_nomem2;
- 	}
- 
- 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
-@@ -240,23 +194,11 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 		goto err_pclk;
- 	}
- 
--	if (fmask)
--		mask = fmask[get_cpu_physical_id(cpu)];
--	else
--		mask = 0x0;
--
- 	for (i = 0; i < count; i++) {
--		clk = of_clk_get(pnode, i);
-+		clk = clk_get_parent_by_index(policy->clk, i);
- 		data->pclk[i] = clk;
- 		freq = clk_get_rate(clk);
--		/*
--		 * the clock is valid if its frequency is not masked
--		 * and large than minimum allowed frequency.
--		 */
--		if (freq < min_cpufreq || (mask & (1 << i)))
--			table[i].frequency = CPUFREQ_ENTRY_INVALID;
--		else
--			table[i].frequency = freq / 1000;
-+		table[i].frequency = freq / 1000;
- 		table[i].driver_data = i;
- 	}
- 	freq_table_redup(table, count);
-@@ -290,10 +232,7 @@ err_nomem1:
- 	kfree(table);
- err_pclk:
- 	kfree(data->pclk);
--err_node:
--	of_node_put(pnode);
- err_nomem2:
--	policy->driver_data = NULL;
- 	kfree(data);
- err_np:
- 	of_node_put(np);
-@@ -357,12 +296,20 @@ static struct cpufreq_driver qoriq_cpufreq_driver = {
- 	.attr		= cpufreq_generic_attr,
+ #define CPU(_ro, _ci, _cn, _cp, _dt)					\
+ 	{								\
+ 		.reg_off			= (_ro),		\
+diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
+index a3d8e66..6571e66 100644
+--- a/drivers/clk/meson/meson8b-clkc.c
++++ b/drivers/clk/meson/meson8b-clkc.c
+@@ -110,7 +110,6 @@ static const struct clk_div_table cpu_div_table[] = {
+ 	{ /* sentinel */ },
  };
  
-+static const struct soc_data blacklist = {
-+	.flags = SOC_BLACKLIST,
+-PNAME(p_fclk_div)	= { "fixed_pll" };
+ PNAME(p_cpu_clk)	= { "sys_pll" };
+ PNAME(p_clk81)		= { "fclk_div3", "fclk_div4", "fclk_div5" };
+ PNAME(p_mali)		= { "fclk_div3", "fclk_div4", "fclk_div5",
+@@ -232,12 +231,62 @@ static struct meson_clk_pll meson8b_sys_pll = {
+ 	},
+ };
+ 
++static struct clk_fixed_factor meson8b_fclk_div2 = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div2",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
 +};
 +
- static const struct of_device_id node_matches[] __initconst = {
--	{ .compatible = "fsl,p2041-clockgen", .data = &sdata[0], },
--	{ .compatible = "fsl,p3041-clockgen", .data = &sdata[0], },
--	{ .compatible = "fsl,p5020-clockgen", .data = &sdata[1], },
--	{ .compatible = "fsl,p4080-clockgen", .data = &sdata[2], },
--	{ .compatible = "fsl,p5040-clockgen", .data = &sdata[2], },
-+	/* e6500 cannot use cpufreq due to erratum A-008083 */
-+	{ .compatible = "fsl,b4420-clockgen", &blacklist },
-+	{ .compatible = "fsl,b4860-clockgen", &blacklist },
-+	{ .compatible = "fsl,t2080-clockgen", &blacklist },
-+	{ .compatible = "fsl,t4240-clockgen", &blacklist },
++static struct clk_fixed_factor meson8b_fclk_div3 = {
++	.mult = 1,
++	.div = 3,
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div3",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
 +
-+	{ .compatible = "fsl,ls1021a-clockgen", },
-+	{ .compatible = "fsl,p4080-clockgen", },
-+	{ .compatible = "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
- 	{}
++static struct clk_fixed_factor meson8b_fclk_div4 = {
++	.mult = 1,
++	.div = 4,
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div4",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor meson8b_fclk_div5 = {
++	.mult = 1,
++	.div = 5,
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div5",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor meson8b_fclk_div7 = {
++	.mult = 1,
++	.div = 7,
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div7",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
++
+ static const struct clk_conf meson8b_clk_confs[] __initconst = {
+-	FIXED_FACTOR_DIV(CLKID_FCLK_DIV2, "fclk_div2", p_fclk_div, 0, 2),
+-	FIXED_FACTOR_DIV(CLKID_FCLK_DIV3, "fclk_div3", p_fclk_div, 0, 3),
+-	FIXED_FACTOR_DIV(CLKID_FCLK_DIV4, "fclk_div4", p_fclk_div, 0, 4),
+-	FIXED_FACTOR_DIV(CLKID_FCLK_DIV5, "fclk_div5", p_fclk_div, 0, 5),
+-	FIXED_FACTOR_DIV(CLKID_FCLK_DIV7, "fclk_div7", p_fclk_div, 0, 7),
+ 	CPU(MESON8B_REG_SYS_CPU_CNTL1, CLKID_CPUCLK, "a5_clk", p_cpu_clk,
+ 	    cpu_div_table),
+ 	COMPOSITE(MESON8B_REG_HHI_MPEG, CLKID_CLK81, "clk81", p_clk81,
+@@ -260,6 +309,11 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
+ 		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
+ 		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
++		[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
++		[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
++		[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
++		[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
++		[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
+ 	},
+ 	.num = CLK_NR_CLKS,
  };
-@@ -380,16 +327,12 @@ static int __init qoriq_cpufreq_init(void)
- 
- 	match = of_match_node(node_matches, np);
- 	data = match->data;
--	if (data) {
--		if (data->flag)
--			fmask = data->freq_mask;
--		min_cpufreq = get_bus_freq();
--	} else {
--		min_cpufreq = get_bus_freq() / 2;
--	}
- 
- 	of_node_put(np);
- 
-+	if (data && data->flags & SOC_BLACKLIST)
-+		return -ENODEV;
-+
- 	ret = cpufreq_register_driver(&qoriq_cpufreq_driver);
- 	if (!ret)
- 		pr_info("Freescale QorIQ CPU frequency scaling driver\n");
 -- 
-2.5.0
+2.1.4
