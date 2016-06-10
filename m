@@ -1,165 +1,146 @@
-Return-Path: <dianders@google.com>
-MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <2376423.L1zs1HaIGm@diego>
-References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com> <2376423.L1zs1HaIGm@diego>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 21 Jun 2016 17:31:16 -0700
-Message-ID: <CAD=FV=V5UvQGtYQ26gZ+U7+TygEWuqRoHhiH8SiQSK7GcvkF5w@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for
- dclk_vop0_div on RK3399
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Xing Zheng <zhengxing@rock-chips.com>, elaine zhang <elaine.zhang@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>, Brian Norris <briannorris@chromium.org>,
-	Yakir Yang <ykk@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH 08/10] clk: meson8b: convert to platform_driver
+Date: Thu,  9 Jun 2016 17:27:45 -0700
+Message-Id: <1465518467-23939-9-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Heiko,
+This patch creates a proper platform_driver for the meson8b clock
+controller. Use of CLK_OF_DECLARE is removed, and can be added back in
+later if very early registration of some clocks is required.
 
-On Mon, Jun 13, 2016 at 3:46 PM, Heiko St=C3=BCbner <heiko@sntech.de> wrote=
-:
-> Am Sonntag, 12. Juni 2016, 17:48:48 schrieb Xing Zheng:
->> The functions and features VOP0 more complete than VOP1's, we need to
->> use it dclk_vop0_div operate VPLLI, and let VOP0 as the default primary
->> screen.
->>
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> ---
->>
->>  drivers/clk/rockchip/clk-rk3399.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3399.c
->> b/drivers/clk/rockchip/clk-rk3399.c index 7ecb12c3..6affa75 100644
->> --- a/drivers/clk/rockchip/clk-rk3399.c
->> +++ b/drivers/clk/rockchip/clk-rk3399.c
->> @@ -1157,7 +1157,7 @@ static struct rockchip_clk_branch
->> rk3399_clk_branches[] __initdata =3D { GATE(HCLK_VOP0_NOC, "hclk_vop0_no=
-c",
->> "hclk_vop0_pre", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(28), 0, GFLAGS),
->>
->> -     COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gp=
-ll_p, 0,
->> +     COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gp=
-ll_p,
->> CLK_SET_RATE_PARENT, RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
->>                       RK3399_CLKGATE_CON(10), 12, GFLAGS),
->
-> The vpll is a possible source for multiple clocks (cci, aclk_vop0, dclk_v=
-op0,
-> clk_vop0_pwm, aclk_vop1, dclk_vop1, clk_vop1_pwm), so allowing one clock =
-to
-> hog the rate setting, might influence the other consumers of the vpll as =
-well.
-
-OK, so let's think this through.
-
-1. If we want to be able to support a wide variety of devices plugged
-into an external display connector, we need _some_ type of PLL that
-can change dynamically when the system is up.  On rk3399 there are new
-fractional clocks available (yay!) but only for low speed pixel clocks
-(boo!).  On rk3288 even those weren't there.
-
-2. There are no PLLs dedicated to be used only for the pixel clock.
-No matter what PLL we choose to use we _might_ end up changing some
-else's rate when we change the pixel clock since someone else could be
-a child.
-
-2a) If we are careful with our clock tree we actually _can_ totally
-avoid changing people's rates.  On rk3288 there's nothing else in the
-system that really _needs_ NPLL and on rk3388 nothing really _needs_
-VPLL.
-
-2b) We could also try to do something dynamic like you proposed in
-<https://patchwork.kernel.org/patch/8993811>, but presumably if a
-child of NPLL/VPLL is really flexible about its rate (and thus could
-handle this new rate), we'd be better off just starting that child off
-parented somewhere else.  This relies on the fact that nothing really
-_needs_ NPLL/VPLL.  Note that in rk3399, all muxings that include vpll
-also include at least cpll and gpll; in rk3288 all muxings that
-include npll also include at least cpll and gpll
-
-2c) So, this means that if we are on a system that needs to support a
-wide range of pixels clocks, we should ahead of time reparent everyone
-else on another PLL and leave NPLL/VPLL as dynamic.
-
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
+ drivers/clk/meson/meson8b-clkc.c | 67 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 18 deletions(-)
 
-Let's think about use cases.  As far as I can think of, we have these.
-Note that I'll call VPLL (rk3399) / NPLL (rk3288) the "dynamic" PLL.
-
-
-A) There is some other important non-pixel-clock use of the "dynamic"
-PLL where it's sub-optimal (or impossible) to use another PLL.
-
-B) No important non-pixel-clock use for the "dynamic PLL".  Support
-for arbitrary pixel clocks not important at all.
-
-C) No important non-pixel-clock use for the "dynamic PLL".  Support
-for arbitrary pixel clocks important for one display, not for the
-other.
-
-D) No important non-pixel-clock use for the "dynamic PLL".  Support
-for arbitrary pixel clocks important for two displays.
-
-
-I don't know of anyone in use case A), but if you do then please yell.
-
-For B) we might have other things currently parented from the
-"dynamic" PLL, but presumably these clocks are either not used or
-could be reparented elsewhere.
-
-Case C) is a device with a builtin display where the builtin display
-can run fine on a pixel clock derived from CPLL or GPLL.  We might
-need something like
-<https://chromium-review.googlesource.com/#/c/354165/2>
-
-Case D) is a device with two external connectors which might be used
-at the same time.  You either need to pick one connector to get the
-dynamic pixel clock (at boot? first come first served? userspace?) or
-somehow rejigger your PLLs to allow two PLLs to be dynamic (don't
-laugh, potentially GPLL could run at 1188 MHz and then you could
-divide by 3 and get roughly 396 MHz, so you could actually just parent
-everything on GPLL and make CPLL a second dynamic PLL).
-
----
-
-OK, so what do we do?  Personally I can't see us coming up with a
-one-size fits all approach, can you?  That means some type of
-configuration.  ...and, as seen by the assigned-clocks device tree
-binding, _some_ types of configuration is allowed in the device tree
-presuming it is well thought out and describing how the designers of
-the hardware "intended" it to be used.
-
-So maybe:
-
-i) Unless there's a counter example, I see no reason to let any clocks
-other than the VOP display clocks parent on the "dynamic" PLL.  If we
-later find a counter example then presumably we should add a device
-tree property on that board.  We could have code at boot time that
-goes through all clocks parented on "dynamic" PLL and reparents them
-(trying to keep the rate?), they disallows future muxing to the
-"dynamic" PLL.
-
-ii) It seems sane to me to add a device tree property to the board
-that will effectively enable CLK_SET_RATE_PARENT on one of the
-dclk_vop clocks and forcing it to the "dynamic" PLL (no
-auto-remuxing).  Maybe we would add something to the HDMI node, for
-instance, like "rockchip,intended-dclk-pll =3D <&...>".  Then somehow
-this would need to affect whichever VOP was assigned to HDMI.
-
-iii) If later someone can propose how to handle D) above, we can
-handle it then.  Until a solution is proposed those boards would work
-like today.
-
----
-
-OK, what was long.  Thoughts?
-
-
--Doug
+diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
+index 57dea03..b1902e9 100644
+--- a/drivers/clk/meson/meson8b-clkc.c
++++ b/drivers/clk/meson/meson8b-clkc.c
+@@ -2,6 +2,9 @@
+  * Copyright (c) 2015 Endless Mobile, Inc.
+  * Author: Carlo Caione <carlo@endlessm.com>
+  *
++ * Copyright (c) 2016 BayLibre, Inc.
++ * Michael Turquette <mturquette@baylibre.com>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -17,11 +20,10 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/kernel.h>
+-#include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/slab.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
+ 
+ #include "clkc.h"
+ 
+@@ -350,18 +352,19 @@ static struct meson_clk_pll *const meson8b_clk_plls[] = {
+ 	&meson8b_sys_pll,
+ };
+ 
+-static void __init meson8b_clkc_init(struct device_node *np)
++static int meson8b_clkc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *clk_base;
+ 	int ret, clkid, i;
+ 	struct clk_hw *parent_hw;
+ 	struct clk *parent_clk;
++	struct device *dev = &pdev->dev;
+ 
+ 	/*  Generic clocks and PLLs */
+-	clk_base = of_iomap(np, 1);
++	clk_base = of_iomap(dev->of_node, 1);
+ 	if (!clk_base) {
+ 		pr_err("%s: Unable to map clk base\n", __func__);
+-		return;
++		return -ENXIO;
+ 	}
+ 
+ 	/* Populate base address for PLLs */
+@@ -386,9 +389,9 @@ static void __init meson8b_clkc_init(struct device_node *np)
+ 			continue;
+ 
+ 		/* FIXME convert to devm_clk_register */
+-		ret = clk_hw_register(NULL, meson8b_hw_onecell_data.hws[clkid]);
++		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[clkid]);
+ 		if (ret)
+-			goto unregister;
++			goto iounmap;
+ 	}
+ 
+ 	/*
+@@ -411,17 +414,45 @@ static void __init meson8b_clkc_init(struct device_node *np)
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for cpu_clk\n",
+ 				__func__);
+-		goto unregister_clk_nb;
++		goto iounmap;
+ 	}
+ 
+-	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &meson8b_hw_onecell_data);
+-	return;
++	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++			&meson8b_hw_onecell_data);
+ 
+-/* FIXME remove after converting to platform_driver/devm_clk_register */
+-unregister_clk_nb:
+-	clk_notifier_unregister(parent_clk, &meson8b_a5_clk.clk_nb);
+-unregister:
+-	for (clkid = CLK_NR_CLKS - 1; clkid >= 0; clkid--)
+-		clk_hw_unregister(meson8b_hw_onecell_data.hws[clkid]);
++iounmap:
++	iounmap(clk_base);
++	return ret;
+ }
+-CLK_OF_DECLARE(meson8b_clock, "amlogic,meson8b-clkc", meson8b_clkc_init);
++
++static const struct of_device_id meson8b_clkc_match_table[] = {
++	{ .compatible = "amlogic,meson8b-clkc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, meson8b_match_table);
++
++static struct platform_driver meson8b_driver = {
++	.probe		= meson8b_clkc_probe,
++	.driver		= {
++		.name	= "meson8b-clkc",
++		.of_match_table = meson8b_clkc_match_table,
++	},
++};
++
++static int __init meson8b_clkc_init(void)
++{
++	return platform_driver_register(&meson8b_driver);
++}
++module_init(meson8b_clkc_init);
++
++static void __exit meson8b_clkc_exit(void)
++{
++	platform_driver_unregister(&meson8b_driver);
++}
++module_exit(meson8b_clkc_exit);
++
++MODULE_DESCRIPTION("AmLogic S805 / Meson8b Clock Controller Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:meson8b-clkc");
++MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
++MODULE_AUTHOR("Carlo Caione <carlo@endlessm.com>");
+-- 
+2.1.4
