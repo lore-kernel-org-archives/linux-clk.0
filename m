@@ -1,40 +1,59 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: dianders@chromium.org, elaine.zhang@rock-chips.com, huangtao@rock-chips.com, briannorris@chromium.org, ykk@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for dclk_vop0_div on RK3399
-Date: Tue, 14 Jun 2016 00:46:34 +0200
-Message-ID: <2376423.L1zs1HaIGm@diego>
-In-Reply-To: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com>
-References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:62829 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751883AbcFKR4F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Sat, 11 Jun 2016 13:56:05 -0400
+Message-Id: <cover.1465666788.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Sat, 11 Jun 2016 19:39:48 +0200
+Subject: [PATCH v2 0/3] clk: sunxi-ng: Add the A83T clocks
+To: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Sonntag, 12. Juni 2016, 17:48:48 schrieb Xing Zheng:
-> The functions and features VOP0 more complete than VOP1's, we need to
-> use it dclk_vop0_div operate VPLLI, and let VOP0 as the default primary
-> screen.
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> ---
-> 
->  drivers/clk/rockchip/clk-rk3399.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c
-> b/drivers/clk/rockchip/clk-rk3399.c index 7ecb12c3..6affa75 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -1157,7 +1157,7 @@ static struct rockchip_clk_branch
-> rk3399_clk_branches[] __initdata = { GATE(HCLK_VOP0_NOC, "hclk_vop0_noc",
-> "hclk_vop0_pre", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(28), 0, GFLAGS),
-> 
-> -	COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gpll_p, 0,
-> +	COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gpll_p,
-> CLK_SET_RATE_PARENT, RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
->  			RK3399_CLKGATE_CON(10), 12, GFLAGS),
+This patch series adds the clocks of the sunxi A83T in the "modern"
+clock framework proposed by Maxime Ripard.
+It applies on the V2 of his patch series.
 
-The vpll is a possible source for multiple clocks (cci, aclk_vop0, dclk_vop0, 
-clk_vop0_pwm, aclk_vop1, dclk_vop1, clk_vop1_pwm), so allowing one clock to 
-hog the rate setting, might influence the other consumers of the vpll as well.
+It is currently being tested on a Banana Pi M3 with the legacy u-boot.
+- working:
+	mmc0
+	mmc2 (eMMC) but slow clock
+	ths
+	uart0
+	usb0
+- not working:
+	mmc1 (wifi/bt)
+	video (machine freeze on reading/writing the DE I/O memory)
+- not yet tested
+	audio
+	prcm
+
+Jean-Francois Moine (3):
+  clk: sunxi-ng: Add N-D-M-P-factor clock support
+  clk: sunxi-ng: Add the A83T clocks and resets
+  dt: sun8i: Define the clocks of the A83T
+
+ arch/arm/boot/dts/sun8i-a83t.dtsi      |  18 +-
+ drivers/clk/sunxi-ng/Makefile          |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c  | 675 +++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_common.h      |   1 +
+ drivers/clk/sunxi-ng/ccu_ndmp.c        | 239 ++++++++++++
+ drivers/clk/sunxi-ng/ccu_ndmp.h        |  96 +++++
+ include/dt-bindings/clock/sun8i-a83t.h | 150 ++++++++
+ include/dt-bindings/reset/sun8i-a83t.h |  94 +++++
+ 8 files changed, 1270 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.h
+ create mode 100644 include/dt-bindings/clock/sun8i-a83t.h
+ create mode 100644 include/dt-bindings/reset/sun8i-a83t.h
+
+-- 
+2.8.4
+
