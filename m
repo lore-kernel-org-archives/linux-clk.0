@@ -1,98 +1,111 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Thu, 30 Jun 2016 16:18:49 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>, devicetree@vger.kernel.org,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Julien Grall <julien.grall@arm.com>, xen-devel@lists.xenproject.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [Xen-devel] [PATCH v2] xen/arm: register clocks used by the
- hypervisor
-Message-ID: <20160630151523.GA29700@leverpostej>
-References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
- <20160630142136.GE20363@leverpostej>
- <57753328.9060300@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <57753328.9060300@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from host.buserror.net ([209.198.135.123]:49616 "EHLO
+	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751057AbcFKCNU (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2016 22:13:20 -0400
+Message-ID: <1465611186.22191.169.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+	Kumar Gala <galak@codeaurora.org>
+Date: Fri, 10 Jun 2016 21:13:07 -0500
+In-Reply-To: <3225846.9EJ0sHv0XK@wuerfel>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+	 <5513501.AmZs7h1vI2@wuerfel> <1464830660.22191.6.camel@buserror.net>
+	 <3225846.9EJ0sHv0XK@wuerfel>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of
+ arch/powerpc"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On Thu, Jun 30, 2016 at 04:56:40PM +0200, Dirk Behme wrote:
-> On 30.06.2016 16:21, Mark Rutland wrote:
-> >On Thu, Jun 30, 2016 at 12:32:32PM +0200, Dirk Behme wrote:
-> >>+- clocks: one or more clocks to be registered.
-> >>+  Xen hypervisor drivers might replace native drivers, resulting in
-> >>+  clocks not registered by these native drivers. To avoid that these
-> >>+  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
-> >>+  register them in the hypervisor node.
-> >>+  An example for this are the clocks of the serial driver. If the clocks
-> >>+  used by the serial hardware interface are not registered by the serial
-> >>+  driver the serial output might stop once clk_disable_unused() is called.
-> >
-> >This shouldn't be described in terms of the Linux implementation details
-> >like clk_disable_unused. Those can change at any time, and don't define
-> >the contract as such.
+On Thu, 2016-06-02 at 11:01 +0200, Arnd Bergmann wrote:
+> On Wednesday, June 1, 2016 8:24:20 PM CEST Scott Wood wrote:
+> > On Mon, 2016-05-30 at 15:18 +0200, Arnd Bergmann wrote:
+> > > All users of this driver are PowerPC specific and the header file
+> > > has no business in the global include/linux/ hierarchy, so move
+> > > it back before anyone starts using it on ARM.
+> > > 
+> > > This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
+> > > 
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> > > This part of the series is not required for the eSDHC quirk,
+> > > but it restores the asm/fsl_guts.h header so it doesn't accidentally
+> > > get abused for this in the future. I found two drivers outside of
+> > > arch/powerpc that already accessed the registers directly, but the
+> > > functions look fairly contained, and can be easily hidden in an
+> > > #ifdef CONFIG_PPC
+> > 
+> > NACK
+> > 
+> > Besides adding ifdef pollution for no good reason, this register block is
+> > used
+> > on some ARM chips as well.  Why is it a problem if "anyone starts using it
+> > on
+> > ARM"?
 > 
-> Ok. I remove that from the description. Thanks!
+> It's just not a good interface when it's defined as "this is the layout of
+> a register area that any driver can ioremap() if they can figure out the
+> device node".
 
-Great, thanks.
+That's why I want to move accesses into one guts driver.
 
-> >What exactly is the contract here? I assume that you don't want the
-> >kernel to alter the state of these clocks in any way,
-> 
-> I don't think so. I think what we want is that the kernel just don't
-> disable the (from kernel's point of view) "unused" clocks. I think
-> we get this from the fact that using 'clk_ignore_unused' is a
-> working workaround for this issue.
+>  It's not uncommon to have register areas like that, but
+> normally you have at the minimum a 'syscon' device to handle locking
+> between drivers accessing the same registers and to avoid having to map
+> the same area multiple times.
 
-What if the clock (or a parent thereof) is shared with another device?
+syscon requires device tree changes.
 
-Surely you don't want that other driver to change the rate (changing the
-rate of the UART behind Xen's back)?
+I don't see read-modify-write operations in regmap -- how does locking around
+an individual, inherently-atomic load or store help?
 
-I appreciate that clk_ignore_unused might work on platforms today, but
-that relies on the behaviour of drivers, which might change. It may also
-not work on other platforms in future, in cases like the above.
+> If we need to use 'guts' registers on ARM, we can find a way to abstract
+> them properly for the given use cases, using a syscon or a driver with
+> exported functions, but just making a PowerPC platform specific header
+> global to all Linux drivers by putting it into include/linux doesn't seem
+> right.
 
-> >e.g. the rate cannot be changed, they must be left always on, parent
-> >clocks cannot be altered if that would result in momentary jitter.
-> >
-> >I suspect it may be necessary to do more to ensure that, but I'm not
-> >familiar enough with the clocks subsystem to say.
-> >
-> >Are we likely to need to care about regulators, GPIOs, resets, etc? I
-> >worry that this may be the tip of hte iceberg
-> 
-> I don't think so. If there is a user in the kernel of the clock,
-> fine. Then hopefully the user in the kernel knows what he is doing
-> with the clock and then he should do what ever he wants.
+Again, it's not PowerPC-specific!  It started that way but then the same
+register block got put onto some ARM chips.
 
-I'm not sure that's true. A user of the clock may know nothing about
-other users. As far as I can see, nothing prevents it from changing the
-clock rate.
+It's not global to "all Linux drivers", just the ones that choose to include
+an fsl-specific header.
 
-While drivers in the same kernel can co-ordinate to avoid problems such
-as that, we can't do that if we know nothing about the user hidden by
-Xen.
+If and when all uses of guts are moved into the guts driver, the header can be
+moved into drivers/soc/fsl.
 
->From looking at the Xen bug tracker, it's not clear which
-platforms/devices this is necessary for, so it's still not clear to me
-if we need to care about regulators, GPIOs, resets, and so on.
+> Note that the header file uses a structure definition rather than the more
+> common macros with register offsets, which is fine for a driver that has
+> its own registers and abstracts them, but it doesn't really work with
+> the regmap interface, so if we want to use it with syscon, it also needs to
+> be rewritten.
 
-Do we know which platforms in particular we need this for?
+We don't want to use it with syscon.  If we did, the solution wouldn't be to
+move the header back to arch/powerpc, but to convert the struct into offsets.
 
-> As there is a user in the kernel, we don't have to care about
-> 'accidentally' disabling it.
-> 
-> Just let us care about the clocks there is no user.
+-Scott
 
-As above, I don't believe that alone is sufficient in general, though it
-may happen to be for a particular platform. Without information
-regarding the affected platform(s), it's rather difficult to tell.
-
-Thanks,
-Mark.
