@@ -1,57 +1,95 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
-	Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: ti: fapll: fix address space warnings
-Date: Tue,  7 Jun 2016 15:05:37 +0100
-Message-Id: <1465308337-18047-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:51277 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751171AbcFKHtv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 11 Jun 2016 03:49:51 -0400
+Date: Sat, 11 Jun 2016 09:49:48 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/48] clk: at91: replace usleep() by udelay() calls
+Message-ID: <20160611094948.07c5487b@bbrezillon>
+In-Reply-To: <1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com>
+	<1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix the following warnings from casting "void __iomem *" pointers
-to u32 when using sparse:
+On Sat, 11 Jun 2016 00:03:04 +0200
+Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
 
-drivers/clk/ti/fapll.c:583:13: warning: cast removes address space of expression
-drivers/clk/ti/fapll.c:623:21: warning: cast removes address space of expression
+> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> 
+> Fix the main and slow clock .prepare() implementations which used to call
+> usleep() when the scheduler wasn't ready yet.
+> 
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+>  drivers/clk/at91/clk-main.c | 2 +-
+>  drivers/clk/at91/clk-slow.c | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+> index 58b5baca670c..12c5062aeb92 100644
+> --- a/drivers/clk/at91/clk-main.c
+> +++ b/drivers/clk/at91/clk-main.c
+> @@ -342,7 +342,7 @@ static int clk_main_probe_frequency(struct regmap *regmap)
+>  		regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
+>  		if (mcfr & AT91_PMC_MAINRDY)
+>  			return 0;
+> -		usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
+> +		udelay(MAINF_LOOP_MIN_WAIT);
+>  	} while (time_before(prep_time, timeout));
+>  
+>  	return -ETIMEDOUT;
+> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+> index 61090b1146cf..612e893ce994 100644
+> --- a/drivers/clk/at91/clk-slow.c
+> +++ b/drivers/clk/at91/clk-slow.c
+> @@ -76,7 +76,7 @@ static int clk_slow_osc_prepare(struct clk_hw *hw)
+>  
+>  	writel(tmp | AT91_SCKC_OSC32EN, sckcr);
+>  
+> -	usleep_range(osc->startup_usec, osc->startup_usec + 1);
+> +	udelay(osc->startup_usec);
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org
----
- drivers/clk/ti/fapll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you're using udelay() you should probably move the code in
+->prepare() into ->enable(). The same goes for the following changes.
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index 66a0d0e..d765f4a 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -43,14 +43,14 @@
- #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
- 
- /* The bypass bit is inverted on the ddr_pll.. */
--#define fapll_is_ddr_pll(va)	(((u32)(va) & 0xffff) == 0x0440)
-+#define fapll_is_ddr_pll(va)	(((u32 __force)(va) & 0xffff) == 0x0440)
- 
- /*
-  * The audio_pll_clk1 input is hard wired to the 27MHz bypass clock,
-  * and the audio_pll_clk1 synthesizer is hardwared to 32KiHz output.
-  */
--#define is_ddr_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x044c)
--#define is_audio_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x04a8)
-+#define is_ddr_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x044c)
-+#define is_audio_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x04a8)
- 
- /* Synthesizer divider register */
- #define SYNTH_LDMDIV1		BIT(8)
+>  
+>  	return 0;
+>  }
+> @@ -195,7 +195,7 @@ static int clk_slow_rc_osc_prepare(struct clk_hw *hw)
+>  
+>  	writel(readl(sckcr) | AT91_SCKC_RCEN, sckcr);
+>  
+> -	usleep_range(osc->startup_usec, osc->startup_usec + 1);
+> +	udelay(osc->startup_usec);
+>  
+>  	return 0;
+>  }
+> @@ -304,7 +304,7 @@ static int clk_sam9x5_slow_set_parent(struct clk_hw *hw, u8 index)
+>  
+>  	writel(tmp, sckcr);
+>  
+> -	usleep_range(SLOWCK_SW_TIME_USEC, SLOWCK_SW_TIME_USEC + 1);
+> +	udelay(SLOWCK_SW_TIME_USEC);
+>  
+>  	return 0;
+>  }
+
+
+
 -- 
-2.8.1
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
