@@ -1,149 +1,100 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 30 Jun 2016 22:40:01 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: megous@megous.com
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
- application method
-Message-ID: <20160630204001.GC5485@lukather>
-References: <20160625034511.7966-1-megous@megous.com>
- <20160625034511.7966-7-megous@megous.com>
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
-In-Reply-To: <20160625034511.7966-7-megous@megous.com>
+In-Reply-To: <20160602152059.GC31124@shlinux2>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com> <20160602152059.GC31124@shlinux2>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Sun, 12 Jun 2016 22:58:10 +0800
+Message-ID: <CAA+hA=ST4PMFJxECec29SYQ1wuhNbWBrP4eB3b6aG9wcYZjhJA@mail.gmail.com>
+Subject: Re: [RESEND PATCH 0/8] clk: core: support clocks which requires
+ parents on
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Jun 2, 2016 at 11:20 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+> On Wed, Apr 20, 2016 at 05:34:32PM +0800, Dong Aisheng wrote:
+>> This is a RESEND patch series.
+>> The original one can be found at here:
+>> http://www.spinics.net/lists/arm-kernel/msg435136.html
+>> It has no functional changes but improve the commit message and
+>> comments a bit.
+>>
+>> This patch series adds support in clock framework for clocks which all the
+>> operations like gate/ungate, set_rate, set_parent must require its parent
+>> clock on.
+>>
+>> This special HW requirement can be found on Freescale i.MX7D platform.
+>> Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
+>> (see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
+>> And there may be other SoCs in the same situation.
+>>
+>> Current clock core can not support such type of clock well.
+>>
+>> This patch introduce a new flag CLK_SET_PARENT_ON to handle this special
+>> case in clock core that enable its parent clock firstly for each operation
+>> and disable it later after operation complete.
+>>
+>> There're two special cases for handling this issue:
+>>
+>> One is fixing the possible disabling clocks while its parent is already off
+>> during kernel booting phase in clk_disable_unused_subtree()
+>> Since this state misalign only happens during booting time,
+>> so we simply enable the parent clocks before disable it if flag is set.
+>> For normal clk_disable after kernel booting, there's no such issue
+>> since the clock tree is already created which makes sure no such issue exist.
+>>
+>> Another special case is for set_parent() operation.
+>> It requires both parent, old one and new one, to be enabled at the same
+>> time during the operation.
+>>
+>> Patch 1~4 does this work.
+>>
+>> After clk core supports mx7d type clocks, we don't have to enable all clock
+>> by default anymore, then we remove the enable of all clocks code and instead
+>> only enable set of minimum required clocks.
+>>
+>> Patch 5~8 does this work.
+>>
+>> The whole patch series is based on for-next branch of clock tree:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+>>
+>
+> Hi Stephen,
+>
+> Could you give some comments about this patch series?
+>
 
---2JFBq9zoW8cOFH7v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ping...
 
-Hi,
-
-On Sat, Jun 25, 2016 at 05:45:03AM +0200, megous@megous.com wrote:
-> From: Ondrej Jirman <megous@megous.com>
->=20
-> PLL1 on H3 requires special factors application algorithm,
-> when the rate is changed. This algorithm was extracted
-> from the arisc code that handles frequency scaling
-> in the BSP kernel.
->=20
-> This commit adds optional apply function to
-> struct factors_data, that can implement non-trivial
-> factors application method, when necessary.
->=20
-> Also struct clk_factors_config is extended with position
-> of the PLL lock flag.
-
-Have you tested the current implementation, and found that it was not
-working, or did you duplicate the arisc code directly?
-
->  /**
-> + * sun8i_h3_apply_pll1_factors() - applies n, k, m, p factors to the
-> + * register using an algorithm that tries to reserve the PLL lock
-> + */
-> +
-> +static void sun8i_h3_apply_pll1_factors(struct clk_factors *factors, str=
-uct factors_request *req)
-> +{
-> +	const struct clk_factors_config *config =3D factors->config;
-> +	u32 reg;
-> +
-> +	/* Fetch the register value */
-> +	reg =3D readl(factors->reg);
-> +
-> +	if (FACTOR_GET(config->pshift, config->pwidth, reg) < req->p) {
-> +		reg =3D FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
-> +
-> +		writel(reg, factors->reg);
-> +		__delay(2000);
-> +	}
-
-So there was some doubts about the fact that P was being used, or at
-least that it was useful.
-
-> +	if (FACTOR_GET(config->mshift, config->mwidth, reg) < req->m) {
-> +		reg =3D FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
-> +
-> +		writel(reg, factors->reg);
-> +		__delay(2000);
-> +	}
-> +
-> +	reg =3D FACTOR_SET(config->nshift, config->nwidth, reg, req->n);
-> +	reg =3D FACTOR_SET(config->kshift, config->kwidth, reg, req->k);
-> +
-> +	writel(reg, factors->reg);
-> +	__delay(20);
-> +
-> +	while (!(readl(factors->reg) & (1 << config->lock)));
-
-So, they are applying the dividers first, and then applying the
-multipliers, and then wait for the PLL to stabilize.
-
-> +
-> +	if (FACTOR_GET(config->mshift, config->mwidth, reg) > req->m) {
-> +		reg =3D FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
-> +
-> +		writel(reg, factors->reg);
-> +		__delay(2000);
-> +	}
-> +
-> +	if (FACTOR_GET(config->pshift, config->pwidth, reg) > req->p) {
-> +		reg =3D FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
-> +
-> +		writel(reg, factors->reg);
-> +		__delay(2000);
-> +	}
-
-However, this is kind of weird, why would you need to re-apply the
-dividers? Nothing really changes. Have you tried without that part?
-
-Since this is really specific, I guess you could simply make the
-clk_ops for the nkmp clocks public, and just re-implement set_rate
-using that logic.
-
-You might also need to set an upper limit on P, since the last value
-(4) is not a valid one.
-
-I guess you could do that by adding a max field in the __ccu_div
-structure.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---2JFBq9zoW8cOFH7v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXdYOhAAoJEBx+YmzsjxAgzR4QAL1Bbup57A7vQfC+ANzgg+rq
-e0jZNc/c3Z/yphg5ixmDQ2dDqrNjRKuehAcgejRaEKRVvSPhK2N+WK16n6fBXDdv
-Kzi0axLyq2Jq/Hptsa+AT3EDmG0DJ8rj/lp2lEc1C7dPfVukf5rh1fFe26jHIa2t
-CIHBWwBxzdytxiiY7n/MPhELRULyYe96UHjfnjCiBZG6XAB0DuBKw9+BaZvTk5rU
-jrmfePNx7nPG1yvCC+OS7/Gg+p4rnlPpeP4VrmrP0OZGqGJRsP8eGJszQT+hfOjJ
-oe1n2oi2I5gqc/VkZBosvRstILiFMldoMXO9dExSiqBiwDoSmcdZfbMDDC9A3d2g
-xmLL4tpM4iut0Qi18acVINZ7MFogrOnFTQMUN+JmhxTgiMbfh9QipyWV892TfTk4
-vTEd1zIb+hdFnsNghlUh8zpYBC52crtadsIz3HUqZbyuh3MIQP3zRK0hI2QrKUz2
-2+jFxfOn1OOMdyYVggAUyhn3iJ4I+ksPQprfUAFu47PxodXdeWw7Gt0N7fVw336p
-S6/w5l7kXrD+bwQFj16/bWanEwvHsIv42HhNgslQHbtPpJS0sQElxN6fs8qNLe/1
-oCJJS/xk63Ku011jJYa9rvuhAT1BZlhi0hIsbnL5R6cbYm2MQqry6zVpKRFXZrNb
-9B13S8poycqalBEUnxyF
-=YDC5
------END PGP SIGNATURE-----
-
---2JFBq9zoW8cOFH7v--
+> Regards
+> Dong Aisheng
+>
+>> Dong Aisheng (8):
+>>   clk: introduce clk_core_enable_lock and clk_core_disable_lock
+>>     functions
+>>   clk: move clk_disable_unused after clk_core_disable_unprepare function
+>>   clk: core: support clocks which requires parents on (part 1)
+>>   clk: core: support clocks which requires parents on (part 2)
+>>   clk: imx: re-order and concentrate the same type of clk api
+>>   clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
+>>   clk: imx7d: using api with flag CLK_OPS_PARENT_ON
+>>   clk: imx7d: only enable minimum required clocks
+>>
+>>  drivers/clk/clk.c            | 329 +++++++++++--------
+>>  drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
+>>  drivers/clk/imx/clk.h        |  90 ++++--
+>>  include/linux/clk-provider.h |   2 +
+>>  4 files changed, 623 insertions(+), 530 deletions(-)
+>>
+>> --
+>> 1.9.1
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
