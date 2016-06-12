@@ -1,153 +1,289 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH 8/8] tty: serial: fsl_lpuart: Add support for RS-485
-Date: Thu, 9 Jun 2016 20:40:39 +0530
-Message-ID: <20160609151039.20817-9-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <oss@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	yuantian.tang@nxp.com,
+	leoyang.li@nxp.com,
+	xiaofeng.ren@nxp.com,
+	Scott Wood <scottwood@freescale.com>
+Date: Sat, 11 Jun 2016 22:57:15 -0500
+Message-Id: <1465703835-2777-2-git-send-email-oss@buserror.net>
+In-Reply-To: <1465703835-2777-1-git-send-email-oss@buserror.net>
+References: <1465703835-2777-1-git-send-email-oss@buserror.net>
+Subject: [v2 PATCH 2/2] cpufreq: qoriq: Don't look at clock implementation details
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable Vybrid's build-in support for RS-485 auto RTS for controlling
-line direction of RS-485 transceiver driver.
+From: Scott Wood <scottwood@freescale.com>
 
-Enable RS485 feature by either using ioctrl 'TIOCSRS485' or enable it in
-the device tree by setting 'linux,rs485-enabled-at-boot-time' property.
+Get the CPU clock's potential parent clocks from the clock interface
+itself, rather than manually parsing the clocks property to find a
+phandle, looking at the clock-names property of that, and assuming that
+those are valid parent clocks for the cpu clock.
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+This is necessary now that the clocks are generated based on the clock
+driver's knowledge of the chip rather than a fragile device-tree
+description of the mux options.
+
+We can now rely on the clock driver to ensure that the mux only exposes
+options that are valid.  The cpufreq driver was currently being overly
+conservative in some cases -- for example, the "min_cpufreq =
+get_bus_freq()" restriction only applies to chips with erratum
+A-004510, and whether the freq_mask used on p5020 is needed depends on
+the actual frequencies of the PLLs (FWIW, p5040 has a similar
+limitation but its .freq_mask was zero) -- and the frequency mask
+mechanism made assumptions about particular parent clock indices that
+are no longer valid.
+
+Signed-off-by: Scott Wood <scottwood@freescale.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 78 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 72 insertions(+), 6 deletions(-)
+v2: no changes
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 134090a..4d1fca4 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -917,6 +917,52 @@ static void lpuart_dma_rx_free(struct uart_port *port)
- 	sport->dma_rx_cookie = -EINVAL;
+ drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++----------------------------
+ 1 file changed, 40 insertions(+), 97 deletions(-)
+
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 53d8c3f..f94943a 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -37,53 +37,20 @@ struct cpu_data {
+ 	struct thermal_cooling_device *cdev;
+ };
+ 
++/*
++ * Don't use cpufreq on this SoC -- used when the SoC would have otherwise
++ * matched a more generic compatible.
++ */
++#define SOC_BLACKLIST		1
++
+ /**
+  * struct soc_data - SoC specific data
+- * @freq_mask: mask the disallowed frequencies
+- * @flag: unique flags
++ * @flags: SOC_xxx
+  */
+ struct soc_data {
+-	u32 freq_mask[4];
+-	u32 flag;
+-};
+-
+-#define FREQ_MASK	1
+-/* see hardware specification for the allowed frqeuencies */
+-static const struct soc_data sdata[] = {
+-	{ /* used by p2041 and p3041 */
+-		.freq_mask = {0x8, 0x8, 0x2, 0x2},
+-		.flag = FREQ_MASK,
+-	},
+-	{ /* used by p5020 */
+-		.freq_mask = {0x8, 0x2},
+-		.flag = FREQ_MASK,
+-	},
+-	{ /* used by p4080, p5040 */
+-		.freq_mask = {0},
+-		.flag = 0,
+-	},
++	u32 flags;
+ };
+ 
+-/*
+- * the minimum allowed core frequency, in Hz
+- * for chassis v1.0, >= platform frequency
+- * for chassis v2.0, >= platform frequency / 2
+- */
+-static u32 min_cpufreq;
+-static const u32 *fmask;
+-
+-#if defined(CONFIG_ARM)
+-static int get_cpu_physical_id(int cpu)
+-{
+-	return topology_core_id(cpu);
+-}
+-#else
+-static int get_cpu_physical_id(int cpu)
+-{
+-	return get_hard_smp_processor_id(cpu);
+-}
+-#endif
+-
+ static u32 get_bus_freq(void)
+ {
+ 	struct device_node *soc;
+@@ -101,9 +68,10 @@ static u32 get_bus_freq(void)
+ 	return sysfreq;
  }
  
-+static int lpuart_config_rs485(struct uart_port *port,
-+			struct serial_rs485 *rs485)
-+{
-+	struct lpuart_port *sport = container_of(port,
-+			struct lpuart_port, port);
-+
-+	u8 modem = readb(sport->port.membase + UARTMODEM) &
-+		~(UARTMODEM_TXRTSPOL | UARTMODEM_TXRTSE);
-+	writeb(modem, sport->port.membase + UARTMODEM);
-+
-+	if (rs485->flags & SER_RS485_ENABLED) {
-+		/* Enable auto RS-485 RTS mode */
-+		modem |= UARTMODEM_TXRTSE;
-+
-+		/*
-+		 * RTS needs to be logic HIGH either during transer _or_ after
-+		 * transfer, other variants are not supported by the hardware.
-+		 */
-+
-+		if (!(rs485->flags & (SER_RS485_RTS_ON_SEND |
-+				SER_RS485_RTS_AFTER_SEND)))
-+			rs485->flags |= SER_RS485_RTS_ON_SEND;
-+
-+		if (rs485->flags & SER_RS485_RTS_ON_SEND &&
-+				rs485->flags & SER_RS485_RTS_AFTER_SEND)
-+			rs485->flags &= ~SER_RS485_RTS_AFTER_SEND;
-+
-+		/*
-+		 * The hardware defaults to RTS logic HIGH while transfer.
-+		 * Switch polarity in case RTS shall be logic HIGH
-+		 * after transfer.
-+		 * Note: UART is assumed to be active high.
-+		 */
-+		if (rs485->flags & SER_RS485_RTS_ON_SEND)
-+			modem &= ~UARTMODEM_TXRTSPOL;
-+		else if (rs485->flags & SER_RS485_RTS_AFTER_SEND)
-+			modem |= UARTMODEM_TXRTSPOL;
-+	}
-+
-+	/* Store the new configuration */
-+	sport->port.rs485 = *rs485;
-+
-+	writeb(modem, sport->port.membase + UARTMODEM);
-+	return 0;
-+}
-+
- static unsigned int lpuart_get_mctrl(struct uart_port *port)
+-static struct device_node *cpu_to_clk_node(int cpu)
++static struct clk *cpu_to_clk(int cpu)
  {
- 	unsigned int temp = 0;
-@@ -950,17 +996,22 @@ static unsigned int lpuart32_get_mctrl(struct uart_port *port)
- static void lpuart_set_mctrl(struct uart_port *port, unsigned int mctrl)
- {
- 	unsigned char temp;
-+	struct lpuart_port *sport = container_of(port,
-+				struct lpuart_port, port);
+-	struct device_node *np, *clk_np;
++	struct device_node *np;
++	struct clk *clk;
  
--	temp = readb(port->membase + UARTMODEM) &
-+	/* Make sure RXRTSE bit is not set when RS485 is enabled */
-+	if (!(sport->port.rs485.flags & SER_RS485_ENABLED)) {
-+		temp = readb(sport->port.membase + UARTMODEM) &
- 			~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
+ 	if (!cpu_present(cpu))
+ 		return NULL;
+@@ -112,37 +80,28 @@ static struct device_node *cpu_to_clk_node(int cpu)
+ 	if (!np)
+ 		return NULL;
  
--	if (mctrl & TIOCM_RTS)
--		temp |= UARTMODEM_RXRTSE;
-+		if (mctrl & TIOCM_RTS)
-+			temp |= UARTMODEM_RXRTSE;
- 
--	if (mctrl & TIOCM_CTS)
--		temp |= UARTMODEM_TXCTSE;
-+		if (mctrl & TIOCM_CTS)
-+			temp |= UARTMODEM_TXCTSE;
- 
--	writeb(temp, port->membase + UARTMODEM);
-+		writeb(temp, port->membase + UARTMODEM);
-+	}
+-	clk_np = of_parse_phandle(np, "clocks", 0);
+-	if (!clk_np)
+-		return NULL;
+-
++	clk = of_clk_get(np, 0);
+ 	of_node_put(np);
+-
+-	return clk_np;
++	return clk;
  }
  
- static void lpuart32_set_mctrl(struct uart_port *port, unsigned int mctrl)
-@@ -1256,6 +1307,13 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 		cr1 |= UARTCR1_M;
+ /* traverse cpu nodes to get cpu mask of sharing clock wire */
+ static void set_affected_cpus(struct cpufreq_policy *policy)
+ {
+-	struct device_node *np, *clk_np;
+ 	struct cpumask *dstp = policy->cpus;
++	struct clk *clk;
+ 	int i;
+ 
+-	np = cpu_to_clk_node(policy->cpu);
+-	if (!np)
+-		return;
+-
+ 	for_each_present_cpu(i) {
+-		clk_np = cpu_to_clk_node(i);
+-		if (!clk_np)
++		clk = cpu_to_clk(i);
++		if (IS_ERR(clk)) {
++			pr_err("%s: no clock for cpu %d\n", __func__, i);
+ 			continue;
++		}
+ 
+-		if (clk_np == np)
++		if (clk_is_match(policy->clk, clk))
+ 			cpumask_set_cpu(i, dstp);
+-
+-		of_node_put(clk_np);
+ 	}
+-	of_node_put(np);
+ }
+ 
+ /* reduce the duplicated frequencies in frequency table */
+@@ -200,7 +159,7 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ {
+ 	struct device_node *np, *pnode;
+ 	int i, count, ret;
+-	u32 freq, mask;
++	u32 freq;
+ 	struct clk *clk;
+ 	struct cpufreq_frequency_table *table;
+ 	struct cpu_data *data;
+@@ -221,17 +180,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		goto err_nomem2;
  	}
  
-+	/*
-+	 * When auto RS-485 RTS mode is enabled,
-+	 * hardware flow control need to be disabled.
-+	 */
-+	if (sport->port.rs485.flags & SER_RS485_ENABLED)
-+		termios->c_cflag &= ~CRTSCTS;
-+
- 	if (termios->c_cflag & CRTSCTS) {
- 		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
- 	} else {
-@@ -1864,6 +1922,8 @@ static int lpuart_probe(struct platform_device *pdev)
- 		sport->port.ops = &lpuart_pops;
- 	sport->port.flags = UPF_BOOT_AUTOCONF;
+-	pnode = of_parse_phandle(np, "clocks", 0);
+-	if (!pnode) {
+-		pr_err("%s: could not get clock information\n", __func__);
+-		goto err_nomem2;
+-	}
++	count = clk_get_num_parents(policy->clk);
  
-+	sport->port.rs485_config = lpuart_config_rs485;
-+
- 	sport->clk = devm_clk_get(&pdev->dev, "ipg");
- 	if (IS_ERR(sport->clk)) {
- 		ret = PTR_ERR(sport->clk);
-@@ -1904,6 +1964,12 @@ static int lpuart_probe(struct platform_device *pdev)
- 		dev_info(sport->port.dev, "DMA rx channel request failed, "
- 				"operating without rx DMA\n");
+-	count = of_property_count_strings(pnode, "clock-names");
+ 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
+ 	if (!data->pclk) {
+ 		pr_err("%s: no memory\n", __func__);
+-		goto err_node;
++		goto err_nomem2;
+ 	}
  
-+	if (of_property_read_bool(np, "linux,rs485-enabled-at-boot-time")) {
-+		sport->port.rs485.flags |= SER_RS485_ENABLED;
-+		sport->port.rs485.flags |= SER_RS485_RTS_ON_SEND;
-+		writeb(UARTMODEM_TXRTSE, sport->port.membase + UARTMODEM);
-+	}
-+
- 	return 0;
- }
+ 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
+@@ -240,23 +194,11 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		goto err_pclk;
+ 	}
  
+-	if (fmask)
+-		mask = fmask[get_cpu_physical_id(cpu)];
+-	else
+-		mask = 0x0;
+-
+ 	for (i = 0; i < count; i++) {
+-		clk = of_clk_get(pnode, i);
++		clk = clk_get_parent_by_index(policy->clk, i);
+ 		data->pclk[i] = clk;
+ 		freq = clk_get_rate(clk);
+-		/*
+-		 * the clock is valid if its frequency is not masked
+-		 * and large than minimum allowed frequency.
+-		 */
+-		if (freq < min_cpufreq || (mask & (1 << i)))
+-			table[i].frequency = CPUFREQ_ENTRY_INVALID;
+-		else
+-			table[i].frequency = freq / 1000;
++		table[i].frequency = freq / 1000;
+ 		table[i].driver_data = i;
+ 	}
+ 	freq_table_redup(table, count);
+@@ -290,10 +232,7 @@ err_nomem1:
+ 	kfree(table);
+ err_pclk:
+ 	kfree(data->pclk);
+-err_node:
+-	of_node_put(pnode);
+ err_nomem2:
+-	policy->driver_data = NULL;
+ 	kfree(data);
+ err_np:
+ 	of_node_put(np);
+@@ -357,12 +296,20 @@ static struct cpufreq_driver qoriq_cpufreq_driver = {
+ 	.attr		= cpufreq_generic_attr,
+ };
+ 
++static const struct soc_data blacklist = {
++	.flags = SOC_BLACKLIST,
++};
++
+ static const struct of_device_id node_matches[] __initconst = {
+-	{ .compatible = "fsl,p2041-clockgen", .data = &sdata[0], },
+-	{ .compatible = "fsl,p3041-clockgen", .data = &sdata[0], },
+-	{ .compatible = "fsl,p5020-clockgen", .data = &sdata[1], },
+-	{ .compatible = "fsl,p4080-clockgen", .data = &sdata[2], },
+-	{ .compatible = "fsl,p5040-clockgen", .data = &sdata[2], },
++	/* e6500 cannot use cpufreq due to erratum A-008083 */
++	{ .compatible = "fsl,b4420-clockgen", &blacklist },
++	{ .compatible = "fsl,b4860-clockgen", &blacklist },
++	{ .compatible = "fsl,t2080-clockgen", &blacklist },
++	{ .compatible = "fsl,t4240-clockgen", &blacklist },
++
++	{ .compatible = "fsl,ls1021a-clockgen", },
++	{ .compatible = "fsl,p4080-clockgen", },
++	{ .compatible = "fsl,qoriq-clockgen-1.0", },
+ 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
+ 	{}
+ };
+@@ -380,16 +327,12 @@ static int __init qoriq_cpufreq_init(void)
+ 
+ 	match = of_match_node(node_matches, np);
+ 	data = match->data;
+-	if (data) {
+-		if (data->flag)
+-			fmask = data->freq_mask;
+-		min_cpufreq = get_bus_freq();
+-	} else {
+-		min_cpufreq = get_bus_freq() / 2;
+-	}
+ 
+ 	of_node_put(np);
+ 
++	if (data && data->flags & SOC_BLACKLIST)
++		return -ENODEV;
++
+ 	ret = cpufreq_register_driver(&qoriq_cpufreq_driver);
+ 	if (!ret)
+ 		pr_info("Freescale QorIQ CPU frequency scaling driver\n");
 -- 
-2.8.3
+2.5.0
