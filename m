@@ -1,46 +1,39 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Yakir Yang <ykk@rock-chips.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/5] Fix and improve clock controller for the RK322x SoCs
-Date: Tue, 21 Jun 2016 12:53:26 +0800
-Message-Id: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <dongas86@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160612132928.GG20243@tiger>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+ <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com> <20160612113627.GC20243@tiger>
+ <20160612121303.GE32690@shlinux2> <20160612132928.GG20243@tiger>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Sun, 12 Jun 2016 22:51:58 +0800
+Message-ID: <CAA+hA=SG1OViVLeZGVBT=eteWE3t8bUYv=sqotVQkF-apNcDFA@mail.gmail.com>
+Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, anson.huang@nxp.com,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, Jun 12, 2016 at 9:29 PM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Sun, Jun 12, 2016 at 08:13:03PM +0800, Dong Aisheng wrote:
+>> I understand your point.
+>> How about using power_bit and powerup_set?
+>> * @power_bit:   pll power bit offset
+>
+> I'm fine with the name, but the comment should be fixed, since we are
+> actually using it as a bit mask instead of offset.
+>
 
-Hi,
-  These patchset fix some clocks bugs, and improve clock configuration
-for i2s/spdif/MAC on RK322x SoCs.
+Yes, i can change to:
+* @power_bit:   pll power bit mask
+* @powerup_set: set power_bit to power up the PLL
 
-Thanks.
+Regards
+Dong Aisheng
 
-
-Xing Zheng (5):
-  clk: rockchip: rk3228: fix incorrect clock node names
-  clk: rockchip: rk3228: include downstream muxes into fractional
-    dividers
-  clk: rockchip: rk3228: export related i2s/spdif clocks
-  clk: rockchip: rk3228: rename sclk_macphy_50m to sclk_mac_extclk
-  clk: rockchip: rk3228: export related MAC clocks
-
- drivers/clk/rockchip/clk-rk3228.c      |  125 +++++++++++++++++++-------------
- include/dt-bindings/clock/rk3228-cru.h |   15 ++++
- 2 files changed, 89 insertions(+), 51 deletions(-)
-
--- 
-1.7.9.5
+> Shawn
+>
+>> * @powerup_set: set power_bit to power up the PLL
+>
