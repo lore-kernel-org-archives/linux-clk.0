@@ -1,51 +1,43 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	cw00.choi@samsung.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v2 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for ddrc
-Date: Mon,  6 Jun 2016 18:13:02 +0800
-Message-Id: <1465207986-17888-3-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
-References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 12 Jun 2016 19:43:53 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 07/11] clk: imx6ul: fix pll clock parents
+Message-ID: <20160612114353.GE20243@tiger>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+ <1465396420-27064-7-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1465396420-27064-7-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
+On Wed, Jun 08, 2016 at 10:33:36PM +0800, Dong Aisheng wrote:
+> pllx_bypass_src mux shouldn't be the parent of pllx clock
+> since it's only valid when when pllx BYPASS bit is set.
+> Thus it is actually one parent of pllx_bypass only.
+> 
+> Instead, pllx parent should be fixed to osc according to
+> reference manual.
+> Other plls have the same issue.
+> 
+> e.g. before fix, the pll tree is:
+> osc                                      6            6    24000000          0 0
+>    pll1_bypass_src                       0            0    24000000          0 0
+>       pll1                               0            0   792000000          0 0
+>          pll1_bypass                     0            0   792000000          0 0
+>             pll1_sys                     0            0   792000000          0 0
+> 
+> After the fix, it's:
+> osc                                      6            6    24000000          0 0
+>    pll1                                  0            0   792000000          0 0
+>       pll1_bypass                        0            0   792000000          0 0
+>          pll1_sys                        0            0   792000000          0 0
+> 
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Changes in v2:
-- None 
-Changes in v1:
-- None
+I squashed 7 ~ 11 into one patch and applied it, thanks.
 
- include/dt-bindings/clock/rk3399-cru.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
-index 50a44cf..8a0f0442 100644
---- a/include/dt-bindings/clock/rk3399-cru.h
-+++ b/include/dt-bindings/clock/rk3399-cru.h
-@@ -131,6 +131,7 @@
- #define SCLK_DPHY_RX0_CFG		165
- #define SCLK_RMII_SRC			166
- #define SCLK_PCIEPHY_REF100M		167
-+#define SCLK_DDRCLK			168
- 
- #define DCLK_VOP0			180
- #define DCLK_VOP1			181
--- 
-1.9.1
+Shawn
