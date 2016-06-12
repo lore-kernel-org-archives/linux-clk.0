@@ -1,501 +1,178 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <fengguang.wu@intel.com>
+Date: Sun, 12 Jun 2016 11:32:22 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Scott Wood <oss@buserror.net>
+Cc: kbuild-all@01.org, Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 15/15] ARM: dt: sun8i: switch the H3 to the new CCU driver
-Date: Tue,  7 Jun 2016 22:41:54 +0200
-Message-Id: <20160607204154.31967-16-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+	leoyang.li@nxp.com, yuantian.tang@nxp.com,
+	Scott Wood <scottwood@freescale.com>, xiaofeng.ren@nxp.com,
+	linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 1/2] clk: Add consumer APIs for discovering
+ possible parent clocks
+Message-ID: <201606121130.fIGYeP9B%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="VbJkn9YxBvnuCH5J"
+In-Reply-To: <1465701386-6220-1-git-send-email-oss@buserror.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have a different clock representation, switch to it.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on v4.7-rc2]
+[cannot apply to next-20160609]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Scott-Wood/clk-Add-consumer-APIs-for-discovering-possible-parent-clocks/20160612-112523
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-6 (Debian 6.1.1-1) 6.1.1 20160430
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+   arch/x86/kernel/tsc.o: In function `clk_get_parent_by_index':
+>> tsc.c:(.text+0x3e0): multiple definition of `clk_get_parent_by_index'
+   arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   arch/x86/kernel/tsc.o: In function `clk_get_num_parents':
+>> tsc.c:(.text+0x3e3): multiple definition of `clk_get_num_parents'
+   arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+
 ---
- arch/arm/boot/dts/sun8i-h3.dtsi | 312 ++++++++--------------------------------
- 1 file changed, 60 insertions(+), 252 deletions(-)
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 4a4926b0b0ed..d00e1cd1098d 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -42,8 +42,10 @@
- 
- #include "skeleton.dtsi"
- 
-+#include <dt-bindings/clock/sun8i-h3.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
-+#include <dt-bindings/reset/sun8i-h3.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -104,191 +106,6 @@
- 			clock-output-names = "osc32k";
- 		};
- 
--		pll1: clk@01c20000 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun8i-a23-pll1-clk";
--			reg = <0x01c20000 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll1";
--		};
--
--		/* dummy clock until actually implemented */
--		pll5: pll5_clk {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <0>;
--			clock-output-names = "pll5";
--		};
--
--		pll6: clk@01c20028 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun6i-a31-pll6-clk";
--			reg = <0x01c20028 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll6", "pll6x2";
--		};
--
--		pll6d2: pll6d2_clk {
--			#clock-cells = <0>;
--			compatible = "fixed-factor-clock";
--			clock-div = <2>;
--			clock-mult = <1>;
--			clocks = <&pll6 0>;
--			clock-output-names = "pll6d2";
--		};
--
--		/* dummy clock until pll6 can be reused */
--		pll8: pll8_clk {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <1>;
--			clock-output-names = "pll8";
--		};
--
--		cpu: cpu_clk@01c20050 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-cpu-clk";
--			reg = <0x01c20050 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll1>, <&pll1>;
--			clock-output-names = "cpu";
--		};
--
--		axi: axi_clk@01c20050 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-axi-clk";
--			reg = <0x01c20050 0x4>;
--			clocks = <&cpu>;
--			clock-output-names = "axi";
--		};
--
--		ahb1: ahb1_clk@01c20054 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun6i-a31-ahb1-clk";
--			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
--			clock-output-names = "ahb1";
--		};
--
--		ahb2: ahb2_clk@01c2005c {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun8i-h3-ahb2-clk";
--			reg = <0x01c2005c 0x4>;
--			clocks = <&ahb1>, <&pll6d2>;
--			clock-output-names = "ahb2";
--		};
--
--		apb1: apb1_clk@01c20054 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-apb0-clk";
--			reg = <0x01c20054 0x4>;
--			clocks = <&ahb1>;
--			clock-output-names = "apb1";
--		};
--
--		apb2: apb2_clk@01c20058 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-apb1-clk";
--			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
--			clock-output-names = "apb2";
--		};
--
--		bus_gates: clk@01c20060 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun8i-h3-bus-gates-clk";
--			reg = <0x01c20060 0x14>;
--			clocks = <&ahb1>, <&ahb2>, <&apb1>, <&apb2>;
--			clock-names = "ahb1", "ahb2", "apb1", "apb2";
--			clock-indices = <5>, <6>, <8>,
--					<9>, <10>, <13>,
--					<14>, <17>, <18>,
--					<19>, <20>,
--					<21>, <23>,
--					<24>, <25>,
--					<26>, <27>,
--					<28>, <29>,
--					<30>, <31>, <32>,
--					<35>, <36>, <37>,
--					<40>, <41>, <43>,
--					<44>, <52>, <53>,
--					<54>, <64>,
--					<65>, <69>, <72>,
--					<76>, <77>, <78>,
--					<96>, <97>, <98>,
--					<112>, <113>,
--					<114>, <115>,
--					<116>, <128>, <135>;
--			clock-output-names = "bus_ce", "bus_dma", "bus_mmc0",
--					     "bus_mmc1", "bus_mmc2", "bus_nand",
--					     "bus_sdram", "bus_gmac", "bus_ts",
--					     "bus_hstimer", "bus_spi0",
--					     "bus_spi1", "bus_otg",
--					     "bus_otg_ehci0", "bus_ehci1",
--					     "bus_ehci2", "bus_ehci3",
--					     "bus_otg_ohci0", "bus_ohci1",
--					     "bus_ohci2", "bus_ohci3", "bus_ve",
--					     "bus_lcd0", "bus_lcd1", "bus_deint",
--					     "bus_csi", "bus_tve", "bus_hdmi",
--					     "bus_de", "bus_gpu", "bus_msgbox",
--					     "bus_spinlock", "bus_codec",
--					     "bus_spdif", "bus_pio", "bus_ths",
--					     "bus_i2s0", "bus_i2s1", "bus_i2s2",
--					     "bus_i2c0", "bus_i2c1", "bus_i2c2",
--					     "bus_uart0", "bus_uart1",
--					     "bus_uart2", "bus_uart3",
--					     "bus_scr", "bus_ephy", "bus_dbg";
--		};
--
--		mmc0_clk: clk@01c20088 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-mmc-clk";
--			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
--			clock-output-names = "mmc0",
--					     "mmc0_output",
--					     "mmc0_sample";
--		};
--
--		mmc1_clk: clk@01c2008c {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-mmc-clk";
--			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
--			clock-output-names = "mmc1",
--					     "mmc1_output",
--					     "mmc1_sample";
--		};
--
--		mmc2_clk: clk@01c20090 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-mmc-clk";
--			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
--			clock-output-names = "mmc2",
--					     "mmc2_output",
--					     "mmc2_sample";
--		};
--
--		usb_clk: clk@01c200cc {
--			#clock-cells = <1>;
--			#reset-cells = <1>;
--			compatible = "allwinner,sun8i-h3-usb-clk";
--			reg = <0x01c200cc 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "usb_phy0", "usb_phy1",
--					     "usb_phy2", "usb_phy3",
--					     "usb_ohci0", "usb_ohci1",
--					     "usb_ohci2", "usb_ohci3";
--		};
--
--		mbus_clk: clk@01c2015c {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun8i-a23-mbus-clk";
--			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
--			clock-output-names = "mbus";
--		};
--
- 		apb0: apb0_clk {
- 			compatible = "fixed-factor-clock";
- 			#clock-cells = <0>;
-@@ -327,23 +144,23 @@
- 			compatible = "allwinner,sun8i-h3-dma";
- 			reg = <0x01c02000 0x1000>;
- 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 6>;
--			resets = <&ahb_rst 6>;
-+			clocks = <&ccu CLK_BUS_DMA>;
-+			resets = <&ccu RST_BUS_DMA>;
- 			#dma-cells = <1>;
- 		};
- 
- 		mmc0: mmc@01c0f000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c0f000 0x1000>;
--			clocks = <&bus_gates 8>,
--				 <&mmc0_clk 0>,
--				 <&mmc0_clk 1>,
--				 <&mmc0_clk 2>;
-+			clocks = <&ccu CLK_BUS_MMC0>,
-+				 <&ccu CLK_MMC0>,
-+				 <&ccu CLK_MMC0_OUTPUT>,
-+				 <&ccu CLK_MMC0_SAMPLE>;
- 			clock-names = "ahb",
- 				      "mmc",
- 				      "output",
- 				      "sample";
--			resets = <&ahb_rst 8>;
-+			resets = <&ccu RST_BUS_MMC0>;
- 			reset-names = "ahb";
- 			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -354,15 +171,15 @@
- 		mmc1: mmc@01c10000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c10000 0x1000>;
--			clocks = <&bus_gates 9>,
--				 <&mmc1_clk 0>,
--				 <&mmc1_clk 1>,
--				 <&mmc1_clk 2>;
-+			clocks = <&ccu CLK_BUS_MMC1>,
-+				 <&ccu CLK_MMC1>,
-+				 <&ccu CLK_MMC1_OUTPUT>,
-+				 <&ccu CLK_MMC1_SAMPLE>;
- 			clock-names = "ahb",
- 				      "mmc",
- 				      "output",
- 				      "sample";
--			resets = <&ahb_rst 9>;
-+			resets = <&ccu RST_BUS_MMC1>;
- 			reset-names = "ahb";
- 			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -373,15 +190,15 @@
- 		mmc2: mmc@01c11000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c11000 0x1000>;
--			clocks = <&bus_gates 10>,
--				 <&mmc2_clk 0>,
--				 <&mmc2_clk 1>,
--				 <&mmc2_clk 2>;
-+			clocks = <&ccu CLK_BUS_MMC2>,
-+				 <&ccu CLK_MMC2>,
-+				 <&ccu CLK_MMC2_OUTPUT>,
-+				 <&ccu CLK_MMC2_SAMPLE>;
- 			clock-names = "ahb",
- 				      "mmc",
- 				      "output",
- 				      "sample";
--			resets = <&ahb_rst 10>;
-+			resets = <&ccu RST_BUS_MMC2>;
- 			reset-names = "ahb";
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -401,18 +218,18 @@
- 				    "pmu1",
- 				    "pmu2",
- 				    "pmu3";
--			clocks = <&usb_clk 8>,
--				 <&usb_clk 9>,
--				 <&usb_clk 10>,
--				 <&usb_clk 11>;
-+			clocks = <&ccu CLK_USB_PHY0>,
-+				 <&ccu CLK_USB_PHY1>,
-+				 <&ccu CLK_USB_PHY2>,
-+				 <&ccu CLK_USB_PHY3>;
- 			clock-names = "usb0_phy",
- 				      "usb1_phy",
- 				      "usb2_phy",
- 				      "usb3_phy";
--			resets = <&usb_clk 0>,
--				 <&usb_clk 1>,
--				 <&usb_clk 2>,
--				 <&usb_clk 3>;
-+			resets = <&ccu RST_USB_PHY0>,
-+				 <&ccu RST_USB_PHY1>,
-+				 <&ccu RST_USB_PHY2>,
-+				 <&ccu RST_USB_PHY3>;
- 			reset-names = "usb0_reset",
- 				      "usb1_reset",
- 				      "usb2_reset",
-@@ -425,8 +242,8 @@
- 			compatible = "allwinner,sun8i-h3-ehci", "generic-ehci";
- 			reg = <0x01c1b000 0x100>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 25>, <&bus_gates 29>;
--			resets = <&ahb_rst 25>, <&ahb_rst 29>;
-+			clocks = <&ccu CLK_BUS_EHCI1>, <&ccu CLK_BUS_OHCI1>;
-+			resets = <&ccu RST_BUS_EHCI1>, <&ccu RST_BUS_OHCI1>;
- 			phys = <&usbphy 1>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -436,9 +253,9 @@
- 			compatible = "allwinner,sun8i-h3-ohci", "generic-ohci";
- 			reg = <0x01c1b400 0x100>;
- 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 29>, <&bus_gates 25>,
--				 <&usb_clk 17>;
--			resets = <&ahb_rst 29>, <&ahb_rst 25>;
-+			clocks = <&ccu CLK_BUS_EHCI1>, <&ccu CLK_BUS_OHCI1>,
-+				 <&ccu CLK_USB_OHCI1>;
-+			resets = <&ccu RST_BUS_EHCI1>, <&ccu RST_BUS_OHCI1>;
- 			phys = <&usbphy 1>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -448,8 +265,8 @@
- 			compatible = "allwinner,sun8i-h3-ehci", "generic-ehci";
- 			reg = <0x01c1c000 0x100>;
- 			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 26>, <&bus_gates 30>;
--			resets = <&ahb_rst 26>, <&ahb_rst 30>;
-+			clocks = <&ccu CLK_BUS_EHCI2>, <&ccu CLK_BUS_OHCI2>;
-+			resets = <&ccu RST_BUS_EHCI2>, <&ccu RST_BUS_OHCI2>;
- 			phys = <&usbphy 2>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -459,9 +276,9 @@
- 			compatible = "allwinner,sun8i-h3-ohci", "generic-ohci";
- 			reg = <0x01c1c400 0x100>;
- 			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 30>, <&bus_gates 26>,
--				 <&usb_clk 18>;
--			resets = <&ahb_rst 30>, <&ahb_rst 26>;
-+			clocks = <&ccu CLK_BUS_EHCI2>, <&ccu CLK_BUS_OHCI2>,
-+				 <&ccu CLK_USB_OHCI2>;
-+			resets = <&ccu RST_BUS_EHCI2>, <&ccu RST_BUS_OHCI2>;
- 			phys = <&usbphy 2>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -471,8 +288,8 @@
- 			compatible = "allwinner,sun8i-h3-ehci", "generic-ehci";
- 			reg = <0x01c1d000 0x100>;
- 			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 27>, <&bus_gates 31>;
--			resets = <&ahb_rst 27>, <&ahb_rst 31>;
-+			clocks = <&ccu CLK_BUS_EHCI3>, <&ccu CLK_BUS_OHCI3>;
-+			resets = <&ccu RST_BUS_EHCI3>, <&ccu RST_BUS_OHCI3>;
- 			phys = <&usbphy 3>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -482,20 +299,29 @@
- 			compatible = "allwinner,sun8i-h3-ohci", "generic-ohci";
- 			reg = <0x01c1d400 0x100>;
- 			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 31>, <&bus_gates 27>,
--				 <&usb_clk 19>;
--			resets = <&ahb_rst 31>, <&ahb_rst 27>;
-+			clocks = <&ccu CLK_BUS_EHCI3>, <&ccu CLK_BUS_OHCI3>,
-+				 <&ccu CLK_USB_OHCI3>;
-+			resets = <&ccu RST_BUS_EHCI3>, <&ccu RST_BUS_OHCI3>;
- 			phys = <&usbphy 3>;
- 			phy-names = "usb";
- 			status = "disabled";
- 		};
- 
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun8i-h3-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@01c20800 {
- 			compatible = "allwinner,sun8i-h3-pinctrl";
- 			reg = <0x01c20800 0x400>;
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bus_gates 69>;
-+			clocks = <&ccu CLK_BUS_PIO>;
- 			gpio-controller;
- 			#gpio-cells = <3>;
- 			interrupt-controller;
-@@ -542,24 +368,6 @@
- 			};
- 		};
- 
--		ahb_rst: reset@01c202c0 {
--			#reset-cells = <1>;
--			compatible = "allwinner,sun6i-a31-ahb1-reset";
--			reg = <0x01c202c0 0xc>;
--		};
--
--		apb1_rst: reset@01c202d0 {
--			#reset-cells = <1>;
--			compatible = "allwinner,sun6i-a31-clock-reset";
--			reg = <0x01c202d0 0x4>;
--		};
--
--		apb2_rst: reset@01c202d8 {
--			#reset-cells = <1>;
--			compatible = "allwinner,sun6i-a31-clock-reset";
--			reg = <0x01c202d8 0x4>;
--		};
--
- 		timer@01c20c00 {
- 			compatible = "allwinner,sun4i-a10-timer";
- 			reg = <0x01c20c00 0xa0>;
-@@ -580,8 +388,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&bus_gates 112>;
--			resets = <&apb2_rst 16>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
- 			dmas = <&dma 6>, <&dma 6>;
- 			dma-names = "rx", "tx";
- 			status = "disabled";
-@@ -593,8 +401,8 @@
- 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&bus_gates 113>;
--			resets = <&apb2_rst 17>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
- 			dmas = <&dma 7>, <&dma 7>;
- 			dma-names = "rx", "tx";
- 			status = "disabled";
-@@ -606,8 +414,8 @@
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&bus_gates 114>;
--			resets = <&apb2_rst 18>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
- 			dmas = <&dma 8>, <&dma 8>;
- 			dma-names = "rx", "tx";
- 			status = "disabled";
-@@ -619,8 +427,8 @@
- 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&bus_gates 115>;
--			resets = <&apb2_rst 19>;
-+			clocks = <&ccu CLK_BUS_UART3>;
-+			resets = <&ccu RST_BUS_UART3>;
- 			dmas = <&dma 9>, <&dma 9>;
- 			dma-names = "rx", "tx";
- 			status = "disabled";
--- 
-2.8.3
+--VbJkn9YxBvnuCH5J
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+H4sICNXWXFcAAy5jb25maWcAjDzZcuO2su/nK1hz7kNSdWezPT6TuuUHCARFRATJIUhJ9gtL
+kekZVWzJR0sy8/e3GyDFraFJqqZioRtr740G//2vf3vsdNy9rI6b9er5+Yf3tdpW+9WxevSe
+Ns/V/3l+4sVJ7glf5u8AOdpsT9/fb64/33o37/7z7sPb/fqjN6v22+rZ47vt0+brCXpvdtt/
+/RuweRIHclre3kxk7m0O3nZ39A7V8V91+/LzbXl9dfej87v9IWOdZwXPZRKXvuCJL7IWmBR5
+WuRlkGSK5Xdvquen66u3uKo3DQbLeAj9Avvz7s1qv/72/vvn2/drs8qD2UP5WD3Z3+d+UcJn
+vkhLXaRpkuXtlDpnfJZnjIsxTKmi/WFmVoqlZRb7Jexcl0rGd58vwdny7uMtjcATlbL8p+P0
+0HrDxUL4pZ6WvmJlJOJpHrZrnYpYZJKXUjOEjwHhQshpmA93x+7LkM1FmfIy8HkLzRZaqHLJ
+wynz/ZJF0ySTeajG43IWyUnGcgE0itj9YPyQ6ZKnRZkBbEnBGA9FGckYaCEfRIthFqVFXqRl
+KjIzBstEZ1/mMBqQUBP4FchM5yUPi3jmwEvZVNBodkVyIrKYGU5NE63lJBIDFF3oVACVHOAF
+i/MyLGCWVAGtQlgzhWEOj0UGM48mozkMV+oySXOp4Fh8kCE4IxlPXZi+mBRTsz0WAeP3JBEk
+s4zYw3051cP9Wp4oeRAxAL55+4Sq4+1h9Vf1+LZaf/f6DY/f39CzF2mWTERn9EAuS8Gy6B5+
+l0p02MYuNEt8lneImU5zBocJXD0Xkb67arGDRpqlBvXw/nnzx/uX3ePpuTq8/58iZkogawmm
+xft3A/mX2ZdykWQdGk8KGflwoqIUSzuftsJvVNzU6MtnVGunV2hpOmXJTMQl7EOrtKvUZF6K
+eA4ngYtTMr+7Pi+bZ8AdRpAlcMibN60CrdvKXGhKjwLpWDQXmQYO7PXrAkpW5AnR2YjMDBhY
+ROX0QaYDYaohE4Bc0aDooas4upDlg6tH4gLcAOC8/M6qugsfws3aLiHgComdd1c57pJcHvGG
+GBD4jhURSHKic2Syuze/bHfb6tcORfS9nsuUk2Nb+gPfJ9l9yXKwNyGJF4Qs9iNBwgotQLG6
+yGzkjxVgy2EdwBpRw8XA9d7h9Mfhx+FYvbRcfDYPIBRGWAnLASAdJosOj0MLGGYO+icPQfn6
+PQWkU5ZpgUhtG0ejq5MC+oCiy3noJ0OV1UXpK4EuZA5WxUejEjHU1fc8IlZsRHneHsDQMuF4
+oFDiXF8EojEumf97oXMCTyWo33AtzRHnm5dqf6BOOXxASyMTX/IuJ8YJQqSL0gZMQkLQzqDf
+tNlpprs41itLi/f56vCnd4Qleavto3c4ro4Hb7Ve707b42b7tV1bLvnMmlHOkyLOLS3PUyGt
+zXm24NF0GS88Pd414N6XAOsOBz9BycJhUFpOD5Bzpmcau5CHgEOByxZFqDxVEpNIeSaEwTR+
+nXMcXBLIjCgnSZKTWMZGgPMVX9GiLWf2D5dgFuDsWtMCjo1v2ay7Vz7NkiLVtNoIBZ+liQQH
+AYieJxm9ETsyGgEzFr1Z9MXoDUYzUG9zY8Ayn14HP3seKP/I08Y/j/sn68Du+3EsBoMlY3D6
+9cBSFNL/2IkSUIzzCCjERWocMEPJQZ+U63QGC4pYjitqoZbXugetQH9LUKIZfYbgdylgu7LW
+HjTSvQ70RYwZAPS9osnZAEs20UlUANfBGkECSeQ0A7LPHCw5pbv0D4PuC55RGRSO5QewqCUJ
+EWniOhQ5jVkU0Jxj9JQDZpStAzZJg8uUCMGYkhAmafPO/LmErdeD0gRC7jB23rEqmHPCskz2
+eajZDoYcvvCHHApDlmejY9RmHVSn1f5pt39ZbdeVJ/6qtqCnGWhsjpoa7EmrT/tDnFdTu/gI
+hIWXc2U8fXLhc2X7l0aVDyxHzxfFQDOj2U5HbOIAFJRfoqNk0l0vHH0OISTa+BI8VxlIbiIr
+B/sngYwGRqd7ronF6CiEpqWMlbSM153990Kl4DxMBM1QdcRCW12cz2Q6IO4Fbkdly7nQ2rU2
+EcDeJJ43RCS9HgPfB+mGBgYsZjnRCzZ00SWofEwDwOLyAWg2DLFsayZyEgAame5gWzGcCSgF
+C2c5aDELN6hhkswGQMxEwO9cToukILwsCJmM31P7j0QoDKHrPXjY6M0ZdWwyRYNZMjEFJQpB
+t8nc1EdbsnS4VFwNtFpJGcDCBTC6YNa8DmBKLoFiLVibGYfmCpQFtOdFFoPHlgM7d9NYQ9kn
+DtJAiYEbic7q7fmFGvKFOa2Wo0d5FEu4UrNAgMOaYtZmMELdauNIB8xPCkdCA+Kc0nr7TWxK
+rE8LjhoFYv8oHx0NOAlmd8jZgoNr0/OJhkDay+jjABFicXEUPOwiYrQDMMYG1kvc+ofwjx2C
+EmNgJOo0EGZkOtnFxC8ikD7UAyJCbhjTUlsIsHuixhmxccpxgCCWoLZIaev3+twnT5Le173K
+POqZnXZaWFtIUSYCQoCjwWcLlvmd9STgSIO3UGfMrkcAZlLCPRJCeALRUKtPg2Ac9Ex5Mn/7
+x+pQPXp/Wsv6ut89bZ570c75MBG7bCxFL0w0G2sUlVVkoUDCdRJG6D1pNLR3HztugaUicRQN
+fU00EoG6LNLu9iYYDBDdTHIPJkrBLBQxIvWj6hpuqGPhl2Bk30WGUY+jcxfY791P87E8QUWd
+qcUAA/n5SyEKTE/DJkwc70bJFg1C64jCgT303SxD63S/W1eHw27vHX+82gj3qVodT/vq0L2W
+eEAO9PupodYPUXSIhJnRQDBQ6KA9mXI4AwYLcxANKmbuaNQp8HUgNZ3qwXHEMgdBwHT0JZe9
+ztjKTNLT2PAPKAFryjABamyWI84J78G8gCcM+m1a0DlHEDiMhm2WtmXym8+3tFP86QIg17RD
+ijCllpTI3JqrohYTdAXEbUpKeqAz+DKcPtoGekNDZ46Nzf7jaP9Mt/Os0Akduyuj24TDC1YL
+GfMQrK1jITX42hWuRMwx7lRAAD5dfrwALSM6ElT8PpNL53nPJePXJZ20NUDH2XFwdR29UM04
+JaNW2I47SCMImGyoL5Z0KIP87lMXJfo4gPWGT8FUgKjTmQ5EQD1mkEyyRhedHASCQQD6DbVz
+dXszbE7m/RYlY6kKZWxgAA5xdN9ft3FqeR4p3fOdYCnoDaP/IiJwZCgDDSOCDjeH07F/TbOh
+b+/2toEw5RPoIEKsyMYA4/ooAdEeNVahuG1vVVMqchu3kcT2laSUlbnH02COz/sXQqX5yBts
+2udJBN4ay+hkWI3l5DY8hFTSOs0Qrc8n1mZ14vyX3XZz3O2ta9LO2okT4IxBgS8ch2AYVoCn
+dA8xvUPvOgF5Aiw+oY2i/EwH/ThhJtAeBHLpylOCEwBcB1LmPhft3g/QT/oUaRNMdw/MUN10
+Q2fAaujtDeW2z5VOIzCS1708d9uKMbLjQC3KFT1pC/7pCB+pdZk76AQ8W5HfffjOP9j/BmqI
+UfrHOFIB+A6w51LEjLidNlGaG2xURHMxBd5qVx/ICDktatwJvIIpxN2Hc3rnUt9mUYrFhYkv
+W2/lvCILI7ZVd+6PVhotbvt1wuF2OIjectlRtjaSF2rSd3F7zfWg3QFtdYnUHGKXbvd+/FM7
+SKBCg8QMQuW/DMnT3ExklNTNINfG3emv8B5Uge9nZe6ssZnLDPQlOGtFz3WeaUUgNxeYJuiz
+91t+dnfz4bfb7p3JOFal5LJbQDHrSSePBIuNNaVjbIdH/pAmCZ2We5gUtG/zoMfpzsbtrkM4
+U2/QpNDcdRKByDKMU0yiyQojXoV0t2W0FJp3CJUTvMfPsiId0q6nMDU42RjxLe5uO0RXeUar
+QbMmG+I71SRs2B23GFMO7iztstWZGFplPpQfP3ygshwP5dWnDz3Ofyiv+6iDUehh7mCYYbQS
+Znj9SN+SiKWgyIoiITnoIxD0DDXlx6GizARms8xt26X+JiML/a8G3ev099zX9A0CV76Jjicu
+ZgUdKIP7MvJz6u7C+gK7v6u9B77A6mv1Um2PJoJlPJXe7hVr63pRbJ0ooRUEzSg6kKM58YYp
+2Ff/PVXb9Q/vsF49D9wP42Fm4gvZUz4+V0Nk58214WPUD/qMh1cOaST80eCT06HZtPdLyqVX
+Hdfvfu25RZzy+OqCtjrd2zow2hHtcyQ0CUoiR7kGcAgtSLHIP336QEdNKUeT4Rbfex1MRocg
+vlfr03H1x3NlijI94ygeD957T7ycnlcjlpiAwVE5ZgTpazML1jyTKWUybO4uKXrare6EzZcG
+VdIRy2Pkhjlq53w2SyQTq4a7hzk6D7/6awNusr/f/GWvwNpKrM26bvaSsagU9norFFHqCh/E
+PFdp4Eih5KB7GeYtXVGBGT6QmVqAfbRFASRqsACtz3zHItBkLcxtO3VonbXizZ6fyblzMwZB
+zDNHlgq4rZPqobNTTUELCCqMJDmZwexiYYVBUyvUCcuYLWv04VSCgMjZoaA/Grr2SKZy+gST
+gFiGTVib2sSmOhUclbpUt6WTbRqtQG0Oa2oJQAB1jwlOciEQ9EeJxhQfWvPh+bRHnTFaF/Mr
+cjFCwBkq73B6fd3tj93lWEj52zVf3o665dX31cGT28Nxf3oxl8WHb6t99egd96vtAYfyQK9X
+3iPsdfOKfzbSw56P1X7lBemUgZLZv/wN3bzH3d/b593q0bPFkw2u3B6rZw/E1VDNylsD01wG
+RPM8SYnWdqBwdzg6gXy1f6SmceLvXs8ZYH1cHStPtbb0F55o9etQeeD6zsO1Z81Dh5VfRibN
+7wTWdYJgfpwoQlD3IvbayD+XjWmuZc2VHW44my0t0aHohU7Y5spqK8bBCYQIv9Yb43sSuX09
+HccTthY0Tosxu4ZAIcMx8n3iYZe+i4LVbf9MXg1qdztTpgQpIRwYe7UGpqVkNs/pzA2oMFdJ
+CIBmLphMlSxt1aUjYb645JjHc5f0p/zzf65vv5fT1FGQEmvuBsKKpjbicCfEcg7/HH4gRAN8
+eLlkmeCKk7R3VLdpB5frVNGAUI8d0DTV1JxpOuZRbKvfqexMSWXTy0Lz1Fs/79Z/DgFia1wo
+cPGxRBZ9anAusNYbvX5zhGDhVYrlJMcdzFZ5x2+Vt3p83KAnsXq2ox7eDe4LzV13YiI9iBuQ
+WDB8j4VtE3kSC4ebiLk9E39GjhSkQcAQknbHLJzNHbUqC2dFZCgyxejIpSnNpbIYetJ922A1
+1267WR88vXnerHdbb7Ja//n6vNr24gToR4w24eAuDIeb7MEQrXcv3uG1Wm+ewNFjasJ6bu8g
+c2Ct+un5uHk6bddIw0avPZ6Vf6sZA9+4W7TaRGAGQb2gBSDM0dOAwPHa2X0mVOrwBhGs8tvr
+3xyXHgDWyhVQsMny04cPl5eOcabr7gjAuSyZur7+tMR7COY77uIQUTkUkS2ZyB0+pBK+ZE0y
+ZUSg6X71+g0ZhRB+v3/ZaR0Vnnq/sNPjZgd2/nzT++vo9ZlBDvarl8r74/T0BHbCH9uJgJZK
+LEuIjF2KuE+tvM3ZThmmFB0lt0kRUznrAqQlCbksI5nnEPxC+C5ZpzoG4aM3Zth4rk8Iec/m
+F3ocNGKbcfge+54OtqfffhzwvZ8XrX6gAR2LA84GWpG2SUlq4Esu5JzEQOiU+VOHcioW9LEr
+5eA9obQzExQLCKaETys6W/QlJxJO+p6ghPAZb0JPiIeLzpsqA2qp0PqE0E6MlIEKGOh9bOIR
+0/TSwEUjAiob3yoGURKZ7LmPOZZKORIrxdKXOnXVcBcO6TUpYpc/ON/sYRUUi2A3mQDR+sPW
+sdR6vzvsno5e+OO12r+de19PFXj4hIyD+EwHFZy9lEhT9UCFn60/HUJMJM64422cHVT9utka
+52AgFtw06t1p37MPzfjRTGe8lJ+vPnUqkqBVzHOidRL559aWOrmCiCCVtEyAS26cuJKrnyCo
+vKCvwM8YuaKrxYWqEUCaHOGBjCYJndWSiVKFU4tn1cvuWGHYRbGKzoW5+1FlhjfP496vL4ev
+Q4poQPxFm1cjXrIFf3/z+mtr/H1iliJeSnekDeOVjn2nhruG2c323Ja5036aiy36wBzili6o
+qxcGHD4FLaTYsoyzbuGYTLG+c1LQnG9cQFNNmyWRKzwJ1PjMUbt3n+WMUj4u9Y/Ocrpk5dXn
+WKEnT+vsHhbYA5plwWUrZ+A3G4zhjF1XlvezgoqPDR5xg07pm4yNtQPbPu53m8cuGkRzWSJp
+hy12BpE6dwSQ5uYlD0czm3xLz3UBoozWbLBGXZssDSEKwnckHpvcJGzAdVPkiygqswmtQnzu
+T5irkC2ZRuI8BbFeCL4su3U0q2/LaiAM61S/t+vVGAfIJYAcb1GwQBNjWJcJCbQpu3akAy7A
+pIWVzsdAAbvQ+0uR5HQKxkB4Tm8Hk6eBvikdGegA64gcsATMN1j+kqh95av1t4Hfq0f3r1aG
+DtXpcWduGVpKtTINuts1vYHxUEZ+JmhViSkxV2Ydn0zRkZV96n4ZWg7voFu/wPwPuMgxAF5X
+GB6yz05opDgaH2n9OucbBLX995LmAxEy+2Lexnf8R9Prdb/ZHv80qYfHlwpMXuvine2J1ni5
+HKEszUFn1Ffydzc1KXcvr0Cct+bpJlB1/efBDLe27XvKabT3AFiEQFs3U/MB0X2GH9pIM8Eh
+nnE8xrKoqjBfQhBkWbKtLsXR7j5+uLrp6sZMpiXTqnS+fcN6ZDMD07QeLWKQAAxo1SRxPM+y
+hTKL+OKlSEDdYoQCr2S03dn4DZUW9mMkwDMKMyE0Jw+Q7LEmcURZtjZ91CvJHdQ4/6xYt95R
+Yl5PCzZrqi4cHh46GcDt/euM3lA2d93wrALPbv8Dguc/Tl+/DkvS8KxNfbJ21agMPjHhJhls
+USexS43bYZLJ73C+zhdV9fLBtkVwDmMKNpALM9jHNIV2KRSLNXelkA0Q4qLCkUKzGHU1FBaQ
+XN6KWQ0q9iAyL+ypxTZg10iGyXDnLrYOB1db9RUrkNuLICY6vVoNE662X3tqBa1ukcIo49c3
+nSkQCHo6tu+16bziFzK12GGPGHgWhCpJUor2PfiwAM0CMezBC+1RiYlTK1qwZQf8cstI3Q2O
+EWeYCZFSL+DxGFsB8n451DHo4X+9l9Ox+l7BH1jX8K5f2VDTp34acYmf8EGuIzK2GIuFRcLn
+louU5bTysrimEu2CsGbJ/LLLZQbArNiFSZqcSwRH9pO1wDTmfZ4WUeB+RmEmBTY8v7Zw+OfN
+R5wuTDqzaubSsqRj/FrbyZ9h6EtarnkneImgPBM+vkpghG+Cn0Sg1bUhneuLCfWXOfCDB5fM
+zU/P2AyAtcoXMf7RMD/5LMOX+gtGlxi//hZJmbltYnPepciyJAOV8Ltw11zaAkkSp2vVMUnb
+KGkIpnP7VNM8mLNPAChtTiISM7TPPh3fIzOKPyhi3n4SYfi08gydZiwN/xFOkBpqDZ/P1g9x
+yYfBfWC5kHlIPWatwcq8kQQEDtHgAKWulbMLte9th49F6452lBaIPVCHELncYMRgVoDwKyjg
+X+fV4TgQITwAI9zmI1B0TqOlC77JdDP4xDz4c8Ktiry9+f8+rli5QRiG/lLSLF3BQOqGEg5M
+LmTh2l6GTL3LNUP/vpJMjG0kj+EJYrAty7Lec46Pn47YoLfyLJYJkQGOrWY/Vz7xfoXsDmBo
+hAQgGZDgBF9WRniujZRXILxDOuiq+DJ6G54xajVWiqPqu0AnJ+Bvy08dClHcBIIjecXIPlqe
+tulFV/siSPzj75RjGPI+a+DJEP+h/Inlly57HETTfuVEVeW9rRQrw/IP60UShQ6YVIeYMT/2
+tkJd0IKxhdEJgRFKzhscd/Lp42KT8NFW1k2eCLMn50elpZ+TV05FZ3Ve1YNAspwz2zAbZbEG
+POUQnK0+Wg3DyYxtOW3Or5sl+owx6Kstj9nhuWjYhSjxlHYrjP7ML29dAGEH7ywS08HZNFGp
+o/uk8yLoN9EPrVWbrWfjjDnRH0+bMOosiGuElLpjtMFaJAjiDKiwh65z3QJ7qnD9ftxvv39c
+ouRQjkJ+qlRDp80IvqbsKedOsyxpy6YYnp9ueWDmkVFiNNQA7MY2IeB3CigW8x5UX2TtlFw3
+WTcyDt1uWW5f90/Y9t9/HrAEXr0MlRPpMF2jIEqpsBoRIxJGxwNM6rIR0Eo3T/HNXDMaaq3S
+rhw4gsTLjC4C0bBJ1qmtdaj2ojo1KaUN35GAbnmKHN5ntptC8wshwtpA9CqhO/4wBBC+AqTW
+Od0lyQYqnlFMQn+zfJ5lLTA02CUcofq13Us63DhfUIw3AU25emcHaY+95vO17CX0pSG3ipY4
+X1LSdaWLiPB/dEVHA0afQj0PiACFNywKfkdD6oaicNVM0ZLAmJQUt7nHw+lMN8zr4Joy0bIE
+4D+nj66LilkAAA==
+
+--VbJkn9YxBvnuCH5J--
