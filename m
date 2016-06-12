@@ -1,33 +1,116 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 13:18:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Sun, 12 Jun 2016 20:13:03 +0800
+From: Dong Aisheng <dongas86@gmail.com>
 To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, kernel@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock update for 4.8
-Message-ID: <20160630201803.GB27880@codeaurora.org>
-References: <20160628082827.GG21328@tiger>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	anson.huang@nxp.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
+Message-ID: <20160612121303.GE32690@shlinux2>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+ <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
+ <20160612113627.GC20243@tiger>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160628082827.GG21328@tiger>
+In-Reply-To: <20160612113627.GC20243@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28, Shawn Guo wrote:
-> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+On Sun, Jun 12, 2016 at 07:36:27PM +0800, Shawn Guo wrote:
+> On Wed, Jun 08, 2016 at 10:33:34PM +0800, Dong Aisheng wrote:
+> > There's a powerdown bit already, so let's change the name of
+> > powerup_set bit to power_invert to reflects the power polarity
+> > to make it less confusing.
+> > 
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> >  drivers/clk/imx/clk-pllv3.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> > index eea2b1b3791e..3fdfb6d2cc71 100644
+> > --- a/drivers/clk/imx/clk-pllv3.c
+> > +++ b/drivers/clk/imx/clk-pllv3.c
+> > @@ -29,8 +29,8 @@
+> >   * struct clk_pllv3 - IMX PLL clock version 3
+> >   * @clk_hw:	 clock source
+> >   * @base:	 base address of PLL registers
+> > - * @powerup_set: set POWER bit to power up the PLL
+> > - * @powerdown:   pll powerdown offset bit
+> > + * @powerdown:	 pll powerdown bit offset
 > 
->   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.8
-> 
-> for you to fetch changes up to bfa10f7d9ae2a6d1e615bf6841887fd9adb056be:
-> 
->   clk: imx6ul: fix gpt2 clock names (2016-06-16 09:05:55 +0800)
+> I think 'powerdown' is more confusing here.  I prefer to rename it to
+> something like 'power_mask' and keep 'powerdown' as it is.
 > 
 
-Thanks. Pulled.
+I understand your point.
+How about using power_bit and powerup_set?
+* @power_bit:   pll power bit offset
+* @powerup_set: set power_bit to power up the PLL
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards
+Dong Aisheng
+
+> Shawn
+> 
+> > + * @power_invert: set powerdown bit to power up the PLL
+> >   * @div_mask:	 mask of divider bits
+> >   * @div_shift:	 shift of divider bits
+> >   *
+> > @@ -40,7 +40,7 @@
+> >  struct clk_pllv3 {
+> >  	struct clk_hw	hw;
+> >  	void __iomem	*base;
+> > -	bool		powerup_set;
+> > +	bool		power_invert;
+> >  	u32		powerdown;
+> >  	u32		div_mask;
+> >  	u32		div_shift;
+> > @@ -55,7 +55,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+> >  	u32 val = readl_relaxed(pll->base) & pll->powerdown;
+> >  
+> >  	/* No need to wait for lock when pll is not powered up */
+> > -	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+> > +	if ((pll->power_invert && !val) || (!pll->power_invert && val))
+> >  		return 0;
+> >  
+> >  	/* Wait for PLL to lock */
+> > @@ -76,7 +76,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
+> >  	u32 val;
+> >  
+> >  	val = readl_relaxed(pll->base);
+> > -	if (pll->powerup_set)
+> > +	if (pll->power_invert)
+> >  		val |= pll->powerdown;
+> >  	else
+> >  		val &= ~pll->powerdown;
+> > @@ -91,7 +91,7 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
+> >  	u32 val;
+> >  
+> >  	val = readl_relaxed(pll->base);
+> > -	if (pll->powerup_set)
+> > +	if (pll->power_invert)
+> >  		val &= ~pll->powerdown;
+> >  	else
+> >  		val |= pll->powerdown;
+> > @@ -326,7 +326,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+> >  		pll->div_shift = 1;
+> >  	case IMX_PLLV3_USB:
+> >  		ops = &clk_pllv3_ops;
+> > -		pll->powerup_set = true;
+> > +		pll->power_invert = true;
+> >  		break;
+> >  	case IMX_PLLV3_AV:
+> >  		ops = &clk_pllv3_av_ops;
+> > -- 
+> > 1.9.1
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
