@@ -1,51 +1,61 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>,
- Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag for
- SPI3 related clocks
-Date: Fri, 17 Jun 2016 17:16:02 +0900
-Message-id: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:38440 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751182AbcFLKrI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2016 06:47:08 -0400
+Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for
+ dclk_vop0_div on RK3399
+To: Xing Zheng <zhengxing@rock-chips.com>, heiko@sntech.de
+References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com>
+Cc: dianders@chromium.org, elaine.zhang@rock-chips.com,
+	huangtao@rock-chips.com, briannorris@chromium.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Yakir Yang <ykk@rock-chips.com>
+Message-ID: <575D3D9B.1070501@rock-chips.com>
+Date: Sun, 12 Jun 2016 18:46:51 +0800
+MIME-Version: 1.0
+In-Reply-To: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaehoon Chung <jh80.chung@samsung.com>
+Xing,
 
-The SPI 3 bus uses two clocks, a bus clock and an input clock.
-Do not disable the clocks when unused in order to allow access to
-the SPI 3 device.
+On 06/12/2016 05:48 PM, Xing Zheng wrote:
+> The functions and features VOP0 more complete than VOP1's, we need to
+> use it dclk_vop0_div operate VPLLI, and let VOP0 as the default primary
+> screen.
+>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Tested on RK3399 Kevin board, after apply this patch, my eDP panel light 
+up normally. So
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 128527b..7c1fa09 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1641,11 +1641,12 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
- 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
--			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 20,
-+			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
- 			19, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
--			18, CLK_SET_RATE_PARENT, 0),
-+			18, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SCI, "sclk_sci", "div_sclk_sci", ENABLE_SCLK_PERIC,
- 			17, 0, 0),
- 	GATE(CLK_SCLK_SC_IN, "sclk_sc_in", "div_sclk_sc_in", ENABLE_SCLK_PERIC,
--- 
-2.8.1
+Tested-by: Yakir Yang <ykk@rock-chips.com>
+
+BR,
+- Yakir
+
+> ---
+>
+>   drivers/clk/rockchip/clk-rk3399.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index 7ecb12c3..6affa75 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -1157,7 +1157,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>   	GATE(HCLK_VOP0_NOC, "hclk_vop0_noc", "hclk_vop0_pre", CLK_IGNORE_UNUSED,
+>   			RK3399_CLKGATE_CON(28), 0, GFLAGS),
+>   
+> -	COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gpll_p, 0,
+> +	COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gpll_p, CLK_SET_RATE_PARENT,
+>   			RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
+>   			RK3399_CLKGATE_CON(10), 12, GFLAGS),
+>   
+
+
