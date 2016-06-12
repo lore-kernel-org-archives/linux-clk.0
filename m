@@ -1,73 +1,30 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-Date: Mon, 13 Jun 2016 11:37:49 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Xing Zheng <zhengxing@rock-chips.com>, heiko@sntech.de,
-	dianders@chromium.org, elaine.zhang@rock-chips.com,
-	huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for
- dclk_vop0_div on RK3399
-Message-ID: <20160613183748.GA21936@google.com>
-References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com>
- <575D3D9B.1070501@rock-chips.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 12 Jun 2016 21:29:28 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, anson.huang@nxp.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
+Message-ID: <20160612132928.GG20243@tiger>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+ <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
+ <20160612113627.GC20243@tiger>
+ <20160612121303.GE32690@shlinux2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <575D3D9B.1070501@rock-chips.com>
+In-Reply-To: <20160612121303.GE32690@shlinux2>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Sun, Jun 12, 2016 at 08:13:03PM +0800, Dong Aisheng wrote:
+> I understand your point.
+> How about using power_bit and powerup_set?
+> * @power_bit:   pll power bit offset
 
-On Sun, Jun 12, 2016 at 06:46:51PM +0800, Yakir Yang wrote:
-> On 06/12/2016 05:48 PM, Xing Zheng wrote:
-> >The functions and features VOP0 more complete than VOP1's, we need to
-> >use it dclk_vop0_div operate VPLLI, and let VOP0 as the default primary
-> >screen.
+I'm fine with the name, but the comment should be fixed, since we are
+actually using it as a bit mask instead of offset.
 
-Personally, I'd like a little better description that talks about the
-rates, not just the differences between VOP0 and VOP1. Presumably the
-clock rates needed by VOP0 are not achievable just by these dividers, so
-we need to adjust the PLL?
+Shawn
 
-FWIW, I haven't actually found this patch necessary in my own testing (I
-have eDP running fine without this change), but perhaps with better
-justification, this will make more sense.
-
-> >Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> 
-> Tested on RK3399 Kevin board, after apply this patch, my eDP panel
-> light up normally. So
-> 
-> Tested-by: Yakir Yang <ykk@rock-chips.com>
-
-For clarification: this patch isn't sufficient for that, right? Of
-course eDP support hasn't fully landed upstream yet, but I presume you
-have other changes to set the correct VOP frequencies?
-
-Brian
-
-> BR,
-> - Yakir
-> 
-> >---
-> >
-> >  drivers/clk/rockchip/clk-rk3399.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> >diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> >index 7ecb12c3..6affa75 100644
-> >--- a/drivers/clk/rockchip/clk-rk3399.c
-> >+++ b/drivers/clk/rockchip/clk-rk3399.c
-> >@@ -1157,7 +1157,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
-> >  	GATE(HCLK_VOP0_NOC, "hclk_vop0_noc", "hclk_vop0_pre", CLK_IGNORE_UNUSED,
-> >  			RK3399_CLKGATE_CON(28), 0, GFLAGS),
-> >-	COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gpll_p, 0,
-> >+	COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gpll_p, CLK_SET_RATE_PARENT,
-> >  			RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
-> >  			RK3399_CLKGATE_CON(10), 12, GFLAGS),
-> 
-> 
+> * @powerup_set: set power_bit to power up the PLL
