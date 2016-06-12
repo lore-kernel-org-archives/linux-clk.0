@@ -1,31 +1,66 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 28 Jun 2016 00:04:58 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCHv2 07/28] ARM: OMAP2+: timer: change order of hwmod
- data handling
-Message-ID: <20160628070457.GF28140@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-8-git-send-email-t-kristo@ti.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Sun, 12 Jun 2016 19:52:57 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	anson.huang@nxp.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/11] clk: imx6ul: fix gpt2 clock names
+Message-ID: <20160612115256.GC32690@shlinux2>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+ <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
+ <20160612114111.GD20243@tiger>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465844702-12200-8-git-send-email-t-kristo@ti.com>
+In-Reply-To: <20160612114111.GD20243@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160613 12:07]:
-> With the introduction of hwmod module clocks, the name of the hwmod
-> main clk may not be available before hwmod setup, as hwmod setup
-> may lookup the main clock dynamically based on the hwmod name.
-> Thus, change the order of hwmod setup and main clock handling for
-> the timer code, to make sure the main clock is going to be
-> available.
+On Sun, Jun 12, 2016 at 07:41:11PM +0800, Shawn Guo wrote:
+> On Wed, Jun 08, 2016 at 10:33:35PM +0800, Dong Aisheng wrote:
+> > fix gpt2 clock names
+> > 
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> >  drivers/clk/imx/clk-imx6ul.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> > index 0f1f17a8f3ed..67ae3465dd37 100644
+> > --- a/drivers/clk/imx/clk-imx6ul.c
+> > +++ b/drivers/clk/imx/clk-imx6ul.c
+> > @@ -305,8 +305,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+> >  	clks[IMX6UL_CLK_CAN1_SERIAL]	= imx_clk_gate2("can1_serial",	"can_podf",	base + 0x68,	16);
+> >  	clks[IMX6UL_CLK_CAN2_IPG]	= imx_clk_gate2("can2_ipg",	"ipg",		base + 0x68,	18);
+> >  	clks[IMX6UL_CLK_CAN2_SERIAL]	= imx_clk_gate2("can2_serial",	"can_podf",	base + 0x68,	20);
+> > -	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus",	"perclk",	base + 0x68,	24);
+> > -	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial",	"perclk",	base + 0x68,	26);
+> > +	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus2",	"perclk",	base + 0x68,	24);
+> > +	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial2",	"perclk",	base + 0x68,	26);
+> 
+> gpt2_bus and gpt2_serial, please.
+> 
 
-Acked-by: Tony Lindgren <tony@atomidme.com>
+Yes, sorry the careless.
+Will resend it.
 
-Also for this one, please let me know if this can be picked
-separately.
+Regards
+Dong Aisheng
 
-Tony
+> Shawn
+> 
+> >  	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
+> >  	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+> >  	clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
+> > -- 
+> > 1.9.1
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
