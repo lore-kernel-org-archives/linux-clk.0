@@ -1,145 +1,525 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 11/28] clk: ti: am33xx: transition to usage of ti_clk_get
-Date: Mon, 13 Jun 2016 22:04:45 +0300
-Message-ID: <1465844702-12200-12-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: [PATCH v2 10/17] sh: convert generic drivers framework
+Date: Sun, 12 Jun 2016 15:54:28 +0900
+Message-Id: <1465714475-24111-11-git-send-email-ysato@users.sourceforge.jp>
+In-Reply-To: <1465714475-24111-1-git-send-email-ysato@users.sourceforge.jp>
+References: <1465714475-24111-1-git-send-email-ysato@users.sourceforge.jp>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Cleanup any unnecessary DT_CLK() alias entries from the AM33xx clock file.
-Also, use ti_clk_get where necessary.
+Use common PCI host framework and Common Clock Freamework.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 ---
- drivers/clk/ti/clk-33xx.c | 92 ++++-------------------------------------------
- 1 file changed, 7 insertions(+), 85 deletions(-)
+ arch/sh/boards/Kconfig      |   1 +
+ arch/sh/drivers/Makefile    |   2 +
+ arch/sh/kernel/cpu/Makefile |   8 +-
+ arch/sh/kernel/cpu/clock.c  |   6 +-
+ drivers/clk/Kconfig         |   1 +
+ drivers/clk/Makefile        |   3 +-
+ drivers/clk/sh/Kconfig      |   2 +
+ drivers/clk/sh/Makefile     |   2 +
+ drivers/clk/sh/clk-shdiv.c  | 344 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sh/clk-shdiv.h  |  16 +++
+ 10 files changed, 381 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/sh/Kconfig
+ create mode 100644 drivers/clk/sh/Makefile
+ create mode 100644 drivers/clk/sh/clk-shdiv.c
+ create mode 100644 drivers/clk/sh/clk-shdiv.h
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index ef2ec64..43847bc 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -23,88 +23,10 @@
- #include "clock.h"
+diff --git a/arch/sh/boards/Kconfig b/arch/sh/boards/Kconfig
+index 9e4ccd0..b6ff9df 100644
+--- a/arch/sh/boards/Kconfig
++++ b/arch/sh/boards/Kconfig
+@@ -13,6 +13,7 @@ config SH_DEVICE_TREE
+ 	select CLKSRC_OF
+ 	select GENERIC_CALIBRATE_DELAY
+ 	select GENERIC_IOMAP
++	select COMMON_CLK
+ 	help
+ 	  Select Board Described by Device Tree to build a kernel that
+ 	  does not hard-code any board-specific knowledge but instead uses
+diff --git a/arch/sh/drivers/Makefile b/arch/sh/drivers/Makefile
+index e13f06b..382e86f 100644
+--- a/arch/sh/drivers/Makefile
++++ b/arch/sh/drivers/Makefile
+@@ -4,7 +4,9 @@
  
- static struct ti_dt_clk am33xx_clks[] = {
--	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
--	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
--	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
--	DT_CLK(NULL, "virt_24000000_ck", "virt_24000000_ck"),
--	DT_CLK(NULL, "virt_25000000_ck", "virt_25000000_ck"),
--	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
--	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin_ck"),
--	DT_CLK(NULL, "tclkin_ck", "tclkin_ck"),
--	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
--	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
--	DT_CLK(NULL, "dpll_core_m4_ck", "dpll_core_m4_ck"),
--	DT_CLK(NULL, "dpll_core_m5_ck", "dpll_core_m5_ck"),
--	DT_CLK(NULL, "dpll_core_m6_ck", "dpll_core_m6_ck"),
--	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
--	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
--	DT_CLK(NULL, "dpll_ddr_ck", "dpll_ddr_ck"),
--	DT_CLK(NULL, "dpll_ddr_m2_ck", "dpll_ddr_m2_ck"),
--	DT_CLK(NULL, "dpll_ddr_m2_div2_ck", "dpll_ddr_m2_div2_ck"),
--	DT_CLK(NULL, "dpll_disp_ck", "dpll_disp_ck"),
--	DT_CLK(NULL, "dpll_disp_m2_ck", "dpll_disp_m2_ck"),
--	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
--	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
--	DT_CLK(NULL, "dpll_per_m2_div4_wkupdm_ck", "dpll_per_m2_div4_wkupdm_ck"),
--	DT_CLK(NULL, "dpll_per_m2_div4_ck", "dpll_per_m2_div4_ck"),
--	DT_CLK(NULL, "adc_tsc_fck", "adc_tsc_fck"),
--	DT_CLK(NULL, "cefuse_fck", "cefuse_fck"),
--	DT_CLK(NULL, "clkdiv32k_ck", "clkdiv32k_ck"),
--	DT_CLK(NULL, "clkdiv32k_ick", "clkdiv32k_ick"),
--	DT_CLK(NULL, "dcan0_fck", "dcan0_fck"),
--	DT_CLK("481cc000.d_can", NULL, "dcan0_fck"),
--	DT_CLK(NULL, "dcan1_fck", "dcan1_fck"),
--	DT_CLK("481d0000.d_can", NULL, "dcan1_fck"),
--	DT_CLK(NULL, "pruss_ocp_gclk", "pruss_ocp_gclk"),
--	DT_CLK(NULL, "mcasp0_fck", "mcasp0_fck"),
--	DT_CLK(NULL, "mcasp1_fck", "mcasp1_fck"),
--	DT_CLK(NULL, "mmu_fck", "mmu_fck"),
--	DT_CLK(NULL, "smartreflex0_fck", "smartreflex0_fck"),
--	DT_CLK(NULL, "smartreflex1_fck", "smartreflex1_fck"),
--	DT_CLK(NULL, "sha0_fck", "sha0_fck"),
--	DT_CLK(NULL, "aes0_fck", "aes0_fck"),
--	DT_CLK(NULL, "rng_fck", "rng_fck"),
--	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
--	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
--	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
--	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
--	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
--	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
--	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
--	DT_CLK(NULL, "usbotg_fck", "usbotg_fck"),
--	DT_CLK(NULL, "ieee5000_fck", "ieee5000_fck"),
--	DT_CLK(NULL, "wdt1_fck", "wdt1_fck"),
--	DT_CLK(NULL, "l4_rtc_gclk", "l4_rtc_gclk"),
--	DT_CLK(NULL, "l3_gclk", "l3_gclk"),
--	DT_CLK(NULL, "dpll_core_m4_div2_ck", "dpll_core_m4_div2_ck"),
--	DT_CLK(NULL, "l4hs_gclk", "l4hs_gclk"),
--	DT_CLK(NULL, "l3s_gclk", "l3s_gclk"),
--	DT_CLK(NULL, "l4fw_gclk", "l4fw_gclk"),
--	DT_CLK(NULL, "l4ls_gclk", "l4ls_gclk"),
--	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
--	DT_CLK(NULL, "sysclk_div_ck", "sysclk_div_ck"),
--	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
--	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
--	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
--	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
--	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
--	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
--	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
--	DT_CLK(NULL, "lcd_gclk", "lcd_gclk"),
--	DT_CLK(NULL, "mmc_clk", "mmc_clk"),
--	DT_CLK(NULL, "gfx_fclk_clksel_ck", "gfx_fclk_clksel_ck"),
--	DT_CLK(NULL, "gfx_fck_div_ck", "gfx_fck_div_ck"),
--	DT_CLK(NULL, "sysclkout_pre_ck", "sysclkout_pre_ck"),
--	DT_CLK(NULL, "clkout2_div_ck", "clkout2_div_ck"),
- 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
- 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
--	DT_CLK(NULL, "dbg_sysclk_ck", "dbg_sysclk_ck"),
--	DT_CLK(NULL, "dbg_clka_ck", "dbg_clka_ck"),
--	DT_CLK(NULL, "stm_pmd_clock_mux_ck", "stm_pmd_clock_mux_ck"),
--	DT_CLK(NULL, "trace_pmd_clk_mux_ck", "trace_pmd_clk_mux_ck"),
--	DT_CLK(NULL, "stm_clk_div_ck", "stm_clk_div_ck"),
--	DT_CLK(NULL, "trace_clk_div_ck", "trace_clk_div_ck"),
--	DT_CLK(NULL, "clkout2_ck", "clkout2_ck"),
-+	DT_CLK("481cc000.d_can", NULL, "dcan0_fck"),
-+	DT_CLK("481d0000.d_can", NULL, "dcan1_fck"),
- 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
- 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
- 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
-@@ -142,11 +64,11 @@ int __init am33xx_dt_clk_init(void)
- 	 *    oscillator clock.
- 	 */
+ obj-y		+= dma/
  
--	clk1 = clk_get_sys(NULL, "sys_clkin_ck");
--	clk2 = clk_get_sys(NULL, "timer3_fck");
-+	clk1 = ti_clk_get("sys_clkin_ck");
-+	clk2 = ti_clk_get("timer3_fck");
- 	clk_set_parent(clk2, clk1);
++ifndef CONFIG_SH_DEVICE_TREE
+ obj-$(CONFIG_PCI)		+= pci/
++endif
+ obj-$(CONFIG_SUPERHYWAY)	+= superhyway/
+ obj-$(CONFIG_PUSH_SWITCH)	+= push-switch.o
+ obj-$(CONFIG_HEARTBEAT)		+= heartbeat.o
+diff --git a/arch/sh/kernel/cpu/Makefile b/arch/sh/kernel/cpu/Makefile
+index accc7ca..22ad0ee 100644
+--- a/arch/sh/kernel/cpu/Makefile
++++ b/arch/sh/kernel/cpu/Makefile
+@@ -16,6 +16,10 @@ obj-$(CONFIG_ARCH_SHMOBILE)	+= shmobile/
+ # Common interfaces.
  
--	clk2 = clk_get_sys(NULL, "timer6_fck");
-+	clk2 = ti_clk_get("timer6_fck");
- 	clk_set_parent(clk2, clk1);
- 	/*
- 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
-@@ -155,8 +77,8 @@ int __init am33xx_dt_clk_init(void)
- 	 * not expected by any use-case, so change WDT1 clock source to PRCM
- 	 * 32KHz clock.
- 	 */
--	clk1 = clk_get_sys(NULL, "wdt1_fck");
--	clk2 = clk_get_sys(NULL, "clkdiv32k_ick");
-+	clk1 = ti_clk_get("wdt1_fck");
-+	clk2 = ti_clk_get("clkdiv32k_ick");
- 	clk_set_parent(clk1, clk2);
+ obj-$(CONFIG_SH_ADC)		+= adc.o
++ifndef CONFIG_COMMON_CLK
+ obj-$(CONFIG_SH_CLK_CPG_LEGACY)	+= clock-cpg.o
+-
+-obj-y	+= irq/ init.o clock.o fpu.o pfc.o proc.o
++endif
++ifndef CONFIG_GENERIC_IRQ_CHIP
++obj-y	+= irq/
++endif
++obj-y	+= init.o clock.o fpu.o pfc.o proc.o
+diff --git a/arch/sh/kernel/cpu/clock.c b/arch/sh/kernel/cpu/clock.c
+index 4187cf4..8e66e23 100644
+--- a/arch/sh/kernel/cpu/clock.c
++++ b/arch/sh/kernel/cpu/clock.c
+@@ -22,13 +22,15 @@
  
- 	return 0;
+ int __init clk_init(void)
+ {
+-	int ret;
++	int ret = 0;
+ 
++#ifndef CONFIG_COMMON_CLK
+ 	ret = arch_clk_init();
+ 	if (unlikely(ret)) {
+ 		pr_err("%s: CPU clock registration failed.\n", __func__);
+ 		return ret;
+ 	}
++#endif
+ 
+ 	if (sh_mv.mv_clk_init) {
+ 		ret = sh_mv.mv_clk_init();
+@@ -39,11 +41,13 @@ int __init clk_init(void)
+ 		}
+ 	}
+ 
++#ifndef CONFIG_COMMON_CLK
+ 	/* Kick the child clocks.. */
+ 	recalculate_root_clocks();
+ 
+ 	/* Enable the necessary init clocks */
+ 	clk_enable_init_clocks();
++#endif
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 16f7d33..19b0cd3 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -202,6 +202,7 @@ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
++source "drivers/clk/sh/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
+ source "drivers/clk/ti/Kconfig"
+ 
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 46869d6..c75d9c8 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -83,4 +83,5 @@ obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
+ obj-$(CONFIG_X86)			+= x86/
+ obj-$(CONFIG_ARCH_ZX)			+= zte/
+ obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
+-obj-$(CONFIG_H8300)		+= h8300/
++obj-$(CONFIG_H8300)			+= h8300/
++obj-$(CONFIG_SUPERH)			+= sh/
+diff --git a/drivers/clk/sh/Kconfig b/drivers/clk/sh/Kconfig
+new file mode 100644
+index 0000000..89e28d8
+--- /dev/null
++++ b/drivers/clk/sh/Kconfig
+@@ -0,0 +1,2 @@
++config COMMON_CLK_SH7750
++	bool "Clcok driver for SH7750/SH7751"
+diff --git a/drivers/clk/sh/Makefile b/drivers/clk/sh/Makefile
+new file mode 100644
+index 0000000..468eb9d
+--- /dev/null
++++ b/drivers/clk/sh/Makefile
+@@ -0,0 +1,2 @@
++obj-y += clk-shdiv.o
++obj-$(CONFIG_COMMON_CLK_SH7750) += clk-sh7750.o
+\ No newline at end of file
+diff --git a/drivers/clk/sh/clk-shdiv.c b/drivers/clk/sh/clk-shdiv.c
+new file mode 100644
+index 0000000..be19ffa
+--- /dev/null
++++ b/drivers/clk/sh/clk-shdiv.c
+@@ -0,0 +1,344 @@
++/*
++ * SuperH divider clock driver
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/err.h>
++#include <linux/string.h>
++#include "clk-shdiv.h"
++
++#define div_mask(width) ((1 << (width)) - 1)
++#define to_sh_clk_div(_divider)					\
++	container_of(_divider, struct sh_clk_div, divider)
++
++static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
++				      u8 width)
++{
++	unsigned int maxdiv = 0, mask = div_mask(width);
++	const struct clk_div_table *clkt;
++
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->div > maxdiv && clkt->val <= mask)
++			maxdiv = clkt->div;
++	return maxdiv;
++}
++
++static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width)
++{
++	if (table)
++		return _get_table_maxdiv(table, width);
++	return div_mask(width) + 1;
++}
++
++static unsigned int _get_table_div(const struct clk_div_table *table,
++				   unsigned int val)
++{
++	const struct clk_div_table *clkt;
++
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->val == val)
++			return clkt->div;
++	return 0;
++}
++
++static unsigned int _get_div(const struct clk_div_table *table,
++			     unsigned int val,  u8 width)
++{
++	if (table)
++		return _get_table_div(table, val);
++	return val + 1;
++}
++
++static unsigned int _get_table_val(const struct clk_div_table *table,
++				   unsigned int div)
++{
++	const struct clk_div_table *clkt;
++
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->div == div)
++			return clkt->val;
++	return 0;
++}
++
++static unsigned int _get_val(const struct clk_div_table *table,
++			     unsigned int div, u8 width)
++{
++	if (table)
++		return  _get_table_val(table, div);
++	return div - 1;
++}
++
++static unsigned long sh_divider_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate,
++					 unsigned int val,
++					 const struct clk_div_table *table)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned int div;
++
++	div = _get_div(table, val, divider->width);
++
++	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
++}
++
++static unsigned long sh_clk_divider_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	struct sh_clk_div *sh_div = to_sh_clk_div(divider);
++	unsigned int val;
++
++	val = sh_div->read(divider);
++
++	return sh_divider_recalc_rate(hw, parent_rate, val, divider->table);
++}
++
++static bool _is_valid_table_div(const struct clk_div_table *table,
++				unsigned int div)
++{
++	const struct clk_div_table *clkt;
++
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->div == div)
++			return true;
++	return false;
++}
++
++static bool _is_valid_div(const struct clk_div_table *table, unsigned int div)
++{
++	if (table)
++		return _is_valid_table_div(table, div);
++	return true;
++}
++
++static int _round_up_table(const struct clk_div_table *table, int div)
++{
++	const struct clk_div_table *clkt;
++	int up = INT_MAX;
++
++	for (clkt = table; clkt->div; clkt++) {
++		if (clkt->div == div)
++			return clkt->div;
++		else if (clkt->div < div)
++			continue;
++
++		if ((clkt->div - div) < (up - div))
++			up = clkt->div;
++	}
++
++	return up;
++}
++
++static int _div_round_up(const struct clk_div_table *table,
++			 unsigned long parent_rate, unsigned long rate)
++{
++	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++
++	if (table)
++		div = _round_up_table(table, div);
++
++	return div;
++}
++
++static int _div_round(const struct clk_div_table *table,
++		      unsigned long parent_rate, unsigned long rate)
++{
++	return _div_round_up(table, parent_rate, rate);
++}
++
++static bool _is_best_div(unsigned long rate, unsigned long now,
++			 unsigned long best)
++{
++	return now <= rate && now > best;
++}
++
++static int _next_div(const struct clk_div_table *table, int div)
++{
++	div++;
++
++	if (table)
++		return _round_up_table(table, div);
++
++	return div;
++}
++
++static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *best_parent_rate,
++			       const struct clk_div_table *table, u8 width)
++{
++	int i, bestdiv = 0;
++	unsigned long parent_rate, best = 0, now, maxdiv;
++	unsigned long parent_rate_saved = *best_parent_rate;
++
++	if (!rate)
++		rate = 1;
++
++	maxdiv = _get_maxdiv(table, width);
++
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		parent_rate = *best_parent_rate;
++		bestdiv = _div_round(table, parent_rate, rate);
++		bestdiv = bestdiv == 0 ? 1 : bestdiv;
++		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
++		return bestdiv;
++	}
++
++	/*
++	 * The maximum divider we can use without overflowing
++	 * unsigned long in rate * i below
++	 */
++	maxdiv = min(ULONG_MAX / rate, maxdiv);
++
++	for (i = _next_div(table, 0); i <= maxdiv;
++	     i = _next_div(table, i)) {
++		if (rate * i == parent_rate_saved) {
++			/*
++			 * It's the most ideal case if the requested rate can be
++			 * divided from parent clock without needing to change
++			 * parent rate, so return the divider immediately.
++			 */
++			*best_parent_rate = parent_rate_saved;
++			return i;
++		}
++		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
++					       rate * i);
++		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
++		if (_is_best_div(rate, now, best)) {
++			bestdiv = i;
++			best = now;
++			*best_parent_rate = parent_rate;
++		}
++	}
++
++	if (!bestdiv) {
++		bestdiv = _get_maxdiv(table, width);
++		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
++	}
++
++	return bestdiv;
++}
++
++static long sh_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *prate, const struct clk_div_table *table,
++			u8 width)
++{
++	int div;
++
++	div = clk_divider_bestdiv(hw, rate, prate, table, width);
++
++	return DIV_ROUND_UP_ULL((u64)*prate, div);
++}
++
++static long sh_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *prate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++
++	return sh_divider_round_rate(hw, rate, prate, divider->table,
++				     divider->width);
++}
++
++static int sh_divider_get_val(unsigned long rate, unsigned long parent_rate,
++			   const struct clk_div_table *table, u8 width)
++{
++	unsigned int div, value;
++
++	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++
++	if (!_is_valid_div(table, div))
++		return -EINVAL;
++
++	value = _get_val(table, div, width);
++
++	return min_t(unsigned int, value, div_mask(width));
++}
++
++static int sh_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	struct sh_clk_div *sh_div = to_sh_clk_div(divider);
++	unsigned int value;
++	unsigned long flags = 0;
++
++	value = sh_divider_get_val(rate, parent_rate, divider->table,
++				   divider->width);
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	sh_div->write(divider, value);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return 0;
++}
++
++static const struct clk_ops sh_clk_divider_ops = {
++	.recalc_rate = sh_clk_divider_recalc_rate,
++	.round_rate = sh_clk_divider_round_rate,
++	.set_rate = sh_clk_divider_set_rate,
++};
++
++static struct clk *_register_divider(struct device *dev, const char *name,
++		     const char *parent_name,
++		     void __iomem *reg, u8 shift, u8 width,
++		     const struct clk_div_table *table,
++		     spinlock_t *lock,
++		     u16 (*read)(struct clk_divider *hw),
++		     void (*write)(struct clk_divider *hw, u16 val))
++{
++	struct sh_clk_div *div;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	/* allocate the divider */
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &sh_clk_divider_ops;
++	init.flags = CLK_IS_BASIC;
++	init.parent_names = (parent_name ? &parent_name : NULL);
++	init.num_parents = (parent_name ? 1 : 0);
++
++	/* struct clk_divider assignments */
++	div->divider.reg = reg;
++	div->divider.shift = shift;
++	div->divider.width = width;
++	div->divider.lock = lock;
++	div->divider.hw.init = &init;
++	div->divider.table = table;
++	div->read = read;
++	div->write = write;
++
++	/* register the clock */
++	clk = clk_register(dev, &div->divider.hw);
++
++	if (IS_ERR(clk))
++		kfree(div);
++
++	return clk;
++}
++
++struct clk *sh_div_clk_register(struct device *dev, const char *name,
++				const char *parent_name,
++				void __iomem *reg, u8 shift, u8 width,
++				const struct clk_div_table *table,
++				spinlock_t *lock,
++				u16 (*read)(struct clk_divider *hw),
++				void (*write)(struct clk_divider *hw, u16 val))
++{
++	return _register_divider(dev, name, parent_name, reg, shift,
++				 width, table, lock, read, write);
++}
++EXPORT_SYMBOL_GPL(sh_div_clk_register);
+diff --git a/drivers/clk/sh/clk-shdiv.h b/drivers/clk/sh/clk-shdiv.h
+new file mode 100644
+index 0000000..ebd27df
+--- /dev/null
++++ b/drivers/clk/sh/clk-shdiv.h
+@@ -0,0 +1,16 @@
++/* SuperH common clock divider */
++
++struct sh_clk_div {
++	struct clk_divider divider;
++	u16 (*read)(struct clk_divider *divider);
++	void (*write)(struct clk_divider *divider, u16 val);
++};
++
++struct clk *sh_div_clk_register(struct device *dev, const char *name,
++				const char *parent_name,
++				void __iomem *reg, u8 shift, u8 width,
++				const struct clk_div_table *table,
++				spinlock_t *lock,
++				u16 (*read)(struct clk_divider *hw),
++				void (*write)(struct clk_divider *hw, u16 val));
++
 -- 
-1.9.1
+2.7.0
