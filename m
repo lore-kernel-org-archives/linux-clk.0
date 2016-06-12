@@ -1,53 +1,26 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/3] dt-bindings: clock: Update bindings for MDM9615 GCC and LCC
-Date: Fri, 17 Jun 2016 12:04:34 +0200
-Message-Id: <1466157875-14428-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1466157875-14428-1-git-send-email-narmstrong@baylibre.com>
-References: <1466157875-14428-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 12 Jun 2016 21:22:43 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	anson.huang@nxp.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 07/11] clk: imx6ul: fix pll clock parents
+Message-ID: <20160612132243.GF20243@tiger>
+References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
+ <1465396420-27064-7-git-send-email-aisheng.dong@nxp.com>
+ <20160612114353.GE20243@tiger>
+ <20160612115204.GB32690@shlinux2>
+ <20160612121947.GF32690@shlinux2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160612121947.GF32690@shlinux2>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- Documentation/devicetree/bindings/clock/qcom,gcc.txt | 1 +
- Documentation/devicetree/bindings/clock/qcom,lcc.txt | 1 +
- 2 files changed, 2 insertions(+)
+On Sun, Jun 12, 2016 at 08:19:47PM +0800, Dong Aisheng wrote:
+> You probably may need to change the patch title after merge.
+> clk: imx: fix pll clock parents
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-index 9a60fde..869a2f0 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-@@ -15,6 +15,7 @@ Required properties :
- 			"qcom,gcc-msm8974pro"
- 			"qcom,gcc-msm8974pro-ac"
- 			"qcom,gcc-msm8996"
-+			"qcom,gcc-mdm9615"
- 
- - reg : shall contain base register location and length
- - #clock-cells : shall contain 1
-diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.txt b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
-index dd755be..a3c78aa 100644
---- a/Documentation/devicetree/bindings/clock/qcom,lcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
-@@ -7,6 +7,7 @@ Required properties :
- 			"qcom,lcc-msm8960"
- 			"qcom,lcc-apq8064"
- 			"qcom,lcc-ipq8064"
-+			"qcom,lcc-mdm9615"
- 
- - reg : shall contain base register location and length
- - #clock-cells : shall contain 1
--- 
-1.9.1
+Right, thanks for the reminding.
+
+Shawn
