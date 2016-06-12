@@ -1,98 +1,128 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20160615123646.GD4948@dell>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
- <1465986467-14802-4-git-send-email-wens@csie.org> <20160615123646.GD4948@dell>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 15 Jun 2016 20:41:35 +0800
-Message-ID: <CAGb2v669g6G4aK5UssyLLve1a-AbdVfo4CPYrt+YWmCUURz9qQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] mfd: ac100: Add driver for X-Powers AC100 audio
- codec / RTC combo IC
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <oss@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	yuantian.tang@nxp.com,
+	leoyang.li@nxp.com,
+	xiaofeng.ren@nxp.com,
+	Scott Wood <scottwood@freescale.com>
+Date: Sat, 11 Jun 2016 22:16:25 -0500
+Message-Id: <1465701386-6220-1-git-send-email-oss@buserror.net>
+Subject: [RESEND PATCH 1/2] clk: Add consumer APIs for discovering possible parent clocks
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 15, 2016 at 8:36 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
->
->> The AC100 is a multifunction device with an audio codec subsystem and
->> an RTC subsystem. These two subsystems share a common register space
->> and host interface.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->
-> Change log?
+From: Scott Wood <scottwood@freescale.com>
 
-Change log was in the cover letter. Changes were the addition of the
-codec related register macros and regmap ranges.
+Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
+__clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
+true provider API versions that operate on struct clk_hw.
 
->>  drivers/mfd/Kconfig       |  10 +++
->>  drivers/mfd/Makefile      |   2 +
->>  drivers/mfd/ac100.c       | 135 +++++++++++++++++++++++++++++++++++
->>  include/linux/mfd/ac100.h | 176 ++++++++++++++++++++++++++++++++++++++++++++++
->>  4 files changed, 323 insertions(+)
->>  create mode 100644 drivers/mfd/ac100.c
->>  create mode 100644 include/linux/mfd/ac100.h
->>
->> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->> index 1bcf601de5bc..bd83849a0c8d 100644
->> --- a/drivers/mfd/Kconfig
->> +++ b/drivers/mfd/Kconfig
->> @@ -101,6 +101,16 @@ config MFD_BCM590XX
->>       help
->>         Support for the BCM590xx PMUs from Broadcom
->>
->> +config MFD_AC100
->> +     tristate "X-Powers AC100"
->> +     select MFD_CORE
->> +     depends on SUNXI_RSB
->> +     help
->> +       If you say Y here you get support for the X-Powers AC100 audio codec
->> +       IC.
->> +       This driver include only the core APIs. You have to select individual
->> +       components like codecs or RTC under the corresponding menus.
->> +
->>  config MFD_AXP20X
->>       tristate
->>       select MFD_CORE
->> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
->> index 42a66e19e191..60f9a6b0557c 100644
->> --- a/drivers/mfd/Makefile
->> +++ b/drivers/mfd/Makefile
->> @@ -113,6 +113,8 @@ obj-$(CONFIG_PMIC_DA9052) += da9052-irq.o
->>  obj-$(CONFIG_PMIC_DA9052)    += da9052-core.o
->>  obj-$(CONFIG_MFD_DA9052_SPI) += da9052-spi.o
->>  obj-$(CONFIG_MFD_DA9052_I2C) += da9052-i2c.o
->> +
->> +obj-$(CONFIG_MFD_AC100)              += ac100.o
->>  obj-$(CONFIG_MFD_AXP20X)     += axp20x.o
->>  obj-$(CONFIG_MFD_AXP20X_I2C) += axp20x-i2c.o
->>  obj-$(CONFIG_MFD_AXP20X_RSB) += axp20x-rsb.o
->> diff --git a/drivers/mfd/ac100.c b/drivers/mfd/ac100.c
->> new file mode 100644
->> index 000000000000..15d24fa77771
->> --- /dev/null
->> +++ b/drivers/mfd/ac100.c
->> @@ -0,0 +1,135 @@
->> +/*
->> + * ac100.c - MFD core driver for X-Powers' AC100 Audio Codec IC
->
-> Nit: Drop the filename here.
->
-> Apart from that:
->   Acked-by: Lee Jones <lee.jones@linaro.org>
+qoriq-cpufreq needs these functions in order to determine the options
+it has for calling clk_set_parent() and thus populate the cpufreq
+table, so revive them as legitimate consumer APIs.
 
-Thanks.
-ChenYu
+Signed-off-by: Scott Wood <scottwood@freescale.com>
+---
+Previously sent as http://patchwork.ozlabs.org/patch/519803/
+
+Russell, could you please either ACK this or comment, as CLK API
+maintainer?
+
+ drivers/clk/clk.c   | 19 +++++++++++++++++++
+ include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d584004..d61a3fe 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_hw);
+ 
++unsigned int clk_get_num_parents(struct clk *clk)
++{
++	return !clk ? 0 : clk->core->num_parents;
++}
++EXPORT_SYMBOL_GPL(clk_get_num_parents);
++
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
+ {
+ 	return hw->core->num_parents;
+@@ -358,6 +364,19 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
+ 	return core->parents[index];
+ }
+ 
++struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int index)
++{
++	struct clk_core *parent;
++
++	if (!clk)
++		return NULL;
++
++	parent = clk_core_get_parent_by_index(clk->core, index);
++
++	return !parent ? NULL : parent->hw->clk;
++}
++EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
++
+ struct clk_hw *
+ clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..937de0e 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
+ struct clk *clk_get_parent(struct clk *clk);
+ 
+ /**
++ * clk_get_parent_by_index - get a possible parent clock by index
++ * @clk: clock source
++ * @index: index into the array of possible parents of this clock
++ *
++ * Returns struct clk corresponding to the requested possible
++ * parent clock source, or NULL.
++ */
++struct clk *clk_get_parent_by_index(struct clk *clk,
++				    unsigned int index);
++
++/**
++ * clk_get_num_parents - get number of possible parents
++ * @clk: clock source
++ *
++ * Returns the number of possible parents of this clock,
++ * which can then be enumerated using clk_get_parent_by_index().
++ */
++unsigned int clk_get_num_parents(struct clk *clk);
++
++/**
+  * clk_get_sys - get a clock based upon the device name
+  * @dev_id: device name
+  * @con_id: connection ID
+@@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk *clk)
+ 	return NULL;
+ }
+ 
++struct clk *clk_get_parent_by_index(struct clk *clk,
++				    unsigned int index)
++{
++	return NULL;
++}
++
++unsigned int clk_get_num_parents(struct clk *clk)
++{
++	return 0;
++}
++
+ #endif
+ 
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+-- 
+2.5.0
