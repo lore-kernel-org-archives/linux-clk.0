@@ -1,55 +1,62 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH v2 2/6] clk: meson: add peripheral gate macro
-Date: Wed, 22 Jun 2016 19:01:16 -0700
-Message-Id: <1466647280-17596-3-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
-References: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [Query]set clk rate must operate its coordinated clock
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <20160309152420.20de187a@xhacker>
+ <20160311165152.4103.82090@quark.deferred.io> <2738343.ekabfXD0fs@diego>
+Cc: Jisheng Zhang <jszhang@marvell.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ pi-cheng.chen@linaro.org
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <575ED857.2020008@linaro.org>
+Date: Mon, 13 Jun 2016 18:59:19 +0300
+MIME-Version: 1.0
+In-Reply-To: <2738343.ekabfXD0fs@diego>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-There are a series of peripheral and system gate clocks that fan out
-from the clk81 signal. Add a helper macro to statically initialize these
-gate clocks.
+On 06/06/2016 11:10 AM, Heiko Stübner wrote:
+> Hi Mike,
+> 
+> Am Freitag, 11. März 2016, 08:51:52 schrieb Michael Turquette:
+>> Quoting Jisheng Zhang (2016-03-08 23:24:20)
+>>> I have the following clk case which I dunno the elegant solution:
+>>>
+>>>
+>>> cpuclk have two parents: cpupll and refclk. When set the cpuclk freq, we
+>>> have to set its parent's freq, I.E cpupll freq. But before changing the
+>>> cpupll's freq, we should set its refclk as its parent firstly.
+>>>
+>>> AFAIK, this is a common case, I have seen such requirement in rockchip,
+>>> samsung clk driver. They solve this by notifier, but as pointed out by
+>>> Michael in
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351565.ht
+>>> ml
+>>>
+>>> "This is also a hack and it points towards some missing infrastructure in
+>>> the clock framework."
+>>>
+>>> I also don't like the notifier solution, I believe the elegant solution
+>>> could be using the coordinated clock infrastructure. So what's the status
+>>> of this infrastructure? I can test, and I can even add some code to make
+>>> it be ready to be merged if you guide me ;)
+>>
+>> Thanks for the email. I hope to finish that feature before ELC. I have
+>> Cc'd Pi-Cheng Chen from Mediatek who is also interested in coordinated
+>> clock rates.
+> 
+> pulling this up again, did this materialize yet? :-)
+> 
+> Because it looks like on Rockchip we're getting yet another clock that needs 
+> special handling (set_rate needs to go through the trusted-firmware, while 
+> reading stays the same) which might profit from that as well.
+> 
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
----
-No change in v2.
+Hi,
+I am also interested in the CCR. Hopefully Mike will post some patches on
+the list soon.
 
- drivers/clk/meson/clkc.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index f3f396168ba4..9436932880c0 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -73,6 +73,20 @@ struct meson_clk_cpu {
- int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
- 		void *data);
- 
-+#define MESON_GATE(_name, _reg, _bit)					\
-+struct clk_gate gxbb_##_name = { 						\
-+	.reg = (void __iomem *) _reg, 					\
-+	.bit_idx = (_bit), 						\
-+	.lock = &clk_lock,						\
-+	.hw.init = &(struct clk_init_data) { 				\
-+		.name = #_name,					\
-+		.ops = &clk_gate_ops,					\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), 	\
-+	},								\
-+};
-+
- /* clk_ops */
- extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
--- 
-2.1.4
+Regards,
+Georgi
