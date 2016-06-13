@@ -1,121 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 3/7] clk: meson: fractional pll support
-Date: Thu,  9 Jun 2016 17:32:50 -0700
-Message-Id: <1465518774-26924-4-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
-References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <neidhard.kim@lge.com>
+From: Jongsung Kim <neidhard.kim@lge.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chanho Min
+	<chanho.min@lge.com>, Jongsung Kim <neidhard.kim@lge.com>
+Subject: [RESEND][PATCH] clk: fixed-factor: set CLK_SET_RATE_PARENT
+Date: Mon, 13 Jun 2016 18:08:00 +0900
+Message-ID: <1465808880-12332-1-git-send-email-neidhard.kim@lge.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: neidhard.kim@lge.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
----
- drivers/clk/meson/clk-pll.c | 32 ++++++++++++++++++++++++++++++--
- drivers/clk/meson/clkc.h    | 15 +++++++++++++++
- 2 files changed, 45 insertions(+), 2 deletions(-)
+Without CLK_SET_RATE_PARENT-flag set, clk_factor_round_rate() just
+returns the current frequency. A fixed-factor-clock initialzed via
+of_fixed_factor_clk_set() (ie, by device-tree) can't have the flag
+set. It can be problematic when the parent of a fixed-factor-clock
+is rate-controllable clk, because the rounding can't be propagated
+to parent, the rounded target frequency is always the current, and
+finally the frequency can't be changed.
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 60c6b94..4adc1e8 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -53,7 +53,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	struct parm *p;
- 	unsigned long parent_rate_mhz = parent_rate / 1000000;
- 	unsigned long rate_mhz;
--	u16 n, m, od;
-+	u16 n, m, frac = 0, od, od2 = 0;
- 	u32 reg;
+This patch sets the flags CLK_SET_RATE_PARENT for all fixed-factor-
+clocks, from clk_register_fixed_factor(), and removes checking the
+flag from clk_factor_round_rate().
+
+Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+---
+ drivers/clk/clk-fixed-factor.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 75cd6c7..9568306 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -38,13 +38,10 @@ static long clk_factor_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
+ 	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
++	unsigned long best_parent;
  
- 	p = &pll->n;
-@@ -68,7 +68,21 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	reg = readl(pll->base + p->reg_off);
- 	od = PARM_GET(p->width, p->shift, reg);
+-	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-		unsigned long best_parent;
+-
+-		best_parent = (rate / fix->mult) * fix->div;
+-		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
+-	}
++	best_parent = (rate / fix->mult) * fix->div;
++	*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
  
--	rate_mhz = (parent_rate_mhz * m / n) >> od;
-+	p = &pll->od2;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		od2 = PARM_GET(p->width, p->shift, reg);
-+	}
-+
-+	p = &pll->frac;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		frac = PARM_GET(p->width, p->shift, reg);
-+		rate_mhz = (parent_rate_mhz * m + \
-+				(parent_rate_mhz * frac >> 12)) * 2 / n;
-+		rate_mhz = rate_mhz >> od >> od2;
-+	} else
-+		rate_mhz = (parent_rate_mhz * m / n) >> od >> od2;
- 
- 	return rate_mhz * 1000000;
+ 	return (*prate / fix->div) * fix->mult;
  }
-@@ -155,6 +169,20 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->od);
- 	writel(reg, pll->base + p->reg_off);
+@@ -88,7 +85,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
  
-+	p = &pll->od2;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		reg = PARM_SET(p->width, p->shift, reg, rate_set->od2);
-+		writel(reg, pll->base + p->reg_off);
-+	}
-+
-+	p = &pll->frac;
-+	if (p->width) {
-+		reg = readl(pll->base + p->reg_off);
-+		reg = PARM_SET(p->width, p->shift, reg, rate_set->frac);
-+		writel(reg, pll->base + p->reg_off);
-+	}
-+
- 	p = &pll->n;
- 	ret = meson_clk_pll_wait_lock(pll, p);
- 	if (ret) {
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 73f0146..53326c3 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -40,7 +40,10 @@ struct pll_rate_table {
- 	u16		m;
- 	u16		n;
- 	u16		od;
-+	u16		od2;
-+	u16		frac;
- };
-+
- #define PLL_RATE(_r, _m, _n, _od)					\
- 	{								\
- 		.rate		= (_r),					\
-@@ -49,12 +52,24 @@ struct pll_rate_table {
- 		.od		= (_od),				\
- 	}								\
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+-	init.flags = flags | CLK_IS_BASIC;
++	init.flags = flags | CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
  
-+#define PLL_FRAC_RATE(_r, _m, _n, _od, _od2, _frac)			\
-+	{								\
-+		.rate		= (_r),					\
-+		.m		= (_m),					\
-+		.n		= (_n),					\
-+		.od		= (_od),				\
-+		.od2		= (_od2),				\
-+		.frac		= (_frac),				\
-+	}								\
-+
- struct meson_clk_pll {
- 	struct clk_hw hw;
- 	void __iomem *base;
- 	struct parm m;
- 	struct parm n;
-+	struct parm frac;
- 	struct parm od;
-+	struct parm od2;
- 	const struct pll_rate_table *rate_table;
- 	unsigned int rate_count;
- 	spinlock_t *lock;
 -- 
-2.1.4
+2.7.4
