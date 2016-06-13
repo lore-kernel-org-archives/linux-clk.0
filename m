@@ -1,305 +1,98 @@
-Return-Path: <hotran@apm.com>
-Return-Path: <hotran@apm.com>
-From: Hoan Tran <hotran@apm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	lho@apm.com,
-	Duc Dang <dhdang@apm.com>,
-	Hoan Tran <hotran@apm.com>
-Subject: [PATCH v2] clk: Add fractional scale clock support
-Date: Mon, 20 Jun 2016 14:31:09 -0700
-Message-Id: <1466458269-460-1-git-send-email-hotran@apm.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 1/1] clk: imx: refine the powerdown bit of clk-pllv3
+Date: Mon, 13 Jun 2016 15:37:14 +0800
+Message-ID: <1465803434-31507-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <CAA+hA=SG1OViVLeZGVBT=eteWE3t8bUYv=sqotVQkF-apNcDFA@mail.gmail.com>
+References: <CAA+hA=SG1OViVLeZGVBT=eteWE3t8bUYv=sqotVQkF-apNcDFA@mail.gmail.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds fractional scale clock support.
-Fractional scale clock is implemented for a single register field.
-  Output rate = parent_rate * scale / denominator
-For example, for 1 / 8 fractional scale, denominator will be 8 and scale
-will be computed and programmed accordingly.
+The powerdown bit is a bit confused, let's change it to power_bit
+to relfect both powerdown and powerup case according to different
+plls.
 
-v2
- * Fix compile error by using DIV_ROUND_UP_ULL() macro
- * Remove DT binding document
- * Remove DT clk_fractional_scale_init() function
-
-v1
- * Initial
-
-Signed-off-by: Hoan Tran <hotran@apm.com>
-Signed-off-by: Loc Ho <lho@apm.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/Makefile               |   1 +
- drivers/clk/clk-fractional-scale.c | 195 +++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h       |  41 ++++++++
- 3 files changed, 237 insertions(+)
- create mode 100644 drivers/clk/clk-fractional-scale.c
+ drivers/clk/imx/clk-pllv3.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index dcc5e69..d7deddf 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
-+obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-scale.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
-diff --git a/drivers/clk/clk-fractional-scale.c b/drivers/clk/clk-fractional-scale.c
-new file mode 100644
-index 0000000..c4e9e06
---- /dev/null
-+++ b/drivers/clk/clk-fractional-scale.c
-@@ -0,0 +1,195 @@
-+/*
-+ * Copyright (C) 2016 Applied Micro Circuits Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Fractional scale clock is implemented for a single register field.
-+ *
-+ * Output rate = parent_rate * scale / denominator
-+ *
-+ * For example, for 1/8 fractional scale, denominator will be 8 and scale
-+ * will be computed and programmed accordingly.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#define to_clk_sf(_hw) container_of(_hw, struct clk_fractional_scale, hw)
-+
-+static unsigned long clk_fs_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct clk_fractional_scale *fd = to_clk_sf(hw);
-+	unsigned long flags = 0;
-+	u64 ret, scale;
-+	u32 val;
-+
-+	if (fd->lock)
-+		spin_lock_irqsave(fd->lock, flags);
-+	else
-+		__acquire(fd->lock);
-+
-+	val = clk_readl(fd->reg);
-+
-+	if (fd->lock)
-+		spin_unlock_irqrestore(fd->lock, flags);
-+	else
-+		__release(fd->lock);
-+
-+	ret = (u64) parent_rate;
-+
-+	scale = (val & fd->mask) >> fd->shift;
-+	if (fd->flags & CLK_FRACTIONAL_SCALE_INVERTED)
-+		scale = fd->denom - scale;
-+	else
-+		scale++;
-+
-+	/* freq = parent_rate * scaler / denom */
-+	do_div(ret, fd->denom);
-+	ret *= scale;
-+	if (ret == 0)
-+		ret = (u64) parent_rate;
-+
-+	return ret;
-+}
-+
-+static long clk_fs_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct clk_fractional_scale *fd = to_clk_sf(hw);
-+	u64 ret, scale;
-+
-+	if (!rate || rate >= *parent_rate)
-+		return *parent_rate;
-+
-+	/* freq = parent_rate * scaler / denom */
-+	ret = rate * fd->denom;
-+	scale = DIV_ROUND_UP_ULL(ret, *parent_rate);
-+
-+	ret = (u64) *parent_rate * scale;
-+	do_div(ret, fd->denom);
-+
-+	return ret;
-+}
-+
-+static int clk_fs_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct clk_fractional_scale *fd = to_clk_sf(hw);
-+	unsigned long flags = 0;
-+	u64 scale, ret;
-+	u32 val;
-+
-+	/*
-+	 * Compute the scaler:
-+	 *
-+	 * freq = parent_rate * scaler / denom, or
-+	 * scaler = freq * denom / parent_rate
-+	 */
-+	ret = rate * fd->denom;
-+	scale = DIV_ROUND_UP_ULL(ret, (u64)parent_rate);
-+
-+	/* Check if inverted */
-+	if (fd->flags & CLK_FRACTIONAL_SCALE_INVERTED)
-+		scale = fd->denom - scale;
-+	else
-+		scale--;
-+
-+	if (fd->lock)
-+		spin_lock_irqsave(fd->lock, flags);
-+	else
-+		__acquire(fd->lock);
-+
-+	val = clk_readl(fd->reg);
-+	val &= ~fd->mask;
-+	val |= (scale << fd->shift);
-+	clk_writel(val, fd->reg);
-+
-+	if (fd->lock)
-+		spin_unlock_irqrestore(fd->lock, flags);
-+	else
-+		__release(fd->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops clk_fractional_scale_ops = {
-+	.recalc_rate = clk_fs_recalc_rate,
-+	.round_rate = clk_fs_round_rate,
-+	.set_rate = clk_fs_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_fractional_scale_ops);
-+
-+struct clk_hw *clk_hw_register_fractional_scale(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width, u64 denom,
-+		u32 clk_flags, spinlock_t *lock)
-+{
-+	struct clk_fractional_scale *fd;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+	if (!fd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_fractional_scale_ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	fd->reg = reg;
-+	fd->shift = shift;
-+	fd->mask = (BIT(width) - 1) << shift;
-+	fd->denom = denom;
-+	fd->flags = clk_flags;
-+	fd->lock = lock;
-+	fd->hw.init = &init;
-+
-+	hw = &fd->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(fd);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_fractional_scale);
-+
-+struct clk *clk_register_fractional_scale(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width, u64 denom,
-+		u32 clk_flags, spinlock_t *lock)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_fractional_scale(dev, name, parent_name, flags,
-+					      reg, shift, width, denom,
-+					      clk_flags, lock);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+
-+	return hw->clk;
-+}
-+EXPORT_SYMBOL_GPL(clk_register_fractional_scale);
-+
-+void clk_hw_unregister_fractional_scale(struct clk_hw *hw)
-+{
-+	struct clk_fractional_scale *fd;
-+
-+	fd = to_clk_sf(hw);
-+
-+	clk_hw_unregister(hw);
-+	kfree(fd);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_unregister_fractional_scale);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0c72204..7d33bc0 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -578,6 +578,47 @@ struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
- void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
- 
- /**
-+ * struct clk_fractional_scale - Fractional scale clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @reg:	register containing the fractional scale multiplier (scaler)
-+ * @shift:	shift to the unit bit field
-+ * @width:	width of the unit bit field
-+ * @denom:	1/denominator unit
-+ * @lock:	register lock
-+ *
-+ * Clock with fractional scale affecting its output frequency.
-+ *
-+ * Flags:
-+ * CLK_FRACTIONAL_SCALE_INVERTED - by default the scaler is the value read
-+ *                                 from the register plus one. For example,
-+ *                                   0 for (0 + 1) / denom,
-+ *                                   1 for (1 + 1) / denom and etc.
-+ *                                 If this flag is set, it is
-+ *                                   0 for (denom - 0) / denom,
-+ *                                   1 for (denom - 1) / denom and etc.
-+ */
-+
-+struct clk_fractional_scale {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		shift;
-+	u32		mask;
-+	u64		denom;
-+	u32		flags;
-+	spinlock_t	*lock;
-+};
-+
-+#define CLK_FRACTIONAL_SCALE_INVERTED		BIT(0)
-+
-+extern const struct clk_ops clk_fractional_scale_ops;
-+struct clk *clk_register_fractional_scale(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width, u64 denom,
-+		u32 clk_flags, spinlock_t *lock);
-+
-+
-+/**
-  * struct clk_multiplier - adjustable multiplier clock
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index eea2b1b3791e..379ec133fab2 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -29,8 +29,8 @@
+  * struct clk_pllv3 - IMX PLL clock version 3
+  * @clk_hw:	 clock source
+  * @base:	 base address of PLL registers
+- * @powerup_set: set POWER bit to power up the PLL
+- * @powerdown:   pll powerdown offset bit
++ * @power_bit:	 pll power bit mask
++ * @powerup_set: set power_bit to power up the PLL
+  * @div_mask:	 mask of divider bits
+  * @div_shift:	 shift of divider bits
   *
-  * @hw:		handle between common and hardware-specific interfaces
+@@ -40,8 +40,8 @@
+ struct clk_pllv3 {
+ 	struct clk_hw	hw;
+ 	void __iomem	*base;
++	u32		power_bit;
+ 	bool		powerup_set;
+-	u32		powerdown;
+ 	u32		div_mask;
+ 	u32		div_shift;
+ 	unsigned long	ref_clock;
+@@ -52,7 +52,7 @@ struct clk_pllv3 {
+ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+ {
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(10);
+-	u32 val = readl_relaxed(pll->base) & pll->powerdown;
++	u32 val = readl_relaxed(pll->base) & pll->power_bit;
+ 
+ 	/* No need to wait for lock when pll is not powered up */
+ 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+@@ -77,7 +77,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
+ 
+ 	val = readl_relaxed(pll->base);
+ 	if (pll->powerup_set)
+-		val |= pll->powerdown;
++		val |= pll->power_bit;
+ 	else
+ 		val &= ~pll->powerdown;
+ 	writel_relaxed(val, pll->base);
+@@ -92,7 +92,7 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
+ 
+ 	val = readl_relaxed(pll->base);
+ 	if (pll->powerup_set)
+-		val &= ~pll->powerdown;
++		val &= ~pll->power_bit;
+ 	else
+ 		val |= pll->powerdown;
+ 	writel_relaxed(val, pll->base);
+@@ -316,7 +316,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 	if (!pll)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	pll->powerdown = BM_PLL_POWER;
++	pll->power_bit = BM_PLL_POWER;
+ 
+ 	switch (type) {
+ 	case IMX_PLLV3_SYS:
+@@ -332,7 +332,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 		ops = &clk_pllv3_av_ops;
+ 		break;
+ 	case IMX_PLLV3_ENET_IMX7:
+-		pll->powerdown = IMX7_ENET_PLL_POWER;
++		pll->power_bit = IMX7_ENET_PLL_POWER;
+ 		pll->ref_clock = 1000000000;
+ 		ops = &clk_pllv3_enet_ops;
+ 		break;
 -- 
 1.9.1
