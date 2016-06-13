@@ -1,118 +1,102 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V2 5/8] clk: imx: re-order and concentrate the same type of clk api
-Date: Wed, 29 Jun 2016 22:59:08 +0800
-Message-ID: <1467212351-16626-6-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 01/28] clk: ti: add ti_clk_get helper API
+Date: Mon, 13 Jun 2016 22:04:35 +0300
+Message-ID: <1465844702-12200-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Re-order and concentrate the same type of clk api for better
-code maintenance.
+The API can be used to fetch directly DT clocks based on name. Using
+this new API allows getting rid of most of the DT_CLK() entries under
+drivers/clk/ti.
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/imx/clk.h | 58 +++++++++++++++++++++++++--------------------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+ drivers/clk/ti/clk.c   | 35 +++++++++++++++++++++++++++++------
+ include/linux/clk/ti.h |  2 ++
+ 2 files changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 508d0fad84cf..df87d8888d80 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -51,28 +51,6 @@ struct clk * imx_obtain_fixed_clock(
- struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
- 
--static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
--		void __iomem *reg, u8 shift)
--{
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
--			shift, 0x3, 0, &imx_ccm_lock, NULL);
--}
--
--static inline struct clk *imx_clk_gate2_shared(const char *name,
--		const char *parent, void __iomem *reg, u8 shift,
--		unsigned int *share_count)
--{
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
--			shift, 0x3, 0, &imx_ccm_lock, share_count);
--}
--
--static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
--		void __iomem *reg, u8 shift, u8 cgr_val)
--{
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
--			shift, cgr_val, 0, &imx_ccm_lock, NULL);
--}
--
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
- 
-@@ -97,6 +75,13 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 5fcf247..3dcf97e 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -68,6 +68,33 @@ static u32 clk_memmap_readl(void __iomem *reg)
  }
  
-+static inline struct clk *imx_clk_fixed_factor(const char *name,
-+		const char *parent, unsigned int mult, unsigned int div)
+ /**
++ * ti_clk_get - lookup a TI clock handle
++ * @name: clock to find
++ *
++ * Searches for a TI clock handle. Will first attempt to search for a
++ * clock based on a DT node name, but if this fails, will revert to
++ * looking up a clock alias. Returns the pointer to the clock handle,
++ * or ERR_PTR in failure.
++ */
++struct clk *ti_clk_get(const char *name)
 +{
-+	return clk_register_fixed_factor(NULL, name, parent,
-+			CLK_SET_RATE_PARENT, mult, div);
++	struct of_phandle_args clkspec;
++	struct device_node *node;
++	struct clk *clk;
++
++	if (of_have_populated_dt()) {
++		node = of_find_node_by_name(NULL, name);
++		clkspec.np = node;
++		clk = of_clk_get_from_provider(&clkspec);
++
++		if (!IS_ERR(clk))
++			return clk;
++	}
++
++	return clk_get(NULL, name);
 +}
 +
- static inline struct clk *imx_clk_divider(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift, u8 width)
++/**
+  * ti_clk_setup_ll_ops - setup low level clock operations
+  * @ops: low level clock ops descriptor
+  *
+@@ -102,14 +129,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
  {
-@@ -126,6 +111,28 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
- }
+ 	struct ti_dt_clk *c;
+-	struct device_node *node;
+ 	struct clk *clk;
+-	struct of_phandle_args clkspec;
  
-+static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift)
-+{
-+	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+			shift, 0x3, 0, &imx_ccm_lock, NULL);
-+}
-+
-+static inline struct clk *imx_clk_gate2_shared(const char *name,
-+		const char *parent, void __iomem *reg, u8 shift,
-+		unsigned int *share_count)
-+{
-+	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+			shift, 0x3, 0, &imx_ccm_lock, share_count);
-+}
-+
-+static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift, u8 cgr_val)
-+{
-+	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+			shift, cgr_val, 0, &imx_ccm_lock, NULL);
-+}
-+
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- 		u8 shift, u8 width, const char **parents, int num_parents)
- {
-@@ -143,13 +150,6 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
- 			&imx_ccm_lock);
- }
+ 	for (c = oclks; c->node_name != NULL; c++) {
+-		node = of_find_node_by_name(NULL, c->node_name);
+-		clkspec.np = node;
+-		clk = of_clk_get_from_provider(&clkspec);
++		clk = ti_clk_get(c->node_name);
  
--static inline struct clk *imx_clk_fixed_factor(const char *name,
--		const char *parent, unsigned int mult, unsigned int div)
--{
--	return clk_register_fixed_factor(NULL, name, parent,
--			CLK_SET_RATE_PARENT, mult, div);
--}
--
- struct clk *imx_clk_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
+ 		if (!IS_ERR(clk)) {
+ 			c->lk.clk = clk;
+@@ -446,7 +469,7 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
+ 	int i;
+ 
+ 	for (i = 0; i < num_clocks; i++) {
+-		init_clk = clk_get(NULL, clk_names[i]);
++		init_clk = ti_clk_get(clk_names[i]);
+ 		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
+ 			 clk_names[i]))
+ 			continue;
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 6110fe0..331b81b 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -294,6 +294,8 @@ struct ti_clk_features {
+ void ti_clk_setup_features(struct ti_clk_features *features);
+ const struct ti_clk_features *ti_clk_get_features(void);
+ 
++struct clk *ti_clk_get(const char *name);
++
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+ 
+ #ifdef CONFIG_ATAGS
 -- 
 1.9.1
