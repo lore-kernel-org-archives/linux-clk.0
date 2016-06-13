@@ -1,192 +1,145 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:20442 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932239AbcFOGjA (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2016 02:39:00 -0400
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 5/5] clk: hisilicon: hi3519: add driver remove path and fix some issues
-Date: Wed, 15 Jun 2016 14:26:38 +0800
-Message-ID: <1465971998-29619-6-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 11/28] clk: ti: am33xx: transition to usage of ti_clk_get
+Date: Mon, 13 Jun 2016 22:04:45 +0300
+Message-ID: <1465844702-12200-12-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-1. Add driver remove path.
-2. Fix some issues.
-   -Fix the ordering issue about clock provider being published.
-   -Add error checking upon registering clocks.
+Cleanup any unnecessary DT_CLK() alias entries from the AM33xx clock file.
+Also, use ti_clk_get where necessary.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 100 insertions(+), 16 deletions(-)
+ drivers/clk/ti/clk-33xx.c | 92 ++++-------------------------------------------
+ 1 file changed, 7 insertions(+), 85 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
-index 8d12700..51b173e 100644
---- a/drivers/clk/hisilicon/clk-hi3519.c
-+++ b/drivers/clk/hisilicon/clk-hi3519.c
-@@ -38,6 +38,11 @@
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index ef2ec64..43847bc 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -23,88 +23,10 @@
+ #include "clock.h"
  
- #define HI3519_NR_CLKS		128
+ static struct ti_dt_clk am33xx_clks[] = {
+-	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
+-	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
+-	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
+-	DT_CLK(NULL, "virt_24000000_ck", "virt_24000000_ck"),
+-	DT_CLK(NULL, "virt_25000000_ck", "virt_25000000_ck"),
+-	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
+-	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "tclkin_ck", "tclkin_ck"),
+-	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
+-	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
+-	DT_CLK(NULL, "dpll_core_m4_ck", "dpll_core_m4_ck"),
+-	DT_CLK(NULL, "dpll_core_m5_ck", "dpll_core_m5_ck"),
+-	DT_CLK(NULL, "dpll_core_m6_ck", "dpll_core_m6_ck"),
+-	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
+-	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_ck", "dpll_ddr_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m2_ck", "dpll_ddr_m2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m2_div2_ck", "dpll_ddr_m2_div2_ck"),
+-	DT_CLK(NULL, "dpll_disp_ck", "dpll_disp_ck"),
+-	DT_CLK(NULL, "dpll_disp_m2_ck", "dpll_disp_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_wkupdm_ck", "dpll_per_m2_div4_wkupdm_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_ck", "dpll_per_m2_div4_ck"),
+-	DT_CLK(NULL, "adc_tsc_fck", "adc_tsc_fck"),
+-	DT_CLK(NULL, "cefuse_fck", "cefuse_fck"),
+-	DT_CLK(NULL, "clkdiv32k_ck", "clkdiv32k_ck"),
+-	DT_CLK(NULL, "clkdiv32k_ick", "clkdiv32k_ick"),
+-	DT_CLK(NULL, "dcan0_fck", "dcan0_fck"),
+-	DT_CLK("481cc000.d_can", NULL, "dcan0_fck"),
+-	DT_CLK(NULL, "dcan1_fck", "dcan1_fck"),
+-	DT_CLK("481d0000.d_can", NULL, "dcan1_fck"),
+-	DT_CLK(NULL, "pruss_ocp_gclk", "pruss_ocp_gclk"),
+-	DT_CLK(NULL, "mcasp0_fck", "mcasp0_fck"),
+-	DT_CLK(NULL, "mcasp1_fck", "mcasp1_fck"),
+-	DT_CLK(NULL, "mmu_fck", "mmu_fck"),
+-	DT_CLK(NULL, "smartreflex0_fck", "smartreflex0_fck"),
+-	DT_CLK(NULL, "smartreflex1_fck", "smartreflex1_fck"),
+-	DT_CLK(NULL, "sha0_fck", "sha0_fck"),
+-	DT_CLK(NULL, "aes0_fck", "aes0_fck"),
+-	DT_CLK(NULL, "rng_fck", "rng_fck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
+-	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
+-	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
+-	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
+-	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
+-	DT_CLK(NULL, "usbotg_fck", "usbotg_fck"),
+-	DT_CLK(NULL, "ieee5000_fck", "ieee5000_fck"),
+-	DT_CLK(NULL, "wdt1_fck", "wdt1_fck"),
+-	DT_CLK(NULL, "l4_rtc_gclk", "l4_rtc_gclk"),
+-	DT_CLK(NULL, "l3_gclk", "l3_gclk"),
+-	DT_CLK(NULL, "dpll_core_m4_div2_ck", "dpll_core_m4_div2_ck"),
+-	DT_CLK(NULL, "l4hs_gclk", "l4hs_gclk"),
+-	DT_CLK(NULL, "l3s_gclk", "l3s_gclk"),
+-	DT_CLK(NULL, "l4fw_gclk", "l4fw_gclk"),
+-	DT_CLK(NULL, "l4ls_gclk", "l4ls_gclk"),
+-	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
+-	DT_CLK(NULL, "sysclk_div_ck", "sysclk_div_ck"),
+-	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
+-	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
+-	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
+-	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
+-	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
+-	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
+-	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
+-	DT_CLK(NULL, "lcd_gclk", "lcd_gclk"),
+-	DT_CLK(NULL, "mmc_clk", "mmc_clk"),
+-	DT_CLK(NULL, "gfx_fclk_clksel_ck", "gfx_fclk_clksel_ck"),
+-	DT_CLK(NULL, "gfx_fck_div_ck", "gfx_fck_div_ck"),
+-	DT_CLK(NULL, "sysclkout_pre_ck", "sysclkout_pre_ck"),
+-	DT_CLK(NULL, "clkout2_div_ck", "clkout2_div_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "dbg_sysclk_ck", "dbg_sysclk_ck"),
+-	DT_CLK(NULL, "dbg_clka_ck", "dbg_clka_ck"),
+-	DT_CLK(NULL, "stm_pmd_clock_mux_ck", "stm_pmd_clock_mux_ck"),
+-	DT_CLK(NULL, "trace_pmd_clk_mux_ck", "trace_pmd_clk_mux_ck"),
+-	DT_CLK(NULL, "stm_clk_div_ck", "stm_clk_div_ck"),
+-	DT_CLK(NULL, "trace_clk_div_ck", "trace_clk_div_ck"),
+-	DT_CLK(NULL, "clkout2_ck", "clkout2_ck"),
++	DT_CLK("481cc000.d_can", NULL, "dcan0_fck"),
++	DT_CLK("481d0000.d_can", NULL, "dcan1_fck"),
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+@@ -142,11 +64,11 @@ int __init am33xx_dt_clk_init(void)
+ 	 *    oscillator clock.
+ 	 */
  
-+struct hi3519_crg_data {
-+	struct hisi_clock_data *clk_data;
-+	struct hisi_reset_controller *rstc;
-+};
-+
- static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
- 	{ HI3519_FIXED_24M, "24m", NULL, 0, 24000000, },
- 	{ HI3519_FIXED_50M, "50m", NULL, 0, 50000000, },
-@@ -80,33 +85,105 @@ static const struct hisi_gate_clock hi3519_gate_clks[] = {
- 		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
- };
+-	clk1 = clk_get_sys(NULL, "sys_clkin_ck");
+-	clk2 = clk_get_sys(NULL, "timer3_fck");
++	clk1 = ti_clk_get("sys_clkin_ck");
++	clk2 = ti_clk_get("timer3_fck");
+ 	clk_set_parent(clk2, clk1);
  
--static int hi3519_clk_probe(struct platform_device *pdev)
-+static struct hisi_clock_data *hi3519_clk_register(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
- 	struct hisi_clock_data *clk_data;
--	struct hisi_reset_controller *rstc;
-+	int ret;
+-	clk2 = clk_get_sys(NULL, "timer6_fck");
++	clk2 = ti_clk_get("timer6_fck");
+ 	clk_set_parent(clk2, clk1);
+ 	/*
+ 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
+@@ -155,8 +77,8 @@ int __init am33xx_dt_clk_init(void)
+ 	 * not expected by any use-case, so change WDT1 clock source to PRCM
+ 	 * 32KHz clock.
+ 	 */
+-	clk1 = clk_get_sys(NULL, "wdt1_fck");
+-	clk2 = clk_get_sys(NULL, "clkdiv32k_ick");
++	clk1 = ti_clk_get("wdt1_fck");
++	clk2 = ti_clk_get("clkdiv32k_ick");
+ 	clk_set_parent(clk1, clk2);
  
--	rstc = hisi_reset_init(pdev);
--	if (!rstc)
-+	clk_data = hisi_clk_alloc(pdev, HI3519_NR_CLKS);
-+	if (!clk_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
-+				     ARRAY_SIZE(hi3519_fixed_rate_clks),
-+				     clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	ret = hisi_clk_register_mux(hi3519_mux_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				clk_data);
-+	if (ret)
-+		goto unregister_fixed_rate;
-+
-+	ret = hisi_clk_register_gate(hi3519_gate_clks,
-+				ARRAY_SIZE(hi3519_gate_clks),
-+				clk_data);
-+	if (ret)
-+		goto unregister_mux;
-+
-+	ret = of_clk_add_provider(pdev->dev.of_node,
-+			of_clk_src_onecell_get, &clk_data->clk_data);
-+	if (ret)
-+		goto unregister_gate;
-+
-+	return clk_data;
-+
-+unregister_fixed_rate:
-+	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
-+				ARRAY_SIZE(hi3519_fixed_rate_clks),
-+				clk_data);
-+
-+unregister_mux:
-+	hisi_clk_unregister_mux(hi3519_mux_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				clk_data);
-+unregister_gate:
-+	hisi_clk_unregister_gate(hi3519_gate_clks,
-+				ARRAY_SIZE(hi3519_gate_clks),
-+				clk_data);
-+	return ERR_PTR(ret);
-+}
-+
-+static void hi3519_clk_unregister(struct platform_device *pdev)
-+{
-+	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	hisi_clk_unregister_gate(hi3519_gate_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				crg->clk_data);
-+	hisi_clk_unregister_mux(hi3519_mux_clks,
-+				ARRAY_SIZE(hi3519_mux_clks),
-+				crg->clk_data);
-+	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
-+				ARRAY_SIZE(hi3519_fixed_rate_clks),
-+				crg->clk_data);
-+}
-+
-+static int hi3519_clk_probe(struct platform_device *pdev)
-+{
-+	struct hi3519_crg_data *crg;
-+
-+	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
-+	if (!crg)
-+		return -ENOMEM;
-+
-+	crg->rstc = hisi_reset_init(pdev);
-+	if (!crg->rstc)
- 		return -ENOMEM;
- 
--	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
--	if (!clk_data) {
--		hisi_reset_exit(rstc);
--		return -ENODEV;
-+	crg->clk_data = hi3519_clk_register(pdev);
-+	if (IS_ERR(crg->clk_data)) {
-+		hisi_reset_exit(crg->rstc);
-+		return PTR_ERR(crg->clk_data);
- 	}
- 
--	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
--				     ARRAY_SIZE(hi3519_fixed_rate_clks),
--				     clk_data);
--	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
--					clk_data);
--	hisi_clk_register_gate(hi3519_gate_clks,
--			ARRAY_SIZE(hi3519_gate_clks), clk_data);
-+	platform_set_drvdata(pdev, crg);
-+	return 0;
-+}
-+
-+static int hi3519_clk_remove(struct platform_device *pdev)
-+{
-+	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
- 
-+	hisi_reset_exit(crg->rstc);
-+	hi3519_clk_unregister(pdev);
  	return 0;
- }
- 
-+
- static const struct of_device_id hi3519_clk_match_table[] = {
- 	{ .compatible = "hisilicon,hi3519-crg" },
- 	{ }
-@@ -115,6 +192,7 @@ MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
- 
- static struct platform_driver hi3519_clk_driver = {
- 	.probe          = hi3519_clk_probe,
-+	.remove		= hi3519_clk_remove,
- 	.driver         = {
- 		.name   = "hi3519-clk",
- 		.of_match_table = hi3519_clk_match_table,
-@@ -127,5 +205,11 @@ static int __init hi3519_clk_init(void)
- }
- core_initcall(hi3519_clk_init);
- 
-+static void __exit hi3519_clk_exit(void)
-+{
-+	platform_driver_unregister(&hi3519_clk_driver);
-+}
-+module_exit(hi3519_clk_exit);
-+
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
 -- 
 1.9.1
-
