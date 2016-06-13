@@ -1,41 +1,53 @@
-Return-Path: <hotran@apm.com>
-Return-Path: <hotran@apm.com>
-From: Hoan Tran <hotran@apm.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	lho@apm.com,
-	Duc Dang <dhdang@apm.com>,
-	Hoan Tran <hotran@apm.com>
-Subject: [PATCH 0/2] clk: Add fractional scale clock support
-Date: Thu, 16 Jun 2016 16:40:31 -0700
-Message-Id: <1466120433-30648-1-git-send-email-hotran@apm.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 18/28] clk: ti: dm816x: cleanup any unnecessary clock aliases
+Date: Mon, 13 Jun 2016 22:04:52 +0300
+Message-ID: <1465844702-12200-19-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds fractional scale clock support.
-Fractional scale clock is implemented for a single register field.
-  Output rate = parent_rate * scale / denominator
-For example, for 1 / 8 fractional scale, denominator will be 8 and scale
-will be computed and programmed accordingly.
+Cleanup any unnecessary DT_CLK() alias entries from the DM816x clock file.
 
-Hoan Tran (2):
-  Documentation: dt: clock: Add fractional scale binding
-  clk: Add fractional scale clock support
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-816x.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
- .../bindings/clock/fractional-scale-clock.txt      |  31 +++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-fractional-scale.c                 | 253 +++++++++++++++++++++
- include/linux/clk-provider.h                       |  41 ++++
- 4 files changed, 326 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/fractional-scale-clock.txt
- create mode 100644 drivers/clk/clk-fractional-scale.c
-
+diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
+index 2a5d84f..e0a984e 100644
+--- a/drivers/clk/ti/clk-816x.c
++++ b/drivers/clk/ti/clk-816x.c
+@@ -17,25 +17,9 @@
+ #include "clock.h"
+ 
+ static struct ti_dt_clk dm816x_clks[] = {
+-	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
+ 	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
+-	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
+-	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
+-	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
+-	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
+-	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
+-	DT_CLK(NULL, "sysclk4_ck", "sysclk4_ck"),
+-	DT_CLK(NULL, "sysclk5_ck", "sysclk5_ck"),
+-	DT_CLK(NULL, "sysclk6_ck", "sysclk6_ck"),
+-	DT_CLK(NULL, "sysclk10_ck", "sysclk10_ck"),
+-	DT_CLK(NULL, "sysclk18_ck", "sysclk18_ck"),
+-	DT_CLK(NULL, "sysclk24_ck", "sysclk24_ck"),
+ 	DT_CLK("4a100000.ethernet", "sysclk24_ck", "sysclk24_ck"),
+ 	{ .node_name = NULL },
+ };
 -- 
 1.9.1
