@@ -1,407 +1,105 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:62844 "EHLO smtp5-g21.free.fr"
+Received: from mail.phycore.de ([217.6.246.34]:34500 "EHLO root.phytec.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751987AbcFKR4G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Sat, 11 Jun 2016 13:56:06 -0400
-Message-Id: <5ef2054fab9087d6f6ca7a0b4fea699db5b1dca7.1465666788.git.moinejf@free.fr>
-In-Reply-To: <cover.1465666788.git.moinejf@free.fr>
-References: <cover.1465666788.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Sat, 11 Jun 2016 18:23:52 +0200
-Subject: [PATCH v2 1/3] clk: sunxi-ng: Add N-D-M-P-factor clock support
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
+	id S964788AbcFMHsX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 13 Jun 2016 03:48:23 -0400
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+Subject: [PATCH v6 3/5] mfd: dt-bindings: Add RK818 device tree bindings document
+Date: Mon, 13 Jun 2016 09:46:27 +0200
+Message-Id: <1465803989-33632-3-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
+References: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for the PLL clocks of the A83T and A80 SoCs
-which are set from N, D1, D2, M and P factors.
+Add device tree bindings documentation for Rockchip's RK818 PMIC.
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/sunxi-ng/Makefile     |   1 +
- drivers/clk/sunxi-ng/ccu_common.h |   1 +
- drivers/clk/sunxi-ng/ccu_ndmp.c   | 239 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_ndmp.h   |  96 +++++++++++++++
- 4 files changed, 337 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_ndmp.h
+Changes since v5:
+- Added Acked-by from Lee Jones
+---
+ Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index cafabf0..f0608cb 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -8,6 +8,7 @@ obj-y += ccu_fixed_factor.o
- obj-y += ccu_gate.o
- obj-y += ccu_mp.o
- obj-y += ccu_mux.o
-+obj-y += ccu_ndmp.o
- obj-y += ccu_nk.o
- obj-y += ccu_nkm.o
- obj-y += ccu_nkmp.o
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index fda2450..df3ae5e 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -23,6 +23,7 @@
- #define CCU_FEATURE_VARIABLE_PREDIV	BIT(3)
- #define CCU_FEATURE_FIXED_PREDIV	BIT(4)
- #define CCU_FEATURE_FIXED_POSTDIV	BIT(5)
-+#define CCU_FEATURE_N1			BIT(6)
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 4ca6aab..9636ae8 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -1,7 +1,11 @@
+-RK808 Power Management Integrated Circuit
++RK8XX Power Management Integrated Circuit
++
++The rk8xx family current members:
++rk808
++rk818
  
- struct device_node;
+ Required properties:
+-- compatible: "rockchip,rk808"
++- compatible: "rockchip,rk808", "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+ - interrupts: the interrupt outputs of the controller.
+@@ -13,6 +17,8 @@ Optional properties:
+   default output clock name
+ - rockchip,system-power-controller: Telling whether or not this pmic is controlling
+   the system power.
++
++Optional RK808 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+ - vcc3-supply:  The input supply for DCDC_REG3
+@@ -29,7 +35,20 @@ Optional properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
  
-diff --git a/drivers/clk/sunxi-ng/ccu_ndmp.c b/drivers/clk/sunxi-ng/ccu_ndmp.c
-new file mode 100644
-index 0000000..5481527
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_ndmp.c
-@@ -0,0 +1,239 @@
-+/*
-+ * PLL clocks of sun8iw6 (A83T) and sun9iw1 (A80)
-+ *
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * The clock rates are computed as:
-+ *	rate = parent_rate / d1 * n / d2 / m >> p
-+ */
+-Regulators: All the regulators of RK808 to be instantiated shall be
++Optional RK818 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- boost-supply: The input supply for DCDC_BOOST
++- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
++- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
++- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
++- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
++- h_5v-supply:  The input supply for HDMI_SWITCH
++- usb-supply:   The input supply for OTG_SWITCH
 +
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+#include <linux/iopoll.h>
++Regulators: All the regulators of RK8XX to be instantiated shall be
+ listed in a child node named 'regulators'. Each regulator is represented
+ by a child node of the 'regulators' node.
+ 
+@@ -48,6 +67,18 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK818 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
 +
-+#include "ccu_gate.h"
-+#include "ccu_ndmp.h"
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REG
++	- HDMI_SWITCH
++	- OTG_SWITCH
 +
-+struct values {
-+	int n, d1, d2, m, p;
-+};
-+
-+static void ccu_ndmp_disable(struct clk_hw *hw)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+
-+	return ccu_gate_helper_disable(&ndmp->common, ndmp->enable);
-+}
-+
-+static int ccu_ndmp_enable(struct clk_hw *hw)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+
-+	return ccu_gate_helper_enable(&ndmp->common, ndmp->enable);
-+}
-+
-+static int ccu_ndmp_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+
-+	return ccu_gate_helper_is_enabled(&ndmp->common, ndmp->enable);
-+}
-+
-+static unsigned long ccu_ndmp_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+	int n, d1, d2, m, p;
-+	unsigned long rate;
-+	u32 reg;
-+
-+	reg = readl(ndmp->common.base + ndmp->common.reg);
-+
-+	rate = parent_rate;
-+
-+	if (ndmp->d1.width) {
-+		d1 = reg >> ndmp->d1.shift;
-+		d1 &= (1 << ndmp->d1.width) - 1;
-+		rate /= (d1 + 1);
-+	}
-+
-+	n = reg >> ndmp->n.shift;
-+	n &= (1 << ndmp->n.width) - 1;
-+	if (ndmp->common.features & CCU_FEATURE_N1)
-+		n++;
-+	rate *= n;
-+
-+	if (ndmp->d2.width) {
-+		d2 = reg >> ndmp->d2.shift;
-+		d2 &= (1 << ndmp->d2.width) - 1;
-+		rate /= (d2 + 1);
-+	}
-+
-+	if (ndmp->m.width) {
-+		m = reg >> ndmp->m.shift;
-+		m &= (1 << ndmp->m.width) - 1;
-+		rate /= (m + 1);
-+	}
-+
-+	if (ndmp->p.width) {
-+		p = reg >> ndmp->p.shift;
-+		p &= (1 << ndmp->p.width) - 1;
-+		rate >>= p;
-+	}
-+
-+	return rate;
-+}
-+
-+/* all returned values are set here */
-+/* d1 and d2 may be only 1 or 2 */
-+static int ccu_ndmp_get_fact(struct ccu_ndmp *ndmp,
-+			unsigned long rate, unsigned long prate,
-+			struct values *p_v)
-+{
-+	int n;
-+	int d1 = 0 + 1, d2 = 0 + 1, m = 1, p = 0, d;
-+	unsigned long t;
-+
-+	/* m implies only n, d1, d2 and m (pll-audio) */
-+	/*
-+	 * Setting d1=1 and d2=2 keeps n and m small enough
-+	 *	with error < 5/10000
-+	 */
-+	if (ndmp->m.width) {
-+		unsigned long lun, lum;
-+
-+		d2 = 1 + 1;
-+		t = prate / 2;
-+		rational_best_approximation(rate, t,
-+					1 << ndmp->n.width,
-+					1 << ndmp->m.width,
-+					&lun, &lum);
-+		if (lum == 0)
-+			return -EINVAL;
-+		n = lun;
-+		m = lum;
-+
-+	/* no d1 implies only n and p (pll-cxcpux) */
-+	} else if (!ndmp->d1.width) {
-+		n = rate / prate;
-+		p = 0;		/* p is used only for rates under 288 MHz */
-+
-+	/* p implies only n, d1 and p (pll-videox) */
-+	} else if (ndmp->p.width) {
-+		d = 2 + ndmp->p.width;
-+		n = rate / (prate / (1 << d));
-+		if (n < 12) {
-+			n *= 2;
-+			d++;
-+		}
-+		while (n >= 12 * 2 && !(n & 1)) {
-+			n /= 2;
-+			if (--d == 0)
-+				break;
-+		}
-+		if (d <= 1) {
-+			d1 = d + 1;
-+		} else {
-+			d1 = 1 + 1;
-+			p = d - 1;
-+		}
-+
-+	/* only n, d1 and d2 (other plls) */
-+	} else {
-+		t = prate / 4;
-+		n = rate / t;
-+		if (n < 12) {
-+			n *= 4;
-+		} else if (n >= 12 * 2 && !(n & 1)) {
-+			if (n >= 12 * 4 && !(n & 3)) {
-+				n /= 4;
-+			} else {
-+				n /= 2;
-+				d2 = 1 + 1;
-+			}
-+		} else {
-+			d1 = d2 = 1 + 1;
-+		}
-+		if (n > (1 << ndmp->n.width))
-+			return -EINVAL;
-+	}
-+
-+	if (n < 12 || n > (1 << ndmp->n.width))
-+		return -EINVAL;
-+
-+	p_v->n = n;
-+	p_v->d1 = d1;
-+	p_v->d2 = d2;
-+	p_v->m = m;
-+	p_v->p = p;
-+
-+	return 0;
-+}
-+
-+static long ccu_ndmp_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+	struct values v;
-+	int ret;
-+
-+	ret = ccu_ndmp_get_fact(ndmp, rate, *parent_rate, &v);
-+	if (ret)
-+		return 0;
-+
-+	return *parent_rate / v.d1 * v.n / v.d2 / v.m >> v.p;
-+}
-+
-+static int ccu_ndmp_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_ndmp *ndmp = hw_to_ccu_ndmp(hw);
-+	unsigned long flags;
-+	struct values v;
-+	int ret;
-+	u32 reg;
-+
-+	ret = ccu_ndmp_get_fact(ndmp, rate, parent_rate, &v);
-+	if (ret)
-+		return ret;
-+	if (ndmp->common.features & CCU_FEATURE_N1)
-+		v.n--;
-+
-+	spin_lock_irqsave(ndmp->common.lock, flags);
-+
-+	reg = readl(ndmp->common.base + ndmp->common.reg) &
-+		~((((1 << ndmp->n.width) - 1) << ndmp->n.shift) |
-+		  (((1 << ndmp->d1.width) - 1) << ndmp->d1.shift) |
-+		  (((1 << ndmp->d2.width) - 1) << ndmp->d2.shift) |
-+		  (((1 << ndmp->m.width) - 1) << ndmp->m.shift) |
-+		  (((1 << ndmp->p.width) - 1) << ndmp->p.shift));
-+
-+	writel(reg | (v.n << ndmp->n.shift) |
-+			((v.d1 - 1) << ndmp->d1.shift) |
-+			((v.d2 - 1) << ndmp->d2.shift) |
-+			((v.m - 1) << ndmp->m.shift) |
-+			(v.p << ndmp->p.shift),
-+	       ndmp->common.base + ndmp->common.reg);
-+
-+	spin_unlock_irqrestore(ndmp->common.lock, flags);
-+
-+	WARN_ON(readl_relaxed_poll_timeout(ndmp->common.base + ndmp->reg_lock,
-+					   reg, !(reg & ndmp->lock), 50, 5000));
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_ndmp_ops = {
-+	.disable	= ccu_ndmp_disable,
-+	.enable		= ccu_ndmp_enable,
-+	.is_enabled	= ccu_ndmp_is_enabled,
-+
-+	.recalc_rate	= ccu_ndmp_recalc_rate,
-+	.round_rate	= ccu_ndmp_round_rate,
-+	.set_rate	= ccu_ndmp_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_ndmp.h b/drivers/clk/sunxi-ng/ccu_ndmp.h
-new file mode 100644
-index 0000000..5341861
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_ndmp.h
-@@ -0,0 +1,96 @@
-+/*
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_NDMP_H_
-+#define _CCU_NDMP_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_mult.h"
-+
-+struct ccu_ndmp {
-+	u32			enable;
-+	u32			lock;
-+	u16			reg_lock;
-+
-+	struct _ccu_mult	n;
-+	struct _ccu_mult	d1;
-+	struct _ccu_mult	d2;
-+	struct _ccu_mult	m;
-+	struct _ccu_mult	p;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_NDMP(_struct, _name, _parent, _reg,			\
-+			_nshift, _nwidth,				\
-+			_d1shift, _d1width,				\
-+			_d2shift, _d2width,				\
-+			_mshift, _mwidth,				\
-+			_pshift, _pwidth,				\
-+			_gate, _lock, _reglock, _flags)			\
-+	struct ccu_ndmp _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.reg_lock	= _reglock,				\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.d1		= _SUNXI_CCU_MULT(_d1shift, _d1width),	\
-+		.d2		= _SUNXI_CCU_MULT(_d2shift, _d2width),	\
-+		.m		= _SUNXI_CCU_MULT(_mshift, _mwidth),	\
-+		.p		= _SUNXI_CCU_MULT(_pshift, _pwidth),	\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_ndmp_ops,	\
-+							_flags),	\
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_NDMP_N1(_struct, _name, _parent, _reg,		\
-+			_nshift, _nwidth,				\
-+			_d1shift, _d1width,				\
-+			_d2shift, _d2width,				\
-+			_mshift, _mwidth,				\
-+			_pshift, _pwidth,				\
-+			_gate, _lock, _reglock, _flags)			\
-+	struct ccu_ndmp _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.reg_lock	= _reglock,				\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.d1		= _SUNXI_CCU_MULT(_d1shift, _d1width),	\
-+		.d2		= _SUNXI_CCU_MULT(_d2shift, _d2width),	\
-+		.m		= _SUNXI_CCU_MULT(_mshift, _mwidth),	\
-+		.p		= _SUNXI_CCU_MULT(_pshift, _pwidth),	\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_N1,		\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_ndmp_ops,	\
-+							_flags),	\
-+		},							\
-+	}
-+
-+static inline struct ccu_ndmp *hw_to_ccu_ndmp(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_ndmp, common);
-+}
-+
-+extern const struct clk_ops ccu_ndmp_ops;
-+
-+#endif /* _CCU_NDMP_H_ */
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
 -- 
-2.8.4
+1.9.1
 
