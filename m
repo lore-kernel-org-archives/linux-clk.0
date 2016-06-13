@@ -1,44 +1,45 @@
-Return-Path: <paulmck@linux.vnet.ibm.com>
-Date: Fri, 17 Jun 2016 10:49:32 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: tony@atomide.com, linux@roeck-us.net, sboyd@codeaurora.org,
-        linux-clk@vger.kernel.org
-Subject: Re: Clock-driver patches to avoid lockdep complaints
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20160615211159.GA31575@linux.vnet.ibm.com>
- <20160617170140.27203.76544@quark.deferred.io>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 21/28] clk: ti: am33xx: fix timer3/6 init time setup for module clocks
+Date: Mon, 13 Jun 2016 22:04:55 +0300
+Message-ID: <1465844702-12200-22-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160617170140.27203.76544@quark.deferred.io>
-Message-Id: <20160617174932.GZ3923@linux.vnet.ibm.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 17, 2016 at 10:01:40AM -0700, Michael Turquette wrote:
-> Quoting Paul E. McKenney (2016-06-15 14:11:59)
-> > Hello!
-> > 
-> > Ingo was not comfortable taking these through -tip, which is understandable,
-> > given that they don't depend on each other or on anything else not already
-> > in mainline, and that they don't have anything to do with -tip.
-> > 
-> > So what would you guys like to do with these?
-> > 
-> > They may be pulled from f17a0dd1c2e0 (clk: Use _rcuidle suffix to allow
-> > clk_core_enable() to used from idle) in my -rcu tree:
-> > 
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
-> 
-> Applied both patches to clk-next.
+timer*_fck are going to be renamed as timer*_mod_ck:s. Fix the init
+time configuration of timer3/timer6 to take this into account, and
+lookup for the module clock in case the lookup for fck fails.
 
-Thank you, Mike!
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-33xx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-							Thanx, Paul
-
-> Regards,
-> Mike
-> 
-> > 
-> >                                                         Thanx, Paul
-> > 
-> 
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index 43847bc..2343a22 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -66,9 +66,15 @@ int __init am33xx_dt_clk_init(void)
+ 
+ 	clk1 = ti_clk_get("sys_clkin_ck");
+ 	clk2 = ti_clk_get("timer3_fck");
++	if (IS_ERR(clk2))
++		clk2 = ti_clk_get("timer3_mod_ck");
++
+ 	clk_set_parent(clk2, clk1);
+ 
+ 	clk2 = ti_clk_get("timer6_fck");
++	if (IS_ERR(clk2))
++		clk2 = ti_clk_get("timer6_mod_ck");
++
+ 	clk_set_parent(clk2, clk1);
+ 	/*
+ 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
+-- 
+1.9.1
