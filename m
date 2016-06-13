@@ -1,129 +1,48 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Dong Aisheng <aisheng.dong@nxp.com>,  linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
-Cc: linux-kernel@vger.kernel.org, sboyd@codeaurora.org, shawnguo@kernel.org,
- linux-arm-kernel@lists.infradead.org, aisheng.dong@nxp.com,
- anson.huang@nxp.com
-References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
- <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <146681236249.35033.18209610320711572265@resonance>
-Subject: Re: [RESEND PATCH 3/8] clk: core: support clocks which requires parents on
- (part 1)
-Date: Fri, 24 Jun 2016 16:52:42 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wadim Egorov <w.egorov@phytec.de>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, a.zummo@towertech.it,
+	alexandre.belloni@free-electrons.com, dianders@chromium.org,
+	zyw@rock-chips.com
+Subject: [PATCH v6 5/5] rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
+Date: Mon, 13 Jun 2016 09:46:29 +0200
+Message-Id: <1465803989-33632-5-git-send-email-w.egorov@phytec.de>
+In-Reply-To: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
+References: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dong Aisheng (2016-04-20 02:34:35)
-> On Freescale i.MX7D platform, all clocks operations, including
-> enable/disable, rate change and re-parent, requires its parent
-> clock on. Current clock core can not support it well.
-> This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
-> special case in clock core that enable its parent clock firstly for
-> each operation and disable it later after operation complete.
-> =
+The RK808 and RK818 PMICs are using a similar register map.
+We can reuse the rtc driver for the RK818 PMIC. So let's add
+the RK818 in the Kconfig description.
 
-> The patch part 1 fixes the possible disabling clocks while its parent
-> is off during kernel booting phase in clk_disable_unused_subtree().
-> =
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/rtc/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Before the completion of kernel booting, clock tree is still not built
-> completely, there may be a case that the child clock is on but its
-> parent is off which could be caused by either HW initial reset state
-> or bootloader initialization.
-> =
-
-> Taking bootloader as an example, we may enable all clocks in HW by defaul=
-t.
-> And during kernel booting time, the parent clock could be disabled in its
-> driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
-> Because it's child clock is only enabled in HW while its SW usecount
-> in clock tree is still 0, so clk_disable of parent clock will gate
-> the parent clock in both HW and SW usecount ultimately. Then there will
-> be a child clock is still on in HW but its parent is already off.
-> =
-
-> Later in clk_disable_unused(), this clock disable accessing while its
-> parent off will cause system hang due to the limitation of HW which
-> must require its parent on.
-> =
-
-> This patch simply enables the parent clock first before disabling
-> if flag CLK_OPS_PARENT_ON is set in clk_disable_unused_subtree().
-> This is a simple solution and only affects booting time.
-> =
-
-> After kernel booting up the clock tree is already created, there will
-> be no case that child is off but its parent is off.
-> So no need do this checking for normal clk_disable() later.
-> =
-
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/clk.c            | 5 +++++
->  include/linux/clk-provider.h | 2 ++
->  2 files changed, 7 insertions(+)
-> =
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 9f944d4..1f054d1a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_cor=
-e *core)
->         hlist_for_each_entry(child, &core->children, child_node)
->                 clk_disable_unused_subtree(child);
->  =
-
-> +       if (core->flags & CLK_OPS_PARENT_ON)
-> +               clk_core_prepare_enable(core->parent);
-> +
->         flags =3D clk_enable_lock();
->  =
-
->         if (core->enable_count)
-> @@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_cor=
-e *core)
->  =
-
->  unlock_out:
->         clk_enable_unlock(flags);
-> +       if (core->flags & CLK_OPS_PARENT_ON)
-> +               clk_core_disable_unprepare(core->parent);
->  }
->  =
-
->  static bool clk_ignore_unused;
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 15628644..c878f9c 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -33,6 +33,8 @@
->  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notification=
-s */
->  #define CLK_SET_RATE_UNGATE    BIT(10) /* clock needs to run to set rate=
- */
->  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
-> +/* parents need on during gate/ungate, set rate and re-parent */
-> +#define CLK_OPS_PARENT_ON      BIT(12)
-
-Hi Dong,
-
-In the clk framework we use "enabled" instead of "on". How about
-changing the flag to CLK_OPS_PARENT_ENABLE?
-
-Regards,
-Mike
-
->  =
-
->  struct clk;
->  struct clk_hw;
-> -- =
-
-> 1.9.1
->=20
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 18639e0..2faed74 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -324,11 +324,11 @@ config RTC_DRV_MAX77686
+ 	  will be called rtc-max77686.
+ 
+ config RTC_DRV_RK808
+-	tristate "Rockchip RK808 RTC"
++	tristate "Rockchip RK808/RK818 RTC"
+ 	depends on MFD_RK808
+ 	help
+ 	  If you say yes here you will get support for the
+-	  RTC of RK808 PMIC.
++	  RTC of RK808 and RK818 PMIC.
+ 
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rk808-rtc.
+-- 
+1.9.1
