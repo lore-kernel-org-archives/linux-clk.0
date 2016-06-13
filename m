@@ -1,150 +1,52 @@
-Return-Path: <moinejf@free.fr>
-Date: Thu, 9 Jun 2016 09:40:28 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
- Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
- Patekar <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, Boris Brezillon
- <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 08/15] clk: sunxi-ng: Add divider
-Message-Id: <20160609094028.490c9d38599cda31fdd069be@free.fr>
-In-Reply-To: <20160607204154.31967-9-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-	<20160607204154.31967-9-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 03/28] ARM: OMAP2+: omap_device: create clock alias purely from DT data
+Date: Mon, 13 Jun 2016 22:04:37 +0300
+Message-ID: <1465844702-12200-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue,  7 Jun 2016 22:41:47 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+This avoids the need to add most of the clock aliases under
+drivers/clk/ti/clk-xyz.c files.
 
-> Add support for the various dividers (linear, table or pow-of-two based)
-> found in the CCU.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Makefile  |   1 +
->  drivers/clk/sunxi-ng/ccu_div.c | 136 +++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu_div.h | 135 +++++++++++++++++++++++++++++++++++=
-+++++
->  3 files changed, 272 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_div.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_div.h
->=20
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index c47cbd309d59..67a2559fe283 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -3,6 +3,7 @@ obj-y +=3D ccu_reset.o
-> =20
->  obj-y +=3D ccu_frac.o
-> =20
-> +obj-y +=3D ccu_div.o
->  obj-y +=3D ccu_fixed_factor.o
->  obj-y +=3D ccu_gate.o
->  obj-y +=3D ccu_mux.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_di=
-v.c
-> new file mode 100644
-> index 000000000000..8659b4cb6c20
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-	[snip]
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_di=
-v.h
-> new file mode 100644
-> index 000000000000..5edbdc1a98c8
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -0,0 +1,135 @@
-> +/*
-> + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_DIV_H_
-> +#define _CCU_DIV_H_
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_common.h"
-> +#include "ccu_mux.h"
-> +
-> +struct _ccu_div {
-> +	u8			shift;
-> +	u8			width;
-> +
-> +	u32			flags;
-> +
-> +	struct clk_div_table	*table;
-> +};
-> +
-> +#define _SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, _flags)	\
-> +	{								\
-> +		.shift	=3D _shift,					\
-> +		.width	=3D _width,					\
-> +		.flags	=3D _flags,					\
-> +		.table	=3D _table,					\
-> +	}
-> +
-> +#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
-> +	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, _flags)
-> +
-> +#define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)			\
-> +	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
-> +
-> +#define _SUNXI_CCU_DIV(_shift, _width)					\
-> +	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, 0)
-> +
-> +struct ccu_div {
-> +	u32			enable;
-> +
-> +	struct _ccu_div		div;
-> +	struct ccu_mux_internal	mux;
-> +	struct ccu_common	common;
-> +};
-> +
-> +#define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
-> +				      _shift, _width,			\
-> +				      _table, _gate, _flags)		\
-> +	struct ccu_div _struct =3D {					\
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/omap_device.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-The gate is missing
-		.enable =3D _gate,
-
-(I was really afraid when I saw 217=B0C as the board temperature!)
-
-> +		.div		=3D _SUNXI_CCU_DIV_TABLE(_shift, _width,	\
-> +						       _table),		\
-> +		.common	=3D {						\
-> +			.reg		=3D _reg,				\
-> +			.features	=3D CCU_FEATURE_GATE,		\
-> +			.hw.init	=3D SUNXI_HW_INIT(_name,		\
-> +							_parent,	\
-> +							&ccu_div_ops,	\
-> +							_flags),	\
-> +		}							\
-> +	}
-> +
-> +
-> +#define SUNXI_CCU_DIV_TABLE(_struct, _name, _parent, _reg,		\
-> +			    _shift, _width,				\
-> +			    _table, _flags)				\
-	[snip]
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+index f7ff3b9..b32d7c8 100644
+--- a/arch/arm/mach-omap2/omap_device.c
++++ b/arch/arm/mach-omap2/omap_device.c
+@@ -63,7 +63,22 @@ static void _add_clkdev(struct omap_device *od, const char *clk_alias,
+ 		return;
+ 	}
+ 
+-	rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev), clk_name, NULL);
++	r = clk_get_sys(NULL, clk_name);
++
++	if (IS_ERR(r) && of_have_populated_dt()) {
++		struct of_phandle_args clkspec;
++
++		clkspec.np = of_find_node_by_name(NULL, clk_name);
++
++		r = of_clk_get_from_provider(&clkspec);
++
++		rc = clk_register_clkdev(r, clk_alias,
++					 dev_name(&od->pdev->dev));
++	} else {
++		rc = clk_add_alias(clk_alias, dev_name(&od->pdev->dev),
++				   clk_name, NULL);
++	}
++
+ 	if (rc) {
+ 		if (rc == -ENODEV || rc == -ENOMEM)
+ 			dev_err(&od->pdev->dev,
+-- 
+1.9.1
