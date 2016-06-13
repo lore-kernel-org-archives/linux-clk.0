@@ -1,49 +1,92 @@
-Return-Path: <tomasz.figa@gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 22/28] dt-bindings: clk: ti: Document module clock type
+Date: Mon, 13 Jun 2016 22:04:56 +0300
+Message-ID: <1465844702-12200-23-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1462815151-14396-1-git-send-email-krzk@kernel.org>
-References: <1462815151-14396-1-git-send-email-krzk@kernel.org>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Sat, 18 Jun 2016 23:35:15 +0900
-Message-ID: <CA+Ln22GCD+DeeaB0J_S8ZE7UXWPjFghSHjG_Q4FLA9EoqdDp2w@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: samsung: Remove useless check for return value of samsung_clk_init
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Document the new TI module clock type, which is intended to replace the
+internal clock control handling within omap_hwmod. Module clock is
+effectively a gate clock controlling both interface and functional
+clocks for a single hardware IP block.
 
-2016-05-10 2:32 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> The samsung_clk_init() cannot return NULL. Either it returns allocated
-> memory or it panics.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
->
-> ---
->
-> Changes since v1:
-> 1. Remove the check from most of other Samsung clock drivers (suggested
->    by Javier).
-> ---
->  drivers/clk/samsung/clk-exynos4.c    | 2 --
->  drivers/clk/samsung/clk-exynos5250.c | 3 +--
->  drivers/clk/samsung/clk-exynos5420.c | 2 --
->  drivers/clk/samsung/clk-exynos5440.c | 2 --
->  drivers/clk/samsung/clk-s3c2410.c    | 2 --
->  drivers/clk/samsung/clk-s3c2412.c    | 2 --
->  drivers/clk/samsung/clk-s3c2443.c    | 2 --
->  drivers/clk/samsung/clk-s3c64xx.c    | 2 --
->  drivers/clk/samsung/clk-s5pv210.c    | 2 --
->  9 files changed, 1 insertion(+), 18 deletions(-)
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ .../devicetree/bindings/clock/ti/module.txt        | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/module.txt
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
+diff --git a/Documentation/devicetree/bindings/clock/ti/module.txt b/Documentation/devicetree/bindings/clock/ti/module.txt
+new file mode 100644
+index 0000000..0329667
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/module.txt
+@@ -0,0 +1,59 @@
++Binding for Texas Instruments module clock.
++
++Binding status: Unstable - ABI compatibility may be broken in the future
++
++This binding uses the common clock binding[1]. This clock is
++quite much similar to the basic gate-clock [2], however, internally
++it controls an OMAP module clock, which effectively handles
++both interface and functional clocks for a single module. In some
++cases, support for mux clock [3] is composited to the same clock node,
++currently only needed for proper support of timer module clocks.
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++[2] Documentation/devicetree/bindings/clock/ti/gate.txt
++[3] Documentation/devicetree/bindings/clock/ti/mux.txt
++
++Required properties:
++- compatible : shall be one of:
++  "ti,omap4-mod-clock" - basic module clock, no gating supported
++  "ti,omap4-hw-mod-clock" - module clock with hardware gating support
++  "ti,omap4-sw-mod-clock" - module clock with software forced gating support
++  "ti,omap4-sw-no-idlest-mod-clock" - module clock with software forced gating
++				      support, misses idlest
++  "ti,omap4-mux-mod-clock" - composite clock with mux and module clocks, no
++			     gating supported
++  "ti,omap4-hw-mux-mod-clock" - composite clock with mux and module clocks,
++				with hardware gating
++  "ti,omap4-sw-mux-mod-clock" - composite clock with mux and module clocks,
++				with software forced gating
++
++- #clock-cells : from common clock binding; shall be set to 0
++- clocks : link to phandle of parent clock(s)
++- reg : offset for register controlling adjustable gate and optional mux
++
++Optional properties:
++- ti,bit-shift : bit shift for programming the clock mux, only needed for
++		 the nodes of the mux variant
++
++Examples:
++	timer6_mod_ck: timer6_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0570>;
++		clocks = <&syc_clk_div_ck>, <&sys_32k_ck>;
++		ti,bit-shift = <24>;
++	};
++
++	i2c1_mod_ck: i2c1_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x14a0>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	hsi_mod_ck: hsi_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1338>;
++		clocks = <&hsi_fck>;
++	};
+-- 
+1.9.1
