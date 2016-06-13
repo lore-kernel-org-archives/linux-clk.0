@@ -1,50 +1,39 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: build clk-rcar-gen2.o for R8A7792
-Date: Mon, 20 Jun 2016 17:43:10 +0200
-Message-Id: <20160620154341.2242033-1-arnd@arndb.de>
+Return-Path: <van.freenix@gmail.com>
+Return-Path: <van.freenix@gmail.com>
+From: Peng Fan <van.freenix@gmail.com>
+To: sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	van.freenix@gmail.com,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH] clk: correct comments for __clk_determine_rate
+Date: Mon, 13 Jun 2016 19:34:21 +0800
+Message-Id: <1465817661-19128-1-git-send-email-van.freenix@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The newly added support for R8A7792 causes build failures
-because we try to call rcar_gen2_clocks_init but that is not
-built into the kernel:
+Correct comments for __clk_determine_rate.
 
-arch/arm/mach-shmobile/built-in.o: In function `rcar_gen2_timer_init':
-:(.init.text+0x3b0): undefined reference to `rcar_gen2_clocks_init'
-
-This changes the clk Makefile to match the other platforms, though
-I guess it would be better to find another way to do this, e.g.
-by not requiring the external function call by relying on
-CLK_OF_DECLARE(), or by making the ARCH_RCAR_GEN2 also control
-the compilation of the clk driver.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 3ebee0adbfe7 ("ARM: shmobile: r8a7792: basic SoC support")
+Signed-off-by: Peng Fan <van.freenix@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/renesas/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index ead8bb843524..3cdb9aaf8717 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d584004..4224a2e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -828,9 +828,7 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ /**
+  * __clk_determine_rate - get the closest rate actually supported by a clock
+  * @hw: determine the rate of this clock
+- * @rate: target rate
+- * @min_rate: returned rate must be greater than this rate
+- * @max_rate: returned rate must be less than this rate
++ * @req: target rate request
+  *
+  * Useful for clk_ops such as .set_rate and .determine_rate.
+  */
 -- 
-2.9.0
+2.6.2
