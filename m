@@ -1,111 +1,57 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 8 Jun 2016 15:23:26 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
-	broonie@kernel.org, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Subject: Re: [RESEND PATCH v5 3/5] mfd: dt-bindings: Add RK818 device tree
- bindings document
-Message-ID: <20160608142326.GF14888@dell>
-References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
- <1464850228-17244-3-git-send-email-w.egorov@phytec.de>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 17/28] clk: ti: dm814x: transition to usage of ti_clk_get
+Date: Mon, 13 Jun 2016 22:04:51 +0300
+Message-ID: <1465844702-12200-18-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1464850228-17244-3-git-send-email-w.egorov@phytec.de>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 02 Jun 2016, Wadim Egorov wrote:
+Cleanup any unnecessary DT_CLK() alias entries from the DM814x clock file.
+Also, use ti_clk_get where necessary.
 
-> Add device tree bindings documentation for Rockchip's RK818 PMIC.
-> 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-814x.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
-> ---
->  Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
->  1 file changed, 34 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-> index 4ca6aab..9636ae8 100644
-> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
-> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-> @@ -1,7 +1,11 @@
-> -RK808 Power Management Integrated Circuit
-> +RK8XX Power Management Integrated Circuit
-> +
-> +The rk8xx family current members:
-> +rk808
-> +rk818
->  
->  Required properties:
-> -- compatible: "rockchip,rk808"
-> +- compatible: "rockchip,rk808", "rockchip,rk818"
->  - reg: I2C slave address
->  - interrupt-parent: The parent interrupt controller.
->  - interrupts: the interrupt outputs of the controller.
-> @@ -13,6 +17,8 @@ Optional properties:
->    default output clock name
->  - rockchip,system-power-controller: Telling whether or not this pmic is controlling
->    the system power.
-> +
-> +Optional RK808 properties:
->  - vcc1-supply:  The input supply for DCDC_REG1
->  - vcc2-supply:  The input supply for DCDC_REG2
->  - vcc3-supply:  The input supply for DCDC_REG3
-> @@ -29,7 +35,20 @@ Optional properties:
->    the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
->    very quickly with no slow ramp time.
->  
-> -Regulators: All the regulators of RK808 to be instantiated shall be
-> +Optional RK818 properties:
-> +- vcc1-supply:  The input supply for DCDC_REG1
-> +- vcc2-supply:  The input supply for DCDC_REG2
-> +- vcc3-supply:  The input supply for DCDC_REG3
-> +- vcc4-supply:  The input supply for DCDC_REG4
-> +- boost-supply: The input supply for DCDC_BOOST
-> +- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
-> +- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
-> +- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
-> +- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
-> +- h_5v-supply:  The input supply for HDMI_SWITCH
-> +- usb-supply:   The input supply for OTG_SWITCH
-> +
-> +Regulators: All the regulators of RK8XX to be instantiated shall be
->  listed in a child node named 'regulators'. Each regulator is represented
->  by a child node of the 'regulators' node.
->  
-> @@ -48,6 +67,18 @@ number as described in RK808 datasheet.
->  	- SWITCH_REGn
->  		- valid values for n are 1 to 2
->  
-> +Following regulators of the RK818 PMIC block are supported. Note that
-> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-> +number as described in RK818 datasheet.
-> +
-> +	- DCDC_REGn
-> +		- valid values for n are 1 to 4.
-> +	- LDO_REGn
-> +		- valid values for n are 1 to 9.
-> +	- SWITCH_REG
-> +	- HDMI_SWITCH
-> +	- OTG_SWITCH
-> +
->  Standard regulator bindings are used inside regulator subnodes. Check
->    Documentation/devicetree/bindings/regulator/regulator.txt
->  for more details
-
+diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
+index 52c6efc..17dc99b 100644
+--- a/drivers/clk/ti/clk-814x.c
++++ b/drivers/clk/ti/clk-814x.c
+@@ -13,19 +13,7 @@
+ #include "clock.h"
+ 
+ static struct ti_dt_clk dm814_clks[] = {
+-	DT_CLK(NULL, "devosc_ck", "devosc_ck"),
+-	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
+-	DT_CLK(NULL, "sysclk4_ck", "sysclk4_ck"),
+-	DT_CLK(NULL, "sysclk5_ck", "sysclk5_ck"),
+-	DT_CLK(NULL, "sysclk6_ck", "sysclk6_ck"),
+-	DT_CLK(NULL, "sysclk8_ck", "sysclk8_ck"),
+-	DT_CLK(NULL, "sysclk10_ck", "sysclk10_ck"),
+-	DT_CLK(NULL, "sysclk18_ck", "sysclk18_ck"),
+ 	DT_CLK(NULL, "timer_sys_ck", "devosc_ck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
+-	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
+ 	{ .node_name = NULL },
+ };
+ 
+@@ -65,7 +53,7 @@ static int __init dm814x_adpll_enable_init_clocks(void)
+ 	for (i = 0; i < ARRAY_SIZE(init_clocks); i++) {
+ 		struct clk *clock;
+ 
+-		clock = clk_get(NULL, init_clocks[i]);
++		clock = ti_clk_get(init_clocks[i]);
+ 		if (WARN(IS_ERR(clock), "could not find init clock %s\n",
+ 			 init_clocks[i]))
+ 			continue;
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
