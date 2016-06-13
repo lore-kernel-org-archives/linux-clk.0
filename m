@@ -1,173 +1,91 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
-	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
-	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
-Subject: [PATCH RFC 6/7] clk: imx: pllv3: convert to prepare_hw and set_rate_hw
-Date: Wed, 29 Jun 2016 21:52:14 +0800
-Message-ID: <1467208335-29876-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1465714475-24111-12-git-send-email-ysato@users.sourceforge.jp>
+References: <1465714475-24111-1-git-send-email-ysato@users.sourceforge.jp> <1465714475-24111-12-git-send-email-ysato@users.sourceforge.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Jun 2016 10:15:26 +0200
+Message-ID: <CAMuHMdXDZyKkd3STNPNL8jmpJvW8gigWrRfZnwjoWkuYa8rMAg@mail.gmail.com>
+Subject: Re: [PATCH v2 11/17] sh: SH7750/51 clock driver
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Convert to prepare_hw and set_rate_hw and let the clk core
-to handle the polling process automatically.
+Hi Sato-san,
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-pllv3.c | 64 ++++++++++++++++++++++-----------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+On Sun, Jun 12, 2016 at 8:54 AM, Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  .../bindings/clock/renesas,sh7750-div-clock.txt    |  27 +++
+>  .../bindings/clock/renesas,sh7750-pll-clock.txt    |  26 +++
+>  drivers/clk/sh/clk-sh7750.c                        | 240 +++++++++++++++++++++
+>  3 files changed, 293 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
+>  create mode 100644 drivers/clk/sh/clk-sh7750.c
+>
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
+> new file mode 100644
+> index 0000000..8c57ab5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-div-clock.txt
+> @@ -0,0 +1,27 @@
+> +* Renesas SH7750/51 divider clock
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be "renesas,sh7750-div-clock"
+> +
+> +  - clocks: Reference to the parent clocks (mostly PLL)
+> +
+> +  - #clock-cells: Must be 0
+> +
+> +  - reg: Base address and length of the divide rate selector
+> +
+> +  - renesas,offset: bit offset of selector
+> +
+> +  - clock-output-names: The names of the clocks.
+> +
+> +Example
+> +-------
+> +
+> +        iclk: iclk {
+> +                compatible = "renesas,sh7750-div-clock";
+> +                clocks = <&pllclk>;
+> +                #clock-cells = <0>;
+> +                reg = <0xffc00000 2>;
+> +               renesas,offset = <6>;
+> +               clock-output-names = "ick";
+> +        };
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
+> new file mode 100644
+> index 0000000..06a3d31
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-pll-clock.txt
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 4826b3c9e19e..78184310ad35 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -49,27 +49,6 @@ struct clk_pllv3 {
- 
- #define to_clk_pllv3(_hw) container_of(_hw, struct clk_pllv3, hw)
- 
--static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
--{
--	unsigned long timeout = jiffies + msecs_to_jiffies(10);
--	u32 val = readl_relaxed(pll->base) & pll->powerdown;
--
--	/* No need to wait for lock when pll is not powered up */
--	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
--		return 0;
--
--	/* Wait for PLL to lock */
--	do {
--		if (readl_relaxed(pll->base) & BM_PLL_LOCK)
--			break;
--		if (time_after(jiffies, timeout))
--			break;
--		usleep_range(50, 500);
--	} while (1);
--
--	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
--}
--
- static int clk_pllv3_prepare(struct clk_hw *hw)
- {
- 	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-@@ -82,7 +61,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
- 		val &= ~BM_PLL_POWER;
- 	writel_relaxed(val, pll->base);
- 
--	return clk_pllv3_wait_lock(pll);
-+	return 0;
- }
- 
- static void clk_pllv3_unprepare(struct clk_hw *hw)
-@@ -126,6 +105,18 @@ static long clk_pllv3_round_rate(struct clk_hw *hw, unsigned long rate,
- 					    parent_rate * 20;
- }
- 
-+static int clk_pllv3_set_rate_done(struct clk_hw *hw)
-+{
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+	u32 val = readl_relaxed(pll->base) & pll->powerdown;
-+
-+	/* always return true if pll is not powered up */
-+	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
-+		return 1;
-+
-+	return readl_relaxed(pll->base) & BM_PLL_LOCK;
-+}
-+
- static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
- 		unsigned long parent_rate)
- {
-@@ -144,16 +135,18 @@ static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
- 	val |= (div << pll->div_shift);
- 	writel_relaxed(val, pll->base);
- 
--	return clk_pllv3_wait_lock(pll);
-+	return 0;
- }
- 
- static const struct clk_ops clk_pllv3_ops = {
--	.prepare	= clk_pllv3_prepare,
-+	.prepare_hw	= clk_pllv3_prepare,
-+	.prepare_done	= clk_pllv3_is_prepared,
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_recalc_rate,
- 	.round_rate	= clk_pllv3_round_rate,
--	.set_rate	= clk_pllv3_set_rate,
-+	.set_rate_hw	= clk_pllv3_set_rate,
-+	.set_rate_done	= clk_pllv3_set_rate_done,
- };
- 
- static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
-@@ -199,16 +192,18 @@ static int clk_pllv3_sys_set_rate(struct clk_hw *hw, unsigned long rate,
- 	val |= div;
- 	writel_relaxed(val, pll->base);
- 
--	return clk_pllv3_wait_lock(pll);
-+	return 0;
- }
- 
- static const struct clk_ops clk_pllv3_sys_ops = {
--	.prepare	= clk_pllv3_prepare,
-+	.prepare_hw	= clk_pllv3_prepare,
-+	.prepare_done	= clk_pllv3_is_prepared,
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_sys_recalc_rate,
- 	.round_rate	= clk_pllv3_sys_round_rate,
--	.set_rate	= clk_pllv3_sys_set_rate,
-+	.set_rate_hw	= clk_pllv3_sys_set_rate,
-+	.set_rate_done	= clk_pllv3_set_rate_done,
- };
- 
- static unsigned long clk_pllv3_av_recalc_rate(struct clk_hw *hw,
-@@ -272,16 +267,18 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
- 	writel_relaxed(mfn, pll->base + PLL_NUM_OFFSET);
- 	writel_relaxed(mfd, pll->base + PLL_DENOM_OFFSET);
- 
--	return clk_pllv3_wait_lock(pll);
-+	return 0;
- }
- 
- static const struct clk_ops clk_pllv3_av_ops = {
--	.prepare	= clk_pllv3_prepare,
-+	.prepare_hw	= clk_pllv3_prepare,
-+	.prepare_done	= clk_pllv3_is_prepared,
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_av_recalc_rate,
- 	.round_rate	= clk_pllv3_av_round_rate,
--	.set_rate	= clk_pllv3_av_set_rate,
-+	.set_rate_hw	= clk_pllv3_av_set_rate,
-+	.set_rate_done	= clk_pllv3_set_rate_done,
- };
- 
- static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
-@@ -293,7 +290,8 @@ static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
- }
- 
- static const struct clk_ops clk_pllv3_enet_ops = {
--	.prepare	= clk_pllv3_prepare,
-+	.prepare_hw	= clk_pllv3_prepare,
-+	.prepare_done	= clk_pllv3_is_prepared,
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_enet_recalc_rate,
-@@ -347,6 +345,8 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 	init.flags = 0;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-+	init.delay_min = 50;
-+	init.delay_max = 500;
- 
- 	pll->hw.init = &init;
- 
--- 
-1.9.1
+> +CLK_OF_DECLARE(sh7750_div_clk, "renesas,sh7750-div-clock",
+> +              sh7750_div_clk_setup);
+> +CLK_OF_DECLARE(sh7750_pll_clk, "renesas,sh7750-pll-clock",
+> +              sh7750_pll_clk_setup);
+> +
+
+Cfr. my comment on the .dtsi, which didn't have linux-clk in CC:
+
+I think it will be much easier for maintenance and code reuse to just have a
+single "cpg" node that's compatible with "renesas,sh7750-cpg", covering all
+CPG registers. Especially since the various clocks use the same registers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
