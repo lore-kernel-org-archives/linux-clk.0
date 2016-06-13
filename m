@@ -1,2374 +1,1331 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] clk: mdm9615: Add support for MDM9615 Clock Controllers
-Date: Fri, 17 Jun 2016 12:04:33 +0200
-Message-Id: <1466157875-14428-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1466157875-14428-1-git-send-email-narmstrong@baylibre.com>
-References: <1466157875-14428-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 28/28] ARM: dts: dra7: add hwmod module clocks
+Date: Mon, 13 Jun 2016 22:05:02 +0300
+Message-ID: <1465844702-12200-29-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to support the Qualcomm MDM9615 SoC, add support for
-the Global and LPASS Clock Controllers.
+Add clock nodes for the SoC hwmods. This is done in preparation to remove
+hwmod data from kernel, hwmod will use the clock nodes instead for
+module level enable / disable logic.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/qcom/Kconfig       |   17 +
- drivers/clk/qcom/Makefile      |    2 +
- drivers/clk/qcom/gcc-mdm9615.c | 1709 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/lcc-mdm9615.c |  580 ++++++++++++++
- 4 files changed, 2308 insertions(+)
- create mode 100644 drivers/clk/qcom/gcc-mdm9615.c
- create mode 100644 drivers/clk/qcom/lcc-mdm9615.c
+ arch/arm/boot/dts/dra7xx-clocks.dtsi | 988 +++++++++++++++++++++++++++++++----
+ 1 file changed, 887 insertions(+), 101 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 95e3b3e..1c05430 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -87,6 +87,23 @@ config MSM_LCC_8960
- 	  Say Y if you want to use audio devices such as i2s, pcm,
- 	  SLIMBus, etc.
+diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+index 8378b44..69b0c72 100644
+--- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
++++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+@@ -419,6 +419,13 @@
+ 		ti,invert-autoidle-bit;
+ 	};
  
-+config MSM_GCC_9615
-+	tristate "MDM9615 Global Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the global clock controller on mdm9615 devices.
-+	  Say Y if you want to use peripheral devices such as UART, SPI,
-+	  i2c, USB, SD/eMMC, etc.
-+
-+config MSM_LCC_9615
-+	tristate "MDM9615 LPASS Clock Controller"
-+	select MSM_GCC_9615
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the LPASS clock controller on mdm9615 devices.
-+	  Say Y if you want to use audio devices such as i2s, pcm,
-+	  SLIMBus, etc.
-+
- config MSM_MMCC_8960
- 	tristate "MSM8960 Multimedia Clock Controller"
- 	select MSM_GCC_8960
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 2a25f4e..556a954 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -26,3 +26,5 @@ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_MSM_GCC_9615) += gcc-mdm9615.o
-+obj-$(CONFIG_MSM_LCC_9615) += lcc-mdm9615.o
-diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-new file mode 100644
-index 0000000..3178f6a
---- /dev/null
-+++ b/drivers/clk/qcom/gcc-mdm9615.c
-@@ -0,0 +1,1709 @@
-+/*
-+ * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
-+ * Copyright (c) BayLibre, SAS.
-+ * Author : Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#include <dt-bindings/clock/qcom,gcc-mdm9615.h>
-+#include <dt-bindings/reset/qcom,gcc-mdm9615.h>
-+
-+#include "common.h"
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-branch.h"
-+#include "reset.h"
-+
-+static struct clk_pll pll0 = {
-+	.l_reg = 0x30c4,
-+	.m_reg = 0x30c8,
-+	.n_reg = 0x30cc,
-+	.config_reg = 0x30d4,
-+	.mode_reg = 0x30c0,
-+	.status_reg = 0x30d8,
-+	.status_bit = 16,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll0",
-+		.parent_names = (const char *[]){ "cxo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
++	mpu_mod_ck: mpu_mod_ck@320 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0320>;
++		clocks = <&dpll_mpu_m2_ck>;
++	};
++
+ 	dpll_core_m2_ck: dpll_core_m2_ck@130 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,divider-clock";
+@@ -809,44 +816,68 @@
+ 		reg = <0x0550>;
+ 	};
+ 
+-	mcasp1_aux_gfclk_mux: mcasp1_aux_gfclk_mux@550 {
++	timer5_mod_ck: timer5_mod_ck@558 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&per_abe_x1_gfclk2_div>, <&video1_clk2_div>, <&video2_clk2_div>, <&hdmi_clk2_div>;
+-		ti,bit-shift = <22>;
+-		reg = <0x0550>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0558>, <0x0558>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>,
++			 <&clkoutmux0_clk_mux>;
++		ti,bit-shift = <24>;
+ 	};
+ 
+-	timer5_gfclk_mux: timer5_gfclk_mux@558 {
++	timer6_mod_ck: timer6_mod_ck@560 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>, <&clkoutmux0_clk_mux>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0560>, <0x0560>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>,
++			 <&clkoutmux0_clk_mux>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x0558>;
+ 	};
+ 
+-	timer6_gfclk_mux: timer6_gfclk_mux@560 {
++	timer7_mod_ck: timer7_mod_ck@568 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>, <&clkoutmux0_clk_mux>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0568>, <0x0568>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>,
++			 <&clkoutmux0_clk_mux>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x0560>;
+ 	};
+ 
+-	timer7_gfclk_mux: timer7_gfclk_mux@568 {
++	timer8_mod_ck: timer8_mod_ck@570 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>, <&clkoutmux0_clk_mux>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0570>, <0x0570>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>,
++			 <&clkoutmux0_clk_mux>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x0568>;
+ 	};
+ 
+-	timer8_gfclk_mux: timer8_gfclk_mux@570 {
++	i2c5_mod_ck: i2c5_mod_ck@578 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x0578>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	mcasp1_aux_gfclk_mux: mcasp1_aux_gfclk_mux@550 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>, <&clkoutmux0_clk_mux>;
+-		ti,bit-shift = <24>;
+-		reg = <0x0570>;
++		clocks = <&per_abe_x1_gfclk2_div>, <&video1_clk2_div>,
++			 <&video2_clk2_div>, <&hdmi_clk2_div>;
++		ti,bit-shift = <22>;
++		reg = <0x0550>;
+ 	};
+ 
+ 	uart6_gfclk_mux: uart6_gfclk_mux@580 {
+@@ -857,6 +888,20 @@
+ 		reg = <0x0580>;
+ 	};
+ 
++	uart6_mod_ck: uart6_mod_ck@580 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x0580>;
++		clocks = <&uart6_gfclk_mux>;
++	};
++
++	rtcss_mod_ck: rtcss_mod_ck@744 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x0744>;
++		clocks = <&sys_32k_ck>;
++	};
++
+ 	dummy_ck: dummy_ck {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+@@ -940,6 +985,20 @@
+ 		reg = <0x01dc>;
+ 	};
+ 
++	l4_wkup_mod_ck: l4_wkup_mod_ck@1820 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x1820>;
++		clocks = <&wkupaon_iclk_mux>;
++	};
++
++	wd_timer2_mod_ck: wd_timer2_mod_ck@1830 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1830>;
++		clocks = <&sys_32k_ck>;
++	};
++
+ 	sys_clk1_dclk_div: sys_clk1_dclk_div@1c8 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,divider-clock";
+@@ -1173,6 +1232,31 @@
+ 		reg = <0x1838>;
+ 	};
+ 
++	gpio1_mod_ck: gpio1_mod_ck@1838 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1838>;
++		clocks = <&wkupaon_iclk_mux>;
++	};
++
++	timer1_mod_ck: timer1_mod_ck@1840 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1840>, <0x1840>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	counter_32k_mod_ck: counter_32k_mod_ck@1850 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x1850>;
++		clocks = <&wkupaon_iclk_mux>;
++	};
++
+ 	dcan1_sys_clk_mux: dcan1_sys_clk_mux@1888 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+@@ -1181,12 +1265,11 @@
+ 		reg = <0x1888>;
+ 	};
+ 
+-	timer1_gfclk_mux: timer1_gfclk_mux@1840 {
++	dcan1_mod_ck: dcan1_mod_ck@1888 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1840>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1888>;
++		clocks = <&dcan1_sys_clk_mux>;
+ 	};
+ 
+ 	uart10_gfclk_mux: uart10_gfclk_mux@1880 {
+@@ -1196,6 +1279,13 @@
+ 		ti,bit-shift = <24>;
+ 		reg = <0x1880>;
+ 	};
++
++	uart10_mod_ck: uart10_mod_ck@1880 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1880>;
++		clocks = <&uart10_gfclk_mux>;
++	};
+ };
+ &cm_core_clocks {
+ 	dpll_pcie_ref_ck: dpll_pcie_ref_ck@200 {
+@@ -1231,6 +1321,20 @@
+ 		reg = <0x021c>, <0x0220>;
+ 	};
+ 
++	smartreflex_mpu_mod_ck: smartreflex_mpu_mod_ck@628 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x0628>;
++		clocks = <&wkupaon_iclk_mux>;
++	};
++
++	smartreflex_core_mod_ck: smartreflex_core_mod_ck@638 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x0638>;
++		clocks = <&wkupaon_iclk_mux>;
++	};
++
+ 	optfclk_pciephy1_32khz: optfclk_pciephy1_32khz@4a0093b0 {
+ 		compatible = "ti,gate-clock";
+ 		clocks = <&sys_32k_ck>;
+@@ -1239,6 +1343,13 @@
+ 		ti,bit-shift = <8>;
+ 	};
+ 
++	pcie1_mod_ck: pcie1_mod_ck@13b0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x13b0>;
++		clocks = <&l4_root_clk_div>;
++	};
++
+ 	optfclk_pciephy2_32khz: optfclk_pciephy2_32khz@4a0093b8 {
+ 		compatible = "ti,gate-clock";
+ 		clocks = <&sys_32k_ck>;
+@@ -1273,6 +1384,13 @@
+ 		ti,bit-shift = <9>;
+ 	};
+ 
++	pcie2_mod_ck: pcie2_mod_ck@13b8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x13b8>;
++		clocks = <&l4_root_clk_div>;
++	};
++
+ 	optfclk_pciephy1_div_clk: optfclk_pciephy1_div_clk@4a0093b0 {
+ 		compatible = "ti,gate-clock";
+ 		clocks = <&optfclk_pciephy_div>;
+@@ -1517,6 +1635,69 @@
+ 		reg = <0x06c0>;
+ 	};
+ 
++	l3_main_1_mod_ck: l3_main_1_mod_ck@720 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0720>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	gpmc_mod_ck: gpmc_mod_ck@728 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x0728>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	tpcc_mod_ck: tpcc_mod_ck@770 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0770>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	tptc0_mod_ck: tptc0_mod_ck@778 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x0778>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	tptc1_mod_ck: tptc1_mod_ck@780 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x0780>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	vcp1_mod_ck: vcp1_mod_ck@788 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0788>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	vcp2_mod_ck: vcp2_mod_ck@790 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0790>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	dma_system_mod_ck: dma_system_mod_ck@a20 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0a20>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	dmm_mod_ck: dmm_mod_ck@b20 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0b20>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	dss_32khz_clk: dss_32khz_clk@1120 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1550,6 +1731,34 @@
+ 		reg = <0x1120>;
+ 	};
+ 
++	dss_dispc_mod_ck: dss_dispc_mod_ck@1120 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x1120>;
++		clocks = <&dss_dss_clk>;
++	};
++
++	dss_core_mod_ck: dss_core_mod_ck@1120 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1120>;
++		clocks = <&dss_dss_clk>;
++	};
++
++	dss_hdmi_mod_ck: dss_hdmi_mod_ck@1120 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x1120>;
++		clocks = <&dss_48mhz_clk>;
++	};
++
++	bb2d_mod_ck: bb2d_mod_ck@1130 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1130>;
++		clocks = <&dpll_core_h24x2_ck>;
++	};
++
+ 	dss_video1_clk: dss_video1_clk@1120 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1574,6 +1783,13 @@
+ 		reg = <0x1760>;
+ 	};
+ 
++	gpio2_mod_ck: gpio2_mod_ck@1760 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1760>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	gpio3_dbclk: gpio3_dbclk@1768 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1582,6 +1798,13 @@
+ 		reg = <0x1768>;
+ 	};
+ 
++	gpio3_mod_ck: gpio3_mod_ck@1768 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1768>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	gpio4_dbclk: gpio4_dbclk@1770 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1590,6 +1813,13 @@
+ 		reg = <0x1770>;
+ 	};
+ 
++	gpio4_mod_ck: gpio4_mod_ck@1770 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1770>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	gpio5_dbclk: gpio5_dbclk@1778 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1598,6 +1828,13 @@
+ 		reg = <0x1778>;
+ 	};
+ 
++	gpio5_mod_ck: gpio5_mod_ck@1778 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1778>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	gpio6_dbclk: gpio6_dbclk@1780 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1606,6 +1843,116 @@
+ 		reg = <0x1780>;
+ 	};
+ 
++	gpio6_mod_ck: gpio6_mod_ck@1780 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1780>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	hdq1w_mod_ck: hdq1w_mod_ck@1788 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1788>;
++		clocks = <&func_12m_fclk>;
++	};
++
++	i2c1_mod_ck: i2c1_mod_ck@17a0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x17a0>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	i2c2_mod_ck: i2c2_mod_ck@17a8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x17a8>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	i2c3_mod_ck: i2c3_mod_ck@17b0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x17b0>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	i2c4_mod_ck: i2c4_mod_ck@17b8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x17b8>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	l4_per1_mod_ck: l4_per1_mod_ck@17c0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x17c0>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	timer13_mod_ck: timer13_mod_ck@17c8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x17c8>, <0x17c8>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer14_mod_ck: timer14_mod_ck@17d0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x17d0>, <0x17d0>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer15_mod_ck: timer15_mod_ck@17d8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x17d8>, <0x17d8>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	mcspi1_mod_ck: mcspi1_mod_ck@17f0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x17f0>;
++		clocks = <&func_48m_fclk>;
++	};
++
++	mcspi2_mod_ck: mcspi2_mod_ck@17f8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x17f8>;
++		clocks = <&func_48m_fclk>;
++	};
++
++	mcspi3_mod_ck: mcspi3_mod_ck@1800 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1800>;
++		clocks = <&func_48m_fclk>;
++	};
++
++	mcspi4_mod_ck: mcspi4_mod_ck@1808 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1808>;
++		clocks = <&func_48m_fclk>;
++	};
++
+ 	gpio7_dbclk: gpio7_dbclk@1810 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1614,6 +1961,13 @@
+ 		reg = <0x1810>;
+ 	};
+ 
++	gpio7_mod_ck: gpio7_mod_ck@1810 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1810>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	gpio8_dbclk: gpio8_dbclk@1818 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1622,6 +1976,13 @@
+ 		reg = <0x1818>;
+ 	};
+ 
++	gpio8_mod_ck: gpio8_mod_ck@1818 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1818>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	mmc1_clk32k: mmc1_clk32k@1328 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1654,6 +2015,24 @@
+ 		reg = <0x1828>;
+ 	};
+ 
++	mmc4_mod_ck: mmc4_mod_ck@1828 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1828>;
++		clocks = <&mmc4_gfclk_div>;
++	};
++
++	timer16_mod_ck: timer16_mod_ck@1830 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1830>, <0x1830>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
+ 	sata_ref_clk: sata_ref_clk@1388 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1662,6 +2041,13 @@
+ 		reg = <0x1388>;
+ 	};
+ 
++	sata_mod_ck: sata_mod_ck@1388 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1388>;
++		clocks = <&func_48m_fclk>;
++	};
++
+ 	usb_otg_ss1_refclk960m: usb_otg_ss1_refclk960m@13f0 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1670,6 +2056,100 @@
+ 		reg = <0x13f0>;
+ 	};
+ 
++	usb_otg_ss1_mod_ck: usb_otg_ss1_mod_ck@13f0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x13f0>;
++		clocks = <&dpll_core_h13x2_ck>;
++	};
++
++	l4_per2_mod_ck: l4_per2_mod_ck@170c {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x170c>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	l4_per3_mod_ck: l4_per3_mod_ck@1714 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x1714>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	timer10_mod_ck: timer10_mod_ck@1728 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1728>, <0x1728>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer11_mod_ck: timer11_mod_ck@1730 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1730>, <0x1730>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer2_mod_ck: timer2_mod_ck@1738 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1738>, <0x1738>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer3_mod_ck: timer3_mod_ck@1740 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1740>, <0x1740>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer4_mod_ck: timer4_mod_ck@1748 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1748>, <0x1748>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	timer9_mod_ck: timer9_mod_ck@1750 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x1750>, <0x1750>;
++		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>,
++			 <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>,
++			 <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>,
++			 <&video2_div_clk>, <&hdmi_div_clk>;
++		ti,bit-shift = <24>;
++	};
++
++	elm_mod_ck: elm_mod_ck@1758 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x1758>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	usb_otg_ss2_refclk960m: usb_otg_ss2_refclk960m@1340 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1678,6 +2158,27 @@
+ 		reg = <0x1340>;
+ 	};
+ 
++	usb_otg_ss2_mod_ck: usb_otg_ss2_mod_ck@1340 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1340>;
++		clocks = <&dpll_core_h13x2_ck>;
++	};
++
++	usb_otg_ss3_mod_ck: usb_otg_ss3_mod_ck@1348 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1348>;
++		clocks = <&dpll_core_h13x2_ck>;
++	};
++
++	usb_otg_ss4_mod_ck: usb_otg_ss4_mod_ck@1350 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1350>;
++		clocks = <&dpll_core_h13x2_ck>;
++	};
++
+ 	usb_phy1_always_on_clk32k: usb_phy1_always_on_clk32k@640 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,gate-clock";
+@@ -1718,6 +2219,132 @@
+ 		reg = <0x0c00>;
+ 	};
+ 
++	atl_mod_ck: atl_mod_ck@c00 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x0c00>;
++		clocks = <&atl_gfclk_mux>;
++	};
++
++	l4_cfg_mod_ck: l4_cfg_mod_ck@d20 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d20>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	spinlock_mod_ck: spinlock_mod_ck@d28 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d28>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox1_mod_ck: mailbox1_mod_ck@d30 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d30>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox2_mod_ck: mailbox2_mod_ck@d48 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d48>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox3_mod_ck: mailbox3_mod_ck@d50 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d50>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox4_mod_ck: mailbox4_mod_ck@d58 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d58>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox5_mod_ck: mailbox5_mod_ck@d60 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d60>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox6_mod_ck: mailbox6_mod_ck@d68 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d68>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox7_mod_ck: mailbox7_mod_ck@d70 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d70>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox8_mod_ck: mailbox8_mod_ck@d78 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d78>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox9_mod_ck: mailbox9_mod_ck@d80 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d80>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox10_mod_ck: mailbox10_mod_ck@d88 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d88>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox11_mod_ck: mailbox11_mod_ck@d90 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d90>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox12_mod_ck: mailbox12_mod_ck@d98 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0d98>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	mailbox13_mod_ck: mailbox13_mod_ck@da0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-mod-clock";
++		reg = <0x0da0>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	l3_main_2_mod_ck: l3_main_2_mod_ck@e20 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x0e20>;
++		clocks = <&l3_iclk_div>;
++	};
++
++	l3_instr_mod_ck: l3_instr_mod_ck@e28 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x0e28>;
++		clocks = <&l3_iclk_div>;
++	};
++
+ 	gmac_gmii_ref_clk_div: gmac_gmii_ref_clk_div@13d0 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,divider-clock";
+@@ -1727,6 +2354,27 @@
+ 		ti,dividers = <2>;
+ 	};
+ 
++	gmac_mod_ck: gmac_mod_ck@13d0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x13d0>;
++		clocks = <&dpll_gmac_ck>;
++	};
++
++	ocp2scp1_mod_ck: ocp2scp1_mod_ck@13e0 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x13e0>;
++		clocks = <&l4_root_clk_div>;
++	};
++
++	ocp2scp3_mod_ck: ocp2scp3_mod_ck@13e8 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x13e8>;
++		clocks = <&l4_root_clk_div>;
++	};
++
+ 	gmac_rft_clk_mux: gmac_rft_clk_mux@13d0 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+@@ -1800,6 +2448,13 @@
+ 		reg = <0x1868>;
+ 	};
+ 
++	mcasp3_mod_ck: mcasp3_mod_ck@1868 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1868>;
++		clocks = <&mcasp3_aux_gfclk_mux>;
++	};
++
+ 	mcasp4_ahclkx_mux: mcasp4_ahclkx_mux@1898 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+@@ -1888,6 +2543,13 @@
+ 		reg = <0x1328>;
+ 	};
+ 
++	mmc1_mod_ck: mmc1_mod_ck@1328 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1328>;
++		clocks = <&mmc1_fclk_div>;
++	};
++
+ 	mmc1_fclk_div: mmc1_fclk_div@1328 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,divider-clock";
+@@ -1916,6 +2578,13 @@
+ 		ti,index-power-of-two;
+ 	};
+ 
++	mmc2_mod_ck: mmc2_mod_ck@1330 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1330>;
++		clocks = <&mmc2_fclk_div>;
++	};
++
+ 	mmc3_gfclk_mux: mmc3_gfclk_mux@1820 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+@@ -1934,6 +2603,13 @@
+ 		ti,index-power-of-two;
+ 	};
+ 
++	mmc3_mod_ck: mmc3_mod_ck@1820 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1820>;
++		clocks = <&mmc3_gfclk_div>;
++	};
++
+ 	mmc4_gfclk_mux: mmc4_gfclk_mux@1828 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+@@ -1960,6 +2636,13 @@
+ 		reg = <0x1838>;
+ 	};
+ 
++	qspi_mod_ck: qspi_mod_ck@1838 {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1838>;
++		clocks = <&qspi_gfclk_div>;
++	};
++
+ 	qspi_gfclk_div: qspi_gfclk_div@1838 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,divider-clock";
+@@ -1970,148 +2653,131 @@
+ 		ti,index-power-of-two;
+ 	};
+ 
+-	timer10_gfclk_mux: timer10_gfclk_mux@1728 {
+-		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1728>;
+-	};
+-
+-	timer11_gfclk_mux: timer11_gfclk_mux@1730 {
++	uart1_gfclk_mux: uart1_gfclk_mux@1840 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
++		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x1730>;
++		reg = <0x1840>;
+ 	};
+ 
+-	timer13_gfclk_mux: timer13_gfclk_mux@17c8 {
++	uart1_mod_ck: uart1_mod_ck@1840 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+-		ti,bit-shift = <24>;
+-		reg = <0x17c8>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1840>;
++		clocks = <&uart1_gfclk_mux>;
+ 	};
+ 
+-	timer14_gfclk_mux: timer14_gfclk_mux@17d0 {
++	uart2_gfclk_mux: uart2_gfclk_mux@1848 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
++		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x17d0>;
++		reg = <0x1848>;
+ 	};
+ 
+-	timer15_gfclk_mux: timer15_gfclk_mux@17d8 {
++	uart2_mod_ck: uart2_mod_ck@1848 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+-		ti,bit-shift = <24>;
+-		reg = <0x17d8>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1848>;
++		clocks = <&uart2_gfclk_mux>;
+ 	};
+ 
+-	timer16_gfclk_mux: timer16_gfclk_mux@1830 {
++	uart3_gfclk_mux: uart3_gfclk_mux@1850 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
++		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x1830>;
++		reg = <0x1850>;
+ 	};
+ 
+-	timer2_gfclk_mux: timer2_gfclk_mux@1738 {
++	uart3_mod_ck: uart3_mod_ck@1850 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1738>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1850>;
++		clocks = <&uart3_gfclk_mux>;
+ 	};
+ 
+-	timer3_gfclk_mux: timer3_gfclk_mux@1740 {
++	uart4_gfclk_mux: uart4_gfclk_mux@1858 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
++		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x1740>;
++		reg = <0x1858>;
+ 	};
+ 
+-	timer4_gfclk_mux: timer4_gfclk_mux@1748 {
++	uart4_mod_ck: uart4_mod_ck@1858 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1748>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1858>;
++		clocks = <&uart4_gfclk_mux>;
+ 	};
+ 
+-	timer9_gfclk_mux: timer9_gfclk_mux@1750 {
++	uart5_gfclk_mux: uart5_gfclk_mux@1870 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+-		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
++		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x1750>;
++		reg = <0x1870>;
+ 	};
+ 
+-	uart1_gfclk_mux: uart1_gfclk_mux@1840 {
++	uart5_mod_ck: uart5_mod_ck@1870 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1840>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x1870>;
++		clocks = <&uart5_gfclk_mux>;
+ 	};
+ 
+-	uart2_gfclk_mux: uart2_gfclk_mux@1848 {
++	uart7_gfclk_mux: uart7_gfclk_mux@18d0 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+ 		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x1848>;
++		reg = <0x18d0>;
+ 	};
+ 
+-	uart3_gfclk_mux: uart3_gfclk_mux@1850 {
++	uart7_mod_ck: uart7_mod_ck@18d0 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1850>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x18d0>;
++		clocks = <&uart7_gfclk_mux>;
+ 	};
+ 
+-	uart4_gfclk_mux: uart4_gfclk_mux@1858 {
++	uart8_gfclk_mux: uart8_gfclk_mux@18e0 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+ 		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x1858>;
++		reg = <0x18e0>;
+ 	};
+ 
+-	uart5_gfclk_mux: uart5_gfclk_mux@1870 {
++	uart8_mod_ck: uart8_mod_ck@18e0 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+-		ti,bit-shift = <24>;
+-		reg = <0x1870>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x18e0>;
++		clocks = <&uart8_gfclk_mux>;
+ 	};
+ 
+-	uart7_gfclk_mux: uart7_gfclk_mux@18d0 {
++	uart9_gfclk_mux: uart9_gfclk_mux@18e8 {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,mux-clock";
+ 		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+ 		ti,bit-shift = <24>;
+-		reg = <0x18d0>;
++		reg = <0x18e8>;
+ 	};
+ 
+-	uart8_gfclk_mux: uart8_gfclk_mux@18e0 {
++	uart9_mod_ck: uart9_mod_ck@18e8 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+-		ti,bit-shift = <24>;
+-		reg = <0x18e0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x18e8>;
++		clocks = <&uart9_gfclk_mux>;
+ 	};
+ 
+-	uart9_gfclk_mux: uart9_gfclk_mux@18e8 {
++	dcan2_mod_ck: dcan2_mod_ck@18f0 {
+ 		#clock-cells = <0>;
+-		compatible = "ti,mux-clock";
+-		clocks = <&func_48m_fclk>, <&dpll_per_m2x2_ck>;
+-		ti,bit-shift = <24>;
+-		reg = <0x18e8>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x18f0>;
++		clocks = <&sys_clkin1>;
+ 	};
+ 
+ 	vip1_gclk_mux: vip1_gclk_mux@1020 {
+@@ -2142,7 +2808,100 @@
+ &cm_core_clockdomains {
+ 	coreaon_clkdm: coreaon_clkdm {
+ 		compatible = "ti,clockdomain";
+-		clocks = <&dpll_usb_ck>;
++		clocks = <&smartreflex_mpu_mod_ck>, <&smartreflex_core_mod_ck>,
++			 <&dpll_usb_ck>;
++	};
++
++	atl_clkdm: atl_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&atl_mod_ck>;
++	};
++
++	l3main1_clkdm: l3main1_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&tpcc_mod_ck>, <&tptc1_mod_ck>, <&l3_main_1_mod_ck>,
++			 <&vcp1_mod_ck>, <&gpmc_mod_ck>, <&tptc0_mod_ck>,
++			 <&vcp2_mod_ck>;
++	};
++
++	l4cfg_clkdm: l4cfg_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&mailbox12_mod_ck>, <&mailbox6_mod_ck>,
++			 <&mailbox10_mod_ck>, <&mailbox11_mod_ck>,
++			 <&mailbox4_mod_ck>, <&mailbox8_mod_ck>,
++			 <&mailbox5_mod_ck>, <&mailbox3_mod_ck>,
++			 <&mailbox2_mod_ck>, <&l4_cfg_mod_ck>,
++			 <&mailbox13_mod_ck>, <&mailbox7_mod_ck>,
++			 <&mailbox1_mod_ck>, <&spinlock_mod_ck>,
++			 <&mailbox9_mod_ck>;
++	};
++
++	l3instr_clkdm: l3instr_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&l3_instr_mod_ck>, <&l3_main_2_mod_ck>;
++	};
++
++	l4per_clkdm: l4per_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&timer3_mod_ck>, <&gpio6_mod_ck>, <&timer11_mod_ck>,
++			 <&hdq1w_mod_ck>, <&uart3_mod_ck>, <&gpio2_mod_ck>,
++			 <&uart1_mod_ck>, <&i2c4_mod_ck>, <&i2c2_mod_ck>,
++			 <&timer4_mod_ck>, <&i2c3_mod_ck>, <&l4_per1_mod_ck>,
++			 <&elm_mod_ck>, <&gpio3_mod_ck>, <&mcspi3_mod_ck>,
++			 <&uart4_mod_ck>, <&mmc4_mod_ck>, <&timer2_mod_ck>,
++			 <&mmc3_mod_ck>, <&gpio5_mod_ck>, <&gpio8_mod_ck>,
++			 <&gpio4_mod_ck>, <&mcspi1_mod_ck>, <&timer9_mod_ck>,
++			 <&mcspi2_mod_ck>, <&uart5_mod_ck>, <&timer10_mod_ck>,
++			 <&mcspi4_mod_ck>, <&uart2_mod_ck>, <&i2c1_mod_ck>,
++			 <&gpio7_mod_ck>;
++	};
++
++	l4per3_clkdm: l4per3_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&timer16_mod_ck>, <&timer15_mod_ck>,
++			 <&l4_per3_mod_ck>, <&timer13_mod_ck>,
++			 <&timer14_mod_ck>;
++	};
++
++	l4per2_clkdm: l4per2_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&qspi_mod_ck>, <&uart8_mod_ck>, <&uart7_mod_ck>,
++			 <&l4_per2_mod_ck>, <&uart9_mod_ck>, <&mcasp3_mod_ck>,
++			 <&dcan2_mod_ck>;
++	};
++
++	dss_clkdm: dss_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&dss_hdmi_mod_ck>, <&dss_core_mod_ck>,
++			 <&dss_dispc_mod_ck>, <&bb2d_mod_ck>;
++	};
++
++	pcie_clkdm: pcie_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&pcie2_mod_ck>, <&pcie1_mod_ck>;
++	};
++
++	emif_clkdm: emif_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&dmm_mod_ck>;
++	};
++
++	l3init_clkdm: l3init_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&ocp2scp1_mod_ck>, <&usb_otg_ss1_mod_ck>,
++			 <&sata_mod_ck>, <&mmc1_mod_ck>, <&usb_otg_ss4_mod_ck>,
++			 <&usb_otg_ss2_mod_ck>, <&ocp2scp3_mod_ck>,
++			 <&usb_otg_ss3_mod_ck>, <&mmc2_mod_ck>;
++	};
++
++	dma_clkdm: dma_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&dma_system_mod_ck>;
++	};
++
++	gmac_clkdm: gmac_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&gmac_mod_ck>;
+ 	};
+ };
+ 
+@@ -2187,3 +2946,30 @@
+ 		reg = <0x6c4>;
+ 	};
+ };
++
++&prm_clockdomains {
++	wkupaon_clkdm: wkupaon_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&gpio1_mod_ck>, <&wd_timer2_mod_ck>,
++			 <&l4_wkup_mod_ck>, <&timer1_mod_ck>, <&uart10_mod_ck>,
++			 <&dcan1_mod_ck>, <&counter_32k_mod_ck>;
++	};
++};
++
++&cm_core_aon_clockdomains {
++	ipu_clkdm: ipu_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&timer7_mod_ck>, <&timer6_mod_ck>, <&uart6_mod_ck>,
++			 <&i2c5_mod_ck>, <&timer8_mod_ck>, <&timer5_mod_ck>;
++	};
++
++	mpu_clkdm: mpu_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&mpu_mod_ck>;
++	};
++
++	rtc_clkdm: rtc_clkdm {
++		compatible = "ti,clockdomain";
++		clocks = <&rtcss_mod_ck>;
++	};
 +};
-+
-+static struct clk_regmap pll0_vote = {
-+	.enable_reg = 0x34c0,
-+	.enable_mask = BIT(0),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pll0_vote",
-+		.parent_names = (const char *[]){ "pll8" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+static struct clk_regmap pll4_vote = {
-+	.enable_reg = 0x34c0,
-+	.enable_mask = BIT(4),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pll4_vote",
-+		.parent_names = (const char *[]){ "pll4" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+static struct clk_pll pll8 = {
-+	.l_reg = 0x3144,
-+	.m_reg = 0x3148,
-+	.n_reg = 0x314c,
-+	.config_reg = 0x3154,
-+	.mode_reg = 0x3140,
-+	.status_reg = 0x3158,
-+	.status_bit = 16,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll8",
-+		.parent_names = (const char *[]){ "cxo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
-+static struct clk_regmap pll8_vote = {
-+	.enable_reg = 0x34c0,
-+	.enable_mask = BIT(8),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pll8_vote",
-+		.parent_names = (const char *[]){ "pll8" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+static struct clk_pll pll14 = {
-+	.l_reg = 0x31c4,
-+	.m_reg = 0x31c8,
-+	.n_reg = 0x31cc,
-+	.config_reg = 0x31d4,
-+	.mode_reg = 0x31c0,
-+	.status_reg = 0x31d8,
-+	.status_bit = 16,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll14",
-+		.parent_names = (const char *[]){ "cxo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
-+static struct clk_regmap pll14_vote = {
-+	.enable_reg = 0x34c0,
-+	.enable_mask = BIT(11),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pll14_vote",
-+		.parent_names = (const char *[]){ "pll14" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
-+
-+enum {
-+	P_CXO,
-+	P_PLL8,
-+	P_PLL14,
-+};
-+
-+static const struct parent_map gcc_cxo_pll8_map[] = {
-+	{ P_CXO, 0 },
-+	{ P_PLL8, 3 }
-+};
-+
-+static const char * const gcc_cxo_pll8[] = {
-+	"cxo",
-+	"pll8_vote",
-+};
-+
-+static const struct parent_map gcc_cxo_pll14_map[] = {
-+	{ P_CXO, 0 },
-+	{ P_PLL14, 4 }
-+};
-+
-+static const char * const gcc_cxo_pll14[] = {
-+	"cxo",
-+	"pll14_vote",
-+};
-+
-+static const struct parent_map gcc_cxo_map[] = {
-+	{ P_CXO, 0 },
-+};
-+
-+static const char * const gcc_cxo[] = {
-+	"cxo",
-+};
-+
-+static struct freq_tbl clk_tbl_gsbi_uart[] = {
-+	{  1843200, P_PLL8, 2,  6, 625 },
-+	{  3686400, P_PLL8, 2, 12, 625 },
-+	{  7372800, P_PLL8, 2, 24, 625 },
-+	{ 14745600, P_PLL8, 2, 48, 625 },
-+	{ 16000000, P_PLL8, 4,  1,   6 },
-+	{ 24000000, P_PLL8, 4,  1,   4 },
-+	{ 32000000, P_PLL8, 4,  1,   3 },
-+	{ 40000000, P_PLL8, 1,  5,  48 },
-+	{ 46400000, P_PLL8, 1, 29, 240 },
-+	{ 48000000, P_PLL8, 4,  1,   2 },
-+	{ 51200000, P_PLL8, 1,  2,  15 },
-+	{ 56000000, P_PLL8, 1,  7,  48 },
-+	{ 58982400, P_PLL8, 1, 96, 625 },
-+	{ 64000000, P_PLL8, 2,  1,   3 },
-+	{ }
-+};
-+
-+static struct clk_rcg gsbi1_uart_src = {
-+	.ns_reg = 0x29d4,
-+	.md_reg = 0x29d0,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_uart,
-+	.clkr = {
-+		.enable_reg = 0x29d4,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi1_uart_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi1_uart_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 10,
-+	.clkr = {
-+		.enable_reg = 0x29d4,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi1_uart_clk",
-+			.parent_names = (const char *[]){
-+				"gsbi1_uart_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi2_uart_src = {
-+	.ns_reg = 0x29f4,
-+	.md_reg = 0x29f0,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_uart,
-+	.clkr = {
-+		.enable_reg = 0x29f4,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi2_uart_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi2_uart_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x29f4,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi2_uart_clk",
-+			.parent_names = (const char *[]){
-+				"gsbi2_uart_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi3_uart_src = {
-+	.ns_reg = 0x2a14,
-+	.md_reg = 0x2a10,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_uart,
-+	.clkr = {
-+		.enable_reg = 0x2a14,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi3_uart_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi3_uart_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 2,
-+	.clkr = {
-+		.enable_reg = 0x2a14,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi3_uart_clk",
-+			.parent_names = (const char *[]){
-+				"gsbi3_uart_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi4_uart_src = {
-+	.ns_reg = 0x2a34,
-+	.md_reg = 0x2a30,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_uart,
-+	.clkr = {
-+		.enable_reg = 0x2a34,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi4_uart_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi4_uart_clk = {
-+	.halt_reg = 0x2fd0,
-+	.halt_bit = 26,
-+	.clkr = {
-+		.enable_reg = 0x2a34,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi4_uart_clk",
-+			.parent_names = (const char *[]){
-+				"gsbi4_uart_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi5_uart_src = {
-+	.ns_reg = 0x2a54,
-+	.md_reg = 0x2a50,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_uart,
-+	.clkr = {
-+		.enable_reg = 0x2a54,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi5_uart_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi5_uart_clk = {
-+	.halt_reg = 0x2fd0,
-+	.halt_bit = 22,
-+	.clkr = {
-+		.enable_reg = 0x2a54,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi5_uart_clk",
-+			.parent_names = (const char *[]){
-+				"gsbi5_uart_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct freq_tbl clk_tbl_gsbi_qup[] = {
-+	{   960000, P_CXO,  4, 1,  5 },
-+	{  4800000, P_CXO,  4, 0,  1 },
-+	{  9600000, P_CXO,  2, 0,  1 },
-+	{ 15060000, P_PLL8, 1, 2, 51 },
-+	{ 24000000, P_PLL8, 4, 1,  4 },
-+	{ 25600000, P_PLL8, 1, 1, 15 },
-+	{ 48000000, P_PLL8, 4, 1,  2 },
-+	{ 51200000, P_PLL8, 1, 2, 15 },
-+	{ }
-+};
-+
-+static struct clk_rcg gsbi1_qup_src = {
-+	.ns_reg = 0x29cc,
-+	.md_reg = 0x29c8,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_qup,
-+	.clkr = {
-+		.enable_reg = 0x29cc,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi1_qup_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi1_qup_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 9,
-+	.clkr = {
-+		.enable_reg = 0x29cc,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi1_qup_clk",
-+			.parent_names = (const char *[]){ "gsbi1_qup_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi2_qup_src = {
-+	.ns_reg = 0x29ec,
-+	.md_reg = 0x29e8,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_qup,
-+	.clkr = {
-+		.enable_reg = 0x29ec,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi2_qup_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi2_qup_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 4,
-+	.clkr = {
-+		.enable_reg = 0x29ec,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi2_qup_clk",
-+			.parent_names = (const char *[]){ "gsbi2_qup_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi3_qup_src = {
-+	.ns_reg = 0x2a0c,
-+	.md_reg = 0x2a08,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_qup,
-+	.clkr = {
-+		.enable_reg = 0x2a0c,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi3_qup_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi3_qup_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 0,
-+	.clkr = {
-+		.enable_reg = 0x2a0c,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi3_qup_clk",
-+			.parent_names = (const char *[]){ "gsbi3_qup_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi4_qup_src = {
-+	.ns_reg = 0x2a2c,
-+	.md_reg = 0x2a28,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_qup,
-+	.clkr = {
-+		.enable_reg = 0x2a2c,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi4_qup_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi4_qup_clk = {
-+	.halt_reg = 0x2fd0,
-+	.halt_bit = 24,
-+	.clkr = {
-+		.enable_reg = 0x2a2c,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi4_qup_clk",
-+			.parent_names = (const char *[]){ "gsbi4_qup_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gsbi5_qup_src = {
-+	.ns_reg = 0x2a4c,
-+	.md_reg = 0x2a48,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_gsbi_qup,
-+	.clkr = {
-+		.enable_reg = 0x2a4c,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi5_qup_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi5_qup_clk = {
-+	.halt_reg = 0x2fd0,
-+	.halt_bit = 20,
-+	.clkr = {
-+		.enable_reg = 0x2a4c,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi5_qup_clk",
-+			.parent_names = (const char *[]){ "gsbi5_qup_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_gp[] = {
-+	{ 9600000, P_CXO,  2, 0, 0 },
-+	{ 19200000, P_CXO,  1, 0, 0 },
-+	{ }
-+};
-+
-+static struct clk_rcg gp0_src = {
-+	.ns_reg = 0x2d24,
-+	.md_reg = 0x2d00,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_map,
-+	},
-+	.freq_tbl = clk_tbl_gp,
-+	.clkr = {
-+		.enable_reg = 0x2d24,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gp0_src",
-+			.parent_names = gcc_cxo,
-+			.num_parents = 1,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_PARENT_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch gp0_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_bit = 7,
-+	.clkr = {
-+		.enable_reg = 0x2d24,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gp0_clk",
-+			.parent_names = (const char *[]){ "gp0_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gp1_src = {
-+	.ns_reg = 0x2d44,
-+	.md_reg = 0x2d40,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_map,
-+	},
-+	.freq_tbl = clk_tbl_gp,
-+	.clkr = {
-+		.enable_reg = 0x2d44,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gp1_src",
-+			.parent_names = gcc_cxo,
-+			.num_parents = 1,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch gp1_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x2d44,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gp1_clk",
-+			.parent_names = (const char *[]){ "gp1_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg gp2_src = {
-+	.ns_reg = 0x2d64,
-+	.md_reg = 0x2d60,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_map,
-+	},
-+	.freq_tbl = clk_tbl_gp,
-+	.clkr = {
-+		.enable_reg = 0x2d64,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gp2_src",
-+			.parent_names = gcc_cxo,
-+			.num_parents = 1,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch gp2_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_bit = 5,
-+	.clkr = {
-+		.enable_reg = 0x2d64,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gp2_clk",
-+			.parent_names = (const char *[]){ "gp2_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_branch pmem_clk = {
-+	.hwcg_reg = 0x25a0,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 20,
-+	.clkr = {
-+		.enable_reg = 0x25a0,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pmem_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg prng_src = {
-+	.ns_reg = 0x2e80,
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "prng_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch prng_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 10,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(10),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "prng_clk",
-+			.parent_names = (const char *[]){ "prng_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_sdc[] = {
-+	{    144000, P_CXO,   1, 1, 133 },
-+	{    400000, P_PLL8,  4, 1, 240 },
-+	{  16000000, P_PLL8,  4, 1,   6 },
-+	{  17070000, P_PLL8,  1, 2,  45 },
-+	{  20210000, P_PLL8,  1, 1,  19 },
-+	{  24000000, P_PLL8,  4, 1,   4 },
-+	{  38400000, P_PLL8,  2, 1,   5 },
-+	{  48000000, P_PLL8,  4, 1,   2 },
-+	{  64000000, P_PLL8,  3, 1,   2 },
-+	{  76800000, P_PLL8,  1, 1,   5 },
-+	{ }
-+};
-+
-+static struct clk_rcg sdc1_src = {
-+	.ns_reg = 0x282c,
-+	.md_reg = 0x2828,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_sdc,
-+	.clkr = {
-+		.enable_reg = 0x282c,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sdc1_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch sdc1_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x282c,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sdc1_clk",
-+			.parent_names = (const char *[]){ "sdc1_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg sdc2_src = {
-+	.ns_reg = 0x284c,
-+	.md_reg = 0x2848,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_sdc,
-+	.clkr = {
-+		.enable_reg = 0x284c,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sdc2_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch sdc2_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 5,
-+	.clkr = {
-+		.enable_reg = 0x284c,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sdc2_clk",
-+			.parent_names = (const char *[]){ "sdc2_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_usb[] = {
-+	{ 60000000, P_PLL8, 1, 5, 32 },
-+	{ }
-+};
-+
-+static struct clk_rcg usb_hs1_xcvr_src = {
-+	.ns_reg = 0x290c,
-+	.md_reg = 0x2908,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_usb,
-+	.clkr = {
-+		.enable_reg = 0x290c,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hs1_xcvr_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch usb_hs1_xcvr_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 0,
-+	.clkr = {
-+		.enable_reg = 0x290c,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hs1_xcvr_clk",
-+			.parent_names = (const char *[]){ "usb_hs1_xcvr_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg usb_hsic_xcvr_fs_src = {
-+	.ns_reg = 0x2928,
-+	.md_reg = 0x2924,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_usb,
-+	.clkr = {
-+		.enable_reg = 0x2928,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hsic_xcvr_fs_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch usb_hsic_xcvr_fs_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 9,
-+	.clkr = {
-+		.enable_reg = 0x2928,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hsic_xcvr_fs_clk",
-+			.parent_names =
-+				(const char *[]){ "usb_hsic_xcvr_fs_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_usb_hs1_system[] = {
-+	{ 60000000, P_PLL8, 1, 5, 32 },
-+	{ }
-+};
-+
-+static struct clk_rcg usb_hs1_system_src = {
-+	.ns_reg = 0x36a4,
-+	.md_reg = 0x36a0,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_usb_hs1_system,
-+	.clkr = {
-+		.enable_reg = 0x36a4,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hs1_system_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch usb_hs1_system_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 4,
-+	.clkr = {
-+		.enable_reg = 0x36a4,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.parent_names =
-+				(const char *[]){ "usb_hs1_system_src" },
-+			.num_parents = 1,
-+			.name = "usb_hs1_system_clk",
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_usb_hsic_system[] = {
-+	{ 64000000, P_PLL8, 1, 1, 6 },
-+	{ }
-+};
-+
-+static struct clk_rcg usb_hsic_system_src = {
-+	.ns_reg = 0x2b58,
-+	.md_reg = 0x2b54,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll8_map,
-+	},
-+	.freq_tbl = clk_tbl_usb_hsic_system,
-+	.clkr = {
-+		.enable_reg = 0x2b58,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hsic_system_src",
-+			.parent_names = gcc_cxo_pll8,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch usb_hsic_system_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 7,
-+	.clkr = {
-+		.enable_reg = 0x2b58,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.parent_names =
-+				(const char *[]){ "usb_hsic_system_src" },
-+			.num_parents = 1,
-+			.name = "usb_hsic_system_clk",
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_usb_hsic_hsic[] = {
-+	{ 48000000, P_PLL14, 1, 0, 0 },
-+	{ }
-+};
-+
-+static struct clk_rcg usb_hsic_hsic_src = {
-+	.ns_reg = 0x2b50,
-+	.md_reg = 0x2b4c,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_cxo_pll14_map,
-+	},
-+	.freq_tbl = clk_tbl_usb_hsic_hsic,
-+	.clkr = {
-+		.enable_reg = 0x2b50,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hsic_hsic_src",
-+			.parent_names = gcc_cxo_pll14,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	}
-+};
-+
-+static struct clk_branch usb_hsic_hsic_clk = {
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x2b50,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.parent_names = (const char *[]){ "usb_hsic_hsic_src" },
-+			.num_parents = 1,
-+			.name = "usb_hsic_hsic_clk",
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_branch usb_hsic_hsio_cal_clk = {
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 8,
-+	.clkr = {
-+		.enable_reg = 0x2b48,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.parent_names = (const char *[]){ "cxo" },
-+			.num_parents = 1,
-+			.name = "usb_hsic_hsio_cal_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch ce1_core_clk = {
-+	.hwcg_reg = 0x2724,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fd4,
-+	.halt_bit = 27,
-+	.clkr = {
-+		.enable_reg = 0x2724,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce1_core_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch ce1_h_clk = {
-+	.halt_reg = 0x2fd4,
-+	.halt_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x2720,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce1_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch dma_bam_h_clk = {
-+	.hwcg_reg = 0x25c0,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 12,
-+	.clkr = {
-+		.enable_reg = 0x25c0,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "dma_bam_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi1_h_clk = {
-+	.hwcg_reg = 0x29c0,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 11,
-+	.clkr = {
-+		.enable_reg = 0x29c0,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi1_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi2_h_clk = {
-+	.hwcg_reg = 0x29e0,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 7,
-+	.clkr = {
-+		.enable_reg = 0x29e0,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi2_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi3_h_clk = {
-+	.hwcg_reg = 0x2a00,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 3,
-+	.clkr = {
-+		.enable_reg = 0x2a00,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi3_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi4_h_clk = {
-+	.hwcg_reg = 0x2a20,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fd0,
-+	.halt_bit = 27,
-+	.clkr = {
-+		.enable_reg = 0x2a20,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi4_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gsbi5_h_clk = {
-+	.hwcg_reg = 0x2a40,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fd0,
-+	.halt_bit = 23,
-+	.clkr = {
-+		.enable_reg = 0x2a40,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gsbi5_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch usb_hs1_h_clk = {
-+	.hwcg_reg = 0x2900,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x2900,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hs1_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch usb_hsic_h_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 28,
-+	.clkr = {
-+		.enable_reg = 0x2920,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "usb_hsic_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch sdc1_h_clk = {
-+	.hwcg_reg = 0x2820,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 11,
-+	.clkr = {
-+		.enable_reg = 0x2820,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sdc1_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch sdc2_h_clk = {
-+	.hwcg_reg = 0x2840,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fc8,
-+	.halt_bit = 10,
-+	.clkr = {
-+		.enable_reg = 0x2840,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sdc2_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch adm0_clk = {
-+	.halt_reg = 0x2fdc,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 14,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(2),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "adm0_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch adm0_pbus_clk = {
-+	.hwcg_reg = 0x2208,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fdc,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 13,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(3),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "adm0_pbus_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch pmic_arb0_h_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 22,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(8),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pmic_arb0_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch pmic_arb1_h_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 21,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pmic_arb1_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch pmic_ssbi2_clk = {
-+	.halt_reg = 0x2fd8,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 23,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(7),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pmic_ssbi2_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch rpm_msg_ram_h_clk = {
-+	.hwcg_reg = 0x27e0,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fd8,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_bit = 12,
-+	.clkr = {
-+		.enable_reg = 0x3080,
-+		.enable_mask = BIT(6),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "rpm_msg_ram_h_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap *gcc_mdm9615_clks[] = {
-+	[PLL0] = &pll0.clkr,
-+	[PLL0_VOTE] = &pll0_vote,
-+	[PLL4_VOTE] = &pll4_vote,
-+	[PLL8] = &pll8.clkr,
-+	[PLL8_VOTE] = &pll8_vote,
-+	[PLL14] = &pll14.clkr,
-+	[PLL14_VOTE] = &pll14_vote,
-+	[GSBI1_UART_SRC] = &gsbi1_uart_src.clkr,
-+	[GSBI1_UART_CLK] = &gsbi1_uart_clk.clkr,
-+	[GSBI2_UART_SRC] = &gsbi2_uart_src.clkr,
-+	[GSBI2_UART_CLK] = &gsbi2_uart_clk.clkr,
-+	[GSBI3_UART_SRC] = &gsbi3_uart_src.clkr,
-+	[GSBI3_UART_CLK] = &gsbi3_uart_clk.clkr,
-+	[GSBI4_UART_SRC] = &gsbi4_uart_src.clkr,
-+	[GSBI4_UART_CLK] = &gsbi4_uart_clk.clkr,
-+	[GSBI5_UART_SRC] = &gsbi5_uart_src.clkr,
-+	[GSBI5_UART_CLK] = &gsbi5_uart_clk.clkr,
-+	[GSBI1_QUP_SRC] = &gsbi1_qup_src.clkr,
-+	[GSBI1_QUP_CLK] = &gsbi1_qup_clk.clkr,
-+	[GSBI2_QUP_SRC] = &gsbi2_qup_src.clkr,
-+	[GSBI2_QUP_CLK] = &gsbi2_qup_clk.clkr,
-+	[GSBI3_QUP_SRC] = &gsbi3_qup_src.clkr,
-+	[GSBI3_QUP_CLK] = &gsbi3_qup_clk.clkr,
-+	[GSBI4_QUP_SRC] = &gsbi4_qup_src.clkr,
-+	[GSBI4_QUP_CLK] = &gsbi4_qup_clk.clkr,
-+	[GSBI5_QUP_SRC] = &gsbi5_qup_src.clkr,
-+	[GSBI5_QUP_CLK] = &gsbi5_qup_clk.clkr,
-+	[GP0_SRC] = &gp0_src.clkr,
-+	[GP0_CLK] = &gp0_clk.clkr,
-+	[GP1_SRC] = &gp1_src.clkr,
-+	[GP1_CLK] = &gp1_clk.clkr,
-+	[GP2_SRC] = &gp2_src.clkr,
-+	[GP2_CLK] = &gp2_clk.clkr,
-+	[PMEM_A_CLK] = &pmem_clk.clkr,
-+	[PRNG_SRC] = &prng_src.clkr,
-+	[PRNG_CLK] = &prng_clk.clkr,
-+	[SDC1_SRC] = &sdc1_src.clkr,
-+	[SDC1_CLK] = &sdc1_clk.clkr,
-+	[SDC2_SRC] = &sdc2_src.clkr,
-+	[SDC2_CLK] = &sdc2_clk.clkr,
-+	[USB_HS1_XCVR_SRC] = &usb_hs1_xcvr_src.clkr,
-+	[USB_HS1_XCVR_CLK] = &usb_hs1_xcvr_clk.clkr,
-+	[USB_HS1_SYSTEM_CLK_SRC] = &usb_hs1_system_src.clkr,
-+	[USB_HS1_SYSTEM_CLK] = &usb_hs1_system_clk.clkr,
-+	[USB_HSIC_XCVR_FS_SRC] = &usb_hsic_xcvr_fs_src.clkr,
-+	[USB_HSIC_XCVR_FS_CLK] = &usb_hsic_xcvr_fs_clk.clkr,
-+	[USB_HSIC_SYSTEM_CLK_SRC] = &usb_hsic_system_src.clkr,
-+	[USB_HSIC_SYSTEM_CLK] = &usb_hsic_system_clk.clkr,
-+	[USB_HSIC_HSIC_CLK_SRC] = &usb_hsic_hsic_src.clkr,
-+	[USB_HSIC_HSIC_CLK] = &usb_hsic_hsic_clk.clkr,
-+	[USB_HSIC_HSIO_CAL_CLK] = &usb_hsic_hsio_cal_clk.clkr,
-+	[CE1_CORE_CLK] = &ce1_core_clk.clkr,
-+	[CE1_H_CLK] = &ce1_h_clk.clkr,
-+	[DMA_BAM_H_CLK] = &dma_bam_h_clk.clkr,
-+	[GSBI1_H_CLK] = &gsbi1_h_clk.clkr,
-+	[GSBI2_H_CLK] = &gsbi2_h_clk.clkr,
-+	[GSBI3_H_CLK] = &gsbi3_h_clk.clkr,
-+	[GSBI4_H_CLK] = &gsbi4_h_clk.clkr,
-+	[GSBI5_H_CLK] = &gsbi5_h_clk.clkr,
-+	[USB_HS1_H_CLK] = &usb_hs1_h_clk.clkr,
-+	[USB_HSIC_H_CLK] = &usb_hsic_h_clk.clkr,
-+	[SDC1_H_CLK] = &sdc1_h_clk.clkr,
-+	[SDC2_H_CLK] = &sdc2_h_clk.clkr,
-+	[ADM0_CLK] = &adm0_clk.clkr,
-+	[ADM0_PBUS_CLK] = &adm0_pbus_clk.clkr,
-+	[PMIC_ARB0_H_CLK] = &pmic_arb0_h_clk.clkr,
-+	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
-+	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
-+	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+};
-+
-+static const struct qcom_reset_map gcc_mdm9615_resets[] = {
-+	[DMA_BAM_RESET] = { 0x25c0, 7 },
-+	[CE1_H_RESET] = { 0x2720, 7 },
-+	[CE1_CORE_RESET] = { 0x2724, 7 },
-+	[SDC1_RESET] = { 0x2830 },
-+	[SDC2_RESET] = { 0x2850 },
-+	[ADM0_C2_RESET] = { 0x220c, 4 },
-+	[ADM0_C1_RESET] = { 0x220c, 3 },
-+	[ADM0_C0_RESET] = { 0x220c, 2 },
-+	[ADM0_PBUS_RESET] = { 0x220c, 1 },
-+	[ADM0_RESET] = { 0x220c },
-+	[USB_HS1_RESET] = { 0x2910 },
-+	[USB_HSIC_RESET] = { 0x2934 },
-+	[GSBI1_RESET] = { 0x29dc },
-+	[GSBI2_RESET] = { 0x29fc },
-+	[GSBI3_RESET] = { 0x2a1c },
-+	[GSBI4_RESET] = { 0x2a3c },
-+	[GSBI5_RESET] = { 0x2a5c },
-+	[PDM_RESET] = { 0x2CC0, 12 },
-+};
-+
-+static const struct regmap_config gcc_mdm9615_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x3660,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc gcc_mdm9615_desc = {
-+	.config = &gcc_mdm9615_regmap_config,
-+	.clks = gcc_mdm9615_clks,
-+	.num_clks = ARRAY_SIZE(gcc_mdm9615_clks),
-+	.resets = gcc_mdm9615_resets,
-+	.num_resets = ARRAY_SIZE(gcc_mdm9615_resets),
-+};
-+
-+static const struct of_device_id gcc_mdm9615_match_table[] = {
-+	{ .compatible = "qcom,gcc-mdm9615", .data = &gcc_mdm9615_desc },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, gcc_mdm9615_match_table);
-+
-+static int gcc_mdm9615_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct of_device_id *match;
-+	int ret;
-+
-+	match = of_match_device(gcc_mdm9615_match_table, &pdev->dev);
-+	if (!match)
-+		return -EINVAL;
-+
-+	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 19200000);
-+	if (ret)
-+		return ret;
-+
-+	return qcom_cc_probe(pdev, match->data);
-+}
-+
-+static struct platform_driver gcc_mdm9615_driver = {
-+	.probe		= gcc_mdm9615_probe,
-+	.driver		= {
-+		.name	= "gcc-mdm9615",
-+		.of_match_table = gcc_mdm9615_match_table,
-+	},
-+};
-+
-+static int __init gcc_mdm9615_init(void)
-+{
-+	return platform_driver_register(&gcc_mdm9615_driver);
-+}
-+core_initcall(gcc_mdm9615_init);
-+
-+static void __exit gcc_mdm9615_exit(void)
-+{
-+	platform_driver_unregister(&gcc_mdm9615_driver);
-+}
-+module_exit(gcc_mdm9615_exit);
-+
-+MODULE_DESCRIPTION("QCOM GCC MDM9615 Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:gcc-mdm9615");
-diff --git a/drivers/clk/qcom/lcc-mdm9615.c b/drivers/clk/qcom/lcc-mdm9615.c
-new file mode 100644
-index 0000000..3237ef4
---- /dev/null
-+++ b/drivers/clk/qcom/lcc-mdm9615.c
-@@ -0,0 +1,580 @@
-+/*
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ * Copyright (c) BayLibre, SAS.
-+ * Author : Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,lcc-mdm9615.h>
-+
-+#include "common.h"
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-branch.h"
-+#include "clk-regmap-divider.h"
-+#include "clk-regmap-mux.h"
-+
-+static struct clk_pll pll4 = {
-+	.l_reg = 0x4,
-+	.m_reg = 0x8,
-+	.n_reg = 0xc,
-+	.config_reg = 0x14,
-+	.mode_reg = 0x0,
-+	.status_reg = 0x18,
-+	.status_bit = 16,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll4",
-+		.parent_names = (const char *[]){ "cxo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
-+enum {
-+	P_CXO,
-+	P_PLL4,
-+};
-+
-+static const struct parent_map lcc_cxo_pll4_map[] = {
-+	{ P_CXO, 0 },
-+	{ P_PLL4, 2 }
-+};
-+
-+static const char * const lcc_cxo_pll4[] = {
-+	"cxo",
-+	"pll4_vote",
-+};
-+
-+static struct freq_tbl clk_tbl_aif_osr_492[] = {
-+	{   512000, P_PLL4, 4, 1, 240 },
-+	{   768000, P_PLL4, 4, 1, 160 },
-+	{  1024000, P_PLL4, 4, 1, 120 },
-+	{  1536000, P_PLL4, 4, 1,  80 },
-+	{  2048000, P_PLL4, 4, 1,  60 },
-+	{  3072000, P_PLL4, 4, 1,  40 },
-+	{  4096000, P_PLL4, 4, 1,  30 },
-+	{  6144000, P_PLL4, 4, 1,  20 },
-+	{  8192000, P_PLL4, 4, 1,  15 },
-+	{ 12288000, P_PLL4, 4, 1,  10 },
-+	{ 24576000, P_PLL4, 4, 1,   5 },
-+	{ 27000000, P_CXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+static struct freq_tbl clk_tbl_aif_osr_393[] = {
-+	{   512000, P_PLL4, 4, 1, 192 },
-+	{   768000, P_PLL4, 4, 1, 128 },
-+	{  1024000, P_PLL4, 4, 1,  96 },
-+	{  1536000, P_PLL4, 4, 1,  64 },
-+	{  2048000, P_PLL4, 4, 1,  48 },
-+	{  3072000, P_PLL4, 4, 1,  32 },
-+	{  4096000, P_PLL4, 4, 1,  24 },
-+	{  6144000, P_PLL4, 4, 1,  16 },
-+	{  8192000, P_PLL4, 4, 1,  12 },
-+	{ 12288000, P_PLL4, 4, 1,   8 },
-+	{ 24576000, P_PLL4, 4, 1,   4 },
-+	{ 27000000, P_CXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+static struct clk_rcg mi2s_osr_src = {
-+	.ns_reg = 0x48,
-+	.md_reg = 0x4c,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 24,
-+		.m_val_shift = 8,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = lcc_cxo_pll4_map,
-+	},
-+	.freq_tbl = clk_tbl_aif_osr_393,
-+	.clkr = {
-+		.enable_reg = 0x48,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mi2s_osr_src",
-+			.parent_names = lcc_cxo_pll4,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	},
-+};
-+
-+static const char * const lcc_mi2s_parents[] = {
-+	"mi2s_osr_src",
-+};
-+
-+static struct clk_branch mi2s_osr_clk = {
-+	.halt_reg = 0x50,
-+	.halt_bit = 1,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0x48,
-+		.enable_mask = BIT(17),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mi2s_osr_clk",
-+			.parent_names = lcc_mi2s_parents,
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap_div mi2s_div_clk = {
-+	.reg = 0x48,
-+	.shift = 10,
-+	.width = 4,
-+	.clkr = {
-+		.enable_reg = 0x48,
-+		.enable_mask = BIT(15),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mi2s_div_clk",
-+			.parent_names = lcc_mi2s_parents,
-+			.num_parents = 1,
-+			.ops = &clk_regmap_div_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch mi2s_bit_div_clk = {
-+	.halt_reg = 0x50,
-+	.halt_bit = 0,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0x48,
-+		.enable_mask = BIT(15),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mi2s_bit_div_clk",
-+			.parent_names = (const char *[]){ "mi2s_div_clk" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap_mux mi2s_bit_clk = {
-+	.reg = 0x48,
-+	.shift = 14,
-+	.width = 1,
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mi2s_bit_clk",
-+			.parent_names = (const char *[]){
-+				"mi2s_bit_div_clk",
-+				"mi2s_codec_clk",
-+			},
-+			.num_parents = 2,
-+			.ops = &clk_regmap_mux_closest_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+#define CLK_AIF_OSR_DIV(prefix, _ns, _md, hr)			\
-+static struct clk_rcg prefix##_osr_src = {			\
-+	.ns_reg = _ns,						\
-+	.md_reg = _md,						\
-+	.mn = {							\
-+		.mnctr_en_bit = 8,				\
-+		.mnctr_reset_bit = 7,				\
-+		.mnctr_mode_shift = 5,				\
-+		.n_val_shift = 24,				\
-+		.m_val_shift = 8,				\
-+		.width = 8,					\
-+	},							\
-+	.p = {							\
-+		.pre_div_shift = 3,				\
-+		.pre_div_width = 2,				\
-+	},							\
-+	.s = {							\
-+		.src_sel_shift = 0,				\
-+		.parent_map = lcc_cxo_pll4_map,			\
-+	},							\
-+	.freq_tbl = clk_tbl_aif_osr_393,			\
-+	.clkr = {						\
-+		.enable_reg = _ns,				\
-+		.enable_mask = BIT(9),				\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_osr_src",		\
-+			.parent_names = lcc_cxo_pll4,		\
-+			.num_parents = 2,			\
-+			.ops = &clk_rcg_ops,			\
-+			.flags = CLK_SET_RATE_GATE,		\
-+		},						\
-+	},							\
-+};								\
-+								\
-+static const char * const lcc_##prefix##_parents[] = {		\
-+	#prefix "_osr_src",					\
-+};								\
-+								\
-+static struct clk_branch prefix##_osr_clk = {			\
-+	.halt_reg = hr,						\
-+	.halt_bit = 1,						\
-+	.halt_check = BRANCH_HALT_ENABLE,			\
-+	.clkr = {						\
-+		.enable_reg = _ns,				\
-+		.enable_mask = BIT(21),				\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_osr_clk",		\
-+			.parent_names = lcc_##prefix##_parents,	\
-+			.num_parents = 1,			\
-+			.ops = &clk_branch_ops,			\
-+			.flags = CLK_SET_RATE_PARENT,		\
-+		},						\
-+	},							\
-+};								\
-+								\
-+static struct clk_regmap_div prefix##_div_clk = {		\
-+	.reg = _ns,						\
-+	.shift = 10,						\
-+	.width = 8,						\
-+	.clkr = {						\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_div_clk",		\
-+			.parent_names = lcc_##prefix##_parents,	\
-+			.num_parents = 1,			\
-+			.ops = &clk_regmap_div_ops,		\
-+		},						\
-+	},							\
-+};								\
-+								\
-+static struct clk_branch prefix##_bit_div_clk = {		\
-+	.halt_reg = hr,						\
-+	.halt_bit = 0,						\
-+	.halt_check = BRANCH_HALT_ENABLE,			\
-+	.clkr = {						\
-+		.enable_reg = _ns,				\
-+		.enable_mask = BIT(19),				\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_bit_div_clk",		\
-+			.parent_names = (const char *[]){	\
-+				#prefix "_div_clk"		\
-+			},					\
-+			.num_parents = 1,			\
-+			.ops = &clk_branch_ops,			\
-+			.flags = CLK_SET_RATE_PARENT,		\
-+		},						\
-+	},							\
-+};								\
-+								\
-+static struct clk_regmap_mux prefix##_bit_clk = {		\
-+	.reg = _ns,						\
-+	.shift = 18,						\
-+	.width = 1,						\
-+	.clkr = {						\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_bit_clk",		\
-+			.parent_names = (const char *[]){	\
-+				#prefix "_bit_div_clk",		\
-+				#prefix "_codec_clk",		\
-+			},					\
-+			.num_parents = 2,			\
-+			.ops = &clk_regmap_mux_closest_ops,	\
-+			.flags = CLK_SET_RATE_PARENT,		\
-+		},						\
-+	},							\
-+}
-+
-+CLK_AIF_OSR_DIV(codec_i2s_mic, 0x60, 0x64, 0x68);
-+CLK_AIF_OSR_DIV(spare_i2s_mic, 0x78, 0x7c, 0x80);
-+CLK_AIF_OSR_DIV(codec_i2s_spkr, 0x6c, 0x70, 0x74);
-+CLK_AIF_OSR_DIV(spare_i2s_spkr, 0x84, 0x88, 0x8c);
-+
-+static struct freq_tbl clk_tbl_pcm_492[] = {
-+	{   256000, P_PLL4, 4, 1, 480 },
-+	{   512000, P_PLL4, 4, 1, 240 },
-+	{   768000, P_PLL4, 4, 1, 160 },
-+	{  1024000, P_PLL4, 4, 1, 120 },
-+	{  1536000, P_PLL4, 4, 1,  80 },
-+	{  2048000, P_PLL4, 4, 1,  60 },
-+	{  3072000, P_PLL4, 4, 1,  40 },
-+	{  4096000, P_PLL4, 4, 1,  30 },
-+	{  6144000, P_PLL4, 4, 1,  20 },
-+	{  8192000, P_PLL4, 4, 1,  15 },
-+	{ 12288000, P_PLL4, 4, 1,  10 },
-+	{ 24576000, P_PLL4, 4, 1,   5 },
-+	{ 27000000, P_CXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+static struct freq_tbl clk_tbl_pcm_393[] = {
-+	{   256000, P_PLL4, 4, 1, 384 },
-+	{   512000, P_PLL4, 4, 1, 192 },
-+	{   768000, P_PLL4, 4, 1, 128 },
-+	{  1024000, P_PLL4, 4, 1,  96 },
-+	{  1536000, P_PLL4, 4, 1,  64 },
-+	{  2048000, P_PLL4, 4, 1,  48 },
-+	{  3072000, P_PLL4, 4, 1,  32 },
-+	{  4096000, P_PLL4, 4, 1,  24 },
-+	{  6144000, P_PLL4, 4, 1,  16 },
-+	{  8192000, P_PLL4, 4, 1,  12 },
-+	{ 12288000, P_PLL4, 4, 1,   8 },
-+	{ 24576000, P_PLL4, 4, 1,   4 },
-+	{ 27000000, P_CXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+static struct clk_rcg pcm_src = {
-+	.ns_reg = 0x54,
-+	.md_reg = 0x58,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = lcc_cxo_pll4_map,
-+	},
-+	.freq_tbl = clk_tbl_pcm_393,
-+	.clkr = {
-+		.enable_reg = 0x54,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcm_src",
-+			.parent_names = lcc_cxo_pll4,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch pcm_clk_out = {
-+	.halt_reg = 0x5c,
-+	.halt_bit = 0,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0x54,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcm_clk_out",
-+			.parent_names = (const char *[]){ "pcm_src" },
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap_mux pcm_clk = {
-+	.reg = 0x54,
-+	.shift = 10,
-+	.width = 1,
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcm_clk",
-+			.parent_names = (const char *[]){
-+				"pcm_clk_out",
-+				"pcm_codec_clk",
-+			},
-+			.num_parents = 2,
-+			.ops = &clk_regmap_mux_closest_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg slimbus_src = {
-+	.ns_reg = 0xcc,
-+	.md_reg = 0xd0,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 24,
-+		.m_val_shift = 8,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = lcc_cxo_pll4_map,
-+	},
-+	.freq_tbl = clk_tbl_aif_osr_393,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "slimbus_src",
-+			.parent_names = lcc_cxo_pll4,
-+			.num_parents = 2,
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	},
-+};
-+
-+static const char * const lcc_slimbus_parents[] = {
-+	"slimbus_src",
-+};
-+
-+static struct clk_branch audio_slimbus_clk = {
-+	.halt_reg = 0xd4,
-+	.halt_bit = 0,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(10),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "audio_slimbus_clk",
-+			.parent_names = lcc_slimbus_parents,
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_branch sps_slimbus_clk = {
-+	.halt_reg = 0xd4,
-+	.halt_bit = 1,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(12),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sps_slimbus_clk",
-+			.parent_names = lcc_slimbus_parents,
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap *lcc_mdm9615_clks[] = {
-+	[PLL4] = &pll4.clkr,
-+	[MI2S_OSR_SRC] = &mi2s_osr_src.clkr,
-+	[MI2S_OSR_CLK] = &mi2s_osr_clk.clkr,
-+	[MI2S_DIV_CLK] = &mi2s_div_clk.clkr,
-+	[MI2S_BIT_DIV_CLK] = &mi2s_bit_div_clk.clkr,
-+	[MI2S_BIT_CLK] = &mi2s_bit_clk.clkr,
-+	[PCM_SRC] = &pcm_src.clkr,
-+	[PCM_CLK_OUT] = &pcm_clk_out.clkr,
-+	[PCM_CLK] = &pcm_clk.clkr,
-+	[SLIMBUS_SRC] = &slimbus_src.clkr,
-+	[AUDIO_SLIMBUS_CLK] = &audio_slimbus_clk.clkr,
-+	[SPS_SLIMBUS_CLK] = &sps_slimbus_clk.clkr,
-+	[CODEC_I2S_MIC_OSR_SRC] = &codec_i2s_mic_osr_src.clkr,
-+	[CODEC_I2S_MIC_OSR_CLK] = &codec_i2s_mic_osr_clk.clkr,
-+	[CODEC_I2S_MIC_DIV_CLK] = &codec_i2s_mic_div_clk.clkr,
-+	[CODEC_I2S_MIC_BIT_DIV_CLK] = &codec_i2s_mic_bit_div_clk.clkr,
-+	[CODEC_I2S_MIC_BIT_CLK] = &codec_i2s_mic_bit_clk.clkr,
-+	[SPARE_I2S_MIC_OSR_SRC] = &spare_i2s_mic_osr_src.clkr,
-+	[SPARE_I2S_MIC_OSR_CLK] = &spare_i2s_mic_osr_clk.clkr,
-+	[SPARE_I2S_MIC_DIV_CLK] = &spare_i2s_mic_div_clk.clkr,
-+	[SPARE_I2S_MIC_BIT_DIV_CLK] = &spare_i2s_mic_bit_div_clk.clkr,
-+	[SPARE_I2S_MIC_BIT_CLK] = &spare_i2s_mic_bit_clk.clkr,
-+	[CODEC_I2S_SPKR_OSR_SRC] = &codec_i2s_spkr_osr_src.clkr,
-+	[CODEC_I2S_SPKR_OSR_CLK] = &codec_i2s_spkr_osr_clk.clkr,
-+	[CODEC_I2S_SPKR_DIV_CLK] = &codec_i2s_spkr_div_clk.clkr,
-+	[CODEC_I2S_SPKR_BIT_DIV_CLK] = &codec_i2s_spkr_bit_div_clk.clkr,
-+	[CODEC_I2S_SPKR_BIT_CLK] = &codec_i2s_spkr_bit_clk.clkr,
-+	[SPARE_I2S_SPKR_OSR_SRC] = &spare_i2s_spkr_osr_src.clkr,
-+	[SPARE_I2S_SPKR_OSR_CLK] = &spare_i2s_spkr_osr_clk.clkr,
-+	[SPARE_I2S_SPKR_DIV_CLK] = &spare_i2s_spkr_div_clk.clkr,
-+	[SPARE_I2S_SPKR_BIT_DIV_CLK] = &spare_i2s_spkr_bit_div_clk.clkr,
-+	[SPARE_I2S_SPKR_BIT_CLK] = &spare_i2s_spkr_bit_clk.clkr,
-+};
-+
-+static const struct regmap_config lcc_mdm9615_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xfc,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc lcc_mdm9615_desc = {
-+	.config = &lcc_mdm9615_regmap_config,
-+	.clks = lcc_mdm9615_clks,
-+	.num_clks = ARRAY_SIZE(lcc_mdm9615_clks),
-+};
-+
-+static const struct of_device_id lcc_mdm9615_match_table[] = {
-+	{ .compatible = "qcom,lcc-mdm9615" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lcc_mdm9615_match_table);
-+
-+static int lcc_mdm9615_probe(struct platform_device *pdev)
-+{
-+	u32 val;
-+	struct regmap *regmap;
-+
-+	regmap = qcom_cc_map(pdev, &lcc_mdm9615_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	/* Use the correct frequency plan depending on speed of PLL4 */
-+	regmap_read(regmap, 0x4, &val);
-+	if (val == 0x12) {
-+		slimbus_src.freq_tbl = clk_tbl_aif_osr_492;
-+		mi2s_osr_src.freq_tbl = clk_tbl_aif_osr_492;
-+		codec_i2s_mic_osr_src.freq_tbl = clk_tbl_aif_osr_492;
-+		spare_i2s_mic_osr_src.freq_tbl = clk_tbl_aif_osr_492;
-+		codec_i2s_spkr_osr_src.freq_tbl = clk_tbl_aif_osr_492;
-+		spare_i2s_spkr_osr_src.freq_tbl = clk_tbl_aif_osr_492;
-+		pcm_src.freq_tbl = clk_tbl_pcm_492;
-+	}
-+	/* Enable PLL4 source on the LPASS Primary PLL Mux */
-+	regmap_write(regmap, 0xc4, 0x1);
-+
-+	return qcom_cc_really_probe(pdev, &lcc_mdm9615_desc, regmap);
-+}
-+
-+static struct platform_driver lcc_mdm9615_driver = {
-+	.probe		= lcc_mdm9615_probe,
-+	.driver		= {
-+		.name	= "lcc-mdm9615",
-+		.of_match_table = lcc_mdm9615_match_table,
-+	},
-+};
-+module_platform_driver(lcc_mdm9615_driver);
-+
-+MODULE_DESCRIPTION("QCOM LCC MDM9615 Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:lcc-mdm9615");
 -- 
 1.9.1
