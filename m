@@ -1,116 +1,132 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lin Huang <hl@rock-chips.com>, =?utf-8?B?5aea5pm65oOF?= <mark.yao@rock-chips.com>, myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, David Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Derek Basehore <dbasehore@chromium.org>
-Subject: Re: [RFC PATCH 2/4] clk: rockchip: rk3399: add ddrc clock support
-Date: Wed, 01 Jun 2016 17:46:22 +0200
-Message-ID: <7336973.nHpy8GhqcO@diego>
-In-Reply-To: <CAD=FV=UQoWe7DcPe3sZrocXLmX4JNpBBF1rr+-+T_q3FttihEQ@mail.gmail.com>
-References: <1464773739-18152-1-git-send-email-hl@rock-chips.com> <1464773739-18152-3-git-send-email-hl@rock-chips.com> <CAD=FV=UQoWe7DcPe3sZrocXLmX4JNpBBF1rr+-+T_q3FttihEQ@mail.gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCHv2 13/28] clk: ti: am43xx: transition to usage of ti_clk_get
+Date: Mon, 13 Jun 2016 22:04:47 +0300
+Message-ID: <1465844702-12200-14-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 1. Juni 2016, 08:24:48 schrieb Doug Anderson:
-> Lin Huang,
-> 
-> On Wed, Jun 1, 2016 at 2:35 AM, Lin Huang <hl@rock-chips.com> wrote:
-> > add ddrc clock setting, so we can do ddr frequency
-> > scaling on rk3399 platform in future.
-> > 
-> > Signed-off-by: Lin Huang <hl@rock-chips.com>
-> > ---
-> > 
-> >  drivers/clk/rockchip/clk-rk3399.c      | 16 ++++++++++++++++
-> >  include/dt-bindings/clock/rk3399-cru.h |  1 +
-> >  2 files changed, 17 insertions(+)
-> > 
-> > diff --git a/drivers/clk/rockchip/clk-rk3399.c
-> > b/drivers/clk/rockchip/clk-rk3399.c index f1d8e44..749ea59 100644
-> > --- a/drivers/clk/rockchip/clk-rk3399.c
-> > +++ b/drivers/clk/rockchip/clk-rk3399.c
-> > @@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)                               =
-> > { "clk_core_b_lpll_src",> 
-> >                                                     "clk_core_b_bpll_src",
-> >                                                     "clk_core_b_dpll_src",
-> >                                                     "clk_core_b_gpll_src"
-> >                                                     };
-> > 
-> > +PNAME(mux_ddrclk_p)                            = { "clk_ddrc_lpll_src",
-> > +                                                   "clk_ddrc_bpll_src",
-> > +                                                   "clk_ddrc_dpll_src",
-> > +                                                   "clk_ddrc_gpll_src" };
-> > 
-> >  PNAME(mux_aclk_cci_p)                          = { "cpll_aclk_cci_src",
-> >  
-> >                                                     "gpll_aclk_cci_src",
-> >                                                     "npll_aclk_cci_src",
-> > 
-> > @@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch
-> > rk3399_clk_branches[] __initdata = {> 
-> >         COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
-> >         
-> >                         RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
-> >                         RK3368_CLKGATE_CON(13), 11, GFLAGS),
-> > 
-> > +
-> > +       /* ddrc */
-> > +       GATE(0, "clk_ddrc_lpll_src", "lpll", CLK_IGNORE_UNUSED,
-> > +            RK3399_CLKGATE_CON(3), 0, GFLAGS),
-> > +       GATE(0, "clk_ddrc_bpll_src", "bpll", CLK_IGNORE_UNUSED,
-> > +            RK3399_CLKGATE_CON(3), 1, GFLAGS),
-> > +       GATE(0, "clk_ddrc_dpll_src", "dpll", CLK_IGNORE_UNUSED,
-> > +            RK3399_CLKGATE_CON(3), 2, GFLAGS),
-> > +       GATE(0, "clk_ddrc_gpll_src", "gpll", CLK_IGNORE_UNUSED,
-> > +            RK3399_CLKGATE_CON(3), 3, GFLAGS),
-> > +       COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p,
-> > CLK_IGNORE_UNUSED, +                      RK3399_CLKSEL_CON(6), 4, 2,
-> > MFLAGS, 0, 3, DFLAGS),
-> It seems slightly unfortunate that we need CLK_IGNORE_UNUSED on these.
-> Only one of these will ever be used at once and it would be awfully
-> nice if the others could get gated, right?
-> 
-> ...presumably this is needed because we might not have an actual
-> driver for DDR Freq and we definitely want to make sure that clk_ddrc
-> is enabled in that case.  I guess what we really want is something
-> like CLK_ENABLE_HAND_OFF eventually, but until then I think you might
-> get slightly better behavior by getting rid of all of these
-> CLK_IGNORE_UNUSED and setting "clk_ddrc" as a critical clock, either
-> using the table in this file or the new flag.
+Cleanup any unnecessary DT_CLK() alias entries from the AM43xx clock file.
+Also, use ti_clk_get where necessary.
 
-My current feeling is that staying with the homegrown solution for critical 
-clocks might be preferable until the clk-handoff mechanism lands as well, as 
-our critical clocks fall into both categories and I'd like to not touch 
-everything twice.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-43xx.c | 88 ++---------------------------------------------
+ 1 file changed, 2 insertions(+), 86 deletions(-)
 
-The clock above should be controlled by the dcf, so falls into the handoff 
-category (critical until a driver picks up the clock).
-
-Also mixing both new and old approach might get confusing.
-
-But I'm definitly open to counter-arguments :-)
-
-
-> >  };
-> >  
-> >  static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata =
-> >  {
-> > 
-> > diff --git a/include/dt-bindings/clock/rk3399-cru.h
-> > b/include/dt-bindings/clock/rk3399-cru.h index 50a44cf..8a0f0442 100644
-> > --- a/include/dt-bindings/clock/rk3399-cru.h
-> > +++ b/include/dt-bindings/clock/rk3399-cru.h
-> > @@ -131,6 +131,7 @@
-> > 
-> >  #define SCLK_DPHY_RX0_CFG              165
-> >  #define SCLK_RMII_SRC                  166
-> >  #define SCLK_PCIEPHY_REF100M           167
-> > 
-> > +#define SCLK_DDRCLK                    168
-> 
-> Almost certainly you'll want to create a separate patch for the
-> dt-bindings change since it will need to land in a different tree so
-> it can be pulled into both Heiko's clock topic branch and dts64 topic
-> branch.
-
-correct.
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 097fc90..eefa62b 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -23,92 +23,8 @@
+ #include "clock.h"
+ 
+ static struct ti_dt_clk am43xx_clks[] = {
+-	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
+-	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
+-	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
+-	DT_CLK(NULL, "virt_24000000_ck", "virt_24000000_ck"),
+-	DT_CLK(NULL, "virt_25000000_ck", "virt_25000000_ck"),
+-	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
+-	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "tclkin_ck", "tclkin_ck"),
+-	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
+-	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
+-	DT_CLK(NULL, "dpll_core_m4_ck", "dpll_core_m4_ck"),
+-	DT_CLK(NULL, "dpll_core_m5_ck", "dpll_core_m5_ck"),
+-	DT_CLK(NULL, "dpll_core_m6_ck", "dpll_core_m6_ck"),
+-	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
+-	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_ck", "dpll_ddr_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m2_ck", "dpll_ddr_m2_ck"),
+-	DT_CLK(NULL, "dpll_disp_ck", "dpll_disp_ck"),
+-	DT_CLK(NULL, "dpll_disp_m2_ck", "dpll_disp_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_wkupdm_ck", "dpll_per_m2_div4_wkupdm_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_div4_ck", "dpll_per_m2_div4_ck"),
+-	DT_CLK(NULL, "adc_tsc_fck", "adc_tsc_fck"),
+-	DT_CLK(NULL, "clkdiv32k_ck", "clkdiv32k_ck"),
+-	DT_CLK(NULL, "clkdiv32k_ick", "clkdiv32k_ick"),
+-	DT_CLK(NULL, "dcan0_fck", "dcan0_fck"),
+-	DT_CLK(NULL, "dcan1_fck", "dcan1_fck"),
+-	DT_CLK(NULL, "pruss_ocp_gclk", "pruss_ocp_gclk"),
+-	DT_CLK(NULL, "mcasp0_fck", "mcasp0_fck"),
+-	DT_CLK(NULL, "mcasp1_fck", "mcasp1_fck"),
+-	DT_CLK(NULL, "smartreflex0_fck", "smartreflex0_fck"),
+-	DT_CLK(NULL, "smartreflex1_fck", "smartreflex1_fck"),
+-	DT_CLK(NULL, "sha0_fck", "sha0_fck"),
+-	DT_CLK(NULL, "aes0_fck", "aes0_fck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
+-	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
+-	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
+-	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
+-	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
+-	DT_CLK(NULL, "wdt1_fck", "wdt1_fck"),
+-	DT_CLK(NULL, "l3_gclk", "l3_gclk"),
+-	DT_CLK(NULL, "dpll_core_m4_div2_ck", "dpll_core_m4_div2_ck"),
+-	DT_CLK(NULL, "l4hs_gclk", "l4hs_gclk"),
+-	DT_CLK(NULL, "l3s_gclk", "l3s_gclk"),
+-	DT_CLK(NULL, "l4ls_gclk", "l4ls_gclk"),
+-	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
+-	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
+-	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
+-	DT_CLK(NULL, "dpll_clksel_mac_clk", "dpll_clksel_mac_clk"),
+-	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
+-	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
+-	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
+-	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
+-	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
+-	DT_CLK(NULL, "gpio4_dbclk", "gpio4_dbclk"),
+-	DT_CLK(NULL, "gpio5_dbclk", "gpio5_dbclk"),
+-	DT_CLK(NULL, "mmc_clk", "mmc_clk"),
+-	DT_CLK(NULL, "gfx_fclk_clksel_ck", "gfx_fclk_clksel_ck"),
+-	DT_CLK(NULL, "gfx_fck_div_ck", "gfx_fck_div_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "sysclk_div", "sysclk_div"),
+-	DT_CLK(NULL, "disp_clk", "disp_clk"),
+-	DT_CLK(NULL, "clk_32k_mosc_ck", "clk_32k_mosc_ck"),
+-	DT_CLK(NULL, "clk_32k_tpm_ck", "clk_32k_tpm_ck"),
+-	DT_CLK(NULL, "dpll_extdev_ck", "dpll_extdev_ck"),
+-	DT_CLK(NULL, "dpll_extdev_m2_ck", "dpll_extdev_m2_ck"),
+-	DT_CLK(NULL, "mux_synctimer32k_ck", "mux_synctimer32k_ck"),
+-	DT_CLK(NULL, "synctimer_32kclk", "synctimer_32kclk"),
+-	DT_CLK(NULL, "timer8_fck", "timer8_fck"),
+-	DT_CLK(NULL, "timer9_fck", "timer9_fck"),
+-	DT_CLK(NULL, "timer10_fck", "timer10_fck"),
+-	DT_CLK(NULL, "timer11_fck", "timer11_fck"),
+-	DT_CLK(NULL, "cpsw_50m_clkdiv", "cpsw_50m_clkdiv"),
+-	DT_CLK(NULL, "cpsw_5m_clkdiv", "cpsw_5m_clkdiv"),
+-	DT_CLK(NULL, "dpll_ddr_x2_ck", "dpll_ddr_x2_ck"),
+-	DT_CLK(NULL, "dpll_ddr_m4_ck", "dpll_ddr_m4_ck"),
+-	DT_CLK(NULL, "dpll_per_clkdcoldo", "dpll_per_clkdcoldo"),
+-	DT_CLK(NULL, "dll_aging_clk_div", "dll_aging_clk_div"),
+-	DT_CLK(NULL, "div_core_25m_ck", "div_core_25m_ck"),
+-	DT_CLK(NULL, "func_12m_clk", "func_12m_clk"),
+-	DT_CLK(NULL, "vtp_clk_div", "vtp_clk_div"),
+-	DT_CLK(NULL, "usbphy_32khz_clkmux", "usbphy_32khz_clkmux"),
+ 	DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+ 	DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+ 	DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+@@ -136,8 +52,8 @@ int __init am43xx_dt_clk_init(void)
+ 	 * By selecting dpll_core_m5_ck as the clocksource fixes this issue.
+ 	 * In AM335x dpll_core_m5_ck is the default clocksource.
+ 	 */
+-	clk1 = clk_get_sys(NULL, "cpsw_cpts_rft_clk");
+-	clk2 = clk_get_sys(NULL, "dpll_core_m5_ck");
++	clk1 = ti_clk_get("cpsw_cpts_rft_clk");
++	clk2 = ti_clk_get("dpll_core_m5_ck");
+ 	clk_set_parent(clk1, clk2);
+ 
+ 	return 0;
+-- 
+1.9.1
