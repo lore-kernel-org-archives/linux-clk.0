@@ -1,86 +1,53 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 08/10] ARM: dts: sun9i: cubieboard4: Order nodes by alphabetical order
-Date: Tue, 14 Jun 2016 10:17:56 +0800
-Message-Id: <1465870678-30128-10-git-send-email-wens@csie.org>
-In-Reply-To: <1465870678-30128-1-git-send-email-wens@csie.org>
-References: <1465870678-30128-1-git-send-email-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36319 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964842AbcFMIF7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2016 04:05:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <1465714475-24111-11-git-send-email-ysato@users.sourceforge.jp>
+References: <1465714475-24111-1-git-send-email-ysato@users.sourceforge.jp> <1465714475-24111-11-git-send-email-ysato@users.sourceforge.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Jun 2016 10:05:57 +0200
+Message-ID: <CAMuHMdWMreEye+jLeXkKgh8Qthq4E28OSg2KkE7siWf7F42+=A@mail.gmail.com>
+Subject: Re: [PATCH v2 10/17] sh: convert generic drivers framework
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the &pio node below the mmc nodes for proper ordering by name.
+On Sun, Jun 12, 2016 at 8:54 AM, Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> index 0000000..89e28d8
+> --- /dev/null
+> +++ b/drivers/clk/sh/Kconfig
+> @@ -0,0 +1,2 @@
+> +config COMMON_CLK_SH7750
+> +       bool "Clcok driver for SH7750/SH7751"
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 32 ++++++++++++++---------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+Clock
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-index a92eeea1b222..65f4f32f89ad 100644
---- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-@@ -78,22 +78,6 @@
- 	};
- };
- 
--&pio {
--	led_pins_cubieboard4: led-pins@0 {
--		allwinner,pins = "PH6", "PH17";
--		allwinner,function = "gpio_out";
--		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
--		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
--	};
--
--	mmc0_cd_pin_cubieboard4: mmc0_cd_pin@0 {
--		allwinner,pins = "PH18";
--		allwinner,function = "gpio_in";
--		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
--		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
--	};
--};
--
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_cubieboard4>;
-@@ -119,6 +103,22 @@
- 	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
- };
- 
-+&pio {
-+	led_pins_cubieboard4: led-pins@0 {
-+		allwinner,pins = "PH6", "PH17";
-+		allwinner,function = "gpio_out";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+	};
-+
-+	mmc0_cd_pin_cubieboard4: mmc0_cd_pin@0 {
-+		allwinner,pins = "PH18";
-+		allwinner,function = "gpio_in";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+	};
-+};
-+
- &r_ir {
- 	status = "okay";
- };
--- 
-2.8.1
+> diff --git a/drivers/clk/sh/Makefile b/drivers/clk/sh/Makefile
+> new file mode 100644
+> index 0000000..468eb9d
+> --- /dev/null
+> +++ b/drivers/clk/sh/Makefile
+> @@ -0,0 +1,2 @@
+> +obj-y += clk-shdiv.o
+> +obj-$(CONFIG_COMMON_CLK_SH7750) += clk-sh7750.o
+> \ No newline at end of file
+
+Please add the newline.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
