@@ -1,76 +1,108 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Add support for R-Car M3-W
-Date: Mon,  6 Jun 2016 13:33:24 +0200
-Message-Id: <1465212804-21391-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 1/1] clk: imx: refine the powerdown bit of clk-pllv3
+Date: Mon, 13 Jun 2016 20:24:52 +0800
+Message-ID: <1465820692-20055-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1465803434-31507-1-git-send-email-aisheng.dong@nxp.com>
+References: <1465803434-31507-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+The powerdown bit is a bit confused, let's change it to power_bit
+to relfect both powerdown and powerup case according to different
+plls.
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+Changes from v2:
+Sorry for sending the patch too quickly.
+There's a rebase error in V2, fixed it.
+---
+ drivers/clk/imx/clk-pllv3.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.8-tag1
-
-for you to fetch changes up to e4e2d7c388350eba8b1dbc2569441ac9b545a8c4:
-
-  clk: renesas: cpg-mssr: Add support for R-Car M3-W (2016-06-06 11:58:35 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Add support for R-Car M3-W
-
-Add initial support for the Clock Pulse Generator and Module Standby and
-Software Reset modules on the Renesas R-Car M3-W SoC:
-  - Basic core clocks,
-  - SCIF2 (console) module clock,
-  - INTC-AP (GIC) module clock.
-
-As <dt-bindings/clock/r8a7796-cpg-mssr.h> is a hard dependency for the
-initial r8a7796.dtsi file, I would appreciate if you could pull this
-sooner rather than later, so Simon can pull it as well, and start
-queueing up the DT files for R-Car M3-W.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      clk: renesas: cpg-mssr: Document r8a7796 support
-      clk: renesas: Add r8a7796 CPG Core Clock Definitions
-      clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code
-      clk: renesas: cpg-mssr: Add support for R-Car M3-W
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
- drivers/clk/renesas/Kconfig                        |   1 +
- drivers/clk/renesas/Makefile                       |   3 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c             | 360 +--------------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c             | 192 +++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c                | 359 ++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h                |  43 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a7796-cpg-mssr.h       |  69 ++++
- 10 files changed, 682 insertions(+), 359 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7796-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.h
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index eea2b1b3791e..19f9b622981a 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -29,8 +29,8 @@
+  * struct clk_pllv3 - IMX PLL clock version 3
+  * @clk_hw:	 clock source
+  * @base:	 base address of PLL registers
+- * @powerup_set: set POWER bit to power up the PLL
+- * @powerdown:   pll powerdown offset bit
++ * @power_bit:	 pll power bit mask
++ * @powerup_set: set power_bit to power up the PLL
+  * @div_mask:	 mask of divider bits
+  * @div_shift:	 shift of divider bits
+  *
+@@ -40,8 +40,8 @@
+ struct clk_pllv3 {
+ 	struct clk_hw	hw;
+ 	void __iomem	*base;
++	u32		power_bit;
+ 	bool		powerup_set;
+-	u32		powerdown;
+ 	u32		div_mask;
+ 	u32		div_shift;
+ 	unsigned long	ref_clock;
+@@ -52,7 +52,7 @@ struct clk_pllv3 {
+ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+ {
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(10);
+-	u32 val = readl_relaxed(pll->base) & pll->powerdown;
++	u32 val = readl_relaxed(pll->base) & pll->power_bit;
+ 
+ 	/* No need to wait for lock when pll is not powered up */
+ 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+@@ -77,9 +77,9 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
+ 
+ 	val = readl_relaxed(pll->base);
+ 	if (pll->powerup_set)
+-		val |= pll->powerdown;
++		val |= pll->power_bit;
+ 	else
+-		val &= ~pll->powerdown;
++		val &= ~pll->power_bit;
+ 	writel_relaxed(val, pll->base);
+ 
+ 	return clk_pllv3_wait_lock(pll);
+@@ -92,9 +92,9 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
+ 
+ 	val = readl_relaxed(pll->base);
+ 	if (pll->powerup_set)
+-		val &= ~pll->powerdown;
++		val &= ~pll->power_bit;
+ 	else
+-		val |= pll->powerdown;
++		val |= pll->power_bit;
+ 	writel_relaxed(val, pll->base);
+ }
+ 
+@@ -316,7 +316,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 	if (!pll)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	pll->powerdown = BM_PLL_POWER;
++	pll->power_bit = BM_PLL_POWER;
+ 
+ 	switch (type) {
+ 	case IMX_PLLV3_SYS:
+@@ -332,7 +332,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 		ops = &clk_pllv3_av_ops;
+ 		break;
+ 	case IMX_PLLV3_ENET_IMX7:
+-		pll->powerdown = IMX7_ENET_PLL_POWER;
++		pll->power_bit = IMX7_ENET_PLL_POWER;
+ 		pll->ref_clock = 1000000000;
+ 		ops = &clk_pllv3_enet_ops;
+ 		break;
+-- 
+1.9.1
