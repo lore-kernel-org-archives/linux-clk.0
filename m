@@ -1,39 +1,97 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160619055921.GA424@jack.zhora.eu>
-References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
- <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com> <20160619055921.GA424@jack.zhora.eu>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Sun, 19 Jun 2016 22:44:20 +0900
-Message-ID: <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag
- for SPI3 related clocks
-To: Andi Shyti <andi@etezian.org>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 10/10] ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
+Date: Tue, 14 Jun 2016 10:17:58 +0800
+Message-Id: <1465870678-30128-12-git-send-email-wens@csie.org>
+In-Reply-To: <1465870678-30128-1-git-send-email-wens@csie.org>
+References: <1465870678-30128-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-06-19 14:59 GMT+09:00 Andi Shyti <andi@etezian.org>:
-> Hi Tomasz,
->
->> > The SPI 3 bus uses two clocks, a bus clock and an input clock.
->> > Do not disable the clocks when unused in order to allow access to
->> > the SPI 3 device.
->>
->> If unused, why would access to SPI 3 device needed?
->
-> because next I will submit a small driver which uses the SPI3.
-> Actually in the exynos5433 boards all the SPI are used but not all
-> the drivers are ported to mainline.
+The 32.768 kHz clock inside the A80 SoC is fed from an external source,
+typically the AC100 RTC module.
 
-Then shouldn't the driver request the clocks and enable them? Or I'm
-missing something obvious? :)
+Make the osc32k placeholder a fixed-factor clock so board dts files can
+specify its source.
 
-Best regards,
-Tomasz
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 5 +++++
+ arch/arm/boot/dts/sun9i-a80-optimus.dts     | 5 +++++
+ arch/arm/boot/dts/sun9i-a80.dtsi            | 9 +++------
+ 3 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+index 65f4f32f89ad..b6299a9c14e3 100644
+--- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
++++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+@@ -103,6 +103,11 @@
+ 	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
+ };
+ 
++&osc32k {
++	/* osc32k input is from AC100 */
++	clocks = <&ac100_rtc 0>;
++};
++
+ &pio {
+ 	led_pins_cubieboard4: led-pins@0 {
+ 		allwinner,pins = "PH6", "PH17";
+diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+index 3b013dc5fef1..2f079cbd2025 100644
+--- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
++++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+@@ -152,6 +152,11 @@
+ 	status = "okay";
+ };
+ 
++&osc32k {
++	/* osc32k input is from AC100 */
++	clocks = <&ac100_rtc 0>;
++};
++
+ &pio {
+ 	led_pins_optimus: led-pins@0 {
+ 		allwinner,pins = "PH0", "PH1";
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index f68b3242b33a..dd11115ec087 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -148,15 +148,12 @@
+ 
+ 		/*
+ 		 * The 32k clock is from an external source, normally the
+-		 * AC100 codec/RTC chip. This clock is by default enabled
+-		 * and clocked at 32768 Hz, from the oscillator connected
+-		 * to the AC100. It is configurable, but no such driver or
+-		 * bindings exist yet.
++		 * AC100 codec/RTC chip. This serves as a placeholder for
++		 * board dts files to specify the source.
+ 		 */
+ 		osc32k: osc32k_clk {
+ 			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32768>;
++			compatible = "fixed-factor-clock";
+ 			clock-output-names = "osc32k";
+ 		};
+ 
+-- 
+2.8.1
