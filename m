@@ -1,50 +1,49 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	jorge.ramirez-ortiz@linaro.org,
-	xinliang.liu@linaro.org,
-	guodong.xu@linaro.org,
-	john.stultz@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34330 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751140AbcFNMAs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 08:00:48 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: hi6220: Change syspll and media_syspll clk to 1.19GHz
-Date: Wed, 29 Jun 2016 16:45:54 +0800
-Message-Id: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
+Subject: [PATCH 1/3] clk: tegra: Disable spread spectrum on pll_d2
+Date: Tue, 14 Jun 2016 14:00:42 +0200
+Message-Id: <20160614120044.30734-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Xinliang Liu <xinliang.liu@linaro.org>
+From: Thierry Reding <treding@nvidia.com>
 
-In the bootloader of HiKey/96boards, syspll and media_syspll clk
-was initialized to 1.19GHz. So, here changes it in kernel accordingly.
+Enabling spread spectrum on pll_d2 can lead to issues with display
+modes. HDMI monitors, for example, would report "Signal Error" and
+some modes driven over DisplayPort would generate fuzzy horizontal
+bands.
 
-1.19GHz was chosen over 1.2GHz because at 1.19GHz we get more precise
-HDMI pixel clock (1.19G/16 = 74.4MHz) for 1280x720p@60Hz HDMI
-(74.25MHz required by standards). Closer pixel clock means better
-compatibility to HDMI monitors.
-
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
-Signed-off-by: Xinliang Liu <xinliang.liu@linaro.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/hisilicon/clk-hi6220.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index f02cb41..a36ffcb 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -34,8 +34,8 @@ static struct hisi_fixed_rate_clock hi6220_fixed_rate_clks[] __initdata = {
- 	{ HI6220_PLL_BBP,	"bbppll0",	NULL, 0, 245760000, },
- 	{ HI6220_PLL_GPU,	"gpupll",	NULL, 0, 1000000000,},
- 	{ HI6220_PLL1_DDR,	"ddrpll1",	NULL, 0, 1066000000,},
--	{ HI6220_PLL_SYS,	"syspll",	NULL, 0, 1200000000,},
--	{ HI6220_PLL_SYS_MEDIA,	"media_syspll",	NULL, 0, 1200000000,},
-+	{ HI6220_PLL_SYS,	"syspll",	NULL, 0, 1190400000,},
-+	{ HI6220_PLL_SYS_MEDIA,	"media_syspll",	NULL, 0, 1190400000,},
- 	{ HI6220_DDR_SRC,	"ddr_sel_src",  NULL, 0, 1200000000,},
- 	{ HI6220_PLL_MEDIA,	"media_pll",    NULL, 0, 1440000000,},
- 	{ HI6220_PLL_DDR,	"ddrpll0",      NULL, 0, 1600000000,},
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 6bd1235d09b1..cd141a364c9d 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -1914,8 +1914,9 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.sdm_din_mask = PLLA_SDM_DIN_MASK,
+ 	.sdm_ctrl_reg = PLLD2_MISC1,
+ 	.sdm_ctrl_en_mask = PLLD2_SDM_EN_MASK,
+-	.ssc_ctrl_reg = PLLD2_MISC1,
+-	.ssc_ctrl_en_mask = PLLD2_SSC_EN_MASK,
++	/* disable spread-spectrum for pll_d2 */
++	.ssc_ctrl_reg = 0,
++	.ssc_ctrl_en_mask = 0,
+ 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+ 	.div_nmp = &pllss_nmp,
 -- 
-1.9.1
+2.8.3
+
