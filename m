@@ -1,45 +1,52 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Sat, 25 Jun 2016 14:26:00 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-Cc: stefan@agner.ch, shawnguo@kernel.org, kernel@pengutronix.de,
-	mturquette@baylibre.com, sboyd@codeaurora.org, jslaby@suse.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 1/8] tty: serial: fsl_lpuart: consider TX FIFO too in
- tx_empty
-Message-ID: <20160625212600.GA28726@kroah.com>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+Subject: Re: [PATCH 2/8] tty: serial: fsl_lpuart: support suspend/resume
+To: Shawn Guo <shawnguo@kernel.org>
 References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
- <20160609151039.20817-2-bhuvanchandra.dv@toradex.com>
+ <20160609151039.20817-3-bhuvanchandra.dv@toradex.com>
+ <20160611140341.GT20243@tiger>
+CC: <gregkh@linuxfoundation.org>, <linux-serial@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-kernel@vger.kernel.org>, <stefan@agner.ch>, <kernel@pengutronix.de>,
+	<jslaby@suse.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <bhuvanchandra.dv@toradex.com>
+From: Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Message-ID: <cdeb3e9b-92c5-77d9-78ec-3af3954e8e16@toradex.com>
+Date: Tue, 14 Jun 2016 00:18:19 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160609151039.20817-2-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160611140341.GT20243@tiger>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 09, 2016 at 08:40:32PM +0530, Bhuvanchandra DV wrote:
-> From: Stefan Agner <stefan@agner.ch>
-> 
-> Currently the tx_empty callback only considers the Transmit Complete
-> Flag (TC). The reference manual is not quite clear if the TC flag
-> covers the TX FIFO too. Debug prints on real hardware have shown that
-> from time to time the TC flag is asserted (indicating Transmitter
-> idle) while there are still data in the TX FIFO. Hence, in this case
-> the serial core will call the shutdown callback even though there are
-> data remaining in the TX FIFO buffers.
-> 
-> Avoid early shutdowns by considering the TX FIFO empty flag too. Also
-> avoid theoretical race conditions between DMA and the driver by
-> checking whether the TX DMA is in progress too.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/tty/serial/fsl_lpuart.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
+Hi Shawn,
 
-Why are you not signing off on patches that are flowing through you?
-Please fix this up and resend the series, after breaking up the clock
-change as asked.
+On 06/11/2016 02:03 PM, Shawn Guo wrote:
 
-thanks,
+> On Thu, Jun 09, 2016 at 08:40:33PM +0530, Bhuvanchandra DV wrote:
+>> From: Stefan Agner <stefan@agner.ch>
+>>
+>> In order to allow wake support in STOP sleep mode, clocks are
+>> needed. Use imx_clk_gate2_cgr to disable automatic clock gating
+>> in low power mode STOP. This allows to enable wake by UART using:
+>> echo enabled > /sys/class/tty/ttyLP0/power/wakeup
+>>
+>> However, if wake is not enabled, the driver should disable the
+>> clocks explicitly to save power.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>   drivers/clk/imx/clk-vf610.c     | 12 ++++++------
+> Please send clock driver changes in a separate patch.
 
-greg k-h
+How about splitting this patchset to two? few patches are having minor
+fixes and the few patches might need some review and discussions.
+May be some thing like DMA fixes and the other minor fixes.
+
+--
+Bhuvan
+
+>
+> Shawn
+>
+>>   drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
+>>   2 files changed, 20 insertions(+), 8 deletions(-)
