@@ -1,53 +1,61 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
-Date: Thu, 30 Jun 2016 16:15:11 +0900
-Message-id: <1467270911-10971-3-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15079 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750789AbcFNO6E (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 10:58:04 -0400
+Date: Tue, 14 Jun 2016 17:57:56 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/3] clk: tegra: Disable spread spectrum on pll_d2
+Message-ID: <20160614145756.GE12863@tbergstrom-lnx.Nvidia.com>
+References: <20160614120044.30734-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160614120044.30734-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-enable SPI3 critical clocks by using the CLK_IS_CRITICAL flag.
-There is no device which is supposed to enable this clock when
-needed, therefore, the only way to use the SPI bus is to enable
-it in boot time.
+On Tue, Jun 14, 2016 at 02:00:42PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Enabling spread spectrum on pll_d2 can lead to issues with display
+> modes. HDMI monitors, for example, would report "Signal Error" and
+> some modes driven over DisplayPort would generate fuzzy horizontal
+> bands.
+> 
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 1f7c4951..e769c80 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1648,11 +1648,12 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
- 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
--			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 20,
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
- 			19, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
--			18, CLK_SET_RATE_PARENT, 0),
-+			18, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SCI, "sclk_sci", "div_sclk_sci", ENABLE_SCLK_PERIC,
- 			17, 0, 0),
- 	GATE(CLK_SCLK_SC_IN, "sclk_sc_in", "div_sclk_sc_in", ENABLE_SCLK_PERIC,
--- 
-2.8.1
+The only display clock we should enable spread spectrum for, is pll_dp.
+AFAIK the DP spec specifies the amount of spread which can be tolerated.
+
+Peter.
+
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 6bd1235d09b1..cd141a364c9d 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -1914,8 +1914,9 @@ static struct tegra_clk_pll_params pll_d2_params = {
+>  	.sdm_din_mask = PLLA_SDM_DIN_MASK,
+>  	.sdm_ctrl_reg = PLLD2_MISC1,
+>  	.sdm_ctrl_en_mask = PLLD2_SDM_EN_MASK,
+> -	.ssc_ctrl_reg = PLLD2_MISC1,
+> -	.ssc_ctrl_en_mask = PLLD2_SSC_EN_MASK,
+> +	/* disable spread-spectrum for pll_d2 */
+> +	.ssc_ctrl_reg = 0,
+> +	.ssc_ctrl_en_mask = 0,
+>  	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
+>  	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+>  	.div_nmp = &pllss_nmp,
+> -- 
+> 2.8.3
+> 
