@@ -1,195 +1,52 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V2 1/8] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
-Date: Wed, 29 Jun 2016 22:59:04 +0800
-Message-ID: <1467212351-16626-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [RESEND PATCHv2 08/28] ARM: OMAP2+: clockdomain: add usecounting
+ support to autoidle APIs
+To: Nishanth Menon <nm@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <tony@atomide.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+ <1465844702-12200-9-git-send-email-t-kristo@ti.com> <575F4257.3010108@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <575FA4B2.70408@ti.com>
+Date: Tue, 14 Jun 2016 09:31:14 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <575F4257.3010108@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This can be useful when clock core wants to enable/disable clocks.
-Then we don't have to convert the struct clk_core to struct clk to call
-clk_enable/clk_disable which is a bit un-align with exist using.
+On 14/06/16 02:31, Nishanth Menon wrote:
+> On 06/13/2016 02:04 PM, Tero Kristo wrote:
+> [..]
+>> diff --git a/arch/arm/mach-omap2/omap_hwmod.c
+> b/arch/arm/mach-omap2/omap_hwmod.c
+>> index 0c85f91..635a563 100644
+>> --- a/arch/arm/mach-omap2/omap_hwmod.c
+>> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+>
+> [...]
+>
+>> @@ -2177,14 +2173,10 @@ static int _enable(struct omap_hwmod *oh)
+>>
+>>   	r = (soc_ops.wait_target_ready) ? soc_ops.wait_target_ready(oh) :
+>>   		-EINVAL;
+>> -	if (!r) {
+>> -		/*
+>> -		 * Set the clockdomain to HW_AUTO only if the target is ready,
+>> -		 * assuming that the previous state was HW_AUTO
+>> -		 */
+>> -		if (oh->clkdm && hwsup)
+>> -			clkdm_allow_idle(oh->clkdm);
+>> +	if (oh->clkdm)
+>> +		clkdm_allow_idle(oh->clkdm);
+>
+> Should'nt this be under if (!r) ?
 
-And after introduce clk_core_{enable|disable}_lock, we can refine
-clk_enable and clk_disable a bit.
+No, we must call clkdm_allow_idle() always, otherwise the clockdomain is 
+left in force wakeup state for all eternity, which is wrong, and 
+prevents any further transitions on the clockdomain. (Most likely the 
+failed transition on the hwmod itself is going to prevent idle on the 
+clockdomain though, but its better to keep at least the clockdomain 
+state sane.)
 
-As well as clk_core_{enable|disable}_lock, we also added
-clk_core_{prepare|unprepare}_lock and clk_core_prepare_enable/
-clk_core_unprepare_disable for clock core to easily use.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk.c | 85 +++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 63 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 95b80aeb8c9d..55e62bac0fb4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -591,6 +591,13 @@ static void clk_core_unprepare(struct clk_core *core)
- 	clk_core_unprepare(core->parent);
- }
- 
-+static void clk_core_unprepare_lock(struct clk_core *core)
-+{
-+	clk_prepare_lock();
-+	clk_core_unprepare(core);
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * clk_unprepare - undo preparation of a clock source
-  * @clk: the clk being unprepared
-@@ -607,9 +614,7 @@ void clk_unprepare(struct clk *clk)
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	clk_prepare_lock();
--	clk_core_unprepare(clk->core);
--	clk_prepare_unlock();
-+	clk_core_unprepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_unprepare);
- 
-@@ -645,6 +650,17 @@ static int clk_core_prepare(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_prepare_lock(struct clk_core *core)
-+{
-+	int ret;
-+
-+	clk_prepare_lock();
-+	ret = clk_core_prepare(core);
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
- /**
-  * clk_prepare - prepare a clock source
-  * @clk: the clk being prepared
-@@ -659,16 +675,10 @@ static int clk_core_prepare(struct clk_core *core)
-  */
- int clk_prepare(struct clk *clk)
- {
--	int ret;
--
- 	if (!clk)
- 		return 0;
- 
--	clk_prepare_lock();
--	ret = clk_core_prepare(clk->core);
--	clk_prepare_unlock();
--
--	return ret;
-+	return clk_core_prepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_prepare);
- 
-@@ -698,6 +708,15 @@ static void clk_core_disable(struct clk_core *core)
- 	clk_core_disable(core->parent);
- }
- 
-+static void clk_core_disable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+
-+	flags = clk_enable_lock();
-+	clk_core_disable(core);
-+	clk_enable_unlock(flags);
-+}
-+
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -712,14 +731,10 @@ static void clk_core_disable(struct clk_core *core)
-  */
- void clk_disable(struct clk *clk)
- {
--	unsigned long flags;
--
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	flags = clk_enable_lock();
--	clk_core_disable(clk->core);
--	clk_enable_unlock(flags);
-+	clk_core_disable_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -758,6 +773,18 @@ static int clk_core_enable(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_enable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	flags = clk_enable_lock();
-+	ret = clk_core_enable(core);
-+	clk_enable_unlock(flags);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -773,19 +800,33 @@ static int clk_core_enable(struct clk_core *core)
-  */
- int clk_enable(struct clk *clk)
- {
--	unsigned long flags;
--	int ret;
--
- 	if (!clk)
- 		return 0;
- 
--	flags = clk_enable_lock();
--	ret = clk_core_enable(clk->core);
--	clk_enable_unlock(flags);
-+	return clk_core_enable_lock(clk->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static int clk_core_prepare_enable(struct clk_core *core)
-+{
-+	int ret;
-+
-+	ret = clk_core_prepare_lock(core);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_core_enable_lock(core);
-+	if (ret)
-+		clk_core_unprepare_lock(core);
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static void clk_core_disable_unprepare(struct clk_core *core)
-+{
-+	clk_core_disable_lock(core);
-+	clk_core_unprepare_lock(core);
-+}
- 
- static int clk_core_round_rate_nolock(struct clk_core *core,
- 				      struct clk_rate_request *req)
--- 
-1.9.1
+-Tero
