@@ -1,66 +1,74 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
- <1464381494-27096-11-git-send-email-rklein@nvidia.com>
- <20160622122419.GC26943@ulmo.ba.sec>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Alexandre
- Courbot" <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Stephen Warren
-	<swarren@wwwdotorg.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
-Date: Wed, 22 Jun 2016 11:31:08 -0400
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20160622122419.GC26943@ulmo.ba.sec>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Sender: dianders@google.com
+In-Reply-To: <2376423.L1zs1HaIGm@diego>
+References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com> <2376423.L1zs1HaIGm@diego>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 14 Jun 2016 09:04:43 -0700
+Message-ID: <CAD=FV=Vk9Lb8DD7dWD7eW_xhMFFwh1o=XKx38wObTOmmi94CGw@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for
+ dclk_vop0_div on RK3399
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, elaine zhang <elaine.zhang@rock-chips.com>,
+	Tao Huang <huangtao@rock-chips.com>, Brian Norris <briannorris@chromium.org>,
+	Yakir Yang <ykk@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 6/22/2016 8:24 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, May 27, 2016 at 04:38:13PM -0400, Rhyland Klein wrote:
->> Add a '^' character to the beginning of clk entries that are for
->> CRITICAL clks.
+Heiko,
+
+On Mon, Jun 13, 2016 at 3:46 PM, Heiko St=C3=BCbner <heiko@sntech.de> wrote=
+:
+> Am Sonntag, 12. Juni 2016, 17:48:48 schrieb Xing Zheng:
+>> The functions and features VOP0 more complete than VOP1's, we need to
+>> use it dclk_vop0_div operate VPLLI, and let VOP0 as the default primary
+>> screen.
 >>
->> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 >> ---
->>  drivers/clk/clk.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 874c7dd8ef66..22dd0ca1e491 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
->>  	if (!c)
->>  		return;
->>  
->> -	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
->> -		   level * 3 + 1, "",
->> +	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
->> +		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
->> +		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
-> 
-> Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
-> omit the second conditional.
-> 
-> I wonder if it might be easier to read if this flag was at the end of
-> the line. There's also the fact that someone may have written a script
-> that expects the clock name as the first word on the line and may get
-> confused by this change. If you put it at the very end of the line the
-> likelihood of upsetting scripts will be reduced.
+>>  drivers/clk/rockchip/clk-rk3399.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3399.c
+>> b/drivers/clk/rockchip/clk-rk3399.c index 7ecb12c3..6affa75 100644
+>> --- a/drivers/clk/rockchip/clk-rk3399.c
+>> +++ b/drivers/clk/rockchip/clk-rk3399.c
+>> @@ -1157,7 +1157,7 @@ static struct rockchip_clk_branch
+>> rk3399_clk_branches[] __initdata =3D { GATE(HCLK_VOP0_NOC, "hclk_vop0_no=
+c",
+>> "hclk_vop0_pre", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(28), 0, GFLAGS),
+>>
+>> -     COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gp=
+ll_p, 0,
+>> +     COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gp=
+ll_p,
+>> CLK_SET_RATE_PARENT, RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
+>>                       RK3399_CLKGATE_CON(10), 12, GFLAGS),
+>
+> The vpll is a possible source for multiple clocks (cci, aclk_vop0, dclk_v=
+op0,
+> clk_vop0_pwm, aclk_vop1, dclk_vop1, clk_vop1_pwm), so allowing one clock =
+to
+> hog the rate setting, might influence the other consumers of the vpll as =
+well.
 
-Yah we can put the mark at the end of the line. I wasn't sure if there
-was a strong motivation to avoid extending the the width of each line,
-as sometimes people prefer to try to keep it close to 80 char as
-possible. I think right now, it was close to that, but might be a little
-over already. I can switch to that though, as it is less likely to break
-any automatic parsing scripts.
+Ah, right.  I think this gets back to your series:
 
--rhyland
+  8993791 [RFC,1/3] clk: fix inconsistent use of req_rate
+  8993801 [RFC,2/3] clk: adjust clocks to their requested rate after
+parent changes
+  8993811 [RFC,3/3] clk: rockchip: make rk3399 vop dclks keep their
+rate on parent rate changes
 
--- 
-nvpublic
+Did you ever have any more ideas about that?  I think the last thing
+in that series was a comment from me on patch #2/3.  If we can't come
+up with a general CCF solution for this problem, perhaps we need to
+register for notifications for all the relevant clocks that might
+change?
+
+-Doug
