@@ -1,68 +1,60 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH 4/8] tty: serial: fsl_lpuart: Fix broken 8m/s1 support
-Date: Thu, 9 Jun 2016 20:40:35 +0530
-Message-ID: <20160609151039.20817-5-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36603 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751226AbcFNMAw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 08:00:52 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 3/3] clk: tegra: Enable sor1 and sor1_src on Tegra210
+Date: Tue, 14 Jun 2016 14:00:44 +0200
+Message-Id: <20160614120044.30734-3-thierry.reding@gmail.com>
+In-Reply-To: <20160614120044.30734-1-thierry.reding@gmail.com>
+References: <20160614120044.30734-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-By default the driver always configure the mode as 8s1 even when 8m1
-mode is selected. Fix this by adding support to control the space/mark bit.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Make the sor1 and sor1_src clocks available on Tegra210. They will be
+used by the display driver to support HDMI and DP.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/tty/serial/fsl_lpuart.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c         | 2 ++
+ include/dt-bindings/clock/tegra210-car.h | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 97c1fda..615f191 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1220,13 +1220,14 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- {
- 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
- 	unsigned long flags;
--	unsigned char cr1, old_cr1, old_cr2, cr4, bdh, modem;
-+	unsigned char cr1, old_cr1, old_cr2, cr3, cr4, bdh, modem;
- 	unsigned int  baud;
- 	unsigned int old_csize = old ? old->c_cflag & CSIZE : CS8;
- 	unsigned int sbr, brfa;
- 
- 	cr1 = old_cr1 = readb(sport->port.membase + UARTCR1);
- 	old_cr2 = readb(sport->port.membase + UARTCR2);
-+	cr3 = readb(sport->port.membase + UARTCR3);
- 	cr4 = readb(sport->port.membase + UARTCR4);
- 	bdh = readb(sport->port.membase + UARTBDH);
- 	modem = readb(sport->port.membase + UARTMODEM);
-@@ -1274,7 +1275,10 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 	if ((termios->c_cflag & PARENB)) {
- 		if (termios->c_cflag & CMSPAR) {
- 			cr1 &= ~UARTCR1_PE;
--			cr1 |= UARTCR1_M;
-+			if (termios->c_cflag & PARODD)
-+				cr3 |= UARTCR3_T8;
-+			else
-+				cr3 &= ~UARTCR3_T8;
- 		} else {
- 			cr1 |= UARTCR1_PE;
- 			if ((termios->c_cflag & CSIZE) == CS8)
-@@ -1342,6 +1346,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 	writeb(cr4 | brfa, sport->port.membase + UARTCR4);
- 	writeb(bdh, sport->port.membase + UARTBDH);
- 	writeb(sbr & 0xFF, sport->port.membase + UARTBDL);
-+	writeb(cr3, sport->port.membase + UARTCR3);
- 	writeb(cr1, sport->port.membase + UARTCR1);
- 	writeb(modem, sport->port.membase + UARTMODEM);
- 
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index cd141a364c9d..8e37eda37449 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2093,6 +2093,8 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_dpaux1] = { .dt_id = TEGRA210_CLK_DPAUX1, .present = true },
+ 	[tegra_clk_sor0] = { .dt_id = TEGRA210_CLK_SOR0, .present = true },
+ 	[tegra_clk_sor0_lvds] = { .dt_id = TEGRA210_CLK_SOR0_LVDS, .present = true },
++	[tegra_clk_sor1] = { .dt_id = TEGRA210_CLK_SOR1, .present = true },
++	[tegra_clk_sor1_src] = { .dt_id = TEGRA210_CLK_SOR1_SRC, .present = true },
+ 	[tegra_clk_gpu] = { .dt_id = TEGRA210_CLK_GPU, .present = true },
+ 	[tegra_clk_pll_g_ref] = { .dt_id = TEGRA210_CLK_PLL_G_REF, .present = true, },
+ 	[tegra_clk_uartb_8] = { .dt_id = TEGRA210_CLK_UARTB, .present = true },
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index bd3530e56d46..35288b20f2c9 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -308,7 +308,7 @@
+ #define TEGRA210_CLK_CLK_OUT_3 279
+ #define TEGRA210_CLK_BLINK 280
+ /* 281 */
+-/* 282 */
++#define TEGRA210_CLK_SOR1_SRC 282
+ /* 283 */
+ #define TEGRA210_CLK_XUSB_HOST_SRC 284
+ #define TEGRA210_CLK_XUSB_FALCON_SRC 285
 -- 
 2.8.3
+
