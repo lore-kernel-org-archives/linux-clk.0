@@ -1,61 +1,61 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Date: Tue, 28 Jun 2016 21:01:00 +0200
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2] clk: Provide notifier stubs when !COMMON_CLK
-Message-ID: <20160628190100.GA11586@kozik-lap>
-References: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
- <20160628172653.GB1521@codeaurora.org>
+Return-Path: <stefan@agner.ch>
+In-Reply-To: <cdeb3e9b-92c5-77d9-78ec-3af3954e8e16@toradex.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com> <20160609151039.20817-3-bhuvanchandra.dv@toradex.com> <20160611140341.GT20243@tiger> <cdeb3e9b-92c5-77d9-78ec-3af3954e8e16@toradex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160628172653.GB1521@codeaurora.org>
+Content-Type: text/plain;
+ charset=UTF-8
+Subject: Re: [PATCH 2/8] tty: serial: fsl_lpuart: support suspend/resume
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 13 Jun 2016 19:42:10 -0700
+To: Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com>,Shawn Guo <shawnguo@kernel.org>
+CC: gregkh@linuxfoundation.org,linux-serial@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,linux-kernel@vger.kernel.org,kernel@pengutronix.de,jslaby@suse.com,linux-clk@vger.kernel.org,linux-arm-kernel@lists.infradead.org
+Message-ID: <AF70EE92-9B41-4ECE-AB5F-E829E611B7C6@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 28, 2016 at 10:26:53AM -0700, Stephen Boyd wrote:
-> On 06/28, Krzysztof Kozlowski wrote:
-> > The clk notifier symbols are hidden by COMMON_CLK.  However on some
-> > platforms HAVE_CLK might be set while COMMON_CLK not which leads to
-> > compile test build errors like:
-> > 
-> > $ make.cross ARCH=sh
-> >    drivers/devfreq/tegra-devfreq.c: In function 'tegra_actmon_rate_notify_cb':
-> > >> drivers/devfreq/tegra-devfreq.c:391:16: error: 'POST_RATE_CHANGE' undeclared (first use in this function)
-> >      if (action != POST_RATE_CHANGE)
-> >                    ^
-> >    drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_probe':
-> > >> drivers/devfreq/tegra-devfreq.c:654:8: error: implicit declaration of function 'clk_notifier_register' [-Werror=implicit-function-declaration]
-> >      err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
-> >            ^
-> > 
-> > Export the macros and data type declarations outside of COMMON_CLK ifdef
-> > and provide stubs to fix the compile testing.
-> > 
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > 
-> > ---
-> > 
-> 
-> Ok. Did you want some stable branch to pull this in and base your
-> use case on?
 
-It is only one patch but indeed without the branch my patches would have
-to wait for next release. If you would be so kind, could you prepare
-the stable branch? I hope MyungJoo Ham will use it.
 
-Anyway I encountered more linkage errors for clk API (like clk_get_rate()).
-They happen for various compile-tested drivers in case of MIPS (and
-maybe others like SH). I will investigate it more but I think it is not
-related strictly to this issue.
+On June 13, 2016 5:18:19 PM PDT, Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com> wrote:
+>Hi Shawn,
+>
+>On 06/11/2016 02:03 PM, Shawn Guo wrote:
+>
+>> On Thu, Jun 09, 2016 at 08:40:33PM +0530, Bhuvanchandra DV wrote:
+>>> From: Stefan Agner <stefan@agner.ch>
+>>>
+>>> In order to allow wake support in STOP sleep mode, clocks are
+>>> needed. Use imx_clk_gate2_cgr to disable automatic clock gating
+>>> in low power mode STOP. This allows to enable wake by UART using:
+>>> echo enabled > /sys/class/tty/ttyLP0/power/wakeup
+>>>
+>>> However, if wake is not enabled, the driver should disable the
+>>> clocks explicitly to save power.
+>>>
+>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>> ---
+>>>   drivers/clk/imx/clk-vf610.c     | 12 ++++++------
+>> Please send clock driver changes in a separate patch.
 
-Best regards,
-Krzysztof
+The changes are dependet on each other, hence I put it in a single patch. But since it is a new feature it shouldn't really matter...
+
+>
+>How about splitting this patchset to two? few patches are having minor
+>fixes and the few patches might need some review and discussions.
+>May be some thing like DMA fixes and the other minor fixes.
+
+I don't think that splitting up the patchset is necessary, with the current order it is possible to pick up the fixes independently...
+
+--
+Stefan
+
+>
+>--
+>Bhuvan
+>
+>>
+>> Shawn
+>>
+>>>   drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
+>>>   2 files changed, 20 insertions(+), 8 deletions(-)
+
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
