@@ -1,92 +1,61 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 19 Jun 2016 10:04:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
-	benjamin.gaignard@st.com, vincent.abriou@st.com,
-	gabriel.fernandez@st.com
-Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding
- of STiH4xx platforms
-Message-ID: <20160619150458.GA26824@rob-hp-laptop>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
- <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  carlo@endlessm.com,  victor.wan@amlogic.com,  jerry.cao@amlogic.com,  xing.xu@amlogic.com
+Subject: Re: [PATCH 00/10] meson8b clock driver rewrite/cleanup
+References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Date: Tue, 14 Jun 2016 12:12:50 -0700
+In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+	(Michael Turquette's message of "Thu, 9 Jun 2016 17:27:37 -0700")
+Message-ID: <m2ziqnr3d9.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
-> This patch reworks the clock binding to avoid too much detail in DT.
-> Now we have only compatible string per type of clock
-> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
+Michael Turquette <mturquette@baylibre.com> writes:
+
+> This series came about while writing the clock driver for the AmLogic
+> GXBB clock controller. GXBB shares much of the same clock controller IP
+> as the Meson8b clock controller and the source for the drivers is very
+> similar. However, I wanted the GXBB driver to actually be a real
+> platform_driver, and not an early initcall, which led to the same
+> changes in the Meson8b driver. From there a lot of other changes came
+> about.
 >
+> This series improves documentation, refactors statically initialized
+> data, removes unnecessary registration functions and converts the
+> meson8b clock controller code into a proper platform_driver. It also
+> changes up the Kconfig bits to prepare for the gxbb clock controller.
+> The diffstat is -190, which is nice as well.
+>
+> As a consequence of the shift to platform_driver, all of clocks are
+> registered at module_init time. If any are needed very early during boot
+> then the OF_CLK_DECLARE stuff can be added back in, but I doubt it is
+> necessary.
+>
+> Additionally this series makes use of some of the nice clk_hw helper
+> introduced by Stephen, especially clk_hw_onecell_data.
 
-I have no idea what the clock trees and clock controller in these chips 
-look like, so it's hard to say if the changes here are good. It still 
-looks like things are somewhat fine grained clocks in DT. I'll leave 
-it up to the platform maintainers to decide...
- 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> ---
->  .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  2 +-
->  .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
->  .../devicetree/bindings/clock/st/st,clkgen.txt     |  2 +-
->  .../devicetree/bindings/clock/st/st,quadfs.txt     |  6 +--
->  drivers/clk/st/clkgen-fsyn.c                       | 41 ++++++--------
->  drivers/clk/st/clkgen-mux.c                        | 28 ++++------
->  drivers/clk/st/clkgen-pll.c                        | 62 ++++++++++------------
->  7 files changed, 65 insertions(+), 87 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
-> index 4d277d6..9a46cb1d7 100644
-> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
-> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
-> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
->  Required properties:
->  
->  - compatible : shall be:
-> -	"st,stih407-clkgen-a9-mux",	"st,clkgen-mux"
-> +	"st,stih407-clkgen-a9-mux"
->  
->  - #clock-cells : from common clock binding; shall be set to 0.
->  
-> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> index c9fd674..be0b043 100644
-> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> @@ -9,11 +9,10 @@ Base address is located to the parent node. See clock binding[2]
->  Required properties:
->  
->  - compatible : shall be:
-> -	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
-> -	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
-> -	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
-> -	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
-> -	"st,stih418-plls-c28-a9",	"st,clkgen-plls-c32"
+Not sure if it qualifies as much of a clock test, but I at least boot
+tested this on meson8b-odroidc1 and nothing exploded, and the
+clk_summary looks sane:
 
-> +	"st,clkgen-pll0"
-> +	"st,clkgen-pll0"
+/ # cat /debug/clk/clk_summary
+   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+   ----------------------------------------------------------------------------------------
+    xtal                                     0            0    24000000   0 0
+       sys_pll                               0            0  1200000000   0 0
+          cpu_clk                            0            0  1200000000   0 0
+       vid_pll                               0            0   732000000   0 0
+       fixed_pll                             0            0  2550000000   0 0
+          fclk_div7                          0            0   364285714   0 0
+          fclk_div5                          0            0   510000000   0 0
+          fclk_div4                          0            0   637500000   0 0
+             mpeg_clk_sel                    0            0   637500000   0 0
+                mpeg_clk_div                 0            0   159375000   0 0
+                   clk81                     0            0   159375000   0 0
+          fclk_div3                          0            0   850000000   0 0
+          fclk_div2                          0            0  1275000000   0 0
 
-Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
-
-> +	"st,stih407-clkgen-plla9"
-> +	"st,stih418-clkgen-plla9"
+Kevin
