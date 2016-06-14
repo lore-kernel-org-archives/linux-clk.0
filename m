@@ -1,92 +1,102 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        Jiancheng Xue
-	<xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 2/5] clk: hisilicon: add hisi_clk_alloc function.
-Date: Wed, 15 Jun 2016 14:26:35 +0800
-Message-ID: <1465971998-29619-3-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 01/10] regmap: Support bulk writes for devices without raw formatting
+Date: Tue, 14 Jun 2016 10:17:48 +0800
+Message-Id: <1465870678-30128-2-git-send-email-wens@csie.org>
+In-Reply-To: <1465870678-30128-1-git-send-email-wens@csie.org>
+References: <1465870678-30128-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Before, there was an ordering issue that the clock provider
-had been published in hisi_clk_init before it could provide
-valid clocks to consumers. hisi_clk_alloc is just used to
-allocate memory space for struct hisi_clock_data. It makes
-it possible to publish the provider after the clocks are ready.
+When doing a bulk writes from a device which lacks raw I/O support we
+fall back to doing register at a time reads but we still use the raw
+formatters in order to render the data into the word size used by the
+device (since bulk reads still operate on the device word size rather
+than unsigned ints).  This means that devices without raw formatting
+such as those that provide reg_read() are not supported.  Provide
+handling for them by copying the values read into native endian values
+of the appropriate size.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+This complements commit d5b98eb12420 ("regmap: Support bulk reads for
+devices without raw formatting").
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/hisilicon/clk.c | 29 +++++++++++++++++++++++++++++
- drivers/clk/hisilicon/clk.h |  3 +++
- 2 files changed, 32 insertions(+)
+ drivers/base/regmap/regmap.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 9b15adb..78675d1 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -37,6 +37,35 @@
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index df2d2ef5d6b3..51fa7d66a393 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1777,8 +1777,6 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 	size_t val_bytes = map->format.val_bytes;
+ 	size_t total_size = val_bytes * val_count;
  
- static DEFINE_SPINLOCK(hisi_clk_lock);
+-	if (map->bus && !map->format.parse_inplace)
+-		return -EINVAL;
+ 	if (!IS_ALIGNED(reg, map->reg_stride))
+ 		return -EINVAL;
  
-+struct hisi_clock_data *hisi_clk_alloc(struct platform_device *pdev,
-+						int nr_clks)
-+{
-+	struct hisi_clock_data *clk_data;
-+	struct resource *res;
-+	struct clk **clk_table;
+@@ -1789,7 +1787,8 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 	 *
+ 	 * The first if block is used for memory mapped io. It does not allow
+ 	 * val_bytes of 3 for example.
+-	 * The second one is used for busses which do not have this limitation
++	 * The second one is for busses that do not provide raw I/O.
++	 * The third one is used for busses which do not have these limitations
+ 	 * and can write arbitrary value lengths.
+ 	 */
+ 	if (!map->bus) {
+@@ -1825,6 +1824,32 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 		}
+ out:
+ 		map->unlock(map->lock_arg);
++	} else if (map->bus && !map->format.parse_inplace) {
++		const u8 *u8 = val;
++		const u16 *u16 = val;
++		const u32 *u32 = val;
++		unsigned int ival;
 +
-+	clk_data = devm_kmalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return NULL;
++		for (i = 0; i < val_count; i++) {
++			switch (map->format.val_bytes) {
++			case 4:
++				ival = u32[i];
++				break;
++			case 2:
++				ival = u16[i];
++				break;
++			case 1:
++				ival = u8[i];
++				break;
++			default:
++				return -EINVAL;
++			}
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	clk_data->base = devm_ioremap(&pdev->dev,
-+				res->start, resource_size(res));
-+	if (!clk_data->base)
-+		return NULL;
-+
-+	clk_table = devm_kmalloc(&pdev->dev, sizeof(struct clk *) * nr_clks,
-+				GFP_KERNEL);
-+	if (!clk_table)
-+		return NULL;
-+
-+	clk_data->clk_data.clks = clk_table;
-+	clk_data->clk_data.clk_num = nr_clks;
-+
-+	return clk_data;
-+}
-+EXPORT_SYMBOL_GPL(hisi_clk_alloc);
-+
- struct hisi_clock_data *hisi_clk_init(struct device_node *np,
- 					     int nr_clks)
- {
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 20d64af..5fc644f 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -30,6 +30,8 @@
- #include <linux/io.h>
- #include <linux/spinlock.h>
- 
-+struct platform_device;
-+
- struct hisi_clock_data {
- 	struct clk_onecell_data	clk_data;
- 	void __iomem		*base;
-@@ -110,6 +112,7 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 	const char *parent_name, unsigned long flags, void __iomem *reg,
- 	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
- 
-+struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
- struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
- void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
- 				int, struct hisi_clock_data *);
++			ret = regmap_write(map, reg + (i * map->reg_stride),
++					   ival);
++			if (ret)
++				return ret;
++		}
+ 	} else if (map->use_single_write ||
+ 		   (map->max_raw_write && map->max_raw_write < total_size)) {
+ 		int chunk_stride = map->reg_stride;
 -- 
-1.9.1
+2.8.1
