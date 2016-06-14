@@ -1,46 +1,72 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 19/28] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Mon, 13 Jun 2016 22:04:53 +0300
-Message-ID: <1465844702-12200-20-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160614173910.GB28218@codeaurora.org>
+References: <1465381201-11537-1-git-send-email-ricardo.ribalda@gmail.com> <20160614173910.GB28218@codeaurora.org>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Wed, 15 Jun 2016 00:59:15 +0200
+Message-ID: <CAPybu_1qTTn8tkdvJ8r1ehi4-ooJdPkmYJVvQdg71vsOJwoFUQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Convert clk-fixed into module platform driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	jeremy.kerr@canonical.com, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
+Hi Stephen
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- include/linux/clk/ti.h | 4 ----
- 1 file changed, 4 deletions(-)
+Assume this device tree overlay:
 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 331b81b..0269208 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -145,8 +143,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
+
+&bus0{
+
+axi_clk: axi_clk {
+compatible = "fixed-clock";
+#clock-cells = <0x0>;
+clock-frequency = <125000000>;
+};
+
+iic_0: iic {
+#address-cells = <1>;
+#size-cells = <1>;
+compatible = "xlnx,xps-iic-2.00.a";
+reg = < 0x00030000 0x10000 >;
+interrupt-parent = <&xps_intc_0>;
+interrupts = < 2 2 >;
+clocks = <&axi_clk>;
+ } ;
+
+}
+
+Which is basically a new i2c master and a fixed clock definition.
+
+The fixed clock driver will only be probed to the driver at arch
+initialization, when of_clk_init is called.  The device overlay can be
+added at any point, usually after arch init. Which will result in ii_0
+failing to probe,  because it is missing its clock.
+
+This changeset allows fixed clocks to be added after of_clk_init is
+called, by converting the driver into a platform driver.
+
+
+Thanks!b
+
+On Tue, Jun 14, 2016 at 7:39 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/08, Ricardo Ribalda Delgado wrote:
+>> When clock providers are added to the device tree after of_clk_init is called
+>> they are not added to the clock provider list. This makes that drivers such
+>> as i2c-xiic.c fail to init, as they may depend on the unadded clock provider.
+>
+> Who's the provider here? It isn't clear to me why we're
+> populating fixed factor and fixed rate clks from DT for i2c
+> devices? Presumably there's an i2c device driver that should be
+> populating clks from C code instead?
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
+
+
 -- 
-1.9.1
+Ricardo Ribalda
