@@ -1,91 +1,52 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [RESEND PATCH v2 13/13] ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-Date: Thu, 16 Jun 2016 11:20:33 +0200
-Message-Id: <1466068833-5055-14-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [PATCH] clk: rockchip: add pclk_vio_grf to critical clock on the
+ RK3399
+To: Doug Anderson <dianders@chromium.org>
+References: <1465724913-14553-1-git-send-email-zhengxing@rock-chips.com>
+ <CAD=FV=XSSPMOnMD3mqFyqM3wWLShbRc2cXVdN0PYcUxpaDnsTw@mail.gmail.com>
+ <575E240C.9060502@rock-chips.com>
+ <CAD=FV=WhaN__psCV_hYoc67gZMpCt_9yp5=vR-C4uc8i39RAaA@mail.gmail.com>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ elaine zhang <elaine.zhang@rock-chips.com>,
+ Tao Huang <huangtao@rock-chips.com>, Brian Norris
+ <briannorris@chromium.org>, Yakir Yang <ykk@rock-chips.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <575F73B1.9000703@rock-chips.com>
+Date: Tue, 14 Jun 2016 11:02:09 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=WhaN__psCV_hYoc67gZMpCt_9yp5=vR-C4uc8i39RAaA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-It is necessary to properly configure these clocks in order
-to address 720p and 1080p HDMI resolution.
+Hi Doug,
 
-Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+On 2016年06月14日 07:46, Doug Anderson wrote:
+>
+> Even if it's not much power, it seems like we should still turn it off
+> and on in the right place.  Unless I'm mistaken it should be such a
+> simple patch provide the clock to the right driver and then get the
+> clock when appropriate.
+Yes, I talked with Yakir and we intent to enable/disable the 
+pclk_vio_grf in video drivers,
+so this patch will be dropped.
+>> I will refer the latest TRM to update a new patch for always enable these
+>> GRFs.
+> Does that mean you're going to make these all critical clocks?  That
+> doesn't sound so great...
+>
+> -Doug
+Maybe, I heard that they are removed in the updated TRM, but I have not 
+got the TRM yet.
+I will double check it, and it seems that you do not agree to remove 
+these clock...
 
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-index 18ed1ad..7eec729 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -103,7 +103,10 @@
- 			#size-cells = <1>;
- 
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
--					  <&clk_s_d2_quadfs 0>,
-+					  <&clk_s_d2_quadfs 1>,
-+					  <&clk_s_c0_pll1 0>,
-+					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
-+					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
-@@ -113,14 +116,21 @@
- 
- 			assigned-clock-parents = <0>,
- 						 <0>,
-+						 <0>,
-+						 <&clk_s_c0_pll1 0>,
-+						 <&clk_s_c0_pll1 0>,
- 						 <&clk_s_d2_quadfs 0>,
--						 <&clk_s_d2_quadfs 0>,
-+						 <&clk_s_d2_quadfs 1>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>;
- 
--			assigned-clock-rates = <297000000>, <297000000>;
-+			assigned-clock-rates = <297000000>,
-+					       <108000000>,
-+					       <0>,
-+					       <400000000>,
-+					       <400000000>;
- 
- 			ranges;
- 
+Thanks.
+
 -- 
-1.9.1
+- Xing Zheng
