@@ -1,285 +1,66 @@
-Return-Path: <megous@megous.com>
-From: megous@megous.com
-To: dev@linux-sunxi.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Ondrej Jirman <megous@megous.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate application method
-Date: Sat, 25 Jun 2016 05:45:03 +0200
-Message-Id: <20160625034511.7966-7-megous@megous.com>
-In-Reply-To: <20160625034511.7966-1-megous@megous.com>
-References: <20160625034511.7966-1-megous@megous.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17364 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750977AbcFNPhT (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 11:37:19 -0400
+Subject: Re: [PATCH 3/3] clk: tegra: Enable sor1 and sor1_src on Tegra210
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <20160614120044.30734-1-thierry.reding@gmail.com>
+ <20160614120044.30734-3-thierry.reding@gmail.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <a9bdfd66-5571-287f-3928-6cbe6967a0a6@nvidia.com>
+Date: Tue, 14 Jun 2016 11:37:10 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160614120044.30734-3-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ondrej Jirman <megous@megous.com>
+On 6/14/2016 8:00 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Make the sor1 and sor1_src clocks available on Tegra210. They will be
+> used by the display driver to support HDMI and DP.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c         | 2 ++
+>  include/dt-bindings/clock/tegra210-car.h | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index cd141a364c9d..8e37eda37449 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2093,6 +2093,8 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+>  	[tegra_clk_dpaux1] = { .dt_id = TEGRA210_CLK_DPAUX1, .present = true },
+>  	[tegra_clk_sor0] = { .dt_id = TEGRA210_CLK_SOR0, .present = true },
+>  	[tegra_clk_sor0_lvds] = { .dt_id = TEGRA210_CLK_SOR0_LVDS, .present = true },
+> +	[tegra_clk_sor1] = { .dt_id = TEGRA210_CLK_SOR1, .present = true },
+> +	[tegra_clk_sor1_src] = { .dt_id = TEGRA210_CLK_SOR1_SRC, .present = true },
+>  	[tegra_clk_gpu] = { .dt_id = TEGRA210_CLK_GPU, .present = true },
+>  	[tegra_clk_pll_g_ref] = { .dt_id = TEGRA210_CLK_PLL_G_REF, .present = true, },
+>  	[tegra_clk_uartb_8] = { .dt_id = TEGRA210_CLK_UARTB, .present = true },
+> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> index bd3530e56d46..35288b20f2c9 100644
+> --- a/include/dt-bindings/clock/tegra210-car.h
+> +++ b/include/dt-bindings/clock/tegra210-car.h
+> @@ -308,7 +308,7 @@
+>  #define TEGRA210_CLK_CLK_OUT_3 279
+>  #define TEGRA210_CLK_BLINK 280
+>  /* 281 */
+> -/* 282 */
+> +#define TEGRA210_CLK_SOR1_SRC 282
+>  /* 283 */
+>  #define TEGRA210_CLK_XUSB_HOST_SRC 284
+>  #define TEGRA210_CLK_XUSB_FALCON_SRC 285
+> 
 
-PLL1 on H3 requires special factors application algorithm,
-when the rate is changed. This algorithm was extracted
-from the arisc code that handles frequency scaling
-in the BSP kernel.
+Acked-by: Rhyland Klein <rklein@nvidia.com>
 
-This commit adds optional apply function to
-struct factors_data, that can implement non-trivial
-factors application method, when necessary.
-
-Also struct clk_factors_config is extended with position
-of the PLL lock flag.
-
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-factors.c                   | 34 +++++------
- drivers/clk/sunxi/clk-factors.h                   | 12 ++++
- drivers/clk/sunxi/clk-sunxi.c                     | 72 ++++++++++++++++++++++-
- 4 files changed, 98 insertions(+), 21 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 5faae05..774500c 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -10,6 +10,7 @@ Required properties:
- 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
- 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
- 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-+	"allwinner,sun8i-h3-pll1-clk" - for the main PLL clock on H3
- 	"allwinner,sun4i-a10-pll3-clk" - for the video PLL clock on A10
- 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
- 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index ddefe96..7c165db 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -34,13 +34,6 @@
- 
- #define FACTORS_MAX_PARENTS		5
- 
--#define SETMASK(len, pos)		(((1U << (len)) - 1) << (pos))
--#define CLRMASK(len, pos)		(~(SETMASK(len, pos)))
--#define FACTOR_GET(bit, len, reg)	(((reg) & SETMASK(len, bit)) >> (bit))
--
--#define FACTOR_SET(bit, len, reg, val) \
--	(((reg) & CLRMASK(len, bit)) | (val << (bit)))
--
- static unsigned long clk_factors_recalc_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
-@@ -150,20 +143,24 @@ static int clk_factors_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (factors->lock)
- 		spin_lock_irqsave(factors->lock, flags);
- 
--	/* Fetch the register value */
--	reg = readl(factors->reg);
-+	if (factors->apply) {
-+		factors->apply(factors, &req);
-+	} else {
-+		/* Fetch the register value */
-+		reg = readl(factors->reg);
- 
--	/* Set up the new factors - macros do not do anything if width is 0 */
--	reg = FACTOR_SET(config->nshift, config->nwidth, reg, req.n);
--	reg = FACTOR_SET(config->kshift, config->kwidth, reg, req.k);
--	reg = FACTOR_SET(config->mshift, config->mwidth, reg, req.m);
--	reg = FACTOR_SET(config->pshift, config->pwidth, reg, req.p);
-+		/* Set up the new factors - macros do not do anything if width is 0 */
-+		reg = FACTOR_SET(config->nshift, config->nwidth, reg, req.n);
-+		reg = FACTOR_SET(config->kshift, config->kwidth, reg, req.k);
-+		reg = FACTOR_SET(config->mshift, config->mwidth, reg, req.m);
-+		reg = FACTOR_SET(config->pshift, config->pwidth, reg, req.p);
- 
--	/* Apply them now */
--	writel(reg, factors->reg);
-+		/* Apply them now */
-+		writel(reg, factors->reg);
- 
--	/* delay 500us so pll stabilizes */
--	__delay((rate >> 20) * 500 / 2);
-+		/* delay 500us so pll stabilizes */
-+		__delay((rate >> 20) * 500 / 2);
-+	}
- 
- 	if (factors->lock)
- 		spin_unlock_irqrestore(factors->lock, flags);
-@@ -213,6 +210,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 	factors->config = data->table;
- 	factors->get_factors = data->getter;
- 	factors->recalc = data->recalc;
-+	factors->apply = data->apply;
- 	factors->lock = lock;
- 
- 	/* Add a gate if this factor clock can be gated */
-diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
-index 1e63c5b..661a45a 100644
---- a/drivers/clk/sunxi/clk-factors.h
-+++ b/drivers/clk/sunxi/clk-factors.h
-@@ -6,6 +6,13 @@
- 
- #define SUNXI_FACTORS_NOT_APPLICABLE	(0)
- 
-+#define SETMASK(len, pos)		(((1U << (len)) - 1) << (pos))
-+#define CLRMASK(len, pos)		(~(SETMASK(len, pos)))
-+#define FACTOR_GET(bit, len, reg)	(((reg) & SETMASK(len, bit)) >> (bit))
-+
-+#define FACTOR_SET(bit, len, reg, val) \
-+	(((reg) & CLRMASK(len, bit)) | (val << (bit)))
-+
- struct clk_factors_config {
- 	u8 nshift;
- 	u8 nwidth;
-@@ -16,6 +23,7 @@ struct clk_factors_config {
- 	u8 pshift;
- 	u8 pwidth;
- 	u8 n_start;
-+	u8 lock;
- };
- 
- struct factors_request {
-@@ -28,6 +36,8 @@ struct factors_request {
- 	u8 p;
- };
- 
-+struct clk_factors;
-+
- struct factors_data {
- 	int enable;
- 	int mux;
-@@ -35,6 +45,7 @@ struct factors_data {
- 	const struct clk_factors_config *table;
- 	void (*getter)(struct factors_request *req);
- 	void (*recalc)(struct factors_request *req);
-+	void (*apply)(struct clk_factors *factors, struct factors_request *req);
- 	const char *name;
- };
- 
-@@ -44,6 +55,7 @@ struct clk_factors {
- 	const struct clk_factors_config *config;
- 	void (*get_factors)(struct factors_request *req);
- 	void (*recalc)(struct factors_request *req);
-+	void (*apply)(struct clk_factors *factors, struct factors_request *req);
- 	spinlock_t *lock;
- 	/* for cleanup */
- 	struct clk_mux *mux;
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 838b22a..e4bb908 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/log2.h>
-+#include <linux/delay.h>
- 
- #include "clk-factors.h"
- 
-@@ -200,6 +201,56 @@ static void sun8i_a23_get_pll1_factors(struct factors_request *req)
- }
- 
- /**
-+ * sun8i_h3_apply_pll1_factors() - applies n, k, m, p factors to the
-+ * register using an algorithm that tries to reserve the PLL lock
-+ */
-+
-+static void sun8i_h3_apply_pll1_factors(struct clk_factors *factors, struct factors_request *req)
-+{
-+	const struct clk_factors_config *config = factors->config;
-+	u32 reg;
-+
-+	/* Fetch the register value */
-+	reg = readl(factors->reg);
-+
-+	if (FACTOR_GET(config->pshift, config->pwidth, reg) < req->p) {
-+		reg = FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
-+
-+		writel(reg, factors->reg);
-+		__delay(2000);
-+	}
-+
-+	if (FACTOR_GET(config->mshift, config->mwidth, reg) < req->m) {
-+		reg = FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
-+
-+		writel(reg, factors->reg);
-+		__delay(2000);
-+	}
-+
-+	reg = FACTOR_SET(config->nshift, config->nwidth, reg, req->n);
-+	reg = FACTOR_SET(config->kshift, config->kwidth, reg, req->k);
-+
-+	writel(reg, factors->reg);
-+	__delay(20);
-+
-+	while (!(readl(factors->reg) & (1 << config->lock)));
-+
-+	if (FACTOR_GET(config->mshift, config->mwidth, reg) > req->m) {
-+		reg = FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
-+
-+		writel(reg, factors->reg);
-+		__delay(2000);
-+	}
-+
-+	if (FACTOR_GET(config->pshift, config->pwidth, reg) > req->p) {
-+		reg = FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
-+
-+		writel(reg, factors->reg);
-+		__delay(2000);
-+	}
-+}
-+
-+/**
-  * sun4i_get_pll5_factors() - calculates n, k factors for PLL5
-  * PLL5 rate is calculated as follows
-  * rate = parent_rate * n * (k + 1)
-@@ -451,6 +502,7 @@ static const struct clk_factors_config sun8i_a23_pll1_config = {
- 	.pshift = 16,
- 	.pwidth = 2,
- 	.n_start = 1,
-+	.lock = 28
- };
- 
- static const struct clk_factors_config sun4i_pll5_config = {
-@@ -513,6 +565,13 @@ static const struct factors_data sun8i_a23_pll1_data __initconst = {
- 	.getter = sun8i_a23_get_pll1_factors,
- };
- 
-+static const struct factors_data sun8i_h3_pll1_data __initconst = {
-+	.enable = 31,
-+	.table = &sun8i_a23_pll1_config,
-+	.getter = sun8i_a23_get_pll1_factors,
-+	.apply = sun8i_h3_apply_pll1_factors,
-+};
-+
- static const struct factors_data sun7i_a20_pll4_data __initconst = {
- 	.enable = 31,
- 	.table = &sun4i_pll5_config,
-@@ -590,12 +649,19 @@ static void __init sun6i_pll1_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun6i_pll1, "allwinner,sun6i-a31-pll1-clk",
- 	       sun6i_pll1_clk_setup);
- 
--static void __init sun8i_pll1_clk_setup(struct device_node *node)
-+static void __init sun8i_a23_pll1_clk_setup(struct device_node *node)
- {
- 	sunxi_factors_clk_setup(node, &sun8i_a23_pll1_data);
- }
--CLK_OF_DECLARE(sun8i_pll1, "allwinner,sun8i-a23-pll1-clk",
--	       sun8i_pll1_clk_setup);
-+CLK_OF_DECLARE(sun8i_a23_pll1, "allwinner,sun8i-a23-pll1-clk",
-+	       sun8i_a23_pll1_clk_setup);
-+
-+static void __init sun8i_h3_pll1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun8i_h3_pll1_data);
-+}
-+CLK_OF_DECLARE(sun8i_h3_pll1, "allwinner,sun8i-h3-pll1-clk",
-+	       sun8i_h3_pll1_clk_setup);
- 
- static void __init sun7i_pll4_clk_setup(struct device_node *node)
- {
 -- 
-2.9.0
+nvpublic
