@@ -1,66 +1,104 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1505 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750866AbcFWP2X (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2016 11:28:23 -0400
-Subject: Re: [PATCH 2/2] clk: tegra: Micro-optimize Tegra210 clock setup
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <20160623105231.24383-1-thierry.reding@gmail.com>
- <20160623105231.24383-2-thierry.reding@gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <a4b8e607-896b-08a1-0ab4-c8fa092cbf43@nvidia.com>
-Date: Thu, 23 Jun 2016 11:28:18 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160623105231.24383-2-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 09/10] ARM: dts: sun9i: a80-optimus: Order nodes by alphabetical order
+Date: Tue, 14 Jun 2016 10:17:57 +0800
+Message-Id: <1465870678-30128-11-git-send-email-wens@csie.org>
+In-Reply-To: <1465870678-30128-1-git-send-email-wens@csie.org>
+References: <1465870678-30128-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 6/23/2016 6:52 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> sor_safe being the parent of the dpaux and dpaux1 clocks, it's not only
-> natural, but also slightly more efficient, to initialize it before its
-> children. This avoids orphaning the dpaux and dpaux1 clocks only to get
-> them reparented when the sor_safe clock is registered.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index fe295b4102ca..b4df5c46642f 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2466,6 +2466,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
->  					1, 2);
->  	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
->  
-> +	clk = tegra_clk_register_periph_fixed("sor_safe", "pll_p", 0, clk_base,
-> +					      1, 17, 222);
-> +	clks[TEGRA210_CLK_SOR_SAFE] = clk;
-> +
->  	clk = tegra_clk_register_periph_fixed("dpaux", "sor_safe", 0, clk_base,
->  					      1, 17, 181);
->  	clks[TEGRA210_CLK_DPAUX] = clk;
-> @@ -2474,10 +2478,6 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
->  					      1, 17, 207);
->  	clks[TEGRA210_CLK_DPAUX1] = clk;
->  
-> -	clk = tegra_clk_register_periph_fixed("sor_safe", "pll_p", 0, clk_base,
-> -					      1, 17, 222);
-> -	clks[TEGRA210_CLK_SOR_SAFE] = clk;
-> -
->  	/* pll_d_dsi_out */
->  	clk = clk_register_gate(NULL, "pll_d_dsi_out", "pll_d_out0", 0,
->  				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
-> 
+Move the mmc nodes above the ohci nodes for proper ordering by name.
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80-optimus.dts | 50 ++++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
+diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+index 24ef8e65a975..3b013dc5fef1 100644
+--- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
++++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+@@ -119,6 +119,31 @@
+ 	status = "okay";
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_optimus>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <4>;
++	cd-gpios = <&pio 7 18 GPIO_ACTIVE_HIGH>; /* PH8 */
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&mmc2_8bit_pins {
++	/* Increase drive strength for DDR modes */
++	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
++};
++
+ &ohci0 {
+ 	status = "okay";
+ };
+@@ -157,31 +182,6 @@
+ 	};
+ };
+ 
+-&mmc0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_optimus>;
+-	vmmc-supply = <&reg_dcdc1>;
+-	bus-width = <4>;
+-	cd-gpios = <&pio 7 18 GPIO_ACTIVE_HIGH>; /* PH8 */
+-	cd-inverted;
+-	status = "okay";
+-};
+-
+-&mmc2 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mmc2_8bit_pins>;
+-	vmmc-supply = <&reg_dcdc1>;
+-	bus-width = <8>;
+-	non-removable;
+-	cap-mmc-hw-reset;
+-	status = "okay";
+-};
+-
+-&mmc2_8bit_pins {
+-	/* Increase drive strength for DDR modes */
+-	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
+-};
+-
+ &r_ir {
+ 	status = "okay";
+ };
 -- 
-nvpublic
+2.8.1
