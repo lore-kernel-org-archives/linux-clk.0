@@ -1,153 +1,64 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH v2 9/9] tty: serial: fsl_lpuart: Add support for RS-485
-Date: Tue, 28 Jun 2016 11:02:35 +0530
-Message-ID: <20160628053235.5114-10-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
-References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:43641 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751388AbcFNQS2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 12:18:28 -0400
+Date: Tue, 14 Jun 2016 18:18:20 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Afzal Mohammed <afzal.mohd.ma@gmail.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	linux-kernel@vger.kernel.org,
+	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/48] clk: at91: replace usleep() by udelay() calls
+Message-ID: <20160614181820.1b817ed3@bbrezillon>
+In-Reply-To: <20160614160517.GA2490@afzalpc>
+References: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com>
+	<1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
+	<11395561.bQatt85IOg@wuerfel>
+	<20160613152409.GD3240@piout.net>
+	<20160614160517.GA2490@afzalpc>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Content-Type: text/plain; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable Vybrid's build-in support for RS-485 auto RTS for controlling line
-direction of RS-485 transceiver driver.
+On Tue, 14 Jun 2016 21:35:17 +0530
+Afzal Mohammed <afzal.mohd.ma@gmail.com> wrote:
 
-Enable RS485 feature by either using ioctrl 'TIOCSRS485' or enable it in the
-device tree by setting 'linux,rs485-enabled-at-boot-time' property.
+> Hi,
+> 
+> On Mon, Jun 13, 2016 at 05:24:09PM +0200, Alexandre Belloni wrote:
+> > On 11/06/2016 at 00:30:36 +0200, Arnd Bergmann wrote :  
+> 
+> > > Does this have to be called that early? It seems wasteful to always
+> > > call udelay() here, when these are functions that are normally
+> > > allowed to sleep.  
+> 
+> > So I've tested it and something like that would work:
+> > 
+> > 	if (system_state < SYSTEM_RUNNING)
+> > 		udelay(osc->startup_usec);
+> > 	else
+> > 		usleep_range(osc->startup_usec, osc->startup_usec + 1);
+> > 
+> > But I'm afraid it would be the first driver to actually do something
+> > like that (however, it is already the only driver trying to sleep).   
+> 
+> tglx has suggested to modify clock core to handle a somewhat similar
+> kind of scenario (probably should work here too) and avoid driver
+> changes,
+> 
+> http://lkml.kernel.org/r/alpine.DEB.2.11.1606061448010.28031@nanos
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
----
- drivers/tty/serial/fsl_lpuart.c | 78 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 72 insertions(+), 6 deletions(-)
+Oh, interesting. Definitely a better solution than this custom check.
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 134090a..4d1fca4 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -917,6 +917,52 @@ static void lpuart_dma_rx_free(struct uart_port *port)
- 	sport->dma_rx_cookie = -EINVAL;
- }
- 
-+static int lpuart_config_rs485(struct uart_port *port,
-+			struct serial_rs485 *rs485)
-+{
-+	struct lpuart_port *sport = container_of(port,
-+			struct lpuart_port, port);
-+
-+	u8 modem = readb(sport->port.membase + UARTMODEM) &
-+		~(UARTMODEM_TXRTSPOL | UARTMODEM_TXRTSE);
-+	writeb(modem, sport->port.membase + UARTMODEM);
-+
-+	if (rs485->flags & SER_RS485_ENABLED) {
-+		/* Enable auto RS-485 RTS mode */
-+		modem |= UARTMODEM_TXRTSE;
-+
-+		/*
-+		 * RTS needs to be logic HIGH either during transer _or_ after
-+		 * transfer, other variants are not supported by the hardware.
-+		 */
-+
-+		if (!(rs485->flags & (SER_RS485_RTS_ON_SEND |
-+				SER_RS485_RTS_AFTER_SEND)))
-+			rs485->flags |= SER_RS485_RTS_ON_SEND;
-+
-+		if (rs485->flags & SER_RS485_RTS_ON_SEND &&
-+				rs485->flags & SER_RS485_RTS_AFTER_SEND)
-+			rs485->flags &= ~SER_RS485_RTS_AFTER_SEND;
-+
-+		/*
-+		 * The hardware defaults to RTS logic HIGH while transfer.
-+		 * Switch polarity in case RTS shall be logic HIGH
-+		 * after transfer.
-+		 * Note: UART is assumed to be active high.
-+		 */
-+		if (rs485->flags & SER_RS485_RTS_ON_SEND)
-+			modem &= ~UARTMODEM_TXRTSPOL;
-+		else if (rs485->flags & SER_RS485_RTS_AFTER_SEND)
-+			modem |= UARTMODEM_TXRTSPOL;
-+	}
-+
-+	/* Store the new configuration */
-+	sport->port.rs485 = *rs485;
-+
-+	writeb(modem, sport->port.membase + UARTMODEM);
-+	return 0;
-+}
-+
- static unsigned int lpuart_get_mctrl(struct uart_port *port)
- {
- 	unsigned int temp = 0;
-@@ -950,17 +996,22 @@ static unsigned int lpuart32_get_mctrl(struct uart_port *port)
- static void lpuart_set_mctrl(struct uart_port *port, unsigned int mctrl)
- {
- 	unsigned char temp;
-+	struct lpuart_port *sport = container_of(port,
-+				struct lpuart_port, port);
- 
--	temp = readb(port->membase + UARTMODEM) &
-+	/* Make sure RXRTSE bit is not set when RS485 is enabled */
-+	if (!(sport->port.rs485.flags & SER_RS485_ENABLED)) {
-+		temp = readb(sport->port.membase + UARTMODEM) &
- 			~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
- 
--	if (mctrl & TIOCM_RTS)
--		temp |= UARTMODEM_RXRTSE;
-+		if (mctrl & TIOCM_RTS)
-+			temp |= UARTMODEM_RXRTSE;
- 
--	if (mctrl & TIOCM_CTS)
--		temp |= UARTMODEM_TXCTSE;
-+		if (mctrl & TIOCM_CTS)
-+			temp |= UARTMODEM_TXCTSE;
- 
--	writeb(temp, port->membase + UARTMODEM);
-+		writeb(temp, port->membase + UARTMODEM);
-+	}
- }
- 
- static void lpuart32_set_mctrl(struct uart_port *port, unsigned int mctrl)
-@@ -1256,6 +1307,13 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 		cr1 |= UARTCR1_M;
- 	}
- 
-+	/*
-+	 * When auto RS-485 RTS mode is enabled,
-+	 * hardware flow control need to be disabled.
-+	 */
-+	if (sport->port.rs485.flags & SER_RS485_ENABLED)
-+		termios->c_cflag &= ~CRTSCTS;
-+
- 	if (termios->c_cflag & CRTSCTS) {
- 		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
- 	} else {
-@@ -1864,6 +1922,8 @@ static int lpuart_probe(struct platform_device *pdev)
- 		sport->port.ops = &lpuart_pops;
- 	sport->port.flags = UPF_BOOT_AUTOCONF;
- 
-+	sport->port.rs485_config = lpuart_config_rs485;
-+
- 	sport->clk = devm_clk_get(&pdev->dev, "ipg");
- 	if (IS_ERR(sport->clk)) {
- 		ret = PTR_ERR(sport->clk);
-@@ -1904,6 +1964,12 @@ static int lpuart_probe(struct platform_device *pdev)
- 		dev_info(sport->port.dev, "DMA rx channel request failed, "
- 				"operating without rx DMA\n");
- 
-+	if (of_property_read_bool(np, "linux,rs485-enabled-at-boot-time")) {
-+		sport->port.rs485.flags |= SER_RS485_ENABLED;
-+		sport->port.rs485.flags |= SER_RS485_RTS_ON_SEND;
-+		writeb(UARTMODEM_TXRTSE, sport->port.membase + UARTMODEM);
-+	}
-+
- 	return 0;
- }
- 
+
 -- 
-2.9.0
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
