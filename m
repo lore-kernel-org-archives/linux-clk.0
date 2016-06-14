@@ -1,67 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:37792 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753992AbcFPNGo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 16 Jun 2016 09:06:44 -0400
-Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
- <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com>
- <57629AB9.2090506@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Javier Martinez Canillas <javier@dowhile0.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
-Date: Thu, 16 Jun 2016 09:06:29 -0400
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 14 Jun 2016 07:42:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH 09/10] dt-bindings: clock: add DT binding for the
+ peripheral clocks on Armada 3700
+Message-ID: <20160614124236.GA2001@rob-hp-laptop>
+References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+ <1465565018-14172-10-git-send-email-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <57629AB9.2090506@samsung.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1465565018-14172-10-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
-
-On 06/16/2016 08:25 AM, Krzysztof Kozlowski wrote:
-> On 06/15/2016 05:39 PM, Javier Martinez Canillas wrote:
->> Hello Laxman,
->>
->> On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
->>> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
->>> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
->>>
->>> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> CC: Javier Martinez Canillas <javier@dowhile0.org>
->>> ---
->>>  arch/arm/configs/exynos_defconfig   | 1 -
->>>  arch/arm/configs/multi_v7_defconfig | 1 -
->>
->> Please split these two changes in separate patches, there are just
->> cleanups needed after 1/5 and they can be picked separately.
+On Fri, Jun 10, 2016 at 03:23:37PM +0200, Gregory CLEMENT wrote:
+> This commit adds the DT binding documentation for the peripheral clocks
+> used in the Marvell Armada 3700 SoCs.
 > 
-> Not entirely separately. If we do not want to loose max77802 clocks on
-> defconfigs, then it should go with the same tree or after driver get
-> merged. I prefer the latter, similar case to 1898994229f8 ("ARM:
-> multi_v7_defconfig: Switch max77693 to module").
->
-
-Agreed. Your latter example is what I tried to say (that can be picked
-as cleanups separately once 1/5 hits mainline). I just didn't express
-clearly.
- 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  .../bindings/clock/armada3700-periph-clock.txt     | 70 ++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+> new file mode 100644
+> index 000000000000..549a5ad14031
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+> @@ -0,0 +1,70 @@
+> +* Peripheral Clock bindings for Marvell Armada 37xx SoCs
+> +
+> +Marvell Armada 37xx SoCs provide peripheral clocks which are
+> +used as clock source for the peripheral of the SoC.
+> +
+> +There are two different block associated to north bridge and south
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+s/block/blocks/
+
+Otherwise,
+
+Acked-by: Rob Herring <robh@kernel.org>
