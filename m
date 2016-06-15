@@ -1,88 +1,192 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:60174 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161017AbcFBLoF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2016 07:44:05 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Scott Wood <oss@buserror.net>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Yangbo Lu <yangbo.lu@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH 4/4] Revert "powerpc/fsl: Move fsl_guts.h out of arch/powerpc"
-Date: Thu, 02 Jun 2016 11:01:45 +0200
-Message-ID: <3225846.9EJ0sHv0XK@wuerfel>
-In-Reply-To: <1464830660.22191.6.camel@buserror.net>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <5513501.AmZs7h1vI2@wuerfel> <1464830660.22191.6.camel@buserror.net>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:20442 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932239AbcFOGjA (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2016 02:39:00 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH v2 5/5] clk: hisilicon: hi3519: add driver remove path and fix some issues
+Date: Wed, 15 Jun 2016 14:26:38 +0800
+Message-ID: <1465971998-29619-6-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday, June 1, 2016 8:24:20 PM CEST Scott Wood wrote:
-> On Mon, 2016-05-30 at 15:18 +0200, Arnd Bergmann wrote:
-> > All users of this driver are PowerPC specific and the header file
-> > has no business in the global include/linux/ hierarchy, so move
-> > it back before anyone starts using it on ARM.
-> > 
-> > This reverts commit 948486544713492f00ac8a9572909101ea892cb0.
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> > This part of the series is not required for the eSDHC quirk,
-> > but it restores the asm/fsl_guts.h header so it doesn't accidentally
-> > get abused for this in the future. I found two drivers outside of
-> > arch/powerpc that already accessed the registers directly, but the
-> > functions look fairly contained, and can be easily hidden in an
-> > #ifdef CONFIG_PPC
-> 
-> NACK
-> 
-> Besides adding ifdef pollution for no good reason, this register block is used
-> on some ARM chips as well.  Why is it a problem if "anyone starts using it on
-> ARM"?
+1. Add driver remove path.
+2. Fix some issues.
+   -Fix the ordering issue about clock provider being published.
+   -Add error checking upon registering clocks.
 
-It's just not a good interface when it's defined as "this is the layout of
-a register area that any driver can ioremap() if they can figure out the
-device node". It's not uncommon to have register areas like that, but
-normally you have at the minimum a 'syscon' device to handle locking
-between drivers accessing the same registers and to avoid having to map
-the same area multiple times.
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+---
+ drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 100 insertions(+), 16 deletions(-)
 
-If we need to use 'guts' registers on ARM, we can find a way to abstract
-them properly for the given use cases, using a syscon or a driver with
-exported functions, but just making a PowerPC platform specific header
-global to all Linux drivers by putting it into include/linux doesn't seem
-right.
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+index 8d12700..51b173e 100644
+--- a/drivers/clk/hisilicon/clk-hi3519.c
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -38,6 +38,11 @@
+ 
+ #define HI3519_NR_CLKS		128
+ 
++struct hi3519_crg_data {
++	struct hisi_clock_data *clk_data;
++	struct hisi_reset_controller *rstc;
++};
++
+ static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
+ 	{ HI3519_FIXED_24M, "24m", NULL, 0, 24000000, },
+ 	{ HI3519_FIXED_50M, "50m", NULL, 0, 50000000, },
+@@ -80,33 +85,105 @@ static const struct hisi_gate_clock hi3519_gate_clks[] = {
+ 		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
+ };
+ 
+-static int hi3519_clk_probe(struct platform_device *pdev)
++static struct hisi_clock_data *hi3519_clk_register(struct platform_device *pdev)
+ {
+-	struct device_node *np = pdev->dev.of_node;
+ 	struct hisi_clock_data *clk_data;
+-	struct hisi_reset_controller *rstc;
++	int ret;
+ 
+-	rstc = hisi_reset_init(pdev);
+-	if (!rstc)
++	clk_data = hisi_clk_alloc(pdev, HI3519_NR_CLKS);
++	if (!clk_data)
++		return ERR_PTR(-ENOMEM);
++
++	ret = hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
++				     ARRAY_SIZE(hi3519_fixed_rate_clks),
++				     clk_data);
++	if (ret)
++		return ERR_PTR(ret);
++
++	ret = hisi_clk_register_mux(hi3519_mux_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				clk_data);
++	if (ret)
++		goto unregister_fixed_rate;
++
++	ret = hisi_clk_register_gate(hi3519_gate_clks,
++				ARRAY_SIZE(hi3519_gate_clks),
++				clk_data);
++	if (ret)
++		goto unregister_mux;
++
++	ret = of_clk_add_provider(pdev->dev.of_node,
++			of_clk_src_onecell_get, &clk_data->clk_data);
++	if (ret)
++		goto unregister_gate;
++
++	return clk_data;
++
++unregister_fixed_rate:
++	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
++				ARRAY_SIZE(hi3519_fixed_rate_clks),
++				clk_data);
++
++unregister_mux:
++	hisi_clk_unregister_mux(hi3519_mux_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				clk_data);
++unregister_gate:
++	hisi_clk_unregister_gate(hi3519_gate_clks,
++				ARRAY_SIZE(hi3519_gate_clks),
++				clk_data);
++	return ERR_PTR(ret);
++}
++
++static void hi3519_clk_unregister(struct platform_device *pdev)
++{
++	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++
++	hisi_clk_unregister_gate(hi3519_gate_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				crg->clk_data);
++	hisi_clk_unregister_mux(hi3519_mux_clks,
++				ARRAY_SIZE(hi3519_mux_clks),
++				crg->clk_data);
++	hisi_clk_unregister_fixed_rate(hi3519_fixed_rate_clks,
++				ARRAY_SIZE(hi3519_fixed_rate_clks),
++				crg->clk_data);
++}
++
++static int hi3519_clk_probe(struct platform_device *pdev)
++{
++	struct hi3519_crg_data *crg;
++
++	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
++	if (!crg)
++		return -ENOMEM;
++
++	crg->rstc = hisi_reset_init(pdev);
++	if (!crg->rstc)
+ 		return -ENOMEM;
+ 
+-	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
+-	if (!clk_data) {
+-		hisi_reset_exit(rstc);
+-		return -ENODEV;
++	crg->clk_data = hi3519_clk_register(pdev);
++	if (IS_ERR(crg->clk_data)) {
++		hisi_reset_exit(crg->rstc);
++		return PTR_ERR(crg->clk_data);
+ 	}
+ 
+-	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
+-				     ARRAY_SIZE(hi3519_fixed_rate_clks),
+-				     clk_data);
+-	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
+-					clk_data);
+-	hisi_clk_register_gate(hi3519_gate_clks,
+-			ARRAY_SIZE(hi3519_gate_clks), clk_data);
++	platform_set_drvdata(pdev, crg);
++	return 0;
++}
++
++static int hi3519_clk_remove(struct platform_device *pdev)
++{
++	struct hi3519_crg_data *crg = platform_get_drvdata(pdev);
+ 
++	hisi_reset_exit(crg->rstc);
++	hi3519_clk_unregister(pdev);
+ 	return 0;
+ }
+ 
++
+ static const struct of_device_id hi3519_clk_match_table[] = {
+ 	{ .compatible = "hisilicon,hi3519-crg" },
+ 	{ }
+@@ -115,6 +192,7 @@ MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
+ 
+ static struct platform_driver hi3519_clk_driver = {
+ 	.probe          = hi3519_clk_probe,
++	.remove		= hi3519_clk_remove,
+ 	.driver         = {
+ 		.name   = "hi3519-clk",
+ 		.of_match_table = hi3519_clk_match_table,
+@@ -127,5 +205,11 @@ static int __init hi3519_clk_init(void)
+ }
+ core_initcall(hi3519_clk_init);
+ 
++static void __exit hi3519_clk_exit(void)
++{
++	platform_driver_unregister(&hi3519_clk_driver);
++}
++module_exit(hi3519_clk_exit);
++
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
+-- 
+1.9.1
 
-Note that the header file uses a structure definition rather than the more
-common macros with register offsets, which is fine for a driver that has
-its own registers and abstracts them, but it doesn't really work with
-the regmap interface, so if we want to use it with syscon, it also needs to
-be rewritten.
-
-> BTW, of all the mailing lists you included on this CC, you seem to have left
-> off the PPC list (I've added it).
-
-Sorry, my mistake.
-
-	Arnd
