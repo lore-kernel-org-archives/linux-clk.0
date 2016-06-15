@@ -1,406 +1,400 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH 6/8] tty: serial: fsl-lpuart: Use scatter/gather DMA for Tx Drop PIO to DMA switching and use scatter/gather DMA for Tx path to improve performance.
-Date: Thu, 9 Jun 2016 20:40:37 +0530
-Message-ID: <20160609151039.20817-7-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 03/10] mfd: ac100: Add driver for X-Powers AC100 audio codec / RTC combo IC
+Date: Wed, 15 Jun 2016 18:27:40 +0800
+Message-Id: <1465986467-14802-4-git-send-email-wens@csie.org>
+In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some part of the code is borrowed from imx serial driver.
+The AC100 is a multifunction device with an audio codec subsystem and
+an RTC subsystem. These two subsystems share a common register space
+and host interface.
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 257 ++++++++++++++++++----------------------
- 1 file changed, 113 insertions(+), 144 deletions(-)
+ drivers/mfd/Kconfig       |  10 +++
+ drivers/mfd/Makefile      |   2 +
+ drivers/mfd/ac100.c       | 135 +++++++++++++++++++++++++++++++++++
+ include/linux/mfd/ac100.h | 176 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 323 insertions(+)
+ create mode 100644 drivers/mfd/ac100.c
+ create mode 100644 include/linux/mfd/ac100.h
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 51d2b5a..27687d5 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -244,18 +244,18 @@ struct lpuart_port {
- 	struct dma_chan		*dma_rx_chan;
- 	struct dma_async_tx_descriptor  *dma_tx_desc;
- 	struct dma_async_tx_descriptor  *dma_rx_desc;
--	dma_addr_t		dma_tx_buf_bus;
- 	dma_cookie_t		dma_tx_cookie;
- 	dma_cookie_t		dma_rx_cookie;
--	unsigned char		*dma_tx_buf_virt;
- 	unsigned int		dma_tx_bytes;
- 	unsigned int		dma_rx_bytes;
--	int			dma_tx_in_progress;
-+	bool			dma_tx_in_progress;
- 	unsigned int		dma_rx_timeout;
- 	struct timer_list	lpuart_timer;
--	struct scatterlist	rx_sgl;
-+	struct scatterlist	rx_sgl, tx_sgl[2];
- 	struct circ_buf		rx_ring;
- 	int			rx_dma_rng_buf_len;
-+	unsigned int		dma_tx_nents;
-+	wait_queue_head_t	dma_wait;
- };
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 1bcf601de5bc..bd83849a0c8d 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -101,6 +101,16 @@ config MFD_BCM590XX
+ 	help
+ 	  Support for the BCM590xx PMUs from Broadcom
  
- static const struct of_device_id lpuart_dt_ids[] = {
-@@ -316,103 +316,118 @@ static void lpuart32_stop_rx(struct uart_port *port)
- 	lpuart32_write(temp & ~UARTCTRL_RE, port->membase + UARTCTRL);
- }
- 
--static void lpuart_pio_tx(struct lpuart_port *sport)
-+static void lpuart_dma_tx(struct lpuart_port *sport)
- {
- 	struct circ_buf *xmit = &sport->port.state->xmit;
--	unsigned long flags;
--
--	spin_lock_irqsave(&sport->port.lock, flags);
-+	struct scatterlist *sgl = sport->tx_sgl;
-+	struct device *dev = sport->port.dev;
-+	int ret;
- 
--	while (!uart_circ_empty(xmit) &&
--		readb(sport->port.membase + UARTTCFIFO) < sport->txfifo_size) {
--		writeb(xmit->buf[xmit->tail], sport->port.membase + UARTDR);
--		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
--		sport->port.icount.tx++;
--	}
-+	if (sport->dma_tx_in_progress)
-+		return;
- 
--	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
--		uart_write_wakeup(&sport->port);
-+	sport->dma_tx_bytes = uart_circ_chars_pending(xmit);
- 
--	if (uart_circ_empty(xmit))
--		writeb(readb(sport->port.membase + UARTCR5) | UARTCR5_TDMAS,
--			sport->port.membase + UARTCR5);
-+	if (xmit->tail < xmit->head) {
-+		sport->dma_tx_nents = 1;
-+		sg_init_one(sgl, xmit->buf + xmit->tail, sport->dma_tx_bytes);
-+	} else {
-+		sport->dma_tx_nents = 2;
-+		sg_init_table(sgl, 2);
-+		sg_set_buf(sgl, xmit->buf + xmit->tail,
-+				UART_XMIT_SIZE - xmit->tail);
-+		sg_set_buf(sgl + 1, xmit->buf, xmit->head);
-+	}
- 
--	spin_unlock_irqrestore(&sport->port.lock, flags);
--}
-+	ret = dma_map_sg(dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
-+	if (!ret) {
-+		dev_err(dev, "DMA mapping error for TX.\n");
-+		return;
-+	}
- 
--static int lpuart_dma_tx(struct lpuart_port *sport, unsigned long count)
--{
--	struct circ_buf *xmit = &sport->port.state->xmit;
--	dma_addr_t tx_bus_addr;
--
--	dma_sync_single_for_device(sport->port.dev, sport->dma_tx_buf_bus,
--				UART_XMIT_SIZE, DMA_TO_DEVICE);
--	sport->dma_tx_bytes = count & ~(sport->txfifo_size - 1);
--	tx_bus_addr = sport->dma_tx_buf_bus + xmit->tail;
--	sport->dma_tx_desc = dmaengine_prep_slave_single(sport->dma_tx_chan,
--					tx_bus_addr, sport->dma_tx_bytes,
-+	sport->dma_tx_desc = dmaengine_prep_slave_sg(sport->dma_tx_chan, sgl,
-+					sport->dma_tx_nents,
- 					DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
--
- 	if (!sport->dma_tx_desc) {
--		dev_err(sport->port.dev, "Not able to get desc for tx\n");
--		return -EIO;
-+		dma_unmap_sg(dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
-+		dev_err(dev, "Cannot prepare TX slave DMA!\n");
-+		return;
- 	}
- 
- 	sport->dma_tx_desc->callback = lpuart_dma_tx_complete;
- 	sport->dma_tx_desc->callback_param = sport;
--	sport->dma_tx_in_progress = 1;
-+	sport->dma_tx_in_progress = true;
- 	sport->dma_tx_cookie = dmaengine_submit(sport->dma_tx_desc);
- 	dma_async_issue_pending(sport->dma_tx_chan);
- 
--	return 0;
--}
--
--static void lpuart_prepare_tx(struct lpuart_port *sport)
--{
--	struct circ_buf *xmit = &sport->port.state->xmit;
--	unsigned long count =  CIRC_CNT_TO_END(xmit->head,
--					xmit->tail, UART_XMIT_SIZE);
--
--	if (!count)
--		return;
--
--	if (count < sport->txfifo_size)
--		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_TDMAS,
--				sport->port.membase + UARTCR5);
--	else {
--		writeb(readb(sport->port.membase + UARTCR5) | UARTCR5_TDMAS,
--				sport->port.membase + UARTCR5);
--		lpuart_dma_tx(sport, count);
--	}
- }
- 
- static void lpuart_dma_tx_complete(void *arg)
- {
- 	struct lpuart_port *sport = arg;
-+	struct scatterlist *sgl = &sport->tx_sgl[0];
- 	struct circ_buf *xmit = &sport->port.state->xmit;
- 	unsigned long flags;
- 
--	async_tx_ack(sport->dma_tx_desc);
--
- 	spin_lock_irqsave(&sport->port.lock, flags);
- 
-+	dma_unmap_sg(sport->port.dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
++config MFD_AC100
++	tristate "X-Powers AC100"
++	select MFD_CORE
++	depends on SUNXI_RSB
++	help
++	  If you say Y here you get support for the X-Powers AC100 audio codec
++	  IC.
++	  This driver include only the core APIs. You have to select individual
++	  components like codecs or RTC under the corresponding menus.
 +
- 	xmit->tail = (xmit->tail + sport->dma_tx_bytes) & (UART_XMIT_SIZE - 1);
--	sport->dma_tx_in_progress = 0;
+ config MFD_AXP20X
+ 	tristate
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 42a66e19e191..60f9a6b0557c 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -113,6 +113,8 @@ obj-$(CONFIG_PMIC_DA9052)	+= da9052-irq.o
+ obj-$(CONFIG_PMIC_DA9052)	+= da9052-core.o
+ obj-$(CONFIG_MFD_DA9052_SPI)	+= da9052-spi.o
+ obj-$(CONFIG_MFD_DA9052_I2C)	+= da9052-i2c.o
 +
-+	sport->port.icount.tx += sport->dma_tx_bytes;
-+	sport->dma_tx_in_progress = false;
-+	spin_unlock_irqrestore(&sport->port.lock, flags);
- 
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(&sport->port);
- 
--	lpuart_prepare_tx(sport);
-+	if (waitqueue_active(&sport->dma_wait)) {
-+		wake_up(&sport->dma_wait);
-+		return;
-+	}
++obj-$(CONFIG_MFD_AC100)		+= ac100.o
+ obj-$(CONFIG_MFD_AXP20X)	+= axp20x.o
+ obj-$(CONFIG_MFD_AXP20X_I2C)	+= axp20x-i2c.o
+ obj-$(CONFIG_MFD_AXP20X_RSB)	+= axp20x-rsb.o
+diff --git a/drivers/mfd/ac100.c b/drivers/mfd/ac100.c
+new file mode 100644
+index 000000000000..15d24fa77771
+--- /dev/null
++++ b/drivers/mfd/ac100.c
+@@ -0,0 +1,135 @@
++/*
++ * ac100.c - MFD core driver for X-Powers' AC100 Audio Codec IC
++ *
++ * The AC100 is a highly integrated audio codec and RTC subsystem designed
++ * for mobile applications. It has 3 I2S/PCM interfaces, a 2 channel DAC,
++ * a 2 channel ADC with 5 inputs and a builtin mixer. The RTC subsystem has
++ * 3 clock outputs.
++ *
++ * The audio codec and RTC parts are completely separate, sharing only the
++ * host interface for access to its registers.
++ *
++ * Author: Chen-Yu Tsai <wens@csie.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+	spin_lock_irqsave(&sport->port.lock, flags);
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/mfd/core.h>
++#include <linux/mfd/ac100.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/sunxi-rsb.h>
 +
-+	if (!uart_circ_empty(xmit) && !uart_tx_stopped(&sport->port))
-+		lpuart_dma_tx(sport);
- 
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
-+static int lpuart_dma_tx_request(struct uart_port *port)
++static const struct regmap_range ac100_writeable_ranges[] = {
++	regmap_reg_range(AC100_CHIP_AUDIO_RST, AC100_I2S_SR_CTRL),
++	regmap_reg_range(AC100_I2S1_CLK_CTRL, AC100_I2S1_MXR_GAIN),
++	regmap_reg_range(AC100_I2S2_CLK_CTRL, AC100_I2S2_MXR_GAIN),
++	regmap_reg_range(AC100_I2S3_CLK_CTRL, AC100_I2S3_SIG_PATH_CTRL),
++	regmap_reg_range(AC100_ADC_DIG_CTRL, AC100_ADC_VOL_CTRL),
++	regmap_reg_range(AC100_HMIC_CTRL1, AC100_HMIC_STATUS),
++	regmap_reg_range(AC100_DAC_DIG_CTRL, AC100_DAC_MXR_GAIN),
++	regmap_reg_range(AC100_ADC_APC_CTRL, AC100_LINEOUT_CTRL),
++	regmap_reg_range(AC100_ADC_DAP_L_CTRL, AC100_ADC_DAP_OPT),
++	regmap_reg_range(AC100_DAC_DAP_CTRL, AC100_DAC_DAP_OPT),
++	regmap_reg_range(AC100_ADC_DAP_ENA, AC100_DAC_DAP_ENA),
++	regmap_reg_range(AC100_SRC1_CTRL1, AC100_SRC1_CTRL2),
++	regmap_reg_range(AC100_SRC2_CTRL1, AC100_SRC2_CTRL2),
++	regmap_reg_range(AC100_CLK32K_ANALOG_CTRL, AC100_CLK32K_OUT_CTRL3),
++	regmap_reg_range(AC100_RTC_RST, AC100_RTC_UPD),
++	regmap_reg_range(AC100_ALM_INT_ENA, AC100_ALM_INT_STA),
++	regmap_reg_range(AC100_ALM_SEC, AC100_RTC_GP(15)),
++};
++
++static const struct regmap_range ac100_volatile_ranges[] = {
++	regmap_reg_range(AC100_CHIP_AUDIO_RST, AC100_PLL_CTRL2),
++	regmap_reg_range(AC100_HMIC_STATUS, AC100_HMIC_STATUS),
++	regmap_reg_range(AC100_ADC_DAP_L_STA, AC100_ADC_DAP_L_STA),
++	regmap_reg_range(AC100_SRC1_CTRL1, AC100_SRC1_CTRL1),
++	regmap_reg_range(AC100_SRC1_CTRL3, AC100_SRC2_CTRL1),
++	regmap_reg_range(AC100_SRC2_CTRL3, AC100_SRC2_CTRL4),
++	regmap_reg_range(AC100_RTC_RST, AC100_RTC_RST),
++	regmap_reg_range(AC100_RTC_SEC, AC100_ALM_INT_STA),
++	regmap_reg_range(AC100_ALM_SEC, AC100_ALM_UPD),
++};
++
++static const struct regmap_access_table ac100_writeable_table = {
++	.yes_ranges	= ac100_writeable_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(ac100_writeable_ranges),
++};
++
++static const struct regmap_access_table ac100_volatile_table = {
++	.yes_ranges	= ac100_volatile_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(ac100_volatile_ranges),
++};
++
++static const struct regmap_config ac100_regmap_config = {
++	.reg_bits	= 8,
++	.val_bits	= 16,
++	.wr_table	= &ac100_writeable_table,
++	.volatile_table	= &ac100_volatile_table,
++	.max_register	= AC100_RTC_GP(15),
++	.cache_type	= REGCACHE_RBTREE,
++};
++
++static struct mfd_cell ac100_cells[] = {
++	{
++		.name		= "ac100-codec",
++		.of_compatible	= "x-powers,ac100-codec",
++	}, {
++		.name		= "ac100-rtc",
++		.of_compatible	= "x-powers,ac100-rtc",
++	},
++};
++
++static int ac100_rsb_probe(struct sunxi_rsb_device *rdev)
 +{
-+	struct lpuart_port *sport = container_of(port,
-+					struct lpuart_port, port);
-+	struct dma_slave_config dma_tx_sconfig = {};
++	struct ac100_dev *ac100;
 +	int ret;
 +
-+	dma_tx_sconfig.dst_addr = sport->port.mapbase + UARTDR;
-+	dma_tx_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_tx_sconfig.dst_maxburst = 1;
-+	dma_tx_sconfig.direction = DMA_MEM_TO_DEV;
-+	ret = dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);
++	ac100 = devm_kzalloc(&rdev->dev, sizeof(*ac100), GFP_KERNEL);
++	if (!ac100)
++		return -ENOMEM;
 +
++	ac100->dev = &rdev->dev;
++	sunxi_rsb_device_set_drvdata(rdev, ac100);
++
++	ac100->regmap = devm_regmap_init_sunxi_rsb(rdev, &ac100_regmap_config);
++	if (IS_ERR(ac100->regmap)) {
++		ret = PTR_ERR(ac100->regmap);
++		dev_err(ac100->dev, "regmap init failed: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_mfd_add_devices(ac100->dev, PLATFORM_DEVID_NONE, ac100_cells,
++				   ARRAY_SIZE(ac100_cells), NULL, 0, NULL);
 +	if (ret) {
-+		dev_err(sport->port.dev,
-+				"DMA slave config failed, err = %d\n", ret);
++		dev_err(ac100->dev, "failed to add MFD devices: %d\n", ret);
 +		return ret;
 +	}
 +
 +	return 0;
 +}
 +
- static void lpuart_flush_buffer(struct uart_port *port)
- {
- 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
++static const struct of_device_id ac100_of_match[] = {
++	{ .compatible = "x-powers,ac100" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ac100_of_match);
 +
- 	if (sport->lpuart_dma_tx_use) {
-+		if (sport->dma_tx_in_progress) {
-+			dma_unmap_sg(sport->port.dev, &sport->tx_sgl[0],
-+				sport->dma_tx_nents, DMA_TO_DEVICE);
-+			sport->dma_tx_in_progress = false;
-+		}
- 		dmaengine_terminate_all(sport->dma_tx_chan);
--		sport->dma_tx_in_progress = 0;
- 	}
- }
- 
-@@ -469,8 +484,8 @@ static void lpuart_start_tx(struct uart_port *port)
- 	writeb(temp | UARTCR2_TIE, port->membase + UARTCR2);
- 
- 	if (sport->lpuart_dma_tx_use) {
--		if (!uart_circ_empty(xmit) && !sport->dma_tx_in_progress)
--			lpuart_prepare_tx(sport);
-+		if (!uart_circ_empty(xmit) && !uart_tx_stopped(port))
-+			lpuart_dma_tx(sport);
- 	} else {
- 		if (readb(port->membase + UARTSR1) & UARTSR1_TDRE)
- 			lpuart_transmit_buffer(sport);
-@@ -489,6 +504,29 @@ static void lpuart32_start_tx(struct uart_port *port)
- 		lpuart32_transmit_buffer(sport);
- }
- 
-+/* return TIOCSER_TEMT when transmitter is not busy */
-+static unsigned int lpuart_tx_empty(struct uart_port *port)
-+{
-+	struct lpuart_port *sport = container_of(port,
-+			struct lpuart_port, port);
-+	unsigned char sr1 = readb(port->membase + UARTSR1);
-+	unsigned char sfifo = readb(port->membase + UARTSFIFO);
++static struct sunxi_rsb_driver ac100_rsb_driver = {
++	.driver = {
++		.name	= "ac100",
++		.of_match_table	= of_match_ptr(ac100_of_match),
++	},
++	.probe	= ac100_rsb_probe,
++};
++module_sunxi_rsb_driver(ac100_rsb_driver);
 +
-+	if (sport->dma_tx_in_progress)
-+		return 0;
++MODULE_DESCRIPTION("Audio codec MFD core driver for AC100");
++MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/ac100.h b/include/linux/mfd/ac100.h
+new file mode 100644
+index 000000000000..460b4fd03df1
+--- /dev/null
++++ b/include/linux/mfd/ac100.h
+@@ -0,0 +1,176 @@
++/*
++ * Functions and registers to access AC100 codec / RTC combo IC.
++ *
++ * Copyright (C) 2013, Carlo Caione <carlo@caione.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+	if (sr1 & UARTSR1_TC && sfifo & UARTSFIFO_TXEMPT)
-+		return TIOCSER_TEMT;
++#ifndef __LINUX_MFD_AC100_H
++#define __LINUX_MFD_AC100_H
 +
-+	return 0;
-+}
++#include <linux/regmap.h>
 +
-+static unsigned int lpuart32_tx_empty(struct uart_port *port)
-+{
-+	return (lpuart32_read(port->membase + UARTSTAT) & UARTSTAT_TC) ?
-+		TIOCSER_TEMT : 0;
-+}
++struct ac100_dev {
++	struct device			*dev;
++	struct regmap			*regmap;
++};
 +
- static irqreturn_t lpuart_txint(int irq, void *dev_id)
- {
- 	struct lpuart_port *sport = dev_id;
-@@ -662,12 +700,8 @@ static irqreturn_t lpuart_int(int irq, void *dev_id)
- 	if (sts & UARTSR1_RDRF)
- 		lpuart_rxint(irq, dev_id);
- 
--	if (sts & UARTSR1_TDRE) {
--		if (sport->lpuart_dma_tx_use)
--			lpuart_pio_tx(sport);
--		else
--			lpuart_txint(irq, dev_id);
--	}
-+	if (sts & UARTSR1_TDRE)
-+		lpuart_txint(irq, dev_id);
- 
- 	return IRQ_HANDLED;
- }
-@@ -692,29 +726,6 @@ static irqreturn_t lpuart32_int(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--/* return TIOCSER_TEMT when transmitter is not busy */
--static unsigned int lpuart_tx_empty(struct uart_port *port)
--{
--	struct lpuart_port *sport = container_of(port,
--			struct lpuart_port, port);
--	unsigned char sr1 = readb(port->membase + UARTSR1);
--	unsigned char sfifo = readb(port->membase + UARTSFIFO);
--
--	if (sport->dma_tx_in_progress)
--		return 0;
--
--	if (sr1 & UARTSR1_TC && sfifo & UARTSFIFO_TXEMPT)
--		return TIOCSER_TEMT;
--
--	return 0;
--}
--
--static unsigned int lpuart32_tx_empty(struct uart_port *port)
--{
--	return (lpuart32_read(port->membase + UARTSTAT) & UARTSTAT_TC) ?
--		TIOCSER_TEMT : 0;
--}
--
- static void lpuart_copy_rx_to_tty(struct lpuart_port *sport)
- {
- 	struct tty_port *port = &sport->port.state->port;
-@@ -890,18 +901,6 @@ static inline int lpuart_start_rx_dma(struct lpuart_port *sport)
- 	return 0;
- }
- 
--static void lpuart_dma_tx_free(struct uart_port *port)
--{
--	struct lpuart_port *sport = container_of(port,
--					struct lpuart_port, port);
--
--	dma_unmap_single(sport->port.dev, sport->dma_tx_buf_bus,
--			UART_XMIT_SIZE, DMA_TO_DEVICE);
--
--	sport->dma_tx_buf_bus = 0;
--	sport->dma_tx_buf_virt = NULL;
--}
--
- static void lpuart_dma_rx_free(struct uart_port *port)
- {
- 	struct lpuart_port *sport = container_of(port,
-@@ -1061,44 +1060,6 @@ static void lpuart32_setup_watermark(struct lpuart_port *sport)
- 	lpuart32_write(ctrl_saved, sport->port.membase + UARTCTRL);
- }
- 
--static int lpuart_dma_tx_request(struct uart_port *port)
--{
--	struct lpuart_port *sport = container_of(port,
--					struct lpuart_port, port);
--	struct dma_slave_config dma_tx_sconfig;
--	dma_addr_t dma_bus;
--	unsigned char *dma_buf;
--	int ret;
--
--	dma_bus = dma_map_single(sport->dma_tx_chan->device->dev,
--				sport->port.state->xmit.buf,
--				UART_XMIT_SIZE, DMA_TO_DEVICE);
--
--	if (dma_mapping_error(sport->dma_tx_chan->device->dev, dma_bus)) {
--		dev_err(sport->port.dev, "dma_map_single tx failed\n");
--		return -ENOMEM;
--	}
--
--	dma_buf = sport->port.state->xmit.buf;
--	dma_tx_sconfig.dst_addr = sport->port.mapbase + UARTDR;
--	dma_tx_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
--	dma_tx_sconfig.dst_maxburst = sport->txfifo_size;
--	dma_tx_sconfig.direction = DMA_MEM_TO_DEV;
--	ret = dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);
--
--	if (ret < 0) {
--		dev_err(sport->port.dev,
--				"Dma slave config failed, err = %d\n", ret);
--		return ret;
--	}
--
--	sport->dma_tx_buf_virt = dma_buf;
--	sport->dma_tx_buf_bus = dma_bus;
--	sport->dma_tx_in_progress = 0;
--
--	return 0;
--}
--
- static void rx_dma_timer_init(struct lpuart_port *sport)
- {
- 		setup_timer(&sport->lpuart_timer, lpuart_timer_func,
-@@ -1151,6 +1112,7 @@ static int lpuart_startup(struct uart_port *port)
- 	}
- 
- 	if (sport->dma_tx_chan && !lpuart_dma_tx_request(port)) {
-+		init_waitqueue_head(&sport->dma_wait);
- 		sport->lpuart_dma_tx_use = true;
- 		temp = readb(port->membase + UARTCR5);
- 		writeb(temp | UARTCR5_TDMAS, port->membase + UARTCR5);
-@@ -1220,8 +1182,15 @@ static void lpuart_shutdown(struct uart_port *port)
- 		lpuart_dma_rx_free(&sport->port);
- 	}
- 
--	if (sport->lpuart_dma_tx_use)
--		lpuart_dma_tx_free(&sport->port);
-+	if (sport->lpuart_dma_tx_use) {
-+		if (wait_event_interruptible(sport->dma_wait,
-+			!sport->dma_tx_in_progress) != false) {
-+			sport->dma_tx_in_progress = false;
-+			dmaengine_terminate_all(sport->dma_tx_chan);
-+		}
++/* Audio codec related registers */
++#define AC100_CHIP_AUDIO_RST		0x00
++#define AC100_PLL_CTRL1			0x01
++#define AC100_PLL_CTRL2			0x02
++#define AC100_SYSCLK_CTRL		0x03
++#define AC100_MOD_CLK_ENA		0x04
++#define AC100_MOD_RST_CTRL		0x05
++#define AC100_I2S_SR_CTRL		0x06
 +
-+		lpuart_stop_tx(port);
-+	}
- }
- 
- static void lpuart32_shutdown(struct uart_port *port)
++/* I2S1 interface */
++#define AC100_I2S1_CLK_CTRL		0x10
++#define AC100_I2S1_SND_OUT_CTRL		0x11
++#define AC100_I2S1_SND_IN_CTRL		0x12
++#define AC100_I2S1_MXR_SRC		0x13
++#define AC100_I2S1_VOL_CTRL1		0x14
++#define AC100_I2S1_VOL_CTRL2		0x15
++#define AC100_I2S1_VOL_CTRL3		0x16
++#define AC100_I2S1_VOL_CTRL4		0x17
++#define AC100_I2S1_MXR_GAIN		0x18
++
++/* I2S2 interface */
++#define AC100_I2S2_CLK_CTRL		0x20
++#define AC100_I2S2_SND_OUT_CTRL		0x21
++#define AC100_I2S2_SND_IN_CTRL		0x22
++#define AC100_I2S2_MXR_SRC		0x23
++#define AC100_I2S2_VOL_CTRL1		0x24
++#define AC100_I2S2_VOL_CTRL2		0x25
++#define AC100_I2S2_VOL_CTRL3		0x26
++#define AC100_I2S2_VOL_CTRL4		0x27
++#define AC100_I2S2_MXR_GAIN		0x28
++
++/* I2S3 interface */
++#define AC100_I2S3_CLK_CTRL		0x30
++#define AC100_I2S3_SND_OUT_CTRL		0x31
++#define AC100_I2S3_SND_IN_CTRL		0x32
++#define AC100_I2S3_SIG_PATH_CTRL	0x33
++
++/* ADC digital controls */
++#define AC100_ADC_DIG_CTRL		0x40
++#define AC100_ADC_VOL_CTRL		0x41
++
++/* HMIC plug sensing / key detection */
++#define AC100_HMIC_CTRL1		0x44
++#define AC100_HMIC_CTRL2		0x45
++#define AC100_HMIC_STATUS		0x46
++
++/* DAC digital controls */
++#define AC100_DAC_DIG_CTRL		0x48
++#define AC100_DAC_VOL_CTRL		0x49
++#define AC100_DAC_MXR_SRC		0x4c
++#define AC100_DAC_MXR_GAIN		0x4d
++
++/* Analog controls */
++#define AC100_ADC_APC_CTRL		0x50
++#define AC100_ADC_SRC			0x51
++#define AC100_ADC_SRC_BST_CTRL		0x52
++#define AC100_OUT_MXR_DAC_A_CTRL	0x53
++#define AC100_OUT_MXR_SRC		0x54
++#define AC100_OUT_MXR_SRC_BST		0x55
++#define AC100_HPOUT_CTRL		0x56
++#define AC100_ERPOUT_CTRL		0x57
++#define AC100_SPKOUT_CTRL		0x58
++#define AC100_LINEOUT_CTRL		0x59
++
++/* ADC digital audio processing (high pass filter & auto gain control */
++#define AC100_ADC_DAP_L_STA		0x80
++#define AC100_ADC_DAP_R_STA		0x81
++#define AC100_ADC_DAP_L_CTRL		0x82
++#define AC100_ADC_DAP_R_CTRL		0x83
++#define AC100_ADC_DAP_L_T_L		0x84 /* Left Target Level */
++#define AC100_ADC_DAP_R_T_L		0x85 /* Right Target Level */
++#define AC100_ADC_DAP_L_H_A_C		0x86 /* Left High Avg. Coef */
++#define AC100_ADC_DAP_L_L_A_C		0x87 /* Left Low Avg. Coef */
++#define AC100_ADC_DAP_R_H_A_C		0x88 /* Right High Avg. Coef */
++#define AC100_ADC_DAP_R_L_A_C		0x89 /* Right Low Avg. Coef */
++#define AC100_ADC_DAP_L_D_T		0x8a /* Left Decay Time */
++#define AC100_ADC_DAP_L_A_T		0x8b /* Left Attack Time */
++#define AC100_ADC_DAP_R_D_T		0x8c /* Right Decay Time */
++#define AC100_ADC_DAP_R_A_T		0x8d /* Right Attack Time */
++#define AC100_ADC_DAP_N_TH		0x8e /* Noise Threshold */
++#define AC100_ADC_DAP_L_H_N_A_C		0x8f /* Left High Noise Avg. Coef */
++#define AC100_ADC_DAP_L_L_N_A_C		0x90 /* Left Low Noise Avg. Coef */
++#define AC100_ADC_DAP_R_H_N_A_C		0x91 /* Right High Noise Avg. Coef */
++#define AC100_ADC_DAP_R_L_N_A_C		0x92 /* Right Low Noise Avg. Coef */
++#define AC100_ADC_DAP_H_HPF_C		0x93 /* High High-Pass-Filter Coef */
++#define AC100_ADC_DAP_L_HPF_C		0x94 /* Low High-Pass-Filter Coef */
++#define AC100_ADC_DAP_OPT		0x95 /* AGC Optimum */
++
++/* DAC digital audio processing (high pass filter & dynamic range control) */
++#define AC100_DAC_DAP_CTRL		0xa0
++#define AC100_DAC_DAP_H_HPF_C		0xa1 /* High High-Pass-Filter Coef */
++#define AC100_DAC_DAP_L_HPF_C		0xa2 /* Low High-Pass-Filter Coef */
++#define AC100_DAC_DAP_L_H_E_A_C		0xa3 /* Left High Energy Avg Coef */
++#define AC100_DAC_DAP_L_L_E_A_C		0xa4 /* Left Low Energy Avg Coef */
++#define AC100_DAC_DAP_R_H_E_A_C		0xa5 /* Right High Energy Avg Coef */
++#define AC100_DAC_DAP_R_L_E_A_C		0xa6 /* Right Low Energy Avg Coef */
++#define AC100_DAC_DAP_H_G_D_T_C		0xa7 /* High Gain Delay Time Coef */
++#define AC100_DAC_DAP_L_G_D_T_C		0xa8 /* Low Gain Delay Time Coef */
++#define AC100_DAC_DAP_H_G_A_T_C		0xa9 /* High Gain Attack Time Coef */
++#define AC100_DAC_DAP_L_G_A_T_C		0xaa /* Low Gain Attack Time Coef */
++#define AC100_DAC_DAP_H_E_TH		0xab /* High Energy Threshold */
++#define AC100_DAC_DAP_L_E_TH		0xac /* Low Energy Threshold */
++#define AC100_DAC_DAP_H_G_K		0xad /* High Gain K parameter */
++#define AC100_DAC_DAP_L_G_K		0xae /* Low Gain K parameter */
++#define AC100_DAC_DAP_H_G_OFF		0xaf /* High Gain offset */
++#define AC100_DAC_DAP_L_G_OFF		0xb0 /* Low Gain offset */
++#define AC100_DAC_DAP_OPT		0xb1 /* DRC optimum */
++
++/* Digital audio processing enable */
++#define AC100_ADC_DAP_ENA		0xb4
++#define AC100_DAC_DAP_ENA		0xb5
++
++/* SRC control */
++#define AC100_SRC1_CTRL1		0xb8
++#define AC100_SRC1_CTRL2		0xb9
++#define AC100_SRC1_CTRL3		0xba
++#define AC100_SRC1_CTRL4		0xbb
++#define AC100_SRC2_CTRL1		0xbc
++#define AC100_SRC2_CTRL2		0xbd
++#define AC100_SRC2_CTRL3		0xbe
++#define AC100_SRC2_CTRL4		0xbf
++
++/* RTC clk control */
++#define AC100_CLK32K_ANALOG_CTRL	0xc0
++#define AC100_CLK32K_OUT_CTRL1		0xc1
++#define AC100_CLK32K_OUT_CTRL2		0xc2
++#define AC100_CLK32K_OUT_CTRL3		0xc3
++
++/* RTC module */
++#define AC100_RTC_RST			0xc6
++#define AC100_RTC_CTRL			0xc7
++#define AC100_RTC_SEC			0xc8 /* second */
++#define AC100_RTC_MIN			0xc9 /* minute */
++#define AC100_RTC_HOU			0xca /* hour */
++#define AC100_RTC_WEE			0xcb /* weekday */
++#define AC100_RTC_DAY			0xcc /* day */
++#define AC100_RTC_MON			0xcd /* month */
++#define AC100_RTC_YEA			0xce /* year */
++#define AC100_RTC_UPD			0xcf /* update trigger */
++
++/* RTC alarm */
++#define AC100_ALM_INT_ENA		0xd0
++#define	AC100_ALM_INT_STA		0xd1
++#define AC100_ALM_SEC			0xd8
++#define AC100_ALM_MIN			0xd9
++#define AC100_ALM_HOU			0xda
++#define AC100_ALM_WEE			0xdb
++#define AC100_ALM_DAY			0xdc
++#define AC100_ALM_MON			0xdd
++#define AC100_ALM_YEA			0xde
++#define AC100_ALM_UPD			0xdf
++
++/* RTC general purpose register 0 ~ 15 */
++#define AC100_RTC_GP(x)			(0xe0 + (x))
++
++#endif /* __LINUX_MFD_AC100_H */
 -- 
-2.8.3
+2.8.1
