@@ -1,85 +1,187 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 28 Jun 2016 13:52:16 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
-	Josef Gajdusek <atx@atx.name>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 01/14] ARM: clk: sunxi: Add driver for the H3 THS clock
-Message-ID: <20160628115216.GF5550@lukather>
-References: <20160625034511.7966-1-megous@megous.com>
- <20160625034511.7966-2-megous@megous.com>
- <20160625071338.GC4000@lukather>
- <6a37450f-35fe-3296-da4b-10f7d645e2b9@megous.com>
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH 2/5] clk: Combine DT binding doc for max77686 and max77802
+Date: Wed, 15 Jun 2016 19:43:35 +0530
+Message-ID: <1466000018-16784-3-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5CUMAwwhRxlRszMD"
-In-Reply-To: <6a37450f-35fe-3296-da4b-10f7d645e2b9@megous.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+The clock driver for Maxim PMICs max77686 and max77802 are
+combined into single file to extend the support for same clock
+IP for different PMICs.
 
---5CUMAwwhRxlRszMD
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove the separate DT binding document file for maxim,max77802 and
+move all information to maxim,max77686 DT binding document.
 
-Hi,
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+---
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 78 ++++++++++++++++------
+ .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ------------
+ 2 files changed, 58 insertions(+), 64 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
 
-On Sat, Jun 25, 2016 at 05:23:12PM +0200, Ond=C5=99ej Jirman wrote:
-> Hi Maxime,
->=20
-> I try to base everything on the torvalds's kernel.
->=20
-> I did notice the patches. Is there some main git tree/branch where this
-> work is tracked in? I'd gladly use it.
-
-I just pushed it, branch sunxi/pen/clk-rework, on my github repo:
-https://github.com/mripard/linux
-
-> Also there's a PLL1 rate application patch, that would need to be ported
-> to the new CCU code, in the case I would use it as a base for this work.
-> Given that the new CCU code is your work and it's fresh in your mind, do
-> you have suggestion how to approach it?
->=20
-> It is [PATCH v2 06/14] in this series.
-
-Yes, it's still in my queue of things to review, let's discuss this on
-this patch thread.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---5CUMAwwhRxlRszMD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXcmTwAAoJEBx+YmzsjxAguPYQAKtoPbrkHdAmkUsLsRQqJg0H
-+hB7Ga0FWtCus+vgiRTVRAO9dboXz/MiCHr2kC3pLSuK2/T4jk9tufPrDy4ynUc+
-AFllBgCxfenK5oE18yhY0ZLBOeJRzhBT9GuuYIGMF1x8ps3Kx3HqAqn+OVWnZjVM
-pgV9Fm/jSt+VWQ+SfSqbDj4p8jtLwIDfcGgRGBQ5z3momDCNKsXyC5CJGOwznV/s
-+OPsmaFwxtdDIq9RqSjzBjunFxP03Y0E7veCB9iUaSYbKEBhG4+ZEbDkapDslA0r
-cg93cfAgRdQaPyxjzH4PccHLqASIdpBBmdS45JTN9ciB1+lG2i0f6u5kCYel+FZI
-31RY/07kFZab7E32kFDc7fOTz+S59e4RjQk0Mmp5wMyh1n0Y/ccyRyywGvHoRDQx
-r8mGuPX2IsJSLww95u/zC64aukB4TsTz2+WjPKWE2w1B8HK1KnYq32s2eXAwqYaa
-6OZkPmaPjZb3SlTUWAubJN0a4zUOP46HoTtpKtX59Cy4Flp26TZck/IDRiz5s5J5
-cgIs5iyKIEMGOqOEZmWnLxtKJIfbr7hB+IR7XVJr0mmHpUSO52RcpY39Q508HtYj
-Er53IW1r5v43hyGTa4NTglvR7xblio+CsgAa/BVbQgaOaM3Gau1+9SMkPuP4smkn
-BqmHUfDcB96uyLRj9JUU
-=95dk
------END PGP SIGNATURE-----
-
---5CUMAwwhRxlRszMD--
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+index 9c40739..354e5ab 100644
+--- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
++++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+@@ -1,11 +1,15 @@
+-Binding for Maxim MAX77686 32k clock generator block
++Binding for Maxim MAX77686/MAX77802 32k clock generator block
+ 
+-This is a part of device tree bindings of MAX77686 multi-function device.
+-More information can be found in bindings/mfd/max77686.txt file.
++This is a part of device tree bindings of MAX77686/MAX77802 multi-function
++device. More information can be found in bindings/mfd/max77686.txt file for
++MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+ 
+ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+ (gated/ungated) over I2C.
+ 
++The MAX77802 contains two 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C.
++
+ Following properties should be presend in main device node of the MFD chip.
+ 
+ Required properties:
+@@ -21,26 +25,60 @@ to specify the clock which they consume. Following indices are allowed:
+     - 1: 32khz_cp clock,
+     - 2: 32khz_pmic clock.
+ 
++For MAX77802, 32khz_pmic is not valid.
++
+ Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
+-header and can be used in device tree sources.
++header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
++be used in device tree sources.
++
++Example:
++
++1. With MAX77686:
++
++#include <dt-bindings/clock/maxim,max77686.h>
++:::
++
++	Node of the MFD chip
++		max77686: max77686@09 {
++			compatible = "maxim,max77686";
++			interrupt-parent = <&wakeup_eint>;
++			interrupts = <26 0>;
++			reg = <0x09>;
++			#clock-cells = <1>;
++
++			/* ... */
++		};
++
++	Clock consumer node
++
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77686 MAX77686_CLK_PMIC>;
++		};
++
++2. With MAX77802:
+ 
+-Example: Node of the MFD chip
++#include <dt-bindings/clock/maxim,max77802.h>
++:::
+ 
+-	max77686: max77686@09 {
+-		compatible = "maxim,max77686";
+-		interrupt-parent = <&wakeup_eint>;
+-		interrupts = <26 0>;
+-		reg = <0x09>;
+-		#clock-cells = <1>;
++	Node of the MFD chip
++		max77802: max77802@09 {
++			compatible = "maxim,max77802";
++			interrupt-parent = <&wakeup_eint>;
++			interrupts = <26 0>;
++			reg = <0x09>;
++			#clock-cells = <1>;
+ 
+-		/* ... */
+-	};
++			/* ... */
++		};
+ 
+-Example: Clock consumer node
++	Clock consumer node
+ 
+-	foo@0 {
+-		compatible = "bar,foo";
+-		/* ... */
+-		clock-names = "my-clock";
+-		clocks = <&max77686 MAX77686_CLK_PMIC>;
+-	};
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77802 MAX77802_CLK_32K_AP>;
++		};
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
+deleted file mode 100644
+index c6dc783..0000000
+--- a/Documentation/devicetree/bindings/clock/maxim,max77802.txt
++++ /dev/null
+@@ -1,44 +0,0 @@
+-Binding for Maxim MAX77802 32k clock generator block
+-
+-This is a part of device tree bindings of MAX77802 multi-function device.
+-More information can be found in bindings/mfd/max77802.txt file.
+-
+-The MAX77802 contains two 32.768khz clock outputs that can be controlled
+-(gated/ungated) over I2C.
+-
+-Following properties should be present in main device node of the MFD chip.
+-
+-Required properties:
+-- #clock-cells: From common clock binding; shall be set to 1.
+-
+-Optional properties:
+-- clock-output-names: From common clock binding.
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. Following indices are allowed:
+-     - 0: 32khz_ap clock,
+-     - 1: 32khz_cp clock.
+-
+-Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
+-header and can be used in device tree sources.
+-
+-Example: Node of the MFD chip
+-
+-	max77802: max77802@09 {
+-		compatible = "maxim,max77802";
+-		interrupt-parent = <&wakeup_eint>;
+-		interrupts = <26 0>;
+-		reg = <0x09>;
+-		#clock-cells = <1>;
+-
+-		/* ... */
+-	};
+-
+-Example: Clock consumer node
+-
+-	foo@0 {
+-		compatible = "bar,foo";
+-		/* ... */
+-		clock-names = "my-clock";
+-		clocks = <&max77802 MAX77802_CLK_32K_AP>;
+-	};
+-- 
+2.1.4
