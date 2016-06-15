@@ -1,64 +1,44 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [PATCH v2 10/13] ARM: DT: STiH410: Enable synchronous clock mode for video clocks
-Date: Mon,  6 Jun 2016 11:26:29 +0200
-Message-Id: <1465205192-7888-11-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi: remove unused variable
+Date: Wed, 15 Jun 2016 17:55:23 +0200
+Message-Id: <20160615155537.3342366-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the synchronous clock mode for video clocks
-on STiH410 board.
+The only use of the local num_parents variable was remove,
+so we now get a warning:
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+drivers/clk/sunxi/clk-sun4i-tcon-ch1.c: In function 'tcon_ch1_get_parent':
+drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: error: unused variable 'num_parents' [-Werror=unused-variable]
+
+This removes the variable.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 4de2d58bc973 ("clk: sunxi: tcon-ch1: Do not return a negative error in get_parent")
 ---
- arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi/clk-sun4i-tcon-ch1.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
-index 5a9a487..f1d56ba 100644
---- a/arch/arm/boot/dts/stih410-clock.dtsi
-+++ b/arch/arm/boot/dts/stih410-clock.dtsi
-@@ -268,7 +268,7 @@
+diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+index 248585238b1c..b6d29d1bedca 100644
+--- a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
++++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+@@ -79,7 +79,6 @@ static int tcon_ch1_is_enabled(struct clk_hw *hw)
+ static u8 tcon_ch1_get_parent(struct clk_hw *hw)
+ {
+ 	struct tcon_ch1_clk *tclk = hw_to_tclk(hw);
+-	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 reg;
  
- 			clk_s_d2_flexgen: clk-s-d2-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-video", "st,flexgen";
- 
- 				clocks = <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>,
+ 	reg = readl(tclk->reg) >> TCON_CH1_SCLK2_MUX_SHIFT;
 -- 
-1.9.1
+2.9.0
