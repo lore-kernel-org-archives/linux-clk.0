@@ -1,219 +1,66 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
-	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
-	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
-Subject: [PATCH RFC 1/7] clk: add prepare_hw and prepare_done support
-Date: Wed, 29 Jun 2016 21:52:09 +0800
-Message-ID: <1467208335-29876-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Kevin Hilman <khilman@baylibre.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <m260tbsigp.fsf@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ carlo@endlessm.com, victor.wan@amlogic.com, jerry.cao@amlogic.com,
+ xing.xu@amlogic.com
+References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
+ <1465518774-26924-8-git-send-email-mturquette@baylibre.com>
+ <m260tbsigp.fsf@baylibre.com>
+Message-ID: <20160615014148.5467.29763@quark.deferred.io>
+Subject: Re: [PATCH 7/7] arm64: dts: gxbb clock controller
+Date: Tue, 14 Jun 2016 18:41:48 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce prepare_hw and prepare_done to support calling
-clk_prepare_enable in early kernel booting where we still
-can't schedule.
+Quoting Kevin Hilman (2016-06-14 12:01:26)
+> Michael Turquette <mturquette@baylibre.com> writes:
+> =
 
-The prepare_hw callback is intended to do the hw part
-initialization of prepare work. It should cooperate with
-prepare_done callback to do the whole prepare work.
-The clock core will check @prepare_done in sleep or
-polling way according to system state to decide whether the
-whole prepare work is done.
+> > Add the clock controller node for the AmLogic GXBB machine.
+> >
+> > Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+> > ---
+> >  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/b=
+oot/dts/amlogic/meson-gxbb.dtsi
+> > index 832815d..3badfab 100644
+> > --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> > @@ -174,5 +174,12 @@
+> >                       #size-cells =3D <2>;
+> >                       ranges =3D <0x0 0x0 0x0 0xd0000000 0x0 0x200000>;
+> >               };
+> > +
+> > +             clkc: clock-controller@c883c000 {
+> > +                     compatible =3D "amlogic,gxbb-clkc";
+> > +                     #clock-cells =3D <1>;
+> > +                     reg =3D <0x0 0xc883c000 0x0 0x3db>;
+> > +             };
+> > +
+> >       };
+> >  };
+> =
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk.c            | 57 ++++++++++++++++++++++++++++++++++++++++++--
- include/linux/clk-provider.h | 32 +++++++++++++++++++++++++
- 2 files changed, 87 insertions(+), 2 deletions(-)
+> minor nit: could you put this under the (recently added) hibus node (at
+> offset 0).  See the DT in my for-next branch for reference:
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d584004f7af7..7dcb34c75a9f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -12,6 +12,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clk/clk-conf.h>
-+#include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
-@@ -60,6 +61,8 @@ struct clk_core {
- 	bool			orphan;
- 	unsigned int		enable_count;
- 	unsigned int		prepare_count;
-+	unsigned long		delay_min;
-+	unsigned long		delay_max;
- 	unsigned long		min_rate;
- 	unsigned long		max_rate;
- 	unsigned long		accuracy;
-@@ -566,6 +569,8 @@ EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
- 
- static void clk_core_unprepare(struct clk_core *core)
- {
-+	unsigned long timeout;
-+
- 	lockdep_assert_held(&prepare_lock);
- 
- 	if (!core)
-@@ -584,8 +589,30 @@ static void clk_core_unprepare(struct clk_core *core)
- 
- 	trace_clk_unprepare(core);
- 
--	if (core->ops->unprepare)
-+	if (core->ops->unprepare) {
- 		core->ops->unprepare(core->hw);
-+	} else if (core->ops->unprepare_hw) {
-+		core->ops->unprepare_hw(core->hw);
-+		if (core->ops->unprepare_done) {
-+			timeout = jiffies + msecs_to_jiffies(10);
-+			while (!core->ops->unprepare_done(core->hw)) {
-+				if (time_after(jiffies, timeout)) {
-+					pr_err("%s: clock %s unprepare timeout\n",
-+						__func__, core->name);
-+					break;
-+				}
-+				if (system_state == SYSTEM_BOOTING)
-+					/*
-+					 * Busy loop as we can't schedule in
-+					 * early boot
-+					 */
-+					continue;
-+				else
-+					usleep_range(core->delay_min,
-+						     core->delay_max);
-+			}
-+		}
-+	}
- 
- 	trace_clk_unprepare_complete(core);
- 	clk_core_unprepare(core->parent);
-@@ -615,6 +642,7 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
- 
- static int clk_core_prepare(struct clk_core *core)
- {
-+	unsigned long timeout;
- 	int ret = 0;
- 
- 	lockdep_assert_held(&prepare_lock);
-@@ -629,8 +657,31 @@ static int clk_core_prepare(struct clk_core *core)
- 
- 		trace_clk_prepare(core);
- 
--		if (core->ops->prepare)
-+		if (core->ops->prepare) {
- 			ret = core->ops->prepare(core->hw);
-+		} else if (core->ops->prepare_hw) {
-+			ret = core->ops->prepare_hw(core->hw);
-+			if (!ret && core->ops->prepare_done) {
-+				timeout = jiffies + msecs_to_jiffies(10);
-+				while (!core->ops->prepare_done(core->hw)) {
-+					if (time_after(jiffies, timeout)) {
-+						pr_err("%s: clock %s prepare timeout\n",
-+							__func__, core->name);
-+						ret = -ETIMEDOUT;
-+						break;
-+					}
-+					if (system_state == SYSTEM_BOOTING)
-+						/*
-+						 * Busy loop as we can't
-+						 * schedule in early boot
-+						 */
-+						continue;
-+					else
-+						usleep_range(core->delay_min,
-+							     core->delay_max);
-+				}
-+			}
-+		}
- 
- 		trace_clk_prepare_complete(core);
- 
-@@ -2490,6 +2541,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 	core->hw = hw;
- 	core->flags = hw->init->flags;
- 	core->num_parents = hw->init->num_parents;
-+	core->delay_min = hw->init->delay_min;
-+	core->delay_max = hw->init->delay_max;
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
- 	hw->core = core;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index fb39d5add173..b37174360f1c 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -72,10 +72,34 @@ struct clk_rate_request {
-  *		do any initialisation that may sleep. Called with
-  *		prepare_lock held.
-  *
-+ * @prepare_hw:	Prepare the clock hw for enabling. This callback is intended
-+ *		to do the hw part initialization of prepare work. It should
-+ *		cooperate with @prepare_done callback to do the whole prepare
-+ *		work. The clock core will check @prepare_done in sleep or
-+ *		polling way according to system state to decide whether the
-+ *		whole prepare work is done. Optional if @prepare is used.
-+ *		This function must not sleep.
-+ *
-+ * @prepare_done: Queries the hardware to determine if the clock hw is prepared.
-+ *		Optional, if this op is not set then the prepare simply return.
-+ *		This function must not sleep.
-+ *
-  * @unprepare:	Release the clock from its prepared state. This will typically
-  *		undo any work done in the @prepare callback. Called with
-  *		prepare_lock held.
-  *
-+ * @unprepare_hw: Release the clock from its prepared hw state. This will
-+ *		typically undo any work done in the @prepare_hw callback.
-+ *		It should cooperate with @unprepare_done callback to
-+ *		do the whole unprepare work. The clock core will check
-+ *		@unprepare_done in either sleep or polling way according to
-+ *		system state to decide whether the whole unprepare work is done.
-+ *		Optional if @prepare is used. This function must not sleep.
-+ *
-+ * @unprepare_done: Queries the hardware to determine if the clock hw
-+ *		is unprepared. Optional, if this op is not set then the
-+ *		unprepare simply return. This function must not sleep.
-+ *
-  * @is_prepared: Queries the hardware to determine if the clock is prepared.
-  *		This function is allowed to sleep. Optional, if this op is not
-  *		set then the prepare count will be used.
-@@ -189,7 +213,11 @@ struct clk_rate_request {
-  */
- struct clk_ops {
- 	int		(*prepare)(struct clk_hw *hw);
-+	int		(*prepare_hw)(struct clk_hw *hw);
-+	int		(*prepare_done)(struct clk_hw *hw);
- 	void		(*unprepare)(struct clk_hw *hw);
-+	void		(*unprepare_hw)(struct clk_hw *hw);
-+	int		(*unprepare_done)(struct clk_hw *hw);
- 	int		(*is_prepared)(struct clk_hw *hw);
- 	void		(*unprepare_unused)(struct clk_hw *hw);
- 	int		(*enable)(struct clk_hw *hw);
-@@ -226,6 +254,8 @@ struct clk_ops {
-  * @parent_names: array of string names for all possible parents
-  * @num_parents: number of possible parents
-  * @flags: framework-level hints and quirks
-+ * @delay_min: min delays in us for clock hw prepare
-+ * @delay_max: max delays in us for clock hw prepare
-  */
- struct clk_init_data {
- 	const char		*name;
-@@ -233,6 +263,8 @@ struct clk_init_data {
- 	const char		* const *parent_names;
- 	u8			num_parents;
- 	unsigned long		flags;
-+	unsigned int		delay_min;
-+	unsigned int		delay_max;
- };
- 
- /**
--- 
-1.9.1
+Ah, I had wondered about that. Will do.
+
+Thanks for reviewing,
+Mike
+
+> =
+
+> https://git.kernel.org/cgit/linux/kernel/git/khilman/linux-amlogic.git/lo=
+g/?h=3Dfor-next
+> =
+
+> Thanks,
+> =
+
+> Kevin
