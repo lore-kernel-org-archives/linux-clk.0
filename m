@@ -1,85 +1,56 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] clk: rockchip: rk3228: fix incorrect clock node names
-Date: Tue, 21 Jun 2016 12:53:27 +0800
-Message-Id: <1466484811-26923-2-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
-References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH v2 4/5] clk: hisilicon: add hisi_clk_unregister_* functions
+Date: Wed, 15 Jun 2016 14:26:37 +0800
+Message-ID: <1465971998-29619-5-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Due to copy and paste carelessly, RK3288_CLKxxx nodes are incorrect,
-we need to fix them.
+Add hisi_clk_unregister_* functions.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
+ drivers/clk/hisilicon/clk.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
- drivers/clk/rockchip/clk-rk3228.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 016bdb0..2f1442f 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -335,7 +335,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
- 
- 	GATE(0, "sclk_hsadc", "ext_hsadc", 0,
--			RK3288_CLKGATE_CON(10), 12, GFLAGS),
-+			RK2928_CLKGATE_CON(10), 12, GFLAGS),
- 
- 	COMPOSITE(0, "sclk_wifi", mux_pll_src_cpll_gpll_usb480m_p, 0,
- 			RK2928_CLKSEL_CON(23), 5, 2, MFLAGS, 0, 6, DFLAGS,
-@@ -380,8 +380,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(9), 15, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 3, GFLAGS),
- 	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_src", CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(8), 0,
--			RK3288_CLKGATE_CON(0), 4, GFLAGS),
-+			RK2928_CLKSEL_CON(8), 0,
-+			RK2928_CLKGATE_CON(0), 4, GFLAGS),
- 	COMPOSITE_NODIV(SCLK_I2S0, "sclk_i2s0", mux_i2s0_p, 0,
- 			RK2928_CLKSEL_CON(9), 8, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(0), 5, GFLAGS),
-@@ -390,8 +390,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(3), 15, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 10, GFLAGS),
- 	COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_src", CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(7), 0,
--			RK3288_CLKGATE_CON(0), 11, GFLAGS),
-+			RK2928_CLKSEL_CON(7), 0,
-+			RK2928_CLKGATE_CON(0), 11, GFLAGS,
- 	MUX(0, "i2s1_pre", mux_i2s1_pre_p, 0,
- 			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
- 	GATE(SCLK_I2S1, "sclk_i2s1", "i2s1_pre", 0,
-@@ -404,8 +404,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(16), 15, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 7, GFLAGS),
- 	COMPOSITE_FRAC(0, "i2s2_frac", "i2s2_src", CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(30), 0,
--			RK3288_CLKGATE_CON(0), 8, GFLAGS),
-+			RK2928_CLKSEL_CON(30), 0,
-+			RK2928_CLKGATE_CON(0), 8, GFLAGS),
- 	COMPOSITE_NODIV(SCLK_I2S2, "sclk_i2s2", mux_i2s2_p, 0,
- 			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
-@@ -414,8 +414,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(6), 15, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
- 	COMPOSITE_FRAC(0, "spdif_frac", "sclk_spdif_src", CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(20), 0,
--			RK3288_CLKGATE_CON(2), 12, GFLAGS),
-+			RK2928_CLKSEL_CON(20), 0,
-+			RK2928_CLKGATE_CON(2), 12, GFLAGS),
- 	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, 0,
- 			RK2928_CLKSEL_CON(6), 8, 2, MFLAGS),
- 
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 2575329..4e1d1af 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -128,4 +128,25 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+ void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
+ 				int, struct hisi_clock_data *);
++
++#define hisi_clk_unregister(type) \
++static inline \
++void hisi_clk_unregister_##type(const struct hisi_##type##_clock *clks, \
++				int nums, struct hisi_clock_data *data) \
++{ \
++	struct clk **clocks = data->clk_data.clks; \
++	int i; \
++	for (i = 0; i < nums; i++) { \
++		int id = clks[i].id; \
++		if (clocks[id])  \
++			clk_unregister_##type(clocks[id]); \
++	} \
++}
++
++hisi_clk_unregister(fixed_rate)
++hisi_clk_unregister(fixed_factor)
++hisi_clk_unregister(mux)
++hisi_clk_unregister(divider)
++hisi_clk_unregister(gate)
++
+ #endif	/* __HISI_CLK_H */
 -- 
-1.7.9.5
+1.9.1
