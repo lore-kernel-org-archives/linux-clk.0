@@ -1,63 +1,86 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem
- to Exynos5410
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
- <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
-Date: Wed, 1 Jun 2016 11:16:58 -0400
-MIME-Version: 1.0
-In-Reply-To: <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 08/10] ARM: dts: sun9i: cubieboard4: Order nodes by alphabetical order
+Date: Wed, 15 Jun 2016 18:27:45 +0800
+Message-Id: <1465986467-14802-9-git-send-email-wens@csie.org>
+In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Move the &pio node below the mmc nodes for proper ordering by name.
 
-On 06/01/2016 05:45 AM, Krzysztof Kozlowski wrote:
-> Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
-> shared with Exynos5410 and configure the clocks on the latter.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 32 ++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-[snip]
-
->  
-> +&sss {
-> +	clocks = <&clock CLK_SSS>;
-> +	clock-names = "secss";
-> +};
-> +
-
-[snip]
-
->  
-> +&watchdog {
-> +	clocks = <&clock CLK_WDT>;
-> +	clock-names = "watchdog";
-> +	samsung,syscon-phandle = <&pmu_system_controller>;
-> +};
-> +
-
-Since you used the same ID than Exynos5420 for the SSS and WDT clocks,
-I wonder if the clock and clock-names shouldn't be just defined in the
-shared exynos54xx.dtsi as is the case for the interrupts that are also
-the same?
-
-The patch looks good to me though, so whatever you decide:
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+index a92eeea1b222..65f4f32f89ad 100644
+--- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
++++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+@@ -78,22 +78,6 @@
+ 	};
+ };
+ 
+-&pio {
+-	led_pins_cubieboard4: led-pins@0 {
+-		allwinner,pins = "PH6", "PH17";
+-		allwinner,function = "gpio_out";
+-		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+-		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+-	};
+-
+-	mmc0_cd_pin_cubieboard4: mmc0_cd_pin@0 {
+-		allwinner,pins = "PH18";
+-		allwinner,function = "gpio_in";
+-		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+-		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
+-	};
+-};
+-
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_cubieboard4>;
+@@ -119,6 +103,22 @@
+ 	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
+ };
+ 
++&pio {
++	led_pins_cubieboard4: led-pins@0 {
++		allwinner,pins = "PH6", "PH17";
++		allwinner,function = "gpio_out";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++
++	mmc0_cd_pin_cubieboard4: mmc0_cd_pin@0 {
++		allwinner,pins = "PH18";
++		allwinner,function = "gpio_in";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++	};
++};
++
+ &r_ir {
+ 	status = "okay";
+ };
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.8.1
