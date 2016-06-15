@@ -1,52 +1,66 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 29 Jun 2016 00:54:47 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCHv2 03/28] ARM: OMAP2+: omap_device: create clock
- alias purely from DT data
-Message-ID: <20160629075446.GK28140@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-4-git-send-email-t-kristo@ti.com>
- <20160628070011.GD28140@atomide.com>
- <577373F0.5080700@ti.com>
- <5773745A.6020307@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5773745A.6020307@ti.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 07/10] ARM: dts: sun9i: cubieboard4: Add device node for AC100
+Date: Wed, 15 Jun 2016 18:27:44 +0800
+Message-Id: <1465986467-14802-8-git-send-email-wens@csie.org>
+In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160629 00:13]:
-> On 29/06/16 10:08, Tero Kristo wrote:
-> > On 28/06/16 10:00, Tony Lindgren wrote:
-> > > * Tero Kristo <t-kristo@ti.com> [160613 12:07]:
-> > > > This avoids the need to add most of the clock aliases under
-> > > > drivers/clk/ti/clk-xyz.c files.
-> > > 
-> > > This is a nice improvment, probably best to queu this along
-> > > with the rest of the series via the clock tree:
-> > > 
-> > > Acked-by: Tony Lindgren <tony@atomide.com>
-> > > 
-> > > Or please let me know if you want me to pick this separately.
-> > > 
-> > > Regards,
-> > > 
-> > > Tony
-> > > 
-> > 
-> > Patches #3, #6, #7, #8 you can pick up separately (but you will have
-> > some conflicts due to missing ti_clk_get implementation.) These patches
-> > are required for this series to work properly though.
-> 
-> And patch #9 you can pick up also obviously...
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-OK can you please repost the ones I can pick for v4.8 merge window
-to get them out of the way? There were some merge conflicts against
-Linux next when I tried to apply them for testing yesterday.
-
-Regards,
-
-Tony
+diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+index db770d06c31e..a92eeea1b222 100644
+--- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
++++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+@@ -250,6 +250,27 @@
+ 			};
+ 		};
+ 	};
++
++	ac100: codec@e89 {
++		compatible = "x-powers,ac100";
++		reg = <0xe89>;
++
++		ac100_codec: codec {
++			compatible = "x-powers,ac100-codec";
++			interrupt-parent = <&r_pio>;
++			interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
++		};
++
++		ac100_rtc: rtc {
++			compatible = "x-powers,ac100-rtc";
++			interrupt-parent = <&nmi_intc>;
++			interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++			#clock-cells = <1>;
++			clock-output-names = "cko1_rtc",
++					     "cko2_rtc",
++					     "cko3_rtc";
++		};
++	};
+ };
+ 
+ #include "axp809.dtsi"
+-- 
+2.8.1
