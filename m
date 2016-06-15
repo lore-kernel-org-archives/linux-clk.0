@@ -1,164 +1,62 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH 13/34] clk: clps711x: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:12 -0700
-Message-Id: <20160601231533.9354-14-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 0/5] clk: Combine MAX77686 and MAX77802 driver and extend for MAX77620
+Date: Wed, 15 Jun 2016 19:43:33 +0530
+Message-ID: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+The clock IP used on the Maxim PMICs max77686 and max77802 are
+same. The configuration of clock register is also same except
+the number of clocks.
+    
+Part of common code utilisation, there is 3 files for these chips
+clock driver, one for common and two files for driver registration.
+    
+Combine both drivers into single file and move common code into
+same common file reduces the 2 files and make max77686 and max77802
+clock driver in single fine. This driver does not depends on the
+parent driver structure. The regmap handle is acquired through
+regmap APIs for the register access.
 
-Cc: Alexander Shiyan <shc_work@mail.ru>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
+After comining the driver and DT files, extend the support to MAX77620.
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
 
- drivers/clk/clk-clps711x.c | 78 +++++++++++++++++++++++-----------------------
- 1 file changed, 39 insertions(+), 39 deletions(-)
+This series is based on discussion from the series
+	clk: max77620: Add clock driver for MAX77620/MAX20024
+On this series, it is proposed to combine all files together.
 
-diff --git a/drivers/clk/clk-clps711x.c b/drivers/clk/clk-clps711x.c
-index 1f60b02416a7..9b57050b8f19 100644
---- a/drivers/clk/clk-clps711x.c
-+++ b/drivers/clk/clk-clps711x.c
-@@ -40,9 +40,8 @@ static const struct clk_div_table timer_div_table[] = {
- };
- 
- struct clps711x_clk {
--	struct clk_onecell_data	clk_data;
--	spinlock_t		lock;
--	struct clk		*clks[CLPS711X_CLK_MAX];
-+	spinlock_t			lock;
-+	struct clk_hw_onecell_data	clk_data;
- };
- 
- static struct clps711x_clk * __init _clps711x_clk_init(void __iomem *base,
-@@ -55,7 +54,9 @@ static struct clps711x_clk * __init _clps711x_clk_init(void __iomem *base,
- 	if (!base)
- 		return ERR_PTR(-ENOMEM);
- 
--	clps711x_clk = kzalloc(sizeof(*clps711x_clk), GFP_KERNEL);
-+	clps711x_clk = kzalloc(sizeof(*clps711x_clk) +
-+			sizeof(*clps711x_clk->clk_data.hws) * CLPS711X_CLK_MAX,
-+			GFP_KERNEL);
- 	if (!clps711x_clk)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -106,40 +107,40 @@ static struct clps711x_clk * __init _clps711x_clk_init(void __iomem *base,
- 	tmp |= SYSCON1_TC2M | SYSCON1_TC2S;
- 	writel(tmp, base + CLPS711X_SYSCON1);
- 
--	clps711x_clk->clks[CLPS711X_CLK_DUMMY] =
--		clk_register_fixed_rate(NULL, "dummy", NULL, 0, 0);
--	clps711x_clk->clks[CLPS711X_CLK_CPU] =
--		clk_register_fixed_rate(NULL, "cpu", NULL, 0, f_cpu);
--	clps711x_clk->clks[CLPS711X_CLK_BUS] =
--		clk_register_fixed_rate(NULL, "bus", NULL, 0, f_bus);
--	clps711x_clk->clks[CLPS711X_CLK_PLL] =
--		clk_register_fixed_rate(NULL, "pll", NULL, 0, f_pll);
--	clps711x_clk->clks[CLPS711X_CLK_TIMERREF] =
--		clk_register_fixed_rate(NULL, "timer_ref", NULL, 0, f_tim);
--	clps711x_clk->clks[CLPS711X_CLK_TIMER1] =
--		clk_register_divider_table(NULL, "timer1", "timer_ref", 0,
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_DUMMY] =
-+		clk_hw_register_fixed_rate(NULL, "dummy", NULL, 0, 0);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_CPU] =
-+		clk_hw_register_fixed_rate(NULL, "cpu", NULL, 0, f_cpu);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_BUS] =
-+		clk_hw_register_fixed_rate(NULL, "bus", NULL, 0, f_bus);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_PLL] =
-+		clk_hw_register_fixed_rate(NULL, "pll", NULL, 0, f_pll);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_TIMERREF] =
-+		clk_hw_register_fixed_rate(NULL, "timer_ref", NULL, 0, f_tim);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_TIMER1] =
-+		clk_hw_register_divider_table(NULL, "timer1", "timer_ref", 0,
- 					   base + CLPS711X_SYSCON1, 5, 1, 0,
- 					   timer_div_table, &clps711x_clk->lock);
--	clps711x_clk->clks[CLPS711X_CLK_TIMER2] =
--		clk_register_divider_table(NULL, "timer2", "timer_ref", 0,
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_TIMER2] =
-+		clk_hw_register_divider_table(NULL, "timer2", "timer_ref", 0,
- 					   base + CLPS711X_SYSCON1, 7, 1, 0,
- 					   timer_div_table, &clps711x_clk->lock);
--	clps711x_clk->clks[CLPS711X_CLK_PWM] =
--		clk_register_fixed_rate(NULL, "pwm", NULL, 0, f_pwm);
--	clps711x_clk->clks[CLPS711X_CLK_SPIREF] =
--		clk_register_fixed_rate(NULL, "spi_ref", NULL, 0, f_spi);
--	clps711x_clk->clks[CLPS711X_CLK_SPI] =
--		clk_register_divider_table(NULL, "spi", "spi_ref", 0,
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_PWM] =
-+		clk_hw_register_fixed_rate(NULL, "pwm", NULL, 0, f_pwm);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_SPIREF] =
-+		clk_hw_register_fixed_rate(NULL, "spi_ref", NULL, 0, f_spi);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_SPI] =
-+		clk_hw_register_divider_table(NULL, "spi", "spi_ref", 0,
- 					   base + CLPS711X_SYSCON1, 16, 2, 0,
- 					   spi_div_table, &clps711x_clk->lock);
--	clps711x_clk->clks[CLPS711X_CLK_UART] =
--		clk_register_fixed_factor(NULL, "uart", "bus", 0, 1, 10);
--	clps711x_clk->clks[CLPS711X_CLK_TICK] =
--		clk_register_fixed_rate(NULL, "tick", NULL, 0, 64);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_UART] =
-+		clk_hw_register_fixed_factor(NULL, "uart", "bus", 0, 1, 10);
-+	clps711x_clk->clk_data.hws[CLPS711X_CLK_TICK] =
-+		clk_hw_register_fixed_rate(NULL, "tick", NULL, 0, 64);
- 	for (i = 0; i < CLPS711X_CLK_MAX; i++)
--		if (IS_ERR(clps711x_clk->clks[i]))
-+		if (IS_ERR(clps711x_clk->clk_data.hws[i]))
- 			pr_err("clk %i: register failed with %ld\n",
--			       i, PTR_ERR(clps711x_clk->clks[i]));
-+			       i, PTR_ERR(clps711x_clk->clk_data.hws[i]));
- 
- 	return clps711x_clk;
- }
-@@ -153,17 +154,17 @@ void __init clps711x_clk_init(void __iomem *base)
- 	BUG_ON(IS_ERR(clps711x_clk));
- 
- 	/* Clocksource */
--	clk_register_clkdev(clps711x_clk->clks[CLPS711X_CLK_TIMER1],
-+	clk_hw_register_clkdev(clps711x_clk->clk_data.hws[CLPS711X_CLK_TIMER1],
- 			    NULL, "clps711x-timer.0");
--	clk_register_clkdev(clps711x_clk->clks[CLPS711X_CLK_TIMER2],
-+	clk_hw_register_clkdev(clps711x_clk->clk_data.hws[CLPS711X_CLK_TIMER2],
- 			    NULL, "clps711x-timer.1");
- 
- 	/* Drivers */
--	clk_register_clkdev(clps711x_clk->clks[CLPS711X_CLK_PWM],
-+	clk_hw_register_clkdev(clps711x_clk->clk_data.hws[CLPS711X_CLK_PWM],
- 			    NULL, "clps711x-pwm");
--	clk_register_clkdev(clps711x_clk->clks[CLPS711X_CLK_UART],
-+	clk_hw_register_clkdev(clps711x_clk->clk_data.hws[CLPS711X_CLK_UART],
- 			    NULL, "clps711x-uart.0");
--	clk_register_clkdev(clps711x_clk->clks[CLPS711X_CLK_UART],
-+	clk_hw_register_clkdev(clps711x_clk->clk_data.hws[CLPS711X_CLK_UART],
- 			    NULL, "clps711x-uart.1");
- }
- 
-@@ -179,10 +180,9 @@ static void __init clps711x_clk_init_dt(struct device_node *np)
- 	clps711x_clk = _clps711x_clk_init(base, fref);
- 	BUG_ON(IS_ERR(clps711x_clk));
- 
--	clps711x_clk->clk_data.clks = clps711x_clk->clks;
--	clps711x_clk->clk_data.clk_num = CLPS711X_CLK_MAX;
--	of_clk_add_provider(np, of_clk_src_onecell_get,
--			    &clps711x_clk->clk_data);
-+	clps711x_clk->clk_data.num = CLPS711X_CLK_MAX;
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+			       &clps711x_clk->clk_data);
- }
- CLK_OF_DECLARE(clps711x, "cirrus,clps711x-clk", clps711x_clk_init_dt);
- #endif
+
+Laxman Dewangan (5):
+  clk: max77686: Combine Maxim max77686 and max77802 driver
+  clk: Combine DT binding doc for max77686 and max77802
+  clk: max77686: Add DT binding details for PMIC MAX77620
+  clk: max77686: Add support for MAX77620 clocks
+  ARM: config: Get rid of config COMMON_CLK_MAX77802
+
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 108 +++++++--
+ .../devicetree/bindings/clock/maxim,max77802.txt   |  44 ----
+ arch/arm/configs/exynos_defconfig                  |   1 -
+ arch/arm/configs/multi_v7_defconfig                |   1 -
+ drivers/clk/Kconfig                                |  18 +-
+ drivers/clk/Makefile                               |   2 -
+ drivers/clk/clk-max-gen.c                          | 194 ----------------
+ drivers/clk/clk-max-gen.h                          |  32 ---
+ drivers/clk/clk-max77686.c                         | 257 +++++++++++++++++++--
+ drivers/clk/clk-max77802.c                         |  96 --------
+ include/dt-bindings/mfd/max77620.h                 |   4 +
+ 11 files changed, 335 insertions(+), 422 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ delete mode 100644 drivers/clk/clk-max-gen.c
+ delete mode 100644 drivers/clk/clk-max-gen.h
+ delete mode 100644 drivers/clk/clk-max77802.c
+
 -- 
-2.7.4
+2.1.4
