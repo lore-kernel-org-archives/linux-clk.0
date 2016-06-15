@@ -1,86 +1,102 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
 	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	cw00.choi@samsung.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v2 3/6] clk: rockchip: rk3399: add ddrc clock support
-Date: Mon,  6 Jun 2016 18:13:03 +0800
-Message-Id: <1465207986-17888-4-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
-References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 01/10] regmap: Support bulk writes for devices without raw formatting
+Date: Wed, 15 Jun 2016 18:27:38 +0800
+Message-Id: <1465986467-14802-2-git-send-email-wens@csie.org>
+In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-add ddrc clock setting, so we can do ddr frequency
-scaling on rk3399 platform in future.
+When doing a bulk writes from a device which lacks raw I/O support we
+fall back to doing register at a time reads but we still use the raw
+formatters in order to render the data into the word size used by the
+device (since bulk reads still operate on the device word size rather
+than unsigned ints).  This means that devices without raw formatting
+such as those that provide reg_read() are not supported.  Provide
+handling for them by copying the values read into native endian values
+of the appropriate size.
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+This complements commit d5b98eb12420 ("regmap: Support bulk reads for
+devices without raw formatting").
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ drivers/base/regmap/regmap.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
-Changes in v2:
-- remove clk_ddrc_dpll_src from critical clock list
-
-Changes in v1:
-- remove ddrc source CLK_IGNORE_UNUSED flag
-- move clk_ddrc and clk_ddrc_dpll_src to critical
-
- drivers/clk/rockchip/clk-rk3399.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index f1d8e44..3291b97 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)				= { "clk_core_b_lpll_src",
- 						    "clk_core_b_bpll_src",
- 						    "clk_core_b_dpll_src",
- 						    "clk_core_b_gpll_src" };
-+PNAME(mux_ddrclk_p)				= { "clk_ddrc_lpll_src",
-+						    "clk_ddrc_bpll_src",
-+						    "clk_ddrc_dpll_src",
-+						    "clk_ddrc_gpll_src" };
- PNAME(mux_aclk_cci_p)				= { "cpll_aclk_cci_src",
- 						    "gpll_aclk_cci_src",
- 						    "npll_aclk_cci_src",
-@@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
- 			RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
- 			RK3368_CLKGATE_CON(13), 11, GFLAGS),
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index df2d2ef5d6b3..51fa7d66a393 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1777,8 +1777,6 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 	size_t val_bytes = map->format.val_bytes;
+ 	size_t total_size = val_bytes * val_count;
+ 
+-	if (map->bus && !map->format.parse_inplace)
+-		return -EINVAL;
+ 	if (!IS_ALIGNED(reg, map->reg_stride))
+ 		return -EINVAL;
+ 
+@@ -1789,7 +1787,8 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 	 *
+ 	 * The first if block is used for memory mapped io. It does not allow
+ 	 * val_bytes of 3 for example.
+-	 * The second one is used for busses which do not have this limitation
++	 * The second one is for busses that do not provide raw I/O.
++	 * The third one is used for busses which do not have these limitations
+ 	 * and can write arbitrary value lengths.
+ 	 */
+ 	if (!map->bus) {
+@@ -1825,6 +1824,32 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 		}
+ out:
+ 		map->unlock(map->lock_arg);
++	} else if (map->bus && !map->format.parse_inplace) {
++		const u8 *u8 = val;
++		const u16 *u16 = val;
++		const u32 *u32 = val;
++		unsigned int ival;
 +
-+	/* ddrc */
-+	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
-+	     0, GFLAGS),
-+	GATE(0, "clk_ddrc_bpll_src", "bpll", 0, RK3399_CLKGATE_CON(3),
-+	     1, GFLAGS),
-+	GATE(0, "clk_ddrc_dpll_src", "dpll", 0, RK3399_CLKGATE_CON(3),
-+	     2, GFLAGS),
-+	GATE(0, "clk_ddrc_gpll_src", "gpll", 0, RK3399_CLKGATE_CON(3),
-+	     3, GFLAGS),
-+	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, 0,
-+		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
- };
- 
- static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
-@@ -1487,6 +1503,8 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
- 	"gpll_hclk_perilp1_src",
- 	"gpll_aclk_perilp0_src",
- 	"gpll_aclk_perihp_src",
-+	"clk_ddrc",
- };
- 
- static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
++		for (i = 0; i < val_count; i++) {
++			switch (map->format.val_bytes) {
++			case 4:
++				ival = u32[i];
++				break;
++			case 2:
++				ival = u16[i];
++				break;
++			case 1:
++				ival = u8[i];
++				break;
++			default:
++				return -EINVAL;
++			}
++
++			ret = regmap_write(map, reg + (i * map->reg_stride),
++					   ival);
++			if (ret)
++				return ret;
++		}
+ 	} else if (map->use_single_write ||
+ 		   (map->max_raw_write && map->max_raw_write < total_size)) {
+ 		int chunk_stride = map->reg_stride;
 -- 
-1.9.1
+2.8.1
